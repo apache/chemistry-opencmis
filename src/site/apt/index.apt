@@ -1,0 +1,29 @@
+  -----
+  OpenCMIS
+  -----
+
+OpenCMIS
+  
+  OpenCMIS is an open source implementation of the 
+  {{{http://xml.coverpages.org/cmis.html}OASIS CMIS specification}}
+  for Java.
+
+  The project consists of the following parts:
+  
+  * <<CMIS Client>>
+  
+    * {{{./client-api.html}Client API}}
+
+    * {{{./client-provider.html}Provider Layer}}
+
+  * <<CMIS Server>>
+  
+    * {{{./server.html}Server Framework}}
+	
+    * {{{./server-inmemory.html}InMemory Test Repository}}
+	
+    * {{{./server-fileshare.html}FileShare Test Repository}}
+  
+  * <<Tests and Tools>>
+    
+	* {{{./browser.html}CMIS Browser}}

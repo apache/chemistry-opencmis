@@ -1,0 +1,79 @@
+<!--
+ 
+  Copyright 2009 Alfresco Software Ltd / Open Text Corporation / SAP AG
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  
+ -->
+<html>
+<head>
+<!--
+ JavaDoc package.html
+-->
+</head>
+<body>
+The OpenCMIS Client API.
+<p>
+This package provides interfaces and classes for accessing CMIS repositories
+via an object oriented API.
+<br/>
+Interfaces in this package are implemented by the OpenCMIS runtime and must not be
+implemented by applications.
+The OpenCMIS client API depends on the OpenCMIS commons API. 
+</p>
+<p>
+To use the OpenCMIS client API, a client needs to get a reference to the entry interface
+{@link org.opencmis.client.api.SessionFactory} and then connect to the CMIS repository
+by obtaining a session to the repository from  the {@code SessionFactory}.
+The way to get an instance of a {@code SessionFactory} depends on the clients runtime:
+Usually this will be done via JNDI lookup in a J2E runtime or a service lookup in a OSGi Runtime.
+</p>
+<p>
+Note: A session is not thread-safe, thus either multiple sessions should be used or some
+kind of synchronization has to be used. <br/>
+All operations that require a round-trip to the back-end will do that synchronously,
+causing the client to be blocked during that call.</p>
+
+<h2>Usage of the API</h2>
+<p>
+The following example code illustrates how the session is obtained, used and finally released.
+<pre>
+  SessionFactory factory;
+  Session session;
+  try {
+    // acquire the session factory  
+    factory = (SessionFactory) new InitialContext().lookup(JNDI_LOOKUP_KEY);
+    // provide some basic configuration
+    HashMap parameters = new HashMap();
+    parameters.put(SessionParameter.USER, "user");
+    parameters.put(SessionParamter.PASSWORD, encode("password"));
+    parameters.put(SessionParameter.URL, "http://server:port/path");
+    // get the session
+    session = factory.getSession(parameters);
+    // sample: get the root folder and create a new top-level folder
+    Folder rootFolder = session.getRootFolder();
+    Document document = session.getObjectFactory().createDocument(rootFolder, "test");
+    document.setProperty("myProperty", "stringpropertyvalue");
+    document.save(); // create document with property
+  } // end try
+  finally {
+    //cleanup
+  }    
+</pre>
+</p>
+<p>
+@see org.opencmis.client.api.SessionFactory
+@see org.opencmis.client.api.Session
+</p>
+</body>
+</html>

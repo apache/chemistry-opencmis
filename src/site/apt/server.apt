@@ -1,0 +1,82 @@
+  -----
+  OpenCMIS Server Framework
+  -----
+
+OpenCMIS Server Framework
+
+  The OpenCMIS Server Framework provides a server implementation of both 
+  CMIS bindings, AtomPub and Web Services, and maps them to Java interfaces.
+  Requests and data from CMIS clients are converted and pushed to a repository
+  connector. The connector translates the CMIS calls into native repository 
+  calls.
+
+
+* Repository Connector Development
+
+  This is a brief description of the interfaces and classes a repository 
+  connector has to extend and implement. For interface details see the
+  {{{./opencmis-server-spi/apidocs/index.html}OpenCMIS Server Framework SPI JavaDoc}}.
+  
+
+** Framework Entry Point
+
+  A repository connector has to extend the 
+  <<<{{{./opencmis-server-spi/apidocs/org/apache/opencmis/server/spi/AbstractServicesFactory.html}AbstractServicesFactory}}>>> 
+  class. This class manages the objects that implement the interfaces of 
+  the different CMIS services. There is only one active instance of this 
+  class per servlet context. The class name has to be set in the 
+  configuration file <<</WEB-INF/classes/repository.properties>>>.
+
++----+
+# set fully qualified class name
+class=org.repository.ServicesFactory
++----+
+  
+  The configuration file can contain more key-value pairs. They are passed
+  to the <<<init()>>> method of the <<<AbstractServicesFactory>>> object
+  when the servlet context starts up.
+
+  
+** Service Interfaces
+
+  There is an interface for each service in the 
+  {{{http://docs.oasis-open.org/cmis/CMIS/v1.0/cd06/cmis-spec-v1.0.html}CMIS specification}}. 
+  Most methods are named after the operations described in the CMIS 
+  specification document. There are a few exceptions to that rule because the 
+  AtomPub binding doesn't always allow a one-to-one mapping. Those divergences
+  are explained in the JavaDoc.
+  
+  The methods take the same parameters as described in the CMIS specification.
+  There are also a few exceptions that are explained in the JavaDoc. 
+  
+  The first parameter of all methods is the 
+  <<<{{{./opencmis-server-spi/apidocs/org/apache/opencmis/server/spi/CallContext.html}CallContext}}>>>. 
+  It is used to
+  transport authentication data to the connector. 
+  (See section "Authentictaion Framework".)
+
+  Some methods have an additional
+  <<<{{{./opencmis-server-spi/apidocs/org/apache/opencmis/server/spi/ObjectInfoHolder.html}ObjectInfoHolder}}>>> 
+  parameter. This object
+  is only set if the call is an AtomPub call. AtomPub entries and feeds require 
+  additional data about the objects that should be returned AND the object that
+  has been passed. In case of a <<<getChildren()>>> call, for example, data about
+  the children AND folder itself would be required. 
+  <<<ObjectInfoHolder>>> collects <<<ObjectInfo>>> objects. 
+  
+  
+** Authentictaion Framework
+
+  tbw.
+
+* Repository Connector Deployment
+
+  The OpenCMIS build procress creates a WAR file in 
+  <<</opencmis-server/opencmis-server/target>>>. This WAR file should be used 
+  as a template. It can be deployed as it is but doesn't do anything.
+  
+  In order to use your connector, copy your compiled connector code into this
+  WAR file and overwrite <<</WEB-INF/classes/repository.properties>>>.
+  
+  Have a look at the {{{./server-fileshare.html}OpenCMIS FileShare test repository}}
+  code and <<<pom.xml>>>. It's a simple example of a repository connector.

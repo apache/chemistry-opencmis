@@ -1,0 +1,60 @@
+  -----
+  OpenCMIS FileShare Repository
+  -----
+
+OpenCMIS FileShare Repository
+
+  <<This repository is not indented for productive use!>>
+
+  The FileShare repository uses the file system as its back-end store and
+  provides read/write access to content and metadata. In other words, it puts
+  a CMIS interface on top of your file system. 
+  
+  The repository is restricted by the capabilities of the file system and 
+  therefore does not support relationships, policies, document versions, 
+  multi-filing, un-filing and query.
+
+  By default it provides a repository "test" that uses your home directory
+  as the repository root. It requires authentication. A user "test" with the 
+  password "test" is pre-configured.
+
+
+* Build and Deploy the Test Repository
+
+  [[1]] {{{./how-to-build.html}Build OpenCMIS}}.
+
+  [[2]] A ready-to-use WAR file should now exist in <<</opencmis-server/opencmis-server-fileshare/target>>>.
+
+  [[3]] Deploy the WAR file to your favorite servlet engine. 
+  
+  
+* Configure the Repository
+ 
+  The configuration file in the WAR file is
+  <<</WEB-INF/classes/repository.properties>>>.
+
++----+
+# Don't touch this line
+class=org.opencmis.fileshare.ServicesFactory
+
+# Login configuration
+#  login.<no> = <user>:<password>
+login.1 = test:test
+login.2 = cmisuser:password
+login.3 = reader:reader
+
+# Type defintions (see example-type.xml)
+#  type.<no> = <absolute path to type definition XML file>
+type.1 = /home/cmistest/type1.xml
+type.2 = /home/cmistest/type2.xml
+
+# Repository configuration
+#  repository.<repositoryId> = <absolute path to repository root folder>
+#  repository.<repositoryId>.readwrite = <comma separated list of login names>
+#  repository.<repositoryId>.readonly = <comma separated list of login names>
+repository.test = /home/cmistest/myreproot 
+repository.test.readwrite = test, cmisuser
+repository.test.readonly = reader
++----+
+
+

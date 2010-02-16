@@ -1,0 +1,43 @@
+  -----
+  How to build OpenCMIS
+  -----
+  
+How to build OpenCMIS
+
+  There is no official release of OpenCMIS, yet. In order to use it, you have
+  to build it. That's a simple task:
+
+  * Make sure you have JDK 1.5 or higher, Maven and a Subversion client 
+    installed.
+
+  * Fetch the source code via Subversion from here: 
+    <<<https://svn.apache.org/repos/asf/incubator/chemistry/opencmis>>>
+
+  * Change to the <<<trunk>>> directory and run:
+  
+  []
+  
++---------------+
+mvn clean install
++---------------+
+
+
+* Build the Client Libraries
+  
+  If you need the OpenCMIS client libraries with all dependencies, 
+  change to the <<<trunk>>> directory and run:
+  
++---------------------------+
+mvn package assembly:assembly
++---------------------------+
+
+  This will create a zip file in the <<</target>>> directory with all
+  requires JAR files.
+  
+  
+* Build the Server Framework
+
+  The server framework will be build with the whole project. There are no additional step necessary.  
+  Please refer to the {{{./server.html}Server Framework}} page for more information how to use it.
+
+  

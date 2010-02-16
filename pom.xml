@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+                             
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Project Information -->
+
+  <groupId>org.opencmis</groupId>
+  <artifactId>opencmis</artifactId>
+  <name>OpenCMIS</name>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <organization>
+    <name>The Apache Software Foundation</name>
+    <url>http://www.apache.org/</url>
+  </organization>
+
+  <url>http://incubator.apache.org/chemistry/</url>
+  <inceptionYear>2009</inceptionYear>
+  <description>
+    OpenCMIS is an open source implementation of the OASIS CMIS specification.
+  </description>
+
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</developerConnection>
+    <url>https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk/</url>
+  </scm>
+
+  <issueManagement>
+    <system>Jira</system>
+    <url>https://issues.apache.org/jira/browse/CMIS</url>
+  </issueManagement>
+
+  <mailingLists>
+    <mailingList>
+      <name>Chemistry Development List</name>
+      <subscribe>chemistry-dev-subscribe@incubator.apache.org</subscribe>
+      <unsubscribe>chemistry-dev-unsubscribe@incubator.apache.org</unsubscribe>
+      <post>chemistry-dev@incubator.apache.org</post>
+      <archive>
+        http://mail-archives.apache.org/mod_mbox/incubator-chemistry-dev/
+      </archive>
+    </mailingList>
+    <mailingList>
+      <name>Chemistry Source Control List</name>
+      <subscribe>chemistry-commits-subscribe@incubator.apache.org</subscribe>
+      <unsubscribe>chemistry-commits-unsubscribe@incubator.apache.org</unsubscribe>
+      <post>chemistry-commits@incubator.apache.org</post>
+      <archive>
+        http://mail-archives.apache.org/mod_mbox/incubator-chemistry-commits/
+      </archive>
+    </mailingList>
+  </mailingLists>
+
+  <developers>
+    <developer>
+      <name>Dieter Guendisch</name>
+      <id>dguendisch</id>
+      <roles>
+        <role>committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Florian Müller</name>
+      <id>fmui</id>
+      <roles>
+        <role>committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Jens Hübel</name>
+      <id>jenshuebel</id>
+      <roles>
+        <role>committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Juergen Schneider</name>
+      <id>jschneider</id>
+      <roles>
+        <role>committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Stephan Klevenz</name>
+      <id>klevenzs</id>
+      <roles>
+        <role>committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Paul Goetz</name>
+      <id>paulgoetz</id>
+      <roles>
+        <role>committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>David Caruana</name>
+      <id>dcaruana</id>
+      <roles>
+        <role>committer</role>
+      </roles>
+    </developer>
+  </developers>
+
+
+  <!-- Project Environment -->
+  <modules>
+    <module>opencmis-commons/opencmis-commons-api</module>
+    <module>opencmis-commons/opencmis-commons-impl</module>
+    <module>opencmis-client/opencmis-client-api</module>
+    <module>opencmis-client/opencmis-client-impl</module>
+    <module>opencmis-client/opencmis-provider-impl</module>
+	<module>opencmis-server/opencmis-server-spi</module>
+	<module>opencmis-server/opencmis-server-impl</module>
+	<module>opencmis-server/opencmis-server-inmemory</module>
+	<module>opencmis-server/opencmis-server-fileshare</module>
+	<module>opencmis-test/opencmis-test-fit</module>
+	<module>opencmis-test/opencmis-test-tck</module>
+	<module>opencmis-test/opencmis-test-tools</module>
+	<module>opencmis-test/opencmis-test-util</module>
+	<module>opencmis-test/opencmis-test-browser</module>	
+  </modules>
+
+  <build>
+    <plugins>
+      <!-- Java 1.5 -->
+      <plugin>
+        <inherited>true</inherited>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <target>1.5</target>
+          <source>1.5</source>
+		  <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.1</version>        
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includePom>true</includePom>
+        </configuration>
+      </plugin>
+	  <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <filtering>false</filtering>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-5</version>
+        <configuration>
+          <descriptors>
+            <descriptor>client-assembly.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
+		  <workspace>.</workspace>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+     <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.4</version>
+     </dependency>
+     <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+     </dependency>
+    
+     <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.13</version>
+        <scope>test</scope>
+     </dependency>
+     <dependency>
+     	<groupId>junit</groupId>
+     	<artifactId>junit</artifactId>
+     	<version>4.7</version>
+     	<type>jar</type>
+     	<scope>test</scope>
+     </dependency>
+  </dependencies>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+		  <code>
+			javadoc:aggregate
+          </code>
+        </configuration>
+      </plugin>
+      <plugin>
+      	<groupId>org.apache.maven.plugins</groupId>
+      	<artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+</project>

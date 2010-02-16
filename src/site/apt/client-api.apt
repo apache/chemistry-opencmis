@@ -1,0 +1,19 @@
+  -----
+  OpenCMIS Client API
+  -----
+
+OpenCMIS Client API
+
+  The OpenCMIS Client API is under development and not working yet.
+  
+  You can check the 
+  {{{./opencmis-commons-api/apidocs/index.html}OpenCMIS Commons JavaDoc}} 
+  and
+  {{{./opencmis-client-api/apidocs/index.html}OpenCMIS Client API JavaDoc}}
+  for a first impression.
+
+  
+  For the time being, you might want to use the 
+  {{{./client-provider.html}client provider layer}}. The interface is not
+  as nice as the client API but it is feature complete and working.
+  

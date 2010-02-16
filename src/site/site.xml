@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project name="OpenCMIS">
+  <body>
+    <menu name="OpenCMIS">
+	  <item name="Introduction" href="index.html" />
+	  <item name="How to build OpenCMIS" href="how-to-build.html" />
+	</menu>
+    <menu name="CMIS Client">
+	  <item name="Client API" href="client-api.html" />
+	  <item name="Provider Layer" href="client-provider.html" />
+	</menu>
+    <menu name="CMIS Server">
+	  <item name="Server Framework" href="server.html" />
+	  <item name="InMemory Repository" href="server-inmemory.html" />
+	  <item name="FileShare Repository" href="server-fileshare.html" />
+	</menu>
+    <menu name="Tests and Tools">
+	  <item name="CMIS Browser" href="browser.html" />
+	</menu>
+    <menu ref="reports" />
+	<menu ref="modules" />
+  </body>
+</project>

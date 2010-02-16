@@ -1,0 +1,113 @@
+  -----
+  OpenCMIS Provider Layer
+  -----
+  
+OpenCMIS Provider Layer
+
+  The OpenCMIS provider layer hides the CMIS AtomPub and Web Services bindings
+  and provides an interface that is very similar to the 
+  {{{http://docs.oasis-open.org/cmis/CMIS/v1.0/cd06/cmis-spec-v1.0.html#_Toc243905428}CMIS domain model}}. 
+  The services, operations, parameters, and structures are named after the 
+  CMIS domain model and behave as described in the CMIS specification.
+  
+  The primary objective of the provider layer is to be complete, covering all
+  CMIS operations and extension points. The result is a somewhat bulky 
+  interface. The {{{./client-api.html}OpenCMIS Client API}} sits on top of the 
+  provider layer and exposes a nicer and simpler to use interface. It is the 
+  better choice for most applications.
+
+  A connection to a CMIS repository is represented by a 
+  <<<{{{./opencmis-commons-api/apidocs/org/apache/opencmis/commons/provider/CmisProvider.html}CmisProvider}}>>>
+  object. Such an object can be created by the 
+  <<<{{{./opencmis-provider-impl/apidocs/org/apache/opencmis/client/provider/factory/CmisProviderFactory.html}CmisProviderFactory}}>>>. 
+  The factory provides two main methods, one for each binding, that require
+  binding specific connection information. The created <<<CmisProvider>>> 
+  object exposes a binding agnostic interface.
+
+  <<<CmisProvider>>> is the entry point to the CMIS services and a few utility
+  operations. It contains a transparent cache for repository infos and type 
+  definitions. The object is serializable, although dehydrating can be 
+  expensive.
+  
+  The <<<get*Service()>>> methods provide access to the CMIS services. 
+  Some service operations take provider layer specific objects. These objects
+  should be created with the <<<ProviderObjectFactory>>>. This factory can be 
+  obtained through the <<<getObjectFactory()>>> method of the
+  <<<CmisProvider>>> object.
+
+  Please refer to the
+  {{{./opencmis-commons-api/apidocs/index.html}OpenCMIS Commons JavaDoc}} 
+  and
+  {{{./opencmis-client-api/apidocs/index.html}OpenCMIS Provider JavaDoc}}
+  for more details on the interfaces.
+  
+  
+* Sample Code
+
+** Creating an AtomPub Provider
+
+  The AtomPub provider requires the URL of the CMIS service document.
+  HTTP basic authentication is enabled by default and a username and a 
+  password have to be provided. 
+
++---
+Map<String, String> parameters = new HashMap<String, String>();
+
+parameters.put(SessionParameter.USER, user);
+parameters.put(SessionParameter.PASSWORD, password);
+
+parameters.put(SessionParameter.ATOMPUB_URL, url); // service document URL
+
+CmisProviderFactory factory = CmisProviderFactory.newInstance();
+CmisProvider provider = factory.createCmisAtomPubProvider(parameters);
++---  
+
+
+** Creating a Web Services Provider
+
+  The Web Services provider requires a WSDL URL for each CMIS service. 
+  This might the same the URL for all services. WS-Security (UsernameToken)
+  is enabled by default and a username and a password have to be provided. 
+  
++---  
+Map<String, String> parameters = new HashMap<String, String>();
+
+parameters.put(SessionParameter.USER, username);
+parameters.put(SessionParameter.PASSWORD, password);
+    
+parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, repositoryServiceWsdlUrl);
+parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, navigationServiceWsdlUrl);
+parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, objectServiceWsdlUrl);
+parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, versioningServiceWsdlUrl);
+parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, discoveryServiceWsdlUrl);
+parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, relationshipServiceWsdlUrl);
+parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, multiFilingServiceWsdlUrl);
+parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, policyServiceWsdlUrl);
+parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, aclServiceWsdlUrl);
+
+CmisProviderFactory factory = CmisProviderFactory.newInstance();
+CmisProvider provider = factory.createCmisWebServicesProvider(parameters);
++---
+
+
+** Getting an Object
+
+  The following snippet gets the name of the object "myObject" in repository 
+  "myRepository". The parameters of <<<getObject()>>> can be found in the 
+  CMIS specification.
+ 
++---  
+CmisProvider provider = ...
+
+ObjectData myObject = provider.getObjectService().getObject("myRepository", "myObject", 
+   "*", true, IncludeRelationships.BOTH, "cmis:none", true, true, null);
+
+PropertiesData properties = myObject.getProperties();
+PropertyData<String> nameProperty = properties.getProperties().get(PropertyIds.CMIS_NAME);
+String name = nameProperty.getFirstValue();
++---  
+
+
+* Custom Authentication Provider
+
+  tbw.

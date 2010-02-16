@@ -1,0 +1,19 @@
+  -----
+  OpenCMIS InMemory Repository
+  -----
+
+OpenCMIS InMemory Repository
+
+  <<This repository is not indented for productive use!>>
+
+
+* Build and Deploy the Test Repository
+
+  [[1]] {{{./how-to-build.html}Build OpenCMIS}}.
+
+  [[2]] A ready-to-use WAR file should now exist in <<</opencmis-server/opencmis-server-inmemory/target>>>.
+
+  [[3]] Deploy the WAR file to your favorite servlet engine. 
+
+  
+* Configure the Repository
