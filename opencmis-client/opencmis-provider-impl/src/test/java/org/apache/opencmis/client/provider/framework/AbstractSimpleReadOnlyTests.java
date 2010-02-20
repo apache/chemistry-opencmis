@@ -46,6 +46,8 @@ import org.apache.opencmis.commons.provider.RenditionData;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 
 /**
+ * Simple read-only tests.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
@@ -179,24 +181,32 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     }
 
     String repId = getTestRepositoryId();
-    String rootFolder = getTestRootFolder();
+    String rootFolder = getRootFolderId();
+    String testRootFolder = getTestRootFolder();
 
-    ObjectData folderObject = getObject(rootFolder);
+    ObjectData rootFolderObject = getObject(rootFolder);
+    String rootPath = getPath(rootFolderObject);
+    assertEquals("Root path is not \"/\"!", "/", rootPath);
+    assertAllowableAction(rootFolderObject.getAllowableActions(),
+        AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, false);
+
+    ObjectData folderObject = getObject(testRootFolder);
     String path = getPath(folderObject);
-    assertEquals("/", path);
 
     ObjectInFolderList children = getProvider().getNavigationService().getChildren(repId,
-        rootFolder, "*", null, Boolean.TRUE, IncludeRelationships.BOTH, null, Boolean.TRUE, null,
-        null, null);
+        testRootFolder, "*", null, Boolean.TRUE, IncludeRelationships.BOTH, null, Boolean.TRUE,
+        null, null, null);
     assertNotNull(children);
     assertNotNull(children.hasMoreItems());
 
     if (supportsDescendants()) {
       List<ObjectInFolderContainer> desc = getProvider().getNavigationService().getDescendants(
-          repId, rootFolder, BigInteger.valueOf(5), null, Boolean.TRUE, IncludeRelationships.BOTH,
-          null, Boolean.TRUE, null);
+          repId, testRootFolder, BigInteger.valueOf(5), "*", Boolean.TRUE,
+          IncludeRelationships.BOTH, null, Boolean.TRUE, null);
       assertNotNull(desc);
       Tools.print("Descendants", desc);
+
+      assertContainer(desc, 5);
     }
     else {
       warning("Descendants not supported!");
@@ -204,10 +214,12 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
 
     if (supportsFolderTree()) {
       List<ObjectInFolderContainer> tree = getProvider().getNavigationService().getFolderTree(
-          repId, rootFolder, BigInteger.valueOf(5), null, Boolean.TRUE, IncludeRelationships.BOTH,
-          null, Boolean.TRUE, null);
+          repId, testRootFolder, BigInteger.valueOf(5), "*", Boolean.TRUE,
+          IncludeRelationships.BOTH, null, Boolean.TRUE, null);
       assertNotNull(tree);
       Tools.print("Tree", tree);
+
+      assertContainer(tree, 5);
     }
     else {
       warning("Folder Tree not supported!");
@@ -244,6 +256,32 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     }
   }
 
+  private void assertContainer(List<ObjectInFolderContainer> containers, int maxDepth) {
+    if (containers == null) {
+      return;
+    }
+
+    if (maxDepth < 1) {
+      return;
+    }
+
+    for (ObjectInFolderContainer container : containers) {
+      assertNotNull(container);
+      assertNotNull(container.getObject());
+      assertNotNull(container.getObject().getObject());
+      assertNotNull(container.getObject().getObject().getId());
+      assertNotNull(container.getObject().getPathSegment());
+
+      ObjectData object = getObject(container.getObject().getObject().getId());
+
+      assertEquals(container.getObject().getObject().getProperties(), object.getProperties());
+      assertEquals(container.getObject().getObject().getAllowableActions(), object
+          .getAllowableActions());
+
+      assertContainer(container.getChildren(), maxDepth - 1);
+    }
+  }
+
   /**
    * Content stream smoke test.
    */
@@ -258,6 +296,8 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     ObjectInFolderList children = getProvider().getNavigationService().getChildren(repId,
         rootFolder, null, null, Boolean.FALSE, IncludeRelationships.BOTH, null, Boolean.FALSE,
         null, null, null);
+    assertNotNull(children);
+    assertNotNull(children.getObjects());
 
     for (ObjectInFolderData object : children.getObjects()) {
       assertNotNull(object.getObject().getId());

@@ -27,6 +27,7 @@ import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.VersioningState;
+import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.opencmis.commons.provider.AccessControlEntry;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.ContentStreamData;
@@ -36,6 +37,8 @@ import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
 
 /**
+ * Simple read-write test.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
@@ -190,19 +193,33 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     boolean requiresCheckOut = getRepositoryInfo().getRepositoryCapabilities()
         .getCapabilityContentStreamUpdatability() == CapabilityContentStreamUpdates.PWCONLY;
 
+    boolean isVersionable = isVersionable(getDefaultDocumentType());
+
     String docId = createDefaultDocument(getTestRootFolder(), "testcontent.txt", CONTENT_TYPE,
         CONTENT);
 
     // if a check out is required, do it
     if (requiresCheckOut) {
-      getProvider().getVersioningService().checkOut(getTestRepositoryId(),
-          new Holder<String>(docId), null, null);
+      if (isVersionable) {
+        getProvider().getVersioningService().checkOut(getTestRepositoryId(),
+            new Holder<String>(docId), null, null);
+      }
+      else {
+        warning("Default document type is not versionable!");
+        delete(docId, true);
+        return;
+      }
     }
 
     // delete content
     Holder<String> docIdHolder = new Holder<String>(docId);
-    getProvider().getObjectService().deleteContentStream(getTestRepositoryId(), docIdHolder, null,
-        null);
+    try {
+      getProvider().getObjectService().deleteContentStream(getTestRepositoryId(), docIdHolder,
+          null, null);
+    }
+    catch (CmisNotSupportedException e) {
+      warning("deleteContentStream not supported!");
+    }
 
     // set content
     ContentStreamData contentStream2 = createContentStreamData(CONTENT_TYPE, CONTENT2);
