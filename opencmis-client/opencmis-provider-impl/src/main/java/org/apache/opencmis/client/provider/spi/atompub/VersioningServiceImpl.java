@@ -40,6 +40,7 @@ import org.apache.opencmis.commons.impl.Constants;
 import org.apache.opencmis.commons.impl.ReturnVersion;
 import org.apache.opencmis.commons.impl.UrlBuilder;
 import org.apache.opencmis.commons.impl.jaxb.CmisObjectType;
+import org.apache.opencmis.commons.impl.jaxb.CmisPropertiesType;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.ContentStreamData;
 import org.apache.opencmis.commons.provider.Holder;
@@ -166,6 +167,10 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
     object.setProperties(convert(properties));
     object.setPolicyIds(convertPolicyIds(policies));
 
+    if(object.getProperties() == null) {
+      object.setProperties(new CmisPropertiesType());
+    }
+    
     String mediaType = null;
     InputStream stream = null;
 
