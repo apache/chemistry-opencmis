@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,6 +153,31 @@ public class BrowseServlet extends HttpServlet {
     if (!browseUrl.matches(fAllow)) {
       printError(req, resp, "Prohibited URL!", null);
       return;
+    }
+
+    // re-encode parameters
+    int qm = browseUrl.indexOf('?');
+    if ((qm > -1) && (browseUrl.length() > qm + 1)) {
+      StringBuilder urlSb = new StringBuilder(browseUrl.substring(0, qm + 1));
+      StringBuilder paramSb = new StringBuilder();
+
+      for (int i = qm + 1; i < browseUrl.length(); i++) {
+        char c = browseUrl.charAt(i);
+        if ((c == '=') || (c == '&')) {
+          urlSb.append(URLEncoder.encode(paramSb.toString(), "UTF-8"));
+          urlSb.append(c);
+          paramSb = new StringBuilder();
+        }
+        else {
+          paramSb.append(c);
+        }
+      }
+
+      if (paramSb.length() > 0) {
+        urlSb.append(URLEncoder.encode(paramSb.toString(), "UTF-8"));
+      }
+
+      browseUrl = urlSb.toString();
     }
 
     try {
