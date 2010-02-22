@@ -22,17 +22,31 @@ import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.provider.ObjectData;
 
 /**
- * CMIS MultiFiling Service interface.
+ * CMIS MultiFiling Service interface. Please refer to the CMIS specification and the OpenCMIS
+ * documentation for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public interface CmisMultiFilingService {
 
+  /**
+   * Adds an object to a folder.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   ObjectData addObjectToFolder(CallContext context, String repositoryId, String objectId,
       String folderId, Boolean allVersions, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
+  /**
+   * Removes an object to a folder.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   ObjectData removeObjectFromFolder(CallContext context, String repositoryId, String objectId,
       String folderId, ExtensionsData extension, ObjectInfoHolder objectInfos);
-
 }

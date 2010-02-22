@@ -29,13 +29,28 @@ import java.math.BigInteger;
  */
 public interface RenditionInfo {
 
+  /**
+   * Return the id of the rendition.
+   */
   String getId();
 
+  /**
+   * Return the content type of the rendition.
+   */
   String getContenType();
 
+  /**
+   * Return the kind of the rendition.
+   */
   String getKind();
 
+  /**
+   * Return the title of the rendition.
+   */
   String getTitle();
 
+  /**
+   * Return the size of the rendition in bytes.
+   */
   BigInteger getLength();
 }

@@ -19,8 +19,8 @@
 package org.apache.opencmis.server.spi;
 
 /**
- * This class contains information about an object. This data is used to generate the appropriate
- * links in AtomPub entries and feeds.
+ * This class contains information about a set of objects. This data is used to generate the
+ * appropriate links in AtomPub entries and feeds.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 

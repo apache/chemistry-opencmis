@@ -35,7 +35,8 @@ import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.RenditionData;
 
 /**
- * CMIS Object Service interface.
+ * CMIS Object Service interface. Please refer to the CMIS specification and the OpenCMIS
+ * documentation for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
@@ -43,7 +44,7 @@ import org.apache.opencmis.commons.provider.RenditionData;
 public interface CmisObjectService {
 
   /**
-   * createDocument.
+   * Creates new document.
    * 
    * <p>
    * Bindings: Web Services
@@ -55,7 +56,7 @@ public interface CmisObjectService {
       ExtensionsData extension);
 
   /**
-   * createDocumentFromSource.
+   * Copies a document.
    * 
    * <p>
    * Bindings: Web Services
@@ -67,7 +68,7 @@ public interface CmisObjectService {
       ExtensionsData extension);
 
   /**
-   * createFolder.
+   * Creates a new folder.
    * 
    * <p>
    * Bindings: Web Services
@@ -78,7 +79,7 @@ public interface CmisObjectService {
       AccessControlList removeAces, ExtensionsData extension);
 
   /**
-   * createRelationship.
+   * Create a new relationship.
    * 
    * <p>
    * Bindings: AtomPub, Web Services
@@ -89,7 +90,7 @@ public interface CmisObjectService {
       ExtensionsData extension);
 
   /**
-   * createPolicy.
+   * Creates a new policy.
    * 
    * <p>
    * Bindings: Web Services
@@ -100,7 +101,8 @@ public interface CmisObjectService {
       AccessControlList removeAces, ExtensionsData extension);
 
   /**
-   * create.
+   * Creates a new document, folder or policy. The property "cmis:objectTypeId" defines the type and
+   * implicitly the base type.
    * 
    * <p>
    * Bindings: AtomPub
@@ -110,11 +112,18 @@ public interface CmisObjectService {
       String folderId, ContentStreamData contentStream, VersioningState versioningState,
       List<String> policies, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
+  /**
+   * Gets the allowable actions.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   AllowableActionsData getAllowableActions(CallContext context, String repositoryId,
       String objectId, ExtensionsData extension);
 
   /**
-   * getObject.
+   * Gets an object by id.
    * 
    * <p>
    * Bindings: AtomPub, Web Services
@@ -126,7 +135,7 @@ public interface CmisObjectService {
       ExtensionsData extension, ObjectInfoHolder objectInfos);
 
   /**
-   * getProperties.
+   * Gets the properties of an object.
    * 
    * <p>
    * Bindings: Web Services
@@ -135,36 +144,102 @@ public interface CmisObjectService {
   PropertiesData getProperties(CallContext context, String repositoryId, String objectId,
       String filter, ExtensionsData extension);
 
+  /**
+   * Gets the renditions of an object.
+   * 
+   * <p>
+   * Bindings: Web Services
+   * </p>
+   */
   List<RenditionData> getRenditions(CallContext context, String repositoryId, String objectId,
       String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
+  /**
+   * Gets an object by path.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   ObjectData getObjectByPath(CallContext context, String repositoryId, String path, String filter,
       Boolean includeAllowableActions, IncludeRelationships includeRelationships,
       String renditionFilter, Boolean includePolicyIds, Boolean includeAcl,
       ExtensionsData extension, ObjectInfoHolder objectInfos);
 
+  /**
+   * Gets the content of a document.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   ContentStreamData getContentStream(CallContext context, String repositoryId, String objectId,
       String streamId, BigInteger offset, BigInteger length, ExtensionsData extension);
 
+  /**
+   * Updates the properties of an object.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   ObjectData updateProperties(CallContext context, String repositoryId, Holder<String> objectId,
       Holder<String> changeToken, PropertiesData properties, AccessControlList acl,
       ExtensionsData extension, ObjectInfoHolder objectInfos);
 
+  /**
+   * Moves an object.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   ObjectData moveObject(CallContext context, String repositoryId, Holder<String> objectId,
       String targetFolderId, String sourceFolderId, ExtensionsData extension,
       ObjectInfoHolder objectInfos);
 
+  /**
+   * Deletes an object or cancels a check out. For the Web Services binding this is always an object
+   * deletion. For the AtomPub it depends on the referenced object. If it is a checked out document
+   * then the check out must be canceled. If the object is not a checked out document then the
+   * object must be deleted.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   void deleteObjectOrCancelCheckOut(CallContext context, String repositoryId, String objectId,
       Boolean allVersions, ExtensionsData extension);
 
+  /**
+   * Deletes a folder tree.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   FailedToDeleteData deleteTree(CallContext context, String repositoryId, String folderId,
       Boolean allVersions, UnfileObjects unfileObjects, Boolean continueOnFailure,
       ExtensionsData extension);
 
+  /**
+   * Sets a new content.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   void setContentStream(CallContext context, String repositoryId, Holder<String> objectId,
       Boolean overwriteFlag, Holder<String> changeToken, ContentStreamData contentStream,
       ExtensionsData extension);
 
+  /**
+   * Deletes a content.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   void deleteContentStream(CallContext context, String repositoryId, Holder<String> objectId,
       Holder<String> changeToken, ExtensionsData extension);
 }

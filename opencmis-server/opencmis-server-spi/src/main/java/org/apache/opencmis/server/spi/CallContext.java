@@ -36,7 +36,8 @@ public interface CallContext {
   String LENGTH = "length";
 
   /**
-   * Returns the binding. Usually it returns {@link BINDING_ATOMPUB} or {@link BINDING_WEBSERVICES}.
+   * Returns the binding. Usually it returns {@link CallContext#BINDING_ATOMPUB} or
+   * {@link CallContext#BINDING_WEBSERVICES}.
    */
   String getBinding();
 

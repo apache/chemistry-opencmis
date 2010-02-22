@@ -28,29 +28,56 @@ import org.apache.opencmis.commons.api.TypeDefinitionList;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 
 /**
- * CMIS Repository Service interface.
+ * CMIS Repository Service interface. Please refer to the CMIS specification and the OpenCMIS
+ * documentation for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public interface CmisRepositoryService {
 
+  /**
+   * Gets all repository infos.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   List<RepositoryInfoData> getRepositoryInfos(CallContext context, ExtensionsData extension);
 
+  /**
+   * Gets the repository info of the specified repository.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   RepositoryInfoData getRepositoryInfo(CallContext context, String repositoryId,
       ExtensionsData extension);
 
+  /**
+   * Gets the children of the given type.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   TypeDefinitionList getTypeChildren(CallContext context, String repositoryId, String typeId,
       Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount,
       ExtensionsData extension);
 
+  /**
+   * Gets the descendants of the given type.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId,
       String typeId, BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension);
 
   /**
-   * getTypeDefinition.
-   * 
-   * Must return a valid type or throw an exception.
+   * Gets the type definition of the given type. It must return a valid type or throw an exception.
    * 
    * <p>
    * Bindings: AtomPub, Web Services

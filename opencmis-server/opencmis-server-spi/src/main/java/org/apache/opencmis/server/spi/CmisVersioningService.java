@@ -28,11 +28,35 @@ import org.apache.opencmis.commons.provider.Holder;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.PropertiesData;
 
+/**
+ * CMIS Versioning Service interface. Please refer to the CMIS specification and the OpenCMIS
+ * documentation for details.
+ * 
+ * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+ * 
+ */
 public interface CmisVersioningService {
 
+  /**
+   * Checks out a document.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   public ObjectData checkOut(CallContext context, String repositoryId, Holder<String> objectId,
       ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHolder objectInfos);
 
+  /**
+   * Cancels a check out.
+   * 
+   * <p>
+   * Bindings: Web Services
+   * </p>
+   * 
+   * @see CmisObjectService#deleteObjectOrCancelCheckOut(CallContext, String, String, Boolean,
+   *      ExtensionsData)
+   */
   public void cancelCheckOut(CallContext context, String repositoryId, String objectId,
       ExtensionsData extension);
 
@@ -42,9 +66,11 @@ public interface CmisVersioningService {
       AccessControlList removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
   /**
-   * getObjectOfLatestVersion.
+   * Gets the latest version an object.
    * 
-   * <p>Bindings: AtomPub, Web Services</p>
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
    */
   public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId,
       String versionSeriesId, Boolean major, String filter, Boolean includeAllowableActions,
@@ -52,13 +78,22 @@ public interface CmisVersioningService {
       Boolean includeAcl, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
   /**
-   * getPropertiesOfLatestVersion.
+   * Gets the properties of latest version an object.
    * 
-   * <p>Bindings: Web Services</p>
+   * <p>
+   * Bindings: Web Services
+   * </p>
    */
   public PropertiesData getPropertiesOfLatestVersion(CallContext context, String repositoryId,
       String versionSeriesId, Boolean major, String filter, ExtensionsData extension);
 
+  /**
+   * Gets the list of all versions of a document.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   public List<ObjectData> getAllVersions(CallContext context, String repositoryId,
       String versionSeriesId, String filter, Boolean includeAllowableActions,
       ExtensionsData extension, ObjectInfoHolder objectInfos);

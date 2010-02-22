@@ -23,7 +23,8 @@ import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.provider.AccessControlList;
 
 /**
- * CMIS ACL Service interface.
+ * CMIS ACL Service interface. Please refer to the CMIS specification and the OpenCMIS documentation
+ * for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
@@ -31,20 +32,34 @@ import org.apache.opencmis.commons.provider.AccessControlList;
 public interface CmisAclService {
 
   /**
+   * Returns the ACL of an object.
+   * 
+   * <p>
    * Bindings: AtomPub, Web Services
+   * </p>
    */
   AccessControlList getAcl(CallContext context, String repositoryId, String objectId,
       Boolean onlyBasicPermissions, ExtensionsData extension);
 
   /**
+   * Adds ACEs to and removes ACEs from the ACL of an object.
+   * 
+   * <p>
    * Bindings: Web Services
+   * </p>
    */
   AccessControlList applyAcl(CallContext context, String repositoryId, String objectId,
       AccessControlList addAces, AccessControlList removeAces, AclPropagation aclPropagation,
       ExtensionsData extension);
 
   /**
+   * Applies a new ACL to an object. Since it is not possible to transmit an "add ACL" and a
+   * "remove ACL" via AtomPub, the merging has to be done the client side. The ACEs provided here is
+   * supposed to the new complete ACL.
+   * 
+   * <p>
    * Bindings: AtomPub
+   * </p>
    */
   AccessControlList applyAcl(CallContext context, String repositoryId, String objectId,
       AccessControlList aces, AclPropagation aclPropagation);

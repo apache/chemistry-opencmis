@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 
 /**
- * The aim of this class is provide CMIS service instances.
+ * This class provides the CMIS service instances.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 

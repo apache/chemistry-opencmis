@@ -25,13 +25,21 @@ import org.apache.opencmis.commons.enums.RelationshipDirection;
 import org.apache.opencmis.commons.provider.ObjectList;
 
 /**
- * CMIS Relationship Service interface.
+ * CMIS Relationship Service interface. Please refer to the CMIS specification and the OpenCMIS
+ * documentation for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public interface CmisRelationshipService {
 
+  /**
+   * Gets the relationships of an object.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   public ObjectList getObjectRelationships(CallContext context, String repositoryId,
       String objectId, Boolean includeSubRelationshipTypes,
       RelationshipDirection relationshipDirection, String typeId, String filter,

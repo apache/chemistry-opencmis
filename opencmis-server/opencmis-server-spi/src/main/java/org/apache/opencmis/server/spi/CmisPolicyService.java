@@ -24,19 +24,41 @@ import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.provider.ObjectData;
 
 /**
- * CMIS Policy Service interface.
+ * CMIS Policy Service interface. Please refer to the CMIS specification and the OpenCMIS
+ * documentation for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public interface CmisPolicyService {
 
+  /**
+   * Applies a policy to an object.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   public ObjectData applyPolicy(CallContext context, String repositoryId, String policyId,
       String objectId, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
+  /**
+   * Removes a policy to an object.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   public void removePolicy(CallContext context, String repositoryId, String policyId,
       String objectId, ExtensionsData extension);
 
+  /**
+   * Get all applied policies of an object.
+   * 
+   * <p>
+   * Bindings: AtomPub, Web Services
+   * </p>
+   */
   public List<ObjectData> getAppliedPolicies(CallContext context, String repositoryId,
       String objectId, String filter, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
