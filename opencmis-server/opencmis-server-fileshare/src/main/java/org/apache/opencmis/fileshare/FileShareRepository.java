@@ -665,7 +665,7 @@ public class FileShareRepository {
     else {
       // set new id
       objectId.setValue(getId(newFile));
-      
+
       // if it is a file, move properties file too
       if (newFile.isFile()) {
         File propFile = getPropertiesFile(file);

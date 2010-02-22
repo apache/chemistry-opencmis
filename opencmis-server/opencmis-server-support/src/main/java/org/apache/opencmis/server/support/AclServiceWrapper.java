@@ -16,30 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.fileshare;
+package org.apache.opencmis.server.support;
 
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.enums.AclPropagation;
-import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.server.spi.CallContext;
 import org.apache.opencmis.server.spi.CmisAclService;
 
 /**
- * ACL Service.
+ * ACL service wrapper.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class AclService implements CmisAclService {
+public class AclServiceWrapper extends AbstractServiceWrapper implements CmisAclService {
 
-  private RepositoryMap fRepositoryMap;
+  private CmisAclService fService;
 
   /**
    * Constructor.
+   * 
+   * @param service
+   *          the real service object
    */
-  public AclService(RepositoryMap repositoryMap) {
-    fRepositoryMap = repositoryMap;
+  public AclServiceWrapper(CmisAclService service) {
+    if (service == null) {
+      throw new IllegalArgumentException("Service must be set!");
+    }
+
+    fService = service;
   }
 
   /*
@@ -52,8 +58,16 @@ public class AclService implements CmisAclService {
    */
   public AccessControlList applyAcl(CallContext context, String repositoryId, String objectId,
       AccessControlList aces, AclPropagation aclPropagation) {
-    fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
-    throw new CmisNotSupportedException("applyAcl not supported!");
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+    aclPropagation = getDefault(aclPropagation);
+
+    try {
+      return fService.applyAcl(context, repositoryId, objectId, aces, aclPropagation);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -69,8 +83,17 @@ public class AclService implements CmisAclService {
   public AccessControlList applyAcl(CallContext context, String repositoryId, String objectId,
       AccessControlList addAces, AccessControlList removeAces, AclPropagation aclPropagation,
       ExtensionsData extension) {
-    fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
-    throw new CmisNotSupportedException("applyAcl not supported!");
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+    aclPropagation = getDefault(aclPropagation);
+
+    try {
+      return fService.applyAcl(context, repositoryId, objectId, addAces, removeAces,
+          aclPropagation, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -83,7 +106,16 @@ public class AclService implements CmisAclService {
    */
   public AccessControlList getAcl(CallContext context, String repositoryId, String objectId,
       Boolean onlyBasicPermissions, ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getAcl(context,
-        objectId, objectId);
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+    onlyBasicPermissions = getDefaultTrue(onlyBasicPermissions);
+
+    try {
+      return fService.getAcl(context, repositoryId, objectId, onlyBasicPermissions, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
+
 }

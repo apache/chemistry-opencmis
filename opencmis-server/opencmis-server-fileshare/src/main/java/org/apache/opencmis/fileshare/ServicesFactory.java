@@ -19,6 +19,7 @@
 package org.apache.opencmis.fileshare;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +40,11 @@ import org.apache.opencmis.server.spi.CmisNavigationService;
 import org.apache.opencmis.server.spi.CmisObjectService;
 import org.apache.opencmis.server.spi.CmisRepositoryService;
 import org.apache.opencmis.server.spi.CmisVersioningService;
+import org.apache.opencmis.server.support.AclServiceWrapper;
+import org.apache.opencmis.server.support.NavigationServiceWrapper;
+import org.apache.opencmis.server.support.ObjectServiceWrapper;
+import org.apache.opencmis.server.support.RepositoryServiceWrapper;
+import org.apache.opencmis.server.support.VersioningServiceWrapper;
 
 /**
  * Services Factory for file share back-end.
@@ -54,16 +60,21 @@ public class ServicesFactory extends AbstractServicesFactory {
   private static final String SUFFIX_READWRITE = ".readwrite";
   private static final String SUFFIX_READONLY = ".readonly";
 
+  private static final BigInteger DEFAULT_MAX_ITEMS_OBJECTS = BigInteger.valueOf(200);
+  private static final BigInteger DEFAULT_MAX_ITEMS_TYPES = BigInteger.valueOf(50);
+  private static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(10);
+  private static final BigInteger DEFAULT_DEPTH_TYPES = BigInteger.valueOf(-1);
+
   private static final Log log = LogFactory.getLog(AbstractServicesFactory.class);
 
   private RepositoryMap fRepositoryMap;
   private TypeManager fTypeManager;
 
-  private RepositoryService fRepositoryService;
-  private NavigationService fNavigationService;
-  private ObjectService fObjectService;
-  private VersioningService fVersioningService;
-  private AclService fAclService;
+  private CmisRepositoryService fRepositoryService;
+  private CmisNavigationService fNavigationService;
+  private CmisObjectService fObjectService;
+  private CmisVersioningService fVersioningService;
+  private CmisAclService fAclService;
 
   public ServicesFactory() {
   }
@@ -75,11 +86,15 @@ public class ServicesFactory extends AbstractServicesFactory {
 
     readConfiguration(parameters);
 
-    fRepositoryService = new RepositoryService(fRepositoryMap);
-    fNavigationService = new NavigationService(fRepositoryMap);
-    fObjectService = new ObjectService(fRepositoryMap);
-    fVersioningService = new VersioningService(fRepositoryMap);
-    fAclService = new AclService(fRepositoryMap);
+    // create service object with wrappers
+    fRepositoryService = new RepositoryServiceWrapper(new RepositoryService(fRepositoryMap),
+        DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES);
+    fNavigationService = new NavigationServiceWrapper(new NavigationService(fRepositoryMap),
+        DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+    fObjectService = new ObjectServiceWrapper(new ObjectService(fRepositoryMap),
+        DEFAULT_MAX_ITEMS_OBJECTS);
+    fVersioningService = new VersioningServiceWrapper(new VersioningService(fRepositoryMap));
+    fAclService = new AclServiceWrapper(new AclService(fRepositoryMap));
   }
 
   @Override

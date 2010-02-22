@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.fileshare;
+package org.apache.opencmis.server.support;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
-import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.ContentStreamData;
 import org.apache.opencmis.commons.provider.Holder;
@@ -34,20 +32,28 @@ import org.apache.opencmis.server.spi.CmisVersioningService;
 import org.apache.opencmis.server.spi.ObjectInfoHolder;
 
 /**
- * Versioning Service.
+ * Versioning service wrapper.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class VersioningService implements CmisVersioningService {
+public class VersioningServiceWrapper extends AbstractServiceWrapper implements
+    CmisVersioningService {
 
-  private RepositoryMap fRepositoryMap;
+  private CmisVersioningService fService;
 
   /**
    * Constructor.
+   * 
+   * @param service
+   *          the real service object
    */
-  public VersioningService(RepositoryMap repositoryMap) {
-    fRepositoryMap = repositoryMap;
+  public VersioningServiceWrapper(CmisVersioningService service) {
+    if (service == null) {
+      throw new IllegalArgumentException("Service must be set!");
+    }
+
+    fService = service;
   }
 
   /*
@@ -55,12 +61,20 @@ public class VersioningService implements CmisVersioningService {
    * 
    * @see
    * org.apache.opencmis.server.spi.CmisVersioningService#cancelCheckOut(org.apache.opencmis.server
-   * .spi.CallContext , java.lang.String, java.lang.String,
+   * .spi.CallContext, java.lang.String, java.lang.String,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public void cancelCheckOut(CallContext context, String repositoryId, String objectId,
       ExtensionsData extension) {
-    throw new CmisNotSupportedException("cancelCheckOut not supported!");
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+
+    try {
+      fService.cancelCheckOut(context, repositoryId, objectId, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -80,7 +94,17 @@ public class VersioningService implements CmisVersioningService {
       Boolean major, PropertiesData properties, ContentStreamData contentStream,
       String checkinComment, List<String> policies, AccessControlList addAces,
       AccessControlList removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    throw new CmisNotSupportedException("checkIn not supported!");
+    checkRepositoryId(repositoryId);
+    checkHolderId("Object Id", objectId);
+    major = getDefaultTrue(major);
+
+    try {
+      return fService.checkIn(context, repositoryId, objectId, major, properties, contentStream,
+          checkinComment, policies, addAces, removeAces, extension, objectInfos);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -94,7 +118,16 @@ public class VersioningService implements CmisVersioningService {
    */
   public ObjectData checkOut(CallContext context, String repositoryId, Holder<String> objectId,
       ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHolder objectInfos) {
-    throw new CmisNotSupportedException("checkOut not supported!");
+    checkRepositoryId(repositoryId);
+    checkHolderId("Object Id", objectId);
+
+    try {
+      return fService.checkOut(context, repositoryId, objectId, extension, contentCopied,
+          objectInfos);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -102,17 +135,24 @@ public class VersioningService implements CmisVersioningService {
    * 
    * @see
    * org.apache.opencmis.server.spi.CmisVersioningService#getAllVersions(org.apache.opencmis.server
-   * .spi.CallContext , java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
+   * .spi.CallContext, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
    * org.apache.opencmis.commons.api.ExtensionsData,
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
   public List<ObjectData> getAllVersions(CallContext context, String repositoryId,
       String versionSeriesId, String filter, Boolean includeAllowableActions,
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    ObjectData theVersion = fRepositoryMap.getAuthenticatedRepository(context, repositoryId)
-        .getObject(context, versionSeriesId, filter, includeAllowableActions, false, objectInfos);
+    checkRepositoryId(repositoryId);
+    checkId("Version Series Id", versionSeriesId);
+    includeAllowableActions = getDefaultFalse(includeAllowableActions);
 
-    return Collections.singletonList(theVersion);
+    try {
+      return fService.getAllVersions(context, repositoryId, versionSeriesId, filter,
+          includeAllowableActions, extension, objectInfos);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -120,7 +160,7 @@ public class VersioningService implements CmisVersioningService {
    * 
    * @see
    * org.apache.opencmis.server.spi.CmisVersioningService#getObjectOfLatestVersion(org.apache.opencmis
-   * .server. spi.CallContext, java.lang.String, java.lang.String, java.lang.Boolean,
+   * .server.spi.CallContext, java.lang.String, java.lang.String, java.lang.Boolean,
    * java.lang.String, java.lang.Boolean, org.apache.opencmis.commons.enums.IncludeRelationships,
    * java.lang.String, java.lang.Boolean, java.lang.Boolean,
    * org.apache.opencmis.commons.api.ExtensionsData,
@@ -130,8 +170,23 @@ public class VersioningService implements CmisVersioningService {
       String versionSeriesId, Boolean major, String filter, Boolean includeAllowableActions,
       IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
       Boolean includeAcl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getObject(context,
-        versionSeriesId, filter, includeAllowableActions, includeAcl, objectInfos);
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", versionSeriesId);
+    major = getDefaultFalse(major);
+    includeAllowableActions = getDefaultFalse(includeAllowableActions);
+    includeRelationships = getDefault(includeRelationships);
+    renditionFilter = getDefaultRenditionFilter(renditionFilter);
+    includePolicyIds = getDefaultFalse(includePolicyIds);
+    includeAcl = getDefaultFalse(includeAcl);
+
+    try {
+      return fService.getObjectOfLatestVersion(context, repositoryId, versionSeriesId, major,
+          filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds,
+          includeAcl, extension, objectInfos);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -139,15 +194,21 @@ public class VersioningService implements CmisVersioningService {
    * 
    * @see
    * org.apache.opencmis.server.spi.CmisVersioningService#getPropertiesOfLatestVersion(org.apache
-   * .opencmis.server .spi.CallContext, java.lang.String, java.lang.String, java.lang.Boolean,
-   * java.lang.String, org.apache.opencmis.commons.api.ExtensionsData,
-   * org.apache.opencmis.server.spi.ObjectInfoHolder)
+   * .opencmis.server.spi.CallContext, java.lang.String, java.lang.String, java.lang.Boolean,
+   * java.lang.String, org.apache.opencmis.commons.api.ExtensionsData)
    */
   public PropertiesData getPropertiesOfLatestVersion(CallContext context, String repositoryId,
       String versionSeriesId, Boolean major, String filter, ExtensionsData extension) {
-    ObjectData object = fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getObject(
-        context, versionSeriesId, filter, false, false, null);
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", versionSeriesId);
+    major = getDefaultFalse(major);
 
-    return object.getProperties();
+    try {
+      return fService.getPropertiesOfLatestVersion(context, repositoryId, versionSeriesId, major,
+          filter, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 }

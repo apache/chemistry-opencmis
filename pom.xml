@@ -141,6 +141,7 @@
 		<module>opencmis-client/opencmis-provider-impl</module>
 		<module>opencmis-server/opencmis-server-spi</module>
 		<module>opencmis-server/opencmis-server-impl</module>
+		<module>opencmis-server/opencmis-server-support</module>
 		<module>opencmis-server/opencmis-server-inmemory</module>
 		<module>opencmis-server/opencmis-server-fileshare</module>
 		<module>opencmis-test/opencmis-test-fit</module>

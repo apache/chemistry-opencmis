@@ -16,17 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.fileshare;
+package org.apache.opencmis.server.support;
 
 import java.math.BigInteger;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.VersioningState;
-import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.AllowableActionsData;
 import org.apache.opencmis.commons.provider.ContentStreamData;
@@ -40,20 +38,30 @@ import org.apache.opencmis.server.spi.CmisObjectService;
 import org.apache.opencmis.server.spi.ObjectInfoHolder;
 
 /**
- * Object Service.
+ * Object service wrapper.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class ObjectService implements CmisObjectService {
+public class ObjectServiceWrapper extends AbstractServiceWrapper implements CmisObjectService {
 
-  private RepositoryMap fRepositoryMap;
+  private CmisObjectService fService;
 
   /**
    * Constructor.
+   * 
+   * @param service
+   *          the real service object
+   * @param defaultMaxItems
+   *          default value for <code>maxItems</code> parameters
    */
-  public ObjectService(RepositoryMap repositoryMap) {
-    fRepositoryMap = repositoryMap;
+  public ObjectServiceWrapper(CmisObjectService service, BigInteger defaultMaxItems) {
+    if (service == null) {
+      throw new IllegalArgumentException("Service must be set!");
+    }
+
+    fService = service;
+    setDefaultMaxItems(defaultMaxItems);
   }
 
   /*
@@ -70,8 +78,17 @@ public class ObjectService implements CmisObjectService {
   public ObjectData create(CallContext context, String repositoryId, PropertiesData properties,
       String folderId, ContentStreamData contentStream, VersioningState versioningState,
       List<String> policies, ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).create(context,
-        properties, folderId, contentStream, versioningState, objectInfos);
+    checkRepositoryId(repositoryId);
+    checkProperties(properties);
+    versioningState = getDefault(versioningState);
+
+    try {
+      return fService.create(context, repositoryId, properties, folderId, contentStream,
+          versioningState, policies, extension, objectInfos);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -90,8 +107,17 @@ public class ObjectService implements CmisObjectService {
       String folderId, ContentStreamData contentStream, VersioningState versioningState,
       List<String> policies, AccessControlList addAces, AccessControlList removeAces,
       ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).createDocument(context,
-        properties, folderId, contentStream, versioningState);
+    checkRepositoryId(repositoryId);
+    checkProperties(properties);
+    versioningState = getDefault(versioningState);
+
+    try {
+      return fService.createDocument(context, repositoryId, properties, folderId, contentStream,
+          versioningState, policies, addAces, removeAces, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -99,7 +125,7 @@ public class ObjectService implements CmisObjectService {
    * 
    * @see
    * org.apache.opencmis.server.spi.CmisObjectService#createDocumentFromSource(org.apache.opencmis
-   * .server.spi. CallContext, java.lang.String, java.lang.String,
+   * .server.spi.CallContext, java.lang.String, java.lang.String,
    * org.apache.opencmis.commons.provider.PropertiesData, java.lang.String,
    * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
    * org.apache.opencmis.commons.provider.AccessControlList,
@@ -110,8 +136,17 @@ public class ObjectService implements CmisObjectService {
       PropertiesData properties, String folderId, VersioningState versioningState,
       List<String> policies, AccessControlList addAces, AccessControlList removeAces,
       ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId)
-        .createDocumentFromSource(context, sourceId, properties, folderId, versioningState);
+    checkRepositoryId(repositoryId);
+    checkId("Source Id", sourceId);
+    versioningState = getDefault(versioningState);
+
+    try {
+      return fService.createDocumentFromSource(context, repositoryId, sourceId, properties,
+          folderId, versioningState, policies, addAces, removeAces, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -127,8 +162,17 @@ public class ObjectService implements CmisObjectService {
   public String createFolder(CallContext context, String repositoryId, PropertiesData properties,
       String folderId, List<String> policies, AccessControlList addAces,
       AccessControlList removeAces, ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).createFolder(context,
-        properties, folderId);
+    checkRepositoryId(repositoryId);
+    checkProperties(properties);
+    checkId("Folder Id", folderId);
+
+    try {
+      return fService.createFolder(context, repositoryId, properties, folderId, policies, addAces,
+          removeAces, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -144,8 +188,16 @@ public class ObjectService implements CmisObjectService {
   public String createPolicy(CallContext context, String repositoryId, PropertiesData properties,
       String folderId, List<String> policies, AccessControlList addAces,
       AccessControlList removeAces, ExtensionsData extension) {
-    fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
-    throw new CmisNotSupportedException("createPolicy not supported!");
+    checkRepositoryId(repositoryId);
+    checkProperties(properties);
+
+    try {
+      return fService.createPolicy(context, repositoryId, properties, folderId, policies, addAces,
+          removeAces, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -153,7 +205,7 @@ public class ObjectService implements CmisObjectService {
    * 
    * @see
    * org.apache.opencmis.server.spi.CmisObjectService#createRelationship(org.apache.opencmis.server
-   * .spi.CallContext , java.lang.String, org.apache.opencmis.commons.provider.PropertiesData,
+   * .spi.CallContext, java.lang.String, org.apache.opencmis.commons.provider.PropertiesData,
    * java.util.List, org.apache.opencmis.commons.provider.AccessControlList,
    * org.apache.opencmis.commons.provider.AccessControlList,
    * org.apache.opencmis.commons.api.ExtensionsData)
@@ -161,8 +213,16 @@ public class ObjectService implements CmisObjectService {
   public String createRelationship(CallContext context, String repositoryId,
       PropertiesData properties, List<String> policies, AccessControlList addAces,
       AccessControlList removeAces, ExtensionsData extension) {
-    fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
-    throw new CmisNotSupportedException("createRelationship not supported!");
+    checkRepositoryId(repositoryId);
+    checkProperties(properties);
+
+    try {
+      return fService.createRelationship(context, repositoryId, properties, policies, addAces,
+          removeAces, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -170,13 +230,20 @@ public class ObjectService implements CmisObjectService {
    * 
    * @see
    * org.apache.opencmis.server.spi.CmisObjectService#deleteContentStream(org.apache.opencmis.server
-   * .spi.CallContext , java.lang.String, org.apache.opencmis.commons.provider.Holder,
+   * .spi.CallContext, java.lang.String, org.apache.opencmis.commons.provider.Holder,
    * org.apache.opencmis.commons.provider.Holder, org.apache.opencmis.commons.api.ExtensionsData)
    */
   public void deleteContentStream(CallContext context, String repositoryId,
       Holder<String> objectId, Holder<String> changeToken, ExtensionsData extension) {
-    fRepositoryMap.getAuthenticatedRepository(context, repositoryId).setContentStream(context,
-        objectId, true, null);
+    checkRepositoryId(repositoryId);
+    checkHolderId("Object Id", objectId);
+
+    try {
+      fService.deleteContentStream(context, repositoryId, objectId, changeToken, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -184,13 +251,22 @@ public class ObjectService implements CmisObjectService {
    * 
    * @see
    * org.apache.opencmis.server.spi.CmisObjectService#deleteObjectOrCancelCheckOut(org.apache.opencmis
-   * .server. spi.CallContext, java.lang.String, java.lang.String, java.lang.Boolean,
+   * .server.spi.CallContext, java.lang.String, java.lang.String, java.lang.Boolean,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public void deleteObjectOrCancelCheckOut(CallContext context, String repositoryId,
       String objectId, Boolean allVersions, ExtensionsData extension) {
-    fRepositoryMap.getAuthenticatedRepository(context, repositoryId)
-        .deleteObject(context, objectId);
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+    allVersions = getDefaultTrue(allVersions);
+
+    try {
+      fService
+          .deleteObjectOrCancelCheckOut(context, repositoryId, objectId, allVersions, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -205,8 +281,19 @@ public class ObjectService implements CmisObjectService {
   public FailedToDeleteData deleteTree(CallContext context, String repositoryId, String folderId,
       Boolean allVersions, UnfileObjects unfileObjects, Boolean continueOnFailure,
       ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).deleteTree(context,
-        folderId, continueOnFailure);
+    checkRepositoryId(repositoryId);
+    checkId("Folder Id", folderId);
+    allVersions = getDefaultTrue(allVersions);
+    unfileObjects = getDefault(unfileObjects);
+    continueOnFailure = getDefaultFalse(continueOnFailure);
+
+    try {
+      return fService.deleteTree(context, repositoryId, folderId, allVersions, unfileObjects,
+          continueOnFailure, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -214,13 +301,20 @@ public class ObjectService implements CmisObjectService {
    * 
    * @see
    * org.apache.opencmis.server.spi.CmisObjectService#getAllowableActions(org.apache.opencmis.server
-   * .spi.CallContext , java.lang.String, java.lang.String,
+   * .spi.CallContext, java.lang.String, java.lang.String,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public AllowableActionsData getAllowableActions(CallContext context, String repositoryId,
       String objectId, ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getAllowableActions(
-        context, objectId);
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+
+    try {
+      return fService.getAllowableActions(context, repositoryId, objectId, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -234,8 +328,18 @@ public class ObjectService implements CmisObjectService {
   public ContentStreamData getContentStream(CallContext context, String repositoryId,
       String objectId, String streamId, BigInteger offset, BigInteger length,
       ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getContentStream(
-        context, objectId, offset, length);
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+    checkNullOrPositive("Offset", offset);
+    checkNullOrPositive("Length", length);
+
+    try {
+      return fService.getContentStream(context, repositoryId, objectId, streamId, offset, length,
+          extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -251,8 +355,22 @@ public class ObjectService implements CmisObjectService {
       String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
       String renditionFilter, Boolean includePolicyIds, Boolean includeAcl,
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getObject(context,
-        objectId, filter, includeAllowableActions, includeAcl, objectInfos);
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+    includeAllowableActions = getDefaultFalse(includeAllowableActions);
+    includeRelationships = getDefault(includeRelationships);
+    renditionFilter = getDefaultRenditionFilter(renditionFilter);
+    includePolicyIds = getDefaultFalse(includePolicyIds);
+    includeAcl = getDefaultFalse(includeAcl);
+
+    try {
+      return fService.getObject(context, repositoryId, objectId, filter, includeAllowableActions,
+          includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension,
+          objectInfos);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -269,8 +387,22 @@ public class ObjectService implements CmisObjectService {
       String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
       String renditionFilter, Boolean includePolicyIds, Boolean includeAcl,
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getObjectByPath(
-        context, path, filter, includeAllowableActions, includeAcl, objectInfos);
+    checkRepositoryId(repositoryId);
+    checkPath("Path", path);
+    includeAllowableActions = getDefaultFalse(includeAllowableActions);
+    includeRelationships = getDefault(includeRelationships);
+    renditionFilter = getDefaultRenditionFilter(renditionFilter);
+    includePolicyIds = getDefaultFalse(includePolicyIds);
+    includeAcl = getDefaultFalse(includeAcl);
+
+    try {
+      return fService.getObjectByPath(context, repositoryId, path, filter, includeAllowableActions,
+          includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension,
+          objectInfos);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -279,14 +411,19 @@ public class ObjectService implements CmisObjectService {
    * @see
    * org.apache.opencmis.server.spi.CmisObjectService#getProperties(org.apache.opencmis.server.spi
    * .CallContext, java.lang.String, java.lang.String, java.lang.String,
-   * org.apache.opencmis.commons.api.ExtensionsData,
-   * org.apache.opencmis.server.spi.ObjectInfoHolder)
+   * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public PropertiesData getProperties(CallContext context, String repositoryId, String objectId,
       String filter, ExtensionsData extension) {
-    ObjectData object = fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getObject(
-        context, objectId, filter, false, false, null);
-    return object.getProperties();
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+
+    try {
+      return fService.getProperties(context, repositoryId, objectId, filter, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -300,8 +437,19 @@ public class ObjectService implements CmisObjectService {
   public List<RenditionData> getRenditions(CallContext context, String repositoryId,
       String objectId, String renditionFilter, BigInteger maxItems, BigInteger skipCount,
       ExtensionsData extension) {
-    fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
-    return Collections.emptyList();
+    checkRepositoryId(repositoryId);
+    checkId("Object Id", objectId);
+    renditionFilter = getDefaultRenditionFilter(renditionFilter);
+    maxItems = getMaxItems(maxItems);
+    skipCount = getSkipCount(skipCount);
+
+    try {
+      return fService.getRenditions(context, repositoryId, objectId, renditionFilter, maxItems,
+          skipCount, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -316,8 +464,17 @@ public class ObjectService implements CmisObjectService {
   public ObjectData moveObject(CallContext context, String repositoryId, Holder<String> objectId,
       String targetFolderId, String sourceFolderId, ExtensionsData extension,
       ObjectInfoHolder objectInfos) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).moveObject(context,
-        objectId, targetFolderId, objectInfos);
+    checkRepositoryId(repositoryId);
+    checkHolderId("Object Id", objectId);
+    checkId("Target Folder Id", targetFolderId);
+
+    try {
+      return fService.moveObject(context, repositoryId, objectId, targetFolderId, sourceFolderId,
+          extension, objectInfos);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -333,8 +490,18 @@ public class ObjectService implements CmisObjectService {
   public void setContentStream(CallContext context, String repositoryId, Holder<String> objectId,
       Boolean overwriteFlag, Holder<String> changeToken, ContentStreamData contentStream,
       ExtensionsData extension) {
-    fRepositoryMap.getAuthenticatedRepository(context, repositoryId).setContentStream(context,
-        objectId, overwriteFlag, contentStream);
+    checkRepositoryId(repositoryId);
+    checkHolderId("Object Id", objectId);
+    overwriteFlag = getDefaultTrue(overwriteFlag);
+    checkContentStream(contentStream);
+
+    try {
+      fService.setContentStream(context, repositoryId, objectId, overwriteFlag, changeToken,
+          contentStream, extension);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
   /*
@@ -352,8 +519,17 @@ public class ObjectService implements CmisObjectService {
   public ObjectData updateProperties(CallContext context, String repositoryId,
       Holder<String> objectId, Holder<String> changeToken, PropertiesData properties,
       AccessControlList acl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).updateProperties(
-        context, objectId, properties, objectInfos);
+    checkRepositoryId(repositoryId);
+    checkHolderId("Object Id", objectId);
+    checkProperties(properties);
+
+    try {
+      return fService.updateProperties(context, repositoryId, objectId, changeToken, properties,
+          acl, extension, objectInfos);
+    }
+    catch (Exception e) {
+      throw createCmisException(e);
+    }
   }
 
 }
