@@ -22,7 +22,7 @@
 
 	<!-- Project Information -->
 
-	<groupId>org.pache.opencmis</groupId>
+	<groupId>org.opencmis</groupId>
 	<artifactId>opencmis</artifactId>
 	<name>OpenCMIS</name>
 	<version>0.1-SNAPSHOT</version>
