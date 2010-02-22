@@ -28,6 +28,7 @@ import org.apache.opencmis.client.runtime.ReadOnlySessionTest;
 import org.apache.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.opencmis.client.runtime.suite.AbstractCmisTestSuite;
 import org.apache.opencmis.commons.SessionParameter;
+import org.apache.opencmis.commons.enums.BindingType;
 import org.apache.opencmis.commons.enums.SessionType;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
@@ -54,8 +55,8 @@ public class OtxAtomPubCmisTestSuite extends AbstractCmisTestSuite {
     parameter.put(SessionParameter.SESSION_TYPE, SessionType.PERSISTENT.value());
     parameter.put(SessionParameter.LOCALE_ISO3166_COUNTRY, Locale.GERMANY.getISO3Country());
     parameter.put(SessionParameter.LOCALE_ISO639_LANGUAGE, Locale.GERMANY.getISO3Language());
+    parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOM.value());
     parameter.put(SessionParameter.ATOMPUB_URL, "http://pwdf6227:8080/cmis/atom");
-//    parameter.put(SessionParameter.WEBSERVICE_URL_PREFIX, "http://pwdf6227:8080/cmis/services");
     
     Fixture.DOCUMENT_TYPE_ID = "sap.doc";
     Fixture.FOLDER_TYPE_ID = "sap.folder";
@@ -71,7 +72,7 @@ public class OtxAtomPubCmisTestSuite extends AbstractCmisTestSuite {
 //    -Dopencmis.test.atompub.url=http://pwdf6227:8080/cmis/atom
     
     Fixture.setParamter(parameter);
-    Fixture.setSessionFactory(new SessionFactoryImpl());
+    Fixture.setSessionFactory(SessionFactoryImpl.newInstance());
   }
 
 }

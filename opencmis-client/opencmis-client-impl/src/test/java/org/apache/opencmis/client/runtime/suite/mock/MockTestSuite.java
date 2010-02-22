@@ -31,6 +31,7 @@ import org.apache.opencmis.client.runtime.ReadOnlyObjectTest;
 import org.apache.opencmis.client.runtime.ReadOnlyRepositoryInfoTest;
 import org.apache.opencmis.client.runtime.ReadOnlySessionTest;
 import org.apache.opencmis.client.runtime.ReadOnlyTypeTest;
+import org.apache.opencmis.client.runtime.misc.CacheTest;
 import org.apache.opencmis.client.runtime.mock.MockSessionFactory;
 import org.apache.opencmis.client.runtime.suite.AbstractCmisTestSuite;
 import org.apache.opencmis.commons.SessionParameter;
@@ -46,7 +47,7 @@ import org.junit.runners.model.RunnerBuilder;
 @SuiteClasses( { ReadOnlyCreateSessionTest.class, ReadOnlySessionTest.class,
     ReadOnlyRepositoryInfoTest.class, ReadOnlyAclCapabilityTest.class, ReadOnlyObjectTest.class,
     ReadOnlyTypeTest.class, ReadOnlyNavigationTest.class, ReadOnlyContentStreamTest.class,
-    ReadOnlyDiscoverTest.class })
+    ReadOnlyDiscoverTest.class, CacheTest.class })
 public class MockTestSuite extends AbstractCmisTestSuite {
 
   public MockTestSuite(Class<?> klass, RunnerBuilder r) throws InitializationError {

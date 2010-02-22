@@ -34,13 +34,14 @@ public final class SessionParameter {
 	public static final String PASSWORD = "org.apache.opencmis.password";
 
 	// ---- provider parameter ----
+	/** Predefined binding types (see {@code BindingType}) */
+	public static final String BINDING_TYPE = "org.apache.opencmis.provider.binding.type";
+	
 	/** Class name of the binding class. */
 	public static final String BINDING_SPI_CLASS = "org.apache.opencmis.provider.binding.classname";
 
 	/** URL of the AtomPub service document. */
 	public static final String ATOMPUB_URL = "org.apache.opencmis.provider.atompub.url";
-
-	public static final String WEBSERVICE_URL_PREFIX = "org.apache.opencmis.provider.webservices.url";
 
 	public static final String WEBSERVICES_REPOSITORY_SERVICE = "org.apache.opencmis.provider.webservices.RepositoryService";
 	public static final String WEBSERVICES_NAVIGATION_SERVICE = "org.apache.opencmis.provider.webservices.NavigationService";

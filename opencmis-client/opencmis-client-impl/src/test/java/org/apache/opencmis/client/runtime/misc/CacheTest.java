@@ -18,16 +18,23 @@
  */
 package org.apache.opencmis.client.runtime.misc;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import junit.framework.Assert;
 
 import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.runtime.cache.Cache;
 import org.apache.opencmis.client.runtime.cache.CacheImpl;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.sun.xml.ws.util.ByteArrayBuffer;
 
 public class CacheTest {
 
@@ -36,8 +43,8 @@ public class CacheTest {
 	}
 
 	@Test
-	public void cacheSingleobject() {
-		Cache cache = new CacheImpl();
+	public void cacheSingleObjectTest() {
+		Cache cache = CacheImpl.newInstance();
 
 		String id = "1";
 		String path = "/1";
@@ -71,20 +78,53 @@ public class CacheTest {
 	}
 
 	@Test
+	public void cacheSizeTest() {
+		int cacheSize = 50000;
+		Cache cache = CacheImpl.newInstance(cacheSize);
+		Assert.assertEquals(cacheSize, cache.size());
+	}
+
+	@Test
 	public void lruTest() {
 		int cacheSize = 3;
-		Cache cache = new CacheImpl(cacheSize);
+		Cache cache = CacheImpl.newInstance(cacheSize);
 
 		for (int i = 0; i < cacheSize + 1; i++) {
 			CmisObject obj = this.createCmisObject("id" + i, "path" + i);
 			cache.put(obj);
 		}
-		
-		Assert.assertNull(cache.get("id0"));    // thrown out
+
+		Assert.assertNull(cache.get("id0")); // thrown out
 		Assert.assertNotNull(cache.get("id1"));
 		Assert.assertNotNull(cache.get("id2"));
 		Assert.assertNotNull(cache.get("id3"));
-		
+	}
+
+	@Test
+	public void serializationTest() throws IOException, ClassNotFoundException {
+		int cacheSize = 10;
+		Cache cache = CacheImpl.newInstance(cacheSize);
+
+		for (int i = 0; i < cacheSize; i++) {
+			CmisObject obj = this.createCmisObject("id" + i, "path" + i);
+			cache.put(obj);
+		}
+
+		ByteArrayBuffer buffer = new ByteArrayBuffer();
+		ObjectOutputStream out = new ObjectOutputStream(buffer);
+		out.writeObject(cache);
+		out.close();
+
+		ObjectInputStream in = new ObjectInputStream(buffer.newInputStream());
+		Cache cache2 = (Cache) in.readObject();
+		in.close();
+
+		for (int k = 0; k < cacheSize; k++) {
+			CmisObject o1 = cache.get("id" + k);
+			CmisObject o2 = cache2.get("id" + k);
+			Assert.assertEquals(o1.getId(), o2.getId());
+		}
+
 	}
 
 	/**

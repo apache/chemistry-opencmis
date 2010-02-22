@@ -46,6 +46,14 @@ import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
  */
 public class SessionFactoryImpl implements SessionFactory {
 
+	protected SessionFactoryImpl() {
+
+	}
+
+	public static SessionFactory newInstance() {
+		return new SessionFactoryImpl();
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T extends Session> T createSession(Map<String, String> parameters) {
 		Session s = null;
@@ -63,7 +71,7 @@ public class SessionFactoryImpl implements SessionFactory {
 		switch (t) {
 		case PERSISTENT:
 			PersistentSessionImpl ps = new PersistentSessionImpl(parameters);
-			ps.connect();  // connect session with provider
+			ps.connect(); // connect session with provider
 			s = ps;
 			break;
 		case TRANSIENT:

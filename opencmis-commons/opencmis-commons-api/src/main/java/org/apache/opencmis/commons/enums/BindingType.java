@@ -16,33 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime.cache;
-
-import java.util.List;
-
-import org.apache.opencmis.client.api.CmisObject;
+package org.apache.opencmis.commons.enums;
 
 /**
- * Implements a session cache providing following capabilities:
- * <p>
- * <lu>
- * <li>access CmisObject by object id</li>
- * <li>access CmisObject by object path</li>
- * <li>access CmisObjects by paging parameter</li>
- * </lu>
+ * Binding Type Enum.
+ * 
+ * 
  */
-public interface Cache {
+public enum BindingType {
 
-	boolean containsId(String objectId);
-	boolean containsPath(String path);
+  SOAP("soap"), ATOM("atom"), UNSPECIFIC("unspecific");
+  private final String value;
 
-	void put(CmisObject object);
-	// public void put(List<CmisObject> pageRange, int pageNumber);
-	
-	CmisObject get(String objectId);
-	CmisObject getByPath(String path);
-	// public List<CmisObject> get(int pageNumber);
-	
-	void clear();
-	int size();
+  BindingType(String v) {
+    value = v;
+  }
+
+  public String value() {
+    return value;
+  }
+
+  public static BindingType fromValue(String v) {
+    for (BindingType c : BindingType.values()) {
+      if (c.value.equals(v)) {
+        return c;
+      }
+    }
+    throw new IllegalArgumentException(v);
+  }
+
 }

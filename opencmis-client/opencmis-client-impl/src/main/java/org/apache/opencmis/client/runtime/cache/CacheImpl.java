@@ -42,12 +42,20 @@ public class CacheImpl implements Cache, Serializable {
 	 */
 	private static final long serialVersionUID = 1978445442452564094L;
 
-	public CacheImpl() {
+	public static Cache newInstance() {
+		return new CacheImpl();
+	}
+
+	public static Cache newInstance(int cacheSize) {
+		return new CacheImpl(cacheSize);
+	}
+
+	protected CacheImpl() {
 		this.idMap = this.createLruCache();
 		this.pathMap = this.createLruCache();
 	}
 
-	public CacheImpl(int cacheSize) {
+	protected CacheImpl(int cacheSize) {
 		this.cacheSize = cacheSize;
 
 		this.idMap = this.createLruCache();
@@ -97,6 +105,10 @@ public class CacheImpl implements Cache, Serializable {
 	public void put(CmisObject object) {
 		this.idMap.put(object.getId(), object);
 		this.pathMap.put(object.getPath(), object);
+	}
+
+	public int size() {
+		return this.cacheSize;
 	}
 
 }

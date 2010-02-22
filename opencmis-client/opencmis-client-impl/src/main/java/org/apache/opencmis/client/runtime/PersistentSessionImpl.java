@@ -25,6 +25,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.opencmis.client.api.ChangeEvent;
 import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.Document;
@@ -44,6 +46,7 @@ import org.apache.opencmis.client.runtime.cache.Cache;
 import org.apache.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.opencmis.client.runtime.repository.PropertyFactoryImpl;
 import org.apache.opencmis.commons.SessionParameter;
+import org.apache.opencmis.commons.enums.BindingType;
 import org.apache.opencmis.commons.enums.CmisProperties;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.UnfileObjects;
@@ -55,48 +58,44 @@ import org.apache.opencmis.util.repository.ObjectGenerator;
 public class PersistentSessionImpl implements PersistentSession, Testable,
 		Serializable {
 
+	private static Log log = LogFactory.getLog(PersistentSessionImpl.class);
+
 	/*
-	 * root folder containing generated test data
-	 * (not serializable)
+	 * root folder containing generated test data (not serializable)
 	 */
 	private transient Folder testRootFolder = null;
 
 	/*
-	 * session parameter
-	 * (serializable)
+	 * session parameter (serializable)
 	 */
 	private Map<String, String> parameters = null;
 
 	/*
-	 * CMIS provider
-	 * (serializable)
+	 * CMIS provider (serializable)
 	 */
 	private CmisProvider provider = null;
 
 	/*
-	 * Session Locale, determined from session parameter
-	 * (serializable)
+	 * Session Locale, determined from session parameter (serializable)
 	 */
 	private Locale locale = null;
 
 	/*
-	 * If not set explicitly then the repository id is returned by the repository
-	 * (serializable)
+	 * If not set explicitly then the repository id is returned by the
+	 * repository (serializable)
 	 */
 	private String repositoryId;
 
 	/*
-	 * helper factory
-	 * (non serializable)
+	 * helper factory (non serializable)
 	 */
 	private transient PropertyFactory propertyFactory = new PropertyFactoryImpl();
 
 	/*
-	 * Object cache
-	 * (serializable)
+	 * Object cache (serializable)
 	 */
-	private Cache cache = new CacheImpl();
-	
+	private Cache cache = null;
+
 	/**
 	 * required for serialization
 	 */
@@ -104,8 +103,31 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 
 	public PersistentSessionImpl(Map<String, String> parameters) {
 		this.parameters = parameters;
+		PersistentSessionImpl.log.info("Session Parameters: " + parameters);
+
 		this.locale = this.determineLocale(parameters);
+		PersistentSessionImpl.log.info("Session Locale: "
+				+ this.locale.toString());
+
 		this.repositoryId = this.determineRepositoryId(parameters);
+		PersistentSessionImpl.log.info("Session Repository Id: "
+				+ this.repositoryId);
+
+		int cacheSize = this.determineCacheSize(parameters);
+
+		if (cacheSize == -1) {
+			this.cache = CacheImpl.newInstance();
+		} else {
+			this.cache = CacheImpl.newInstance(cacheSize);
+		}
+		PersistentSessionImpl.log.info("Session Cache Size: "
+				+ this.cache.size());
+	}
+
+	private int determineCacheSize(Map<String, String> parameters) {
+		int size = -1;
+
+		return size;
 	}
 
 	private String determineRepositoryId(Map<String, String> parameters) {
@@ -113,10 +135,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		// if null then the provider will return a repository id (lazy)
 		return repositoryId;
 	}
-	
+
 	private Locale determineLocale(Map<String, String> parameters) {
 		Locale locale = null;
-		
+
 		String language = parameters
 				.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
 		String country = parameters
@@ -124,22 +146,22 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		String variant = parameters.get(SessionParameter.LOCALE_VARIANT);
 
 		if (variant != null) {
-			// all 3 parameter must not be null and valid 
+			// all 3 parameter must not be null and valid
 			locale = new Locale(language, country, variant);
-		}else {
+		} else {
 			if (country != null) {
-				// 2 parameter must not be null and valid 
+				// 2 parameter must not be null and valid
 				locale = new Locale(language, country);
-			}else {
+			} else {
 				if (language != null) {
-					// 1 parameter must not be null and valid 
+					// 1 parameter must not be null and valid
 					locale = new Locale(language);
 				} else {
 					locale = Locale.getDefault();
 				}
 			}
 		}
-		
+
 		return locale;
 	}
 
@@ -195,16 +217,18 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 
 	public Folder getRootFolder() {
 		Folder rootFolder = null;
-		
+
 		if (this.cache.containsPath("/")) {
 			rootFolder = (Folder) this.cache.getByPath("/");
 		} else {
 			String rootFolderId = this.getRepositoryInfo().getRootFolderId();
-			ObjectData od = this.provider.getObjectService().getObject(this.repositoryId, rootFolderId, "", false, IncludeRelationships.NONE, "", false, false, null);
+			ObjectData od = this.provider.getObjectService().getObject(
+					this.repositoryId, rootFolderId, "", false,
+					IncludeRelationships.NONE, "", false, false, null);
 			rootFolder = new PersistentFolderImpl(this, od);
 			this.cache.put(rootFolder);
 		}
-		
+
 		return rootFolder;
 	}
 
@@ -241,7 +265,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	}
 
 	public void generateTestData(Map<String, String> parameter) {
-		ObjectGenerator og = new ObjectGenerator(this.provider.getObjectFactory(), this.provider.getNavigationService(), this.provider.getObjectService(), this.repositoryId);
+		ObjectGenerator og = new ObjectGenerator(this.provider
+				.getObjectFactory(), this.provider.getNavigationService(),
+				this.provider.getObjectService(), this.repositoryId);
 		Folder rootFolder = null;
 		String documentTypeId = null;
 		String folderTypeId = null;
@@ -310,47 +336,30 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		if (this.parameters == null || this.parameters.isEmpty()) {
 			throw new CmisRuntimeException("Session parameter not set!");
 		}
-		// Is the AtomPub URL set?
-		boolean isAtomPub = this.parameters
-				.containsKey(SessionParameter.ATOMPUB_URL) ? true : false;
-		// Are the WebService Prefix or all service URLS are set?
-		boolean isWebService = this.parameters
-				.containsKey(SessionParameter.WEBSERVICE_URL_PREFIX)
-				|| (this.parameters
-						.containsKey(SessionParameter.WEBSERVICES_ACL_SERVICE)
-						&& this.parameters
-								.containsKey(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE)
-						&& this.parameters
-								.containsKey(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE)
-						&& this.parameters
-								.containsKey(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE)
-						&& this.parameters
-								.containsKey(SessionParameter.WEBSERVICES_OBJECT_SERVICE)
-						&& this.parameters
-								.containsKey(SessionParameter.WEBSERVICES_POLICY_SERVICE)
-						&& this.parameters
-								.containsKey(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE)
-						&& this.parameters
-								.containsKey(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE) && this.parameters
-						.containsKey(SessionParameter.WEBSERVICES_VERSIONING_SERVICE)) ? true
-				: false;
 
-		if (!(isAtomPub ^ isWebService)) {
-			// Illegal parameter combination
-			throw new CmisRuntimeException("Ambiguous session parameter: "
-					+ this.parameters);
-		}
+		BindingType bt = BindingType.fromValue(this.parameters
+				.get(SessionParameter.BINDING_TYPE));
 
-		if (isAtomPub) {
+		switch (bt) {
+		case ATOM:
 			this.provider = this.creaetAtomPubProvider(this.parameters);
-		} else if (isWebService) {
+			break;
+		case SOAP:
 			this.provider = this.creaetWebServiceProvider(this.parameters);
-		} else {
-			// Illegal parameter combination
+			break;
+		case UNSPECIFIC:
+			this.provider = this.creaetUnspecificProvider(this.parameters);
+			break;
+		default:
 			throw new CmisRuntimeException("Ambiguous session parameter: "
 					+ this.parameters);
 		}
+	}
 
+	private CmisProvider creaetUnspecificProvider(Map<String, String> parameters) {
+		CmisProviderFactory factory = CmisProviderFactory.newInstance();
+		CmisProvider provider = factory.createCmisProvider(parameters);
+		return provider;
 	}
 
 	private CmisProvider creaetWebServiceProvider(Map<String, String> parameters) {
