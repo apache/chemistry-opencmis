@@ -27,11 +27,13 @@ import org.apache.opencmis.commons.provider.ObjectInFolderData;
 import org.apache.opencmis.commons.provider.ObjectInFolderList;
 import org.apache.opencmis.commons.provider.ObjectList;
 import org.apache.opencmis.commons.provider.ObjectParentData;
-import org.apache.opencmis.inmemory.storedobj.api.Document;
+import org.apache.opencmis.inmemory.storedobj.api.Content;
+import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
+import org.apache.opencmis.inmemory.storedobj.api.Path;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
-import org.apache.opencmis.inmemory.storedobj.api.Path;
+import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.opencmis.server.spi.ObjectInfoHolder;
 import org.apache.opencmis.server.spi.ObjectInfoImpl;
 
@@ -67,7 +69,8 @@ public class AtomLinkInfoProvider {
     
     ObjectInfoImpl objInfo = new ObjectInfoImpl();
     ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(objectId);    
+    StoredObject so = objectStore.getObjectById(objectId);   
+
     TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
     
     // Fill all setters:
@@ -79,17 +82,33 @@ public class AtomLinkInfoProvider {
     objInfo.setTypeId(so.getTypeId());
     objInfo.setBaseType(typeDef.getBaseId());
     
-    // versioning information: currently only non-versioned documents supported by in-memory provider
-    objInfo.setIsCurrentVersion (true); 
-    objInfo.setHasVersionHistory(false);
-    objInfo.setWorkingCopyId(null);
-    objInfo.setWorkingCopyOriginalId(null);
+    // versioning information: 
+    if (so instanceof DocumentVersion) {
+      DocumentVersion ver = (DocumentVersion) so;
+      DocumentVersion pwc = ver.getParentDocument().getPwc();
+      objInfo.setIsCurrentVersion (ver == ver.getParentDocument().getLatestVersion(false)); 
+      objInfo.setHasVersionHistory(true);
+      objInfo.setWorkingCopyId(pwc==null ? null : pwc.getId());
+      objInfo.setWorkingCopyOriginalId(pwc==null ? null : pwc.getId());
+    } else if (so instanceof VersionedDocument) {
+      VersionedDocument doc = (VersionedDocument) so;
+      DocumentVersion pwc = doc.getPwc();
+      objInfo.setIsCurrentVersion (false); 
+      objInfo.setHasVersionHistory(true);
+      objInfo.setWorkingCopyId(pwc==null ? null : pwc.getId());
+      objInfo.setWorkingCopyOriginalId(pwc==null ? null : pwc.getId());      
+    } else { // unversioned document
+      objInfo.setIsCurrentVersion (true); 
+      objInfo.setHasVersionHistory(false);
+      objInfo.setWorkingCopyId(null);
+      objInfo.setWorkingCopyOriginalId(null);
+    }
     
-    if (so instanceof Document) {
-      Document doc = ((Document)so);
-      objInfo.setHasContent(doc.getContent() != null);
-      objInfo.setContentType(doc.getContent() != null ? doc.getContent().getMimeType() : null);
-      objInfo.setFileName(doc.getContent() != null ? doc.getContent().getFilename() : null);
+    if (so instanceof Content) {
+      Content cont = ((Content)so);
+      objInfo.setHasContent(cont.getContent(0, -1) != null);
+      objInfo.setContentType(cont.getContent(0, -1) != null ? cont.getContent(0, -1).getMimeType() : null);
+      objInfo.setFileName(cont.getContent(0, -1) != null ? cont.getContent(0, -1).getFilename() : null);
     } else {
       objInfo.setHasContent(false);
       objInfo.setContentType(null);

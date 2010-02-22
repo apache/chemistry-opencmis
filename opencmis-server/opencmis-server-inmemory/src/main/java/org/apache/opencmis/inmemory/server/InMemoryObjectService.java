@@ -40,8 +40,13 @@ import org.apache.opencmis.commons.provider.ObjectService;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.RenditionData;
+import org.apache.opencmis.commons.provider.VersioningService;
 import org.apache.opencmis.inmemory.ObjectServiceImpl;
+import org.apache.opencmis.inmemory.VersioningServiceImpl;
+import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
+import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
+import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
@@ -54,14 +59,15 @@ public class InMemoryObjectService implements CmisObjectService {
   private static final Log LOG = LogFactory.getLog(ServiceFactory.class.getName());
 
   StoreManager fStoreManager;
+  VersioningService fVersioningService; // real implementation of the service
   ObjectService fObjectService; // real implementation of the service
-  CallContextConfigReader fCfgReader = null;
   AtomLinkInfoProvider fAtomLinkProvider;
 
   InMemoryObjectService(StoreManager storeManager) {
     fStoreManager = storeManager;
     fObjectService = new ObjectServiceImpl(fStoreManager);
     fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
+    fVersioningService = new VersioningServiceImpl(fStoreManager, fObjectService);
   }
   
   ObjectService getObjectService() {
@@ -74,7 +80,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fObjectService.createDocument(repositoryId, properties, folderId, contentStream,
         versioningState, policies, addAces, removeAces, extension);
@@ -86,7 +92,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fObjectService.createDocumentFromSource(repositoryId, sourceId, properties, folderId,
         versioningState, policies, addAces, removeAces, extension);
@@ -97,7 +103,7 @@ public class InMemoryObjectService implements CmisObjectService {
       AccessControlList removeAces, ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fObjectService.createFolder(repositoryId, properties, folderId, policies, addAces,
         removeAces, extension);
@@ -108,7 +114,7 @@ public class InMemoryObjectService implements CmisObjectService {
       AccessControlList removeAces, ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fObjectService.createPolicy(repositoryId, properties, folderId, policies, addAces,
         removeAces, extension);
@@ -119,14 +125,14 @@ public class InMemoryObjectService implements CmisObjectService {
       AccessControlList removeAces, ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fObjectService.createRelationship(repositoryId, properties, policies, addAces,
         removeAces, extension);
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.server.spi.CmisObjectService#create(org.apache.opencmis.server.spi.CallContext, java.lang.String, org.apache.opencmis.client.provider.PropertiesData, java.lang.String, org.apache.opencmis.client.provider.ContentStreamData, org.apache.opencmis.commons.enums.VersioningState, org.apache.opencmis.client.provider.ExtensionsData, org.apache.opencmis.server.spi.ObjectInfoHolder)
+   * @see org.opencmis.server.spi.CmisObjectService#create(org.opencmis.server.spi.CallContext, java.lang.String, org.opencmis.client.provider.PropertiesData, java.lang.String, org.opencmis.client.provider.ContentStreamData, org.opencmis.commons.enums.VersioningState, org.opencmis.client.provider.ExtensionsData, org.opencmis.server.spi.ObjectInfoHolder)
    * 
    * An additional create call compared to the ObjectService from the CMIS spec.
    * This one is needed because the Atom binding in the server implementation does 
@@ -139,7 +145,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
     
     if (null==properties || null==properties.getProperties())
         throw new RuntimeException("Cannot create object, without properties.");
@@ -183,7 +189,7 @@ public class InMemoryObjectService implements CmisObjectService {
       Holder<String> objectId, Holder<String> changeToken, ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     fObjectService.deleteContentStream(repositoryId, objectId, changeToken, extension);
   }
@@ -192,9 +198,20 @@ public class InMemoryObjectService implements CmisObjectService {
       Boolean allVersions, ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
-    fObjectService.deleteObject(repositoryId, objectId, allVersions, extension);
+    StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(objectId);
+    boolean mustCancelCheckout = false;
+    if (so instanceof DocumentVersion) {
+      mustCancelCheckout = ((DocumentVersion)so).getParentDocument().isCheckedOut();
+    } else if (so instanceof VersionedDocument) {
+      mustCancelCheckout = ((VersionedDocument)so).isCheckedOut();      
+    }
+    
+    if (mustCancelCheckout)
+      fVersioningService.cancelCheckOut(repositoryId, objectId, extension);
+    else
+      fObjectService.deleteObject(repositoryId, objectId, allVersions, extension);
   }
 
   public FailedToDeleteData deleteTree(CallContext context, String repositoryId, String folderId,
@@ -202,7 +219,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fObjectService.deleteTree(repositoryId, folderId, allVersions, unfileObjects,
         continueOnFailure, extension);
@@ -212,7 +229,7 @@ public class InMemoryObjectService implements CmisObjectService {
       String objectId, ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fObjectService.getAllowableActions(repositoryId, objectId, extension);
   }
@@ -222,7 +239,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fObjectService.getContentStream(repositoryId, objectId, streamId, offset, length,
         extension);
@@ -234,7 +251,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     ObjectData res = fObjectService.getObject(repositoryId, objectId, filter,
         includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds,
@@ -254,7 +271,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     ObjectData res = fObjectService.getObjectByPath(repositoryId, path, filter,
         includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds,
@@ -271,7 +288,7 @@ public class InMemoryObjectService implements CmisObjectService {
       String filter, ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     PropertiesData res = fObjectService.getProperties(repositoryId, objectId, filter, extension);
 
@@ -283,7 +300,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fObjectService.getRenditions(repositoryId, objectId, renditionFilter, maxItems,
         skipCount, extension);
@@ -294,7 +311,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     fObjectService.moveObject(repositoryId, objectId, targetFolderId, sourceFolderId, extension);
 
@@ -315,7 +332,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     fObjectService.setContentStream(repositoryId, objectId, overwriteFlag, changeToken,
         contentStream, extension);
@@ -326,7 +343,7 @@ public class InMemoryObjectService implements CmisObjectService {
       ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     if (null!=properties)
       fObjectService.updateProperties(repositoryId, objectId, changeToken, properties, extension);

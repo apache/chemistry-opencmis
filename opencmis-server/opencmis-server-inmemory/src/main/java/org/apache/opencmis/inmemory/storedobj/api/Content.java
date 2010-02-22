@@ -26,7 +26,7 @@ public interface Content {
    * @return
    *    object containing mime-type, length and a stream with content
    */
-  ContentStreamData getContent();
+  ContentStreamData getContent(long offset, long length);
 
   /**
    * Assign content do a document. Existing content gets overwritten.

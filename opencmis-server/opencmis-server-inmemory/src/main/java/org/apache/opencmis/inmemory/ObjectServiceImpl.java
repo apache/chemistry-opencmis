@@ -65,6 +65,7 @@ import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.opencmis.server.spi.CallContext;
 
 public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectService {
   private static Log log = LogFactory.getLog(ObjectService.class);
@@ -78,13 +79,13 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#createDocument(java.lang.String,
-   * org.apache.opencmis.client.provider.PropertiesData, java.lang.String,
-   * org.apache.opencmis.client.provider.ContentStreamData,
-   * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-   * org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ObjectService#createDocument(java.lang.String,
+   * org.opencmis.client.provider.PropertiesData, java.lang.String,
+   * org.opencmis.client.provider.ContentStreamData,
+   * org.opencmis.commons.enums.VersioningState, java.util.List,
+   * org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public String createDocument(String repositoryId, PropertiesData properties, String folderId,
       ContentStreamData contentStream, VersioningState versioningState, List<String> policies,
@@ -126,7 +127,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     TypeValidator.validateProperties(typeDef, properties, true);
 
     // set user, creation date, etc.
-    String user = RuntimeContext.getRuntimeConfigValue(ConfigConstants.USERNAME);
+    String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
     if (user == null)
       user = "unknown";
     
@@ -143,21 +144,17 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       version.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
       version.setCustomProperties(properties.getProperties());
       version.persist();
-      verDoc.persist();
       resId = version.getId(); // return the version and not the version series to caller
     } else {
       Document doc = fStoreManager.getObjectStore(repositoryId).createDocument(name);
       doc.setContent(contentStream, false);
       // add document to folder
-      folder.addChildDocument(doc); // sets parent in doc
       doc.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
       doc.setCustomProperties(properties.getProperties());
-      doc.persist(); // first persist document, only if this succeeds persist folder with added child
+      folder.addChildDocument(doc); // sets parent in doc
       resId = doc.getId();
     }
         
-    folder.persist();
-
     // versioningState, policies, addACEs, removeACEs, extension are ignored for
     // now.
     log.debug("stop createDocument()");
@@ -168,13 +165,13 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#createDocumentFromSource(java
+   * org.opencmis.client.provider.ObjectService#createDocumentFromSource(java
    * .lang.String, java.lang.String,
-   * org.apache.opencmis.client.provider.PropertiesData, java.lang.String,
-   * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-   * org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.PropertiesData, java.lang.String,
+   * org.opencmis.commons.enums.VersioningState, java.util.List,
+   * org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public String createDocumentFromSource(String repositoryId, String sourceId,
       PropertiesData properties, String folderId, VersioningState versioningState,
@@ -222,11 +219,11 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#createFolder(java.lang.String,
-   * org.apache.opencmis.client.provider.PropertiesData, java.lang.String,
-   * java.util.List, org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ObjectService#createFolder(java.lang.String,
+   * org.opencmis.client.provider.PropertiesData, java.lang.String,
+   * java.util.List, org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public String createFolder(String repositoryId, PropertiesData properties, String folderId,
       List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
@@ -274,14 +271,12 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
       Folder newFolder = objStore.createFolder(folderName);
       // set default system attributes
-      String user = RuntimeContext.getRuntimeConfigValue(ConfigConstants.USERNAME);
+      String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
       if (user == null)
         user = "unknown";
       newFolder.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
       newFolder.setCustomProperties(properties.getProperties());
       parent.addChildFolder(newFolder);
-      newFolder.persist();
-      parent.persist();
       log.debug("stop createFolder()");
       return newFolder.getId();
     } catch (Exception e) {
@@ -293,11 +288,11 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#createPolicy(java.lang.String,
-   * org.apache.opencmis.client.provider.PropertiesData, java.lang.String,
-   * java.util.List, org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ObjectService#createPolicy(java.lang.String,
+   * org.opencmis.client.provider.PropertiesData, java.lang.String,
+   * java.util.List, org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public String createPolicy(String repositoryId, PropertiesData properties, String folderId,
       List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
@@ -313,11 +308,11 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#createRelationship(java.lang
-   * .String, org.apache.opencmis.client.provider.PropertiesData, java.util.List,
-   * org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ObjectService#createRelationship(java.lang
+   * .String, org.opencmis.client.provider.PropertiesData, java.util.List,
+   * org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.AccessControlList,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public String createRelationship(String repositoryId, PropertiesData properties,
       List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
@@ -333,10 +328,10 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#deleteContentStream(java.lang
-   * .String, org.apache.opencmis.client.provider.Holder,
-   * org.apache.opencmis.client.provider.Holder,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ObjectService#deleteContentStream(java.lang
+   * .String, org.opencmis.client.provider.Holder,
+   * org.opencmis.client.provider.Holder,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public void deleteContentStream(String repositoryId, Holder<String> objectId,
       Holder<String> changeToken, ExtensionsData extension) {
@@ -349,11 +344,11 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     if (so == null)
       throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
-    if (!(so instanceof Document))
+    if (!(so instanceof Content))
       throw new CmisObjectNotFoundException("Id" + objectId
           + " does not refer to a document, but only documents can have content");
 
-    ((Document) so).setContent(null, true);
+    ((Content) so).setContent(null, true);
     log.debug("stop deleteContentStream()");
   }
 
@@ -361,9 +356,9 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#deleteObject(java.lang.String,
+   * org.opencmis.client.provider.ObjectService#deleteObject(java.lang.String,
    * java.lang.String, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public void deleteObject(String repositoryId, String objectId, Boolean allVersions,
       ExtensionsData extension) {
@@ -386,10 +381,10 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#deleteTree(java.lang.String,
+   * org.opencmis.client.provider.ObjectService#deleteTree(java.lang.String,
    * java.lang.String, java.lang.Boolean,
-   * org.apache.opencmis.commons.enums.UnfileObject, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.commons.enums.UnfileObject, java.lang.Boolean,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
       UnfileObjects unfileObject, Boolean continueOnFailure, ExtensionsData extension) {
@@ -436,8 +431,8 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#getAllowableActions(java.lang
-   * .String, java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ObjectService#getAllowableActions(java.lang
+   * .String, java.lang.String, org.opencmis.client.provider.ExtensionsData)
    */
   public AllowableActionsData getAllowableActions(String repositoryId, String objectId,
       ExtensionsData extension) {
@@ -458,9 +453,9 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#getContentStream(java.lang.String
+   * org.opencmis.client.provider.ObjectService#getContentStream(java.lang.String
    * , java.lang.String, java.lang.String, java.math.BigInteger,
-   * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
+   * java.math.BigInteger, org.opencmis.client.provider.ExtensionsData)
    */
   public ContentStreamData getContentStream(String repositoryId, String objectId, String streamId,
       BigInteger offset, BigInteger length, ExtensionsData extension) {
@@ -485,11 +480,11 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.ObjectService#getObject(java.lang.String,
+   * @see org.opencmis.client.provider.ObjectService#getObject(java.lang.String,
    * java.lang.String, java.lang.String, java.lang.Boolean,
-   * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+   * org.opencmis.commons.enums.IncludeRelationships, java.lang.String,
    * java.lang.Boolean, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public ObjectData getObject(String repositoryId, String objectId, String filter,
       Boolean includeAllowableActions, IncludeRelationships includeRelationships,
@@ -515,11 +510,11 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#getObjectByPath(java.lang.String
+   * org.opencmis.client.provider.ObjectService#getObjectByPath(java.lang.String
    * , java.lang.String, java.lang.String, java.lang.Boolean,
-   * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+   * org.opencmis.commons.enums.IncludeRelationships, java.lang.String,
    * java.lang.Boolean, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public ObjectData getObjectByPath(String repositoryId, String path, String filter,
       Boolean includeAllowableActions, IncludeRelationships includeRelationships,
@@ -564,9 +559,9 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#getRenditions(java.lang.String,
+   * org.opencmis.client.provider.ObjectService#getRenditions(java.lang.String,
    * java.lang.String, java.lang.String, java.math.BigInteger,
-   * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
+   * java.math.BigInteger, org.opencmis.client.provider.ExtensionsData)
    */
   public List<RenditionData> getRenditions(String repositoryId, String objectId,
       String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -581,9 +576,9 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#moveObject(java.lang.String,
-   * org.apache.opencmis.client.provider.Holder, java.lang.String, java.lang.String,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ObjectService#moveObject(java.lang.String,
+   * org.opencmis.client.provider.Holder, java.lang.String, java.lang.String,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId,
       String sourceFolderId, ExtensionsData extension) {
@@ -638,11 +633,11 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#setContentStream(java.lang.String
-   * , org.apache.opencmis.client.provider.Holder, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.Holder,
-   * org.apache.opencmis.client.provider.ContentStreamData,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ObjectService#setContentStream(java.lang.String
+   * , org.opencmis.client.provider.Holder, java.lang.Boolean,
+   * org.opencmis.client.provider.Holder,
+   * org.opencmis.client.provider.ContentStreamData,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
       Holder<String> changeToken, ContentStreamData contentStream, ExtensionsData extension) {
@@ -662,13 +657,13 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       content = ((Document) so);
     else if (so instanceof DocumentVersion) {
       // something that is versionable check the proper status of the object
-      String user = RuntimeContext.getRuntimeConfigValue(ConfigConstants.USERNAME);
+      String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
       testHasProperCheckedOutStatus(so, user);
       content = (DocumentVersion) so;
     } else
       throw new IllegalArgumentException("Content cannot be set on this object (must be document or version)");
 
-    if (!overwriteFlag && content.getContent() != null)
+    if (!overwriteFlag && content.getContent(0, -1) != null)
       throw new CmisConstraintException(
           "cannot overwrite existing content if overwrite flag is not set");
 
@@ -680,10 +675,10 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ObjectService#updateProperties(java.lang.String
-   * , org.apache.opencmis.client.provider.Holder, org.apache.opencmis.client.provider.Holder,
-   * org.apache.opencmis.client.provider.PropertiesData,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * org.opencmis.client.provider.ObjectService#updateProperties(java.lang.String
+   * , org.opencmis.client.provider.Holder, org.opencmis.client.provider.Holder,
+   * org.opencmis.client.provider.PropertiesData,
+   * org.opencmis.client.provider.ExtensionsData)
    */
   public void updateProperties(String repositoryId, Holder<String> objectId,
       Holder<String> changeToken, PropertiesData properties, ExtensionsData extension) {
@@ -701,10 +696,10 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     
     // if the object is a versionable object it must be checked-out
     if (so instanceof VersionedDocument || so instanceof DocumentVersion) {
-      String user = RuntimeContext.getRuntimeConfigValue(ConfigConstants.USERNAME);
-      VersionedDocument verDoc = testIsNotCheckedOutBySomeoneElse(so, user); 
-      isCheckedOut = verDoc.isCheckedOut();
-      // so = verDoc; TODO
+      String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+      //VersionedDocument verDoc = testIsNotCheckedOutBySomeoneElse(so, user); 
+      testHasProperCheckedOutStatus(so, user);
+      isCheckedOut = true;
     }
 
     Map<String, PropertyData<?>> oldProperties = so.getProperties();
@@ -767,7 +762,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
 
     if (hasUpdatedOtherProps) {
       // set user, creation date, etc.
-      String user = RuntimeContext.getRuntimeConfigValue(ConfigConstants.USERNAME);
+      String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
 
       if (user == null)
         user = "unknown";
@@ -829,9 +824,9 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
   private ContentStreamData getContentStream(StoredObject so, String streamId, BigInteger offset,
       BigInteger length) {
 
-    Long lOffset = offset == null ? null : offset.longValue();
-    Long lLength = length == null ? null : length.longValue();
-    ContentStreamData csd = ((Content) so).getContent();
+    long lOffset = offset == null ? 0 : offset.longValue();
+    long lLength = length == null ? -1 : length.longValue();
+    ContentStreamData csd = ((Content) so).getContent(lOffset, lLength);
     return csd;
   }
 

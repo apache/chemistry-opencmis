@@ -43,7 +43,6 @@ public class InMemoryVersioningService implements CmisVersioningService {
   StoreManager fStoreManager;
   VersioningService fVersioningService; // real implementation of the service
   ObjectService fObjectService; // real implementation of the service
-  CallContextConfigReader fCfgReader = null;
   AtomLinkInfoProvider fAtomLinkProvider;
 
   public InMemoryVersioningService(StoreManager storeManager, ObjectService objectService) {
@@ -58,7 +57,7 @@ public class InMemoryVersioningService implements CmisVersioningService {
       ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     fVersioningService.cancelCheckOut(repositoryId, objectId, extension);
 
@@ -70,7 +69,7 @@ public class InMemoryVersioningService implements CmisVersioningService {
       AccessControlList removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     fVersioningService.checkIn(repositoryId, objectId, major, properties, contentStream,
         checkinComment, policies, addAces, removeAces, extension);
@@ -90,14 +89,20 @@ public class InMemoryVersioningService implements CmisVersioningService {
       ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHolder objectInfos) {
     
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     fVersioningService.checkOut(repositoryId, objectId, extension, contentCopied);
     
     // To be able to provide all Atom links in the response we need additional information:
     fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, objectId.getValue(), objectInfos);
 
-    return null;
+    ObjectData objData = null; 
+    if (context.getBinding().equals(CallContext.BINDING_ATOMPUB)) {
+      objData = fObjectService.getObject(repositoryId, objectId.getValue(), "*", false,
+          IncludeRelationships.NONE, null, false, false, extension);      
+    }
+    
+    return objData;
   }
 
   public List<ObjectData> getAllVersions(CallContext context, String repositoryId,
@@ -105,7 +110,7 @@ public class InMemoryVersioningService implements CmisVersioningService {
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
     
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     List<ObjectData> res = fVersioningService.getAllVersions(repositoryId, versionSeriesId, filter, includeAllowableActions, extension);
     
@@ -123,7 +128,7 @@ public class InMemoryVersioningService implements CmisVersioningService {
       Boolean includeAcl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     ObjectData res = fVersioningService.getObjectOfLatestVersion(repositoryId, versionSeriesId, major, filter,
         includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds,
@@ -139,7 +144,7 @@ public class InMemoryVersioningService implements CmisVersioningService {
       String versionSeriesId, Boolean major, String filter, ExtensionsData extension) {
     
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     PropertiesData res = fVersioningService.getPropertiesOfLatestVersion(repositoryId, versionSeriesId, major, filter, extension);
 

@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.opencmis.inmemory.storedobj.api.Document;
+import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.opencmis.inmemory.storedobj.api.Path;
@@ -45,6 +46,11 @@ import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
 public class ObjectStoreImpl implements ObjectStore {
 
   /**
+   * Simple id generator that uses just an integer 
+   */
+  private static int NEXT_UNUSED_ID = 100;
+  
+  /**
    * Maps the absolute folder path to the corresponding folder object
    */
   private Map<String, StoredObject> fStoredObjectMap = new HashMap<String, StoredObject>();
@@ -56,12 +62,15 @@ public class ObjectStoreImpl implements ObjectStore {
     createRootFolder();
   }
 
+  private static synchronized Integer getNextId() {
+    return NEXT_UNUSED_ID++;
+  }
   
 
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#getRootFolder()
+   * @see org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#getRootFolder()
    */
   public Folder getRootFolder() {
     return fRootFolder;
@@ -71,19 +80,26 @@ public class ObjectStoreImpl implements ObjectStore {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#getFolderByPath(java.lang
+   * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#getFolderByPath(java.lang
    * .String)
    */
   public StoredObject getObjectByPath(String path) {
-    StoredObject obj = fStoredObjectMap.get(path);
-    return obj;
+    
+    for (StoredObject so : fStoredObjectMap.values()) {
+      if (so instanceof Path) {
+        String soPath = ((Path) so).getPath();
+        if (soPath.equals(path))
+          return so;
+      }
+    }
+    return null;
   }
 
   /*
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#getObjectById(java.lang
+   * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#getObjectById(java.lang
    * .String)
    */
   public StoredObject getObjectById(String objectId) {
@@ -96,7 +112,7 @@ public class ObjectStoreImpl implements ObjectStore {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#deleteObject(java.lang
+   * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#deleteObject(java.lang
    * .String)
    */
   public void deleteObject(String objectId) {
@@ -110,23 +126,47 @@ public class ObjectStoreImpl implements ObjectStore {
     if (obj instanceof FolderImpl) {
       deleteFolder(objectId);
     }
+    else if (obj instanceof DocumentVersion ){
+      DocumentVersion vers = (DocumentVersion) obj;
+      VersionedDocument parentDoc = vers.getParentDocument();
+      fStoredObjectMap.remove(path);
+      boolean otherVersionsExist =  vers.getParentDocument().deleteVersion(vers);
+      if (!otherVersionsExist)
+        fStoredObjectMap.remove(parentDoc.getId());
+    }
     else {
       fStoredObjectMap.remove(path);
     }
   }
+  public void removeVersion(DocumentVersion vers) {
+    StoredObject found = fStoredObjectMap.remove(vers.getId());
 
-  public void changePath(StoredObject obj, String oldPath, String newPath) {
-    fStoredObjectMap.remove(oldPath);
-    fStoredObjectMap.put(newPath, obj);
+    if (null == found)
+      throw new RuntimeException("Cannot delete object with id  " + vers.getId()
+          + ". Object does not exist.");    
   }
+  
+//  public void changePath(StoredObject obj, String oldPath, String newPath) {
+//    fStoredObjectMap.remove(oldPath);
+//    fStoredObjectMap.put(newPath, obj);
+//  }
 
   // /////////////////////////////////////////
   // methods used by folders and documents, but not for public use
   
-  void storeObject(String id, StoredObject sop) {
-    fStoredObjectMap.put(id, sop);
-  }
+//  void storeObject(String id, StoredObject sop) {
+//    fStoredObjectMap.put(id, sop);
+//  }
 
+  public String storeObject(StoredObject so) {    
+    String id = so.getId();
+    // check if update or create
+    if (null == id)
+      id = getNextId().toString();
+    fStoredObjectMap.put(id, so);
+    return id;
+  }
+  
   StoredObject getObject(String id) {
     return fStoredObjectMap.get(id);
   }
@@ -140,24 +180,24 @@ public class ObjectStoreImpl implements ObjectStore {
    return entries;
   }
   
-  void renameAllIdsWithPrefix(String oldPath, String newPath) {
-    Iterator<Entry<String, StoredObject>> it = fStoredObjectMap.entrySet().iterator();
-    Map<String, StoredObject> newMap = new HashMap<String, StoredObject>();
-    while (it.hasNext()) {
-      Map.Entry<String, StoredObject> entry = (Map.Entry<String, StoredObject>) it
-          .next();
-
-      if (entry.getKey().startsWith(oldPath)) {
-        if (entry.getValue() instanceof Path) {
-          newPath = ((Path)entry.getValue()).getPath();
-          it.remove(); // the only safe way to modify while iteration
-          newMap.put(newPath, entry.getValue()); // we can't add to the current collection while
-                                                 // iterating          
-        }
-      }
-    }
-    fStoredObjectMap.putAll(newMap); // add all at once when iteration is complete  
-  }
+//  void renameAllIdsWithPrefix(String oldPath, String newPath) {
+//    Iterator<Entry<String, StoredObject>> it = fStoredObjectMap.entrySet().iterator();
+//    Map<String, StoredObject> newMap = new HashMap<String, StoredObject>();
+//    while (it.hasNext()) {
+//      Map.Entry<String, StoredObject> entry = (Map.Entry<String, StoredObject>) it
+//          .next();
+//
+//      if (entry.getKey().startsWith(oldPath)) {
+//        if (entry.getValue() instanceof Path) {
+//          newPath = ((Path)entry.getValue()).getPath();
+//          it.remove(); // the only safe way to modify while iteration
+//          newMap.put(newPath, entry.getValue()); // we can't add to the current collection while
+//                                                 // iterating          
+//        }
+//      }
+//    }
+//    fStoredObjectMap.putAll(newMap); // add all at once when iteration is complete  
+//  }
   
   // /////////////////////////////////////////
   // private helper methods
@@ -171,8 +211,7 @@ public class ObjectStoreImpl implements ObjectStore {
     rootFolder.setModifiedBy("Admin");
     rootFolder.setModifiedAtNow();
     rootFolder.setRepositoryId(fRepositoryId);
-
-    fStoredObjectMap.put(Path.PATH_SEPARATOR, rootFolder);
+    rootFolder.persist();
     fRootFolder =  rootFolder;
   }
 
@@ -212,23 +251,20 @@ public class ObjectStoreImpl implements ObjectStore {
   }
   
   private void deleteFolder(String folderId) {
-    String path = folderId; // we use path as id
-    StoredObject obj = fStoredObjectMap.get(path);
-    if (obj != null) {
-      if (!(obj instanceof FolderImpl))
-        throw new RuntimeException("Cannot delete folder with path:  " + path
+    StoredObject folder = fStoredObjectMap.get(folderId);
+    if (folder != null) {
+      if (!(folder instanceof FolderImpl))
+        throw new RuntimeException("Cannot delete folder with id:  " + folderId
             + ". Object exists but is not a folder.");
     }
 
     // check if children exist
-    fStoredObjectMap.remove(path);
-    for (String objPath : fStoredObjectMap.keySet()) {
-      if (objPath.startsWith(path)) {
-        fStoredObjectMap.put(path, obj); // restore object
-        throw new CmisConstraintException("Cannot delete folder with path:  " + path
-            + ". Folder is not empty.");
-      }
-    }
+    List<StoredObject> children = ((Folder)folder).getChildren(-1, -1);
+    if (children!=null && !children.isEmpty())
+      throw new CmisConstraintException("Cannot delete folder with id:  " + folderId
+          + ". Folder is not empty.");
+      
+    fStoredObjectMap.remove(folderId);    
   }
 
 }

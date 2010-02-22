@@ -18,10 +18,6 @@
  */
 package org.apache.opencmis.inmemory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,13 +25,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.commons.PropertyIds;
-import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.api.TypeDefinition;
@@ -46,30 +38,17 @@ import org.apache.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.exceptions.CmisUpdateConflictException;
-import org.apache.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.AllowableActionsData;
-import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.ContentStreamData;
 import org.apache.opencmis.commons.provider.Holder;
-import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectInFolderList;
 import org.apache.opencmis.commons.provider.ObjectParentData;
-import org.apache.opencmis.commons.provider.ObjectService;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
-import org.apache.opencmis.commons.provider.ProviderObjectFactory;
-import org.apache.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.opencmis.commons.provider.RepositoryService;
-import org.apache.opencmis.inmemory.ConfigConstants;
-import org.apache.opencmis.inmemory.ConfigMap;
-import org.apache.opencmis.inmemory.MapConfigReader;
-import org.apache.opencmis.inmemory.TypeCreator;
-import org.apache.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo;
-import org.apache.opencmis.inmemory.server.RuntimeContext;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
@@ -79,15 +58,9 @@ import org.apache.opencmis.util.repository.ObjectGenerator;
  * @author Jens
  */
 
-public class ObjectServiceTest extends TestCase {
+public class ObjectServiceTest extends AbstractServiceTst {
 
   private static Log log = LogFactory.getLog(ObjectServiceTest.class);
-  private static final String REPOSITORY_ID = "UnitTestRepository";
-  private ProviderObjectFactory fFactory;
-  private CmisProvider fProvider;
-  ObjectService fObjSvc;
-  String fRepositoryId;
-  String fRootFolderId;
   private static final String TEST_FOLDER_TYPE_ID = "MyFolderType";
   private static final String TEST_DOCUMENT_TYPE_ID = "MyDocumentType";
   private static final String TEST_FOLDER_STRING_PROP_ID = "MyFolderStringProp";
@@ -98,76 +71,24 @@ public class ObjectServiceTest extends TestCase {
   private static final String TEST_DOCUMENT_MY_INT_PROP_ID  = "MyCustomDocumentIntProp";
   private static final String TEST_DOCUMENT_MY_SUB_STRING_PROP_ID  = "MyInheritedStringProp";
   private static final String TEST_DOCUMENT_MY_SUB_INT_PROP_ID  = "MyInheritedIntProp";
+
+  private static final String DOCUMENT_TYPE_ID =  InMemoryDocumentTypeDefinition.getRootDocumentType().getId();
+  private static final String DOCUMENT_ID =  "Document_1";
+  private static final String FOLDER_TYPE_ID =  InMemoryFolderTypeDefinition.getRootFolderType().getId();
+  private static final String FOLDER_ID =  "Folder_1";
+  private static final String MY_CUSTOM_NAME = "My Custom Document";
+  
   ObjectCreator fCreator;
   
   protected void setUp() throws Exception {
-
-    Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put(SessionParameter.BINDING_SPI_CLASS, CmisProviderFactory.BINDING_SPI_INMEMORY);
-    // attach repository info to the session:
-    parameters
-        .put(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS, UnitTestRepositoryInfo.class.getName());
-
-    parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, ObjectTestTypeSystemCreator.class.getName());
-    parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
-    parameters.put(ConfigConstants.USERNAME, "TestUser");
-    
-    // get factory and create provider
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
-    fProvider = factory.createCmisProvider(parameters);
-    assertNotNull(fProvider);
-    fFactory = fProvider.getObjectFactory();
-    RepositoryService repSvc = fProvider.getRepositoryService();
-    RepositoryInfoData rep = repSvc.getRepositoryInfo(REPOSITORY_ID, null);
-    fObjSvc = fProvider.getObjectService();
-    fRepositoryId = rep.getRepositoryId();
-    fRootFolderId = rep.getRootFolderId();
+    super.setUp(ObjectTestTypeSystemCreator.class.getName());
     fCreator = new ObjectCreator(fFactory, fObjSvc, fRepositoryId);
-
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    ConfigMap cfgReader = new MapConfigReader(parameters);  
-    RuntimeContext.getRuntimeConfig().attachCfg(cfgReader);
   }
 
   protected void tearDown() throws Exception {
+    super.tearDown();
   }
 
-  private String createDocument(String folderId, boolean withContent) {
-    VersioningState versioningState = VersioningState.NONE;
-    String id = null;
-    id = fCreator.createDocument(DOCUMENT_ID, DOCUMENT_TYPE_ID, folderId, versioningState, null);
-
-    return id;
-  }
-  
-  private String createFolder() {
-    PropertiesData props = createFolderProperties();
-    String id = null;
-    try {
-      id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
-      if (null == id)
-        fail("createFolder failed.");
-    } catch (Exception e) {
-      fail("createFolder() failed with exception: " + e);
-    }
-    return id;
-  }
-
-  private String getDocument(String id) {
-    String returnedId=null;
-    try {
-      ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE,
-          null, false, false, null);
-      assertNotNull(res);
-      testReturnedProperties(res.getProperties().getProperties());
-      returnedId = res.getId();
-      assertEquals(id, returnedId);    
-    } catch (Exception e) {
-      fail("getObject() failed with exception: " + e);
-    }    
-    return returnedId;
-  }
-  
   public void testCreateDocument() {
     log.info("starting testCreateObject() ...");
     String id = createDocument(fRootFolderId, false);
@@ -185,10 +106,59 @@ public class ObjectServiceTest extends TestCase {
       log.info("  createDocument succeeded with created id: " + id);
 
     log.info("  getting object");
-    getDocument(id);    
+    retrieveDocument(id);    
     log.info("... testGetObject() finished.");
   }
   
+  public void testGetObjectByPath() {
+    log.info("starting testGetObjectByPath() ...");
+    log.info("  creating object");
+    
+    // create a tree for testing paths
+    String f1 = createFolder("folder1", fRootFolderId, FOLDER_TYPE_ID);
+    String f2 = createFolder("folder2", fRootFolderId, FOLDER_TYPE_ID);
+    String f3 = createFolder("folder3", fRootFolderId, FOLDER_TYPE_ID);
+    String f11 = createFolder("folder1.1", f1, FOLDER_TYPE_ID);
+    String f12 = createFolder("folder1.2", f1, FOLDER_TYPE_ID);
+    String f13 = createFolder("folder1.3", f1, FOLDER_TYPE_ID);
+    String f31 = createFolder("folder3.1", f3, FOLDER_TYPE_ID);
+    String f32 = createFolder("folder3.2", f3, FOLDER_TYPE_ID);
+    String f33 = createFolder("folder3.3", f3, FOLDER_TYPE_ID);
+    String f121 = createFolder("folder1.2.1", f12, FOLDER_TYPE_ID);
+    String f122 = createFolder("folder1.2.2", f12, FOLDER_TYPE_ID);
+    String f123 = createFolder("folder1.2.3", f12, FOLDER_TYPE_ID);
+    String f331 = createFolder("folder3.3.1", f33, FOLDER_TYPE_ID);
+    String f332 = createFolder("folder3.3.2", f33, FOLDER_TYPE_ID);
+    String f333 = createFolder("folder3.3.3", f33, FOLDER_TYPE_ID);
+    String doc12 = createDocument("Document1.2.Doc", f12, false);
+    String doc33 = createDocument("Document3.3.Doc", f33, false);
+    String doc331 = createDocument("Document3.3.1.Doc", f331, false);
+    String doc333 = createDocument("Document3.3.3.Doc", f333, false);
+    
+    log.info("  getting object by path");
+    getByPath(f1, "/folder1");
+    getByPath(f2, "/folder2");
+    getByPath(f3, "/folder3");
+    getByPath(f11, "/folder1/folder1.1");
+    getByPath(f12, "/folder1/folder1.2");
+    getByPath(f13, "/folder1/folder1.3");
+    getByPath(f31, "/folder3/folder3.1");
+    getByPath(f32, "/folder3/folder3.2");
+    getByPath(f33, "/folder3/folder3.3");
+    getByPath(f121, "/folder1/folder1.2/folder1.2.1");
+    getByPath(f122, "/folder1/folder1.2/folder1.2.2");
+    getByPath(f123, "/folder1/folder1.2/folder1.2.3");
+    getByPath(f331, "/folder3/folder3.3/folder3.3.1");
+    getByPath(f332, "/folder3/folder3.3/folder3.3.2");
+    getByPath(f333, "/folder3/folder3.3/folder3.3.3");
+    getByPath(doc12, "/folder1/folder1.2/Document1.2.Doc");
+    getByPath(doc33, "/folder3/folder3.3/Document3.3.Doc");
+    getByPath(doc331, "/folder3/folder3.3/folder3.3.1/Document3.3.1.Doc");
+    getByPath(doc333, "/folder3/folder3.3/folder3.3.3/Document3.3.3.Doc");
+
+    log.info("... testGetObjectByPath() finished.");
+  }   
+
   public void testCreateDocumentWithContent() {
     log.info("starting testCreateDocumentWithContent() ...");
     String id = createDocument(fRootFolderId, true);
@@ -303,10 +273,8 @@ public class ObjectServiceTest extends TestCase {
   
   public void testBuildFolderAndDocuments() {
     // Create a hierarchy of folders and fill it with some documents
-    NavigationService navSvc = fProvider.getNavigationService();
-    ObjectService objSvc = fProvider.getObjectService();
 
-    ObjectGenerator gen = new ObjectGenerator(fFactory, navSvc, objSvc, fRepositoryId);
+    ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
     int levels = 2;  // create a hierarchy with two levels
     int childrenPerLevel = 2; // create two folders on each level
 
@@ -350,7 +318,7 @@ public class ObjectServiceTest extends TestCase {
       log.info("  createDocument succeeded with created id: " + id);
 
     log.info("  getting object");
-    getDocument(id);    
+    retrieveDocument(id);    
     log.info("  deleting object");
     try {
       fObjSvc.deleteObject(fRepositoryId, id, true, null);
@@ -399,7 +367,7 @@ public class ObjectServiceTest extends TestCase {
     log.info("Testing to delete a folder with a contained document");
     String folderId;
     folderId = createFolder();
-    id = createDocument(id, false);
+    id = createDocument(folderId, false);
     
     try {
       fObjSvc.deleteObject(fRepositoryId, folderId, true, null);
@@ -443,9 +411,7 @@ public class ObjectServiceTest extends TestCase {
   
   public void testDeleteTree() {
     log.info("starting testDeleteTree() ...");
-    NavigationService navSvc = fProvider.getNavigationService();
-    ObjectService objSvc = fProvider.getObjectService();
-    ObjectGenerator gen = new ObjectGenerator(fFactory, navSvc, objSvc, fRepositoryId);
+    ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
     String rootFolderId = createFolder();
     // Set the type id for all created documents:
     gen.setDocumentTypeId(InMemoryDocumentTypeDefinition.getRootDocumentType().getId());    
@@ -704,12 +670,17 @@ public class ObjectServiceTest extends TestCase {
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_APPLY_ACL));
   }
   
+  private String retrieveDocument(String id) {
+    ObjectData res = getDocumentObjectData(id);
+    String returnedId = res.getId();
+    testReturnedProperties(returnedId, DOCUMENT_ID, DOCUMENT_TYPE_ID, res.getProperties().getProperties());
+    return returnedId;
+  }
+  
   private void moveObjectTest(boolean isFolder) {
     final String propertyFilter=PropertyIds.CMIS_OBJECT_ID+","+PropertyIds.CMIS_NAME; //+","+PropertyIds.CMIS_OBJECT_TYPE_ID+","+PropertyIds.CMIS_BASE_TYPE_ID;
     String rootFolderId = createFolder();
-    NavigationService navSvc = fProvider.getNavigationService();
-    ObjectService objSvc = fProvider.getObjectService();
-    ObjectGenerator gen = new ObjectGenerator(fFactory, navSvc, objSvc, fRepositoryId);
+    ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
     // Set the type id for all created documents:
     gen.setDocumentTypeId(InMemoryDocumentTypeDefinition.getRootDocumentType().getId());    
     // Set the type id for all created folders:
@@ -727,14 +698,14 @@ public class ObjectServiceTest extends TestCase {
     log.info("Id after moveObject: " + holder.getValue());
     gen.dumpFolder(fRootFolderId, propertyFilter);
 
-    List<ObjectParentData> result = navSvc.getObjectParents(fRepositoryId, holder.getValue(), null, Boolean.FALSE, IncludeRelationships.NONE, null, Boolean.FALSE,  null);
+    List<ObjectParentData> result = fNavSvc.getObjectParents(fRepositoryId, holder.getValue(), null, Boolean.FALSE, IncludeRelationships.NONE, null, Boolean.FALSE,  null);
     // check that new parent is set correctly
     String newParentId =result.get(0).getObject().getId();
     assertEquals(rootFolderId, newParentId);
     
     if (isFolder) {
       log.info("testing moveFolder to a subfolder");
-      ObjectInFolderList ch = navSvc.getChildren(fRepositoryId, holder.getValue(), propertyFilter, null,
+      ObjectInFolderList ch = fNavSvc.getChildren(fRepositoryId, holder.getValue(), propertyFilter, null,
           false, IncludeRelationships.NONE, null, false, null, null, null);
       String subFolderId = ch.getObjects().get(0).getObject().getId();
       try {
@@ -746,20 +717,18 @@ public class ObjectServiceTest extends TestCase {
     }
   }
   
-  private static final String DOCUMENT_TYPE_ID =  InMemoryDocumentTypeDefinition.getRootDocumentType().getId();
-  private static final String DOCUMENT_ID =  "Document_1";
-  private static final String FOLDER_TYPE_ID =  InMemoryFolderTypeDefinition.getRootFolderType().getId();
-  private static final String FOLDER_ID =  "Folder_1";
-  private static final String MY_CUSTOM_NAME = "My Custom Document";
-  
-  private PropertiesData createDocumentProperties() {
-    List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, DOCUMENT_ID));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, DOCUMENT_TYPE_ID));
-    PropertiesData props = fFactory.createPropertiesData(properties);
-    return props;
+  private String createFolder() {
+    return createFolder(FOLDER_ID, fRootFolderId, FOLDER_TYPE_ID);
+  }
+
+  private String createDocument(String folderId, boolean withContent) {
+    return createDocument(DOCUMENT_ID, folderId, withContent);
   }
   
+  private String createDocument(String name, String folderId, boolean withContent) {
+    return createDocument(name, folderId, DOCUMENT_TYPE_ID, withContent);
+  }
+
   private PropertiesData createDocumentPropertiesForDocumentFromSource(String name) {
     // We only provide a name but not a type id, as spec says to copy missing attributes 
     // from the existing one
@@ -769,32 +738,15 @@ public class ObjectServiceTest extends TestCase {
     return props;
   }
 
-  private PropertiesData createDocumentProperties(String name) {
-    List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, name));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, DOCUMENT_TYPE_ID));
-    PropertiesData props = fFactory.createPropertiesData(properties);
-    return props;
-  }
   
-  private PropertiesData createFolderProperties() {
-    List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, FOLDER_ID));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, FOLDER_TYPE_ID));
-    PropertiesData props = fFactory.createPropertiesData(properties);
-    return props;
-  }
-
-  private void testReturnedProperties(Map<String, PropertyData<?>> props) {
-    for (PropertyData<?> pd : props.values()) {
-      log.info("return property id: " + pd.getId() + ", value: " + pd.getValues());
-    }
+  private void testReturnedProperties(String objectId, String objectName, String typeId, Map<String, PropertyData<?>> props) {
+    super.testReturnedProperties(objectId, props);
     
     PropertyData<?> pd = props.get(PropertyIds.CMIS_NAME);
     assertNotNull(pd);
-    assertEquals(DOCUMENT_ID, pd.getFirstValue());
+    assertEquals(objectName, pd.getFirstValue());
     pd = props.get(PropertyIds.CMIS_OBJECT_TYPE_ID);
-    assertEquals(DOCUMENT_TYPE_ID, pd.getFirstValue());
+    assertEquals(typeId, pd.getFirstValue());
   }
  
   private String createDocumentWithCustomType(String folderId, boolean withContent) {
@@ -804,7 +756,6 @@ public class ObjectServiceTest extends TestCase {
     AccessControlList addACEs = null;
     AccessControlList removeACEs = null;
     ExtensionsData extension = null;
-    ObjectService objSvc = fProvider.getObjectService();
 
     // create the properties:
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
@@ -821,7 +772,7 @@ public class ObjectServiceTest extends TestCase {
     
     // create the document 
     String id = null;
-    id = objSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState,
+    id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState,
         policies, addACEs, removeACEs, extension);
     if (null == id)
       throw new RuntimeException("createDocument failed.");
@@ -835,7 +786,6 @@ public class ObjectServiceTest extends TestCase {
     AccessControlList addACEs = null;
     AccessControlList removeACEs = null;
     ExtensionsData extension = null;
-    ObjectService objSvc = fProvider.getObjectService();
 
     // create the properties:
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
@@ -854,54 +804,11 @@ public class ObjectServiceTest extends TestCase {
     
     // create the document 
     String id = null;
-    id = objSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState,
+    id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState,
         policies, addACEs, removeACEs, extension);
     if (null == id)
       throw new RuntimeException("createDocument failed.");
     return id;
-  }
-
-  ContentStreamData createContent() {
-    ContentStreamDataImpl content = new ContentStreamDataImpl();
-    content.setFilename("data.txt");
-    content.setMimeType("text/plain");
-    int len = 32 * 1024;
-    byte[] b = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
-                0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a,     
-                0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
-                0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a
-                }; // 32 Bytes
-    ByteArrayOutputStream ba = new ByteArrayOutputStream(len);
-    try {
-      for (int i=0; i<1024; i++)
-        ba.write(b);
-    } catch (IOException e) {
-        throw new RuntimeException("Failed to fill content stream with data", e) ;
-    }
-    content.setStream(new ByteArrayInputStream(ba.toByteArray()));
-    return content;
-  }
-
-  private void verifyContentResult(ContentStreamData sd) {
-    assertEquals("text/plain", sd.getMimeType());
-    assertEquals("data.txt", sd.getFilename());
-    assertEquals(32 * 1024, sd.getLength().longValue());
-    byte[] ba = new byte[32];
-    InputStream is = sd.getStream();
-    int counter = 0;
-    try {
-      while (is.read(ba) == ba.length) {
-        ++counter;      
-        assertEquals(0x61, ba[0]);
-        assertEquals(0x6e, ba[29]);
-        assertEquals(0x0c, ba[30]);
-        assertEquals(0x0a, ba[31]);
-      }
-    }
-    catch (IOException e) {
-      junit.framework.Assert.fail("reading from content stream failed");
-    }
-    assertEquals(1024, counter);
   }
   
   

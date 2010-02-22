@@ -20,15 +20,17 @@ package org.apache.opencmis.inmemory.types;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.api.Choice;
 import org.apache.opencmis.commons.api.ExtensionsData;
-import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinition;
+import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.enums.Cardinality;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.PropertyType;
@@ -206,7 +208,7 @@ public class PropertyCreationHelper {
     // build properties collection 
     
     ProviderObjectFactory objectFactory = storeManager.getObjectFactory();
-    List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
+    Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
     so.fillProperties(properties, objectFactory, requestedIds);
 
     String typeId = so.getTypeId();
@@ -219,10 +221,11 @@ public class PropertyCreationHelper {
       } else {
         TypeDefinition typeDef = typeDefC.getTypeDefinition();
         String baseTypeId = typeDef.getBaseId().value();
-        properties.add(objectFactory.createPropertyIdData(PropertyIds.CMIS_BASE_TYPE_ID, baseTypeId));
+        properties.put(PropertyIds.CMIS_BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.CMIS_BASE_TYPE_ID, baseTypeId));
       }
     }    
-    PropertiesData props = objectFactory.createPropertiesData(properties);
+    List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>> (properties.values());
+    PropertiesData props = objectFactory.createPropertiesData(propertiesList);
     return props;    
   }
   

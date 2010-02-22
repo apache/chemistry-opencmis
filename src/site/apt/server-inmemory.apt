@@ -1,13 +1,48 @@
   -----
-  OpenCMIS InMemory Repository
+  OpenCMIS In-Memory Repository
   -----
 
-OpenCMIS InMemory Repository
+OpenCMIS In-Memory Repository
 
-  <<This repository is not indented for productive use!>>
+  The OpenCMIS In-Memory is an implementation of a CMIS repository that holds content and
+  all metadata in memory. After each restart therefore any data stored in the repository is
+  lost. This implementation has two main purposes:
+  
+  [[1]] Provide a fast backend for testing purposes without any additional dependencies or
+        configuration.
+  
+  [[2]] Provide a sample implementation for the server interface of OpenCMIS.
 
 
-* Build and Deploy the Test Repository
+* Status
+
+  The code is unstable and under development. Expect any interface to change at any time.
+  The following features are implemented:
+  
+   * Type System and Repository Service
+   
+   * Navigation 
+   
+   * Object Service
+   
+   * Versioning
+   
+  Not supported are currently:
+   
+   * Query
+   
+   * Relationships
+   
+   * ACLs
+   
+   * Policies
+   
+   * Renditions
+   
+   * Unfiling
+   
+     
+* Build and Deploy the Repository
 
   [[1]] {{{./how-to-build.html}Build OpenCMIS}}.
 
@@ -17,3 +52,59 @@ OpenCMIS InMemory Repository
 
   
 * Configure the Repository
+
+  The in-memory server has a couple of parameters that can be set in the repository.properties file
+  ( <<</WEB-INF/classes/repository.properties>>> ). 
+  The CMIS specification does currently not allow to put a repository in a usable state in a 
+  bootstrap process. There is no administrative functionality available to create repositories 
+  or types. The in-memory repository implementation therefore provides a couple of settings that 
+  put the server in a usable state after startup. So, an initial repository is created and an initial 
+  set of type definitions is loaded. The id of the created repository can be configured. The types 
+  to be made available must be provided in a Java class as code. By default there is one such class 
+  in file <<<org.apache.opencmis.inmemory.types.DefaultTypeSystemCreator.java>>> available. You can take 
+  this as an example if you want to provide your own custom types. Such a class must implement the
+  <<<org.apache.opencmis.inmemory.TypeCreator>>> interface which consists of a single method that returns
+  a list of <<<TypeDefinition>>> objects. This method will be called once during startup.
+  
+  Some clients just support read-only access. The in-memory repository supports such clients
+  by providing the possibility to fill a repository on start-up with data (folders and documents).
+  The folder and document types to be used can be configured and also the number of documents
+  and folders that are created. Those configuration parameters start with the prefix
+  <<<RepositoryFiller.>>>
+  
+
++-----------------------------------------------------------------------------------------------------------------
+
+# In Memory Settings
+ # The class that enables the in-memory repository as server implementation
+class=org.apache.opencmis.inmemory.server.ServiceFactory
+
+ # A repository that is created on start-up
+InMemoryServer.RepositoryId=A1
+
+ # The class that used to initialize the type system (creates all types that are available)
+InMemoryServer.TypesCreatorClass=org.apache.opencmis.inmemory.types.DefaultTypeSystemCreator
+
+# settings to initialize a repository with data on start-up
+  # enable or disable
+RepositoryFiller.Enable=true
+  # Type id of documents that are created
+RepositoryFiller.DocumentTypeId=ComplexType
+  # Type id of folders that are created
+RepositoryFiller.FolderTypeId=cmis:folder
+  # Number of documents created per folder
+RepositoryFiller.DocsPerFolder=3
+  # Number of folders created per folder
+RepositoryFiller.FolderPerFolder=2
+  # number of folder levels created (depth of hierarchy)
+RepositoryFiller.Depth=3
+  # Size of content for documents (0=do not create content), default=0
+RepositoryFiller.ContentSizeInKB=32
+  # properties to set for a document
+RepositoryFiller.DocumentProperty.0=StringProp
+#RepositoryFiller.DocumentProperty.1=StringPropMV
+  # properties to set for a folder
+#RepositoryFiller.FolderProperty.0=StringFolderProp
+
++-----------------------------------------------------------------------------------------------------------------
+

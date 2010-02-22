@@ -27,6 +27,6 @@ package org.apache.opencmis.inmemory.storedobj.api;
  * @author Jens
  *
  */
-public interface DocumentVersion extends Version, Content, StoredObject {
+public interface DocumentVersion extends Version, Content, StoredObject, Path {
 
 }

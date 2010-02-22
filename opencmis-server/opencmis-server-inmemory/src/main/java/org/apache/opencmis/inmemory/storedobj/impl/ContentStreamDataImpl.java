@@ -17,9 +17,14 @@ public class ContentStreamDataImpl implements ContentStreamData {
 
   private String fFileName;
 
-  byte[] fContent;
+  private byte[] fContent;
+  
+  private long fStreamLimitOffset;
+  
+  private long fStreamLimitLength;
 
   public void setContent (InputStream in) throws IOException {
+    fStreamLimitOffset = fStreamLimitLength = -1;
     if (null == in) {
       fContent = null; // delete content
       fLength = 0;
@@ -64,10 +69,25 @@ public class ContentStreamDataImpl implements ContentStreamData {
   public InputStream getStream() {
     if (null == fContent)
       return null;
-    else
+    else if (fStreamLimitOffset <= 0 && fStreamLimitLength < 0)
       return new ByteArrayInputStream(fContent);
+    else 
+      return new ByteArrayInputStream(fContent, (int)(fStreamLimitOffset<0 ? 0 : fStreamLimitOffset),
+          (int)(fStreamLimitLength<0 ? fLength : fStreamLimitLength));      
   }
 
+  public ContentStreamData getCloneWithLimits(long offset, long length) {
+    ContentStreamDataImpl clone = new ContentStreamDataImpl();
+    clone.fFileName = fFileName;
+    clone.fLength = fLength;
+    clone.fContent = fContent;
+    clone.fMimeType = fMimeType;
+    clone.fStreamLimitOffset = offset;
+    clone.fStreamLimitLength = length;
+    return clone;
+  }
+  
+  
   public List<Object> getExtensions() {
     return null;
   }

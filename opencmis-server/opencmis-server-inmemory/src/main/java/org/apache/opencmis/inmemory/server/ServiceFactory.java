@@ -19,6 +19,7 @@
 package org.apache.opencmis.inmemory.server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,6 @@ import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.commons.provider.RepositoryService;
 import org.apache.opencmis.inmemory.ConfigConstants;
-import org.apache.opencmis.inmemory.MapConfigReader;
 import org.apache.opencmis.inmemory.NavigationServiceImpl;
 import org.apache.opencmis.inmemory.ObjectServiceImpl;
 import org.apache.opencmis.inmemory.RepositoryServiceImpl;
@@ -40,6 +40,7 @@ import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
 import org.apache.opencmis.server.spi.AbstractServicesFactory;
+import org.apache.opencmis.server.spi.CallContext;
 import org.apache.opencmis.server.spi.CmisDiscoveryService;
 import org.apache.opencmis.server.spi.CmisNavigationService;
 import org.apache.opencmis.server.spi.CmisObjectService;
@@ -50,12 +51,7 @@ import org.apache.opencmis.util.repository.ObjectGenerator;
 public class ServiceFactory extends AbstractServicesFactory {
 
   private static final Log LOG = LogFactory.getLog(ServiceFactory.class.getName());
-  private static StoreManager STORE_MANAGER; // singleton root of everything
-  public static StoreManager getInstance() {
-    if (null == STORE_MANAGER)
-      throw new RuntimeException("Application not initialized correctly");
-    return STORE_MANAGER;
-  }
+  private  StoreManager fStoreManager; // singleton root of everything
 
   private InMemoryRepositoryService fRepositoryService;
   private InMemoryNavigationService fNavigationService;
@@ -63,6 +59,10 @@ public class ServiceFactory extends AbstractServicesFactory {
   private InMemoryVersioningService fVersioningService;
   private InMemoryDiscoveryService fDiscoveryService;
 
+  public StoreManager getStoreManager() {
+    return fStoreManager;
+  }
+  
   @Override
   public void init(Map<String, String> parameters) {
     LOG.info("Initializing in-memory repository...");
@@ -72,51 +72,44 @@ public class ServiceFactory extends AbstractServicesFactory {
     if (null==repositoryClassName)
       repositoryClassName = StoreManagerImpl.class.getName();
     
-    if (null == STORE_MANAGER)
-      STORE_MANAGER = StoreManagerFactory.createInstance(repositoryClassName);
+    if (null == fStoreManager)
+      fStoreManager = StoreManagerFactory.createInstance(repositoryClassName);
 
-    MapConfigReader cfgReader = new MapConfigReader(parameters);
-    STORE_MANAGER.setConfigReader(cfgReader);
     String repositoryId = parameters.get(ConfigConstants.REPOSITORY_ID);
     
-    List<String> allAvailableRepositories = STORE_MANAGER.getAllRepositoryIds();
+    List<String> allAvailableRepositories = fStoreManager.getAllRepositoryIds();
     
     // init existing repositories
     for (String existingRepId : allAvailableRepositories)
-      STORE_MANAGER.initRepository(existingRepId, false);
+      fStoreManager.initRepository(existingRepId);
 
-    // create repository
+    // create repository if configured as a startup parameter
     if (null != repositoryId) {
       if (allAvailableRepositories.contains(repositoryId)) 
         LOG.warn("Repostory " + repositoryId + " already exists and will not be created.");
       else {
-        STORE_MANAGER.createRepository(repositoryId);
-        // then create/initialize type system
         String typeCreatorClassName = parameters.get(ConfigConstants.TYPE_CREATOR_CLASS);        
-        STORE_MANAGER.initTypeSystem(repositoryId, typeCreatorClassName);
-        // then init repository (note: loads root folder which requires cmis:folder type available)
-        
-        STORE_MANAGER.initRepository(repositoryId, true);
+        fStoreManager.createAndInitRepository(repositoryId, typeCreatorClassName);
       }
     }
 
-    if (repositoryId != null) {
-      String repoInfoCreatorClassName = parameters.get(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS);
-      STORE_MANAGER.initRepositoryInfo(repositoryId, repoInfoCreatorClassName);    
-    }
+//    if (repositoryId != null) {
+//      String repoInfoCreatorClassName = parameters.get(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS);
+//      fStoreManager.initRepositoryInfo(repositoryId, repoInfoCreatorClassName);    
+//    }
     
     // initialize services
-    fRepositoryService = new InMemoryRepositoryService(STORE_MANAGER);
-    fNavigationService = new InMemoryNavigationService(STORE_MANAGER);
-    fObjectService = new InMemoryObjectService(STORE_MANAGER);
-    fVersioningService = new InMemoryVersioningService(STORE_MANAGER, fObjectService.getObjectService());
+    fRepositoryService = new InMemoryRepositoryService(fStoreManager);
+    fNavigationService = new InMemoryNavigationService(fStoreManager);
+    fObjectService = new InMemoryObjectService(fStoreManager);
+    fVersioningService = new InMemoryVersioningService(fStoreManager, fObjectService.getObjectService());
     // Begin temporary implementation for discover service
-    fDiscoveryService = new InMemoryDiscoveryService(STORE_MANAGER, fRepositoryService.getRepositoryService(),  fNavigationService.getNavigationService());
+    fDiscoveryService = new InMemoryDiscoveryService(fStoreManager, fRepositoryService.getRepositoryService(),  fNavigationService.getNavigationService());
     // End temporary implementation
     
     // With some special configuration settings fill the repository with some documents and folders if is empty
     if (!allAvailableRepositories.contains(repositoryId))
-      fillRepositoryIfConfigured(cfgReader, repositoryId);
+      fillRepositoryIfConfigured(parameters, repositoryId);
     
     LOG.info("...initialized in-memory repository.");
   }
@@ -151,9 +144,31 @@ public class ServiceFactory extends AbstractServicesFactory {
     return fDiscoveryService;
   }
     
-  private void fillRepositoryIfConfigured(MapConfigReader cfgReader, String repositoryId) {
+  private void fillRepositoryIfConfigured(Map<String, String> parameters, String repositoryId) {
+    class DummyCallContext implements CallContext {
+
+      public String get(String key) {
+        return null;
+      }
+
+      public String getBinding() {
+        return null;
+      }
+
+      public String getLocale() {
+        return null;
+      }
+
+      public String getPassword() {
+        return null;
+      }
+
+      public String getUsername() {
+        return null;
+      }
+    }
     
-    String doFillRepositoryStr = cfgReader.get(ConfigConstants.USE_REPOSITORY_FILER);
+    String doFillRepositoryStr = parameters.get(ConfigConstants.USE_REPOSITORY_FILER);
     boolean doFillRepository = doFillRepositoryStr == null ? false : Boolean
         .parseBoolean(doFillRepositoryStr);
 
@@ -161,35 +176,35 @@ public class ServiceFactory extends AbstractServicesFactory {
       return;
     
     ProviderObjectFactory objectFactory = new ProviderObjectFactoryImpl();
-    NavigationService navSvc = new NavigationServiceImpl(STORE_MANAGER);
-    ObjectService objSvc = new ObjectServiceImpl(STORE_MANAGER);
-    RepositoryService repSvc = new RepositoryServiceImpl(STORE_MANAGER);
+    NavigationService navSvc = new NavigationServiceImpl(fStoreManager);
+    ObjectService objSvc = new ObjectServiceImpl(fStoreManager);
+    RepositoryService repSvc = new RepositoryServiceImpl(fStoreManager);
         
-    String levelsStr = cfgReader.get(ConfigConstants.FILLER_DEPTH);
+    String levelsStr = parameters.get(ConfigConstants.FILLER_DEPTH);
     int levels = 1;
     if (null!=levelsStr)
       levels = Integer.parseInt(levelsStr);  
        
-    String docsPerLevelStr = cfgReader.get(ConfigConstants.FILLER_DOCS_PER_FOLDER);
+    String docsPerLevelStr = parameters.get(ConfigConstants.FILLER_DOCS_PER_FOLDER);
     int docsPerLevel = 1;
     if (null!=docsPerLevelStr)
       docsPerLevel = Integer.parseInt(docsPerLevelStr);
 
-    String childrenPerLevelStr = cfgReader.get(ConfigConstants.FILLER_FOLDERS_PER_FOLDER);
+    String childrenPerLevelStr = parameters.get(ConfigConstants.FILLER_FOLDERS_PER_FOLDER);
     int childrenPerLevel = 2;
     if (null!=childrenPerLevelStr)
       childrenPerLevel = Integer.parseInt(childrenPerLevelStr);
     
-    String documentTypeId =  cfgReader.get(ConfigConstants.FILLER_DOCUMENT_TYPE_ID);
+    String documentTypeId =  parameters.get(ConfigConstants.FILLER_DOCUMENT_TYPE_ID);
     if (null == documentTypeId)
       documentTypeId = BaseObjectTypeIds.CMIS_DOCUMENT.value();
     
-    String folderTypeId =  cfgReader.get(ConfigConstants.FILLER_FOLDER_TYPE_ID);
+    String folderTypeId =  parameters.get(ConfigConstants.FILLER_FOLDER_TYPE_ID);
     if (null == folderTypeId)
       folderTypeId = BaseObjectTypeIds.CMIS_FOLDER.value();
 
     int contentSizeKB = 0;
-    String contentSizeKBStr = cfgReader.get(ConfigConstants.FILLER_CONTENT_SIZE);
+    String contentSizeKBStr = parameters.get(ConfigConstants.FILLER_CONTENT_SIZE);
     if (null!=contentSizeKBStr)
       contentSizeKB = Integer.parseInt(contentSizeKBStr);
 
@@ -211,19 +226,19 @@ public class ServiceFactory extends AbstractServicesFactory {
     // set the properties the generator should fill with values for documents:
     // Note: must be valid properties in configured document and folder type
    
-    List<String> propsToSet = readPropertiesToSetFromConfig(cfgReader,
+    List<String> propsToSet = readPropertiesToSetFromConfig(parameters,
         ConfigConstants.FILLER_DOCUMENT_PROPERTY);
     if (null != propsToSet)
       gen.setDocumentPropertiesToGenerate(propsToSet);
     
-    propsToSet = readPropertiesToSetFromConfig(cfgReader,
+    propsToSet = readPropertiesToSetFromConfig(parameters,
         ConfigConstants.FILLER_FOLDER_PROPERTY);
     if (null != propsToSet)
       gen.setFolderPropertiesToGenerate(propsToSet);
 
     // Simulate a runtime context with configuration parameters
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(cfgReader);
+    RuntimeContext.getRuntimeConfig().attachCfg(new DummyCallContext());
 
     // Build the tree
     RepositoryInfoData rep = repSvc.getRepositoryInfo(repositoryId, null);
@@ -240,11 +255,11 @@ public class ServiceFactory extends AbstractServicesFactory {
 
   }
   
-  private List<String> readPropertiesToSetFromConfig(MapConfigReader cfgReader, String keyPrefix) {
+  private List<String> readPropertiesToSetFromConfig(Map<String, String> parameters, String keyPrefix) {
     List<String> propsToSet = new ArrayList<String>();
     for (int i=0; ; ++i) {
       String propertyKey = keyPrefix + Integer.toString(i);
-      String propertyToAdd = cfgReader.get(propertyKey);
+      String propertyToAdd = parameters.get(propertyKey);
       if (null == propertyToAdd)
         break;
       else

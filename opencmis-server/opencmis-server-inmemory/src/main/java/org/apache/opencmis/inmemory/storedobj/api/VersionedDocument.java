@@ -36,6 +36,17 @@ public interface VersionedDocument extends Path, StoredObject {
   
   DocumentVersion addVersion(ContentStreamData content, VersioningState verState, String user);
   
+  /**
+   * delete a version from this object, throw exception if document is checked out
+   * or document does not contain this version
+   * @param version
+   *    version to be removed
+   * @return
+   *    true if version could be removed, and other versions exist,
+   *    false if the deleted version was the last version in this document
+   */
+  boolean deleteVersion(DocumentVersion version);
+  
   boolean isCheckedOut();
   
   void cancelCheckOut(String user);
@@ -44,7 +55,7 @@ public interface VersionedDocument extends Path, StoredObject {
   
   void checkIn(boolean isMajor, String checkinComment, String user);
   
-  List<DocumentVersion> getAllVersions(String filter);
+  List<DocumentVersion> getAllVersions();
   
   DocumentVersion getLatestVersion(boolean major);
   

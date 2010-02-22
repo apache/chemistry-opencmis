@@ -22,8 +22,6 @@ public class ConfigConstants  {
   public static final String REPOSITORY_ID = "InMemoryServer.RepositoryId";
   public static final String TYPE_CREATOR_CLASS = "InMemoryServer.TypesCreatorClass";
   public static final String REPOSITORY_INFO_CREATOR_CLASS = "InMemoryServer.RepositoryInfoCreatorClass";
-  public static final String USERNAME = "InMemoryServer.User";
-  public static final String PASSWORD = "InMemoryServer.Password";
   public static final String REPOSITORY_CLASS = "InMemoryServer.Class";
 
   // Helper constants that allow to fill a repository with data on initialization

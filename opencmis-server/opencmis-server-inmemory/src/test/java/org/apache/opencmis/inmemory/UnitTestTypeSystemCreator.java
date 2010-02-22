@@ -41,7 +41,6 @@ import org.apache.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
-import org.apache.opencmis.inmemory.TypeCreator;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
 

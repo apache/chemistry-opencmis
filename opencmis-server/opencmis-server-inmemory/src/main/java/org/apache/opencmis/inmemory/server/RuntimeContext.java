@@ -18,7 +18,7 @@
  */
 package org.apache.opencmis.inmemory.server;
 
-import org.apache.opencmis.inmemory.ConfigMap;
+import org.apache.opencmis.server.spi.CallContext;
 
 
 /**
@@ -29,10 +29,10 @@ import org.apache.opencmis.inmemory.ConfigMap;
  *
  */
 public class RuntimeContext {
-  public static class ThreadLocalRuntimeConfig extends ThreadLocal<ConfigMap> {    
+  public static class ThreadLocalRuntimeConfig extends ThreadLocal<CallContext> {    
 
-    public void attachCfg(ConfigMap cfgMap) {
-      set(cfgMap);      
+    public void attachCfg(CallContext ctx) {
+      set(ctx);      
     }
 
     public synchronized String getConfigValue(String key) {
