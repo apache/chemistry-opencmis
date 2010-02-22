@@ -16,19 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.test.suite.otx;
+package org.apache.opencmis.client.runtime.suite.otx;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.opencmis.client.runtime.Fixture;
+import org.apache.opencmis.client.runtime.ReadOnlyCreateSessionTest;
+import org.apache.opencmis.client.runtime.ReadOnlySessionTest;
 import org.apache.opencmis.client.runtime.SessionFactoryImpl;
+import org.apache.opencmis.client.runtime.suite.AbstractCmisTestSuite;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.enums.SessionType;
-import org.apache.opencmis.test.Fixture;
-import org.apache.opencmis.test.ReadOnlyCreateSessionTest;
-import org.apache.opencmis.test.ReadOnlySessionTest;
-import org.apache.opencmis.test.suite.AbstractCmisTestSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.test.suite;
+package org.apache.opencmis.client.runtime.suite;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -27,7 +27,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
-import org.apache.opencmis.test.Fixture;
+import org.apache.opencmis.client.runtime.Fixture;
 
 /**
  * Abstract test suite for initialization of

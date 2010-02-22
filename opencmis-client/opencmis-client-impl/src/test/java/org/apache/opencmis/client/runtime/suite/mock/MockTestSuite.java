@@ -16,24 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.test.suite.mock;
+package org.apache.opencmis.client.runtime.suite.mock;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.opencmis.client.runtime.Fixture;
+import org.apache.opencmis.client.runtime.ReadOnlyAclCapabilityTest;
+import org.apache.opencmis.client.runtime.ReadOnlyContentStreamTest;
+import org.apache.opencmis.client.runtime.ReadOnlyCreateSessionTest;
+import org.apache.opencmis.client.runtime.ReadOnlyDiscoverTest;
+import org.apache.opencmis.client.runtime.ReadOnlyNavigationTest;
+import org.apache.opencmis.client.runtime.ReadOnlyObjectTest;
+import org.apache.opencmis.client.runtime.ReadOnlyRepositoryInfoTest;
+import org.apache.opencmis.client.runtime.ReadOnlySessionTest;
+import org.apache.opencmis.client.runtime.ReadOnlyTypeTest;
+import org.apache.opencmis.client.runtime.mock.MockSessionFactory;
+import org.apache.opencmis.client.runtime.suite.AbstractCmisTestSuite;
 import org.apache.opencmis.commons.SessionParameter;
-import org.apache.opencmis.test.Fixture;
-import org.apache.opencmis.test.ReadOnlyAclCapabilityTest;
-import org.apache.opencmis.test.ReadOnlyContentStreamTest;
-import org.apache.opencmis.test.ReadOnlyCreateSessionTest;
-import org.apache.opencmis.test.ReadOnlyDiscoverTest;
-import org.apache.opencmis.test.ReadOnlyNavigationTest;
-import org.apache.opencmis.test.ReadOnlyObjectTest;
-import org.apache.opencmis.test.ReadOnlyRepositoryInfoTest;
-import org.apache.opencmis.test.ReadOnlySessionTest;
-import org.apache.opencmis.test.ReadOnlyTypeTest;
-import org.apache.opencmis.test.mock.MockSessionFactory;
-import org.apache.opencmis.test.suite.AbstractCmisTestSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;

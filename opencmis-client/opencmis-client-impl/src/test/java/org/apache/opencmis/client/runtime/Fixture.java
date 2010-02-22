@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.test;
+package org.apache.opencmis.client.runtime;
 
 import java.net.URI;
 import java.util.Calendar;
@@ -30,8 +30,8 @@ import java.util.UUID;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
 import org.apache.opencmis.client.api.util.Testable;
+import org.apache.opencmis.client.runtime.mock.MockSessionFactory;
 import org.apache.opencmis.commons.SessionParameter;
-import org.apache.opencmis.test.mock.MockSessionFactory;
 
 /**
  * Definition of unit environment for running test cases. Default implementation

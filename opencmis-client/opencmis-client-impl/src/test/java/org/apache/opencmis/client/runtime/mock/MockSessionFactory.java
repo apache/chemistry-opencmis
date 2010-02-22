@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.test.mock;
+package org.apache.opencmis.client.runtime.mock;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -54,6 +54,7 @@ import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.api.repository.RepositoryCapabilities;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.api.util.PagingList;
+import org.apache.opencmis.client.runtime.Fixture;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
@@ -68,7 +69,6 @@ import org.apache.opencmis.commons.enums.PropertyType;
 import org.apache.opencmis.commons.enums.SessionType;
 import org.apache.opencmis.commons.enums.TypeOfChanges;
 import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.opencmis.test.Fixture;
 
 /**
  * MockSessionFactory based on EasyMock Framework.

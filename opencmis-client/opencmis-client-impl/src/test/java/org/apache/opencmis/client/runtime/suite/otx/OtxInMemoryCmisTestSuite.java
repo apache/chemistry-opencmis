@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.test.suite.otx;
+package org.apache.opencmis.client.runtime.suite.otx;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,12 +25,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
-import org.apache.opencmis.test.Fixture;
-import org.apache.opencmis.test.ReadOnlyAclCapabilityTest;
-import org.apache.opencmis.test.ReadOnlyCreateSessionTest;
-import org.apache.opencmis.test.ReadOnlyObjectTest;
-import org.apache.opencmis.test.ReadOnlyRepositoryInfoTest;
-import org.apache.opencmis.test.suite.AbstractCmisTestSuite;
+import org.apache.opencmis.client.runtime.Fixture;
+import org.apache.opencmis.client.runtime.ReadOnlyAclCapabilityTest;
+import org.apache.opencmis.client.runtime.ReadOnlyCreateSessionTest;
+import org.apache.opencmis.client.runtime.ReadOnlyObjectTest;
+import org.apache.opencmis.client.runtime.ReadOnlyRepositoryInfoTest;
+import org.apache.opencmis.client.runtime.suite.AbstractCmisTestSuite;
 
 /**
  * Test suite to run InMemory binding.

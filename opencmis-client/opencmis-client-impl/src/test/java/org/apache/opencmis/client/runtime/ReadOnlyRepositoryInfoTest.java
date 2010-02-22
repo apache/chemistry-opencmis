@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.test;
+package org.apache.opencmis.client.runtime;
 
 import java.util.List;
 

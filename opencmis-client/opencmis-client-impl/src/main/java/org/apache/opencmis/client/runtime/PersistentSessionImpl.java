@@ -69,9 +69,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 
 	/*
 	 * CMIS provider
-	 * (not serializable)
+	 * (serializable)
 	 */
-	private transient CmisProvider provider = null;
+	private CmisProvider provider = null;
 
 	/*
 	 * Session Locale, determined from session parameter
@@ -93,6 +93,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 
 	/*
 	 * Object cache
+	 * (serializable)
 	 */
 	private Cache cache = new CacheImpl();
 	
