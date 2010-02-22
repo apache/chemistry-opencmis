@@ -188,8 +188,9 @@ public class NavigationServiceTest extends AbstractServiceTst {
   }
 
   private int getSizeOfDescendants(List<ObjectInFolderContainer> objs) {
-    int sum = objs.size();
+    int sum = 0; 
     if (null != objs) {
+      sum = objs.size();
       for (ObjectInFolderContainer obj: objs) {
         if (null != obj.getChildren())
           sum += getSizeOfDescendants(obj.getChildren());

@@ -38,8 +38,8 @@ public class ContentStreamDataImpl implements ContentStreamData {
       fContent = contentStream.toByteArray();
       fLength = contentStream.size();
       contentStream.close();
+      in.close();    
     }
-    in.close();    
   }
 
   public BigInteger getLength() {

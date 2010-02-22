@@ -69,11 +69,6 @@ public class FolderImpl extends AbstractPathImpl implements Folder {
       throw new RuntimeException("Cannot create document " + name
           + ". Name already exists in parent folder");
 
-    String documentPath = getPath();
-    if (documentPath.equals(PATH_SEPARATOR))
-      documentPath += name;
-    else
-      documentPath += PATH_SEPARATOR + name;
     ((Path)so).setParent(this);
     so.persist();
   }

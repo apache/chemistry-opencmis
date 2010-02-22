@@ -81,7 +81,8 @@ public class ObjectServiceTest extends AbstractServiceTst {
   ObjectCreator fCreator;
   
   protected void setUp() throws Exception {
-    super.setUp(ObjectTestTypeSystemCreator.class.getName());
+    super.setTypeCreatorClass(ObjectTestTypeSystemCreator.class.getName());
+    super.setUp();
     fCreator = new ObjectCreator(fFactory, fObjSvc, fRepositoryId);
   }
 

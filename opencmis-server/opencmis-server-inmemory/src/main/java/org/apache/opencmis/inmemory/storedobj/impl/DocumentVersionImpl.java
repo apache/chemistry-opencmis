@@ -76,6 +76,10 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     }  
   }
   
+  public void setCheckinComment(String comment) {
+    fComment = comment;
+  }
+
   public String getCheckinComment() {
     return fComment;
   }
