@@ -109,7 +109,8 @@ public class RepositoryServiceTest extends AbstractServiceTst {
   
 
   protected void setUp() throws Exception {
-    super.setUp(RepositoryTestTypeSystemCreator.class.getName());
+    super.setTypeCreatorClass(RepositoryTestTypeSystemCreator.class.getName());
+    super.setUp();
   }
 
   protected void tearDown() throws Exception {

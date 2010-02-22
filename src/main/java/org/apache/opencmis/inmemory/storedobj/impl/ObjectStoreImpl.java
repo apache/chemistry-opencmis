@@ -252,8 +252,10 @@ public class ObjectStoreImpl implements ObjectStore {
   
   private void deleteFolder(String folderId) {
     StoredObject folder = fStoredObjectMap.get(folderId);
-    if (folder != null) {
-      if (!(folder instanceof FolderImpl))
+    if (folder == null)
+      throw new RuntimeException("Unknown object with id:  " + folderId);
+
+    if (!(folder instanceof FolderImpl)) {
         throw new RuntimeException("Cannot delete folder with id:  " + folderId
             + ". Object exists but is not a folder.");
     }

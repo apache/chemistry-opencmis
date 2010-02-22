@@ -84,7 +84,7 @@ public class VersionedDocumentImpl extends AbstractPathImpl implements Versioned
 
   public void checkIn(boolean isMajor, String checkinComment, String user) {
     if (fIsCheckedOut) {
-      if (fCheckedOutUser.equals(user)) {
+      if (fCheckedOutUser.equals(user)) {        
         fIsCheckedOut = false;
         fCheckedOutUser = null;
       } else {
@@ -96,6 +96,7 @@ public class VersionedDocumentImpl extends AbstractPathImpl implements Versioned
       throw new CmisConstraintException("Error: Can't cancel checkout, Document " + getId() + " is not checked out.");
     
     DocumentVersion pwc = getPwc();
+    pwc.setCheckinComment(checkinComment);
     pwc.commit(isMajor);
   }
 

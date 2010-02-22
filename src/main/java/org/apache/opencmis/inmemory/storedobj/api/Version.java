@@ -35,6 +35,8 @@ public interface Version {
    */
   void commit(boolean isMajor);
 
+  void setCheckinComment(String comment);
+  
   String getCheckinComment();
   
   String getVersionLabel();

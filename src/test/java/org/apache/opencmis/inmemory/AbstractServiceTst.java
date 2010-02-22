@@ -47,6 +47,7 @@ public class AbstractServiceTst  extends TestCase {
   protected NavigationService fNavSvc;
   protected RepositoryService fRepSvc;
   protected VersioningService fVerSvc;
+  private String fTypeCreatorClassName;
   private boolean fUseClientProviderInterface;
   
   public AbstractServiceTst() {
@@ -56,16 +57,24 @@ public class AbstractServiceTst  extends TestCase {
     // The default is using the direct implementation. Subclasses may override
     // this behavior
     fUseClientProviderInterface = false;
+      // Init with default types, can be overridden by subclasses:
+    fTypeCreatorClassName = UnitTestTypeSystemCreator.class.getName();
   }
   
-  protected void setUp(String typeCreatorClassName) throws Exception {
-    LOG.debug("Initializing InMemory Test with type creator class: " + typeCreatorClassName);
+  // Subclasses may want to use their own types
+  protected void setTypeCreatorClass(String typeCreatorClassName) {
+    fTypeCreatorClassName = typeCreatorClassName;
+  }
+  
+  protected void setUp() throws Exception {
+    super.setUp();
+    LOG.debug("Initializing InMemory Test with type creator class: " + fTypeCreatorClassName);
     Map<String, String> parameters = new HashMap<String, String>();
     parameters.put(SessionParameter.BINDING_SPI_CLASS, CmisProviderFactory.BINDING_SPI_INMEMORY);
     // attach TypeSystem to the session
 
     // attach repository info to the session:
-    parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, typeCreatorClassName);
+    parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, fTypeCreatorClassName);
     parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
 
     // attach repository info to the session:
@@ -100,11 +109,8 @@ public class AbstractServiceTst  extends TestCase {
   protected void addParameters(Map<String, String> parameters) {    
   }
 
-  protected void setUp() throws Exception {
-    setUp(UnitTestTypeSystemCreator.class.getName());
-  }
-  
   protected void tearDown() throws Exception {
+    super.tearDown();
   }
   
   public void testDummy() {

@@ -109,7 +109,7 @@ public class CmisInMemoryProvider {
       fStoreManager.createAndInitRepository(repositoryId, typeCreatorClassName);
     } else {    
       // then init repository (note: loads root folder which requires cmis:folder type available)
-      fStoreManager.initRepository(repositoryId);
+      fStoreManager.initRepository(null);
     }
     
 //    String repoInfoCreatorClassName = (String) fSession.get(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS);

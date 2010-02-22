@@ -65,7 +65,7 @@ public class DataObjectCreator {
       canCheckIn = isCheckedOut && ((Version)so).getParentDocument().getCheckedOutBy().equals(user);
     } else if (so instanceof VersionedDocument) {
       isCheckedOut = ((VersionedDocument)so).isCheckedOut();
-      canCheckOut = (so instanceof VersionedDocument) && !((VersionedDocument)so).isCheckedOut();
+      canCheckOut = !((VersionedDocument)so).isCheckedOut();
       canCheckIn = isCheckedOut && ((VersionedDocument)so).getCheckedOutBy().equals(user);
     }
           
