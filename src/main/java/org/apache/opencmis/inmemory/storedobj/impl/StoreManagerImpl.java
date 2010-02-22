@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.opencmis.commons.api.TypeDefinition;
 import org.apache.opencmis.commons.api.TypeDefinitionContainer;
+import org.apache.opencmis.commons.enums.CapabilityAcl;
 import org.apache.opencmis.commons.enums.CapabilityChanges;
 import org.apache.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.opencmis.commons.enums.CapabilityJoin;
@@ -37,7 +38,6 @@ import org.apache.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataIm
 import org.apache.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.opencmis.inmemory.ConfigMap;
 import org.apache.opencmis.inmemory.RepositoryInfo;
 import org.apache.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.opencmis.inmemory.TypeCreator;
@@ -54,7 +54,6 @@ import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
 public class StoreManagerImpl implements StoreManager {
 
   protected ProviderObjectFactory fObjectFactory;
-  protected ConfigMap fConfigMap;
   protected RepositoryInfoData fRepositoryInfo;
   
   /**
@@ -77,10 +76,6 @@ public class StoreManagerImpl implements StoreManager {
     fObjectFactory = new ProviderObjectFactoryImpl();
   }
 
-  public void setConfigReader(ConfigMap configMap) {
-    fConfigMap = configMap;
-  }
-
   public List<String> getAllRepositoryIds() {
     Set<String> repIds = fMapRepositoryToObjectStore.keySet();
     List<String> result = new ArrayList<String>();
@@ -88,28 +83,30 @@ public class StoreManagerImpl implements StoreManager {
     return result;
   }
 
-  public void initRepository(String repositoryId, boolean isCreated) {
-    TypeManager typeManager;
-    if (isCreated)
-      typeManager = fMapRepositoryToTypeManager.get(repositoryId);
-    else {
-      typeManager = new TypeManager();
-      fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));  
-      fMapRepositoryToTypeManager.put(repositoryId, typeManager);      
-    }
-   
+  public void initRepository(String repositoryId) {
+    fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));  
+    fMapRepositoryToTypeManager.put(repositoryId, new TypeManager());      
   }
   
+  public void createAndInitRepository(String repositoryId, String typeCreatorClassName) {
+    if (fMapRepositoryToObjectStore.containsKey(repositoryId)
+        || fMapRepositoryToTypeManager.containsKey(repositoryId))
+      throw new RuntimeException("Cannot add repository, repository " + repositoryId
+          + " already exists.");
+    
+    fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));  
+    fMapRepositoryToTypeManager.put(repositoryId, new TypeManager());
+    
+    // initialize the type system:
+    initTypeSystem(repositoryId, typeCreatorClassName);
+  }
+
   public ObjectStore getObjectStore(String repositoryId) {
     return fMapRepositoryToObjectStore.get(repositoryId);
   }
 
   public ProviderObjectFactory getObjectFactory() {
     return fObjectFactory;
-  }
-
-  public String getParameter(String parameter) {
-    return fConfigMap.get(parameter);
   }
 
   public TypeDefinitionContainer getTypeById(String repositoryId, String typeId) {
@@ -150,7 +147,7 @@ public class StoreManagerImpl implements StoreManager {
     return repoInfo;
   }
 
-  public void initTypeSystem(String repositoryId, String typeCreatorClassName) {
+  private void initTypeSystem(String repositoryId, String typeCreatorClassName) {
 
     List<TypeDefinition> typeDefs = null;
     TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
@@ -209,22 +206,14 @@ public class StoreManagerImpl implements StoreManager {
       createDefaultRepositoryInfo(repositoryId);
     }
   }
-
-  public void createRepository(String repositoryId) {
-    if (fMapRepositoryToObjectStore.containsKey(repositoryId)
-        || fMapRepositoryToTypeManager.containsKey(repositoryId))
-      throw new RuntimeException("Cannot add repository, repository " + repositoryId
-          + " already exists.");
-    
-    fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));  
-    fMapRepositoryToTypeManager.put(repositoryId, new TypeManager());
-  }
   
   public RepositoryInfo loadRepository(String repositoryId) {
     return null;
   }
   
   private RepositoryInfoData createDefaultRepositoryInfo(String repositoryId) {
+    ObjectStore objStore = getObjectStore(repositoryId);
+    String rootFolderId = objStore.getRootFolder().getId();
     // repository info
     RepositoryInfoDataImpl repoInfo;
     repoInfo = new RepositoryInfoDataImpl();
@@ -233,7 +222,7 @@ public class StoreManagerImpl implements StoreManager {
     repoInfo.setRepositoryDescription("InMemory Test Repository");
     repoInfo.setCmisVersionSupported("1.0");
     repoInfo.setRepositoryCapabilities(null);
-    repoInfo.setRootFolder("/");
+    repoInfo.setRootFolder(rootFolderId);
     repoInfo.setPrincipalAnonymous("anonymous");
     repoInfo.setPrincipalAnyone("anyone");
     repoInfo.setThinClientUri(null);
@@ -247,9 +236,9 @@ public class StoreManagerImpl implements StoreManager {
     // set capabilities
     RepositoryCapabilitiesDataImpl caps = new RepositoryCapabilitiesDataImpl();
     caps.setAllVersionsSearchable(false);
-    caps.setCapabilityAcl(org.apache.opencmis.commons.enums.CapabilityAcl.NONE);
+    caps.setCapabilityAcl(CapabilityAcl.NONE);
     caps.setCapabilityChanges(CapabilityChanges.PROPERTIES); // just for testing
-    caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
+    caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.PWCONLY);
     caps.setCapabilityJoin(CapabilityJoin.NONE);
     caps.setCapabilityQuery(CapabilityQuery.METADATAONLY); // just for testing
     caps.setCapabilityRendition(CapabilityRendition.NONE);

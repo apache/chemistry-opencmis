@@ -38,7 +38,6 @@ import org.apache.opencmis.server.spi.ObjectInfoHolder;
 public class InMemoryNavigationService implements CmisNavigationService  {
   StoreManager fStoreManager;
   NavigationService fNavigationService; // real implementation of the service
-  CallContextConfigReader fCfgReader = null;
   AtomLinkInfoProvider fAtomLinkProvider;
   
   InMemoryNavigationService(StoreManager storeManager) {
@@ -53,7 +52,7 @@ public class InMemoryNavigationService implements CmisNavigationService  {
       BigInteger skipCount, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
     
     ObjectList res = fNavigationService.getCheckedOutDocs(repositoryId, folderId, filter, orderBy, includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension);
     
@@ -70,7 +69,7 @@ public class InMemoryNavigationService implements CmisNavigationService  {
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
     
     ObjectInFolderList res = fNavigationService.getChildren(repositoryId, folderId, filter, orderBy, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItems, skipCount, extension);
     
@@ -87,7 +86,7 @@ public class InMemoryNavigationService implements CmisNavigationService  {
       Boolean includePathSegment, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     List<ObjectInFolderContainer> res = fNavigationService.getDescendants(repositoryId, folderId, depth, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension);
     
@@ -101,7 +100,7 @@ public class InMemoryNavigationService implements CmisNavigationService  {
       String filter, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     ObjectData res = fNavigationService.getFolderParent(repositoryId, folderId, filter, extension);
 
@@ -118,7 +117,7 @@ public class InMemoryNavigationService implements CmisNavigationService  {
       Boolean includePathSegment, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     List<ObjectInFolderContainer> res = fNavigationService.getFolderTree(repositoryId, folderId, depth, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension);
     
@@ -134,7 +133,7 @@ public class InMemoryNavigationService implements CmisNavigationService  {
       Boolean includeRelativePathSegment, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     List<ObjectParentData> res = fNavigationService.getObjectParents(repositoryId, objectId, filter, includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment, extension);
     

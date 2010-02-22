@@ -18,6 +18,9 @@
  */
 package org.apache.opencmis.inmemory.clientprovider;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.opencmis.client.provider.spi.CmisSpi;
 import org.apache.opencmis.client.provider.spi.Session;
 import org.apache.opencmis.commons.provider.AclService;
@@ -30,13 +33,13 @@ import org.apache.opencmis.commons.provider.RelationshipService;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.commons.provider.RepositoryService;
 import org.apache.opencmis.commons.provider.VersioningService;
+import org.apache.opencmis.inmemory.CmisInMemoryProvider;
 import org.apache.opencmis.inmemory.ConfigConstants;
 import org.apache.opencmis.inmemory.NavigationServiceImpl;
 import org.apache.opencmis.inmemory.ObjectServiceImpl;
 import org.apache.opencmis.inmemory.RepositoryServiceImpl;
 import org.apache.opencmis.inmemory.VersioningServiceImpl;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.opencmis.inmemory.storedobj.impl.SessionConfigReader;
 import org.apache.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
 
@@ -47,16 +50,10 @@ import org.apache.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
  * @author Jens
  * 
  */
-public class CmisInMemorySpi implements CmisSpi {
+public class CmisInMemorySpi extends CmisInMemoryProvider implements CmisSpi {
 
   // private static Log log = LogFactory.getLog(CmisInMemorySpi.class);
   private Session fSession;
-  private RepositoryService fRepositoryService;
-  private NavigationService fNavigationService;
-  private ObjectService fObjectService;
-  private VersioningService fVersioningService;
-  private RepositoryInfoData fRepositoryInfo;
-  private StoreManager fStoreManager;
   
   CmisInMemorySpi(Session session) { // package visibility
     fSession = session;
@@ -196,35 +193,19 @@ public class CmisInMemorySpi implements CmisSpi {
   // ---- internal ----
     
   private void setup() {
-    String repositoryClassName = (String) fSession.get(ConfigConstants.REPOSITORY_CLASS);
-    if (null==repositoryClassName)
-      repositoryClassName = StoreManagerImpl.class.getName();
+    Map<String, String> cfgParams = new HashMap<String, String>();
+    String[] configParamKeys = {ConfigConstants.REPOSITORY_CLASS, ConfigConstants.REPOSITORY_ID, 
+        ConfigConstants.TYPE_CREATOR_CLASS };
+
     
-    fStoreManager = StoreManagerFactory.createInstance(repositoryClassName);
-    SessionConfigReader cfgReader = new SessionConfigReader(fSession);
-    fStoreManager.setConfigReader(cfgReader);
-    String repositoryId  = (String) fSession.get(ConfigConstants.REPOSITORY_ID);
-    
-    // first create repository
-    if (null != repositoryId ) {
-      fStoreManager.createRepository(repositoryId);
+    for (String key : configParamKeys) {
+      String value = (String) fSession.get(key);
+      if (null != value)
+        cfgParams.put(key, value);
     }
     
-    // then create/initialize type system
-    String typeCreatorClassName = (String) fSession.get(ConfigConstants.TYPE_CREATOR_CLASS);
-    fStoreManager.initTypeSystem(repositoryId, typeCreatorClassName);
 
-    // then init repository (note: loads root folder which requires cmis:folder type available)
-    fStoreManager.initRepository(repositoryId, true);
-
-    String repoInfoCreatorClassName = (String) fSession.get(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS);
-    fStoreManager.initRepositoryInfo(repositoryId, repoInfoCreatorClassName);    
-
-    // initialize services
-    fRepositoryService = new RepositoryServiceImpl(fStoreManager);
-    fNavigationService = new NavigationServiceImpl(fStoreManager);
-    fObjectService = new ObjectServiceImpl(fStoreManager);
-    fVersioningService = new VersioningServiceImpl(fStoreManager, fObjectService);    
+    super.setup(cfgParams);
   }
 
   

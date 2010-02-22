@@ -26,17 +26,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.commons.PropertyIds;
-import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.api.Choice;
 import org.apache.opencmis.commons.api.PropertyDefinition;
-import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinition;
+import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinitionList;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.CapabilityAcl;
@@ -45,8 +41,8 @@ import org.apache.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.opencmis.commons.enums.CapabilityJoin;
 import org.apache.opencmis.commons.enums.CapabilityQuery;
 import org.apache.opencmis.commons.enums.CapabilityRendition;
-import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
@@ -57,22 +53,16 @@ import org.apache.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl
 import org.apache.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
 import org.apache.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
-import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.opencmis.inmemory.ConfigConstants;
-import org.apache.opencmis.inmemory.ConfigMap;
-import org.apache.opencmis.inmemory.MapConfigReader;
-import org.apache.opencmis.inmemory.RepositoryInfoCreator;
-import org.apache.opencmis.inmemory.server.RuntimeContext;
 import org.apache.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
 /**
  * @author Jens
  */
-public class RepositoryServiceTest extends TestCase {
+public class RepositoryServiceTest extends AbstractServiceTst {
 
-  private CmisProvider fProvider;
+//  private CmisProvider fProvider;
 
   private static Log log = LogFactory.getLog(RepositoryServiceTest.class);
   private static final String REPOSITORY_ID = "UnitTestRepository";
@@ -118,35 +108,18 @@ public class RepositoryServiceTest extends TestCase {
   }
   
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see junit.framework.TestCase#setUp()
-   */
   protected void setUp() throws Exception {
-    // gather parameters
-    Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put(SessionParameter.BINDING_SPI_CLASS, CmisProviderFactory.BINDING_SPI_INMEMORY);
-
-    // attach repository info to the session:
-    parameters.put(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS, UnitTestRepositoryInfo.class.getName());
-    // attach TypeSystem to the session
-    parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, RepositoryTestTypeSystemCreator.class.getName());
-    parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
-
-    // get factory and create provider
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
-    fProvider = factory.createCmisProvider(parameters);
-    assertNotNull(fProvider);
-    
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    ConfigMap cfgReader = new MapConfigReader(parameters);  
-    RuntimeContext.getRuntimeConfig().attachCfg(cfgReader);
+    super.setUp(RepositoryTestTypeSystemCreator.class.getName());
   }
+
+  protected void tearDown() throws Exception {
+    super.tearDown();
+  }
+
 
   public void testRepositoryInfo() throws Exception {
     log.info("starting testRepositoryInfo() ...");
-    List<RepositoryInfoData> repositories = fProvider.getRepositoryService().getRepositoryInfos(
+    List<RepositoryInfoData> repositories = fRepSvc.getRepositoryInfos(
         null);
     assertNotNull(repositories);
     assertFalse(repositories.isEmpty());
@@ -154,7 +127,7 @@ public class RepositoryServiceTest extends TestCase {
     log.info("geRepositoryInfo(), found " + repositories.size() + " repository/repositories).");
 
     for (RepositoryInfoData repository : repositories) {
-      RepositoryInfoData repository2 = fProvider.getRepositoryService().getRepositoryInfo(
+      RepositoryInfoData repository2 = fRepSvc.getRepositoryInfo(
           repository.getRepositoryId(), null);
       assertNotNull(repository2);
       assertEquals(repository.getRepositoryId(), repository2.getRepositoryId());
@@ -170,7 +143,7 @@ public class RepositoryServiceTest extends TestCase {
     String repositoryId = getRepositoryId();
     String typeId = "MyDocType1";
     TypeDefinition ref = RepositoryTestTypeSystemCreator.getTypeById(typeId);
-    TypeDefinition type = fProvider.getRepositoryService().getTypeDefinition(repositoryId,
+    TypeDefinition type = fRepSvc.getTypeDefinition(repositoryId,
         typeId, null);
     assertEquals(ref.getId(), type.getId());
     assertEquals(ref.getDescription(), type.getDescription());
@@ -187,7 +160,7 @@ public class RepositoryServiceTest extends TestCase {
     String repositoryId = getRepositoryId();
 
     // get types
-    List<TypeDefinitionContainer> types = fProvider.getRepositoryService().getTypeDescendants(
+    List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(
         repositoryId, null/* all types */, BigInteger.valueOf(-1), Boolean.TRUE, null);
     assertNotNull(types);
     log.info("Repository " + repositoryId + " contains " + types.size() + " type(s).");
@@ -220,7 +193,7 @@ public class RepositoryServiceTest extends TestCase {
 
     // get types
     int depth = 2;
-    List<TypeDefinitionContainer> types = fProvider.getRepositoryService().getTypeDescendants(
+    List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(
         repositoryId, null/* all types */, BigInteger.valueOf(depth), Boolean.TRUE, null);
     assertNotNull(types);
     log.info("Found in repository " + repositoryId + " " + types.size() + " type(s) with depth "
@@ -263,7 +236,7 @@ public class RepositoryServiceTest extends TestCase {
     // get types
     int depth = 2;
     String typeId = "MyDocType1";
-    List<TypeDefinitionContainer> types = fProvider.getRepositoryService().getTypeDescendants(
+    List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(
         repositoryId, typeId, BigInteger.valueOf(depth), Boolean.TRUE, null);
     assertNotNull(types);
     log.info("Found in repository " + repositoryId + " for type " + typeId + ", " + types.size()
@@ -297,7 +270,7 @@ public class RepositoryServiceTest extends TestCase {
     String typeId = BaseObjectTypeIds.CMIS_DOCUMENT.value();
 
     // get types
-    List<TypeDefinitionContainer> types = fProvider.getRepositoryService().getTypeDescendants(
+    List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(
         repositoryId, typeId, BigInteger.valueOf(-1), false, null);
     assertNotNull(types);
     log.info("Repository " + repositoryId + " contains " + types.size() + " type(s).");
@@ -328,7 +301,7 @@ public class RepositoryServiceTest extends TestCase {
     // get all children
     BigInteger maxItems = BigInteger.valueOf(1000);
     BigInteger skipCount = BigInteger.valueOf(0);
-    TypeDefinitionList children = fProvider.getRepositoryService().getTypeChildren(repositoryId,
+    TypeDefinitionList children = fRepSvc.getTypeChildren(repositoryId,
         typeId, true, maxItems, skipCount, null);
 
     for (TypeDefinition type : children.getList()) {
@@ -342,7 +315,7 @@ public class RepositoryServiceTest extends TestCase {
     // get a chunk
     maxItems = BigInteger.valueOf(5);
     skipCount = BigInteger.valueOf(3);
-    children = fProvider.getRepositoryService().getTypeChildren(repositoryId, typeId, true,
+    children = fRepSvc.getTypeChildren(repositoryId, typeId, true,
         maxItems, skipCount, null);
 
     for (TypeDefinition type : children.getList()) {
@@ -367,7 +340,7 @@ public class RepositoryServiceTest extends TestCase {
     String wrongTypeId = "UnknownType";
 
     try {
-      RepositoryInfoData repInf = fProvider.getRepositoryService().getRepositoryInfo(
+      RepositoryInfoData repInf = fRepSvc.getRepositoryInfo(
           wrongRepositoryId, null);
       log.debug("getRepositoryInfo(): " + repInf);
       fail("getRepositoryInfo() with illegal repository id should throw InvalidArgumentException.");
@@ -377,7 +350,7 @@ public class RepositoryServiceTest extends TestCase {
     }
 
     try {
-      List<TypeDefinitionContainer> types = fProvider.getRepositoryService().getTypeDescendants(
+      List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(
           repositoryId, "CMISDocument", BigInteger.valueOf(0), Boolean.TRUE, null);
       log.debug("getTypeDescendants(): " + types);
       fail("getTypeDescendants() with depth 0 should throw InvalidArgumentException.");
@@ -387,7 +360,7 @@ public class RepositoryServiceTest extends TestCase {
     }
 
     try {
-      List<TypeDefinitionContainer> types = fProvider.getRepositoryService().getTypeDescendants(
+      List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(
           repositoryId, wrongTypeId, BigInteger.valueOf(depth), Boolean.TRUE, null);
       log.debug("getTypeDescendants(): " + types);
       fail("getTypeDescendants() with unknown type should throw exception.");
@@ -397,7 +370,7 @@ public class RepositoryServiceTest extends TestCase {
     }
 
     try {
-      TypeDefinition type = fProvider.getRepositoryService().getTypeDefinition(
+      TypeDefinition type = fRepSvc.getTypeDefinition(
           wrongRepositoryId, "CMISDocument", null);
       log.debug("getTypeDefinition(): " + type);
       fail("getTypeDefinition() with unknown repository id should throw exception.");
@@ -407,7 +380,7 @@ public class RepositoryServiceTest extends TestCase {
     }
 
     try {
-      TypeDefinition type = fProvider.getRepositoryService().getTypeDefinition(repositoryId,
+      TypeDefinition type = fRepSvc.getTypeDefinition(repositoryId,
           wrongTypeId, null);
       log.debug("getTypeDefinition(): " + type);
       fail("getTypeDefinition() with unknown type should throw exception.");
@@ -417,7 +390,7 @@ public class RepositoryServiceTest extends TestCase {
     }
 
     try {
-      TypeDefinitionList types = fProvider.getRepositoryService().getTypeChildren(
+      TypeDefinitionList types = fRepSvc.getTypeChildren(
           wrongRepositoryId, "CMISDocument", Boolean.TRUE, BigInteger.valueOf(100),
           BigInteger.ZERO, null);
       log.debug("getTypeChildren(): " + types);
@@ -428,7 +401,7 @@ public class RepositoryServiceTest extends TestCase {
     }
 
     try {
-      TypeDefinitionList types = fProvider.getRepositoryService().getTypeChildren(repositoryId,
+      TypeDefinitionList types = fRepSvc.getTypeChildren(repositoryId,
           wrongTypeId, Boolean.TRUE, BigInteger.valueOf(100), BigInteger.ZERO, null);
       log.debug("getTypeChildren(): " + types);
       fail("getTypeDescendants() with unknown type should throw exception.");
@@ -448,7 +421,7 @@ public class RepositoryServiceTest extends TestCase {
     String typeId = RepositoryTestTypeSystemCreator.TOPLEVEL_TYPE;
 
     // get top level type
-    TypeDefinition typeContainer = fProvider.getRepositoryService().getTypeDefinition(
+    TypeDefinition typeContainer = fRepSvc.getTypeDefinition(
         repositoryId, typeId, null);
     assertNotNull(typeContainer);
     Map<String, PropertyDefinition<?>> propDefMap = typeContainer.getPropertyDefinitions();
@@ -460,7 +433,7 @@ public class RepositoryServiceTest extends TestCase {
     
     // get level 1 type
     typeId = RepositoryTestTypeSystemCreator.LEVEL1_TYPE;
-    typeContainer = fProvider.getRepositoryService().getTypeDefinition(
+    typeContainer = fRepSvc.getTypeDefinition(
         repositoryId, typeId, null);
     assertNotNull(typeContainer);
     propDefMap = typeContainer.getPropertyDefinitions();
@@ -473,7 +446,7 @@ public class RepositoryServiceTest extends TestCase {
     
     // get level 2 type
     typeId = RepositoryTestTypeSystemCreator.LEVEL2_TYPE;
-    typeContainer = fProvider.getRepositoryService().getTypeDefinition(
+    typeContainer = fRepSvc.getTypeDefinition(
         repositoryId, typeId, null);
     assertNotNull(typeContainer);
     propDefMap = typeContainer.getPropertyDefinitions();
@@ -489,7 +462,7 @@ public class RepositoryServiceTest extends TestCase {
   }
 
   private String getRepositoryId() {
-    List<RepositoryInfoData> repositories = fProvider.getRepositoryService().getRepositoryInfos(
+    List<RepositoryInfoData> repositories = fRepSvc.getRepositoryInfos(
         null);
     RepositoryInfoData repository = repositories.get(0);
     assertNotNull(repository);

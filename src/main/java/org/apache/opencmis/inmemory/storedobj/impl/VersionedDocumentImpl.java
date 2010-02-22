@@ -20,6 +20,7 @@ package org.apache.opencmis.inmemory.storedobj.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.enums.VersioningState;
@@ -50,10 +51,9 @@ public class VersionedDocumentImpl extends AbstractPathImpl implements Versioned
     if (isCheckedOut())
         throw new CmisConstraintException("Cannot add a version to document, document is checked out.");
     
-    DocumentVersionImpl ver = new DocumentVersionImpl(fRepositoryId, this, content, verState);
+    DocumentVersionImpl ver = new DocumentVersionImpl(fRepositoryId, this, content, verState, fObjStore);
     ver.setSystemBasePropertiesWhenCreatedDirect(getName(), getTypeId(), user); // copy name and type id from version series.
     ver.persist();
-    fObjStore.storeObject(ver.getId(), ver);
     fVersions.add(ver);
     if (verState == VersioningState.CHECKEDOUT) {
       fCheckedOutUser = user;
@@ -63,10 +63,23 @@ public class VersionedDocumentImpl extends AbstractPathImpl implements Versioned
     return ver;
   }
 
+  public boolean deleteVersion(DocumentVersion version) {
+    if (fIsCheckedOut)
+      throw new RuntimeException("version cannot be deleted if document is checked-out: " + version.getId());
+    boolean found = fVersions.remove(version);
+    if (!found)
+      throw new RuntimeException("Version is not contained in the document:" + version.getId());
+    
+    return !fVersions.isEmpty();
+  }
+  
+  
   public void cancelCheckOut(String user) {
     DocumentVersion pwc = getPwc();
     fVersions.remove(pwc);
-    fObjStore.deleteObject(pwc.getId());
+    fObjStore.removeVersion(pwc);
+    fIsCheckedOut = false;
+    fCheckedOutUser = null;
   }
 
   public void checkIn(boolean isMajor, String checkinComment, String user) {
@@ -96,8 +109,7 @@ public class VersionedDocumentImpl extends AbstractPathImpl implements Versioned
     return pwc;
   }
 
-  public List<DocumentVersion> getAllVersions(String filter) {
-    //TODO: implement filter
+  public List<DocumentVersion> getAllVersions() {
     return fVersions;
   }
 
@@ -131,7 +143,7 @@ public class VersionedDocumentImpl extends AbstractPathImpl implements Versioned
     return null;
   }
 
-  public void fillProperties(List<PropertyData<?>> properties, ProviderObjectFactory objFactory,
+  public void fillProperties(Map<String, PropertyData<?>> properties, ProviderObjectFactory objFactory,
       List<String> requestedIds) {
     
     DocumentVersion pwc = getPwc();
@@ -140,16 +152,16 @@ public class VersionedDocumentImpl extends AbstractPathImpl implements Versioned
     
     // overwrite the version related properties 
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_ID, requestedIds)) { 
-      properties.add(objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_ID, getId()));
+      properties.put(PropertyIds.CMIS_VERSION_SERIES_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_ID, getId()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
-      properties.add(objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, isCheckedOut()));
+      properties.put(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, isCheckedOut()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, requestedIds)) {
-      properties.add(objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, getCheckedOutBy()));
+      properties.put(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, getCheckedOutBy()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, requestedIds)) {
-      properties.add(objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, pwc == null ? null : pwc.getId()));
+      properties.put(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, pwc == null ? null : pwc.getId()));
     }
     
   }

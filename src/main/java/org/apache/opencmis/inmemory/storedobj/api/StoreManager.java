@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.opencmis.inmemory.ConfigMap;
 import org.apache.opencmis.inmemory.RepositoryInfo;
 
 /**
@@ -44,14 +43,17 @@ public interface StoreManager {
   List<String> getAllRepositoryIds();
   
   /**
-   * Initialize the store for the given repository (first call done on a StoreManager after creation)
+   * Initialize the store for the given repository. Only called for repositories
+   * that exist on startup (i.e. for each repository id returned in a previous
+   * getAllRepositoryIds() call.
+   * 
    * @param repositoryId
    *    id of repository to initialize
    * @param isCreated
    *    true if the repository was just created and is initialized for the first time
    *    false if it existed before and is reloaded
    */
-  public void initRepository(String repositoryId, boolean isCreated);
+  public void initRepository(String repositoryId);
   
   /**
    * get the object store for the given repository id.
@@ -62,12 +64,16 @@ public interface StoreManager {
   ObjectStore getObjectStore(String repositoryId);
 
   /**
-   * create a new repository with the given id
+   * create a new repository with the given id. Create the repository, initiate
+   * the type system and initialize it so that it is ready for use
    * 
    * @param repositoryId
    *    id of repository
+   * @param typeCreatorClassName
+   *    class implementing the type creation, the class must implement the interface
+   *    TypeCreator
    */
-  void createRepository(String repositoryId);
+  void createAndInitRepository(String repositoryId, String typeCreatorClassName);
   
   /**
    * load an existing repository with the given id
@@ -78,16 +84,6 @@ public interface StoreManager {
   RepositoryInfo loadRepository(String repositoryId);
   
   
-  /**
-   * retrieve a parameter that a client has attached to a session
-   * 
-   * @param parameter
-   *    name of the parameter
-   * @return
-   *    value of the parameter
-   */
-  String getParameter(String parameter);
-
   /**
    * retrieve a list with all type definitions. 
    * @param repositoryId
@@ -139,36 +135,4 @@ public interface StoreManager {
    */
   RepositoryInfoData getRepositoryInfo(String repositoryId);
 
-  /**
-   * Initialize the type system. Helper class to create types in the repository
-   * implemented in an implementation specific way. CMIS does not yet provide a 
-   * standard to create type definitions. The SPI will call this method in case
-   * a class name was attached to the session. The implementation of this method
-   * should call initTypeSystem of the StoreManager to add the types to the 
-   * system. 
-   * 
-   * @param repositoryId
-   *    id of repository where this type gets stored
-   * @param typeCreatorClassName
-   *    class implementing the type creation, the class must implement the interface
-   *    TypeCreator
-   *    
-   */
-  void initTypeSystem(String repositoryId, String typeCreatorClassName);
-
-  /**
-   * Initialize the repository information. A client can assign specific values that
-   * should be set for subsequent getRepositoryInfo() call. Mainly uses for unit tests.
-   * 
-   * @param repoInfoCreatorClassName
-   *    class name of class setting repository information. The class must implement
-   *    the interface RepositoryInfoCreator
-   */
-  void initRepositoryInfo(String repositoryInfo, String repoInfoCreatorClassName);
-
-  /**
-   * Assign a reader that can retrieve context parameters to this repository manager
-   * @param session
-   */
-  void setConfigReader(ConfigMap configMap);  
 }

@@ -62,7 +62,7 @@ public class InMemoryDiscoveryService implements CmisDiscoveryService {
     // dummy implementation using hard coded values
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     RepositoryInfoData rep = fRepositoryService.getRepositoryInfo(repositoryId, null);
     String rootFolderId = rep.getRootFolderId();
@@ -108,7 +108,7 @@ public class InMemoryDiscoveryService implements CmisDiscoveryService {
     // dummy implementation using hard coded values
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     // use descendants of root folder as result
     RepositoryInfoData rep = fRepositoryService.getRepositoryInfo(repositoryId, null);

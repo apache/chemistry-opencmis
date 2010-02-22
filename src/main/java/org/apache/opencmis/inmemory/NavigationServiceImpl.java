@@ -43,6 +43,7 @@ import org.apache.opencmis.commons.provider.ObjectInFolderList;
 import org.apache.opencmis.commons.provider.ObjectList;
 import org.apache.opencmis.commons.provider.ObjectParentData;
 import org.apache.opencmis.commons.provider.PropertiesData;
+import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.opencmis.inmemory.storedobj.api.Path;
@@ -65,7 +66,7 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.NavigationService#getCheckedOutDocs(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.math.BigInteger, java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
+   * @see org.opencmis.client.provider.NavigationService#getCheckedOutDocs(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, org.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.math.BigInteger, java.math.BigInteger, org.opencmis.client.provider.ExtensionsData)
    */
   public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter,
       String orderBy, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
@@ -94,7 +95,9 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
       for (ObjectInFolderData child: children.getObjects()) {
         ObjectData obj = child.getObject();
         StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(obj.getId());
-        if (so instanceof VersionedDocument && ((VersionedDocument)so).isCheckedOut())
+        log.info("Checked out: children:" + obj.getId());
+        if (so instanceof DocumentVersion && ((DocumentVersion)so).getParentDocument().isCheckedOut())
+//        if (so instanceof VersionedDocument && ((VersionedDocument)so).isCheckedOut())
           odList.add(obj);
       }
     }
@@ -106,7 +109,7 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.NavigationService#getChildren(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean, java.math.BigInteger, java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
+   * @see org.opencmis.client.provider.NavigationService#getChildren(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, org.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean, java.math.BigInteger, java.math.BigInteger, org.opencmis.client.provider.ExtensionsData)
    */
   public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter,
       String orderBy, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
@@ -126,7 +129,7 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.NavigationService#getDescendants(java.lang.String, java.lang.String, java.math.BigInteger, java.lang.String, java.lang.Boolean, org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
+   * @see org.opencmis.client.provider.NavigationService#getDescendants(java.lang.String, java.lang.String, java.math.BigInteger, java.lang.String, java.lang.Boolean, org.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean, org.opencmis.client.provider.ExtensionsData)
    */
   public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId,
       BigInteger depth, String filter, Boolean includeAllowableActions,
@@ -153,7 +156,7 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.NavigationService#getFolderTree(java.lang.String, java.lang.String, java.math.BigInteger, java.lang.String, java.lang.Boolean, org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
+   * @see org.opencmis.client.provider.NavigationService#getFolderTree(java.lang.String, java.lang.String, java.math.BigInteger, java.lang.String, java.lang.Boolean, org.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean, org.opencmis.client.provider.ExtensionsData)
    */
   public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId,
       BigInteger depth, String filter, Boolean includeAllowableActions,
@@ -163,10 +166,10 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
     log.debug("start getFolderTree()");
     checkStandardParameters(repositoryId, folderId);
 
-    if (depth == null || depth.intValue() == 0)
+    if (depth != null && depth.intValue() == 0)
       throw new CmisInvalidArgumentException("A zero depth is not allowed for getFolderTree().");
     
-    int levels = depth.intValue();
+    int levels = depth == null ? 2: depth.intValue();
     int level = 0;
     List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId,
             filter, includeAllowableActions, includeRelationships, renditionFilter,
@@ -176,7 +179,7 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.NavigationService#getFolderParent(java.lang.String, java.lang.String, java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
+   * @see org.opencmis.client.provider.NavigationService#getFolderParent(java.lang.String, java.lang.String, java.lang.String, org.opencmis.client.provider.ExtensionsData)
    */
   public ObjectData getFolderParent(String repositoryId, String folderId, String filter,
       ExtensionsData extension) {
@@ -200,7 +203,7 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.NavigationService#getObjectParents(java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
+   * @see org.opencmis.client.provider.NavigationService#getObjectParents(java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, org.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean, org.opencmis.client.provider.ExtensionsData)
    */
   public List<ObjectParentData> getObjectParents(String repositoryId, String objectId,
       String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
@@ -297,9 +300,8 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
       ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
           includeAllowableActions, includeRelationships, renditionFilter, includePathSegments, 1000, 0, folderOnly);
       
+      childrenOfFolderId = new ArrayList<ObjectInFolderContainer>();
       if (null != children) {        
-        if (children.getObjects().size() > 0)
-          childrenOfFolderId = new ArrayList<ObjectInFolderContainer>();
 
         for (ObjectInFolderData child : children.getObjects()) {      
           ObjectInFolderContainerImpl oifc = new ObjectInFolderContainerImpl();

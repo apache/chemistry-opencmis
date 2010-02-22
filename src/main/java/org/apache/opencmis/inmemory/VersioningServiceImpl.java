@@ -45,6 +45,7 @@ import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.opencmis.server.spi.CallContext;
 
 public class VersioningServiceImpl extends AbstractServiceImpl implements VersioningService {
   
@@ -63,7 +64,7 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
     ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
     StoredObject so = objectStore.getObjectById(objectId);
     
-    String user = RuntimeContext.getRuntimeConfigValue(ConfigConstants.USERNAME);
+    String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
     VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
     verDoc.cancelCheckOut(user);
@@ -78,7 +79,7 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
     ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
     StoredObject so = objectStore.getObjectById(objectId.getValue());
 
-    String user = RuntimeContext.getRuntimeConfigValue(ConfigConstants.USERNAME);
+    String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
     VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
     DocumentVersion  pwc = verDoc.getPwc();
@@ -113,15 +114,15 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
     
     if (so instanceof DocumentVersion) {
       // get document the version is contained in to c
-      content = ((DocumentVersion) so).getContent();
+      content = ((DocumentVersion) so).getContent(0, -1);
     } else {
-      content = ((VersionedDocument) so).getLatestVersion(false).getContent();
+      content = ((VersionedDocument) so).getLatestVersion(false).getContent(0, -1);
     }
     
     if (verDoc.isCheckedOut())
       throw new CmisUpdateConflictException("Document " + objectId.getValue() + " is already checked out.");
     
-    String user = RuntimeContext.getRuntimeConfigValue(ConfigConstants.USERNAME);
+    String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
     checkHasUser(user);    
     
     DocumentVersion pwc = verDoc.checkOut(content, user);
@@ -140,7 +141,7 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
 
     VersionedDocument verDoc = (VersionedDocument)so;
     List<ObjectData> res = new ArrayList<ObjectData> ();
-    List<DocumentVersion> versions = verDoc.getAllVersions(filter);
+    List<DocumentVersion> versions = verDoc.getAllVersions();
     for (DocumentVersion version : versions) {
       ObjectData objData = getObject(repositoryId, version.getId(), filter, includeAllowableActions, extension);
       res.add(objData);

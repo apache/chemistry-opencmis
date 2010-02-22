@@ -47,8 +47,6 @@ import org.apache.opencmis.commons.impl.dataobjects.ProviderObjectFactoryImpl;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
-import org.apache.opencmis.inmemory.TypeManager;
-import org.apache.opencmis.inmemory.TypeValidator;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
 

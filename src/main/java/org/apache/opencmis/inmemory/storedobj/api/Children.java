@@ -57,7 +57,7 @@ public interface Children {
 
   /**
    * get all the children of this folder. To support paging an initial offset and a
-   * maximum number of childrent to retrieve can be passed
+   * maximum number of children to retrieve can be passed
    * 
    * @param maxItems
    *    max. number of items to return

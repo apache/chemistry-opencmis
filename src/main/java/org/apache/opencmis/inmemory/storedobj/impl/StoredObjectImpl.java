@@ -54,100 +54,102 @@ public class StoredObjectImpl implements StoredObject {
   protected GregorianCalendar fModifiedAt;
   protected String fRepositoryId;
   protected Map<String, PropertyData<?>> fProperties;
+  protected ObjectStoreImpl fObjStore;
   
-  StoredObjectImpl() {  // visibility should be package    
+  StoredObjectImpl(ObjectStoreImpl objStore) {  // visibility should be package    
     GregorianCalendar now = getNow();
     now.setTime(new Date());
     fCreatedAt = now;
     fModifiedAt = now;
+    fObjStore = objStore;
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#getId()
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#getId()
    */
   public String getId() {
     return fId;
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#getName()
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#getName()
    */
   public String getName() {
     return fName;
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#setName(java.lang.String)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#setName(java.lang.String)
    */
   public void setName(String name) {
     fName = name;
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#getTypeId()
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#getTypeId()
    */
   public String getTypeId() {
     return fTypeId;
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#setTypeId(java.lang.String)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#setTypeId(java.lang.String)
    */
   public void setTypeId(String type) {
     fTypeId = type;
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#getCreatedBy()
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#getCreatedBy()
    */
   public String getCreatedBy() {
     return fCreatedBy;
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#setCreatedBy(java.lang.String)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#setCreatedBy(java.lang.String)
    */
   public void setCreatedBy(String createdBy) {
     this.fCreatedBy = createdBy;
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#getModifiedBy()
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#getModifiedBy()
    */
   public String getModifiedBy() {
     return fModifiedBy;
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#setModifiedBy(java.lang.String)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#setModifiedBy(java.lang.String)
    */
   public void setModifiedBy(String modifiedBy) {
     this.fModifiedBy = modifiedBy;
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#getCreatedAt()
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#getCreatedAt()
    */
   public GregorianCalendar getCreatedAt() {
     return fCreatedAt;
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#setCreatedAt(java.util.GregorianCalendar)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#setCreatedAt(java.util.GregorianCalendar)
    */
   public void setCreatedAt(GregorianCalendar createdAt) {
     this.fCreatedAt = createdAt;
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#getModifiedAt()
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#getModifiedAt()
    */
   public GregorianCalendar getModifiedAt() {
     return fModifiedAt;
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#setModifiedAtNow()
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#setModifiedAtNow()
    */
   public void setModifiedAtNow() {
     this.fModifiedAt = getNow();
@@ -162,20 +164,20 @@ public class StoredObjectImpl implements StoredObject {
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#setProperties(java.util.Map)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#setProperties(java.util.Map)
    */
   public void setProperties(Map<String, PropertyData<?>> props) {
     fProperties = props;
   }
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#getProperties()
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#getProperties()
    */
   public Map<String, PropertyData<?>> getProperties() {
     return fProperties;
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.storedobj.api.StoredObject#getChangeToken()
+   * @see org.opencmis.client.provider.spi.inmemory.storedobj.api.StoredObject#getChangeToken()
    */
   public String getChangeToken() {
     GregorianCalendar lastModified = getModifiedAt();
@@ -189,7 +191,7 @@ public class StoredObjectImpl implements StoredObject {
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#createSystemBasePropertiesWhenCreated(java.util.Map, java.lang.String)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#createSystemBasePropertiesWhenCreated(java.util.Map, java.lang.String)
    */
   public void createSystemBasePropertiesWhenCreated(
       Map<String, PropertyData<?>> properties,
@@ -198,7 +200,7 @@ public class StoredObjectImpl implements StoredObject {
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#updateSystemBasePropertiesWhenModified(java.util.Map, java.lang.String)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#updateSystemBasePropertiesWhenModified(java.util.Map, java.lang.String)
    */
   public void updateSystemBasePropertiesWhenModified(
       Map<String, PropertyData<?>> properties,
@@ -207,45 +209,45 @@ public class StoredObjectImpl implements StoredObject {
   }
 
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#fillProperties(java.util.List, org.apache.opencmis.client.provider.ProviderObjectFactory, java.util.List)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#fillProperties(java.util.List, org.opencmis.client.provider.ProviderObjectFactory, java.util.List)
    */
-  public void fillProperties(List<PropertyData<?>> properties,
+  public void fillProperties(Map<String, PropertyData<?>> properties,
       ProviderObjectFactory objFactory, List<String> requestedIds) {
     
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_NAME, requestedIds)) {
-      properties.add(objFactory.createPropertyStringData(PropertyIds.CMIS_NAME, getName()));
+      properties.put(PropertyIds.CMIS_NAME, objFactory.createPropertyStringData(PropertyIds.CMIS_NAME, getName()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_OBJECT_ID, requestedIds)) {
-      properties.add(objFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_ID, getId()));
+      properties.put(PropertyIds.CMIS_OBJECT_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_ID, getId()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_OBJECT_TYPE_ID, requestedIds)) {
-      properties.add(objFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, getTypeId()));
+      properties.put(PropertyIds.CMIS_OBJECT_TYPE_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, getTypeId()));
     }
     // set the base type id outside becaus it requires the type definition
 //    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_BASE_TYPE_ID, requestedIds)) {
 //      properties.add(objFactory.createPropertyIdData(PropertyIds.CMIS_BASE_TYPE_ID, getBaseTypeId()));
 //    }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CREATED_BY, requestedIds)) {
-      properties.add(objFactory.createPropertyStringData(PropertyIds.CMIS_CREATED_BY, getCreatedBy()));
+      properties.put(PropertyIds.CMIS_CREATED_BY, objFactory.createPropertyStringData(PropertyIds.CMIS_CREATED_BY, getCreatedBy()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CREATION_DATE, requestedIds)) {
-      properties.add(objFactory.createPropertyDateTimeData(PropertyIds.CMIS_CREATION_DATE, getCreatedAt()));
+      properties.put(PropertyIds.CMIS_CREATION_DATE, objFactory.createPropertyDateTimeData(PropertyIds.CMIS_CREATION_DATE, getCreatedAt()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_LAST_MODIFIED_BY, requestedIds)) {
-      properties.add(objFactory.createPropertyStringData(PropertyIds.CMIS_LAST_MODIFIED_BY, getModifiedBy()));
+      properties.put(PropertyIds.CMIS_LAST_MODIFIED_BY, objFactory.createPropertyStringData(PropertyIds.CMIS_LAST_MODIFIED_BY, getModifiedBy()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_LAST_MODIFICATION_DATE, requestedIds)) {
-      properties.add(objFactory.createPropertyDateTimeData(PropertyIds.CMIS_LAST_MODIFICATION_DATE, getModifiedAt()));
+      properties.put(PropertyIds.CMIS_LAST_MODIFICATION_DATE, objFactory.createPropertyDateTimeData(PropertyIds.CMIS_LAST_MODIFICATION_DATE, getModifiedAt()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CHANGE_TOKEN, requestedIds)) {
       String token = getChangeToken();
-      properties.add(objFactory.createPropertyStringData(PropertyIds.CMIS_CHANGE_TOKEN, token));
+      properties.put(PropertyIds.CMIS_CHANGE_TOKEN, objFactory.createPropertyStringData(PropertyIds.CMIS_CHANGE_TOKEN, token));
     }
 
     // add custom properties of type definition to the collection
     if (null != fProperties) {
       for (Entry<String, PropertyData<?>> prop: fProperties.entrySet()) {
-        properties.add(prop.getValue());      
+        properties.put(prop.getKey(), prop.getValue());      
       }
     }
   }
@@ -255,7 +257,7 @@ public class StoredObjectImpl implements StoredObject {
   // private helper methods
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IStoredObject#setCustomProperties(java.util.Map)
+   * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#setCustomProperties(java.util.Map)
    */
   public void setCustomProperties(Map<String, PropertyData<?>> properties) {
     properties = new HashMap<String, PropertyData<?>>(properties); // get a writable collection
@@ -407,6 +409,8 @@ public class StoredObjectImpl implements StoredObject {
 public void persist() {
   // in-memory implementation does not need to to anything to persist,
   // but after this call the id should be set.
+  fId = fObjStore.storeObject(this);
+
 }
 
 

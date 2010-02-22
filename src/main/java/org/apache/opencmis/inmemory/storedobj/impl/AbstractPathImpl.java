@@ -40,20 +40,15 @@ public abstract class AbstractPathImpl extends StoredObjectImpl implements
     Path {
 
   protected FolderImpl fParent;
-  protected ObjectStoreImpl fObjStore;
 
   protected AbstractPathImpl(ObjectStoreImpl objStore) {
-    fObjStore = objStore;
+    super(objStore);
   }
-  
-  public String getId() {
-    return getPath();
-  }
-  
+    
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.spi.inmemory.StoredObjectWithPath#getPath()
+   * @see org.opencmis.client.provider.spi.inmemory.StoredObjectWithPath#getPath()
    */
   public String getPath() {
     StringBuffer path= new StringBuffer(getName());
@@ -76,14 +71,14 @@ public abstract class AbstractPathImpl extends StoredObjectImpl implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.spi.inmemory.StoredObjectWithPath#getParent()
+   * @see org.opencmis.client.provider.spi.inmemory.StoredObjectWithPath#getParent()
    */
   public Folder getParent() {
     return fParent;
   }
   
   /* (non-Javadoc)
-   * @see org.apache.opencmis.client.provider.spi.inmemory.storedobj.api.StoredObjectWithPath#setParent(org.apache.opencmis.client.provider.spi.inmemory.storedobj.api.Folder)
+   * @see org.opencmis.client.provider.spi.inmemory.storedobj.api.StoredObjectWithPath#setParent(org.opencmis.client.provider.spi.inmemory.storedobj.api.Folder)
    */
   public void setParent(Folder parent) {
     fParent = (FolderImpl) parent;
@@ -98,16 +93,16 @@ public abstract class AbstractPathImpl extends StoredObjectImpl implements
       throw new IllegalArgumentException("Cannot rename object to " + newName
           + ". This path already exists.");
 
-    String oldPath = getPath(); 
+//    String oldPath = getPath(); 
     setName(newName);
-    String newPath = getPath();
-    fObjStore.changePath(this, oldPath, newPath);    
+//    String newPath = getPath();
+//    fObjStore.changePath(this, oldPath, newPath);    
   }
   
   public void move(Folder newParent) {
     // we delegate this to the folder class because we need access to the global map to move
     if (this instanceof Document || this instanceof VersionedDocument)
-      fParent.moveChildDocument((Document) this, newParent);    
+      fParent.moveChildDocument(this, newParent);    
     else {// it must be a folder
       if (getParent() == null)
         throw new IllegalArgumentException("Root folder cannot be moved.");
@@ -117,11 +112,11 @@ public abstract class AbstractPathImpl extends StoredObjectImpl implements
         throw new IllegalArgumentException(
             "Cannot move folder, this name already exists in target.");
 
-      String oldPath = getPath(); // old path
+//      String oldPath = getPath(); // old path
       setParent(newParent);
-      String newPath = getPath(); // new path
+//      String newPath = getPath(); // new path
 
-      fObjStore.renameAllIdsWithPrefix(oldPath, newPath);
+//      fObjStore.renameAllIdsWithPrefix(oldPath, newPath);
 //      fId = newPath;
     }
 //    fId = getPath(); // as we use path the id will change

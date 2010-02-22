@@ -45,7 +45,7 @@ public class InMemoryRepositoryService implements CmisRepositoryService {
       ExtensionsData extension) {
     
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
     
     return fRepositoryService.getRepositoryInfo(repositoryId, extension);
   }
@@ -53,7 +53,7 @@ public class InMemoryRepositoryService implements CmisRepositoryService {
   public List<RepositoryInfoData> getRepositoryInfos(CallContext context, ExtensionsData extension) {
     
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fRepositoryService.getRepositoryInfos(extension);
   }
@@ -63,7 +63,7 @@ public class InMemoryRepositoryService implements CmisRepositoryService {
       ExtensionsData extension) {
     
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fRepositoryService.getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems, skipCount, extension);
   }
@@ -72,7 +72,7 @@ public class InMemoryRepositoryService implements CmisRepositoryService {
       String typeId, ExtensionsData extension) {
     
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fRepositoryService.getTypeDefinition(repositoryId, typeId, extension);
   }
@@ -81,7 +81,7 @@ public class InMemoryRepositoryService implements CmisRepositoryService {
       String typeId, BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
     
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new CallContextConfigReader(context));
+    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
     return fRepositoryService.getTypeDescendants(repositoryId, typeId, depth, includePropertyDefinitions, extension);
   }

@@ -203,7 +203,7 @@ public interface StoredObject {
    */
   void updateSystemBasePropertiesWhenModified(Map<String, PropertyData<?>> properties, String user);
 
-  void fillProperties(List<PropertyData<?>> properties, ProviderObjectFactory objFactory,
+  void fillProperties(Map<String, PropertyData<?>> properties, ProviderObjectFactory objFactory,
       List<String> requestedIds);
 
   /**

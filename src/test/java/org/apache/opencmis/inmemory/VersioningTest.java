@@ -30,8 +30,6 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.SessionParameter;
@@ -63,10 +61,12 @@ import org.apache.opencmis.commons.provider.VersioningService;
 import org.apache.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo;
 import org.apache.opencmis.inmemory.server.RuntimeContext;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
-import org.apache.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.opencmis.server.spi.CallContext;
+import org.junit.After;
+import org.junit.Before;
 
-public class VersioningTest extends TestCase {
+public class VersioningTest extends AbstractServiceTst {
   private static Log log = LogFactory.getLog(ObjectServiceTest.class);
   private static final String REPOSITORY_ID = "UnitTestRepository";
   private static final String PROP_VALUE = "Mickey Mouse";
@@ -117,12 +117,11 @@ public class VersioningTest extends TestCase {
   }
 
   private void setRuntimeContext(String user) {
-    Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put(ConfigConstants.USERNAME, user);
+    DummyCallContext ctx = new DummyCallContext();
+    ctx.put(CallContext.USERNAME, user);
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
-    ConfigMap cfgReader = new MapConfigReader(parameters);  
-    RuntimeContext.getRuntimeConfig().attachCfg(cfgReader); 
+    RuntimeContext.getRuntimeConfig().attachCfg(ctx); 
   }
     
   public void testCreateVersionedDocumentMinor() {
@@ -441,6 +440,13 @@ public class VersioningTest extends TestCase {
     assertEquals(2, checkedOutDocuments.getObjects().size());
   }
   
+  public void testModifyOldVersions() {
+    String versionSeriesId = createVersionSeriesWithThreeVersions();
+    List<ObjectData> allVersions = fVerSvc.getAllVersions(fRepositoryId, versionSeriesId, "*", false, null);
+    assertEquals(3, allVersions.size());
+
+  }
+  
   private String[] createLevel1Folders() {
     ObjectService objSvc = fProvider.getObjectService();
     final int num = 2;
@@ -551,7 +557,7 @@ public class VersioningTest extends TestCase {
     
   }
 
-  private String getDocument(String id) {
+  public String getDocument(String id) {
     String returnedId=null;
     try {
       ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE,
@@ -591,6 +597,62 @@ public class VersioningTest extends TestCase {
     return id;
   }
     
+  private String createVersionSeriesWithThreeVersions() {
+    String verIdV1 = createDocument(PROP_NAME, fRootFolderId, VersioningState.MAJOR);
+    getDocument(verIdV1);
+    
+    ObjectData version = fObjSvc.getObject(fRepositoryId, verIdV1, "*", false, IncludeRelationships.NONE, null, false, false, null);
+    String verSeriesId = getVersionSeriesId(verIdV1, version.getProperties().getProperties());
+
+    // create second version with different content
+    Holder<String>idHolder = new Holder<String>(verIdV1);    
+    Holder<Boolean>contentCopied = new Holder<Boolean>(false);    
+    fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
+
+    ContentStreamData content2 = createContent('a');
+    PropertiesData newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, "PropertyFromVersion2");    
+    idHolder = new Holder<String>(verIdV1);    
+    // Test check-in and pass content and properties
+    String checkinComment = "Checkin from Unit Test-2.";
+    fVerSvc.checkIn(fRepositoryId, idHolder, true, newProps, content2, checkinComment, null, null, null,
+        null);
+    String verIdV2 = idHolder.getValue();
+
+    // create third version with different content
+    contentCopied = new Holder<Boolean>(false);    
+    fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
+    ContentStreamData content3 = super.createContent('a');
+    newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, "PropertyFromVersion3");    
+     // Test check-in and pass content and properties
+    checkinComment = "Checkin from Unit Test-3.";
+    fVerSvc.checkIn(fRepositoryId, idHolder, true, newProps, content3, checkinComment, null, null, null,
+        null);
+    String verIdV3 = idHolder.getValue();
+    
+    // Try to update version2 which should fail (on a versioned document only a document that
+    // is checked out can be modified.
+    try {      
+      fCreator.updateProperty(verIdV2, VersionTestTypeSystemCreator.PROPERTY_ID, "ChangeWithoutCheckout");
+      fail("updateProperty for an older version should fail.");
+    } catch (Exception e) {
+      assertTrue(e instanceof CmisUpdateConflictException);
+    }
+    // try to set content on an older version
+    ContentStreamData content4 = super.createContent('x');
+    idHolder = new Holder<String>(verIdV2);
+    try {      
+      fObjSvc.setContentStream(fRepositoryId, idHolder, true, null, content4, null);
+      fail("setContentStream for an older version should fail.");
+    } catch (Exception e) {
+      assertTrue(e instanceof CmisUpdateConflictException);
+    }
+
+   
+
+    return verSeriesId;
+  }
+  
+  
   public static class VersionTestTypeSystemCreator implements TypeCreator {
     static public String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
     static public String PROPERTY_ID = "StringProp";

@@ -20,6 +20,7 @@ package org.apache.opencmis.inmemory.storedobj.impl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,17 +50,20 @@ public class DocumentImpl extends AbstractPathImpl implements Document{
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.spi.inmemory.IDocument#getContent()
+   * @see org.opencmis.client.provider.spi.inmemory.IDocument#getContent()
    */
-  public ContentStreamData getContent() {
-    return fContent;
+  public ContentStreamData getContent(long offset, long length) {
+    if (offset<=0 && length<0)
+      return fContent;
+    else
+      return fContent.getCloneWithLimits(offset, length);
   }
 
   /*
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.spi.inmemory.IDocument#setContent(org.apache.opencmis.client.provider
+   * org.opencmis.client.provider.spi.inmemory.IDocument#setContent(org.opencmis.client.provider
    * .ContentStreamData)
    */
   public void setContent(ContentStreamData content, boolean mustPersist) {
@@ -80,12 +84,7 @@ public class DocumentImpl extends AbstractPathImpl implements Document{
     }
   }
 
-  public void persist() {
-    // The in-memory provider doesn't have to do anything here, but sets the id
-    fId = getPath();
-  }
-
-  public void fillProperties(List<PropertyData<?>> properties, ProviderObjectFactory objFactory,
+  public void fillProperties(Map<String, PropertyData<?>> properties, ProviderObjectFactory objFactory,
       List<String> requestedIds) {
 
     super.fillProperties(properties, objFactory, requestedIds);
@@ -93,29 +92,29 @@ public class DocumentImpl extends AbstractPathImpl implements Document{
     // fill the version related properties (versions should override this but the spec requires some
     // properties always to be set
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_LATEST_VERSION, requestedIds)) {
-      properties.add(objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_VERSION, true));
+      properties.put(PropertyIds.CMIS_IS_LATEST_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_VERSION, true));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_MAJOR_VERSION, requestedIds)) {
-      properties.add(objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_MAJOR_VERSION, true));
+      properties.put(PropertyIds.CMIS_IS_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_MAJOR_VERSION, true));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, requestedIds)) {
-      properties.add(objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, true));
+      properties.put(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, true));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_ID, requestedIds)) {
       // return id of document itself
-      properties.add(objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_ID, getId()));
+      properties.put(PropertyIds.CMIS_VERSION_SERIES_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_ID, getId()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
-      properties.add(objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, false));
+      properties.put(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, false));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, requestedIds)) {
-      properties.add(objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, (String)null));
+      properties.put(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, (String)null));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, requestedIds)) {
-      properties.add(objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, (String)null));
+      properties.put(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, (String)null));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CHECKIN_COMMENT, requestedIds)) {
-      properties.add(objFactory.createPropertyStringData(PropertyIds.CMIS_CHECKIN_COMMENT, (String)null));
+      properties.put(PropertyIds.CMIS_CHECKIN_COMMENT, objFactory.createPropertyStringData(PropertyIds.CMIS_CHECKIN_COMMENT, (String)null));
     }
     
     // optional:
