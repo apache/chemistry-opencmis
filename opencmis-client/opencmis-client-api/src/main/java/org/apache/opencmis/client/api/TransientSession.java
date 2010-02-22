@@ -18,6 +18,9 @@
  */
 package org.apache.opencmis.client.api;
 
+/**
+ * A transient session buffers all write operations in memory until the save operation is called.
+ */
 public interface TransientSession extends Session {
   /**
    * Save all pending actions for this session. Corresponds to a <code>commit</code> if the CMIS

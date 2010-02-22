@@ -26,148 +26,163 @@ import org.apache.opencmis.client.api.repository.PropertyFactory;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.api.util.PagingList;
 
+/**
+ * A session is associated with a specific connection to a CMIS repository. A
+ * session belongs to one authenticated user and
+ */
 public interface Session {
 
-  /**
-   * Clear all cached data. This implies that all data will be reloaded from the repository
-   * (depending on the implementation, reloading might be done immediately or be deferred).
-   */
-  void clear();
+	/**
+	 * Clear all cached data. This implies that all data will be reloaded from
+	 * the repository (depending on the implementation, reloading might be done
+	 * immediately or be deferred).
+	 */
+	void clear();
 
-  // session context
+	// session context
 
-  /**
-   * Get the current session parameters for filtering and paging.
-   */
-  SessionContext getContext();
+	/**
+	 * Get the current session parameters for filtering and paging.
+	 */
+	SessionContext getContext();
 
-  /**
-   * Set the current session parameters for filtering and paging.
-   * 
-   * @param context
-   *          the <code>SessionContext</code> to be used for the session; if <code>null</code>, a
-   *          default context is used
-   * @return the old <code>SessionContext</code> used before <code>setContext</code> was called
-   */
-  SessionContext setContext(SessionContext context);
+	/**
+	 * Set the current session parameters for filtering and paging.
+	 * 
+	 * @param context
+	 *            the <code>SessionContext</code> to be used for the session; if
+	 *            <code>null</code>, a default context is used
+	 * @return the old <code>SessionContext</code> used before
+	 *         <code>setContext</code> was called
+	 */
+	SessionContext setContext(SessionContext context);
 
-  // localization
+	// localization
 
-  /**
-   * Get the current locale to be used for this sesion.
-   */
-  Locale getLocale();
+	/**
+	 * Get the current locale to be used for this session.
+	 */
+	Locale getLocale();
 
-  // extensions
+	// extensions
 
-  // TODO : clarify extension handling
+	// TODO : clarify extension handling
 
-  /*
-   * basic idea is: Application does something like startup: session.setExtensionHandler('action',
-   * handler); performing an action: session.set('action'); ... do some operations on the session
-   * ... --> handler.handleExtension('action') is called by runtime
-   */
+	/*
+	 * basic idea is: Application does something like startup:
+	 * session.setExtensionHandler('action', handler); performing an action:
+	 * session.set('action'); ... do some operations on the session ... -->
+	 * handler.handleExtension('action') is called by runtime
+	 */
 
-  /**
-   * Get an ID representing an 'extension context' (an action or something)?
-   */
-  String getExtensionContext();
+	/**
+	 * Get an ID representing an 'extension context' (an action or something)?
+	 */
+	String getExtensionContext();
 
-  /**
-   * Set an ID representing an 'extension context' (an action or something)? (null = default/no
-   * context)
-   * 
-   * @param context
-   * @return
-   */
-  String setExtensionContext(String context);
+	/**
+	 * Set an ID representing an 'extension context' (an action or something)?
+	 * (null = default/no context)
+	 * 
+	 * @param context
+	 * @return
+	 */
+	String setExtensionContext(String context);
 
-  /**
-   * Get the <code>ExtensionHandler</code> for a given 'extension context'. (null = default)
-   * 
-   * @param context
-   * @return
-   */
-  ExtensionHandler getExtensionHandler(String context);
+	/**
+	 * Get the <code>ExtensionHandler</code> for a given 'extension context'.
+	 * (null = default)
+	 * 
+	 * @param context
+	 * @return
+	 */
+	ExtensionHandler getExtensionHandler(String context);
 
-  /**
-   * Set the <code>ExtensionHandler</code> for a given 'extension context'. (null = default)
-   * 
-   * @param context
-   * @param extensionHandler
-   * @return
-   */
-  ExtensionHandler setExtensionHandler(String context, ExtensionHandler extensionHandler);
+	/**
+	 * Set the <code>ExtensionHandler</code> for a given 'extension context'.
+	 * (null = default)
+	 * 
+	 * @param context
+	 * @param extensionHandler
+	 * @return
+	 */
+	ExtensionHandler setExtensionHandler(String context,
+			ExtensionHandler extensionHandler);
 
-  // services
+	// services
 
-  /**
-   * Repository service <code>getRepositoryInfo()</code>.
-   */
-  RepositoryInfo getRepositoryInfo();
+	/**
+	 * Repository service <code>getRepositoryInfo()</code>.
+	 */
+	RepositoryInfo getRepositoryInfo();
 
-  /**
-   * Access to the object services <code>create</code><i>...</i>, plus factory methods to create
-   * <code>Acl</code>s, <code>Ace</code>s, and <code>ContentStream</code>.
-   */
-  ObjectFactory getObjectFactory();
+	/**
+	 * Access to the object services <code>create</code><i>...</i>, plus factory
+	 * methods to create <code>Acl</code>s, <code>Ace</code>s, and
+	 * <code>ContentStream</code>.
+	 */
+	ObjectFactory getObjectFactory();
 
-  /**
-   * Get the factory for <code>Property</code> objects.
-   */
-  PropertyFactory getPropertyFactory();
+	/**
+	 * Get the factory for <code>Property</code> objects.
+	 */
+	PropertyFactory getPropertyFactory();
 
-  ObjectType getTypeDefinition(String typeId);
+	ObjectType getTypeDefinition(String typeId);
 
-  PagingList<ObjectType> getTypeChildren(ObjectType t, boolean includePropertyDefinitions, int itemsPerPage);
+	PagingList<ObjectType> getTypeChildren(ObjectType t,
+			boolean includePropertyDefinitions, int itemsPerPage);
 
-  PagingList<ObjectType> getTypeDescendants(ObjectType t, int depth, boolean includePropertyDefinitions, int itemsPerPage);
+	PagingList<ObjectType> getTypeDescendants(ObjectType t, int depth,
+			boolean includePropertyDefinitions, int itemsPerPage);
 
-  // navigation
+	// navigation
 
-  /**
-   * Get the root folder for the repository.
-   */
-  Folder getRootFolder();
+	/**
+	 * Get the root folder for the repository.
+	 */
+	Folder getRootFolder();
 
-  /**
-   * Navigation service <code>getCheckedOutDocs</code>.
-   * 
-   * @param folder
-   * @param orderby
-   * @return @
-   */
-  PagingList<Document> getCheckedOutDocs(Folder folder, String orderby, int itemsPerPage);
+	/**
+	 * Navigation service <code>getCheckedOutDocs</code>.
+	 * 
+	 * @param folder
+	 * @param orderby
+	 * @return @
+	 */
+	PagingList<Document> getCheckedOutDocs(Folder folder, String orderby,
+			int itemsPerPage);
 
-  /**
-   * Object service <code>getObject</code>.
-   * 
-   * @param objectid
-   * @return @
-   */
-  CmisObject getObject(String objectid);
+	/**
+	 * Object service <code>getObject</code>.
+	 * 
+	 * @param objectid
+	 * @return @
+	 */
+	CmisObject getObject(String objectid);
 
-  /**
-   * Object service <code>getObjectByPath</code>.
-   * 
-   * @param path
-   * @return @
-   */
-  CmisObject getObjectByPath(String path);
+	/**
+	 * Object service <code>getObjectByPath</code>.
+	 * 
+	 * @param path
+	 * @return @
+	 */
+	CmisObject getObjectByPath(String path);
 
-  // discovery
+	// discovery
 
-  /**
-   * Discovery service <code>query</code>.
-   */
-  PagingList<CmisObject> query(String statement, boolean searchAllVersions, int itemsPerPage);
+	/**
+	 * Discovery service <code>query</code>.
+	 */
+	PagingList<CmisObject> query(String statement, boolean searchAllVersions,
+			int itemsPerPage);
 
-  /**
-   * Discovery service <code>getContentChanges</code>.
-   * 
-   * @return
-   */
-  PagingList<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage);
-
+	/**
+	 * Discovery service <code>getContentChanges</code>.
+	 * 
+	 * @return
+	 */
+	PagingList<ChangeEvent> getContentChanges(String changeLogToken,
+			int itemsPerPage);
 
 }

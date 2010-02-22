@@ -47,24 +47,24 @@ import java.util.Map;
  * <br>parameters.put(SessionParameter.SESSION_TYPE, SessionType.TRANSIENT.value());
  * <br> ...
  * <br>
- * <br>TrasnientSession s = factory.createSession(parameters);
+ * <br>TransientSession s = factory.createSession(parameters);
  * </code>
  *<p>
  * If the <code>SessionType</code> parameter is not specified then the default
- * session is returned.
+ * persistent session is returned.
  * 
  */
 public interface SessionFactory {
 
 	/**
-	 * Obtain a new session.
+	 * Obtain a new session using parameter configuration.
 	 * 
+	 * @param T A from the {@code Session} interface derived sub type 
 	 * @param parameters
 	 *            a {@code Map} of name/value pairs with parameters for the
-	 *            session.
+	 *            session. See class {@code SessionParameter}.
 	 * @return a {@code session} to the CMIS repository specified by the {@code
-	 *         parameters}.
+	 *         parameters}. 
 	 */
 	<T extends Session> T createSession(Map<String, String> parameters);
-
 }

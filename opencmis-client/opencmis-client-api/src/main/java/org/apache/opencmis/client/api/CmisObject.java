@@ -27,6 +27,7 @@ import org.apache.opencmis.client.api.util.AceList;
 import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.RelationshipDirection;
+import org.apache.opencmis.commons.enums.UnfileObjects;
 
 /**
  * Base CMIS object.
@@ -139,7 +140,7 @@ public interface CmisObject {
 
   CmisObject move(Folder targetfolder);
 
-  void delete();
+  void delete(boolean allVersions);
 
   void updateProperties(List<Property<?>> properties);
 

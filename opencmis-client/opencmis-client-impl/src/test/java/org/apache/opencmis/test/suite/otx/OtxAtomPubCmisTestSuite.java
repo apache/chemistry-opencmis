@@ -19,25 +19,26 @@
 package org.apache.opencmis.test.suite.otx;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
+import org.apache.opencmis.client.runtime.SessionFactoryImpl;
+import org.apache.opencmis.commons.SessionParameter;
+import org.apache.opencmis.commons.enums.SessionType;
+import org.apache.opencmis.test.Fixture;
+import org.apache.opencmis.test.ReadOnlyCreateSessionTest;
+import org.apache.opencmis.test.ReadOnlySessionTest;
+import org.apache.opencmis.test.suite.AbstractCmisTestSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
-import org.apache.opencmis.test.Fixture;
-import org.apache.opencmis.test.ReadOnlyAclCapabilityTest;
-import org.apache.opencmis.test.ReadOnlyCreateSessionTest;
-import org.apache.opencmis.test.ReadOnlyObjectTest;
-import org.apache.opencmis.test.ReadOnlyRepositoryInfoTest;
-import org.apache.opencmis.test.suite.AbstractCmisTestSuite;
 
 /**
  * Test suite to run OTX AtomPub binding.
  */
 @RunWith(OtxAtomPubCmisTestSuite.class)
-@SuiteClasses( { ReadOnlyCreateSessionTest.class, ReadOnlyRepositoryInfoTest.class,
-    ReadOnlyObjectTest.class, ReadOnlyAclCapabilityTest.class })
+@SuiteClasses( { ReadOnlyCreateSessionTest.class, ReadOnlySessionTest.class })
 public class OtxAtomPubCmisTestSuite extends AbstractCmisTestSuite {
 
   public OtxAtomPubCmisTestSuite(Class<?> klass, RunnerBuilder r) throws InitializationError {
@@ -47,15 +48,30 @@ public class OtxAtomPubCmisTestSuite extends AbstractCmisTestSuite {
   @Override
   protected void initializeFixture() {
     Map<String, String> parameter = new HashMap<String, String>();
-    // parameter.put(Session.URL, "http://pwdf6227:8080/cmis/atom");
-    // parameter.put(Session.USER, "test");
-    // parameter.put(Session.PASSWORD, "test");
-    // parameter.put(Session.BINDING, "atompub");
-    // parameter.put(Session.PROVIDER, "otx");
-    // parameter.put(Session.REPOSITORY_ID, "myRepository");
 
+    parameter.put(SessionParameter.USER, "admin");
+    parameter.put(SessionParameter.PASSWORD, "livelink");
+    parameter.put(SessionParameter.SESSION_TYPE, SessionType.PERSISTENT.value());
+    parameter.put(SessionParameter.LOCALE_ISO3166_COUNTRY, Locale.GERMANY.getISO3Country());
+    parameter.put(SessionParameter.LOCALE_ISO639_LANGUAGE, Locale.GERMANY.getISO3Language());
+    parameter.put(SessionParameter.ATOMPUB_URL, "http://pwdf6227:8080/cmis/atom");
+//    parameter.put(SessionParameter.WEBSERVICE_URL_PREFIX, "http://pwdf6227:8080/cmis/services");
+    
+    Fixture.DOCUMENT_TYPE_ID = "sap.doc";
+    Fixture.FOLDER_TYPE_ID = "sap.folder";
+    
+//    -Dopencmis.test=true
+//    -Dopencmis.test.username=admin
+//    -Dopencmis.test.password=livelink
+//    -Dopencmis.test.repository=testApp
+//    -Dopencmis.test.testfolder=default/F34485
+//    -Dopencmis.test.documenttype=sap.doc
+//    -Dopencmis.test.foldertype=sap.folder
+//    -Dopencmis.test.webservices.url=http://pwdf6227:8080/cmis/services/
+//    -Dopencmis.test.atompub.url=http://pwdf6227:8080/cmis/atom
+    
     Fixture.setParamter(parameter);
-    Fixture.setSessionFactory(null);
+    Fixture.setSessionFactory(new SessionFactoryImpl());
   }
 
 }
