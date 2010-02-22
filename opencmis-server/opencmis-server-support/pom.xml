@@ -27,6 +27,7 @@
       <groupId>org.opencmis</groupId>
       <artifactId>opencmis-server-impl</artifactId>
       <version>${version}</version>
+      <type>war</type>
     </dependency>
   </dependencies>
 
