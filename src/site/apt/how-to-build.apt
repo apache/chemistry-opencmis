@@ -17,9 +17,9 @@ How to build OpenCMIS
   
   []
   
-+---------------+
-mvn clean install
-+---------------+
++--------------------------------------+
+mvn clean install -Dmaven.test.skip=true
++--------------------------------------+
 
 
 * Build the Client Libraries
