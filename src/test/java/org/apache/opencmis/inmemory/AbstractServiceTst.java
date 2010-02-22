@@ -32,6 +32,7 @@ import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.commons.provider.RepositoryService;
+import org.apache.opencmis.commons.provider.VersioningService;
 import org.apache.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo;
 import org.apache.opencmis.inmemory.server.RuntimeContext;
 import org.apache.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
@@ -45,6 +46,7 @@ public class AbstractServiceTst  extends TestCase {
   protected ObjectService fObjSvc;
   protected NavigationService fNavSvc;
   protected RepositoryService fRepSvc;
+  protected VersioningService fVerSvc;
   private boolean fUseClientProviderInterface;
   
   public AbstractServiceTst() {
@@ -310,6 +312,7 @@ public class AbstractServiceTst  extends TestCase {
     fRepSvc = inMemSpi.getRepositoryService();
     fObjSvc = inMemSpi.getObjectService();
     fNavSvc = inMemSpi.getNavigationService();    
+    fVerSvc = inMemSpi.getVersioningService();
   }
   
   /**
@@ -328,6 +331,7 @@ public class AbstractServiceTst  extends TestCase {
     fRepSvc = provider.getRepositoryService();
     fObjSvc = provider.getObjectService();
     fNavSvc = provider.getNavigationService();
+    fVerSvc = provider.getVersioningService();
   }
   
 }

@@ -26,13 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.commons.PropertyIds;
-import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.api.TypeDefinition;
@@ -40,25 +36,18 @@ import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
-import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.ContentStreamData;
 import org.apache.opencmis.commons.provider.Holder;
-import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectList;
-import org.apache.opencmis.commons.provider.ObjectService;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyBooleanData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.PropertyIdData;
 import org.apache.opencmis.commons.provider.PropertyStringData;
-import org.apache.opencmis.commons.provider.ProviderObjectFactory;
-import org.apache.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.opencmis.commons.provider.RepositoryService;
-import org.apache.opencmis.commons.provider.VersioningService;
-import org.apache.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo;
 import org.apache.opencmis.inmemory.server.RuntimeContext;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
@@ -68,52 +57,24 @@ import org.junit.Before;
 
 public class VersioningTest extends AbstractServiceTst {
   private static Log log = LogFactory.getLog(ObjectServiceTest.class);
-  private static final String REPOSITORY_ID = "UnitTestRepository";
   private static final String PROP_VALUE = "Mickey Mouse";
   private static final String PROP_VALUE_NEW = "Donald Duck";
   private static final String PROP_NAME = "My Versioned Document";
   private static final String TEST_USER = "TestUser";
   private static final String TEST_USER_2 = "OtherUser";
   
-  private ProviderObjectFactory fFactory;
-  private CmisProvider fProvider;
-  ObjectService fObjSvc;
-  VersioningService fVerSvc;
-  RepositoryService fRepSvc;
-  NavigationService fNavSvc;
-  String fRepositoryId;
-  String fRootFolderId;
   ObjectCreator fCreator;
   
   @Before
-  public void setUp() throws Exception {
-    Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put(SessionParameter.BINDING_SPI_CLASS, CmisProviderFactory.BINDING_SPI_INMEMORY);
-    // attach repository info to the session:
-    parameters
-        .put(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS, UnitTestRepositoryInfo.class.getName());
-
-    parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, VersionTestTypeSystemCreator.class.getName());
-    parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
-  
-    // get factory and create provider
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
-    fProvider = factory.createCmisProvider(parameters);
-    assertNotNull(fProvider);
-    fFactory = fProvider.getObjectFactory();
-    fRepSvc = fProvider.getRepositoryService();
-    RepositoryInfoData rep = fRepSvc.getRepositoryInfo(REPOSITORY_ID, null);
-    fObjSvc = fProvider.getObjectService();
-    fVerSvc = fProvider.getVersioningService();
-    fNavSvc = fProvider.getNavigationService();
-    fRepositoryId = rep.getRepositoryId();
-    fRootFolderId = rep.getRootFolderId();
+  protected void setUp() throws Exception {
+    super.setUp(VersionTestTypeSystemCreator.class.getName());
     fCreator = new ObjectCreator(fFactory, fObjSvc, fRepositoryId);
     setRuntimeContext(TEST_USER);
   }
 
   @After
-  public void tearDown() throws Exception {
+  protected void tearDown() throws Exception {
+    super.tearDown();
   }
 
   private void setRuntimeContext(String user) {
@@ -314,7 +275,9 @@ public class VersioningTest extends AbstractServiceTst {
       fObjSvc.getObject(fRepositoryId, pwcId, "*", false, IncludeRelationships.NONE,
           null, false, false, null);
       fail("Getting pwc after cancel checkout should fail.");
-    } catch (Exception e1) {
+    } catch (CmisObjectNotFoundException e1) {
+    } catch (Exception e2) {
+      fail("Expected a CmisObjectNotFoundException after cancel checkin, but got a " + e2.getClass().getName());
     }
     
     // verify that the old content and properties are still valid
@@ -448,7 +411,6 @@ public class VersioningTest extends AbstractServiceTst {
   }
   
   private String[] createLevel1Folders() {
-    ObjectService objSvc = fProvider.getObjectService();
     final int num = 2;
     String[] res = new String[num];
     
@@ -458,7 +420,7 @@ public class VersioningTest extends AbstractServiceTst {
       properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID,
           BaseObjectTypeIds.CMIS_FOLDER.value()));
       PropertiesData props = fFactory.createPropertiesData(properties);      
-      String id = objSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
+      String id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
       res[i] = id;
     }
     return res;
@@ -627,7 +589,7 @@ public class VersioningTest extends AbstractServiceTst {
     checkinComment = "Checkin from Unit Test-3.";
     fVerSvc.checkIn(fRepositoryId, idHolder, true, newProps, content3, checkinComment, null, null, null,
         null);
-    String verIdV3 = idHolder.getValue();
+    /* String verIdV3 = */ idHolder.getValue();
     
     // Try to update version2 which should fail (on a versioned document only a document that
     // is checked out can be modified.
