@@ -35,7 +35,14 @@ import org.apache.opencmis.commons.provider.ChangeEventInfoData;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.PolicyIdListData;
 import org.apache.opencmis.commons.provider.RenditionData;
+import org.apache.opencmis.inmemory.server.RuntimeContext;
+import org.apache.opencmis.inmemory.storedobj.api.Content;
+import org.apache.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
+import org.apache.opencmis.inmemory.storedobj.api.Version;
+import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.apache.opencmis.server.spi.CallContext;
 
 /**
  * @author Jens A collection of utility functions to fill the data objects used as return values for
@@ -43,37 +50,54 @@ import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
  */
 public class DataObjectCreator {
 
-  public static AllowableActionsData fillAllowableActions(StoredObject so) {
+  public static AllowableActionsData fillAllowableActions(ObjectStore objStore, StoredObject so) {
 
+    boolean isFolder = so instanceof Folder;
+    boolean isDocument = so instanceof Content;
+    boolean isCheckedOut = false; 
+    boolean canCheckOut = false;
+    boolean canCheckIn = false;
+    boolean isVersioned = so instanceof Version || so instanceof VersionedDocument;
+    
+    String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+    if (so instanceof Version) {
+      isCheckedOut = ((Version)so).isPwc();
+      canCheckIn = isCheckedOut && ((Version)so).getParentDocument().getCheckedOutBy().equals(user);
+    } else if (so instanceof VersionedDocument) {
+      isCheckedOut = ((VersionedDocument)so).isCheckedOut();
+      canCheckOut = (so instanceof VersionedDocument) && !((VersionedDocument)so).isCheckedOut();
+      canCheckIn = isCheckedOut && ((VersionedDocument)so).getCheckedOutBy().equals(user);
+    }
+          
     AllowableActionsDataImpl allowableActions = new AllowableActionsDataImpl();
     Map<String, Boolean> actions = new HashMap<String, Boolean>();
     actions.put(AllowableActionsData.ACTION_CAN_DELETE_OBJECT, Boolean.TRUE);
     actions.put(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES, Boolean.TRUE);
     actions.put(AllowableActionsData.ACTION_CAN_GET_PROPERTIES, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS, Boolean.TRUE);
+    actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS, Boolean.FALSE);
+    actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, !so.equals(objStore.getRootFolder()));
+    actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT, !so.equals(objStore.getRootFolder()));
+    actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, isFolder);
+    actions.put(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS, isFolder);
     actions.put(AllowableActionsData.ACTION_CAN_MOVE_OBJECT, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_CHECK_OUT, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_CHECK_IN, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM, Boolean.TRUE);
+    actions.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM, isDocument);
+    actions.put(AllowableActionsData.ACTION_CAN_CHECK_OUT, canCheckOut);
+    actions.put(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT, isCheckedOut);
+    actions.put(AllowableActionsData.ACTION_CAN_CHECK_IN, canCheckIn);
+    actions.put(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM, isVersioned ? canCheckIn: isDocument);
+    actions.put(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS, so instanceof VersionedDocument);
+    actions.put(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER, isFolder);
+    actions.put(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER, isFolder);
+    actions.put(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM, isDocument);
     actions.put(AllowableActionsData.ACTION_CAN_APPLY_POLICY, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_GET_APPLIED_POLICIES, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_REMOVE_POLICY, Boolean.FALSE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_CHILDREN, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, Boolean.TRUE);
+    actions.put(AllowableActionsData.ACTION_CAN_GET_CHILDREN, isFolder);
+    actions.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, isFolder);
+    actions.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, isFolder);
+    actions.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_CREATE_POLICY, Boolean.FALSE);
-    actions.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, Boolean.TRUE);
+    actions.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, isFolder);
     actions.put(AllowableActionsData.ACTION_CAN_GET_RENDITIONS, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_GET_ACL, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_APPLY_ACL, Boolean.FALSE);

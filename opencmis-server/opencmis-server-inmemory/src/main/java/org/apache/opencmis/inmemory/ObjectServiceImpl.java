@@ -438,13 +438,13 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       ExtensionsData extension) {
     log.debug("start getAllowableActions()");
     checkStandardParameters(repositoryId, objectId);
-    ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = folderStore.getObjectById(objectId);
+    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+    StoredObject so = objectStore.getObjectById(objectId);
 
     if (so == null)
       throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
-    AllowableActionsData allowableActions = DataObjectCreator.fillAllowableActions(so);
+    AllowableActionsData allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so);
     log.debug("stop getAllowableActions()");
     return allowableActions;
   }

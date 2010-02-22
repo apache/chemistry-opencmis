@@ -29,12 +29,14 @@ import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.opencmis.commons.impl.dataobjects.ObjectInFolderContainerImpl;
 import org.apache.opencmis.commons.impl.dataobjects.ObjectInFolderDataImpl;
 import org.apache.opencmis.commons.impl.dataobjects.ObjectInFolderListImpl;
 import org.apache.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.opencmis.commons.impl.dataobjects.ObjectParentDataImpl;
+import org.apache.opencmis.commons.provider.AllowableActionsData;
 import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectInFolderContainer;
@@ -250,6 +252,9 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
     StoredObject so = fs.getObjectById(folderId);
     Folder folder = null;
 
+    if (so == null)
+        throw new CmisObjectNotFoundException("Unknown object id: " + folderId);
+
     if (so instanceof Folder)
       folder = (Folder) so;
     else
@@ -266,7 +271,8 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
         if (includePathSegments!=null && includePathSegments)
           oifd.setPathSegment(spo.getName());
         if (includeAllowableActions!=null && includeAllowableActions) {
-          objectData.setAllowableActions(null /*f.getAllowableActions()*/);
+        	AllowableActionsData allowableActions = DataObjectCreator.fillAllowableActions(fs, spo);        	
+          objectData.setAllowableActions(allowableActions);
         }
         if (includeRelationships!=null && includeRelationships != IncludeRelationships.NONE) {
           objectData.setRelationships(null /*f.getRelationships()*/);
