@@ -77,5 +77,5 @@ public final class SessionParameter {
 	public static final String LOCALE_VARIANT = "org.apache.opencmis.locale.variant";
 
 	public static final String SESSION_TYPE = "org.apache.opencmis.session.type";
-	public static final Object REPOSITORY_ID = "org.apache.opencmis.session.repository.id";
+	public static final String REPOSITORY_ID = "org.apache.opencmis.session.repository.id";
 }
