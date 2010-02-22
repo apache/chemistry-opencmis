@@ -55,6 +55,7 @@ import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.inmemory.DataObjectCreator;
 import org.apache.opencmis.inmemory.FilterParser;
 import org.apache.opencmis.inmemory.NameValidator;
+import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 
@@ -245,7 +246,8 @@ public class PropertyCreationHelper {
 
     // fill output object
     if (null != includeAllowableActions && includeAllowableActions) {
-      AllowableActionsData allowableActions = DataObjectCreator.fillAllowableActions(so);
+      ObjectStore objectStore = sm.getObjectStore(so.getRepositoryId());
+      AllowableActionsData allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so);
       od.setAllowableActions(allowableActions);
     }
     if (null != includeACL && includeACL)
