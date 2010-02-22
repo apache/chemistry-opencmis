@@ -26,6 +26,7 @@ import org.apache.opencmis.client.runtime.Fixture;
 import org.apache.opencmis.client.runtime.ReadOnlyCreateSessionTest;
 import org.apache.opencmis.client.runtime.ReadOnlySessionTest;
 import org.apache.opencmis.client.runtime.SessionFactoryImpl;
+import org.apache.opencmis.client.runtime.misc.CacheTest;
 import org.apache.opencmis.client.runtime.suite.AbstractCmisTestSuite;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.enums.BindingType;
@@ -39,7 +40,7 @@ import org.junit.runners.model.RunnerBuilder;
  * Test suite to run OTX AtomPub binding.
  */
 @RunWith(OtxAtomPubCmisTestSuite.class)
-@SuiteClasses( { ReadOnlyCreateSessionTest.class, ReadOnlySessionTest.class })
+@SuiteClasses( { CacheTest.class, ReadOnlyCreateSessionTest.class, ReadOnlySessionTest.class })
 public class OtxAtomPubCmisTestSuite extends AbstractCmisTestSuite {
 
   public OtxAtomPubCmisTestSuite(Class<?> klass, RunnerBuilder r) throws InitializationError {
@@ -57,6 +58,7 @@ public class OtxAtomPubCmisTestSuite extends AbstractCmisTestSuite {
     parameter.put(SessionParameter.LOCALE_ISO639_LANGUAGE, Locale.GERMANY.getISO3Language());
     parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOM.value());
     parameter.put(SessionParameter.ATOMPUB_URL, "http://pwdf6227:8080/cmis/atom");
+    parameter.put(SessionParameter.REPOSITORY_ID, "testApp");
     
     Fixture.DOCUMENT_TYPE_ID = "sap.doc";
     Fixture.FOLDER_TYPE_ID = "sap.folder";

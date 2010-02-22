@@ -53,6 +53,7 @@ import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.ObjectData;
+import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.util.repository.ObjectGenerator;
 
 public class PersistentSessionImpl implements PersistentSession, Testable,
@@ -95,6 +96,12 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	 * Object cache (serializable)
 	 */
 	private Cache cache = null;
+
+	/*
+	 * Lazy loaded repository info
+	 * (serializable)
+	 */
+	private RepositoryInfo repositoryInfo;
 
 	/**
 	 * required for serialization
@@ -212,7 +219,11 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	}
 
 	public RepositoryInfo getRepositoryInfo() {
-		throw new CmisRuntimeException("not implemented");
+		if (this.repositoryInfo == null) {
+			RepositoryInfoData riData = this.provider.getRepositoryService().getRepositoryInfo(this.repositoryId, null);
+			this.repositoryInfo = new RepositoryInfoImpl(this, riData);
+		}
+		return this.repositoryInfo;
 	}
 
 	public Folder getRootFolder() {
@@ -223,8 +234,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		} else {
 			String rootFolderId = this.getRepositoryInfo().getRootFolderId();
 			ObjectData od = this.provider.getObjectService().getObject(
-					this.repositoryId, rootFolderId, "", false,
-					IncludeRelationships.NONE, "", false, false, null);
+					this.repositoryId, rootFolderId, null, false,
+					IncludeRelationships.NONE, null, false, false, null);
 			rootFolder = new PersistentFolderImpl(this, od);
 			this.cache.put(rootFolder);
 		}
