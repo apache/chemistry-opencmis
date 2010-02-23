@@ -20,10 +20,17 @@ package org.apache.opencmis.client.provider.framework;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -84,6 +91,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
   public static final String PROP_TESTFOLDER = "opencmis.test.testfolder";
   public static final String PROP_DOCTYPE = "opencmis.test.documenttype";
   public static final String PROP_FOLDERTYPE = "opencmis.test.foldertype";
+  public static final String PROP_CONFIG_FILE = "opencmis.test.config";
 
   public static final String PROP_ATOMPUB_URL = "opencmis.test.atompub.url";
   public static final String PROP_WEBSERVICES_URLPREFIX = "opencmis.test.webservices.url";
@@ -93,6 +101,29 @@ public abstract class AbstractCmisTestCase extends TestCase {
   private String fTestFolderId;
 
   private static Log log = LogFactory.getLog(AbstractCmisTestCase.class);
+
+  /**
+   * Read configuration file.
+   */
+  static {
+    String configFileName = System.getProperty(PROP_CONFIG_FILE);
+    if (configFileName != null) {
+
+      try {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(configFileName));
+
+        for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
+          String key = (String) e.nextElement();
+          String value = properties.getProperty(key);
+          System.setProperty(key, value);
+        }
+      }
+      catch (Exception e) {
+        System.err.println("Could not load test properties: " + e.toString());
+      }
+    }
+  }
 
   /**
    * Returns the provider object or creates one if does not exist.
