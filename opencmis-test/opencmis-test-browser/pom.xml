@@ -25,11 +25,11 @@
     <groupId>org.opencmis</groupId>
     <artifactId>opencmis</artifactId>
     <version>0.1-SNAPSHOT</version>
-	<relativePath>../../pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   
   <artifactId>opencmis-test-browser</artifactId>
-  <name>OpenCMIS OpenCMIS Browser</name>
+  <name>OpenCMIS Browser</name>
   <packaging>war</packaging>
 
   <dependencies>
