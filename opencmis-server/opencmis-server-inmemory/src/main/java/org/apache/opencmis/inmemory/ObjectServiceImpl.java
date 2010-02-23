@@ -92,7 +92,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       AccessControlList addACEs, AccessControlList removeACEs, ExtensionsData extension) {
 
     log.debug("start createDocument()");
-    checkStandardParameters(repositoryId, folderId);
+    checkRepositoryId(repositoryId);
 
     ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
 
@@ -101,22 +101,26 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     String name = (String) pd.getFirstValue();
 
     // Validation stuff
-    StoredObject so = folderStore.getObjectById(folderId);
-    Folder folder = null;
-
-    if (null == so)
-      throw new CmisInvalidArgumentException(" Cannot create document, folderId: " + folderId
-          + " is invalid");
-
-    if (so instanceof Folder)
-      folder = (Folder) so;
-    else
-      throw new CmisInvalidArgumentException(
-          "Can't creat document, folderId does not refer to a folder: " + folderId);
-
     TypeValidator.validateRequiredSystemProperties(properties);
     TypeDefinition typeDef = getTypeDefinition(repositoryId, properties);
-    TypeValidator.validateAllowedChildObjectTypes(typeDef, folder.getAllowedChildObjectTypeIds());
+
+    Folder folder = null;
+    if (null != folderId) {
+      StoredObject so = folderStore.getObjectById(folderId);
+  
+      if (null == so)
+        throw new CmisInvalidArgumentException(" Cannot create document, folderId: " + folderId
+            + " is invalid");
+  
+      if (so instanceof Folder)
+        folder = (Folder) so;
+      else
+        throw new CmisInvalidArgumentException(
+            "Can't creat document, folderId does not refer to a folder: " + folderId);
+      
+      TypeValidator.validateAllowedChildObjectTypes(typeDef, folder.getAllowedChildObjectTypeIds());
+    }
+    
 
     // check if the given type is a document type
     if (!typeDef.getBaseId().equals(
@@ -139,8 +143,10 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       verDoc.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
       verDoc.setCustomProperties(properties.getProperties());
       DocumentVersion version = verDoc.addVersion(contentStream, versioningState, user);
-      // add document to folder
-      folder.addChildDocument(verDoc); // sets parent in doc
+      if (null != folder)
+        folder.addChildDocument(verDoc); // add document to folder and set parent in doc
+      else
+        verDoc.persist();      
       version.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
       version.setCustomProperties(properties.getProperties());
       version.persist();
@@ -151,7 +157,10 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       // add document to folder
       doc.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
       doc.setCustomProperties(properties.getProperties());
-      folder.addChildDocument(doc); // sets parent in doc
+      if (null != folder)
+        folder.addChildDocument(doc); // add document to folder and set parent in doc
+      else
+        doc.persist();
       resId = doc.getId();
     }
         
@@ -585,6 +594,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     log.debug("start moveObject()");
     checkStandardParameters(repositoryId, objectId.getValue());
     Folder targetFolder = null;
+    Folder sourceFolder = null;
     ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
     StoredObject so = folderStore.getObjectById(objectId.getValue());
     Path spo = null;
@@ -598,16 +608,30 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
           + objectId.getValue());
 
     StoredObject soTarget = folderStore.getObjectById(targetFolderId);
-    if (soTarget instanceof Folder)
+    if (null == soTarget)
+      throw new CmisObjectNotFoundException("Unknown target folder: " + targetFolderId);
+    else if (soTarget instanceof Folder)
       targetFolder = (Folder) soTarget;
     else
-      throw new CmisNotSupportedException("Destination of a move operation must be a folder");
+      throw new CmisNotSupportedException("Destination " + targetFolderId + " of a move operation must be a folder");
 
+    StoredObject soSource = folderStore.getObjectById(sourceFolderId);
+    if (null == soSource)
+      throw new CmisObjectNotFoundException("Unknown source folder: " + sourceFolderId);
+    else if (soSource instanceof Folder)
+      sourceFolder = (Folder) soSource;
+    else
+      throw new CmisNotSupportedException("Source " + sourceFolderId + " of a move operation must be a folder");
+
+    if (spo.getParent() != soSource)
+      throw new CmisNotSupportedException("Cannot move object, source folder " + sourceFolderId + "is not a parent of object " + objectId.getValue());
+      
     if (so instanceof Folder && hasDescendant((Folder) so, targetFolder)) {
       throw new CmisNotSupportedException(
           "Destination of a move cannot be a subfolder of the source");
     }
-    spo.move(targetFolder);
+    
+    spo.move(sourceFolder, targetFolder);
     objectId.setValue(so.getId());
     log.debug("stop moveObject()");
   }

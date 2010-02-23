@@ -203,8 +203,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     return fContainer.getPath();
   }
 
-  public void move(Folder newParent) {
-    fContainer.move(newParent);
+  public void move(Folder oldParent, Folder newParent) {
+    fContainer.move(oldParent, newParent);
   }
 
   public void setParent(Folder parent) {

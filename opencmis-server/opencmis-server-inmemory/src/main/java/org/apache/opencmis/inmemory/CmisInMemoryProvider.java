@@ -49,6 +49,7 @@ public class CmisInMemoryProvider {
   protected NavigationService fNavigationService;
   protected ObjectService fObjectService;
   protected VersioningService fVersioningService;
+  protected MultiFilingService fMultiService;
   protected RepositoryInfoData fRepositoryInfo;
 
   public CmisInMemoryProvider(Map<String, String> cfgParams) {
@@ -83,7 +84,7 @@ public class CmisInMemoryProvider {
   }
 
   MultiFilingService getMultiFilingService() {
-    return null;
+    return fMultiService;
   }
 
   AclService getAclService() {
@@ -120,6 +121,7 @@ public class CmisInMemoryProvider {
     fNavigationService = new NavigationServiceImpl(fStoreManager);
     fObjectService = new ObjectServiceImpl(fStoreManager);
     fVersioningService = new VersioningServiceImpl(fStoreManager, fObjectService);    
+    fMultiService = new MultiFilingServiceImpl(fStoreManager);
   }
 
   

@@ -99,7 +99,7 @@ public abstract class AbstractPathImpl extends StoredObjectImpl implements
 //    fObjStore.changePath(this, oldPath, newPath);    
   }
   
-  public void move(Folder newParent) {
+  public void move(Folder oldParent, Folder newParent) {
     // we delegate this to the folder class because we need access to the global map to move
     if (this instanceof Document || this instanceof VersionedDocument)
       fParent.moveChildDocument(this, newParent);    

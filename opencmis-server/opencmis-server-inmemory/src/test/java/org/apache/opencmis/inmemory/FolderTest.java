@@ -126,14 +126,16 @@ public class FolderTest  extends TestCase {
   
   public void testMoveFolder() {
     String oldPath = f1.getPath();
-    f1.move(f3);
+    Folder f1Parent = f1.getParent();
+    f1.move(f1Parent, f3);
     assertNull(fStore.getObjectByPath(oldPath));
     assertEquals(f1.getPath(), "/Folder 3/Folder 1");
     assertEquals(f1, fStore.getObjectByPath("/Folder 3/Folder 1"));
     
     f2.rename("Folder 1");
     try {
-      f2.move(f3);
+      Folder f2Parent = f2.getParent();
+      f2.move(f2Parent, f3);
       fail("Should not be possible to move folder to a folder that has a child with same name");
     } catch (Exception e) {            
     }
@@ -149,8 +151,6 @@ public class FolderTest  extends TestCase {
       fail("Should not be possible to move folder that has children");
     } catch (Exception e) {            
     }
-    
-    
   }
 
   private void createFolders() {
