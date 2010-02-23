@@ -45,7 +45,7 @@ import org.apache.opencmis.commons.enums.SessionType;
 @RunWith(OtxInMemoryCmisTestSuite.class)
 @SuiteClasses( { CacheTest.class, ReadOnlyCreateSessionTest.class, ReadOnlySessionTest.class,
 		ReadOnlyRepositoryInfoTest.class,
-		ReadOnlyAclCapabilityTest.class, })
+		ReadOnlyAclCapabilityTest.class })
 public class OtxInMemoryCmisTestSuite extends AbstractCmisTestSuite {
 
 	public OtxInMemoryCmisTestSuite(Class<?> klass, RunnerBuilder r)
