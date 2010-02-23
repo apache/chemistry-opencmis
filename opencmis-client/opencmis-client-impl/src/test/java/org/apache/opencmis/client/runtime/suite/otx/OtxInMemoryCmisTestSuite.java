@@ -19,41 +19,63 @@
 package org.apache.opencmis.client.runtime.suite.otx;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
+import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.client.runtime.Fixture;
 import org.apache.opencmis.client.runtime.ReadOnlyAclCapabilityTest;
 import org.apache.opencmis.client.runtime.ReadOnlyCreateSessionTest;
-import org.apache.opencmis.client.runtime.ReadOnlyObjectTest;
 import org.apache.opencmis.client.runtime.ReadOnlyRepositoryInfoTest;
+import org.apache.opencmis.client.runtime.ReadOnlySessionTest;
+import org.apache.opencmis.client.runtime.SessionFactoryImpl;
+import org.apache.opencmis.client.runtime.misc.CacheTest;
 import org.apache.opencmis.client.runtime.suite.AbstractCmisTestSuite;
+import org.apache.opencmis.commons.SessionParameter;
+import org.apache.opencmis.commons.enums.BindingType;
+import org.apache.opencmis.commons.enums.SessionType;
 
 /**
  * Test suite to run InMemory binding.
  */
 @RunWith(OtxInMemoryCmisTestSuite.class)
-@SuiteClasses( { ReadOnlyCreateSessionTest.class, ReadOnlyRepositoryInfoTest.class,
-    ReadOnlyAclCapabilityTest.class, ReadOnlyObjectTest.class })
+@SuiteClasses( { CacheTest.class, ReadOnlyCreateSessionTest.class, ReadOnlySessionTest.class,
+		ReadOnlyRepositoryInfoTest.class,
+		ReadOnlyAclCapabilityTest.class, })
 public class OtxInMemoryCmisTestSuite extends AbstractCmisTestSuite {
 
-  public OtxInMemoryCmisTestSuite(Class<?> klass, RunnerBuilder r) throws InitializationError {
-    super(klass, r);
-  }
+	public OtxInMemoryCmisTestSuite(Class<?> klass, RunnerBuilder r)
+			throws InitializationError {
+		super(klass, r);
+	}
 
-  @Override
-  protected void initializeFixture() {
-    Map<String, String> parameter = new HashMap<String, String>();
-    // parameter.put(Session.USER, "test");
-    // parameter.put(Session.BINDING, "inmemory");
-    // parameter.put(Session.PROVIDER, "otx");
-    // parameter.put(Session.REPOSITORY_ID, "InMemory");
+	@Override
+	protected void initializeFixture() {
+		Map<String, String> parameter = new HashMap<String, String>();
 
-    Fixture.setParamter(parameter);
-    Fixture.setSessionFactory(null);
-  }
+		parameter.put(SessionParameter.USER, "test");
+		parameter.put(SessionParameter.PASSWORD, "test");
+		parameter.put(SessionParameter.SESSION_TYPE, SessionType.PERSISTENT
+				.value());
+		parameter.put(SessionParameter.LOCALE_ISO3166_COUNTRY, Locale.GERMANY
+				.getISO3Country());
+		parameter.put(SessionParameter.LOCALE_ISO639_LANGUAGE, Locale.GERMANY
+				.getISO3Language());
+		parameter.put(SessionParameter.BINDING_TYPE, BindingType.UNSPECIFIC
+				.value());
+		parameter.put(SessionParameter.REPOSITORY_ID, "InMemory");
+		parameter.put(SessionParameter.BINDING_SPI_CLASS,
+				CmisProviderFactory.BINDING_SPI_INMEMORY);
+
+		Fixture.DOCUMENT_TYPE_ID = "cmis:document";
+		Fixture.FOLDER_TYPE_ID = "cmis:folder";
+
+		Fixture.setParamter(parameter);
+		Fixture.setSessionFactory(SessionFactoryImpl.newInstance());
+	}
 
 }

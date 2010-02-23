@@ -353,13 +353,13 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 
 		switch (bt) {
 		case ATOM:
-			this.provider = this.creaetAtomPubProvider(this.parameters);
+			this.provider = this.createAtomPubProvider(this.parameters);
 			break;
-		case SOAP:
-			this.provider = this.creaetWebServiceProvider(this.parameters);
+		case WEBSERVICE:
+			this.provider = this.createWebServiceProvider(this.parameters);
 			break;
 		case UNSPECIFIC:
-			this.provider = this.creaetUnspecificProvider(this.parameters);
+			this.provider = this.createUnspecificProvider(this.parameters);
 			break;
 		default:
 			throw new CmisRuntimeException("Ambiguous session parameter: "
@@ -367,13 +367,13 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		}
 	}
 
-	private CmisProvider creaetUnspecificProvider(Map<String, String> parameters) {
+	private CmisProvider createUnspecificProvider(Map<String, String> parameters) {
 		CmisProviderFactory factory = CmisProviderFactory.newInstance();
 		CmisProvider provider = factory.createCmisProvider(parameters);
 		return provider;
 	}
 
-	private CmisProvider creaetWebServiceProvider(Map<String, String> parameters) {
+	private CmisProvider createWebServiceProvider(Map<String, String> parameters) {
 		CmisProviderFactory factory = CmisProviderFactory.newInstance();
 		CmisProvider provider = factory
 				.createCmisWebServicesProvider(parameters);
@@ -381,10 +381,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		return provider;
 	}
 
-	private CmisProvider creaetAtomPubProvider(Map<String, String> parameters) {
+	private CmisProvider createAtomPubProvider(Map<String, String> parameters) {
 		CmisProviderFactory factory = CmisProviderFactory.newInstance();
 		CmisProvider provider = factory.createCmisAtomPubProvider(parameters);
-
+		
 		return provider;
 	}
 

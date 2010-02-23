@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.opencmis.client.api.repository.RepositoryAclCapabilities;
 import org.apache.opencmis.client.api.repository.RepositoryCapabilities;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
+import org.apache.opencmis.client.runtime.repository.RepositoryAclCapabilitiesImpl;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
@@ -27,6 +28,11 @@ public class RepositoryInfoImpl implements RepositoryInfo, Serializable {
 	 */
 	private PersistentSessionImpl session;
 
+	/*
+	 * acl capabilities (serializable)
+	 */
+	private RepositoryAclCapabilities aclCapabilites = null;
+
 	public RepositoryInfoImpl(PersistentSessionImpl session,
 			RepositoryInfoData riData) {
 		this.riData = riData;
@@ -38,7 +44,11 @@ public class RepositoryInfoImpl implements RepositoryInfo, Serializable {
 	}
 
 	public RepositoryAclCapabilities getAclCapabilities() {
-		throw new CmisRuntimeException("not implemented");
+		if (this.aclCapabilites == null) {
+			this.aclCapabilites = new RepositoryAclCapabilitiesImpl(this.riData
+					.getAclCapabilities());
+		}
+		return this.aclCapabilites;
 	}
 
 	public RepositoryCapabilities getCapabilities() {

@@ -49,6 +49,7 @@ public class Fixture {
 	public static String FOLDER_TYPE_ID = "test.folder";
 	public static String DOCUMENT_TYPE_ID = "test.file";
 	public static String QUERY = "SELECT * FROM cmis:document";
+
 	/*
 	 * cmis objects
 	 */
@@ -73,13 +74,19 @@ public class Fixture {
 	public static String PROPERTY_NAME_ID = "DoubleProperty";
 	public static String PROPERTY_VALUE_ID = "xyz";
 	public static String PROPERTY_NAME_HTML = "HtmlProperty";
-	public static String PROPERTY_VALUE_HTML = "<body>";
+	public static String PROPERTY_VALUE_HTML = "<html><body>html value</body></html>";
 	public static String PROPERTY_NAME_DATETIME = "DateTimeProperty";
 	public static Calendar PROPERTY_VALUE_DATETIME = GregorianCalendar
 			.getInstance();
 	public static String PROPERTY_NAME_URI = "UriProperty";
 	public static URI PROPERTY_VALUE_URI = URI.create("http://foo.com");
 	public static final String PROPERTY_NAME_STRING_MULTI_VALUED = "MultiValuedStringProperty";
+
+	/*
+	 * session parameter
+	 */
+	private static final String X_FOLDER_TYPE_ID = "org.apache.opencmis.fixture.folder.type.id";
+	private static final String X_DOCUMENT_TYPE_ID = "org.apache.opencmis.fixture.document.type.id";
 
 	static {
 		Fixture.TEST_ROOT_FOLDER_NAME = "test_" + UUID.randomUUID().toString();
@@ -99,7 +106,18 @@ public class Fixture {
 	 */
 	public static void setParamter(Map<String, String> paramter) {
 		Fixture.paramter = paramter;
-	}
+
+		/* overload fixture values */
+		String value;
+
+		value = Fixture.paramter.get(Fixture.X_DOCUMENT_TYPE_ID);
+		Fixture.DOCUMENT_TYPE_ID = (value != null ? value
+				: Fixture.DOCUMENT_TYPE_ID);
+
+		value = Fixture.paramter.get(Fixture.X_FOLDER_TYPE_ID);
+		Fixture.FOLDER_TYPE_ID = (value != null ? value
+				: Fixture.FOLDER_TYPE_ID);
+}
 
 	/**
 	 * session parameter.

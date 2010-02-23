@@ -16,33 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.commons.enums;
+package org.apache.opencmis.client.runtime;
 
-/**
- * Binding Type Enum.
- * 
- * 
- */
-public enum BindingType {
+import java.io.Serializable;
 
-  WEBSERVICE("webservice"), ATOM("atom"), UNSPECIFIC("unspecific");
-  private final String value;
+import org.apache.opencmis.client.api.AclPermission;
 
-  BindingType(String v) {
-    value = v;
-  }
+public class AclPermissionImpl implements AclPermission, Serializable {
 
-  public String value() {
-    return value;
-  }
+	/**
+	 * serialization
+	 */
+	private static final long serialVersionUID = -3820947135577677874L;
 
-  public static BindingType fromValue(String v) {
-    for (BindingType c : BindingType.values()) {
-      if (c.value.equals(v)) {
-        return c;
-      }
-    }
-    throw new IllegalArgumentException(v);
-  }
+	private String description = null;
+
+	public AclPermissionImpl(String descr) {
+		this.description = descr;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public String getName() {
+		return this.description;
+	}
 
 }

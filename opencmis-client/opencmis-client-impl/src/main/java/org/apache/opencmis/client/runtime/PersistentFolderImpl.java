@@ -44,9 +44,13 @@ import org.apache.opencmis.commons.provider.ObjectData;
 
 public class PersistentFolderImpl implements Folder {
 
-	public PersistentFolderImpl(PersistentSessionImpl persistentSessionImpl,
-			ObjectData od) {
-		throw new CmisRuntimeException("not implemented");
+	private PersistentSessionImpl session;
+	private ObjectData objectData;
+
+	public PersistentFolderImpl(PersistentSessionImpl session, ObjectData od) {
+
+		this.session = session;
+		this.objectData = od;
 	}
 
 	public Document createDocument(String name) {
@@ -167,7 +171,7 @@ public class PersistentFolderImpl implements Folder {
 	}
 
 	public String getId() {
-		throw new CmisRuntimeException("not implemented");
+		return this.objectData.getId();
 	}
 
 	public GregorianCalendar getLastModificationDate() {
