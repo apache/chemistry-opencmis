@@ -18,8 +18,8 @@
  */
 package org.apache.opencmis.inmemory.server;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,18 +46,28 @@ import org.apache.opencmis.server.spi.CmisNavigationService;
 import org.apache.opencmis.server.spi.CmisObjectService;
 import org.apache.opencmis.server.spi.CmisRepositoryService;
 import org.apache.opencmis.server.spi.CmisVersioningService;
+import org.apache.opencmis.server.support.DiscoveryServiceWrapper;
+import org.apache.opencmis.server.support.NavigationServiceWrapper;
+import org.apache.opencmis.server.support.ObjectServiceWrapper;
+import org.apache.opencmis.server.support.RepositoryServiceWrapper;
+import org.apache.opencmis.server.support.VersioningServiceWrapper;
 import org.apache.opencmis.util.repository.ObjectGenerator;
 
 public class ServiceFactory extends AbstractServicesFactory {
 
   private static final Log LOG = LogFactory.getLog(ServiceFactory.class.getName());
+  private static final BigInteger DEFAULT_MAX_ITEMS_OBJECTS = BigInteger.valueOf(1000);
+  private static final BigInteger DEFAULT_MAX_ITEMS_TYPES = BigInteger.valueOf(100);
+  private static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(2);
+  private static final BigInteger DEFAULT_DEPTH_TYPES = BigInteger.valueOf(-1);
+
   private  StoreManager fStoreManager; // singleton root of everything
 
-  private InMemoryRepositoryService fRepositoryService;
-  private InMemoryNavigationService fNavigationService;
-  private InMemoryObjectService fObjectService;
-  private InMemoryVersioningService fVersioningService;
-  private InMemoryDiscoveryService fDiscoveryService;
+  private CmisRepositoryService fRepositoryService;
+  private CmisNavigationService fNavigationService;
+  private CmisObjectService fObjectService;
+  private CmisVersioningService fVersioningService;
+  private CmisDiscoveryService fDiscoveryService;
 
   public StoreManager getStoreManager() {
     return fStoreManager;
@@ -93,19 +103,24 @@ public class ServiceFactory extends AbstractServicesFactory {
       }
     }
 
-//    if (repositoryId != null) {
-//      String repoInfoCreatorClassName = parameters.get(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS);
-//      fStoreManager.initRepositoryInfo(repositoryId, repoInfoCreatorClassName);    
-//    }
+    InMemoryRepositoryService repSvc = new InMemoryRepositoryService(fStoreManager);
+    InMemoryNavigationService navSvc = new InMemoryNavigationService(fStoreManager);
+    InMemoryObjectService objSvc = new InMemoryObjectService(fStoreManager);
+    InMemoryVersioningService verSvc = new InMemoryVersioningService(fStoreManager, objSvc
+        .getObjectService());
+    InMemoryDiscoveryService disSvc = new InMemoryDiscoveryService(fStoreManager, repSvc
+        .getRepositoryService(), navSvc.fNavigationService);
     
-    // initialize services
-    fRepositoryService = new InMemoryRepositoryService(fStoreManager);
-    fNavigationService = new InMemoryNavigationService(fStoreManager);
-    fObjectService = new InMemoryObjectService(fStoreManager);
-    fVersioningService = new InMemoryVersioningService(fStoreManager, fObjectService.getObjectService());
-    // Begin temporary implementation for discover service
-    fDiscoveryService = new InMemoryDiscoveryService(fStoreManager, fRepositoryService.getRepositoryService(),  fNavigationService.getNavigationService());
-    // End temporary implementation
+    // Initialize services, use the service wrappers to provide suitable default parameters and
+    // paging sets
+    fRepositoryService = new RepositoryServiceWrapper(repSvc,
+        DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES);
+    fNavigationService = new NavigationServiceWrapper(navSvc,
+        DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+    fObjectService = new ObjectServiceWrapper(objSvc,
+        DEFAULT_MAX_ITEMS_OBJECTS);
+    fVersioningService = new VersioningServiceWrapper(verSvc);
+    fDiscoveryService = new DiscoveryServiceWrapper(disSvc, DEFAULT_MAX_ITEMS_OBJECTS);
     
     // With some special configuration settings fill the repository with some documents and folders if is empty
     if (!allAvailableRepositories.contains(repositoryId))

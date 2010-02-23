@@ -83,6 +83,11 @@
       <version>${version}</version>
 	  <type>war</type>
     </dependency>
+    <dependency>
+      <groupId>org.opencmis</groupId>
+      <artifactId>opencmis-server-support</artifactId>
+      <version>${version}</version>
+    </dependency>
   </dependencies>
   
 </project>
