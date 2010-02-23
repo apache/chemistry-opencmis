@@ -694,8 +694,9 @@ public class ObjectServiceTest extends AbstractServiceTst {
     if (!isFolder) // get first document in this folder
       sourceIdToMove = gen.getDocumentId(sourceIdToMove, 0);
     holder.setValue(sourceIdToMove); // "/Folder_1/My Folder 0/My Folder 1");
+    String sourceFolderId = getSourceFolder(sourceIdToMove);
     log.info("Id before moveObject: " + holder.getValue());
-    fObjSvc.moveObject(fRepositoryId, holder, rootFolderId, null, null);
+    fObjSvc.moveObject(fRepositoryId, holder, rootFolderId, sourceFolderId, null);
     log.info("Id after moveObject: " + holder.getValue());
     gen.dumpFolder(fRootFolderId, propertyFilter);
 
@@ -709,8 +710,9 @@ public class ObjectServiceTest extends AbstractServiceTst {
       ObjectInFolderList ch = fNavSvc.getChildren(fRepositoryId, holder.getValue(), propertyFilter, null,
           false, IncludeRelationships.NONE, null, false, null, null, null);
       String subFolderId = ch.getObjects().get(0).getObject().getId();
+      
       try {
-        fObjSvc.moveObject(fRepositoryId, holder, subFolderId, null, null);
+        fObjSvc.moveObject(fRepositoryId, holder, subFolderId, sourceFolderId, null);
         fail("moveObject to a folder that is a descendant of the source must fail.");
       } catch (Exception e) {
         assertTrue(e instanceof CmisNotSupportedException );
@@ -812,6 +814,12 @@ public class ObjectServiceTest extends AbstractServiceTst {
     return id;
   }
   
+  private String getSourceFolder(String objectId) {
+    // return the first parent found in the result list of all parents
+    List<ObjectParentData> parents = fNavSvc.getObjectParents(fRepositoryId, objectId, "*", false,
+        IncludeRelationships.NONE, null, true, null);
+    return parents.get(0).getObject().getId();
+  }
   
   // Helper class to create some type for testing the ObjectService
   

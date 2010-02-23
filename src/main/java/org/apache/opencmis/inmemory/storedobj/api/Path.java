@@ -60,6 +60,6 @@ public interface Path {
    * @param newParent
    *    new parent folder for the object
    */
-  public void move(Folder newParent);
+  public void move(Folder oldParent, Folder newParent);
   
 }

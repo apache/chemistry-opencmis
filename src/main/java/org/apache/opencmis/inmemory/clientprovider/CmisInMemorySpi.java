@@ -107,8 +107,7 @@ public class CmisInMemorySpi extends CmisInMemoryProvider implements CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getMultiFilingService()
    */
   public MultiFilingService getMultiFilingService() {
-    // TODO to be completed if multi-filing implemented
-    return null;
+    return fMultiService;
   }
 
   /*

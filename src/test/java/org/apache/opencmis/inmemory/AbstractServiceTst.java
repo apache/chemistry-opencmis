@@ -23,6 +23,7 @@ import org.apache.opencmis.commons.impl.dataobjects.ProviderObjectFactoryImpl;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.ContentStreamData;
+import org.apache.opencmis.commons.provider.MultiFilingService;
 import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectParentData;
@@ -47,6 +48,8 @@ public class AbstractServiceTst  extends TestCase {
   protected NavigationService fNavSvc;
   protected RepositoryService fRepSvc;
   protected VersioningService fVerSvc;
+  protected MultiFilingService fMultiSvc;
+  
   private String fTypeCreatorClassName;
   private boolean fUseClientProviderInterface;
   
@@ -319,6 +322,7 @@ public class AbstractServiceTst  extends TestCase {
     fObjSvc = inMemSpi.getObjectService();
     fNavSvc = inMemSpi.getNavigationService();    
     fVerSvc = inMemSpi.getVersioningService();
+    fMultiSvc = inMemSpi.getMultiFilingService();
   }
   
   /**
@@ -338,6 +342,14 @@ public class AbstractServiceTst  extends TestCase {
     fObjSvc = provider.getObjectService();
     fNavSvc = provider.getNavigationService();
     fVerSvc = provider.getVersioningService();
+    fMultiSvc = provider.getMultiFilingService();
   }
-  
+
+  protected String getStringProperty(ObjectData objData, String propertyKey) {
+    PropertyData<? extends Object> pd = (PropertyData<? extends Object>) objData.getProperties()
+        .getProperties().get(PropertyIds.CMIS_PATH);
+    assertNotNull(pd.getFirstValue());
+    assertTrue(pd.getFirstValue() instanceof String);
+    return (String)pd.getFirstValue();
+  }
 }
