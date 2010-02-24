@@ -19,6 +19,7 @@
 package org.apache.opencmis.inmemory.storedobj.impl;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,20 +196,25 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     }
   }
 
-  public Folder getParent() {
-    return fContainer.getParent();
+  public List<Folder> getParents() {
+    return fContainer.getParents();
   }
 
-  public String getPath() {
-    return fContainer.getPath();
+  public String getPathSegment() {
+    return fContainer.getPathSegment();
   }
 
   public void move(Folder oldParent, Folder newParent) {
     fContainer.move(oldParent, newParent);
   }
 
-  public void setParent(Folder parent) {
-    fContainer.setParent(parent);    
+  public void addParent(Folder parent) {
+    fContainer.addParent(parent);    
   }
-  
+
+  public void removeParent(Folder parent) {
+    fContainer.removeParent(parent);
+  }
+
+ 
 }

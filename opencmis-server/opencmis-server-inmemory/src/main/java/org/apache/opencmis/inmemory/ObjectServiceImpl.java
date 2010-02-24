@@ -58,7 +58,8 @@ import org.apache.opencmis.inmemory.storedobj.api.Document;
 import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.opencmis.inmemory.storedobj.api.Path;
+import org.apache.opencmis.inmemory.storedobj.api.Filing;
+import org.apache.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -597,12 +598,12 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     Folder sourceFolder = null;
     ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
     StoredObject so = folderStore.getObjectById(objectId.getValue());
-    Path spo = null;
+    Filing spo = null;
 
     if (null == so)
       throw new CmisObjectNotFoundException("Unknown object: " + objectId.getValue());
-    else if (so instanceof Path)
-      spo = (Path) so;
+    else if (so instanceof Filing)
+      spo = (Filing) so;
     else
       throw new CmisInvalidArgumentException("Object must be folder or document: "
           + objectId.getValue());
@@ -623,9 +624,16 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     else
       throw new CmisNotSupportedException("Source " + sourceFolderId + " of a move operation must be a folder");
 
-    if (spo.getParent() != soSource)
+    boolean foundOldParent = false;
+    for (Folder parent: spo.getParents()) {
+      if (parent.getId().equals(soSource.getId())) {
+        foundOldParent = true;
+        break;
+      }
+    }
+    if (!foundOldParent)
       throw new CmisNotSupportedException("Cannot move object, source folder " + sourceFolderId + "is not a parent of object " + objectId.getValue());
-      
+    
     if (so instanceof Folder && hasDescendant((Folder) so, targetFolder)) {
       throw new CmisNotSupportedException(
           "Destination of a move cannot be a subfolder of the source");
@@ -771,15 +779,17 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     // get name from properties and perform special rename to check if path
     // already exists
     PropertyData<?> pd = properties.getProperties().get(PropertyIds.CMIS_NAME);
-    if (pd != null && so instanceof Path) {
-      Folder parent = ((Path) so).getParent();
-      if (parent == null)
+    if (pd != null && so instanceof Filing) {
+      String newName = (String) pd.getFirstValue();
+      List<Folder> parents = ((Filing) so).getParents();
+      if (so instanceof Folder && parents.isEmpty())
         throw new CmisConstraintException(
             "updateProperties failed, you cannot rename the root folder");
-      if (parent.hasChild((String) pd.getFirstValue()))
-        throw new CmisConstraintException(
-            "updateProperties failed, cannot rename because path already exists.");
-
+      for (Folder parent : parents) {
+        if (parent.hasChild(newName))
+          throw new CmisConstraintException(
+              "updateProperties failed, cannot rename because path already exists.");
+      }
       so.rename((String) pd.getFirstValue()); // note: this does persist
       hasUpdatedName = true;
     }

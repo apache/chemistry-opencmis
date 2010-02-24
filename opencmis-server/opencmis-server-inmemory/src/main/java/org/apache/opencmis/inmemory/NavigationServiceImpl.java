@@ -48,8 +48,10 @@ import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.inmemory.storedobj.api.Children;
 import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.opencmis.inmemory.storedobj.api.Path;
+import org.apache.opencmis.inmemory.storedobj.api.Filing;
+import org.apache.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -208,7 +210,6 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
   /* (non-Javadoc)
    * @see org.opencmis.client.provider.NavigationService#getObjectParents(java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, org.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean, org.opencmis.client.provider.ExtensionsData)
    */
-  @SuppressWarnings("unchecked")
   public List<ObjectParentData> getObjectParents(String repositoryId, String objectId,
       String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
       String renditionFilter, Boolean includeRelativePathSegment, ExtensionsData extension) {
@@ -218,31 +219,22 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
 
     // for now we have only folders that have a parent and the in-memory provider only has one
     // parent for each object (no multi-filing)
-    ObjectParentDataImpl result = null;
+    List<ObjectParentData> result = null;
     ObjectStore fs = fStoreManager.getObjectStore(repositoryId);
     
     StoredObject so = fs.getObjectById(objectId);
-    Path spo = null;
-    
-    if (so instanceof Path)
-      spo = (Path) so;
+    Filing spo = null;
+        
+    if (so instanceof Filing)
+      spo = (Filing) so;
     else
       throw new CmisInvalidArgumentException("Can't get object parent, id does not refer to a folder or document: "
           + objectId);
     
-    if (null != spo) {
-      ObjectData parents = getFolderParentIntern(repositoryId, spo, filter);
-      if (null != parents) {
-        result = new ObjectParentDataImpl();
-        result.setObject(parents);
-        String path = spo.getPath();
-        int beginIndex = path.lastIndexOf(Path.PATH_SEPARATOR)+1; // Note: if / not found results in 0
-        String relPathSeg = path.substring(beginIndex, path.length());
-        result.setRelativePathSegment(relPathSeg);
-      }
-    }
+    result = getObjectParentsIntern(repositoryId, spo, filter);
+    
     log.debug("stop getObjectParents()");
-    return null == result ? (List<ObjectParentData>) Collections.EMPTY_LIST : Collections.singletonList((ObjectParentData)result);
+    return result;
   }
 
   // private helpers
@@ -332,7 +324,41 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
     return childrenOfFolderId;
   }
 
-  private ObjectData getFolderParentIntern(String repositoryId, Path sop,
+  private  List<ObjectParentData> getObjectParentsIntern(String repositoryId, Filing sop,
+      String filter) {
+    
+    List<ObjectParentData> result = null;
+    if (sop instanceof SingleFiling) {
+      ObjectData parent = getFolderParentIntern(repositoryId, (SingleFiling)sop, filter);
+      if (null != parent) {
+        ObjectParentDataImpl parentData = new ObjectParentDataImpl();
+        parentData.setObject(parent);
+        String path = ((SingleFiling)sop).getPath();
+        int beginIndex = path.lastIndexOf(Filing.PATH_SEPARATOR)+1; // Note: if / not found results in 0
+        String relPathSeg = path.substring(beginIndex, path.length());
+        parentData.setRelativePathSegment(relPathSeg);
+        result = Collections.singletonList((ObjectParentData)parentData);
+      }
+      else
+        result = Collections.emptyList();
+    } else if (sop instanceof MultiFiling) {
+      result = new ArrayList<ObjectParentData>();
+      MultiFiling multiParentObj = (MultiFiling) sop;
+      List<Folder> parents = multiParentObj.getParents();
+      if (null != parents)
+        for (Folder parent : parents) {
+          ObjectParentDataImpl parentData = new ObjectParentDataImpl();
+          ObjectDataImpl objData = new ObjectDataImpl();
+          copyFilteredProperties(repositoryId, parent, filter, objData);
+          parentData.setObject(objData);
+          parentData.setRelativePathSegment(multiParentObj.getPathSegment());
+          result.add(parentData);
+        }      
+    }
+    return result;
+  }
+  
+  private ObjectData getFolderParentIntern(String repositoryId, SingleFiling sop,
       String filter) {
 
     ObjectDataImpl parent = new ObjectDataImpl();
@@ -346,11 +372,16 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
         return null; // an unfiled document
     }
     
-    List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-    PropertiesData props = PropertyCreationHelper.getPropertiesFromObject(repositoryId,
-        parentFolder, fStoreManager, requestedIds);
-    parent.setProperties(props);
+    copyFilteredProperties(repositoryId, parentFolder, filter, parent);
     return parent;
+  }
+  
+  void copyFilteredProperties(String repositoryId, StoredObject so, String filter,
+      ObjectDataImpl objData) {
+    List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
+    PropertiesData props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, so,
+        fStoreManager, requestedIds);
+    objData.setProperties(props);
   }
 
 }

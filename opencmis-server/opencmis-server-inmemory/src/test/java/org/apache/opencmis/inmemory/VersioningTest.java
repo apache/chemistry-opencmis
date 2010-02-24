@@ -54,6 +54,9 @@ import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.opencmis.server.spi.CallContext;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class VersioningTest extends AbstractServiceTst {
   private static Log log = LogFactory.getLog(ObjectServiceTest.class);
@@ -66,7 +69,7 @@ public class VersioningTest extends AbstractServiceTst {
   ObjectCreator fCreator;
   
   @Before
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
     super.setTypeCreatorClass(VersionTestTypeSystemCreator.class.getName());
     super.setUp();
     fCreator = new ObjectCreator(fFactory, fObjSvc, fRepositoryId);
@@ -74,7 +77,7 @@ public class VersioningTest extends AbstractServiceTst {
   }
 
   @After
-  protected void tearDown() throws Exception {
+  public void tearDown() throws Exception {
     super.tearDown();
   }
 
@@ -86,23 +89,27 @@ public class VersioningTest extends AbstractServiceTst {
     RuntimeContext.getRuntimeConfig().attachCfg(ctx); 
   }
     
+  @Test
   public void testCreateVersionedDocumentMinor() {
-    testCreateVersionedDocument(VersioningState.MINOR);
+    createVersionedDocument(VersioningState.MINOR);
   }
   
+  @Test
   public void testCreateVersionedDocumentCheckedOut() {
-    testCreateVersionedDocument(VersioningState.CHECKEDOUT);
+    createVersionedDocument(VersioningState.CHECKEDOUT);
   }
   
+  @Test
   public void testCreateVersionedDocumentNone() {
     try {
-      testCreateVersionedDocument(VersioningState.NONE);
+      createVersionedDocument(VersioningState.NONE);
       fail("creating a document of a versionable type with state VersioningState.NONE should fail.");
     } catch (Exception e) {     
       assertEquals(CmisConstraintException.class, e.getClass());
     }
   }
 
+  @Test
   public void testCheckOutBasic() {
     String verId = createDocument(PROP_NAME, fRootFolderId, VersioningState.MAJOR);
 
@@ -156,6 +163,7 @@ public class VersioningTest extends AbstractServiceTst {
     assertEquals(2, allVersions.size());
   }
   
+  @Test
   public void testCheckInWithContent() {
     String verId = createDocument(PROP_NAME, fRootFolderId, VersioningState.MAJOR);
 
@@ -192,6 +200,7 @@ public class VersioningTest extends AbstractServiceTst {
     assertTrue(fCreator.verifyProperty(idHolder.getValue(), VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW));
   }
   
+  @Test
   public void testCheckOutAndOtherUser() {
     String verId = createDocument(PROP_NAME, fRootFolderId, VersioningState.MAJOR);
     ObjectData version = fObjSvc.getObject(fRepositoryId, verId, "*", false, IncludeRelationships.NONE, null, false, false, null);
@@ -248,6 +257,7 @@ public class VersioningTest extends AbstractServiceTst {
     assertTrue(fCreator.verifyProperty(idHolder.getValue(), VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE));  
   }
   
+  @Test
   public void testCancelCheckout() {
     String verId = createDocument(PROP_NAME, fRootFolderId, VersioningState.MAJOR);
     ObjectData version = fObjSvc.getObject(fRepositoryId, verId, "*", false, IncludeRelationships.NONE, null, false, false, null);
@@ -288,6 +298,7 @@ public class VersioningTest extends AbstractServiceTst {
     assertTrue(fCreator.verifyContent(retrievedContent, fCreator.createContent()));    
   }
   
+  @Test
   public void testGetPropertiesOfLatestVersion() {
     VersioningState versioningState = VersioningState.MAJOR;
     String verId = createDocument(PROP_NAME, fRootFolderId, versioningState);
@@ -319,6 +330,7 @@ public class VersioningTest extends AbstractServiceTst {
     checkVersionProperties(verId, versioningState, latest.getProperties(), checkinComment);        
   }
   
+  @Test
   public void testGetLatestVersion() {
     VersioningState versioningState = VersioningState.MINOR;
     String verId = createDocument(PROP_NAME, fRootFolderId, versioningState);
@@ -363,6 +375,7 @@ public class VersioningTest extends AbstractServiceTst {
     assertTrue(fCreator.verifyContent(retrievedContent, fCreator.createAlternateContent()));        
    }
   
+  @Test
   public void testGetCheckedOutDocuments() {
     // create two folders with each having two documents, one of them being checked out
     final int count = 2;
@@ -404,6 +417,7 @@ public class VersioningTest extends AbstractServiceTst {
     assertEquals(2, checkedOutDocuments.getObjects().size());
   }
   
+  @Test
   public void testModifyOldVersions() {
     String versionSeriesId = createVersionSeriesWithThreeVersions();
     List<ObjectData> allVersions = fVerSvc.getAllVersions(fRepositoryId, versionSeriesId, "*", false, null);
@@ -427,7 +441,7 @@ public class VersioningTest extends AbstractServiceTst {
     return res;
   }
 
-  private void testCreateVersionedDocument(VersioningState versioningState) {
+  private void createVersionedDocument(VersioningState versioningState) {
     // type id is: VersionTestTypeSystemCreator.VERSION_TEST_DOCUMENT_TYPE_ID    
     String verId = createDocument(PROP_NAME, fRootFolderId, versioningState);
     getDocument(verId);

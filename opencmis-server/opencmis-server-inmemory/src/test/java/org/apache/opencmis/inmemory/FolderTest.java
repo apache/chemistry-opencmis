@@ -24,10 +24,12 @@ import junit.framework.TestCase;
 
 import org.apache.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.opencmis.inmemory.storedobj.api.Path;
+import org.apache.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.opencmis.inmemory.storedobj.impl.FolderImpl;
 import org.apache.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
@@ -49,11 +51,13 @@ public class FolderTest  extends TestCase {
   private FolderImpl f11;
   private static final String TEST_REPOSITORY_ID = "TestRepositoryId";
 
+  @Before
   protected void setUp() throws Exception {
     fStore = new ObjectStoreImpl(TEST_REPOSITORY_ID);
     createFolders();
   }
     
+  @Test
   public void testCreatAndGetFolders() {
     try {
       Folder childFolder = fStore.createFolder("Folder 1");
@@ -66,7 +70,7 @@ public class FolderTest  extends TestCase {
     assertNull(fRoot.getParent());
     assertEquals(fRoot, f1.getParent());
     assertEquals(f1, f11.getParent());
-    assertEquals(Path.PATH_SEPARATOR, fRoot.getPath());
+    assertEquals(Filing.PATH_SEPARATOR, fRoot.getPath());
     assertEquals("/Folder 1", f1.getPath());
     assertEquals("/Folder 1/Folder 1.1", f11.getPath());
     StoredObject fTest = fStore.getObjectByPath("/");
@@ -83,15 +87,16 @@ public class FolderTest  extends TestCase {
     assertEquals(1, subFolders.size()); 
   }
 
+  @Test
   public void testRenameFolder() {
     // rename top level folder
     String newName = "Folder B";
     String oldPath = f2.getPath();
     f2.rename(newName);
     assertEquals(f2.getName(), newName);
-    assertEquals(f2.getPath(), Path.PATH_SEPARATOR + newName);
+    assertEquals(f2.getPath(), Filing.PATH_SEPARATOR + newName);
     assertNull(fStore.getObjectByPath(oldPath));
-    assertEquals(f2, fStore.getObjectByPath(Path.PATH_SEPARATOR + newName));
+    assertEquals(f2, fStore.getObjectByPath(Filing.PATH_SEPARATOR + newName));
     try {
       f2.rename("Folder 3");
       fail("Should not allow to rename a folder to an existing name");
@@ -124,6 +129,7 @@ public class FolderTest  extends TestCase {
     }    
   }
   
+  @Test
   public void testMoveFolder() {
     String oldPath = f1.getPath();
     Folder f1Parent = f1.getParent();
@@ -141,6 +147,7 @@ public class FolderTest  extends TestCase {
     }
   }
   
+  @Test
   public void testDeleteFolder() {
     String oldPath = f2.getPath();
     fStore.deleteObject(f2.getId());

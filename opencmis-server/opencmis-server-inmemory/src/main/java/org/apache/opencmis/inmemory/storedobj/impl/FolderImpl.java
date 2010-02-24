@@ -16,12 +16,14 @@ import org.apache.opencmis.inmemory.NameValidator;
 import org.apache.opencmis.inmemory.storedobj.api.Document;
 import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.Folder;
-import org.apache.opencmis.inmemory.storedobj.api.Path;
+import org.apache.opencmis.inmemory.storedobj.api.MultiFiling;
+import org.apache.opencmis.inmemory.storedobj.api.Filing;
+import org.apache.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
 
-public class FolderImpl extends AbstractPathImpl implements Folder {
-  private static final Log LOG = LogFactory.getLog(AbstractPathImpl.class.getName());
+public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
+  private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
 
   FolderImpl(ObjectStoreImpl objStore) {
     super(objStore);
@@ -69,7 +71,13 @@ public class FolderImpl extends AbstractPathImpl implements Folder {
       throw new RuntimeException("Cannot create document " + name
           + ". Name already exists in parent folder");
 
-    ((Path)so).setParent(this);
+    if (so instanceof SingleFiling)
+      ((SingleFiling)so).setParent(this);
+    else if (so instanceof MultiFiling)
+      ((MultiFiling)so).addParent(this);
+    else 
+      throw new RuntimeException("Cannot create document, object is not fileable.");
+      
     so.persist();
   }
   
@@ -82,8 +90,8 @@ public class FolderImpl extends AbstractPathImpl implements Folder {
     List<StoredObject> result = new ArrayList<StoredObject>();
     for (String id : fObjStore.getIds()) {
       StoredObject obj = fObjStore.getObject(id);
-      Path pathObj = (Path) obj;
-      if (pathObj.getParent() == this) {
+      Filing pathObj = (Filing) obj;
+      if (pathObj.getParents().contains(this)) {
         if (pathObj instanceof VersionedDocument) {
           DocumentVersion ver = ((VersionedDocument) pathObj).getLatestVersion(false);
           result.add(ver);
@@ -115,8 +123,8 @@ public class FolderImpl extends AbstractPathImpl implements Folder {
     List<Folder> result = new ArrayList<Folder>();
     for (String id : fObjStore.getIds()) {
       StoredObject obj = fObjStore.getObject(id);
-      if (obj instanceof Path) {
-        Path pathObj = (Path) obj;
+      if (obj instanceof SingleFiling) {
+        SingleFiling pathObj = (SingleFiling) obj;
         if (pathObj.getParent() == this && pathObj instanceof Folder)
           result.add((Folder)obj);
       }
@@ -134,16 +142,11 @@ public class FolderImpl extends AbstractPathImpl implements Folder {
    * @see org.opencmis.client.provider.spi.inmemory.IFolder#hasChild(java.lang.String)
    */
   public boolean hasChild(String name) {
-//    String path = getPath();
-//    if (path.equals(PATH_SEPARATOR))
-//      path = path + name;
-//    else
-//      path = path + PATH_SEPARATOR + name;
     for (String id : fObjStore.getIds()) {
       StoredObject obj = fObjStore.getObject(id);
-      if (obj instanceof Path) {
-        Path pathObj = (Path) obj;
-        if (pathObj.getParent() == this && obj.getName().equals(name))
+      if (obj instanceof Filing) {
+        Filing pathObj = (Filing) obj;
+        if (pathObj.getParents().contains(this) && obj.getName().equals(name))
           return true;
       }
     }
@@ -200,17 +203,22 @@ public class FolderImpl extends AbstractPathImpl implements Folder {
     Collections.sort(list, new FolderComparator());
   }
 
-  public void moveChildDocument(StoredObject so, Folder newParent) {
+  public void moveChildDocument(StoredObject so, Folder oldParent, Folder newParent) {
     if (newParent.hasChild(so.getName()))
       throw new IllegalArgumentException(
           "Cannot move object, this name already exists in target.");
-    if (!(so instanceof Path))
+    if (!(so instanceof Filing))
       throw new IllegalArgumentException(
       "Cannot move object, object does not have a path.");
     
-    Path pathObj = (Path) so;
-    pathObj.setParent(newParent);
-    // so.persist(); // not needed for in memory
+    if (so instanceof SingleFiling) {
+      SingleFiling pathObj = (SingleFiling) so;
+      pathObj.setParent(newParent);
+    } else if (so instanceof MultiFiling) {
+      MultiFiling pathObj = (MultiFiling) so;
+      pathObj.addParent(newParent);
+      pathObj.removeParent(oldParent);      
+    }
   }
 
   public List<String> getAllowedChildObjectTypeIds() {

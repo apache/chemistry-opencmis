@@ -29,7 +29,7 @@ import java.util.List;
  *
  */
 
-public interface Folder extends Children, Path, StoredObject {
+public interface Folder extends Children, SingleFiling, StoredObject {
   
   /**
    * return a list of allowed types of children in this folder
