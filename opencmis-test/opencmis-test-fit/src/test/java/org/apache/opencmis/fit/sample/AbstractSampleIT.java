@@ -18,10 +18,11 @@
  */
 package org.apache.opencmis.fit.sample;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
+import org.apache.opencmis.fit.SessionFactory;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,7 +66,8 @@ public abstract class AbstractSampleIT {
    */
   @Test
   public void testRepositoryInfo() {
-    // RepositoryInfo ri = getSession().getRepositoryInfo();
-    // assertNotNull(ri);
+    RepositoryInfo ri = getSession().getRepositoryInfo();
+    assertNotNull(ri);
+    assertEquals(SessionFactory.getRepositoryId(), ri.getId());
   }
 }

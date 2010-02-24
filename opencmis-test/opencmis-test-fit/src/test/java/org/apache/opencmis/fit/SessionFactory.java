@@ -23,7 +23,9 @@ import java.util.Map;
 
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
+import org.apache.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.opencmis.commons.SessionParameter;
+import org.apache.opencmis.commons.enums.BindingType;
 import org.apache.opencmis.commons.provider.CmisProvider;
 
 /**
@@ -66,12 +68,15 @@ public class SessionFactory {
 
     Map<String, String> parameters = new HashMap<String, String>();
 
+    parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+
+    parameters.put(SessionParameter.ATOMPUB_URL, url);
+    parameters.put(SessionParameter.REPOSITORY_ID, getRepositoryId());
+
     parameters.put(SessionParameter.USER, USER);
     parameters.put(SessionParameter.PASSWORD, PASSWORD);
-    parameters.put(SessionParameter.ATOMPUB_URL, url);
 
-    // ToDo: creates session
-    return null;
+    return SessionFactoryImpl.newInstance().createSession(parameters);
   }
 
   /**
@@ -82,8 +87,8 @@ public class SessionFactory {
 
     Map<String, String> parameters = new HashMap<String, String>();
 
-    parameters.put(SessionParameter.USER, USER);
-    parameters.put(SessionParameter.PASSWORD, PASSWORD);
+    parameters.put(SessionParameter.BINDING_TYPE, BindingType.WEBSERVICES.value());
+
     parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url + "RepositoryService?wsdl");
     parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url + "NavigationService?wsdl");
     parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url + "ObjectService?wsdl");
@@ -96,8 +101,11 @@ public class SessionFactory {
     parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url + "PolicyService?wsdl");
     parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url + "ACLService?wsdl");
 
-    // ToDo: create session
-    return null;
+    parameters.put(SessionParameter.REPOSITORY_ID, getRepositoryId());
+    parameters.put(SessionParameter.USER, USER);
+    parameters.put(SessionParameter.PASSWORD, PASSWORD);
+
+    return SessionFactoryImpl.newInstance().createSession(parameters);
   }
 
   /**
@@ -110,6 +118,7 @@ public class SessionFactory {
 
     parameters.put(SessionParameter.USER, USER);
     parameters.put(SessionParameter.PASSWORD, PASSWORD);
+
     parameters.put(SessionParameter.ATOMPUB_URL, url);
 
     return CmisProviderFactory.newInstance().createCmisAtomPubProvider(parameters);
@@ -125,6 +134,7 @@ public class SessionFactory {
 
     parameters.put(SessionParameter.USER, USER);
     parameters.put(SessionParameter.PASSWORD, PASSWORD);
+
     parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url + "RepositoryService?wsdl");
     parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url + "NavigationService?wsdl");
     parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url + "ObjectService?wsdl");
