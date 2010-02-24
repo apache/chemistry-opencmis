@@ -104,7 +104,6 @@ public class CacheImpl implements Cache, Serializable {
 
 	public void put(CmisObject object) {
 		this.idMap.put(object.getId(), object);
-		this.pathMap.put(object.getPath(), object);
 	}
 
 	public int size() {

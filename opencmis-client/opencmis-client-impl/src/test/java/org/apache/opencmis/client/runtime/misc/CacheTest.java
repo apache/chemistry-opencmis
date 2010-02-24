@@ -47,34 +47,28 @@ public class CacheTest {
 		Cache cache = CacheImpl.newInstance();
 
 		String id = "1";
-		String path = "/1";
+		// String path = "/1";
 
 		// add object
-		CmisObject obj1 = this.createCmisObject(id, path);
+		CmisObject obj1 = this.createCmisObject(id);
 		cache.put(obj1);
 
 		// access object
 		Assert.assertTrue(cache.containsId(id));
-		Assert.assertTrue(cache.containsPath(path));
 
 		// access object
 		CmisObject obj2 = cache.get(id);
 		Assert.assertEquals(obj1, obj2);
-		CmisObject obj3 = cache.getByPath(path);
-		Assert.assertEquals(obj1, obj3);
 
 		// clear cache
 		cache.clear();
 
 		// access object (not found)
 		Assert.assertFalse(cache.containsId(id));
-		Assert.assertFalse(cache.containsPath(path));
 
 		// access object (not found)
 		CmisObject obj4 = cache.get(id);
 		Assert.assertNull(obj4);
-		CmisObject obj5 = cache.getByPath(path);
-		Assert.assertNull(obj5);
 	}
 
 	@Test
@@ -90,7 +84,7 @@ public class CacheTest {
 		Cache cache = CacheImpl.newInstance(cacheSize);
 
 		for (int i = 0; i < cacheSize + 1; i++) {
-			CmisObject obj = this.createCmisObject("id" + i, "path" + i);
+			CmisObject obj = this.createCmisObject("id" + i);
 			cache.put(obj);
 		}
 
@@ -106,7 +100,7 @@ public class CacheTest {
 		Cache cache = CacheImpl.newInstance(cacheSize);
 
 		for (int i = 0; i < cacheSize; i++) {
-			CmisObject obj = this.createCmisObject("id" + i, "path" + i);
+			CmisObject obj = this.createCmisObject("id" + i);
 			cache.put(obj);
 		}
 
@@ -134,11 +128,10 @@ public class CacheTest {
 	 * @param path
 	 * @return a mocked object
 	 */
-	private CmisObject createCmisObject(String id, String path) {
+	private CmisObject createCmisObject(String id) {
 		CmisObject obj = createNiceMock(CmisObject.class);
 
 		expect(obj.getId()).andReturn(id).anyTimes();
-		expect(obj.getPath()).andReturn(path).anyTimes();
 
 		replay(obj);
 

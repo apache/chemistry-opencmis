@@ -25,7 +25,7 @@
 	<bannerRight>
 		<name>${project.name}</name>
 		<src>http://incubator.apache.org/images/apache-incubator-logo.png</src>
-		<href>http://maven.apache.org/</href>
+		<href>http://www.apache.org/</href>
 	</bannerRight>
 	
 	<skin>

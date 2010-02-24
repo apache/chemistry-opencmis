@@ -42,8 +42,6 @@ public class ReadOnlySessionTest extends AbstractSessionTest {
     Assert.assertNotNull(root);
     String id = root.getId();
     Assert.assertNotNull(this.session.getObject(id));
-    String path = root.getPath();
-    Assert.assertNotNull(this.session.getObjectByPath(path));
 
   }
 

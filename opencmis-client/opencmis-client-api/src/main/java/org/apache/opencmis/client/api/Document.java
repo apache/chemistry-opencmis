@@ -27,7 +27,9 @@ import org.apache.opencmis.commons.enums.VersioningState;
  */
 public interface Document extends CmisObject {
 
-  List<Rendition> getRenditions();
+	List<String> getPaths();
+	
+	List<Rendition> getRenditions();
 
   // object service
 

@@ -22,11 +22,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite.SuiteClasses;
-import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.RunnerBuilder;
-import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.client.runtime.Fixture;
 import org.apache.opencmis.client.runtime.ReadOnlyAclCapabilityTest;
 import org.apache.opencmis.client.runtime.ReadOnlyCreateSessionTest;
@@ -38,6 +33,10 @@ import org.apache.opencmis.client.runtime.suite.AbstractCmisTestSuite;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.enums.BindingType;
 import org.apache.opencmis.commons.enums.SessionType;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite.SuiteClasses;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerBuilder;
 
 /**
  * Test suite to run InMemory binding.
@@ -69,7 +68,7 @@ public class OtxInMemoryCmisTestSuite extends AbstractCmisTestSuite {
 				.value());
 		parameter.put(SessionParameter.REPOSITORY_ID, "InMemory");
 		parameter.put(SessionParameter.BINDING_SPI_CLASS,
-				CmisProviderFactory.BINDING_SPI_INMEMORY);
+				"org.apache.opencmis.inmemory.clientprovider.CmisInMemorySpiFactory");
 
 		Fixture.DOCUMENT_TYPE_ID = "cmis:document";
 		Fixture.FOLDER_TYPE_ID = "cmis:folder";

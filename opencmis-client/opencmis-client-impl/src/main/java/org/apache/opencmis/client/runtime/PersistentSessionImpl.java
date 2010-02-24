@@ -44,6 +44,7 @@ import org.apache.opencmis.client.api.util.Testable;
 import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.client.runtime.cache.Cache;
 import org.apache.opencmis.client.runtime.cache.CacheImpl;
+import org.apache.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
 import org.apache.opencmis.client.runtime.repository.PropertyFactoryImpl;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.enums.BindingType;
@@ -90,7 +91,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	/*
 	 * helper factory (non serializable)
 	 */
-	private transient PropertyFactory propertyFactory = new PropertyFactoryImpl();
+	private transient PropertyFactory propertyFactory = PropertyFactoryImpl.newInstance(this);
 
 	/*
 	 * Object cache (serializable)
@@ -102,6 +103,11 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	 * (serializable)
 	 */
 	private RepositoryInfo repositoryInfo;
+
+	/*
+	 * helper factory (non serializable)
+	 */
+	private transient ObjectFactory objectFactory = PersistentObjectFactoryImpl.newInstance(this);
 
 	/**
 	 * required for serialization
@@ -211,7 +217,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	}
 
 	public ObjectFactory getObjectFactory() {
-		throw new CmisRuntimeException("not implemented");
+		return this.objectFactory ;
 	}
 
 	public PropertyFactory getPropertyFactory() {
@@ -386,6 +392,14 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		CmisProvider provider = factory.createCmisAtomPubProvider(parameters);
 		
 		return provider;
+	}
+
+	public CmisProvider getProvider() {
+		return this.provider;
+	}
+
+	public Cache getCache() {
+		return this.cache;
 	}
 
 }

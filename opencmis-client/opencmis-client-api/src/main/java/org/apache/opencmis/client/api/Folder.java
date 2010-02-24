@@ -31,7 +31,9 @@ import org.apache.opencmis.commons.enums.VersioningState;
  */
 public interface Folder extends CmisObject {
 
-  // object service
+	String getPath();
+
+	// object service
 
   Document createDocument(String name);
 

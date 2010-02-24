@@ -22,23 +22,41 @@ import java.util.List;
 
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.repository.PropertyFactory;
+import org.apache.opencmis.client.runtime.PersistentPropertyImpl;
+import org.apache.opencmis.client.runtime.PersistentSessionImpl;
 import org.apache.opencmis.commons.enums.CmisProperties;
 import org.apache.opencmis.commons.enums.PropertyType;
-import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 
 public class PropertyFactoryImpl implements PropertyFactory {
 
-	public <T> Property<T> createCmisProperty(CmisProperties p, T value) {
-		throw new CmisRuntimeException("not implemented");
+	private PersistentSessionImpl session = null;
+
+	protected PropertyFactoryImpl(PersistentSessionImpl session) {
+		this.session = session;
+	}
+
+	public static PropertyFactoryImpl newInstance(PersistentSessionImpl session) {
+		return new PropertyFactoryImpl(session);
+	}
+
+	public <T> Property<T> createCmisProperty(CmisProperties cmisProperties,
+			T value) {
+		Property<T> p = new PersistentPropertyImpl<T>(this.session,
+				cmisProperties, value);
+		return p;
 	}
 
 	public <T> Property<T> createProperty(String id, PropertyType type, T value) {
-		throw new CmisRuntimeException("not implemented");
+		Property<T> p = new PersistentPropertyImpl<T>(this.session,
+				type, value);
+		return p;
 	}
 
 	public <T> Property<T> createPropertyMultivalue(String id,
 			PropertyType type, List<T> value) {
-		throw new CmisRuntimeException("not implemented");
+		Property<T> p = new PersistentPropertyImpl<T>(this.session,
+				type, value);
+		return p;
 	}
 
 }

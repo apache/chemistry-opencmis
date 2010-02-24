@@ -46,14 +46,12 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 
     Assert.assertEquals("", root.getName());
     Assert.assertNotNull(root.getId());
-    Assert.assertEquals("/", root.getPath());
     Assert.assertNull(root.getFolderParent());
     Assert.assertNotNull(root.getType());
     Assert.assertEquals(Fixture.FOLDER_TYPE_ID, root.getType().getId());
 
     Assert.assertEquals("", root.getName());
     Assert.assertNotNull(root.getId());
-    Assert.assertEquals("/", root.getPath());
     Assert.assertNull(root.getFolderParent());
     Assert.assertNotNull(root.getType());
     Assert.assertEquals(Fixture.FOLDER_TYPE_ID, root.getType().getId());
@@ -67,7 +65,6 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 
     Assert.assertEquals(Fixture.TEST_ROOT_FOLDER_NAME, folder.getName());
     Assert.assertNotNull(folder.getId());
-    Assert.assertEquals("/" + Fixture.TEST_ROOT_FOLDER_NAME, folder.getPath());
     Assert.assertNotNull(folder.getFolderParent());
     Assert.assertNotNull(folder.getType());
     Assert.assertEquals(Fixture.FOLDER_TYPE_ID, folder.getType().getId());
@@ -94,7 +91,6 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
     Assert.assertNotNull(document.getBaseType());
     Assert.assertEquals(ObjectType.DOCUMENT_BASETYPE_ID, document.getBaseType().getId());
     Assert.assertEquals(Fixture.DOCUMENT1_NAME, document.getName());
-    Assert.assertEquals(path, document.getPath());
     Assert.assertNotNull(document.getType());
     Assert.assertEquals(Fixture.DOCUMENT_TYPE_ID, document.getType().getId());
 

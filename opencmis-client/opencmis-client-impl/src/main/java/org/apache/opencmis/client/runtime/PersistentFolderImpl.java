@@ -18,6 +18,7 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TreeMap;
@@ -34,13 +35,24 @@ import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.AllowableActions;
 import org.apache.opencmis.client.api.util.AceList;
 import org.apache.opencmis.client.api.util.PagingList;
+import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.RelationshipDirection;
 import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
+import org.apache.opencmis.commons.impl.dataobjects.AccessControlListImpl;
+import org.apache.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
+import org.apache.opencmis.commons.impl.dataobjects.PropertiesDataImpl;
+import org.apache.opencmis.commons.impl.dataobjects.PropertyBooleanDataImpl;
+import org.apache.opencmis.commons.provider.AccessControlEntry;
+import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.ObjectData;
+import org.apache.opencmis.commons.provider.PropertiesData;
+import org.apache.opencmis.commons.provider.PropertyData;
 
 public class PersistentFolderImpl implements Folder {
 
@@ -51,6 +63,10 @@ public class PersistentFolderImpl implements Folder {
 
 		this.session = session;
 		this.objectData = od;
+	}
+
+	public PersistentFolderImpl(PersistentSessionImpl session) {
+		this.session = session;
 	}
 
 	public Document createDocument(String name) {
@@ -75,7 +91,10 @@ public class PersistentFolderImpl implements Folder {
 
 	public Folder createFolder(List<Property<?>> properties,
 			List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs) {
-		throw new CmisRuntimeException("not implemented");
+
+		Folder f = this.session.getObjectFactory().createFolder(this,
+				properties, policies, addACEs, removeACEs);
+		return f;
 	}
 
 	public Policy createPolicy(List<Property<?>> properties,
@@ -286,6 +305,116 @@ public class PersistentFolderImpl implements Folder {
 
 	public void updateProperties(List<Property<?>> properties) {
 		throw new CmisRuntimeException("not implemented");
+	}
+
+	/**
+	 * Create folder in backend
+	 * 
+	 * @param parent
+	 * @param properties
+	 * @param policies
+	 * @param addACEs
+	 * @param removeACEs
+	 */
+	public void create(Folder parent, List<Property<?>> properties,
+			List<Policy> policies, List<Ace> addAce, List<Ace> removeAce) {
+
+	    List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
+	    propList.add(this.session.getProvider().getObjectFactory().createPropertyStringData(PropertyIds.CMIS_NAME, "testfolder"));
+	    propList.add(this.session.getProvider().getObjectFactory().createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID,
+	        "cmis_Folder"));
+
+	    PropertiesData xxx = this.session.getProvider().getObjectFactory().createPropertiesData(propList);
+
+		
+		
+		String repositoryId = this.session.getRepositoryInfo().getId();
+		String parentFolderId = parent.getId();
+		PropertiesData pd = this.convertToPropertiesData(properties);
+		List<String> pol = this.convertToPoliciesData(policies);
+		AccessControlList addAcl = this.convertToAcl(addAce);
+		AccessControlList removeAcl = this.convertToAcl(removeAce);
+
+		String objectId = this.session.getProvider().getObjectService()
+				.createFolder(repositoryId, pd, parentFolderId, pol, addAcl,
+						removeAcl, null);
+		this.objectData = this.session.getProvider().getObjectService()
+				.getObject(repositoryId, objectId, null, false,
+						IncludeRelationships.NONE, null, true, true, null);
+
+		this.session.getCache().put(this);
+	}
+
+	private AccessControlList convertToAcl(List<Ace> aceList) {
+		AccessControlListImpl acli = null;
+		AccessControlEntryImpl acei;
+		List<AccessControlEntry> aceiList = null;
+		AccessControlPrincipalDataImpl acpdi = null;
+
+		if (aceList != null) {
+			acli = new AccessControlListImpl();
+			aceiList = new ArrayList<AccessControlEntry>();
+
+			for (Ace aceEntry : aceList) {
+				acei = new AccessControlEntryImpl();
+				acei.setPermissions(aceEntry.getPermissionsNames());
+				acpdi = new AccessControlPrincipalDataImpl(aceEntry
+						.getPrincipalId());
+				acei.setPrincipal(acpdi);
+
+				aceiList.add(acei);
+			}
+
+			acli.setAces(aceiList);
+		}
+		return acli;
+	}
+
+	private List<String> convertToPoliciesData(List<Policy> policies) {
+		List<String> pList = null;
+
+		if (policies != null) {
+			pList = new ArrayList<String>();
+			for (Policy pol : policies) {
+				pList.add(pol.getPolicyText());
+			}
+		}
+		return pList;
+	}
+
+	private PropertiesData convertToPropertiesData(List<Property<?>> properties) {
+		PropertiesDataImpl pdi = new PropertiesDataImpl();
+		PropertyData<?> pd = null;
+
+		for (Property<?> property : properties) {
+			switch (property.getType()) {
+			case BOOLEAN:
+//					pd = new PropertyBooleanDataImpl(null, );
+//					pd.
+				break;
+			case DATETIME:
+				break;
+			case DECIMAL:
+				break;
+			case HTML:
+				break;
+			case ID:
+				break;
+			case INTEGER:
+				break;
+			case STRING:
+				break;
+			case URI:
+				break;
+			default:
+				throw new CmisRuntimeException("unsupported property type"
+						+ property.getType());
+			}
+
+			pdi.addProperty(pd);
+		}
+
+		return pdi;
 	}
 
 }

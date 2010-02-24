@@ -124,10 +124,6 @@ public interface CmisObject {
 
   <T> List<T> getPropertyMultivalue(String id);
 
-  String getPathSegment();
-
-  String getPath();
-
   AllowableActions getAllowableActions();
 
   List<Relationship> getRelationships();
