@@ -96,8 +96,10 @@ public final class CmisProviderFactory {
     checkSessionParameters(sessionParameters, false);
 
     sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_ATOMPUB);
-    sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
-        STANDARD_AUTHENTICATION_PROVIDER);
+    if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
+      sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
+          STANDARD_AUTHENTICATION_PROVIDER);
+    }
     sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
     sessionParameters.put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, "false");
     addDefaultParameters(sessionParameters);
@@ -114,8 +116,10 @@ public final class CmisProviderFactory {
     checkSessionParameters(sessionParameters, false);
 
     sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_WEBSERVICES);
-    sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
-        STANDARD_AUTHENTICATION_PROVIDER);
+    if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
+      sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
+          STANDARD_AUTHENTICATION_PROVIDER);
+    }
     sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
     sessionParameters.put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, "true");
     addDefaultParameters(sessionParameters);
