@@ -41,6 +41,8 @@ import org.apache.opencmis.commons.provider.ObjectList;
 import org.apache.opencmis.commons.provider.ObjectParentData;
 
 /**
+ * Navigation Service Web Services client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
@@ -103,7 +105,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
               includeRelationships), renditionFilter, includePathSegment, convert(extension));
 
       // no list?
-      if ((containerList == null) || (containerList.isEmpty())) {
+      if (containerList == null) {
         return null;
       }
 
@@ -164,7 +166,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
               includeRelationships), renditionFilter, includePathSegment, convert(extension));
 
       // no list?
-      if ((containerList == null) || (containerList.isEmpty())) {
+      if (containerList == null) {
         return null;
       }
 
@@ -204,7 +206,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
           convert(extension));
 
       // no list?
-      if ((parentsList == null) || (parentsList.isEmpty())) {
+      if (parentsList == null) {
         return null;
       }
 

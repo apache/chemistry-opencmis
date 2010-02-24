@@ -40,6 +40,8 @@ import org.apache.opencmis.commons.provider.ObjectList;
 import org.apache.opencmis.commons.provider.RelationshipService;
 
 /**
+ * Relationship Service AtomPub client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */

@@ -36,6 +36,8 @@ import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.PolicyService;
 
 /**
+ * Policy Service Web Services client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
@@ -54,8 +56,8 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.PolicyService#applyPolicy(java.lang.String, java.lang.String,
-   * java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
+   * @see org.apache.opencmis.client.provider.PolicyService#applyPolicy(java.lang.String,
+   * java.lang.String, java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
    */
   public void applyPolicy(String repositoryId, String policyId, String objectId,
       ExtensionsData extension) {
@@ -116,7 +118,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
           convert(extension));
 
       // no list?
-      if ((policyList == null) || (policyList.isEmpty())) {
+      if (policyList == null) {
         return null;
       }
 

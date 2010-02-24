@@ -44,6 +44,8 @@ import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.VersioningService;
 
 /**
+ * Versioning Service Web Services client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
@@ -162,7 +164,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
           includeAllowableActions, convert(extension));
 
       // no list?
-      if ((versionList == null) || (versionList.isEmpty())) {
+      if (versionList == null) {
         return null;
       }
 

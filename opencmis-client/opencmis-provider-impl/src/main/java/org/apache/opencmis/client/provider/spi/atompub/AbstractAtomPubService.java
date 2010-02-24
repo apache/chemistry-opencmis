@@ -70,6 +70,8 @@ import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 
 /**
+ * Base class for all AtomPub clients.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */

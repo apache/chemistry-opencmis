@@ -38,6 +38,8 @@ import org.apache.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.opencmis.commons.impl.jaxb.CmisException;
 
 /**
+ * Base class for all Web Services clients.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */

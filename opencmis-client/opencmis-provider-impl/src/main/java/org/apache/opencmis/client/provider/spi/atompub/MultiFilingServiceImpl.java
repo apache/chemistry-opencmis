@@ -29,6 +29,8 @@ import org.apache.opencmis.commons.impl.UrlBuilder;
 import org.apache.opencmis.commons.provider.MultiFilingService;
 
 /**
+ * MultiFiling Service AtomPub client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */

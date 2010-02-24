@@ -2069,7 +2069,7 @@ public final class Converter {
    */
   public static List<TypeDefinitionContainer> convertTypeContainerList(
       List<CmisTypeContainer> typeContainers) {
-    if ((typeContainers == null) || (typeContainers.isEmpty())) {
+    if (typeContainers == null) {
       return null;
     }
 

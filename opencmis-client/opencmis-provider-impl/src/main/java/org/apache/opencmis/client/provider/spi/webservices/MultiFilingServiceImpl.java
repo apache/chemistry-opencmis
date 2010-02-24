@@ -30,6 +30,8 @@ import org.apache.opencmis.commons.impl.jaxb.MultiFilingServicePort;
 import org.apache.opencmis.commons.provider.MultiFilingService;
 
 /**
+ * MultiFiling Service Web Services client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */

@@ -37,6 +37,8 @@ import org.apache.opencmis.commons.provider.Holder;
 import org.apache.opencmis.commons.provider.ObjectList;
 
 /**
+ * Discovery Service Web Services client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */

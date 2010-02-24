@@ -52,6 +52,8 @@ import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.RenditionData;
 
 /**
+ * Object Service Web Services client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
@@ -444,7 +446,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
           renditionFilter, maxItems, skipCount, convert(extension));
 
       // no list?
-      if ((renditionList == null) || (renditionList.isEmpty())) {
+      if (renditionList == null) {
         return null;
       }
 

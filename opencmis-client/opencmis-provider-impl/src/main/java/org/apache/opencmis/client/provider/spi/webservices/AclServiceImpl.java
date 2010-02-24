@@ -31,6 +31,8 @@ import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.AclService;
 
 /**
+ * ACL Service Web Services client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */

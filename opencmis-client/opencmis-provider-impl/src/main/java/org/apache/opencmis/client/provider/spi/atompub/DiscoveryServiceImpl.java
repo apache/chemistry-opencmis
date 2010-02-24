@@ -45,6 +45,8 @@ import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectList;
 
 /**
+ * Discovery Service AtomPub client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */

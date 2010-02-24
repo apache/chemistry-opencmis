@@ -49,6 +49,8 @@ import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.VersioningService;
 
 /**
+ * Versioning Service AtomPub client.
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
