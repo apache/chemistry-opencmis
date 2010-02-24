@@ -18,14 +18,15 @@
  */
 package org.apache.opencmis.client.api;
 
+import java.util.List;
 
 /**
  * Domain Model 2.7
  */
 public interface Policy extends CmisObject {
 
-	String getPath();
+	List<String> getPaths();
 
-  public String getPolicyText(); // cmis:policyText
+	public String getPolicyText(); // cmis:policyText
 
 }

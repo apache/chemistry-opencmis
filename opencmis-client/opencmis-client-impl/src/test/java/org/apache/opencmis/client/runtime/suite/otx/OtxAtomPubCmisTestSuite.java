@@ -56,7 +56,7 @@ public class OtxAtomPubCmisTestSuite extends AbstractCmisTestSuite {
     parameter.put(SessionParameter.SESSION_TYPE, SessionType.PERSISTENT.value());
     parameter.put(SessionParameter.LOCALE_ISO3166_COUNTRY, Locale.GERMANY.getISO3Country());
     parameter.put(SessionParameter.LOCALE_ISO639_LANGUAGE, Locale.GERMANY.getISO3Language());
-    parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOM.value());
+    parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
     parameter.put(SessionParameter.ATOMPUB_URL, "http://pwdf6227:8080/cmis/atom");
     parameter.put(SessionParameter.REPOSITORY_ID, "testApp");
     

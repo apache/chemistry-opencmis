@@ -358,10 +358,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 				.get(SessionParameter.BINDING_TYPE));
 
 		switch (bt) {
-		case ATOM:
+		case ATOMPUB:
 			this.provider = this.createAtomPubProvider(this.parameters);
 			break;
-		case WEBSERVICE:
+		case WEBSERVICES:
 			this.provider = this.createWebServiceProvider(this.parameters);
 			break;
 		case UNSPECIFIC:
