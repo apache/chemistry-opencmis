@@ -31,8 +31,10 @@ import org.apache.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.opencmis.inmemory.storedobj.api.Document;
 import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.opencmis.inmemory.storedobj.api.Path;
+import org.apache.opencmis.inmemory.storedobj.api.Filing;
+import org.apache.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
 
@@ -86,11 +88,24 @@ public class ObjectStoreImpl implements ObjectStore {
   public StoredObject getObjectByPath(String path) {
     
     for (StoredObject so : fStoredObjectMap.values()) {
-      if (so instanceof Path) {
-        String soPath = ((Path) so).getPath();
+      if (so instanceof SingleFiling) {
+        String soPath = ((SingleFiling) so).getPath();
         if (soPath.equals(path))
           return so;
       }
+      else if (so instanceof MultiFiling) {
+        MultiFiling mfo = (MultiFiling)so;
+        List<Folder> parents = mfo.getParents();
+        for (Folder parent : parents) {
+          String parentPath = parent.getPath();
+          String mfPath = parentPath.equals(Folder.PATH_SEPARATOR) ? parentPath
+              + mfo.getPathSegment() : parentPath + Folder.PATH_SEPARATOR + mfo.getPathSegment();
+          if (mfPath.equals(path))
+            return so;
+        }
+      }
+      else
+        return null;
     }
     return null;
   }

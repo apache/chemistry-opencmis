@@ -19,8 +19,14 @@
 package org.apache.opencmis.inmemory;
 
 import org.apache.opencmis.commons.api.ExtensionsData;
+import org.apache.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.opencmis.commons.provider.MultiFilingService;
+import org.apache.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.opencmis.inmemory.storedobj.api.MultiFiling;
+import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
+import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 
 public class MultiFilingServiceImpl extends AbstractServiceImpl implements MultiFilingService {
 
@@ -30,14 +36,54 @@ public class MultiFilingServiceImpl extends AbstractServiceImpl implements Multi
 
   public void addObjectToFolder(String repositoryId, String objectId, String folderId,
       Boolean allVersions, ExtensionsData extension) {
-    // TODO Auto-generated method stub
 
+    checkParams(repositoryId, objectId, folderId);
+    if (allVersions != null && allVersions.booleanValue() == false)
+      throw new CmisNotSupportedException(
+          "Cannot add object to folder, version specific filing is not supported.");
+    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+    StoredObject so = objectStore.getObjectById(objectId);
+    StoredObject folder = objectStore.getObjectById(folderId);
+    checkObjects(so, folder);
+    
+    Folder newParent = (Folder) folder;
+    MultiFiling obj = (MultiFiling) so;
+    obj.addParent(newParent);
   }
 
   public void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
       ExtensionsData extension) {
-    // TODO Auto-generated method stub
+    checkStandardParameters(repositoryId, objectId);
+    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+    checkExistingObjectId(objectStore, folderId);
 
+    StoredObject so = objectStore.getObjectById(objectId);
+    StoredObject folder = objectStore.getObjectById(folderId);
+    checkObjects(so, folder);
+    Folder parent = (Folder) folder;
+    MultiFiling obj = (MultiFiling) so;
+    obj.removeParent(parent);   
   }
 
+  private void checkParams(String repositoryId, String objectId, String folderId) {
+    checkStandardParameters(repositoryId, objectId);
+    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+    checkExistingObjectId(objectStore, folderId);    
+  }
+  
+  private void checkObjects(StoredObject so, StoredObject folder) {
+    if (!(so instanceof MultiFiling))
+      throw new CmisConstraintException("Cannot add object to folder, object id " + so.getId()
+          + " is not a multi-filed object.");
+
+    if ((so instanceof Folder))
+      throw new CmisConstraintException("Cannot add object to folder, object id " + folder.getId()
+          + " is a folder and folders are not multi-filed.");
+
+    if (!(folder instanceof Folder))
+      throw new CmisConstraintException("Cannot add object to folder, folder id " + folder.getId()
+          + " does not refer to a folder.");    
+  }
+
+  
 }

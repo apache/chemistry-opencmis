@@ -38,10 +38,10 @@ import org.apache.opencmis.inmemory.storedobj.api.Document;
  * 
  */
 
-public class DocumentImpl extends AbstractPathImpl implements Document{
+public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
   private ContentStreamDataImpl fContent;
 
-  private static final Log LOG = LogFactory.getLog(AbstractPathImpl.class.getName());
+  private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
 
   DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package
     super(objStore);

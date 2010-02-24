@@ -50,6 +50,8 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
   public static final String TOPLEVEL_TYPE = "DocumentTopLevel";
   public static final String LEVEL1_TYPE = "DocumentLevel1";;
   public static final String LEVEL2_TYPE = "DocumentLevel2";
+  public static final String VERSION_DOCUMENT_TYPE_ID = "MyVersionedType";
+  public static final String VERSION_PROPERTY_ID = "StringProp";
 
   /**
    * in the public interface of this class we return the singleton containing the required types
@@ -242,11 +244,27 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
     propertyDefinitions.put(propLevel2.getId(), propLevel2);
     cmisDocTypeLevel2.addCustomPropertyDefinitions(propertyDefinitions);    
 
+    
+    // create a versioned type with properties
+    InMemoryDocumentTypeDefinition cmisVersionedType = new InMemoryDocumentTypeDefinition(VERSION_DOCUMENT_TYPE_ID,
+        "VersionedType", InMemoryDocumentTypeDefinition.getRootDocumentType());
+    
+    // create a single String property definition
+    
+    propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+    
+    PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(VERSION_PROPERTY_ID, "Sample String Property");
+    propertyDefinitions.put(prop1.getId(), prop1);
+    
+    cmisVersionedType.addCustomPropertyDefinitions(propertyDefinitions);    
+    cmisVersionedType.setIsVersionable(true); // make it a versionable type;
+    
     // add type to types collection
     typesList.add(cmisDocTypeTopLevel);
     typesList.add(cmisDocTypeLevel1);
     typesList.add(cmisDocTypeLevel2);
-    
+    typesList.add(cmisVersionedType);
+
     return typesList;
   }
 

@@ -32,7 +32,7 @@ import org.apache.opencmis.commons.provider.ContentStreamData;
  * @author Jens
  *
  */
-public interface VersionedDocument extends Path, StoredObject {
+public interface VersionedDocument extends MultiFiling, StoredObject {
   
   DocumentVersion addVersion(ContentStreamData content, VersioningState verState, String user);
   

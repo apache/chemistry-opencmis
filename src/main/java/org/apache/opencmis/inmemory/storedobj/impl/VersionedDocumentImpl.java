@@ -32,7 +32,7 @@ import org.apache.opencmis.inmemory.FilterParser;
 import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
 
-public class VersionedDocumentImpl extends AbstractPathImpl implements VersionedDocument {
+public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements VersionedDocument {
   
   private boolean fIsCheckedOut;
   private String fCheckedOutUser;

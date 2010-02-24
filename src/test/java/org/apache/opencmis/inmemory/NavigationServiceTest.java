@@ -35,7 +35,11 @@ import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.opencmis.util.repository.ObjectGenerator;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 
 /**
  * @author Jens
@@ -45,14 +49,17 @@ public class NavigationServiceTest extends AbstractServiceTst {
   private static final int NUM_ROOT_FOLDERS = 10;
   private String fLevel1FolderId;
 
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     super.setUp();
   }
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
     super.tearDown();
   }
 
+  @Test
   public void testGetChildren() {
     log.info("starting testGetChildren() ...");
     createLevel1Folders();
@@ -86,6 +93,7 @@ public class NavigationServiceTest extends AbstractServiceTst {
     log.info("... testGetChildren() finished.");
   }
 
+  @Test
   public void testGetFolderTree() {
     log.info("starting testGetFolderTree() ...");    
     createFolderHierachy(3, 5);
@@ -124,6 +132,7 @@ public class NavigationServiceTest extends AbstractServiceTst {
     }
   }
 
+  @Test
   public void testGetDescendants() {
     log.info("starting testGetDescendants() ...");
     final int numLevels = 3;
@@ -166,6 +175,7 @@ public class NavigationServiceTest extends AbstractServiceTst {
     log.info("... testGetDescendants() finished.");
   }
   
+  @Test
   public void testGetFolderParent() {
     log.info("starting testGetFolderParent() ...");
     createLevel1Folders();

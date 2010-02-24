@@ -27,7 +27,7 @@ package org.apache.opencmis.inmemory.storedobj.api;
  *
  */
 
-public interface Document extends StoredObject, Path, Content {
+public interface Document extends StoredObject, MultiFiling, Content {
 
 }
 

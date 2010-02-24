@@ -1,5 +1,10 @@
 package org.apache.opencmis.inmemory;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +41,7 @@ import org.apache.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo
 import org.apache.opencmis.inmemory.server.RuntimeContext;
 import org.apache.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 
-public class AbstractServiceTst  extends TestCase {
+public class AbstractServiceTst /* extends TestCase*/ {
   private static Log LOG = LogFactory.getLog(AbstractServiceTst.class);
   protected static final String REPOSITORY_ID = "UnitTestRepository";
   protected ProviderObjectFactory fFactory = new ProviderObjectFactoryImpl();
@@ -70,7 +73,7 @@ public class AbstractServiceTst  extends TestCase {
   }
   
   protected void setUp() throws Exception {
-    super.setUp();
+    //super.setUp();
     LOG.debug("Initializing InMemory Test with type creator class: " + fTypeCreatorClassName);
     Map<String, String> parameters = new HashMap<String, String>();
     parameters.put(SessionParameter.BINDING_SPI_CLASS, CmisProviderFactory.BINDING_SPI_INMEMORY);
@@ -113,7 +116,7 @@ public class AbstractServiceTst  extends TestCase {
   }
 
   protected void tearDown() throws Exception {
-    super.tearDown();
+    // super.tearDown();
   }
   
   public void testDummy() {
@@ -133,9 +136,8 @@ public class AbstractServiceTst  extends TestCase {
     return id;
   }
  
-  protected String createDocument(String name, String folderId, String typeId, boolean withContent) {
-      ContentStreamData contentStream = null;
-    VersioningState versioningState = VersioningState.NONE;
+  protected String createDocument(String name, String folderId, String typeId, VersioningState versioningState, boolean withContent) {
+    ContentStreamData contentStream = null;
     List<String> policies = null;
     AccessControlList addACEs = null;
     AccessControlList removeACEs = null;
@@ -156,6 +158,11 @@ public class AbstractServiceTst  extends TestCase {
       fail("createDocument() failed with exception: " + e);
     }
     return id;
+    
+  }
+  protected String createDocument(String name, String folderId, String typeId, boolean withContent) {
+    VersioningState versioningState = VersioningState.NONE;
+    return createDocument(name, folderId, typeId, versioningState, withContent);
   }
   
   protected PropertiesData createDocumentProperties(String name, String typeId) {

@@ -49,6 +49,9 @@ import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Jens
@@ -69,10 +72,12 @@ public class TypeValidationTest extends TestCase {
   private static final String STRING_PROP_TYPE_SUB = "StringPropSub";
   private static final ProviderObjectFactory FACTORY = new ProviderObjectFactoryImpl();
   
+  @Before
   protected void setUp() throws Exception {
     super.setUp();
   }
 
+  @After
   protected void tearDown() throws Exception {
     super.tearDown();
   }
@@ -84,6 +89,7 @@ public class TypeValidationTest extends TestCase {
     return properties;
   }
 
+  @Test
   public void testMandatoryPropertyValidation() {
     // create properties in the same way as we would pass them to a createDocument call
     // of the ObjectService
@@ -114,6 +120,7 @@ public class TypeValidationTest extends TestCase {
     }
   }
 
+  @Test
   public void testStringPropertyValidation() {
     TypeDefinition typeDef = buildTypeWithStringProp(); // we only have one
 
@@ -142,6 +149,7 @@ public class TypeValidationTest extends TestCase {
     }
   }
 
+  @Test
   public void testIntegerPropertyValidation() {
 
     TypeDefinition typeDef = buildTypeWithIntegerProp();
@@ -171,6 +179,7 @@ public class TypeValidationTest extends TestCase {
 
   }
 
+  @Test
   public void testDecimalPropertyValidation() {
     TypeDefinition typeDef = buildTypeWithDecimalProp();
 
@@ -198,6 +207,7 @@ public class TypeValidationTest extends TestCase {
     }
   }
 
+  @Test
   public void testPickListValidationSingleValue() {
     TypeDefinition typeDef =buildTypeWithPickList(Cardinality.SINGLE);
 
@@ -227,6 +237,7 @@ public class TypeValidationTest extends TestCase {
     }
   }
 
+  @Test
   public void testPickListValidationMultiValue() {
     TypeDefinition typeDef =buildTypeWithPickList(Cardinality.MULTI);
 
@@ -261,6 +272,7 @@ public class TypeValidationTest extends TestCase {
     }
   }
 
+  @Test
   public void testPickListValidationMultiUsingMultipleValueLists() {
     TypeDefinition typeDef = buildTypeWithMultiPickList();
 
@@ -298,6 +310,7 @@ public class TypeValidationTest extends TestCase {
     }
   }
 
+  @Test
   public void testHierachicalPickListValidationSingleValue() {
     TypeDefinition typeDef = buildTypeWithHierachicalPickList(Cardinality.SINGLE);
 
@@ -327,6 +340,7 @@ public class TypeValidationTest extends TestCase {
     }
   }
 
+  @Test
   public void testHierachicalPickListValidationMultiValue() {
     TypeDefinition typeDef = buildTypeWithHierachicalPickList(Cardinality.MULTI);
 
@@ -362,6 +376,7 @@ public class TypeValidationTest extends TestCase {
     }
   }
 
+  @Test
   public void testInheritedPropertyValidation() {
     TypeManager tm = buildInheritedTypes();
     TypeDefinition superType = tm.getTypeById(DOC_TYPE_SUPER).getTypeDefinition();

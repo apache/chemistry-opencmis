@@ -30,7 +30,8 @@ import org.apache.opencmis.commons.provider.ObjectParentData;
 import org.apache.opencmis.inmemory.storedobj.api.Content;
 import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.opencmis.inmemory.storedobj.api.Path;
+import org.apache.opencmis.inmemory.storedobj.api.Filing;
+import org.apache.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -116,9 +117,9 @@ public class AtomLinkInfoProvider {
     }
     
     // Filing
-    if (so instanceof Path) {
-      Path sop = ((Path)so);
-      objInfo.setHasParent(sop.getParent()!= null);
+    if (so instanceof Filing) {
+      Filing sop = ((Filing)so);
+      objInfo.setHasParent(!sop.getParents().isEmpty());
     } else {
       objInfo.setHasParent(false);      
     }

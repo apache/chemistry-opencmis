@@ -57,6 +57,12 @@ import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 /**
  * @author Jens
  */
@@ -107,17 +113,18 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     }    
   }
   
-
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     super.setTypeCreatorClass(RepositoryTestTypeSystemCreator.class.getName());
     super.setUp();
   }
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
     super.tearDown();
   }
 
-
+  @Test
   public void testRepositoryInfo() throws Exception {
     log.info("starting testRepositoryInfo() ...");
     List<RepositoryInfoData> repositories = fRepSvc.getRepositoryInfos(
@@ -138,6 +145,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     log.info("... testRepositoryInfo() finished.");
   }
 
+  @Test
   public void testTypeDefinition() throws Exception {
     log.info("");
     log.info("starting testTypeDefinition() ...");
@@ -155,6 +163,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     log.info("... testTypeDefinition() finished.");
   }
 
+  @Test
   public void testGetAllTypesUnlimitedDepth() {
     log.info("");
     log.info("starting testGetAllTypesUnlimitedDepth()...");
@@ -187,6 +196,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     log.info("... testGetAllTypesUnlimitedDepth() finished.");
   }
 
+  @Test
   public void testGetAllTypesLimitedDepth() {
     log.info("");
     log.info("starting testGetAllTypesLimitedDepth()...");
@@ -229,6 +239,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     log.info("... testGetAllTypesLimitedDepth() finished.");
   }
 
+  @Test
   public void testGetSpecificTypeLimitedDepth() {
     log.info("");
     log.info("starting testGetSpecificTypeLimitedDepth()...");
@@ -264,6 +275,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     log.info("... testGetSpecificTypeLimitedDepth() finished.");
   }
   
+  @Test
   public void testGetTypesWithoutProperties() {
     log.info("");
     log.info("starting testGetTypesWithoutProperties()...");
@@ -293,6 +305,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     log.info("... testGetTypesWithoutProperties() finished.");
   }
 
+  @Test
   public void testGetTypeChildren() {
     log.info("");
     log.info("starting testGetTypeChildren()...");
@@ -330,6 +343,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     log.info("... testGetTypeChildren() finished.");
   }
 
+  @Test
   public void testGetWrongParameters() {
     log.info("");
     log.info("starting testGetWrongParameters()...");
@@ -415,6 +429,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
 
   }
 
+  @Test
   public void testInheritedProperties() {
     log.info("");
     log.info("starting testInheritedProperties()...");

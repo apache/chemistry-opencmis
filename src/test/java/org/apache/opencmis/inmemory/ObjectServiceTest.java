@@ -53,6 +53,11 @@ import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.opencmis.util.repository.ObjectGenerator;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Jens
@@ -80,16 +85,19 @@ public class ObjectServiceTest extends AbstractServiceTst {
   
   ObjectCreator fCreator;
   
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     super.setTypeCreatorClass(ObjectTestTypeSystemCreator.class.getName());
     super.setUp();
     fCreator = new ObjectCreator(fFactory, fObjSvc, fRepositoryId);
   }
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
     super.tearDown();
   }
 
+  @Test
   public void testCreateDocument() {
     log.info("starting testCreateObject() ...");
     String id = createDocument(fRootFolderId, false);
@@ -99,6 +107,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
   }
 
 
+  @Test
   public void testGetObject() {
     log.info("starting testGetObject() ...");
     log.info("  creating object");
@@ -111,6 +120,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("... testGetObject() finished.");
   }
   
+  @Test
   public void testGetObjectByPath() {
     log.info("starting testGetObjectByPath() ...");
     log.info("  creating object");
@@ -160,6 +170,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("... testGetObjectByPath() finished.");
   }   
 
+  @Test
   public void testCreateDocumentWithContent() {
     log.info("starting testCreateDocumentWithContent() ...");
     String id = createDocument(fRootFolderId, true);
@@ -198,6 +209,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("... testCreateDocumentWithContent() finished.");
   }
 
+  @Test
   public void testCreateDocumentFromSource() {
     log.info("starting testCreateDocumentFromSource() ...");
     // create a 1st document
@@ -227,6 +239,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("... testCreateDocumentFromSource() finished.");
   }
 
+  @Test
   public void testCreatedDocumentInherited() {
     log.info("starting testCreatedDocumentInherited() ...");
     log.info("  creating object");
@@ -272,6 +285,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("... testCreatedDocumentInherited() finished.");
   }
   
+  @Test
   public void testBuildFolderAndDocuments() {
     // Create a hierarchy of folders and fill it with some documents
 
@@ -310,6 +324,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
   }
   
   
+  @Test
   public void testDeleteObject() {
     log.info("starting testDeleteObject() ...");
     log.info("Testing to delete a document");
@@ -410,6 +425,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("... testDeleteObject() finished.");    
   }
   
+  @Test
   public void testDeleteTree() {
     log.info("starting testDeleteTree() ...");
     ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
@@ -443,18 +459,21 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("... testDeleteTree() finished.");
   }
 
+  @Test
   public void testMoveFolder() {
     log.info("starting testMoveFolder() ...");
     moveObjectTest(true);
     log.info("... testMoveFolder() finished.");    
   }
   
+  @Test
   public void testMoveDocument() {
     log.info("starting testMoveDocument() ...");
     moveObjectTest(false);
     log.info("... testMoveDocument() finished.");    
   }
 
+  @Test
   public void testUpdateProperties() {
     log.info("starting testUpdateProperties() ...");
     String oldChangeToken, newChangeToken;
@@ -614,6 +633,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("... testUpdateProperties() finished.");
   }
 
+  @Test
   public void testAllowableActions() {
     log.info("starting testAllowableActions() ...");
     String id = createDocument(fRootFolderId, false);

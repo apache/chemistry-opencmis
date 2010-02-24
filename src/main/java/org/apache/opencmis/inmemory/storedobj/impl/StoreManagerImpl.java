@@ -246,8 +246,8 @@ public class StoreManagerImpl implements StoreManager {
     caps.setIsPwcUpdatable(true);
     caps.setSupportsGetDescendants(true);
     caps.setSupportsGetFolderTree(true);
-    caps.setSupportsMultifiling(false);
-    caps.setSupportsUnfiling(false);
+    caps.setSupportsMultifiling(true);
+    caps.setSupportsUnfiling(true);
     caps.setSupportsVersionSpecificFiling(false);
     repoInfo.setRepositoryCapabilities(caps);
     
