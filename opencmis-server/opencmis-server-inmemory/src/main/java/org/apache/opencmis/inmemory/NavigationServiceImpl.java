@@ -102,7 +102,6 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
         StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(obj.getId());
         log.info("Checked out: children:" + obj.getId());
         if (so instanceof DocumentVersion && ((DocumentVersion)so).getParentDocument().isCheckedOut())
-//        if (so instanceof VersionedDocument && ((VersionedDocument)so).isCheckedOut())
           odList.add(obj);
       }
     }
@@ -190,12 +189,9 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
       ExtensionsData extension) {
 
     log.debug("start getFolderParent()");
-    checkStandardParameters(repositoryId, folderId);
+    StoredObject so = checkStandardParameters(repositoryId, folderId);
 
-    ObjectStore fs = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = fs.getObjectById(folderId);
-    Folder folder = null;
-    
+    Folder folder = null;   
     if (so instanceof Folder)
       folder = (Folder) so;
     else
@@ -215,16 +211,13 @@ public class NavigationServiceImpl extends AbstractServiceImpl implements Naviga
       String renditionFilter, Boolean includeRelativePathSegment, ExtensionsData extension) {
 
     log.debug("start getObjectParents()");
-    checkStandardParameters(repositoryId, objectId);
+    StoredObject so = checkStandardParameters(repositoryId, objectId);
 
     // for now we have only folders that have a parent and the in-memory provider only has one
     // parent for each object (no multi-filing)
     List<ObjectParentData> result = null;
-    ObjectStore fs = fStoreManager.getObjectStore(repositoryId);
     
-    StoredObject so = fs.getObjectById(objectId);
-    Filing spo = null;
-        
+    Filing spo = null;        
     if (so instanceof Filing)
       spo = (Filing) so;
     else

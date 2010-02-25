@@ -37,13 +37,12 @@ public class MultiFilingServiceImpl extends AbstractServiceImpl implements Multi
   public void addObjectToFolder(String repositoryId, String objectId, String folderId,
       Boolean allVersions, ExtensionsData extension) {
 
-    checkParams(repositoryId, objectId, folderId);
+    StoredObject[] so2 = checkParams(repositoryId, objectId, folderId);
     if (allVersions != null && allVersions.booleanValue() == false)
       throw new CmisNotSupportedException(
           "Cannot add object to folder, version specific filing is not supported.");
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(objectId);
-    StoredObject folder = objectStore.getObjectById(folderId);
+    StoredObject so = so2[0];
+    StoredObject folder = so2[1];
     checkObjects(so, folder);
     
     Folder newParent = (Folder) folder;
@@ -53,22 +52,23 @@ public class MultiFilingServiceImpl extends AbstractServiceImpl implements Multi
 
   public void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
       ExtensionsData extension) {
-    checkStandardParameters(repositoryId, objectId);
+    
+    StoredObject so = checkStandardParameters(repositoryId, objectId);
     ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    checkExistingObjectId(objectStore, folderId);
+    StoredObject folder = checkExistingObjectId(objectStore, folderId);
 
-    StoredObject so = objectStore.getObjectById(objectId);
-    StoredObject folder = objectStore.getObjectById(folderId);
     checkObjects(so, folder);
     Folder parent = (Folder) folder;
     MultiFiling obj = (MultiFiling) so;
     obj.removeParent(parent);   
   }
 
-  private void checkParams(String repositoryId, String objectId, String folderId) {
-    checkStandardParameters(repositoryId, objectId);
+  private StoredObject[] checkParams(String repositoryId, String objectId, String folderId) {
+    StoredObject[] so = new StoredObject[2];
+    so[0] = checkStandardParameters(repositoryId, objectId);
     ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    checkExistingObjectId(objectStore, folderId);    
+    so[1] = checkExistingObjectId(objectStore, folderId);   
+    return so;
   }
   
   private void checkObjects(StoredObject so, StoredObject folder) {
