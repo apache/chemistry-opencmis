@@ -95,7 +95,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     log.debug("start createDocument()");
     checkRepositoryId(repositoryId);
 
-    ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
+    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
 
     // get name from properties
     PropertyData<?> pd = properties.getProperties().get(PropertyIds.CMIS_NAME);
@@ -107,7 +107,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
 
     Folder folder = null;
     if (null != folderId) {
-      StoredObject so = folderStore.getObjectById(folderId);
+      StoredObject so = objectStore.getObjectById(folderId);
   
       if (null == so)
         throw new CmisInvalidArgumentException(" Cannot create document, folderId: " + folderId
@@ -190,15 +190,10 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
 
     log.debug("start createDocumentFromSource()");
 
-    checkStandardParameters(repositoryId, sourceId);
-    ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
-    checkExistingObjectId(folderStore, sourceId);
+    StoredObject so = checkStandardParameters(repositoryId, sourceId);
 
     ContentStreamData content = getContentStream(repositoryId, sourceId, null, BigInteger
         .valueOf(-1), BigInteger.valueOf(-1), null);
-
-    // get all properties of existing document
-    StoredObject so = folderStore.getObjectById(sourceId);
 
     if (so == null)
       throw new CmisObjectNotFoundException("Unknown object id: " + sourceId);
@@ -346,11 +341,8 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
   public void deleteContentStream(String repositoryId, Holder<String> objectId,
       Holder<String> changeToken, ExtensionsData extension) {
     log.debug("start deleteContentStream()");
-    checkStandardParameters(repositoryId, objectId.getValue());
+    StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
     
-    ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = folderStore.getObjectById(objectId.getValue());
-
     if (so == null)
       throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
@@ -375,15 +367,14 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
 
     log.debug("start deleteObject()");
     checkStandardParameters(repositoryId, objectId);
-    ObjectStore fs = fStoreManager.getObjectStore(repositoryId);
+    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
     log.info("delete object for id: " + objectId);
 
     // check if it is the root folder
-    ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
-    if (objectId.equals(folderStore.getRootFolder().getId()))
+    if (objectId.equals(objectStore.getRootFolder().getId()))
       throw new CmisNotSupportedException("You can't delete a root folder");
 
-    fs.deleteObject(objectId);
+    objectStore.deleteObject(objectId);
     log.debug("stop deleteObject()");
   }
 
@@ -398,8 +389,9 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
    */
   public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
       UnfileObjects unfileObject, Boolean continueOnFailure, ExtensionsData extension) {
+    
     log.debug("start deleteTree()");
-    checkStandardParameters(repositoryId, folderId);
+    StoredObject so = checkStandardParameters(repositoryId, folderId);
     List<String> failedToDeleteIds = new ArrayList<String>();
     FailedToDeleteDataImpl result = new FailedToDeleteDataImpl();
 
@@ -410,9 +402,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     if (null == continueOnFailure)
       continueOnFailure = false;
     
-    
-    ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = folderStore.getObjectById(folderId);
+    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
 
     if (null == so)
       throw new RuntimeException("Cannot delete object with id  " + folderId
@@ -426,11 +416,11 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       throw new CmisNotSupportedException("This repository does not support unfile operations.");
 
     // check if it is the root folder
-    if (folderId.equals(folderStore.getRootFolder().getId()))
+    if (folderId.equals(objectStore.getRootFolder().getId()))
       throw new CmisNotSupportedException("You can't delete a root folder");
 
     // recursively delete folder
-    deleteRecursive(folderStore, (Folder) so, continueOnFailure, allVersions, failedToDeleteIds);
+    deleteRecursive(objectStore, (Folder) so, continueOnFailure, allVersions, failedToDeleteIds);
 
     result.setIds(failedToDeleteIds);
     log.debug("stop deleteTree()");
@@ -447,9 +437,8 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
   public AllowableActionsData getAllowableActions(String repositoryId, String objectId,
       ExtensionsData extension) {
     log.debug("start getAllowableActions()");
-    checkStandardParameters(repositoryId, objectId);
+    StoredObject so = checkStandardParameters(repositoryId, objectId);
     ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(objectId);
 
     if (so == null)
       throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -471,9 +460,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       BigInteger offset, BigInteger length, ExtensionsData extension) {
 
     log.debug("start getContentStream()");
-    checkStandardParameters(repositoryId, objectId);
-    ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = folderStore.getObjectById(objectId);
+    StoredObject so = checkStandardParameters(repositoryId, objectId);
 
     if (so == null)
       throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -501,9 +488,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
     log.debug("start getObject()");
-    checkStandardParameters(repositoryId, objectId);
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(objectId);
+    StoredObject so = checkStandardParameters(repositoryId, objectId);
 
     if (so == null)
       throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -549,10 +534,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       ExtensionsData extension) {
 
     log.debug("start getProperties()");
-    checkStandardParameters(repositoryId, objectId);
-
-    ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = folderStore.getObjectById(objectId);
+    StoredObject so = checkStandardParameters(repositoryId, objectId);
 
     if (so == null)
       throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -593,11 +575,10 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
   public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId,
       String sourceFolderId, ExtensionsData extension) {
     log.debug("start moveObject()");
-    checkStandardParameters(repositoryId, objectId.getValue());
+    StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
     Folder targetFolder = null;
     Folder sourceFolder = null;
-    ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = folderStore.getObjectById(objectId.getValue());
+    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
     Filing spo = null;
 
     if (null == so)
@@ -608,7 +589,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       throw new CmisInvalidArgumentException("Object must be folder or document: "
           + objectId.getValue());
 
-    StoredObject soTarget = folderStore.getObjectById(targetFolderId);
+    StoredObject soTarget = objectStore.getObjectById(targetFolderId);
     if (null == soTarget)
       throw new CmisObjectNotFoundException("Unknown target folder: " + targetFolderId);
     else if (soTarget instanceof Folder)
@@ -616,7 +597,7 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     else
       throw new CmisNotSupportedException("Destination " + targetFolderId + " of a move operation must be a folder");
 
-    StoredObject soSource = folderStore.getObjectById(sourceFolderId);
+    StoredObject soSource = objectStore.getObjectById(sourceFolderId);
     if (null == soSource)
       throw new CmisObjectNotFoundException("Unknown source folder: " + sourceFolderId);
     else if (soSource instanceof Folder)
@@ -642,23 +623,6 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
     spo.move(sourceFolder, targetFolder);
     objectId.setValue(so.getId());
     log.debug("stop moveObject()");
-  }
-
-  private boolean hasDescendant(Folder sourceFolder, Folder targetFolder) {
-    String sourceId = sourceFolder.getId();
-    String targetId = targetFolder.getId();
-    while (targetId != null) {
-      // log.info("comparing source id " + sourceId + " with predecessor " +
-      // targetId);
-      if (targetId.equals(sourceId))
-        return true;
-      targetFolder = targetFolder.getParent();
-      if (null != targetFolder)
-        targetId = targetFolder.getId();
-      else
-        targetId = null;
-    }
-    return false;
   }
 
   /*
@@ -716,13 +680,9 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
       Holder<String> changeToken, PropertiesData properties, ExtensionsData extension) {
 
     log.debug("start updateProperties()");
-    checkStandardParameters(repositoryId, objectId.getValue());
+    StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
     
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-
-    // Validation stuff
-    StoredObject so = objectStore.getObjectById(objectId.getValue());
-
+    // Validation
     TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
     boolean isCheckedOut = false;
     
@@ -819,7 +779,24 @@ public class ObjectServiceImpl extends AbstractServiceImpl implements ObjectServ
   // ///////////////////////////////////////////////////////
   // private helper methods
 
-  /**
+  private boolean hasDescendant(Folder sourceFolder, Folder targetFolder) {
+    String sourceId = sourceFolder.getId();
+    String targetId = targetFolder.getId();
+    while (targetId != null) {
+      // log.info("comparing source id " + sourceId + " with predecessor " +
+      // targetId);
+      if (targetId.equals(sourceId))
+        return true;
+      targetFolder = targetFolder.getParent();
+      if (null != targetFolder)
+        targetId = targetFolder.getId();
+      else
+        targetId = null;
+    }
+    return false;
+  }
+
+ /**
    * Recursively delete a tree by traversing it and first deleting all children
    * and then the object itself
    * 

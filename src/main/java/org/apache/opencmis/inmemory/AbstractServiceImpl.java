@@ -44,7 +44,19 @@ public class AbstractServiceImpl {
     fStoreManager = storeManager;
   }
   
-  protected void checkStandardParameters(String repositoryId, String objectId) {
+  /**
+   * check if repository is known and that object exists. To avoid later calls
+   * to again retrieve the object from the id return the retrieved object for 
+   * later use.
+   * 
+   * @param repositoryId
+   *    repository id
+   * @param objectId
+   *    object id
+   * @return
+   *    object for objectId
+   */
+  protected StoredObject checkStandardParameters(String repositoryId, String objectId) {
 
     ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
@@ -54,15 +66,19 @@ public class AbstractServiceImpl {
     StoredObject so = objStore.getObjectById(objectId);
     
     if (so==null)
-      throw new CmisObjectNotFoundException("Unknown object id: " + objectId);    
+      throw new CmisObjectNotFoundException("Unknown object id: " + objectId); 
+    
+    return so;
   }
   
-  protected void checkExistingObjectId(ObjectStore objStore, String objectId) {
+  protected StoredObject checkExistingObjectId(ObjectStore objStore, String objectId) {
     
     StoredObject so = objStore.getObjectById(objectId);
     
     if (so==null)
-      throw new CmisObjectNotFoundException("Unknown object id: " + objectId);    
+      throw new CmisObjectNotFoundException("Unknown object id: " + objectId);   
+    
+    return so;
   }
 
   protected void checkRepositoryId(String repositoryId) {

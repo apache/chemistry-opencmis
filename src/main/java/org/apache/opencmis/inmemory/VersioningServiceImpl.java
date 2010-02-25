@@ -60,10 +60,7 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
 
   public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
 
-    checkStandardParameters(repositoryId, objectId);
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(objectId);
-    
+    StoredObject so = checkStandardParameters(repositoryId, objectId);
     String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
     VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
@@ -75,10 +72,7 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
       List<String> policies, AccessControlList addAces, AccessControlList removeAces,
       ExtensionsData extension) {
     
-    checkStandardParameters(repositoryId, objectId.getValue());
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(objectId.getValue());
-
+    StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
     String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
     VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
@@ -97,9 +91,7 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
   public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
       Holder<Boolean> contentCopied) {
     
-    checkStandardParameters(repositoryId, objectId.getValue());
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(objectId.getValue());
+    StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
     TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
     if (!typeDef.getBaseId().equals(BaseObjectTypeIds.CMIS_DOCUMENT))
       throw new CmisNotSupportedException("Only documents can be checked-out.");
@@ -132,9 +124,7 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
   public List<ObjectData> getAllVersions(String repositoryId, String versionSeriesId,
       String filter, Boolean includeAllowableActions, ExtensionsData extension) {
     
-    checkStandardParameters(repositoryId, versionSeriesId);
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(versionSeriesId);
+    StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
     
     if (! (so instanceof VersionedDocument))
       throw new RuntimeException("Object is not instance of a VersionedDocument (version series)");    
@@ -155,9 +145,7 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
       IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
       Boolean includeAcl, ExtensionsData extension) {
 
-    checkStandardParameters(repositoryId, versionSeriesId);
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(versionSeriesId);
+    StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
     ObjectData objData = null;
     
     if (so instanceof VersionedDocument) {
@@ -175,9 +163,7 @@ public class VersioningServiceImpl extends AbstractServiceImpl implements Versio
   public PropertiesData getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId,
       Boolean major, String filter, ExtensionsData extension) {
        
-    checkStandardParameters(repositoryId, versionSeriesId);
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(versionSeriesId);
+    StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
     StoredObject latestVersionObject = null;
     
     if (so instanceof VersionedDocument) {
