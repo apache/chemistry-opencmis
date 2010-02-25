@@ -63,6 +63,11 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	private static Log log = LogFactory.getLog(PersistentSessionImpl.class);
 
 	/*
+	 * default session context (serializable)
+	 */
+	private SessionContextImpl context = new SessionContextImpl();
+
+	/*
 	 * root folder containing generated test data (not serializable)
 	 */
 	private transient Folder testRootFolder = null;
@@ -91,7 +96,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	/*
 	 * helper factory (non serializable)
 	 */
-	private transient PropertyFactory propertyFactory = PropertyFactoryImpl.newInstance(this);
+	private transient PropertyFactory propertyFactory = PropertyFactoryImpl
+			.newInstance(this);
 
 	/*
 	 * Object cache (serializable)
@@ -99,15 +105,15 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	private Cache cache = null;
 
 	/*
-	 * Lazy loaded repository info
-	 * (serializable)
+	 * Lazy loaded repository info (serializable)
 	 */
 	private RepositoryInfo repositoryInfo;
 
 	/*
 	 * helper factory (non serializable)
 	 */
-	private transient ObjectFactory objectFactory = PersistentObjectFactoryImpl.newInstance(this);
+	private transient ObjectFactory objectFactory = PersistentObjectFactoryImpl
+			.newInstance(this);
 
 	/**
 	 * required for serialization
@@ -193,15 +199,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	}
 
 	public SessionContext getContext() {
-		throw new CmisRuntimeException("not implemented");
-	}
-
-	public String getExtensionContext() {
-		throw new CmisRuntimeException("not implemented");
-	}
-
-	public ExtensionHandler getExtensionHandler(String context) {
-		throw new CmisRuntimeException("not implemented");
+		return this.context;
 	}
 
 	public Locale getLocale() {
@@ -217,7 +215,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	}
 
 	public ObjectFactory getObjectFactory() {
-		return this.objectFactory ;
+		return this.objectFactory;
 	}
 
 	public PropertyFactory getPropertyFactory() {
@@ -226,7 +224,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 
 	public RepositoryInfo getRepositoryInfo() {
 		if (this.repositoryInfo == null) {
-			RepositoryInfoData riData = this.provider.getRepositoryService().getRepositoryInfo(this.repositoryId, null);
+			RepositoryInfoData riData = this.provider.getRepositoryService()
+					.getRepositoryInfo(this.repositoryId, null);
 			this.repositoryInfo = new RepositoryInfoImpl(this, riData);
 		}
 		return this.repositoryInfo;
@@ -268,8 +267,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		throw new CmisRuntimeException("not implemented");
 	}
 
-	public SessionContext setContext(SessionContext context) {
-		throw new CmisRuntimeException("not implemented");
+	public void setContext(SessionContext context) {
+		this.context = (SessionContextImpl) context;
 	}
 
 	public String setExtensionContext(String context) {
@@ -322,6 +321,11 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 				.createCmisProperty(CmisProperties.NAME,
 						UUID.randomUUID().toString());
 		properties.add(nameProperty);
+		Property<String> typeProperty = this
+				.getPropertyFactory()
+				.createCmisProperty(CmisProperties.OBJECT_TYPE_ID, folderTypeId);
+		properties.add(typeProperty);
+
 		this.testRootFolder = rootFolder.createFolder(properties, null, null,
 				null);
 
@@ -329,8 +333,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		og.setDocumentTypeId(documentTypeId);
 		og.setFolderTypeId(folderTypeId);
 		og.setNumberOfDocumentsToCreatePerFolder(2);
-		og.setDocumentPropertiesToGenerate(null);
-		og.setFolderPropertiesToGenerate(null);
+		og.setDocumentPropertiesToGenerate(new ArrayList<String>());
+		og.setFolderPropertiesToGenerate(new ArrayList<String>());
 
 		og.createFolderHierachy(2, 2, this.testRootFolder.getId());
 	}
@@ -390,7 +394,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	private CmisProvider createAtomPubProvider(Map<String, String> parameters) {
 		CmisProviderFactory factory = CmisProviderFactory.newInstance();
 		CmisProvider provider = factory.createCmisAtomPubProvider(parameters);
-		
+
 		return provider;
 	}
 

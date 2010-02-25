@@ -33,9 +33,15 @@ public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
 	 * serialization
 	 */
 	private static final long serialVersionUID = -6586532350183649719L;
+	private PersistentSessionImpl session;
+	private CmisProperties cmisProperties;
+	private T value;
 
 	public PersistentPropertyImpl(PersistentSessionImpl session,
 			CmisProperties cmisProperties, T value) {
+		this.session = session;
+		this.cmisProperties = cmisProperties;
+		this.value = value;
 	}
 
 	public PersistentPropertyImpl(PersistentSessionImpl session,
@@ -57,7 +63,7 @@ public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
 	}
 
 	public String getId() {
-		throw new CmisRuntimeException("not implemented");
+		return this.cmisProperties.value();
 	}
 
 	public String getLocalName() {
@@ -69,11 +75,11 @@ public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
 	}
 
 	public PropertyType getType() {
-		throw new CmisRuntimeException("not implemented");
+		return PropertyType.STRING;
 	}
 
 	public T getValue() {
-		throw new CmisRuntimeException("not implemented");
+		return this.value;
 	}
 
 	public String getValueAsString() {

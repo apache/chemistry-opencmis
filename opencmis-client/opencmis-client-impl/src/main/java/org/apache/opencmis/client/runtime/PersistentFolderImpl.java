@@ -18,6 +18,8 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -46,13 +48,13 @@ import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
-import org.apache.opencmis.commons.impl.dataobjects.PropertiesDataImpl;
-import org.apache.opencmis.commons.impl.dataobjects.PropertyBooleanDataImpl;
 import org.apache.opencmis.commons.provider.AccessControlEntry;
 import org.apache.opencmis.commons.provider.AccessControlList;
+import org.apache.opencmis.commons.provider.FailedToDeleteData;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
+import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 
 public class PersistentFolderImpl implements Folder {
 
@@ -102,9 +104,16 @@ public class PersistentFolderImpl implements Folder {
 		throw new CmisRuntimeException("not implemented");
 	}
 
-	public List<String> deleteTree(boolean allversions, UnfileObjects unfile,
+	public List<String> deleteTree(boolean allVersions, UnfileObjects unfile,
 			boolean continueOnFailure) {
-		throw new CmisRuntimeException("not implemented");
+		String repositoryId = this.session.getRepositoryInfo().getId();
+
+		FailedToDeleteData failed = this.session.getProvider()
+				.getObjectService().deleteTree(repositoryId,
+						this.objectData.getId(), allVersions, unfile,
+						continueOnFailure, null);
+
+		return failed.getIds();
 	}
 
 	public List<ObjectType> getAllowedChildObjectTypes() {
@@ -319,15 +328,6 @@ public class PersistentFolderImpl implements Folder {
 	public void create(Folder parent, List<Property<?>> properties,
 			List<Policy> policies, List<Ace> addAce, List<Ace> removeAce) {
 
-	    List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
-	    propList.add(this.session.getProvider().getObjectFactory().createPropertyStringData(PropertyIds.CMIS_NAME, "testfolder"));
-	    propList.add(this.session.getProvider().getObjectFactory().createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID,
-	        "cmis_Folder"));
-
-	    PropertiesData xxx = this.session.getProvider().getObjectFactory().createPropertiesData(propList);
-
-		
-		
 		String repositoryId = this.session.getRepositoryInfo().getId();
 		String parentFolderId = parent.getId();
 		PropertiesData pd = this.convertToPropertiesData(properties);
@@ -382,39 +382,73 @@ public class PersistentFolderImpl implements Folder {
 		return pList;
 	}
 
-	private PropertiesData convertToPropertiesData(List<Property<?>> properties) {
-		PropertiesDataImpl pdi = new PropertiesDataImpl();
-		PropertyData<?> pd = null;
+	@SuppressWarnings("unchecked")
+	private PropertiesData convertToPropertiesData(
+			List<Property<?>> origProperties) {
+		ProviderObjectFactory of = this.session.getProvider()
+				.getObjectFactory();
 
-		for (Property<?> property : properties) {
-			switch (property.getType()) {
+		List<PropertyData<?>> convProperties = new ArrayList<PropertyData<?>>();
+		PropertyData<?> convProperty = null;
+
+		convProperties.add(of.createPropertyStringData(PropertyIds.CMIS_NAME,
+				"testfolder"));
+		convProperties.add(of.createPropertyIdData(
+				PropertyIds.CMIS_OBJECT_TYPE_ID, "cmis_Folder"));
+
+		for (Property<?> origProperty : origProperties) {
+
+			switch (origProperty.getType()) {
 			case BOOLEAN:
-//					pd = new PropertyBooleanDataImpl(null, );
-//					pd.
+				Property<Boolean> pb = (Property<Boolean>) origProperty;
+				convProperty = of.createPropertyBooleanData(pb.getId(), pb
+						.getValue());
 				break;
 			case DATETIME:
+				Property<GregorianCalendar> pg = (Property<GregorianCalendar>) origProperty;
+				convProperty = of.createPropertyDateTimeData(pg.getId(), pg
+						.getValue());
 				break;
 			case DECIMAL:
+				Property<BigDecimal> pd = (Property<BigDecimal>) origProperty;
+				convProperty = of.createPropertyDecimalData(pd.getId(), pd
+						.getValue());
 				break;
 			case HTML:
+				Property<String> ph = (Property<String>) origProperty;
+				convProperty = of.createPropertyHtmlData(ph.getId(), ph
+						.getValue());
 				break;
 			case ID:
+				Property<String> pi = (Property<String>) origProperty;
+				convProperty = of.createPropertyIdData(pi.getId(), pi
+						.getValue());
 				break;
 			case INTEGER:
+				Property<BigInteger> pn = (Property<BigInteger>) origProperty;
+				convProperty = of.createPropertyIntegerData(pn.getId(), pn
+						.getValue());
 				break;
 			case STRING:
+				Property<String> ps = (Property<String>) origProperty;
+				convProperty = of.createPropertyStringData(ps.getId(), ps
+						.getValue());
 				break;
 			case URI:
+				Property<String> pu = (Property<String>) origProperty;
+				convProperty = of.createPropertyUriData(pu.getId(), pu
+						.getValue());
 				break;
 			default:
 				throw new CmisRuntimeException("unsupported property type"
-						+ property.getType());
+						+ origProperty.getType());
 			}
-
-			pdi.addProperty(pd);
+			convProperties.add(convProperty);
 		}
 
-		return pdi;
+		PropertiesData pd = of.createPropertiesData(convProperties);
+
+		return pd;
 	}
 
 }

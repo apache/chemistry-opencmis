@@ -52,10 +52,8 @@ public interface Session {
 	 * @param context
 	 *            the <code>SessionContext</code> to be used for the session; if
 	 *            <code>null</code>, a default context is used
-	 * @return the old <code>SessionContext</code> used before
-	 *         <code>setContext</code> was called
 	 */
-	SessionContext setContext(SessionContext context);
+	void setContext(SessionContext context);
 
 	// localization
 
@@ -63,51 +61,6 @@ public interface Session {
 	 * Get the current locale to be used for this session.
 	 */
 	Locale getLocale();
-
-	// extensions
-
-	// TODO : clarify extension handling
-
-	/*
-	 * basic idea is: Application does something like startup:
-	 * session.setExtensionHandler('action', handler); performing an action:
-	 * session.set('action'); ... do some operations on the session ... -->
-	 * handler.handleExtension('action') is called by runtime
-	 */
-
-	/**
-	 * Get an ID representing an 'extension context' (an action or something)?
-	 */
-	String getExtensionContext();
-
-	/**
-	 * Set an ID representing an 'extension context' (an action or something)?
-	 * (null = default/no context)
-	 * 
-	 * @param context
-	 * @return
-	 */
-	String setExtensionContext(String context);
-
-	/**
-	 * Get the <code>ExtensionHandler</code> for a given 'extension context'.
-	 * (null = default)
-	 * 
-	 * @param context
-	 * @return
-	 */
-	ExtensionHandler getExtensionHandler(String context);
-
-	/**
-	 * Set the <code>ExtensionHandler</code> for a given 'extension context'.
-	 * (null = default)
-	 * 
-	 * @param context
-	 * @param extensionHandler
-	 * @return
-	 */
-	ExtensionHandler setExtensionHandler(String context,
-			ExtensionHandler extensionHandler);
 
 	// services
 
