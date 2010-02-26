@@ -162,7 +162,7 @@ public class Fixture {
 	public static void init() {
 		/* get optional path from system properties */
 		String pathname = System.getProperty(Fixture.CONFIG_PATH);
-		pathname = (pathname != null) ? pathname.trim() : null;
+		pathname = (pathname != null) ? pathname.trim() : null; 
 		Properties properties = null;
 		Map<String, String> sessionParameter = null;
 		SessionFactory factory = null;
