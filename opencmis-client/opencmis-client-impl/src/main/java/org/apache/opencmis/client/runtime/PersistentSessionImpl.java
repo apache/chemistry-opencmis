@@ -47,6 +47,8 @@ import org.apache.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
 import org.apache.opencmis.client.runtime.repository.PropertyFactoryImpl;
 import org.apache.opencmis.commons.SessionParameter;
+import org.apache.opencmis.commons.api.ExtensionsData;
+import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.BindingType;
 import org.apache.opencmis.commons.enums.CmisProperties;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
@@ -185,7 +187,15 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	}
 
 	public void clear() {
-		throw new CmisRuntimeException("not implemented");
+		int cacheSize = this.determineCacheSize(this.parameters);
+
+		if (cacheSize == -1) {
+			this.cache = CacheImpl.newInstance();
+		} else {
+			this.cache = CacheImpl.newInstance(cacheSize);
+		}
+		PersistentSessionImpl.log.info("Session Cache Size: "
+				+ this.cache.size());
 	}
 
 	public PagingList<Document> getCheckedOutDocs(Folder folder,
@@ -206,8 +216,48 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		return this.locale;
 	}
 
-	public CmisObject getObject(String objectid) {
-		throw new CmisRuntimeException("not implemented");
+	public CmisObject getObject(String objectId) {
+		CmisObject obj = null;
+		if (this.cache.containsId(objectId)) {
+			obj = this.cache.get(objectId);
+		} else {
+			/* query context */
+			String filter = this.context.getIncludeProperties();
+			boolean includeAllowableActions = this.context
+					.getIncludeAllowableActions();
+			IncludeRelationships includeRelationships = this.context
+					.getIncludeRelationships();
+			String renditionFilter = this.context.getIncludeRenditions();
+			boolean includePolicyIds = this.context.getIncludePolicies();
+			boolean includeAcl = this.context.getIncludeAcls();
+			ExtensionsData extension = null;
+
+			/* ask backend */
+			ObjectData od = this.provider.getObjectService().getObject(
+					this.repositoryId, objectId, filter,
+					includeAllowableActions, includeRelationships,
+					renditionFilter, includePolicyIds, includeAcl, extension);
+
+			/* determine type */
+			switch (od.getBaseTypeId()) {
+			case CMIS_DOCUMENT:
+				obj = new PersistentDocumentImpl(this, od);
+				break;
+			case CMIS_FOLDER:
+				obj = new PersistentFolderImpl(this, od);
+				break;
+			case CMIS_POLICY:
+				obj = new PersistentPolicyImpl(this, od);
+			case CMIS_RELATIONSHIP:
+				obj = new PersistentRelationshipImpl(this, od);
+			default:
+				throw new CmisRuntimeException("unsupported type: "
+						+ od.getBaseTypeId());
+			}
+
+			this.cache.put(obj);
+		}
+		return obj;
 	}
 
 	public CmisObject getObjectByPath(String path) {
