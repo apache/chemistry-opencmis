@@ -48,7 +48,6 @@ import org.apache.opencmis.client.runtime.repository.PersistentObjectFactoryImpl
 import org.apache.opencmis.client.runtime.repository.PropertyFactoryImpl;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.api.ExtensionsData;
-import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.BindingType;
 import org.apache.opencmis.commons.enums.CmisProperties;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
@@ -56,7 +55,6 @@ import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.ObjectData;
-import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.util.repository.ObjectGenerator;
 
 public class PersistentSessionImpl implements PersistentSession, Testable,
@@ -90,12 +88,6 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	private Locale locale = null;
 
 	/*
-	 * If not set explicitly then the repository id is returned by the
-	 * repository (serializable)
-	 */
-	private String repositoryId;
-
-	/*
 	 * helper factory (non serializable)
 	 */
 	private transient PropertyFactory propertyFactory = PropertyFactoryImpl
@@ -107,9 +99,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	private Cache cache = null;
 
 	/*
-	 * Lazy loaded repository info (serializable)
+	 * Lazy loaded repository info. Will be invalid after clear(). Access by
+	 * getter always. (serializable)
 	 */
-	private RepositoryInfo repositoryInfo;
+	private RepositoryInfoImpl repositoryInfo;
 
 	/*
 	 * helper factory (non serializable)
@@ -129,10 +122,6 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		this.locale = this.determineLocale(parameters);
 		PersistentSessionImpl.log.info("Session Locale: "
 				+ this.locale.toString());
-
-		this.repositoryId = this.determineRepositoryId(parameters);
-		PersistentSessionImpl.log.info("Session Repository Id: "
-				+ this.repositoryId);
 
 		int cacheSize = this.determineCacheSize(parameters);
 
@@ -187,8 +176,11 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	}
 
 	public void clear() {
-		int cacheSize = this.determineCacheSize(this.parameters);
+		/*
+		 * clear cache
+		 */
 
+		int cacheSize = this.determineCacheSize(this.parameters);
 		if (cacheSize == -1) {
 			this.cache = CacheImpl.newInstance();
 		} else {
@@ -196,6 +188,12 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 		}
 		PersistentSessionImpl.log.info("Session Cache Size: "
 				+ this.cache.size());
+
+		/*
+		 * clear repository info
+		 */
+
+		this.repositoryInfo.clear();
 	}
 
 	public PagingList<Document> getCheckedOutDocs(Folder folder,
@@ -233,10 +231,11 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 			ExtensionsData extension = null;
 
 			/* ask backend */
+			String repositoryId = this.getRepositoryId();
 			ObjectData od = this.provider.getObjectService().getObject(
-					this.repositoryId, objectId, filter,
-					includeAllowableActions, includeRelationships,
-					renditionFilter, includePolicyIds, includeAcl, extension);
+					repositoryId, objectId, filter, includeAllowableActions,
+					includeRelationships, renditionFilter, includePolicyIds,
+					includeAcl, extension);
 
 			/* determine type */
 			switch (od.getBaseTypeId()) {
@@ -274,9 +273,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 
 	public RepositoryInfo getRepositoryInfo() {
 		if (this.repositoryInfo == null) {
-			RepositoryInfoData riData = this.provider.getRepositoryService()
-					.getRepositoryInfo(this.repositoryId, null);
-			this.repositoryInfo = new RepositoryInfoImpl(this, riData);
+			/* get initial repository id from session parameter */
+			String repositoryId = this.determineRepositoryId(this.parameters);
+			RepositoryInfoImpl rii = new RepositoryInfoImpl(this, repositoryId);
+			this.repositoryInfo = rii;
 		}
 		return this.repositoryInfo;
 	}
@@ -288,8 +288,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 			rootFolder = (Folder) this.cache.getByPath("/");
 		} else {
 			String rootFolderId = this.getRepositoryInfo().getRootFolderId();
+			String repositoryId = this.getRepositoryId();
 			ObjectData od = this.provider.getObjectService().getObject(
-					this.repositoryId, rootFolderId, null, false,
+					repositoryId, rootFolderId, null, false,
 					IncludeRelationships.NONE, null, false, false, null);
 			rootFolder = new PersistentFolderImpl(this, od);
 			this.cache.put(rootFolder);
@@ -331,9 +332,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 	}
 
 	public void generateTestData(Map<String, String> parameter) {
+		String repositoryId = this.getRepositoryId();
 		ObjectGenerator og = new ObjectGenerator(this.provider
 				.getObjectFactory(), this.provider.getNavigationService(),
-				this.provider.getObjectService(), this.repositoryId);
+				this.provider.getObjectService(), repositoryId);
 		Folder rootFolder = null;
 		String documentTypeId = null;
 		String folderTypeId = null;
@@ -454,6 +456,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable,
 
 	public Cache getCache() {
 		return this.cache;
+	}
+
+	public String getRepositoryId() {
+		return this.getRepositoryInfo().getId();
 	}
 
 }

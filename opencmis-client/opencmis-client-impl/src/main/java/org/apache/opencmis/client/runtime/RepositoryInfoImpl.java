@@ -25,8 +25,9 @@ import org.apache.opencmis.client.api.repository.RepositoryAclCapabilities;
 import org.apache.opencmis.client.api.repository.RepositoryCapabilities;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.runtime.repository.RepositoryAclCapabilitiesImpl;
+import org.apache.opencmis.client.runtime.repository.RepositoryCapabilitiesImpl;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
-import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.opencmis.commons.provider.RepositoryCapabilitiesData;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 
 public class RepositoryInfoImpl implements RepositoryInfo, Serializable {
@@ -44,7 +45,7 @@ public class RepositoryInfoImpl implements RepositoryInfo, Serializable {
 	/*
 	 * session (serializable)
 	 */
-	private PersistentSessionImpl session;
+	private PersistentSessionImpl session; // TODO is this required?
 
 	/*
 	 * acl capabilities (serializable)
@@ -52,9 +53,21 @@ public class RepositoryInfoImpl implements RepositoryInfo, Serializable {
 	private RepositoryAclCapabilities aclCapabilites = null;
 
 	public RepositoryInfoImpl(PersistentSessionImpl session,
-			RepositoryInfoData riData) {
-		this.riData = riData;
+			String repositoryIdFromSession) {
 		this.session = session;
+		this.read(repositoryIdFromSession);
+	}
+
+	public void clear() {
+		String repositoryId = this.riData.getRepositoryId();
+		this.riData = null;
+		this.read(repositoryId);
+	}
+
+	private void read(String repositoryIdFromSession) {
+		this.riData = this.session.getProvider().getRepositoryService()
+				.getRepositoryInfo(repositoryIdFromSession, null);
+
 	}
 
 	public boolean changesIncomplete() {
@@ -70,7 +83,9 @@ public class RepositoryInfoImpl implements RepositoryInfo, Serializable {
 	}
 
 	public RepositoryCapabilities getCapabilities() {
-		throw new CmisRuntimeException("not implemented");
+		RepositoryCapabilitiesData rcd = this.riData
+				.getRepositoryCapabilities();
+		return new RepositoryCapabilitiesImpl(rcd);
 	}
 
 	public List<BaseObjectTypeIds> getChangesOnType() {
@@ -118,7 +133,7 @@ public class RepositoryInfoImpl implements RepositoryInfo, Serializable {
 	}
 
 	public String getThinClientUri() {
-	  return this.riData.getThinClientUri();
+		return this.riData.getThinClientUri();
 	}
 
 	public String getVendorName() {
