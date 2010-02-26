@@ -1,0 +1,17 @@
+<projectDescription>
+  <name>opencmis-server-support</name>
+  <comment>OpenCMIS is an open source implementation of the OASIS CMIS specification. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <projects>
+    <project>opencmis-commons-api</project>
+    <project>opencmis-server-impl</project>
+    <project>opencmis-server-spi</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

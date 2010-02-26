@@ -18,20 +18,23 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
 import org.apache.opencmis.client.api.util.Testable;
-import org.apache.opencmis.client.runtime.mock.MockSessionFactory;
-import org.apache.opencmis.commons.SessionParameter;
+import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
  * Definition of unit environment for running test cases. Default implementation
@@ -88,6 +91,12 @@ public class Fixture {
 	private static final String X_FOLDER_TYPE_ID = "org.apache.opencmis.fixture.folder.type.id";
 	private static final String X_DOCUMENT_TYPE_ID = "org.apache.opencmis.fixture.document.type.id";
 
+	/*
+	 * environment
+	 */
+	private static final String CONFIG_PATH = "org.apache.opencmis.client.runtime.suite.config.path";
+	private static final String SESSION_FACTORY = "org.apache.opencmis.client.runtime.suite.session.factory";
+
 	static {
 		Fixture.TEST_ROOT_FOLDER_NAME = "test_" + UUID.randomUUID().toString();
 	}
@@ -117,7 +126,7 @@ public class Fixture {
 		value = Fixture.paramter.get(Fixture.X_FOLDER_TYPE_ID);
 		Fixture.FOLDER_TYPE_ID = (value != null ? value
 				: Fixture.FOLDER_TYPE_ID);
-}
+	}
 
 	/**
 	 * session parameter.
@@ -147,14 +156,62 @@ public class Fixture {
 
 	static {
 		// Mock as default
-		Map<String, String> parameter = new HashMap<String, String>();
+		Fixture.init();
+	}
 
-		parameter.put(SessionParameter.USER, "Mr. Mock");
-		parameter.put(SessionParameter.PASSWORD, "*mock#");
-		parameter.put(SessionParameter.LOCALE_ISO639_LANGUAGE, "EN");
+	public static void init() {
+		/* get optional path from system properties */
+		String pathname = System.getProperty(Fixture.CONFIG_PATH);
+		pathname = (pathname != null) ? pathname.trim() : null;
+		Properties properties = null;
+		Map<String, String> sessionParameter = null;
+		SessionFactory factory = null;
+		String factoryClassName = null;
+		try {
+			if (pathname != null && !"".equalsIgnoreCase(pathname)) {
+				// read from file
+				properties = new Properties();
+				FileInputStream in = new FileInputStream(new File(pathname));
+				properties.load(in);
+			} else {
+				// get default settings
+				InputStream in = Fixture.class
+						.getResourceAsStream("/mock.properties");
+				properties = new Properties();
+				properties.load(in);
+			}
 
-		Fixture.paramter = parameter;
-		Fixture.factory = new MockSessionFactory();
+			/* convert to map, filter empty values */
+			sessionParameter = new Hashtable<String, String>();
+			for (Entry<Object, Object> se : properties.entrySet()) {
+				String key = (String) se.getKey();
+				String value = ((String) se.getValue()).trim();
+				if (value != null && !"".equalsIgnoreCase(value)) {
+					sessionParameter.put(key, value);
+				}
+			}
+			Fixture.setParamter(sessionParameter);
+
+			/* load factory class */
+			factoryClassName = sessionParameter.get(Fixture.SESSION_FACTORY);
+			if (factoryClassName != null
+					&& !"".equalsIgnoreCase(factoryClassName)) {
+				Class<?> clazz = Class.forName(factoryClassName);
+				factory = (SessionFactory) clazz.newInstance();
+			} else {
+				/* default */
+				factory = SessionFactoryImpl.newInstance();
+			}
+			Fixture.setSessionFactory(factory);
+		} catch (InstantiationException e) {
+			throw new CmisRuntimeException(factoryClassName, e);
+		} catch (IllegalAccessException e) {
+			throw new CmisRuntimeException(factoryClassName, e);
+		} catch (ClassNotFoundException e) {
+			throw new CmisRuntimeException(factoryClassName, e);
+		} catch (IOException e) {
+			throw new CmisRuntimeException(pathname, e);
+		}
 	}
 
 	public static void setUpTestData(Session session) {
