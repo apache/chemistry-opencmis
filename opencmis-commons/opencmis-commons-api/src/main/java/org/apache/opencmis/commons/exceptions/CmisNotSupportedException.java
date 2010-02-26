@@ -38,12 +38,20 @@ public class CmisNotSupportedException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisNotSupportedException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisNotSupportedException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisNotSupportedException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisNotSupportedException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisNotSupportedException(String message) {

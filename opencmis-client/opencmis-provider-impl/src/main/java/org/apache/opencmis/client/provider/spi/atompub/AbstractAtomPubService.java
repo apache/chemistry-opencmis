@@ -342,20 +342,21 @@ public class AbstractAtomPubService {
   /**
    * Converts a HTTP status code into an Exception.
    */
-  protected CmisBaseException convertStatusCode(int code, String message, Throwable t) {
+  protected CmisBaseException convertStatusCode(int code, String message, String errorContent,
+      Throwable t) {
     switch (code) {
     case 400:
-      return new CmisInvalidArgumentException(message, t);
+      return new CmisInvalidArgumentException(message, errorContent, t);
     case 404:
-      return new CmisObjectNotFoundException(message, t);
+      return new CmisObjectNotFoundException(message, errorContent, t);
     case 403:
-      return new CmisPermissionDeniedException(message, t);
+      return new CmisPermissionDeniedException(message, errorContent, t);
     case 405:
-      return new CmisNotSupportedException(message, t);
+      return new CmisNotSupportedException(message, errorContent, t);
     case 409:
-      return new CmisConstraintException(message, t);
+      return new CmisConstraintException(message, errorContent, t);
     default:
-      return new CmisRuntimeException(message, t);
+      return new CmisRuntimeException(message, errorContent, t);
     }
   }
 
@@ -427,7 +428,8 @@ public class AbstractAtomPubService {
 
     // check response code
     if (resp.getResponseCode() != 200) {
-      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), null);
+      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp
+          .getErrorContent(), null);
     }
 
     return resp;
@@ -442,7 +444,8 @@ public class AbstractAtomPubService {
 
     // check response code
     if (resp.getResponseCode() != 201) {
-      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), null);
+      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp
+          .getErrorContent(), null);
     }
 
     return resp;
@@ -457,7 +460,8 @@ public class AbstractAtomPubService {
 
     // check response code
     if ((resp.getResponseCode() < 200) || (resp.getResponseCode() > 299)) {
-      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), null);
+      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp
+          .getErrorContent(), null);
     }
 
     return resp;
@@ -472,7 +476,8 @@ public class AbstractAtomPubService {
 
     // check response code
     if (resp.getResponseCode() != 204) {
-      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), null);
+      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp
+          .getErrorContent(), null);
     }
   }
 

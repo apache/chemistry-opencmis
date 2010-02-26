@@ -38,12 +38,20 @@ public class CmisPermissionDeniedException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisPermissionDeniedException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisPermissionDeniedException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisPermissionDeniedException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisPermissionDeniedException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisPermissionDeniedException(String message) {

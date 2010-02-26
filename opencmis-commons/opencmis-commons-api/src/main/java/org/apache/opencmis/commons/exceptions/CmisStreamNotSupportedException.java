@@ -38,12 +38,20 @@ public class CmisStreamNotSupportedException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisStreamNotSupportedException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisStreamNotSupportedException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisStreamNotSupportedException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisStreamNotSupportedException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisStreamNotSupportedException(String message) {

@@ -19,7 +19,9 @@
 package org.apache.opencmis.client.provider.spi.atompub;
 
 import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -146,7 +148,8 @@ public class HttpUtils {
       }
 
       // get the response
-      return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream);
+      return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream,
+          conn.getErrorStream());
     }
     catch (Exception e) {
       throw new CmisConnectionException("Cannot access " + url + ": " + e.getMessage(), e);
@@ -162,17 +165,43 @@ public class HttpUtils {
     private String fResponseMessage;
     private Map<String, List<String>> fHeaders;
     private InputStream fStream;
+    private InputStream fErrorStream;
+    private String fErrorContent;
 
     public Response(int responseCode, String responseMessage, Map<String, List<String>> headers,
-        InputStream stream) {
+        InputStream stream, InputStream errorStream) {
       fResponseCode = responseCode;
       fResponseMessage = responseMessage;
       fStream = stream;
+      fErrorStream = errorStream;
 
       fHeaders = new HashMap<String, List<String>>();
       if (headers != null) {
         for (Map.Entry<String, List<String>> e : headers.entrySet()) {
           fHeaders.put(e.getKey() == null ? null : e.getKey().toLowerCase(), e.getValue());
+        }
+      }
+
+      // if there is an error page, get it
+      if (errorStream != null) {
+        String contentType = getContentTypeHeader();
+        if ((contentType != null) && (contentType.toLowerCase().startsWith("text/"))) {
+          StringBuilder sb = new StringBuilder();
+
+          try {
+            InputStreamReader reader = new InputStreamReader(errorStream);
+            char[] buffer = new char[4096];
+            int b;
+            while ((b = reader.read(buffer)) > -1) {
+              sb.append(buffer, 0, b);
+            }
+            reader.close();
+
+            fErrorContent = sb.toString();
+          }
+          catch (IOException e) {
+            fErrorContent = "Unable to retrieve content: " + e.getMessage();
+          }
         }
       }
     }
@@ -240,6 +269,10 @@ public class HttpUtils {
 
     public InputStream getStream() {
       return fStream;
+    }
+
+    public String getErrorContent() {
+      return fErrorContent;
     }
   }
 

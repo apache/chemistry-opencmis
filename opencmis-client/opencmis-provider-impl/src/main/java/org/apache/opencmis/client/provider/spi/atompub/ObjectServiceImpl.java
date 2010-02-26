@@ -444,7 +444,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
       return new FailedToDeleteDataImpl();
     }
 
-    throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), null);
+    throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp
+        .getErrorContent(), null);
   }
 
   /*
@@ -498,7 +499,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
     // check response code
     if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 206)) {
-      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), null);
+      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp
+          .getErrorContent(), null);
     }
 
     result.setFilename(null);
@@ -679,7 +681,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     // check response code
     if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 201)
         && (resp.getResponseCode() != 204)) {
-      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), null);
+      throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp
+          .getErrorContent(), null);
     }
 
     objectId.setValue(null);

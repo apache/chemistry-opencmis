@@ -38,12 +38,20 @@ public class CmisVersioningException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisVersioningException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisVersioningException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisVersioningException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisVersioningException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisVersioningException(String message) {

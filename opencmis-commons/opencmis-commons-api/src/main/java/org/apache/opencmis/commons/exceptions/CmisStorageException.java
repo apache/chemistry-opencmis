@@ -38,12 +38,20 @@ public class CmisStorageException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisStorageException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisStorageException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisStorageException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisStorageException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisStorageException(String message) {

@@ -38,12 +38,20 @@ public class CmisConnectionException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisConnectionException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisConnectionException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisConnectionException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisConnectionException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisConnectionException(String message) {

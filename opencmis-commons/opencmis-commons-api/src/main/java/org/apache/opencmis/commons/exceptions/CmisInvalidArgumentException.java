@@ -38,12 +38,20 @@ public class CmisInvalidArgumentException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisInvalidArgumentException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisInvalidArgumentException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisInvalidArgumentException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisInvalidArgumentException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisInvalidArgumentException(String message) {

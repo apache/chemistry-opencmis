@@ -2271,11 +2271,10 @@ public final class Converter {
     result.setObject(convert(container.getObjectInFolder()));
 
     List<ObjectInFolderContainer> containerList = new ArrayList<ObjectInFolderContainer>();
-    if (!container.getChildren().isEmpty()) {
-      for (CmisObjectInFolderContainerType containerChild : container.getChildren()) {
-        containerList.add(convert(containerChild));
-      }
+    for (CmisObjectInFolderContainerType containerChild : container.getChildren()) {
+      containerList.add(convert(containerChild));
     }
+
     result.setChildren(containerList);
 
     // handle extensions

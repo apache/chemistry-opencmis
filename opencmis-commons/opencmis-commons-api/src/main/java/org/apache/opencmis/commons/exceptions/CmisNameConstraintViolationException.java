@@ -38,12 +38,20 @@ public class CmisNameConstraintViolationException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisNameConstraintViolationException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisNameConstraintViolationException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisNameConstraintViolationException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisNameConstraintViolationException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisNameConstraintViolationException(String message) {

@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +169,7 @@ public class ConverterTest extends TestCase {
 
     assertDataObjectsEquals("Object", obj1, obj2);
   }
-  
+
   /**
    * Asserts OpenCMIS data objects.
    */
@@ -180,7 +181,15 @@ public class ConverterTest extends TestCase {
       return;
     }
 
-    if ((expected == null) || (actual == null)) {
+    if ((expected == null) && (actual instanceof Collection<?>)) {
+      assertTrue(((Collection<?>) actual).isEmpty());
+      return;
+    }
+    else if ((expected instanceof Collection<?>) && (actual == null)) {
+      assertTrue(((Collection<?>) expected).isEmpty());
+      return;
+    }
+    else if ((expected == null) || (actual == null)) {
       fail("Data object is null! name: " + name + " / expected: " + expected + " / actual: "
           + actual);
     }

@@ -38,12 +38,20 @@ public class CmisFilterNotValidException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisFilterNotValidException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisFilterNotValidException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisFilterNotValidException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisFilterNotValidException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisFilterNotValidException(String message) {

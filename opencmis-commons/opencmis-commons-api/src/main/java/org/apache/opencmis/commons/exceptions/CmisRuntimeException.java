@@ -38,12 +38,20 @@ public class CmisRuntimeException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisRuntimeException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisRuntimeException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisRuntimeException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisRuntimeException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisRuntimeException(String message) {

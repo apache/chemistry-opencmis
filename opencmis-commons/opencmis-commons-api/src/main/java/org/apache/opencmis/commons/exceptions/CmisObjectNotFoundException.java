@@ -38,12 +38,20 @@ public class CmisObjectNotFoundException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisObjectNotFoundException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisObjectNotFoundException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisObjectNotFoundException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisObjectNotFoundException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisObjectNotFoundException(String message) {

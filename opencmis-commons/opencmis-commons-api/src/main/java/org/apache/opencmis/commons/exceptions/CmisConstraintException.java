@@ -38,12 +38,20 @@ public class CmisConstraintException extends CmisBaseException {
     super(message, code, cause);
   }
 
+  public CmisConstraintException(String message, String errorContent) {
+    super(message, errorContent);
+  }
+
   public CmisConstraintException(String message, BigInteger code) {
     super(message, code);
   }
 
+  public CmisConstraintException(String message, String errorContent, Throwable cause) {
+    super(message, errorContent, cause);
+  }
+
   public CmisConstraintException(String message, Throwable cause) {
-    super(message, null, cause);
+    super(message, (BigInteger) null, cause);
   }
 
   public CmisConstraintException(String message) {
