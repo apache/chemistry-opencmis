@@ -252,12 +252,9 @@ public final class Converter {
 
     result.setAclCapabilities(convert(repositoryInfo.getAclCapability()));
     result.setChangesIncomplete(repositoryInfo.isChangesIncomplete());
-    List<BaseObjectTypeIds> baseObjectTypeIds = null;
-    if (!repositoryInfo.getChangesOnType().isEmpty()) {
-      baseObjectTypeIds = new ArrayList<BaseObjectTypeIds>();
-      for (EnumBaseObjectTypeIds bot : repositoryInfo.getChangesOnType()) {
-        baseObjectTypeIds.add(convert(BaseObjectTypeIds.class, bot));
-      }
+    List<BaseObjectTypeIds> baseObjectTypeIds = new ArrayList<BaseObjectTypeIds>();
+    for (EnumBaseObjectTypeIds bot : repositoryInfo.getChangesOnType()) {
+      baseObjectTypeIds.add(convert(BaseObjectTypeIds.class, bot));
     }
     result.setChangesOnType(baseObjectTypeIds);
     result.setCmisVersionSupported(repositoryInfo.getCmisVersionSupported());
@@ -329,37 +326,29 @@ public final class Converter {
 
     result.setAclPropagation(convert(AclPropagation.class, aclCapabilities.getPropagation()));
 
-    List<PermissionDefinitionData> permissionDefinitionList = null;
-    if (!aclCapabilities.getPermissions().isEmpty()) {
-      permissionDefinitionList = new ArrayList<PermissionDefinitionData>();
-      for (CmisPermissionDefinition permDef : aclCapabilities.getPermissions()) {
-        PermissionDefinitionDataImpl permDefData = new PermissionDefinitionDataImpl();
-        permDefData.setPermission(permDef.getPermission());
-        permDefData.setDescription(permDef.getDescription());
-        convertExtension(permDef, permDefData);
+    List<PermissionDefinitionData> permissionDefinitionList = new ArrayList<PermissionDefinitionData>();
+    for (CmisPermissionDefinition permDef : aclCapabilities.getPermissions()) {
+      PermissionDefinitionDataImpl permDefData = new PermissionDefinitionDataImpl();
+      permDefData.setPermission(permDef.getPermission());
+      permDefData.setDescription(permDef.getDescription());
+      convertExtension(permDef, permDefData);
 
-        permissionDefinitionList.add(permDefData);
-      }
+      permissionDefinitionList.add(permDefData);
     }
     result.setPermissionDefinitionData(permissionDefinitionList);
 
-    List<PermissionMappingData> permissionMapping = null;
+    List<PermissionMappingData> permissionMapping = new ArrayList<PermissionMappingData>();
+    for (CmisPermissionMapping permMapping : aclCapabilities.getMapping()) {
+      if (permMapping.getKey() != null) {
+        PermissionMappingDataImpl permMappingData = new PermissionMappingDataImpl();
+        permMappingData.setKey(permMapping.getKey().value());
+        permMappingData.setPermissions(permMapping.getPermission());
+        convertExtension(permMapping, permMappingData);
 
-    if (!aclCapabilities.getMapping().isEmpty()) {
-      permissionMapping = new ArrayList<PermissionMappingData>();
-      for (CmisPermissionMapping permMapping : aclCapabilities.getMapping()) {
-        if (permMapping.getKey() != null) {
-          PermissionMappingDataImpl permMappingData = new PermissionMappingDataImpl();
-          permMappingData.setKey(permMapping.getKey().value());
-          permMappingData.setPermissions(permMapping.getPermission());
-          convertExtension(permMapping, permMappingData);
-
-          permissionMapping.add(permMappingData);
-        }
+        permissionMapping.add(permMappingData);
       }
-
-      result.setPermissionMappingData(permissionMapping);
     }
+    result.setPermissionMappingData(permissionMapping);
 
     // handle extensions
     convertExtension(aclCapabilities, result);
@@ -990,7 +979,7 @@ public final class Converter {
    * Converts a choices list.
    */
   private static List<Choice<String>> convertChoiceStringList(List<CmisChoiceString> choices) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return null;
     }
 
@@ -1014,7 +1003,7 @@ public final class Converter {
    */
   private static void convertChoiceStringList(List<Choice<String>> choices,
       List<CmisChoiceString> target) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return;
     }
 
@@ -1038,7 +1027,7 @@ public final class Converter {
    * Converts a choices list.
    */
   private static List<Choice<String>> convertChoiceIdList(List<CmisChoiceId> choices) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return null;
     }
 
@@ -1061,7 +1050,7 @@ public final class Converter {
    * Converts a choices list.
    */
   private static void convertChoiceIdList(List<Choice<String>> choices, List<CmisChoiceId> target) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return;
     }
 
@@ -1085,7 +1074,7 @@ public final class Converter {
    * Converts a choices list.
    */
   private static List<Choice<BigInteger>> convertChoiceIntegerList(List<CmisChoiceInteger> choices) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return null;
     }
 
@@ -1109,7 +1098,7 @@ public final class Converter {
    */
   private static void convertChoiceIntegerList(List<Choice<BigInteger>> choices,
       List<CmisChoiceInteger> target) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return;
     }
 
@@ -1133,7 +1122,7 @@ public final class Converter {
    * Converts a choices list.
    */
   private static List<Choice<BigDecimal>> convertChoiceDecimalList(List<CmisChoiceDecimal> choices) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return null;
     }
 
@@ -1157,7 +1146,7 @@ public final class Converter {
    */
   private static void convertChoiceDecimalList(List<Choice<BigDecimal>> choices,
       List<CmisChoiceDecimal> target) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return;
     }
 
@@ -1181,7 +1170,7 @@ public final class Converter {
    * Converts a choices list.
    */
   private static List<Choice<Boolean>> convertChoiceBooleanList(List<CmisChoiceBoolean> choices) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return null;
     }
 
@@ -1205,7 +1194,7 @@ public final class Converter {
    */
   private static void convertChoiceBooleanList(List<Choice<Boolean>> choices,
       List<CmisChoiceBoolean> target) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return;
     }
 
@@ -1230,7 +1219,7 @@ public final class Converter {
    */
   private static List<Choice<GregorianCalendar>> convertChoiceDateTimeList(
       List<CmisChoiceDateTime> choices) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return null;
     }
 
@@ -1254,7 +1243,7 @@ public final class Converter {
    */
   private static void convertChoiceDateTimeList(List<Choice<GregorianCalendar>> choices,
       List<CmisChoiceDateTime> target) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return;
     }
 
@@ -1278,7 +1267,7 @@ public final class Converter {
    * Converts a choices list.
    */
   private static List<Choice<String>> convertChoiceHtmlList(List<CmisChoiceHtml> choices) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return null;
     }
 
@@ -1302,7 +1291,7 @@ public final class Converter {
    */
   private static void convertChoiceHtmlList(List<Choice<String>> choices,
       List<CmisChoiceHtml> target) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return;
     }
 
@@ -1326,7 +1315,7 @@ public final class Converter {
    * Converts a choices list.
    */
   private static List<Choice<String>> convertChoiceUriList(List<CmisChoiceUri> choices) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return null;
     }
 
@@ -1349,7 +1338,7 @@ public final class Converter {
    * Converts a choices list.
    */
   private static void convertChoiceUriList(List<Choice<String>> choices, List<CmisChoiceUri> target) {
-    if ((choices == null) || (choices.isEmpty())) {
+    if (choices == null) {
       return;
     }
 
@@ -1400,20 +1389,14 @@ public final class Converter {
     result.setIsExactAcl(object.isExactACL());
     result.setPolicyIds(convert(object.getPolicyIds()));
     result.setProperties(convert(object.getProperties()));
-    List<ObjectData> relationships = null;
-    if (!object.getRelationship().isEmpty()) {
-      relationships = new ArrayList<ObjectData>();
-      for (CmisObjectType cmisObject : object.getRelationship()) {
-        relationships.add(convert(cmisObject));
-      }
+    List<ObjectData> relationships = new ArrayList<ObjectData>();
+    for (CmisObjectType cmisObject : object.getRelationship()) {
+      relationships.add(convert(cmisObject));
     }
     result.setRelationships(relationships);
-    List<RenditionData> renditions = null;
-    if (!object.getRendition().isEmpty()) {
-      renditions = new ArrayList<RenditionData>();
-      for (CmisRenditionType rendition : object.getRendition()) {
-        renditions.add(convert(rendition));
-      }
+    List<RenditionData> renditions = new ArrayList<RenditionData>();
+    for (CmisRenditionType rendition : object.getRendition()) {
+      renditions.add(convert(rendition));
     }
     result.setRenditions(renditions);
 
@@ -1686,27 +1669,24 @@ public final class Converter {
 
     AccessControlListImpl result = new AccessControlListImpl();
 
-    List<AccessControlEntry> aces = null;
-    if (!acl.getPermission().isEmpty()) {
-      aces = new ArrayList<AccessControlEntry>();
-      for (CmisAccessControlEntryType entry : acl.getPermission()) {
-        if (entry == null) {
-          continue;
-        }
-
-        AccessControlEntryImpl ace = new AccessControlEntryImpl();
-        ace.setDirect(entry.isDirect());
-        ace.setPermissions(entry.getPermission());
-        AccessControlPrincipalDataImpl principal = new AccessControlPrincipalDataImpl(entry
-            .getPrincipal() == null ? null : entry.getPrincipal().getPrincipalId());
-        convertExtension(entry.getPrincipal(), principal);
-        ace.setPrincipal(principal);
-
-        // handle extensions
-        convertExtension(entry, ace);
-
-        aces.add(ace);
+    List<AccessControlEntry> aces = new ArrayList<AccessControlEntry>();
+    for (CmisAccessControlEntryType entry : acl.getPermission()) {
+      if (entry == null) {
+        continue;
       }
+
+      AccessControlEntryImpl ace = new AccessControlEntryImpl();
+      ace.setDirect(entry.isDirect());
+      ace.setPermissions(entry.getPermission());
+      AccessControlPrincipalDataImpl principal = new AccessControlPrincipalDataImpl(entry
+          .getPrincipal() == null ? null : entry.getPrincipal().getPrincipalId());
+      convertExtension(entry.getPrincipal(), principal);
+      ace.setPrincipal(principal);
+
+      // handle extensions
+      convertExtension(entry, ace);
+
+      aces.add(ace);
     }
 
     result.setAces(aces);
@@ -2021,12 +2001,9 @@ public final class Converter {
     }
 
     TypeDefinitionListImpl result = new TypeDefinitionListImpl();
-    List<TypeDefinition> types = null;
-    if (!typeList.getTypes().isEmpty()) {
-      types = new ArrayList<TypeDefinition>();
-      for (CmisTypeDefinitionType typeDefinition : typeList.getTypes()) {
-        types.add(convert(typeDefinition));
-      }
+    List<TypeDefinition> types = new ArrayList<TypeDefinition>();
+    for (CmisTypeDefinitionType typeDefinition : typeList.getTypes()) {
+      types.add(convert(typeDefinition));
     }
 
     result.setList(types);
@@ -2190,13 +2167,11 @@ public final class Converter {
     }
 
     ObjectInFolderListImpl result = new ObjectInFolderListImpl();
-    List<ObjectInFolderData> objects = null;
-    if (!objectInFolderList.getObjects().isEmpty()) {
-      objects = new ArrayList<ObjectInFolderData>();
-      for (CmisObjectInFolderType object : objectInFolderList.getObjects()) {
-        objects.add(convert(object));
-      }
+    List<ObjectInFolderData> objects = new ArrayList<ObjectInFolderData>();
+    for (CmisObjectInFolderType object : objectInFolderList.getObjects()) {
+      objects.add(convert(object));
     }
+
     result.setObjects(objects);
 
     result.setHasMoreItems(objectInFolderList.isHasMoreItems());
@@ -2243,12 +2218,9 @@ public final class Converter {
 
     ObjectListImpl result = new ObjectListImpl();
 
-    List<ObjectData> objects = null;
-    if (!objectList.getObjects().isEmpty()) {
-      objects = new ArrayList<ObjectData>();
-      for (CmisObjectType object : objectList.getObjects()) {
-        objects.add(convert(object));
-      }
+    List<ObjectData> objects = new ArrayList<ObjectData>();
+    for (CmisObjectType object : objectList.getObjects()) {
+      objects.add(convert(object));
     }
 
     result.setObjects(objects);
@@ -2298,9 +2270,8 @@ public final class Converter {
 
     result.setObject(convert(container.getObjectInFolder()));
 
-    List<ObjectInFolderContainer> containerList = null;
+    List<ObjectInFolderContainer> containerList = new ArrayList<ObjectInFolderContainer>();
     if (!container.getChildren().isEmpty()) {
-      containerList = new ArrayList<ObjectInFolderContainer>();
       for (CmisObjectInFolderContainerType containerChild : container.getChildren()) {
         containerList.add(convert(containerChild));
       }
