@@ -29,7 +29,7 @@ import org.apache.opencmis.client.api.SessionFactory;
  * Create a OpenCMIS test session based on fixture parameter.
  */
 public abstract class AbstractSessionTest {
-
+x
   protected Log log = LogFactory.getLog(this.getClass());
 
   /**
