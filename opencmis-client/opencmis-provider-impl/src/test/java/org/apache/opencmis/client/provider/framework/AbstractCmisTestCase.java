@@ -21,15 +21,11 @@ package org.apache.opencmis.client.provider.framework;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -42,6 +38,7 @@ import org.apache.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.api.TypeDefinition;
+import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.CapabilityAcl;
 import org.apache.opencmis.commons.enums.CapabilityChanges;
 import org.apache.opencmis.commons.enums.CapabilityQuery;
@@ -420,6 +417,21 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     return (relType != null);
+  }
+
+  /**
+   * Returns the AclPropagation from the ACL capabilities.
+   */
+  protected AclPropagation getAclPropagation() {
+    RepositoryInfoData repository = getRepositoryInfo();
+
+    assertNotNull(repository.getRepositoryCapabilities());
+
+    if (repository.getAclCapabilities().getAclPropagation() == null) {
+      return AclPropagation.REPOSITORYDETERMINED;
+    }
+
+    return repository.getAclCapabilities().getAclPropagation();
   }
 
   // ---- helpers ----

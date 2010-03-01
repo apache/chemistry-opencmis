@@ -121,7 +121,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
           Collections.singletonList(ace));
 
       AccessControlList newAcl = getProvider().getAclService().applyAcl(getTestRepositoryId(),
-          docId, acl, null, AclPropagation.REPOSITORYDETERMINED, null);
+          docId, acl, null, getAclPropagation(), null);
       assertNotNull(newAcl);
 
       AccessControlList readAcl = getProvider().getAclService().getAcl(getTestRepositoryId(),
