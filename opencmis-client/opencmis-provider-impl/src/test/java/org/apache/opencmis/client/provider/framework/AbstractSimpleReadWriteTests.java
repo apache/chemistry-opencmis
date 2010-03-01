@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.opencmis.commons.PropertyIds;
-import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.VersioningState;
@@ -105,7 +104,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     // read and assert content
     ContentStreamData contentStream2 = getContent(docId, null);
-    assertEquals(CONTENT_TYPE, contentStream2.getMimeType());
+    assertMimeType(CONTENT_TYPE, contentStream2.getMimeType());
     if (contentStream2.getLength() != null) {
       assertEquals(CONTENT.length, contentStream2.getLength().intValue());
     }
@@ -233,7 +232,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
       docId = docIdHolder.getValue();
     }
     ContentStreamData contentStream3 = getContent(docId, null);
-    assertEquals(CONTENT_TYPE, contentStream3.getMimeType());
+    assertMimeType(CONTENT_TYPE, contentStream3.getMimeType());
     if (contentStream3.getLength() != null) {
       assertEquals(CONTENT2.length, contentStream3.getLength().intValue());
     }

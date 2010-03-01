@@ -1218,6 +1218,19 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
   }
 
+  protected void assertMimeType(String expected, String actual)
+  {
+      assertNotNull(expected);
+      assertNotNull(actual);
+      
+      int paramIdx = actual.indexOf(';');
+      if (paramIdx != -1) {
+          actual = actual.substring(0, paramIdx);
+      }
+      
+      assertEquals(expected, actual);
+  }
+  
   protected void assertEqualLists(List<?> expected, List<?> actual) {
     if ((expected == null) && (actual == null)) {
       return;
