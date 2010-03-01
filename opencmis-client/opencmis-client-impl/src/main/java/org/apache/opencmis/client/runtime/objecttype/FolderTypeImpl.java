@@ -16,23 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api.repository;
+package org.apache.opencmis.client.runtime.objecttype;
 
-import java.util.List;
-
-import org.apache.opencmis.client.api.Property;
-import org.apache.opencmis.commons.api.PropertyDefinition;
+import org.apache.opencmis.client.api.Session;
+import org.apache.opencmis.client.api.objecttype.FolderType;
+import org.apache.opencmis.commons.api.TypeDefinition;
 
 /**
- * A factory to create properties.
- * 
- * @see org.apache.opencmis.client.api.Session#getPropertyFactory()
+ * Folder type.
  */
-public interface PropertyFactory {
+public class FolderTypeImpl extends AbstractObjectType implements FolderType {
 
-  // property factory
-
-  <T> Property<T> createProperty(PropertyDefinition<T> type, T value);
-
-  <T> Property<T> createPropertyMultivalue(PropertyDefinition<T> type, List<T> values);
+  /**
+   * Constructor.
+   */
+  public FolderTypeImpl(Session session, TypeDefinition typeDefinition) {
+    initialize(session, typeDefinition);
+  }
 }

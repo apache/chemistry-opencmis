@@ -20,10 +20,12 @@ package org.apache.opencmis.client.api.repository;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
 import org.apache.opencmis.client.api.AclPermission;
+import org.apache.opencmis.client.api.AllowableActions;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.Folder;
@@ -41,9 +43,11 @@ public interface ObjectFactory {
 
 	// object factory
 
-	Ace createAce(String principal, List<AclPermission> permissions);
+  AllowableActions createAllowableAction(Map<String, Boolean> actions);
+  
+	Ace createAce(String principal, List<String> permissions, boolean isDirect);
 
-	Acl createAcl(List<Ace> aces);
+	Acl createAcl(List<Ace> aces, Boolean isExact);
 
 	ContentStream createContentStream(int length, String mimetype,
 			String filename, InputStream stream);

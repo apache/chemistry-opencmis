@@ -16,23 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api.repository;
+package org.apache.opencmis.client.runtime;
 
 import java.util.List;
 
-import org.apache.opencmis.client.api.Property;
-import org.apache.opencmis.commons.api.PropertyDefinition;
+import org.apache.opencmis.client.api.Ace;
 
 /**
- * A factory to create properties.
- * 
- * @see org.apache.opencmis.client.api.Session#getPropertyFactory()
+ * ACE implementation.
  */
-public interface PropertyFactory {
+public class AceImpl implements Ace {
 
-  // property factory
+  private String principalId;
+  private List<String> permissions;
+  private boolean isDirect;
 
-  <T> Property<T> createProperty(PropertyDefinition<T> type, T value);
+  public AceImpl(String principalId, List<String> permissions, boolean isDirect) {
+    this.principalId = principalId;
+    this.permissions = permissions;
+    this.isDirect = isDirect;
+  }
 
-  <T> Property<T> createPropertyMultivalue(PropertyDefinition<T> type, List<T> values);
+  public String getPrincipalId() {
+    return this.principalId;
+  }
+
+  public List<String> getPermissions() {
+    return this.permissions;
+  }
+
+  public boolean isDirect() {
+    return this.isDirect;
+  }
 }

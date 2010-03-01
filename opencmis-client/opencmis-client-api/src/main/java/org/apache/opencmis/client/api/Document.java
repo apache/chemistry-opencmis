@@ -25,9 +25,7 @@ import org.apache.opencmis.commons.enums.VersioningState;
 /**
  * Domain Model 2.4
  */
-public interface Document extends CmisObject {
-
-	List<String> getPaths();
+public interface Document extends FileableCmisObject {
 	
 	List<Rendition> getRenditions();
 

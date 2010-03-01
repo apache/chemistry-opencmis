@@ -19,14 +19,17 @@
 package org.apache.opencmis.client.runtime;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import junit.framework.Assert;
 
 import org.apache.opencmis.client.api.CmisObject;
+import org.apache.opencmis.client.api.FileableCmisObject;
 import org.apache.opencmis.client.api.Folder;
+import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
 import org.junit.Test;
+
+import sun.reflect.generics.tree.Tree;
 
 public class ReadOnlyNavigationTest extends AbstractSessionTest {
 
@@ -40,7 +43,7 @@ public class ReadOnlyNavigationTest extends AbstractSessionTest {
     Assert.assertNotNull(pl);
     Assert.assertFalse(pl.isEmpty());
 
-    for(List<CmisObject> cl : pl) {
+    for (List<CmisObject> cl : pl) {
       for (CmisObject o : cl) {
         Assert.assertNotNull(o);
       }
@@ -53,12 +56,13 @@ public class ReadOnlyNavigationTest extends AbstractSessionTest {
     Folder folder = (Folder) this.session.getObjectByPath(path);
     Assert.assertNotNull("folder not found: " + path, folder);
 
-    TreeMap<String, CmisObject> tree = folder.getDescendants(-1);
-    Assert.assertNotNull(tree);
-    Assert.assertFalse(tree.isEmpty());
+    List<Container<FileableCmisObject>> desc = folder.getDescendants(-1);
+    Assert.assertNotNull(desc);
+    Assert.assertFalse(desc.isEmpty());
 
-    for (CmisObject o : tree.values()) {
+    for (Container<FileableCmisObject> o : desc) {
       Assert.assertNotNull(o);
+      Assert.assertNotNull(o.getItem());
     }
   }
 
@@ -68,12 +72,13 @@ public class ReadOnlyNavigationTest extends AbstractSessionTest {
     Folder folder = (Folder) this.session.getObjectByPath(path);
     Assert.assertNotNull("folder not found: " + path, folder);
 
-    TreeMap<String, CmisObject> tree = folder.getFolderTree(-1);
+    List<Container<FileableCmisObject>> tree = folder.getFolderTree(-1);
     Assert.assertNotNull(tree);
     Assert.assertFalse(tree.isEmpty());
 
-    for (CmisObject o : tree.values()) {
+    for (Container<FileableCmisObject> o : tree) {
       Assert.assertNotNull(o);
+      Assert.assertNotNull(o.getItem());
     }
   }
 

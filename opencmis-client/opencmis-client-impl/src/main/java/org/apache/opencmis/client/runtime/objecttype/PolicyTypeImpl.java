@@ -16,23 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api.repository;
+package org.apache.opencmis.client.runtime.objecttype;
 
-import java.util.List;
-
-import org.apache.opencmis.client.api.Property;
-import org.apache.opencmis.commons.api.PropertyDefinition;
+import org.apache.opencmis.client.api.Session;
+import org.apache.opencmis.client.api.objecttype.PolicyType;
+import org.apache.opencmis.commons.api.TypeDefinition;
 
 /**
- * A factory to create properties.
- * 
- * @see org.apache.opencmis.client.api.Session#getPropertyFactory()
+ * Policy type.
  */
-public interface PropertyFactory {
+public class PolicyTypeImpl extends AbstractObjectType implements PolicyType {
 
-  // property factory
-
-  <T> Property<T> createProperty(PropertyDefinition<T> type, T value);
-
-  <T> Property<T> createPropertyMultivalue(PropertyDefinition<T> type, List<T> values);
+  /**
+   * Constructor.
+   */
+  public PolicyTypeImpl(Session session, TypeDefinition typeDefinition) {
+    initialize(session, typeDefinition);
+  }
 }

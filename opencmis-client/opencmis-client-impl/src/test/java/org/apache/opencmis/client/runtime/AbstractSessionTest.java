@@ -20,10 +20,10 @@ package org.apache.opencmis.client.runtime;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * Create a OpenCMIS test session based on fixture parameter.

@@ -27,6 +27,7 @@ import org.apache.opencmis.client.api.objecttype.FolderType;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.objecttype.PolicyType;
 import org.apache.opencmis.client.api.objecttype.RelationshipType;
+import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
 import org.junit.Test;
 
@@ -103,16 +104,18 @@ public class ReadOnlyTypeTest extends AbstractSessionTest {
   public void readTypeDescandantsDocument() {
     ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
     Assert.assertNotNull(otd);
-    PagingList<ObjectType> children = this.session.getTypeDescendants(otd, 1, true, -1);
-    Assert.assertNotNull(children);
+    List<Container<ObjectType>> desc = this.session.getTypeDescendants(otd, 1, true);
+    Assert.assertNotNull(desc);
+    Assert.assertFalse(desc.isEmpty());
   }
 
   @Test
   public void readTypeDescandantsFolder() {
     ObjectType otd = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
     Assert.assertNotNull(otd);
-    PagingList<ObjectType> children = this.session.getTypeDescendants(otd, 1, true, -1);
-    Assert.assertNotNull(children);
+    List<Container<ObjectType>> desc = this.session.getTypeDescendants(otd, 1, true);
+    Assert.assertNotNull(desc);
+    Assert.assertFalse(desc.isEmpty());
   }
 
 }

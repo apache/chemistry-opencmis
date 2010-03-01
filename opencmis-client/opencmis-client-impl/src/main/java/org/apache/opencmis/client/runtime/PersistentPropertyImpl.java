@@ -19,79 +19,102 @@
 package org.apache.opencmis.client.runtime;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.commons.api.PropertyDefinition;
-import org.apache.opencmis.commons.enums.CmisProperties;
+import org.apache.opencmis.commons.enums.Cardinality;
 import org.apache.opencmis.commons.enums.PropertyType;
-import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 
+/**
+ * Property Implementation.
+ */
 public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
 
-	/**
-	 * serialization
-	 */
-	private static final long serialVersionUID = -6586532350183649719L;
-	private PersistentSessionImpl session;
-	private CmisProperties cmisProperties;
-	private T value;
+  /**
+   * serialization
+   */
+  private static final long serialVersionUID = -6586532350183649719L;
+  private PropertyDefinition<T> type;
+  private List<T> values;
 
-	public PersistentPropertyImpl(PersistentSessionImpl session,
-			CmisProperties cmisProperties, T value) {
-		this.session = session;
-		this.cmisProperties = cmisProperties;
-		this.value = value;
-	}
+  /**
+   * Constructs a single-value property.
+   */
+  public PersistentPropertyImpl(PropertyDefinition<T> type, T value) {
+    if (type == null) {
+      throw new IllegalArgumentException("Type must be set!");
+    }
 
-	public PersistentPropertyImpl(PersistentSessionImpl session,
-			PropertyType type, T value) {
-		throw new CmisRuntimeException("not implemented");
-	}
+    if (value == null) {
+      throw new IllegalArgumentException("Value must be set!");
+    }
 
-	public PersistentPropertyImpl(PersistentSessionImpl session,
-			PropertyType type, List<T> value) {
-		throw new CmisRuntimeException("not implemented");
-	}
+    this.type = type;
+    this.values = Collections.singletonList(value);
+  }
 
-	public PropertyDefinition<T> getDefinition() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  /**
+   * Constructs a multi-value property.
+   */
+  public PersistentPropertyImpl(PropertyDefinition<T> type, List<T> values) {
+    if (type == null) {
+      throw new IllegalArgumentException("Type must be set!");
+    }
 
-	public String getDisplayName() {
-		throw new CmisRuntimeException("not implemented");
-	}
+    if (values == null) {
+      throw new IllegalArgumentException("Values must be set!");
+    }
 
-	public String getId() {
-		return this.cmisProperties.value();
-	}
+    if (values.isEmpty()) {
+      throw new IllegalArgumentException("Values must not be empyt!");
+    }
 
-	public String getLocalName() {
-		throw new CmisRuntimeException("not implemented");
-	}
+    this.type = type;
+    this.values = values;
+  }
 
-	public String getQueryName() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public PropertyDefinition<T> getDefinition() {
+    return this.type;
+  }
 
-	public PropertyType getType() {
-		return PropertyType.STRING;
-	}
+  public String getDisplayName() {
+    return this.type.getDisplayName();
+  }
 
-	public T getValue() {
-		return this.value;
-	}
+  public String getId() {
+    return this.type.getId();
+  }
 
-	public String getValueAsString() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public String getLocalName() {
+    return this.type.getLocalName();
+  }
 
-	public List<T> getValues() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public String getQueryName() {
+    return this.type.getQueryName();
+  }
 
-	public boolean isMultiValued() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public PropertyType getType() {
+    return this.type.getPropertyType();
+  }
 
+  public T getValue() {
+    return this.values.get(0);
+  }
+
+  public String getValueAsString() {
+    switch (this.type.getPropertyType()) {
+    default:
+      return this.values.get(0).toString();
+    }
+  }
+
+  public List<T> getValues() {
+    return this.values;
+  }
+
+  public boolean isMultiValued() {
+    return this.type.getCardinality() == Cardinality.MULTI;
+  }
 }

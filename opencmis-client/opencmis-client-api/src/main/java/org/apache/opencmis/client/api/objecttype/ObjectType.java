@@ -21,6 +21,8 @@ package org.apache.opencmis.client.api.objecttype;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.opencmis.client.api.util.Container;
+import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
@@ -89,9 +91,9 @@ public interface ObjectType {
   ObjectType getBaseType(); // null if isBase == true
 
   /**
-   * Get the type's base type id. 
+   * Get the type's base type id.
    * 
-   * @return 
+   * @return
    */
   BaseObjectTypeIds getBaseTypeId();
 
@@ -116,49 +118,49 @@ public interface ObjectType {
    * 
    * @return {@code true} if objects for this type can be created.
    */
-  boolean isCreatable();
+  Boolean isCreatable();
 
   /**
    * Indicates that objects of this type can be filed/unfiled.
    * 
    * @return {@code true} if objects for this type can be used for filing operations.
    */
-  boolean isFileable();
+  Boolean isFileable();
 
   /**
    * Indicates that objects of this type can be queried.
    * 
    * @return {@code true} if objects for this type can be used for query operations.
    */
-  boolean isQueryable();
+  Boolean isQueryable();
 
   /**
    * Indicates that objects of this type can be controlled by policies.
    * 
    * @return {@code true} if objects for this type can be used for policy operations.
    */
-  boolean isControllablePolicy();
+  Boolean isControllablePolicy();
 
   /**
    * Indicates that objects of this type can be controlled by ACLs.
    * 
    * @return {@code true} if objects for this type can be used for ACL operations.
    */
-  boolean isControllableAcl();
+  Boolean isControllableAcl();
 
   /**
    * Indicates that objects of this type are indexed in the full text index.
    * 
    * @return {@code true} if objects for this type can be searched via full text searches.
    */
-  boolean isFulltextIndexed();
+  Boolean isFulltextIndexed();
 
   /**
    * Indicates that objects of this type can be queried via its super type.
    * 
    * @return {@code true} if objects for this type are included in queries for their super type.
    */
-  boolean isIncludedInSupertypeQuery();
+  Boolean isIncludedInSupertypeQuery();
 
   /**
    * Get the {@code Map} of {@code PropertyDefinition}s, indexed by the property definition's ids.
@@ -171,18 +173,20 @@ public interface ObjectType {
    * Get the list of types directly derived from this type (which will return this type on {@code
    * getParent()}).
    * 
+   * @param itemsPerPage
+   *          types per page
    * @return a {@code List} of types which are directly derived from this type. @
    */
-  List<ObjectType> getChildren();
+  PagingList<ObjectType> getChildren(int itemsPerPage);
 
   /**
    * Get the list of all types somehow derived from this type.
    * 
    * @param depth
    *          the depth to which the derived types should be resolved.
-   * @return a {@code List} of types which are derived from this type (direct and via their
+   * @return a {@code Tree} of types which are derived from this type (direct and via their
    *         parents). @
    */
-  List<ObjectType> getDescendants(int depth);
+  List<Container<ObjectType>> getDescendants(int depth);
 
 }

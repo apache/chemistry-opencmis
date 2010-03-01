@@ -38,18 +38,11 @@ public interface Ace {
   String getPrincipalId();
 
   /**
-   * Get the list of permissions, this ACE grants to its principal.
-   * 
-   * @return the list of {@code AclPermission} objects
-   */
-  List<AclPermission> getPermissions();
-
-  /**
    * Get the list of ids for the permissions, this ACE grants to its principal.
    * 
    * @return the list of {@code String}s with the ids of the permissions
    */
-  List<String> getPermissionsNames();
+  List<String> getPermissions();
 
   /**
    * Gets the {@code direct} flag for this ACE.

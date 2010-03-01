@@ -16,23 +16,48 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api.repository;
+package org.apache.opencmis.client.api;
 
 import java.util.List;
 
-import org.apache.opencmis.client.api.Property;
-import org.apache.opencmis.commons.api.PropertyDefinition;
-
 /**
- * A factory to create properties.
- * 
- * @see org.apache.opencmis.client.api.Session#getPropertyFactory()
+ * Fileable CMIS object.
  */
-public interface PropertyFactory {
+public interface FileableCmisObject extends CmisObject {
 
-  // property factory
+  // object service
 
-  <T> Property<T> createProperty(PropertyDefinition<T> type, T value);
+  /**
+   * Moves the object.
+   */
+  FileableCmisObject move(Folder sourceFolder, Folder targetFolder);
 
-  <T> Property<T> createPropertyMultivalue(PropertyDefinition<T> type, List<T> values);
+  /**
+   * Moves the object.
+   */
+  FileableCmisObject move(String sourceFolderId, String targetFolderId);
+
+  // navigation service
+
+  /**
+   * Returns the parents of this object.
+   */
+  List<Folder> getParents();
+
+  /**
+   * Returns the paths of this object.
+   */
+  List<String> getPaths();
+
+  // multifiling service
+
+  /**
+   * Adds this object to a folder.
+   */
+  void addToFolder(Folder folder, boolean allVersions);
+
+  /**
+   * Removes this object from a folder.
+   */
+  void removeFromFolder(Folder folder);
 }

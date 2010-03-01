@@ -22,12 +22,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.opencmis.client.api.objecttype.ObjectType;
-import org.apache.opencmis.client.api.repository.AllowableActions;
-import org.apache.opencmis.client.api.util.AceList;
 import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.RelationshipDirection;
-import org.apache.opencmis.commons.enums.UnfileObjects;
 
 /**
  * Base CMIS object.
@@ -90,9 +87,9 @@ public interface CmisObject {
   ObjectType getType();
 
   /**
-   * Get the type's base type id. 
+   * Get the type's base type id.
    * 
-   * @return 
+   * @return
    */
   BaseObjectTypeIds getBaseTypeId();
 
@@ -116,8 +113,6 @@ public interface CmisObject {
 
   List<Property<?>> getProperties();
 
-  List<Property<?>> getProperties(String filter);
-
   <T> Property<T> getProperty(String id);
 
   <T> T getPropertyValue(String id);
@@ -128,27 +123,13 @@ public interface CmisObject {
 
   List<Relationship> getRelationships();
 
-  List<Ace> getAcl();
-
-  boolean isExactAcl();
+  Acl getAcl();
 
   // object service
 
-  CmisObject move(Folder targetfolder);
-
   void delete(boolean allVersions);
 
-  void updateProperties(List<Property<?>> properties);
-
-  // navigation service
-
-  List<Folder> getParents();
-
-  // multifiling service
-
-  void addToFolder(Folder folder, boolean allVersions);
-
-  void removeFromFolder(Folder folder); 
+  void updateProperties();
 
   // relationship service
 
@@ -169,10 +150,14 @@ public interface CmisObject {
 
   // ACL service
 
-  AceList getAcl(boolean onlyBasicPermissions);
+  Acl getAcl(boolean onlyBasicPermissions);
 
-  AceList applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
+  Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
 
+  void addAcl(List<Ace> addAces, AclPropagation aclPropagation);
+
+  void removeAcl(List<Ace> removeAces, AclPropagation aclPropagation);
+  
   // buffered stuff
 
   <T> void setProperty(String id, T value);
@@ -180,10 +165,6 @@ public interface CmisObject {
   <T> void setPropertyMultivalue(String id, List<T> value);
 
   // void saveProperties(); // flush buffered ...Propert...-calls
-
-  void addAcl(List<Ace> addAces, AclPropagation aclPropagation);
-
-  void removeAcl(List<Ace> addAces, AclPropagation aclPropagation);
 
   // void saveAcl(); // flush buffered ...Acl...-calls
 

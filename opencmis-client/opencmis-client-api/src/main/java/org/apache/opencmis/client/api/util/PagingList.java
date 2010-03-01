@@ -37,7 +37,7 @@ public interface PagingList<T> extends Iterable<List<T>> {
    * 
    * @return total number of items or (-1)
    */
-  int totalItems();
+  int getNumItems();
 
   /**
    * This is the maximum number of items to return in one page. The repository MUST NOT exceed

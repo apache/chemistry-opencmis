@@ -116,7 +116,7 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
     Document document = (Document) this.session.getObjectByPath(path);
     Assert.assertNotNull("document not found: " + path, document);
 
-    List<Property<?>> l = document.getProperties(Fixture.PROPERTY_FILTER);
+    List<Property<?>> l = document.getProperties();
     Assert.assertNotNull(l);
     Assert.assertEquals(false, l.isEmpty());
     Iterator<Property<?>> i = l.iterator();

@@ -19,21 +19,19 @@
 package org.apache.opencmis.client.api;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import org.apache.opencmis.client.api.objecttype.ObjectType;
-import org.apache.opencmis.client.api.util.*;
+import org.apache.opencmis.client.api.util.Container;
+import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.VersioningState;
 
 /**
  * Domain Model 2.5
  */
-public interface Folder extends CmisObject {
+public interface Folder extends FileableCmisObject {
 
-	String getPath();
-
-	// object service
+  // object service
 
   Document createDocument(String name);
 
@@ -60,13 +58,15 @@ public interface Folder extends CmisObject {
 
   // navigation service
 
-  TreeMap<String, CmisObject> getFolderTree(int depth);
+  List<Container<FileableCmisObject>> getFolderTree(int depth);
 
-  TreeMap<String, CmisObject> getDescendants(int depth);
+  List<Container<FileableCmisObject>> getDescendants(int depth);
 
   PagingList<CmisObject> getChildren(String orderby, int itemsPerPage);
 
   Folder getFolderParent();
+
+  String getPath();
 
   PagingList<Document> getCheckedOutDocs(String orderby, int itemsPerPage);
 

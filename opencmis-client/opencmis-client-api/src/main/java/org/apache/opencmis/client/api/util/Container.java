@@ -16,23 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api.repository;
+package org.apache.opencmis.client.api.util;
 
 import java.util.List;
 
-import org.apache.opencmis.client.api.Property;
-import org.apache.opencmis.commons.api.PropertyDefinition;
-
 /**
- * A factory to create properties.
- * 
- * @see org.apache.opencmis.client.api.Session#getPropertyFactory()
+ * Basic tree structure.
  */
-public interface PropertyFactory {
+public interface Container<T> {
 
-  // property factory
+  /**
+   * Returns the item on this level.
+   */
+  T getItem();
 
-  <T> Property<T> createProperty(PropertyDefinition<T> type, T value);
-
-  <T> Property<T> createPropertyMultivalue(PropertyDefinition<T> type, List<T> values);
+  /**
+   * Returns the children.
+   */
+  List<T> getChildren();
 }

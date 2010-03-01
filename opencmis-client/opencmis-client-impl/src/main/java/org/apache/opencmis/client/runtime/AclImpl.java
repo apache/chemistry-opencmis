@@ -16,23 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api.repository;
+package org.apache.opencmis.client.runtime;
 
 import java.util.List;
 
-import org.apache.opencmis.client.api.Property;
-import org.apache.opencmis.commons.api.PropertyDefinition;
+import org.apache.opencmis.client.api.Ace;
+import org.apache.opencmis.client.api.Acl;
 
 /**
- * A factory to create properties.
- * 
- * @see org.apache.opencmis.client.api.Session#getPropertyFactory()
+ * ACL implementation
  */
-public interface PropertyFactory {
+public class AclImpl implements Acl {
 
-  // property factory
+  private List<Ace> aces;
+  private boolean isExact;
 
-  <T> Property<T> createProperty(PropertyDefinition<T> type, T value);
+  public AclImpl(List<Ace> aces, boolean isExact) {
+    this.aces = aces;
+    this.isExact = isExact;
+  }
 
-  <T> Property<T> createPropertyMultivalue(PropertyDefinition<T> type, List<T> values);
+  public List<Ace> getAces() {
+    return this.aces;
+  }
+
+  public boolean isExact() {
+    return this.isExact;
+  }
+
 }

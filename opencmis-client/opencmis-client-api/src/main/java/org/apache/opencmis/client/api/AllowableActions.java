@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api.repository;
+package org.apache.opencmis.client.api;
 
 /**
  * Information about the actions for a CMIS object.
@@ -27,62 +27,61 @@ package org.apache.opencmis.client.api.repository;
  */
 public interface AllowableActions {
 
-  boolean canDeleteObject();
+  Boolean canDeleteObject();
 
-  boolean canUpdateProperties();
+  Boolean canUpdateProperties();
 
-  boolean canGetProperties();
+  Boolean canGetProperties();
 
-  boolean canGetObjectRelationships();
+  Boolean canGetObjectRelationships();
 
-  boolean canGetObjectParents();
+  Boolean canGetObjectParents();
 
-  boolean canGetFolderParent();
+  Boolean canGetFolderParent();
 
-  boolean canGetDescendants();
+  Boolean canGetDescendants();
 
-  boolean canMoveObject();
+  Boolean canMoveObject();
 
-  boolean canDeleteContentStream();
+  Boolean canDeleteContentStream();
 
-  boolean canCheckOut();
+  Boolean canCheckOut();
 
-  boolean canCancelCheckOut();
+  Boolean canCancelCheckOut();
 
-  boolean canCheckIn();
+  Boolean canCheckIn();
 
-  boolean canSetContentStream();
+  Boolean canSetContentStream();
 
-  boolean canGetAllVersions();
+  Boolean canGetAllVersions();
 
-  boolean canAddObjectToFolder();
+  Boolean canAddObjectToFolder();
 
-  boolean canRemoveObjectFromFolder();
+  Boolean canRemoveObjectFromFolder();
 
-  boolean canGetContentStream();
+  Boolean canGetContentStream();
 
-  boolean canApplyPolicy();
+  Boolean canApplyPolicy();
 
-  boolean canGetAppliedPolicies();
+  Boolean canGetAppliedPolicies();
 
-  boolean canRemovePolicy();
+  Boolean canRemovePolicy();
 
-  boolean canGetChildren();
+  Boolean canGetChildren();
 
-  boolean canCreateDocument();
+  Boolean canCreateDocument();
 
-  boolean canCreateFolder();
+  Boolean canCreateFolder();
 
-  boolean canCreateRelationship();
+  Boolean canCreateRelationship();
 
-  boolean canCreatePolicy();
+  Boolean canCreatePolicy();
 
-  boolean canDeleteTree();
+  Boolean canDeleteTree();
 
-  boolean canGetRenditions();
+  Boolean canGetRenditions();
 
-  boolean canGetAcl();
+  Boolean canGetAcl();
 
-  boolean canApplyAcl();
-
+  Boolean canApplyAcl();
 }
