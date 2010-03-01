@@ -81,21 +81,27 @@ public class InMemoryRepositoryServiceImpl extends AbstractServiceImpl implement
     int max = maxItems == null ? -1 : maxItems.intValue();
       
     TypeDefinitionListImpl result = new TypeDefinitionListImpl();
-    List<TypeDefinitionContainer> children = getTypeDescendants(context, repositoryId, typeId, 
+    List<TypeDefinitionContainer> children;
+    if (typeId == null) {
+      // spec says that base types must be returned in this case
+      children = fStoreManager.getRootTypes(repositoryId);
+    } else {    
+      children = getTypeDescendants(context, repositoryId, typeId, 
         BigInteger.valueOf(1), includePropertyDefinitions, null);
+    }
     result.setNumItems(BigInteger.valueOf(children.size()));
     result.setHasMoreItems(children.size() > max - skip);
     List<TypeDefinition> childrenTypes = new ArrayList<TypeDefinition>();
     ListIterator<TypeDefinitionContainer> it = children.listIterator(skip);
     if (max<0)
       max = children.size();
-    for (int i=0; i<max && it.hasNext(); i++)
+    for (int i=skip; i<max+skip && it.hasNext(); i++)
       childrenTypes.add(it.next().getTypeDefinition());
 
     result.setList(childrenTypes);      
     return result;
   }
-
+  
   public TypeDefinition getTypeDefinition(CallContext context, String repositoryId,
       String typeId, ExtensionsData extension) {
     
