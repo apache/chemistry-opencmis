@@ -79,7 +79,7 @@ public interface ObjectType {
    * 
    * @return {@code true} if this type is a base type, {@code false} if this type is a derived type.
    */
-  boolean isBase();
+  boolean isBaseType();
 
   /**
    * Get the type's base type, if the type is a derived (non-base) type.

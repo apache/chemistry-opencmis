@@ -586,34 +586,34 @@ public class MockSessionFactory implements SessionFactory {
 	private void createMockGlobalTypes() {
 		FolderType bft = createNiceMock(FolderType.class);
 		expect(bft.getId()).andReturn(ObjectType.FOLDER_BASETYPE_ID).anyTimes();
-		expect(bft.isBase()).andReturn(true);
+		expect(bft.isBaseType()).andReturn(true);
 		expect(bft.getBaseType()).andReturn(null).anyTimes();
 
 		FolderType ft = createNiceMock(FolderType.class);
 		expect(ft.getId()).andReturn(Fixture.FOLDER_TYPE_ID).anyTimes();
-		expect(ft.isBase()).andReturn(false);
+		expect(ft.isBaseType()).andReturn(false);
 		expect(ft.getBaseType()).andReturn(bft).anyTimes();
 
 		PolicyType bpt = createNiceMock(PolicyType.class);
 		expect(bpt.getId()).andReturn(ObjectType.POLICY_BASETYPE_ID).anyTimes();
-		expect(bpt.isBase()).andReturn(true);
+		expect(bpt.isBaseType()).andReturn(true);
 		expect(bpt.getBaseType()).andReturn(null).anyTimes();
 
 		RelationshipType brt = createNiceMock(RelationshipType.class);
 		expect(brt.getId()).andReturn(ObjectType.RELATIONSHIP_BASETYPE_ID)
 				.anyTimes();
-		expect(brt.isBase()).andReturn(true);
+		expect(brt.isBaseType()).andReturn(true);
 		expect(brt.getBaseType()).andReturn(null).anyTimes();
 
 		DocumentType bdt = createNiceMock(DocumentType.class);
 		expect(bdt.getId()).andReturn(ObjectType.DOCUMENT_BASETYPE_ID)
 				.anyTimes();
-		expect(bdt.isBase()).andReturn(true);
+		expect(bdt.isBaseType()).andReturn(true);
 		expect(bdt.getBaseType()).andReturn(null).anyTimes();
 
 		DocumentType dt = createNiceMock(DocumentType.class);
 		expect(dt.getId()).andReturn(Fixture.DOCUMENT_TYPE_ID).anyTimes();
-		expect(dt.isBase()).andReturn(false);
+		expect(dt.isBaseType()).andReturn(false);
 		expect(dt.getBaseType()).andReturn(bft).anyTimes();
 
 		replay(bft);

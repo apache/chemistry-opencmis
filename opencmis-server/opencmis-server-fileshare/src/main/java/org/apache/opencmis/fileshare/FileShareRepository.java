@@ -1853,7 +1853,6 @@ public class FileShareRepository {
       aam.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, true);
       aam.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, !userReadOnly);
       aam.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, !userReadOnly);
-      aam.put(AllowableActionsData.ACTION_CAN_CREATE_POLICY, false);
       aam.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, !userReadOnly && !isReadOnly);
     }
     else {

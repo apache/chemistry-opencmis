@@ -1765,8 +1765,6 @@ public final class Converter {
         .isCanCreateDocument());
     actionsMap.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, allowableActions
         .isCanCreateFolder());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_CREATE_POLICY, allowableActions
-        .isCanCreatePolicy());
     actionsMap.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, allowableActions
         .isCanCreateRelationship());
     actionsMap.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM, allowableActions
@@ -1837,7 +1835,6 @@ public final class Converter {
       result.setCanCheckOut(actionsMap.get(AllowableActionsData.ACTION_CAN_CHECK_OUT));
       result.setCanCreateDocument(actionsMap.get(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT));
       result.setCanCreateFolder(actionsMap.get(AllowableActionsData.ACTION_CAN_CREATE_FOLDER));
-      result.setCanCreatePolicy(actionsMap.get(AllowableActionsData.ACTION_CAN_CREATE_POLICY));
       result.setCanCreateRelationship(actionsMap
           .get(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP));
       result.setCanDeleteContentStream(actionsMap

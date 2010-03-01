@@ -48,7 +48,6 @@ public interface AllowableActionsData extends ExtensionsData {
   String ACTION_CAN_CREATE_DOCUMENT = "canCreateDocument";
   String ACTION_CAN_CREATE_FOLDER = "canCreateFolder";
   String ACTION_CAN_CREATE_RELATIONSHIP = "canCreateRelationship";
-  String ACTION_CAN_CREATE_POLICY = "canCreatePolicy";
   String ACTION_CAN_DELETE_TREE = "canDeleteTree";
   String ACTION_CAN_GET_RENDITIONS = "canGetRenditions";
   String ACTION_CAN_GET_ACL = "canGetACL";

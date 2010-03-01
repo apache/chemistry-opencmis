@@ -75,8 +75,6 @@ public interface AllowableActions {
 
   Boolean canCreateRelationship();
 
-  Boolean canCreatePolicy();
-
   Boolean canDeleteTree();
 
   Boolean canGetRenditions();

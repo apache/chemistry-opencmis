@@ -67,6 +67,10 @@ public abstract class AbstractObjectType implements ObjectType {
    * @see org.apache.opencmis.client.api.objecttype.ObjectType#getBaseType()
    */
   public ObjectType getBaseType() {
+    if (isBaseType()) {
+      return null;
+    }
+
     if (this.baseType != null) {
       return this.baseType;
     }
@@ -174,9 +178,9 @@ public abstract class AbstractObjectType implements ObjectType {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.objecttype.ObjectType#isBase()
+   * @see org.apache.opencmis.client.api.objecttype.ObjectType#isBaseType()
    */
-  public boolean isBase() {
+  public boolean isBaseType() {
     return (getTypeDefinition().getParentId() == null);
   }
 

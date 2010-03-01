@@ -70,10 +70,6 @@ public class AllowableActionsImpl implements AllowableActions {
     return actions.get(AllowableActionsData.ACTION_CAN_CREATE_FOLDER);
   }
 
-  public Boolean canCreatePolicy() {
-    return actions.get(AllowableActionsData.ACTION_CAN_CREATE_POLICY);
-  }
-
   public Boolean canCreateRelationship() {
     return actions.get(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP);
   }
