@@ -96,7 +96,6 @@ public class DataObjectCreator {
     actions.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, isFolder);
     actions.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, isFolder);
     actions.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, Boolean.FALSE);
-    actions.put(AllowableActionsData.ACTION_CAN_CREATE_POLICY, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, isFolder);
     actions.put(AllowableActionsData.ACTION_CAN_GET_RENDITIONS, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_GET_ACL, Boolean.FALSE);

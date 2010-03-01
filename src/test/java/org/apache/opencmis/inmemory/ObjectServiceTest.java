@@ -684,7 +684,6 @@ public class ObjectServiceTest extends AbstractServiceTst {
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_FOLDER));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_POLICY));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_TREE));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_RENDITIONS));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_ACL));
