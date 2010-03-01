@@ -249,7 +249,7 @@ public abstract class AbstractObjectType implements ObjectType {
    * @see org.apache.opencmis.client.api.objecttype.ObjectType#getChildren(int)
    */
   public PagingList<ObjectType> getChildren(int itemsPerPage) {
-    return getSession().getTypeChildren(this, true, itemsPerPage);
+    return getSession().getTypeChildren(getId(), true, itemsPerPage);
   }
 
   /*
@@ -258,6 +258,6 @@ public abstract class AbstractObjectType implements ObjectType {
    * @see org.apache.opencmis.client.api.objecttype.ObjectType#getDescendants(int)
    */
   public List<Container<ObjectType>> getDescendants(int depth) {
-    return getSession().getTypeDescendants(this, depth, true);
+    return getSession().getTypeDescendants(getId(), depth, true);
   }
 }

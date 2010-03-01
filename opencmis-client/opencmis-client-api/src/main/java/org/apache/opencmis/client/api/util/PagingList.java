@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Basically this is a nested list of lists where the outer list represent pages and the inner list
  * is the result set with items of type T. <code>PagingList</code> implementations can support lazy
- * load of result sets.
+ * load of result sets. The first page has the page number 0.
  * 
  * @param <T>
  */
@@ -40,10 +40,10 @@ public interface PagingList<T> extends Iterable<List<T>> {
   int getNumItems();
 
   /**
-   * This is the maximum number of items to return in one page. The repository MUST NOT exceed
-   * this maximum. Default is repository-specific.
+   * This is the maximum number of items to return in one page. The repository MUST NOT exceed this
+   * maximum.
    */
-  void setMaxItems();
+  int getMaxItemsPerPage();
 
   /**
    * This is the maximum number of pages calculated from number of <code>totalItems</code> and
@@ -62,10 +62,4 @@ public interface PagingList<T> extends Iterable<List<T>> {
    * @return a page of items
    */
   List<T> get(int pageNumber);
-
-  /**
-   * Returns true if the server does not return any items.
-   * @return true for empty list
-   */
-  boolean isEmpty();
 }

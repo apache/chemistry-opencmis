@@ -89,10 +89,10 @@ public interface Session {
 
   ObjectType getTypeDefinition(String typeId);
 
-  PagingList<ObjectType> getTypeChildren(ObjectType t, boolean includePropertyDefinitions,
+  PagingList<ObjectType> getTypeChildren(String typeId, boolean includePropertyDefinitions,
       int itemsPerPage);
 
-  List<Container<ObjectType>> getTypeDescendants(ObjectType t, int depth, boolean includePropertyDefinitions);
+  List<Container<ObjectType>> getTypeDescendants(String typeId, int depth, boolean includePropertyDefinitions);
 
   // navigation
 

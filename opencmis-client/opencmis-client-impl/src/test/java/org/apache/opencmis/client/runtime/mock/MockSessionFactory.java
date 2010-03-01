@@ -161,13 +161,10 @@ public class MockSessionFactory implements SessionFactory {
 		PagingList<ObjectType> plot = this.createMockPaging(dtl);
 		Container<ObjectType> ctdoc = this.createMockContainer(this.idTypeIndex.get(Fixture.DOCUMENT_TYPE_ID), null);
 		expect(
-				session
-						.getTypeChildren(this.idTypeIndex
-								.get(BaseObjectTypeIds.CMIS_DOCUMENT.value()),
-								true, -1)).andReturn(plot).anyTimes();
+				session.getTypeChildren(BaseObjectTypeIds.CMIS_DOCUMENT.value(), true, -1))
+						.andReturn(plot).anyTimes();
 		expect(
-				session.getTypeDescendants(this.idTypeIndex
-						.get(BaseObjectTypeIds.CMIS_DOCUMENT.value()), 1, true))
+				session.getTypeDescendants(BaseObjectTypeIds.CMIS_DOCUMENT.value(), 1, true))
 						.andReturn(Collections.singletonList(ctdoc)).anyTimes();
 
 		/* folder child/descendants types */
@@ -176,12 +173,10 @@ public class MockSessionFactory implements SessionFactory {
 		PagingList<ObjectType> plfot = this.createMockPaging(ftl);
     Container<ObjectType> ctfolder = this.createMockContainer(this.idTypeIndex.get(Fixture.FOLDER_TYPE_ID), null);
 		expect(
-				session.getTypeChildren(this.idTypeIndex
-						.get(BaseObjectTypeIds.CMIS_FOLDER.value()), true, -1))
-				.andReturn(plfot).anyTimes();
+				session.getTypeChildren(BaseObjectTypeIds.CMIS_FOLDER.value(), true, -1))
+				    .andReturn(plfot).anyTimes();
 		expect(
-				session.getTypeDescendants(this.idTypeIndex
-						.get(BaseObjectTypeIds.CMIS_FOLDER.value()), 1, true))
+				session.getTypeDescendants(BaseObjectTypeIds.CMIS_FOLDER.value(), 1, true))
 						.andReturn(Collections.singletonList(ctfolder)).anyTimes();
 
 		/* change support */
@@ -568,7 +563,7 @@ public class MockSessionFactory implements SessionFactory {
 		Iterator<List<T>> i = a.iterator();
 
 		expect(pl.get(0)).andReturn(items).anyTimes();
-		expect(pl.isEmpty()).andReturn(false).anyTimes();
+		//expect(pl.isEmpty()).andReturn(false).anyTimes();
 		expect(pl.iterator()).andReturn(i).anyTimes();
 
 		replay(pl);
@@ -577,7 +572,7 @@ public class MockSessionFactory implements SessionFactory {
 	}
 
   @SuppressWarnings("unchecked")
-  private <T> Container<T> createMockContainer(T item, List<T> children) {
+  private <T> Container<T> createMockContainer(T item, List<Container<T>> children) {
     Container<T> c = createNiceMock(Container.class);
 	  
 	  expect(c.getItem()).andReturn(item).anyTimes();

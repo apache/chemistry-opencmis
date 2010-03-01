@@ -74,7 +74,7 @@ public class ReadOnlyTypeTest extends AbstractSessionTest {
   public void readTypeChildrenDocument() {
     ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
     Assert.assertNotNull(otd);
-    PagingList<ObjectType> pc = this.session.getTypeChildren(otd, true, -1);
+    PagingList<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true, -1);
     Assert.assertNotNull(pc);
 
     for (List<ObjectType> children : pc) {
@@ -89,7 +89,7 @@ public class ReadOnlyTypeTest extends AbstractSessionTest {
   public void readTypeChildrenFolder() {
     ObjectType otd = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
     Assert.assertNotNull(otd);
-    PagingList<ObjectType> pc = this.session.getTypeChildren(otd, true, -1);
+    PagingList<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true, -1);
     Assert.assertNotNull(pc);
 
     for (List<ObjectType> children : pc) {
@@ -104,7 +104,7 @@ public class ReadOnlyTypeTest extends AbstractSessionTest {
   public void readTypeDescandantsDocument() {
     ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
     Assert.assertNotNull(otd);
-    List<Container<ObjectType>> desc = this.session.getTypeDescendants(otd, 1, true);
+    List<Container<ObjectType>> desc = this.session.getTypeDescendants(otd.getId(), 1, true);
     Assert.assertNotNull(desc);
     Assert.assertFalse(desc.isEmpty());
   }
@@ -113,7 +113,7 @@ public class ReadOnlyTypeTest extends AbstractSessionTest {
   public void readTypeDescandantsFolder() {
     ObjectType otd = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
     Assert.assertNotNull(otd);
-    List<Container<ObjectType>> desc = this.session.getTypeDescendants(otd, 1, true);
+    List<Container<ObjectType>> desc = this.session.getTypeDescendants(otd.getId(), 1, true);
     Assert.assertNotNull(desc);
     Assert.assertFalse(desc.isEmpty());
   }

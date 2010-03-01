@@ -16,22 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api.util;
+package org.apache.opencmis.client.runtime.util;
 
 import java.util.List;
 
-/**
- * Basic tree structure.
- */
-public interface Container<T> {
+import org.apache.opencmis.client.api.util.Container;
 
-  /**
-   * Returns the item on this level.
-   */
-  T getItem();
+public class ContainerImpl<T> implements Container<T> {
 
-  /**
-   * Returns the children.
+  private T item;
+  private List<Container<T>> children;
+
+  public ContainerImpl(T item, List<Container<T>> children) {
+    if (item == null) {
+      throw new IllegalArgumentException("Item must be set!");
+    }
+
+    this.item = item;
+    this.children = children;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.util.Container#getItem()
    */
-  List<Container<T>> getChildren();
+  public T getItem() {
+    return item;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.util.Container#getChildren()
+   */
+  public List<Container<T>> getChildren() {
+    return this.children;
+  }
 }

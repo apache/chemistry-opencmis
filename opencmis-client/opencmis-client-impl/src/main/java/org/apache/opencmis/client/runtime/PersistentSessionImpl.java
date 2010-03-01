@@ -19,6 +19,7 @@
 package org.apache.opencmis.client.runtime;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +35,7 @@ import org.apache.opencmis.client.api.ExtensionHandler;
 import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.PersistentSession;
 import org.apache.opencmis.client.api.Property;
+import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionContext;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
@@ -47,10 +49,14 @@ import org.apache.opencmis.client.runtime.cache.Cache;
 import org.apache.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
 import org.apache.opencmis.client.runtime.repository.PersistentPropertyFactoryImpl;
+import org.apache.opencmis.client.runtime.util.AbstractPagingList;
+import org.apache.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.api.TypeDefinition;
+import org.apache.opencmis.commons.api.TypeDefinitionContainer;
+import org.apache.opencmis.commons.api.TypeDefinitionList;
 import org.apache.opencmis.commons.enums.BindingType;
 import org.apache.opencmis.commons.enums.Cardinality;
 import org.apache.opencmis.commons.enums.CmisProperties;
@@ -63,6 +69,7 @@ import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.PropertyIdData;
+import org.apache.opencmis.commons.provider.RepositoryService;
 import org.apache.opencmis.util.repository.ObjectGenerator;
 
 public class PersistentSessionImpl implements PersistentSession, Testable, Serializable {
@@ -314,20 +321,97 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     return rootFolder;
   }
 
-  public PagingList<ObjectType> getTypeChildren(ObjectType t, boolean includePropertyDefinitions,
-      int itemsPerPage) {
-    throw new CmisRuntimeException("not implemented");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getTypeChildren(java.lang.String, boolean, int)
+   */
+  public PagingList<ObjectType> getTypeChildren(final String typeId,
+      final boolean includePropertyDefinitions, final int itemsPerPage) {
+    if (itemsPerPage < 1) {
+      throw new IllegalArgumentException("itemsPerPage must be > 0!");
+    }
+
+    final Session thisSession = this;
+    final String repositoryId = getRepositoryId();
+    final RepositoryService repositoryService = getProvider().getRepositoryService();
+
+    return new AbstractPagingList<ObjectType>() {
+
+      @Override
+      protected List<ObjectType> fetchPage(int pageNumber) {
+        int skipCount = pageNumber * getMaxItemsPerPage();
+
+        // fetch the data
+        TypeDefinitionList tdl = repositoryService.getTypeChildren(repositoryId, typeId,
+            includePropertyDefinitions, BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
+                .valueOf(skipCount), null);
+
+        // set num items
+        if (tdl.getNumItems() != null) {
+          setNumItems(tdl.getNumItems().intValue());
+        }
+        else {
+          setNumItems(-1);
+        }
+
+        // convert type definitions
+        List<ObjectType> result = new ArrayList<ObjectType>(tdl.getList().size());
+        for (TypeDefinition typeDefinition : tdl.getList()) {
+          result.add(SessionUtil.convertTypeDefinition(thisSession, typeDefinition));
+        }
+
+        return result;
+      }
+
+      @Override
+      public int getMaxItemsPerPage() {
+        return itemsPerPage;
+      }
+    };
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getTypeDefinition(java.lang.String)
+   */
   public ObjectType getTypeDefinition(String typeId) {
     TypeDefinition typeDefinition = getProvider().getRepositoryService().getTypeDefinition(
         getRepositoryId(), typeId, null);
     return SessionUtil.convertTypeDefinition(this, typeDefinition);
   }
 
-  public List<Container<ObjectType>> getTypeDescendants(ObjectType t, int depth,
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getTypeDescendants(java.lang.String, int, boolean)
+   */
+  public List<Container<ObjectType>> getTypeDescendants(String typeId, int depth,
       boolean includePropertyDefinitions) {
-    throw new CmisRuntimeException("not implemented");
+    List<TypeDefinitionContainer> descendants = getProvider().getRepositoryService()
+        .getTypeDescendants(getRepositoryId(), typeId, BigInteger.valueOf(depth),
+            includePropertyDefinitions, null);
+
+    return convertTypeDescendants(descendants);
+  }
+
+  /**
+   * Converts provider <code>TypeDefinitionContainer</code> to API <code>Container</code>.
+   */
+  private List<Container<ObjectType>> convertTypeDescendants(
+      List<TypeDefinitionContainer> descendantsList) {
+    List<Container<ObjectType>> result = new ArrayList<Container<ObjectType>>();
+
+    for (TypeDefinitionContainer container : descendantsList) {
+      ObjectType objectType = SessionUtil
+          .convertTypeDefinition(this, container.getTypeDefinition());
+      List<Container<ObjectType>> children = convertTypeDescendants(container.getChildren());
+
+      result.add(new ContainerImpl<ObjectType>(objectType, children));
+    }
+
+    return result;
   }
 
   public PagingList<CmisObject> query(String statement, boolean searchAllVersions, int itemsPerPage) {
