@@ -47,7 +47,7 @@ import org.apache.opencmis.commons.provider.PropertyIntegerData;
  */
 public class TypeValidator {
 
-  static void validateRequiredSystemProperties(PropertiesData properties) {
+  public static void validateRequiredSystemProperties(PropertiesData properties) {
     if (properties == null || properties.getProperties() == null)
       throw new RuntimeException("Cannot create object, no properties are given");
 

@@ -38,6 +38,8 @@ import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.commons.provider.RepositoryService;
 import org.apache.opencmis.commons.provider.VersioningService;
 import org.apache.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo;
+import org.apache.opencmis.inmemory.clientprovider.CmisInMemoryProvider;
+import org.apache.opencmis.inmemory.clientprovider.DummyCallContext;
 import org.apache.opencmis.inmemory.server.RuntimeContext;
 import org.apache.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 
@@ -323,8 +325,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
    *    configuration parameters for client provider interface and in-memory provider
    */
   private void initializeDirect(Map<String, String> parameters) {
-    CmisInMemoryProvider inMemSpi;
-    inMemSpi = new CmisInMemoryProvider(parameters);
+    CmisInMemoryProvider inMemSpi = new CmisInMemoryProvider(parameters);
     fRepSvc = inMemSpi.getRepositoryService();
     fObjSvc = inMemSpi.getObjectService();
     fNavSvc = inMemSpi.getNavigationService();    

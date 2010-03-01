@@ -32,11 +32,16 @@ public class RuntimeContext {
   public static class ThreadLocalRuntimeConfig extends ThreadLocal<CallContext> {    
 
     public void attachCfg(CallContext ctx) {
-      set(ctx);      
+      if (null != ctx)
+        set(ctx);      
     }
 
     public synchronized String getConfigValue(String key) {
       return get().get(key) ;
+    }
+
+    public void deleteCfg() {
+      set(null);      
     }
   };
 

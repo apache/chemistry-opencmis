@@ -33,14 +33,8 @@ import org.apache.opencmis.commons.provider.RelationshipService;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.commons.provider.RepositoryService;
 import org.apache.opencmis.commons.provider.VersioningService;
-import org.apache.opencmis.inmemory.CmisInMemoryProvider;
 import org.apache.opencmis.inmemory.ConfigConstants;
-import org.apache.opencmis.inmemory.NavigationServiceImpl;
-import org.apache.opencmis.inmemory.ObjectServiceImpl;
-import org.apache.opencmis.inmemory.RepositoryServiceImpl;
-import org.apache.opencmis.inmemory.VersioningServiceImpl;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
 
 /**

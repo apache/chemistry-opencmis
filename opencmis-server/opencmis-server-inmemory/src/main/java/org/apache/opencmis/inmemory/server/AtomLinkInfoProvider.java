@@ -64,18 +64,14 @@ public class AtomLinkInfoProvider {
    * @param objectInfos
    *          Holder to fill with information
    */
-  public void fillInformationForAtomLinks(String repositoryId, String objectId, ObjectInfoHolder objectInfos) {
-    if (null == objectInfos || null == objectId)
+  public void fillInformationForAtomLinks(String repositoryId, StoredObject so, ObjectInfoHolder objectInfos) {
+    if (null == objectInfos || null == so)
       return;
-    
-    ObjectInfoImpl objInfo = new ObjectInfoImpl();
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject so = objectStore.getObjectById(objectId);   
-
     TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
     
-    // Fill all setters:
-    objInfo.setId(objectId);
+    ObjectInfoImpl objInfo = new ObjectInfoImpl();
+   // Fill all setters:
+    objInfo.setId(so.getId());
     objInfo.setName(so.getName());
     objInfo.setCreatedBy(so.getCreatedBy()); //!
     objInfo.setCreationDate(so.getCreatedAt()); //!
@@ -142,6 +138,25 @@ public class AtomLinkInfoProvider {
     objInfo.setSupportsFolderTree(true);
     
     objectInfos.addObjectInfo(objInfo);
+  }
+  
+ /**
+   * FillObjectInfoHolder object with required information needed for Atom binding for a single object
+   * 
+   * @param repositoryId
+   *          id of repository 
+   * @param objectId
+   *          object to retrieve information for
+   * @param objectInfos
+   *          Holder to fill with information
+   */
+  public void fillInformationForAtomLinks(String repositoryId, String objectId, ObjectInfoHolder objectInfos) {
+    if (null == objectInfos || null == objectId)
+      return;
+    
+    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+    StoredObject so = objectStore.getObjectById(objectId);   
+    fillInformationForAtomLinks(repositoryId, so, objectInfos);    
   }
 
   /**

@@ -19,6 +19,12 @@
 package org.apache.opencmis.inmemory;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +54,12 @@ import org.apache.opencmis.commons.provider.PropertyBooleanData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.PropertyIdData;
 import org.apache.opencmis.commons.provider.PropertyStringData;
+import org.apache.opencmis.inmemory.clientprovider.DummyCallContext;
+import org.apache.opencmis.inmemory.clientprovider.MultiFilingServiceImpl;
+import org.apache.opencmis.inmemory.clientprovider.NavigationServiceImpl;
+import org.apache.opencmis.inmemory.clientprovider.ObjectServiceImpl;
+import org.apache.opencmis.inmemory.clientprovider.RepositoryServiceImpl;
+import org.apache.opencmis.inmemory.clientprovider.VersioningServiceImpl;
 import org.apache.opencmis.inmemory.server.RuntimeContext;
 import org.apache.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.opencmis.inmemory.types.PropertyCreationHelper;
@@ -55,8 +67,6 @@ import org.apache.opencmis.server.spi.CallContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class VersioningTest extends AbstractServiceTst {
   private static Log log = LogFactory.getLog(ObjectServiceTest.class);
@@ -82,9 +92,9 @@ public class VersioningTest extends AbstractServiceTst {
   }
 
   private void setRuntimeContext(String user) {
+
     DummyCallContext ctx = new DummyCallContext();
     ctx.put(CallContext.USERNAME, user);
-
     // Attach the CallContext to a thread local context that can be accessed from everywhere
     RuntimeContext.getRuntimeConfig().attachCfg(ctx); 
   }

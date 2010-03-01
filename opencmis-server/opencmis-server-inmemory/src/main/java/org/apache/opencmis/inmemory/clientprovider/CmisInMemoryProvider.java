@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.inmemory;
+package org.apache.opencmis.inmemory.clientprovider;
 
 import java.util.Map;
 
@@ -30,6 +30,13 @@ import org.apache.opencmis.commons.provider.RelationshipService;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.commons.provider.RepositoryService;
 import org.apache.opencmis.commons.provider.VersioningService;
+import org.apache.opencmis.inmemory.ConfigConstants;
+import org.apache.opencmis.inmemory.server.InMemoryDiscoveryServiceImpl;
+import org.apache.opencmis.inmemory.server.InMemoryMultiFilingServiceImpl;
+import org.apache.opencmis.inmemory.server.InMemoryNavigationServiceImpl;
+import org.apache.opencmis.inmemory.server.InMemoryObjectServiceImpl;
+import org.apache.opencmis.inmemory.server.InMemoryRepositoryServiceImpl;
+import org.apache.opencmis.inmemory.server.InMemoryVersioningServiceImpl;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
@@ -51,6 +58,7 @@ public class CmisInMemoryProvider {
   protected VersioningService fVersioningService;
   protected MultiFilingService fMultiService;
   protected RepositoryInfoData fRepositoryInfo;
+  protected DiscoveryService fDiscoveryService;
 
   public CmisInMemoryProvider(Map<String, String> cfgParams) {
     setup (cfgParams);    
@@ -59,39 +67,39 @@ public class CmisInMemoryProvider {
   protected CmisInMemoryProvider() {  
   }
   
-  RepositoryService getRepositoryService() {
+  public RepositoryService getRepositoryService() {
     return fRepositoryService;
   }
 
-  NavigationService getNavigationService() {
+  public NavigationService getNavigationService() {
     return fNavigationService;
   }
 
-  ObjectService getObjectService() {
+  public ObjectService getObjectService() {
     return fObjectService;    
   }
 
-  VersioningService getVersioningService() {
+  public VersioningService getVersioningService() {
    return fVersioningService; 
   }
 
-  RelationshipService getRelationshipService() {
+  public RelationshipService getRelationshipService() {
     return null;
   }
 
-  DiscoveryService getDiscoveryService() {
-    return null;
+  public DiscoveryService getDiscoveryService() {
+    return fDiscoveryService;
   }
 
-  MultiFilingService getMultiFilingService() {
+  public MultiFilingService getMultiFilingService() {
     return fMultiService;
   }
 
-  AclService getAclService() {
+  public AclService getAclService() {
     return null;
   }
 
-  PolicyService getPolicyService() {
+  public PolicyService getPolicyService() {
     return null;
   }
 
@@ -113,15 +121,21 @@ public class CmisInMemoryProvider {
       fStoreManager.initRepository(null);
     }
     
-//    String repoInfoCreatorClassName = (String) fSession.get(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS);
-//    fStoreManager.initRepositoryInfo(repositoryId, repoInfoCreatorClassName);    
+    InMemoryRepositoryServiceImpl repSvc = new InMemoryRepositoryServiceImpl(fStoreManager);
+    InMemoryNavigationServiceImpl navSvc = new InMemoryNavigationServiceImpl(fStoreManager);
+    InMemoryObjectServiceImpl objSvc = new InMemoryObjectServiceImpl(fStoreManager);
+    InMemoryVersioningServiceImpl verSvc = new InMemoryVersioningServiceImpl(fStoreManager, objSvc);
+    InMemoryDiscoveryServiceImpl disSvc = new InMemoryDiscoveryServiceImpl(fStoreManager, repSvc,
+        navSvc);
+    InMemoryMultiFilingServiceImpl multiSvc = new InMemoryMultiFilingServiceImpl(fStoreManager);
 
     // initialize services
-    fRepositoryService = new RepositoryServiceImpl(fStoreManager);
-    fNavigationService = new NavigationServiceImpl(fStoreManager);
-    fObjectService = new ObjectServiceImpl(fStoreManager);
-    fVersioningService = new VersioningServiceImpl(fStoreManager, fObjectService);    
-    fMultiService = new MultiFilingServiceImpl(fStoreManager);
+    fRepositoryService = new RepositoryServiceImpl(repSvc);
+    fNavigationService = new NavigationServiceImpl(navSvc);
+    fObjectService = new ObjectServiceImpl(objSvc);
+    fVersioningService = new VersioningServiceImpl(verSvc);    
+    fMultiService = new MultiFilingServiceImpl(multiSvc);
+    fDiscoveryService = new DiscoveryServiceImpl(disSvc);
   }
 
   
