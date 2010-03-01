@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.opencmis.client.provider.spi.Session;
+import org.apache.opencmis.client.provider.spi.atompub.objects.Acl;
 import org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase;
 import org.apache.opencmis.client.provider.spi.atompub.objects.AtomElement;
 import org.apache.opencmis.client.provider.spi.atompub.objects.AtomEntry;
@@ -722,7 +723,7 @@ public class AbstractAtomPubService {
   /**
    * Updates the ACL of an object.
    */
-  protected AtomEntry updateAcl(String repositoryId, String objectId, AccessControlList acl,
+  protected Acl updateAcl(String repositoryId, String objectId, AccessControlList acl,
       AclPropagation aclPropagation) {
 
     // find the link
@@ -747,7 +748,7 @@ public class AbstractAtomPubService {
     });
 
     // parse new entry
-    return parse(resp.getStream(), AtomEntry.class);
+    return parse(resp.getStream(), Acl.class);
   }
 
 }

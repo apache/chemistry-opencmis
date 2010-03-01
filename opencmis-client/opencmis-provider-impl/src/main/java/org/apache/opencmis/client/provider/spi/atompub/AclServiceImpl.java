@@ -22,14 +22,11 @@ import static org.apache.opencmis.commons.impl.Converter.convert;
 
 import org.apache.opencmis.client.provider.spi.Session;
 import org.apache.opencmis.client.provider.spi.atompub.objects.Acl;
-import org.apache.opencmis.client.provider.spi.atompub.objects.AtomElement;
-import org.apache.opencmis.client.provider.spi.atompub.objects.AtomEntry;
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.Constants;
 import org.apache.opencmis.commons.impl.UrlBuilder;
-import org.apache.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.AclService;
 
@@ -51,9 +48,11 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.ACLService#applyACL(java.lang.String, java.lang.String,
-   * org.apache.opencmis.client.provider.AccessControlList, org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.commons.enums.ACLPropagation, org.apache.opencmis.client.provider.ExtensionsData)
+   * @see org.apache.opencmis.client.provider.ACLService#applyACL(java.lang.String,
+   * java.lang.String, org.apache.opencmis.client.provider.AccessControlList,
+   * org.apache.opencmis.client.provider.AccessControlList,
+   * org.apache.opencmis.commons.enums.ACLPropagation,
+   * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public AccessControlList applyAcl(String repositoryId, String objectId,
       AccessControlList addAces, AccessControlList removeAces, AclPropagation aclPropagation,
@@ -72,18 +71,8 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
     AccessControlList newACL = mergeAcls(originalAces, addAces, removeAces);
 
     // update ACL
-    AtomEntry entry = updateAcl(repositoryId, objectId, newACL, aclPropagation);
-
-    // walk through the entry and find updated ACL
-    for (AtomElement element : entry.getElements()) {
-      if (element.getObject() instanceof CmisObjectType) {
-        // extract new ACL
-        CmisObjectType object = (CmisObjectType) element.getObject();
-        result = convert(object.getAcl(), object.isExactACL());
-
-        break;
-      }
-    }
+    Acl acl = updateAcl(repositoryId, objectId, newACL, aclPropagation);
+    result = convert(acl.getACL(), null);
 
     return result;
   }
