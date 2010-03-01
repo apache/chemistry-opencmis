@@ -497,22 +497,9 @@ public class AbstractAtomPubService {
    */
   protected AccessControlList mergeAcls(AccessControlList originalAces, AccessControlList addAces,
       AccessControlList removeAces) {
-
-    if ((originalAces == null) || (originalAces.getAces() == null)) {
-      originalAces = new AccessControlListImpl(new ArrayList<AccessControlEntry>());
-    }
-
-    if ((addAces == null) || (addAces.getAces() == null)) {
-      throw new IllegalArgumentException("add ACEs must not be null!");
-    }
-
-    if ((removeAces == null) || (removeAces.getAces() == null)) {
-      throw new IllegalArgumentException("remove ACEs must not be null!");
-    }
-
-    Map<String, Set<String>> originals = convertACEsToMap(originalAces.getAces());
-    Map<String, Set<String>> adds = convertACEsToMap(addAces.getAces());
-    Map<String, Set<String>> removes = convertACEsToMap(removeAces.getAces());
+    Map<String, Set<String>> originals = convertAclToMap(originalAces);
+    Map<String, Set<String>> adds = convertAclToMap(addAces);
+    Map<String, Set<String>> removes = convertAclToMap(removeAces);
     List<AccessControlEntry> newACEs = new ArrayList<AccessControlEntry>();
 
     // iterate through the original ACEs
@@ -551,10 +538,14 @@ public class AbstractAtomPubService {
   /**
    * Converts a list of ACEs into Map for better handling.
    */
-  private Map<String, Set<String>> convertACEsToMap(List<AccessControlEntry> aces) {
+  private Map<String, Set<String>> convertAclToMap(AccessControlList acl) {
     Map<String, Set<String>> result = new HashMap<String, Set<String>>();
 
-    for (AccessControlEntry ace : aces) {
+    if ((acl == null) || (acl.getAces() == null)) {
+      return result;
+    }
+
+    for (AccessControlEntry ace : acl.getAces()) {
       // don't consider indirect ACEs - we can't change them
       if (!ace.isDirect()) {
         // ignore
