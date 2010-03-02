@@ -311,6 +311,7 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 
     }
     result.setObjects(folderList);
+    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
     return result;
   }
 

@@ -230,7 +230,9 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     // Make a call to getObject to convert the resulting id into an ObjectData
     ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
         IncludeRelationships.NONE, null, false, false, extension);    
-    
+
+    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+
     return od;
   }
   
