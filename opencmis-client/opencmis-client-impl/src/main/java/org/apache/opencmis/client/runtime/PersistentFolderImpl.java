@@ -32,9 +32,12 @@ import org.apache.opencmis.client.api.FileableCmisObject;
 import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
+import org.apache.opencmis.client.api.SessionContext;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
+import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
+import org.apache.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.UnfileObjects;
@@ -42,7 +45,10 @@ import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.FailedToDeleteData;
+import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
+import org.apache.opencmis.commons.provider.ObjectInFolderData;
+import org.apache.opencmis.commons.provider.ObjectInFolderList;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
@@ -113,8 +119,50 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     throw new CmisRuntimeException("not implemented");
   }
 
-  public PagingList<CmisObject> getChildren(String orderby, int itemsPerPage) {
-    throw new CmisRuntimeException("not implemented");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#getChildren(java.lang.String, int)
+   */
+  public PagingList<CmisObject> getChildren(final String orderBy, final int itemsPerPage) {
+    if (itemsPerPage < 1) {
+      throw new IllegalArgumentException("itemsPerPage must be > 0!");
+    }
+
+    final String objectId = getObjectId();
+    final SessionContext context = getSession().getContext();
+    final NavigationService navigationService = getProvider().getNavigationService();
+    final ObjectFactory objectFactory = getSession().getObjectFactory();
+
+    return new AbstractPagingList<CmisObject>() {
+
+      @Override
+      protected FetchResult fetchPage(int pageNumber) {
+        int skipCount = pageNumber * getMaxItemsPerPage();
+
+        // get the children
+        ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId,
+            context.getIncludeProperties(), orderBy, context.getIncludeAllowableActions(), context
+                .getIncludeRelationships(), context.getIncludeRenditions(), context
+                .getIncludePathSegments(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
+                .valueOf(skipCount), null);
+
+        // convert objects
+        List<CmisObject> page = new ArrayList<CmisObject>();
+        for (ObjectInFolderData objectData : children.getObjects()) {
+          if (objectData.getObject() != null) {
+            page.add(objectFactory.convertObject(objectData.getObject()));
+          }
+        }
+
+        return new FetchResult(page, children.getNumItems(), children.hasMoreItems());
+      }
+
+      @Override
+      public int getMaxItemsPerPage() {
+        return itemsPerPage;
+      }
+    };
   }
 
   public List<Container<FileableCmisObject>> getFolderTree(int depth) {
@@ -126,7 +174,13 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
   }
 
   public Folder getFolderParent() {
-    throw new CmisRuntimeException("not implemented");
+    List<Folder> parents = getParents();
+
+    if ((parents == null) || (parents.isEmpty())) {
+      return null;
+    }
+
+    return parents.get(0);
   }
 
   public String getPath() {

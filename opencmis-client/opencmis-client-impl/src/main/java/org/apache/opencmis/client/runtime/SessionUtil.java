@@ -38,6 +38,7 @@ import org.apache.opencmis.client.runtime.objecttype.DocumentTypeImpl;
 import org.apache.opencmis.client.runtime.objecttype.FolderTypeImpl;
 import org.apache.opencmis.client.runtime.objecttype.PolicyTypeImpl;
 import org.apache.opencmis.client.runtime.objecttype.RelationshipTypeImpl;
+import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.opencmis.commons.api.FolderTypeDefinition;
 import org.apache.opencmis.commons.api.PolicyTypeDefinition;
@@ -56,8 +57,10 @@ import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.AccessControlEntry;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.AllowableActionsData;
+import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
+import org.apache.opencmis.commons.provider.PropertyIdData;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 
 /**
@@ -268,5 +271,24 @@ public final class SessionUtil {
     }
 
     return of.createAcl(aces, acl.isExact());
+  }
+
+  /**
+   * Extracts the type information from the given object data and returns the object type or
+   * <code>null</code> if there is no type information.
+   */
+  public static ObjectType getTypeFromObjectData(Session session, ObjectData objectData) {
+    if ((objectData == null) || (objectData.getProperties() == null)
+        || (objectData.getProperties().getProperties() == null)) {
+      return null;
+    }
+
+    PropertyData<?> typeProperty = objectData.getProperties().getProperties().get(
+        PropertyIds.CMIS_OBJECT_TYPE_ID);
+    if (!(typeProperty instanceof PropertyIdData)) {
+      return null;
+    }
+
+    return session.getTypeDefinition((String) typeProperty.getFirstValue());
   }
 }

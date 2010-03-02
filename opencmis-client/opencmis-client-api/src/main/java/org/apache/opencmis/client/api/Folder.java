@@ -62,7 +62,7 @@ public interface Folder extends FileableCmisObject {
 
   List<Container<FileableCmisObject>> getDescendants(int depth);
 
-  PagingList<CmisObject> getChildren(String orderby, int itemsPerPage);
+  PagingList<CmisObject> getChildren(String orderBy, int itemsPerPage);
 
   Folder getFolderParent();
 

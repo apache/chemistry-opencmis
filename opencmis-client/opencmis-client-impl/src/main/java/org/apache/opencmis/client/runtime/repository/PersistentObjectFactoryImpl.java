@@ -25,20 +25,27 @@ import java.util.Map;
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
 import org.apache.opencmis.client.api.AllowableActions;
+import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.Relationship;
+import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.runtime.AceImpl;
 import org.apache.opencmis.client.runtime.AclImpl;
 import org.apache.opencmis.client.runtime.AllowableActionsImpl;
+import org.apache.opencmis.client.runtime.PersistentDocumentImpl;
 import org.apache.opencmis.client.runtime.PersistentFolderImpl;
+import org.apache.opencmis.client.runtime.PersistentPolicyImpl;
+import org.apache.opencmis.client.runtime.PersistentRelationshipImpl;
 import org.apache.opencmis.client.runtime.PersistentSessionImpl;
+import org.apache.opencmis.client.runtime.SessionUtil;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.opencmis.commons.provider.ObjectData;
 
 public class PersistentObjectFactoryImpl implements ObjectFactory {
 
@@ -105,5 +112,30 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
   public Relationship createRelationship(List<Property<?>> properties, List<Policy> policies,
       List<Ace> addACEs, List<Ace> removeACEs) {
     throw new CmisRuntimeException("not implemented");
+  }
+
+  /**
+   * Converts object data into an API object.
+   */
+  public CmisObject convertObject(ObjectData objectData) {
+    if (objectData == null) {
+      throw new IllegalArgumentException("Object data is null!");
+    }
+
+    ObjectType type = SessionUtil.getTypeFromObjectData(this.session, objectData);
+
+    /* determine type */
+    switch (objectData.getBaseTypeId()) {
+    case CMIS_DOCUMENT:
+      return new PersistentDocumentImpl(this.session, type, objectData);
+    case CMIS_FOLDER:
+      return new PersistentFolderImpl(this.session, type, objectData);
+    case CMIS_POLICY:
+      return new PersistentPolicyImpl(this.session, type, objectData);
+    case CMIS_RELATIONSHIP:
+      return new PersistentRelationshipImpl(this.session, type, objectData);
+    default:
+      throw new CmisRuntimeException("unsupported type: " + objectData.getBaseTypeId());
+    }
   }
 }

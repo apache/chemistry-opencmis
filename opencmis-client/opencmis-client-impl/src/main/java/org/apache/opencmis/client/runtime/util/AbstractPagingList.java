@@ -18,6 +18,7 @@
  */
 package org.apache.opencmis.client.runtime.util;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,12 +31,12 @@ import org.apache.opencmis.client.api.util.PagingList;
  */
 public abstract class AbstractPagingList<T> implements PagingList<T> {
 
-  // number of item is unknown before the fist fetch
+  // number of item is unknown before the first fetch
   private int numItems = -1;
 
   // cache is disabled by default
   private int cacheSize = 0;
-  private LinkedHashMap<Integer, List<T>> cache = null;
+  private LinkedHashMap<Integer, FetchResult> cache = null;
 
   /**
    * Initializes the cache.
@@ -47,11 +48,11 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
     this.cacheSize = cacheSize;
 
     if (cacheSize > 0) {
-      cache = new LinkedHashMap<Integer, List<T>>(cacheSize + 1, 0.70f, true) {
+      cache = new LinkedHashMap<Integer, FetchResult>(cacheSize + 1, 0.70f, true) {
         private static final long serialVersionUID = 1L;
 
         @Override
-        public boolean removeEldestEntry(Map.Entry<Integer, List<T>> eldest) {
+        public boolean removeEldestEntry(Map.Entry<Integer, FetchResult> eldest) {
           return size() > cacheSize;
         }
       };
@@ -64,11 +65,19 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
    * @see org.apache.opencmis.client.api.util.PagingList#get(int)
    */
   public List<T> get(int pageNumber) {
+    FetchResult fr = getInternal(pageNumber);
+    return (fr == null ? null : fr.getPage());
+  }
+
+  /**
+   * Retrieves a page or gets it from cache.
+   */
+  protected FetchResult getInternal(int pageNumber) {
     if (pageNumber < 0) {
       throw new IllegalArgumentException("pageNumber must be >= 0!");
     }
 
-    List<T> result = null;
+    FetchResult result = null;
 
     if (cacheSize > 0) {
       result = cache.get(pageNumber);
@@ -79,6 +88,16 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
     }
     else {
       result = fetchPage(pageNumber);
+
+      // set number of items
+      if (result != null) {
+        if (result.getNumItems() != null) {
+          setNumItems(result.getNumItems().intValue());
+        }
+        else {
+          setNumItems(-1);
+        }
+      }
     }
 
     return result;
@@ -94,7 +113,7 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
   }
 
   /**
-   * Sets the number of items. Should be updated by {@link #fetchPage(int)}.
+   * Sets the number of items.
    */
   protected void setNumItems(int numItems) {
     this.numItems = numItems;
@@ -139,7 +158,36 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
    * @param pageNumber
    *          number of the page (>= 0).
    */
-  protected abstract List<T> fetchPage(int pageNumber);
+  protected abstract FetchResult fetchPage(int pageNumber);
+
+  // --- fetch result class ---
+
+  /**
+   * Fetch result.
+   */
+  protected class FetchResult {
+    private List<T> page;
+    private BigInteger numItems;
+    private Boolean hasMoreItems;
+
+    public FetchResult(List<T> page, BigInteger numItems, Boolean hasMoreItems) {
+      this.page = page;
+      this.numItems = numItems;
+      this.hasMoreItems = hasMoreItems;
+    }
+
+    public List<T> getPage() {
+      return page;
+    }
+
+    public BigInteger getNumItems() {
+      return numItems;
+    }
+
+    public Boolean getHasMoreItems() {
+      return hasMoreItems;
+    }
+  }
 
   // --- iterator class ---
 
@@ -149,11 +197,10 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
   class PageIterator implements Iterator<List<T>> {
 
     private int currentPage = -1;
-    private boolean lastPageEmpty = false;
+    private boolean hasMoreItems = true;
 
     public boolean hasNext() {
-      if (lastPageEmpty) {
-        // the last page was empty, so we don't expect the next page will have items
+      if (!hasMoreItems) {
         return false;
       }
 
@@ -168,13 +215,22 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
 
     public List<T> next() {
       currentPage++;
-      List<T> next = get(currentPage);
+      FetchResult next = getInternal(currentPage);
 
-      if ((next == null) || (next.isEmpty())) {
-        lastPageEmpty = true;
+      if (next == null) {
+        hasMoreItems = false;
+        return null;
       }
 
-      return next;
+      if ((next.getPage() == null) || (next.getPage().isEmpty())) {
+        hasMoreItems = false;
+      }
+
+      if (next.getHasMoreItems() != null) {
+        hasMoreItems = next.getHasMoreItems().booleanValue();
+      }
+
+      return (next == null ? null : next.getPage());
     }
 
     public void remove() {

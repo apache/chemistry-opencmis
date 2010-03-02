@@ -67,8 +67,6 @@ import org.apache.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.ObjectData;
-import org.apache.opencmis.commons.provider.PropertyData;
-import org.apache.opencmis.commons.provider.PropertyIdData;
 import org.apache.opencmis.commons.provider.RepositoryService;
 import org.apache.opencmis.util.repository.ObjectGenerator;
 
@@ -259,21 +257,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
           includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds,
           includeAcl, extension);
 
-      /* determine type */
-      switch (od.getBaseTypeId()) {
-      case CMIS_DOCUMENT:
-        obj = new PersistentDocumentImpl(this, getType(od), od);
-        break;
-      case CMIS_FOLDER:
-        obj = new PersistentFolderImpl(this, getType(od), od);
-        break;
-      case CMIS_POLICY:
-        obj = new PersistentPolicyImpl(this, getType(od), od);
-      case CMIS_RELATIONSHIP:
-        obj = new PersistentRelationshipImpl(this, getType(od), od);
-      default:
-        throw new CmisRuntimeException("unsupported type: " + od.getBaseTypeId());
-      }
+      obj = getObjectFactory().convertObject(od);
 
       this.cache.put(obj);
     }
@@ -314,7 +298,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
       ObjectData od = this.provider.getObjectService().getObject(repositoryId, rootFolderId, null,
           false, IncludeRelationships.NONE, null, false, false, null);
 
-      rootFolder = new PersistentFolderImpl(this, getType(od), od);
+      ObjectType type = SessionUtil.getTypeFromObjectData(this, od);
+      rootFolder = new PersistentFolderImpl(this, type, od);
       this.cache.put(rootFolder);
     }
 
@@ -339,7 +324,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     return new AbstractPagingList<ObjectType>() {
 
       @Override
-      protected List<ObjectType> fetchPage(int pageNumber) {
+      protected FetchResult fetchPage(int pageNumber) {
         int skipCount = pageNumber * getMaxItemsPerPage();
 
         // fetch the data
@@ -347,21 +332,13 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
             includePropertyDefinitions, BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
                 .valueOf(skipCount), null);
 
-        // set num items
-        if (tdl.getNumItems() != null) {
-          setNumItems(tdl.getNumItems().intValue());
-        }
-        else {
-          setNumItems(-1);
-        }
-
         // convert type definitions
-        List<ObjectType> result = new ArrayList<ObjectType>(tdl.getList().size());
+        List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
         for (TypeDefinition typeDefinition : tdl.getList()) {
-          result.add(SessionUtil.convertTypeDefinition(thisSession, typeDefinition));
+          page.add(SessionUtil.convertTypeDefinition(thisSession, typeDefinition));
         }
 
-        return result;
+        return new FetchResult(page, tdl.getNumItems(), tdl.hasMoreItems());
       }
 
       @Override
@@ -560,22 +537,5 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
 
   public String getRepositoryId() {
     return this.getRepositoryInfo().getId();
-  }
-
-  // --- internal ---
-
-  private ObjectType getType(ObjectData objectData) {
-    if ((objectData == null) || (objectData.getProperties() == null)
-        || (objectData.getProperties().getProperties() == null)) {
-      return null;
-    }
-
-    PropertyData<?> typeProperty = objectData.getProperties().getProperties().get(
-        PropertyIds.CMIS_OBJECT_TYPE_ID);
-    if (!(typeProperty instanceof PropertyIdData)) {
-      return null;
-    }
-
-    return getTypeDefinition((String) typeProperty.getFirstValue());
   }
 }

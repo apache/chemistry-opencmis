@@ -47,8 +47,6 @@ import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.Holder;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectList;
-import org.apache.opencmis.commons.provider.PropertyData;
-import org.apache.opencmis.commons.provider.PropertyIdData;
 import org.apache.opencmis.commons.provider.RelationshipService;
 
 /**
@@ -119,8 +117,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       if (objectData.getRelationships() != null) {
         relationships = new ArrayList<Relationship>();
         for (ObjectData rod : objectData.getRelationships()) {
-          relationships.add(new PersistentRelationshipImpl(getSession(),
-              getTypeFromObjectData(rod), rod));
+          relationships.add(new PersistentRelationshipImpl(getSession(), SessionUtil
+              .getTypeFromObjectData(getSession(), rod), rod));
         }
       }
     }
@@ -164,25 +162,6 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     }
 
     return objectId;
-  }
-
-  /**
-   * Extracts the type information from the given object data and returns the object type or
-   * <code>null</code> if there is no type information.
-   */
-  private ObjectType getTypeFromObjectData(ObjectData objectData) {
-    if ((objectData == null) || (objectData.getProperties() == null)
-        || (objectData.getProperties().getProperties() == null)) {
-      return null;
-    }
-
-    PropertyData<?> typeProperty = objectData.getProperties().getProperties().get(
-        PropertyIds.CMIS_OBJECT_TYPE_ID);
-    if (!(typeProperty instanceof PropertyIdData)) {
-      return null;
-    }
-
-    return getSession().getTypeDefinition((String) typeProperty.getFirstValue());
   }
 
   // --- operations ---
@@ -633,7 +612,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     return new AbstractPagingList<Relationship>() {
 
       @Override
-      protected List<Relationship> fetchPage(int pageNumber) {
+      protected FetchResult fetchPage(int pageNumber) {
         int skipCount = pageNumber * getMaxItemsPerPage();
 
         // fetch the relationships
@@ -642,24 +621,16 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
             includeAllowableActions, BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
                 .valueOf(skipCount), null);
 
-        // set num items
-        if (relList.getNumItems() != null) {
-          setNumItems(relList.getNumItems().intValue());
-        }
-        else {
-          setNumItems(-1);
-        }
-
         // convert relationship objects
-        List<Relationship> result = new ArrayList<Relationship>();
+        List<Relationship> page = new ArrayList<Relationship>();
         if (relList.getObjects() != null) {
           for (ObjectData rod : relList.getObjects()) {
-            result
-                .add(new PersistentRelationshipImpl(getSession(), getTypeFromObjectData(rod), rod));
+            page.add(new PersistentRelationshipImpl(getSession(), SessionUtil
+                .getTypeFromObjectData(getSession(), rod), rod));
           }
         }
 
-        return result;
+        return new FetchResult(page, relList.getNumItems(), relList.hasMoreItems());
       }
 
       @Override

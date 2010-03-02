@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
 import org.apache.opencmis.client.api.AllowableActions;
+import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.Folder;
@@ -32,6 +33,7 @@ import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.Relationship;
 import org.apache.opencmis.commons.enums.VersioningState;
+import org.apache.opencmis.commons.provider.ObjectData;
 
 /**
  * A factory to create CMIS objects.
@@ -40,38 +42,37 @@ import org.apache.opencmis.commons.enums.VersioningState;
  */
 public interface ObjectFactory {
 
-	// object factory
+  // object factory
 
   AllowableActions createAllowableAction(Map<String, Boolean> actions);
-  
-	Ace createAce(String principal, List<String> permissions, boolean isDirect);
 
-	Acl createAcl(List<Ace> aces, Boolean isExact);
+  Ace createAce(String principal, List<String> permissions, boolean isDirect);
 
-	ContentStream createContentStream(int length, String mimetype,
-			String filename, InputStream stream);
+  Acl createAcl(List<Ace> aces, Boolean isExact);
 
-	// object service
+  ContentStream createContentStream(int length, String mimetype, String filename, InputStream stream);
 
-	// shortcut
-	Document createDocument(Folder parentfolder, String name);
+  // object service
 
-	Document createDocument(List<Property<?>> properties, Folder parentfolder,
-			ContentStream contentstream, VersioningState versioningState,
-			List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs);
+  // shortcut
+  Document createDocument(Folder parentfolder, String name);
 
-	Document createDocumentFromSource(Document source,
-			List<Property<?>> properties, Folder parentfolder,
-			VersioningState versioningState, List<Policy> policies,
-			List<Ace> addACEs, List<Ace> removeACEs);
+  Document createDocument(List<Property<?>> properties, Folder parentfolder,
+      ContentStream contentstream, VersioningState versioningState, List<Policy> policies,
+      List<Ace> addACEs, List<Ace> removeACEs);
 
-	Relationship createRelationship(List<Property<?>> properties,
-			List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs);
+  Document createDocumentFromSource(Document source, List<Property<?>> properties,
+      Folder parentfolder, VersioningState versioningState, List<Policy> policies,
+      List<Ace> addACEs, List<Ace> removeACEs);
 
-	Policy createPolicy(List<Property<?>> properties, Folder parentfolder,
-			List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs);
+  Relationship createRelationship(List<Property<?>> properties, List<Policy> policies,
+      List<Ace> addACEs, List<Ace> removeACEs);
 
-	Folder createFolder(Folder parent, List<Property<?>> properties,
-			List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs);
+  Policy createPolicy(List<Property<?>> properties, Folder parentfolder, List<Policy> policies,
+      List<Ace> addACEs, List<Ace> removeACEs);
 
+  Folder createFolder(Folder parent, List<Property<?>> properties, List<Policy> policies,
+      List<Ace> addACEs, List<Ace> removeACEs);
+
+  CmisObject convertObject(ObjectData objectData);
 }

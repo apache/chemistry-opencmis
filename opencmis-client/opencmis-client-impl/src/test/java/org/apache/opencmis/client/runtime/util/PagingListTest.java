@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -179,25 +180,24 @@ public class PagingListTest {
     }
 
     @Override
-    protected List<String> fetchPage(int pageNumber) {
+    protected FetchResult fetchPage(int pageNumber) {
       int skipCount = pageNumber * getMaxItemsPerPage();
       int lastIndex = skipCount + getMaxItemsPerPage() - 1;
       if (lastIndex >= sourceData.length) {
         lastIndex = sourceData.length - 1;
       }
 
-      setNumItems(sourceData.length);
-
       if (skipCount >= sourceData.length) {
         throw new NoSuchElementException();
       }
 
-      List<String> result = new ArrayList<String>();
+      List<String> page = new ArrayList<String>();
       for (int i = skipCount; i <= lastIndex; i++) {
-        result.add(sourceData[i]);
+        page.add(sourceData[i]);
       }
 
-      return result;
+      return new FetchResult(page, BigInteger.valueOf(sourceData.length), skipCount
+          + getMaxItemsPerPage() < sourceData.length);
     }
 
     @Override
