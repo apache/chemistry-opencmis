@@ -127,6 +127,8 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     assertNotNull(types.hasMoreItems());
     assertNotNull(types.getList());
     assertFalse(types.getList().isEmpty());
+    assertTrue(types.getList().size() >= 2);
+    assertTrue(types.getList().size() <= 4);
 
     getProvider().clearAllCaches();
 

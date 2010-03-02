@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
-import org.apache.opencmis.client.api.AclPermission;
 import org.apache.opencmis.client.api.AllowableActions;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;

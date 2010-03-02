@@ -56,23 +56,23 @@ public interface Document extends FileableCmisObject {
 
   // document specific properties
 
-  boolean isImmutable(); // cmis:isImmutable
+  Boolean isImmutable(); // cmis:isImmutable
 
-  boolean isLatestVersion(); // cmis:isLatestVersion
+  Boolean isLatestVersion(); // cmis:isLatestVersion
 
-  boolean isMajorVersion(); // cmis:isMajorVersion
+  Boolean isMajorVersion(); // cmis:isMajorVersion
 
-  boolean isLatestMajorVersion(); // cmis:isLatestMajorVersion
+  Boolean isLatestMajorVersion(); // cmis:isLatestMajorVersion
 
   String getVersionLabel(); // cmis:versionLabel
 
-  String getVersionSeries(); // cmis:versionSeriesId
+  String getVersionSeriesId(); // cmis:versionSeriesId
 
-  boolean isVersionSeriesCheckedOut(); // cmis:isVersionSeriesCheckedOut
+  Boolean isVersionSeriesCheckedOut(); // cmis:isVersionSeriesCheckedOut
 
   String getVersionSeriesCheckedOutBy(); // cmis:versionSeriesCheckedOutBy
 
-  String getVersionSeriesCheckedOut(); // cmis:versionSeriesCheckedOutId
+  String getVersionSeriesCheckedOutId(); // cmis:versionSeriesCheckedOutId
 
   void deleteAllVersions();
   

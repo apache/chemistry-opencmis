@@ -22,6 +22,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.opencmis.client.api.objecttype.ObjectType;
+import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.RelationshipDirection;
@@ -133,8 +134,9 @@ public interface CmisObject {
 
   // relationship service
 
-  List<Relationship> getRelationships(boolean includeSubRelationshipTypes,
-      RelationshipDirection relationshipDirection, ObjectType type);
+  PagingList<Relationship> getRelationships(boolean includeSubRelationshipTypes,
+      RelationshipDirection relationshipDirection, ObjectType type, String filter, 
+      Boolean includeAllowableActions, int itemsPerPage);
 
   // policy service
 
@@ -157,7 +159,7 @@ public interface CmisObject {
   void addAcl(List<Ace> addAces, AclPropagation aclPropagation);
 
   void removeAcl(List<Ace> removeAces, AclPropagation aclPropagation);
-  
+
   // buffered stuff
 
   <T> void setProperty(String id, T value);

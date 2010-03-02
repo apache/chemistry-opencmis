@@ -18,7 +18,10 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -31,14 +34,22 @@ import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.Relationship;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
+import org.apache.opencmis.client.api.util.PagingList;
+import org.apache.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.opencmis.commons.PropertyIds;
+import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.RelationshipDirection;
+import org.apache.opencmis.commons.enums.Updatability;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.Holder;
 import org.apache.opencmis.commons.provider.ObjectData;
+import org.apache.opencmis.commons.provider.ObjectList;
+import org.apache.opencmis.commons.provider.PropertyData;
+import org.apache.opencmis.commons.provider.PropertyIdData;
+import org.apache.opencmis.commons.provider.RelationshipService;
 
 /**
  * Base class for all persistent session object impl classes.
@@ -51,6 +62,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   private AllowableActions allowableActions;
   private Acl acl;
   private List<Policy> policies;
+  private List<Relationship> relationships;
   private boolean isChanged = false;
 
   /**
@@ -64,6 +76,11 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     if (objectType == null) {
       throw new IllegalArgumentException("Object type must be set!");
+    }
+
+    if (objectType.getPropertyDefintions().size() >= 9) {
+      // there must be at least the 9 standard properties that all objects have
+      throw new IllegalArgumentException("Object type must have property defintions!");
     }
 
     this.session = session;
@@ -95,6 +112,15 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
           if (policy instanceof Policy) {
             policies.add((Policy) policy);
           }
+        }
+      }
+
+      // handle relationships
+      if (objectData.getRelationships() != null) {
+        relationships = new ArrayList<Relationship>();
+        for (ObjectData rod : objectData.getRelationships()) {
+          relationships.add(new PersistentRelationshipImpl(getSession(),
+              getTypeFromObjectData(rod), rod));
         }
       }
     }
@@ -134,10 +160,29 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   protected String getObjectId() {
     String objectId = getId();
     if (objectId == null) {
-      throw new IllegalStateException("Object Id is unknown");
+      throw new IllegalStateException("Object Id is unknown!");
     }
 
     return objectId;
+  }
+
+  /**
+   * Extracts the type information from the given object data and returns the object type or
+   * <code>null</code> if there is no type information.
+   */
+  private ObjectType getTypeFromObjectData(ObjectData objectData) {
+    if ((objectData == null) || (objectData.getProperties() == null)
+        || (objectData.getProperties().getProperties() == null)) {
+      return null;
+    }
+
+    PropertyData<?> typeProperty = objectData.getProperties().getProperties().get(
+        PropertyIds.CMIS_OBJECT_TYPE_ID);
+    if (!(typeProperty instanceof PropertyIdData)) {
+      return null;
+    }
+
+    return getSession().getTypeDefinition((String) typeProperty.getFirstValue());
   }
 
   // --- operations ---
@@ -318,8 +363,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#setProperty(java.lang.String, java.lang.Object)
    */
   public <T> void setProperty(String id, T value) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+    setPropertyMultivalue(id, (value == null ? null : Collections.singletonList(value)));
   }
 
   /*
@@ -328,9 +372,69 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#setPropertyMultivalue(java.lang.String,
    * java.util.List)
    */
+  @SuppressWarnings("unchecked")
   public <T> void setPropertyMultivalue(String id, List<T> value) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+    // get and check property type
+    PropertyDefinition<?> propertyDefinition = getObjectType().getPropertyDefintions().get(id);
+    if (propertyDefinition == null) {
+      throw new IllegalArgumentException("Unknown property!");
+    }
+
+    // check updatability
+    if (propertyDefinition.getUpdatability() == Updatability.READONLY) {
+      throw new IllegalArgumentException("Property is read-only!");
+    }
+
+    boolean typeMatch = false;
+
+    if ((value == null) || (value.isEmpty())) {
+      typeMatch = true;
+      if (value.isEmpty()) {
+        value = null;
+      }
+    }
+    else {
+      // check if list contains null values
+      for (Object o : value) {
+        if (o == null) {
+          throw new IllegalArgumentException("List contains null values!");
+        }
+      }
+
+      // take a sample and test the data type
+      Object firstValue = value.get(0);
+
+      switch (propertyDefinition.getPropertyType()) {
+      case STRING:
+      case ID:
+      case URI:
+      case HTML:
+        typeMatch = (firstValue instanceof String);
+        break;
+      case INTEGER:
+        typeMatch = (firstValue instanceof BigInteger);
+        break;
+      case DECIMAL:
+        typeMatch = (firstValue instanceof BigDecimal);
+        break;
+      case BOOLEAN:
+        typeMatch = (firstValue instanceof Boolean);
+        break;
+      case DATETIME:
+        typeMatch = (firstValue instanceof GregorianCalendar);
+        break;
+      }
+    }
+
+    if (!typeMatch) {
+      throw new IllegalArgumentException("Value does not match property type!");
+    }
+
+    Property<T> newProperty = (Property<T>) getSession().getPropertyFactory()
+        .createPropertyMultivalue((PropertyDefinition<T>) propertyDefinition, value);
+
+    setChanged();
+    this.properties.put(id, newProperty);
   }
 
   /*
@@ -499,15 +603,70 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   // --- relationships ---
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.CmisObject#getRelationships()
+   */
   public List<Relationship> getRelationships() {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+    return relationships;
   }
 
-  public List<Relationship> getRelationships(boolean includeSubRelationshipTypes,
-      RelationshipDirection relationshipDirection, ObjectType type) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.CmisObject#getRelationships(boolean,
+   * org.apache.opencmis.commons.enums.RelationshipDirection,
+   * org.apache.opencmis.client.api.objecttype.ObjectType, java.lang.String, java.lang.Boolean, int)
+   */
+  public PagingList<Relationship> getRelationships(final boolean includeSubRelationshipTypes,
+      final RelationshipDirection relationshipDirection, ObjectType type, final String filter,
+      final Boolean includeAllowableActions, final int itemsPerPage) {
+    if (itemsPerPage < 1) {
+      throw new IllegalArgumentException("itemsPerPage must be > 0!");
+    }
+
+    final String objectId = getObjectId();
+    final String typeId = (type == null ? null : type.getId());
+    final RelationshipService relationshipService = getProvider().getRelationshipService();
+
+    return new AbstractPagingList<Relationship>() {
+
+      @Override
+      protected List<Relationship> fetchPage(int pageNumber) {
+        int skipCount = pageNumber * getMaxItemsPerPage();
+
+        // fetch the relationships
+        ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(),
+            objectId, includeSubRelationshipTypes, relationshipDirection, typeId, filter,
+            includeAllowableActions, BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
+                .valueOf(skipCount), null);
+
+        // set num items
+        if (relList.getNumItems() != null) {
+          setNumItems(relList.getNumItems().intValue());
+        }
+        else {
+          setNumItems(-1);
+        }
+
+        // convert relationship objects
+        List<Relationship> result = new ArrayList<Relationship>();
+        if (relList.getObjects() != null) {
+          for (ObjectData rod : relList.getObjects()) {
+            result
+                .add(new PersistentRelationshipImpl(getSession(), getTypeFromObjectData(rod), rod));
+          }
+        }
+
+        return result;
+      }
+
+      @Override
+      public int getMaxItemsPerPage() {
+        return itemsPerPage;
+      }
+    };
   }
 
   // --- other ---

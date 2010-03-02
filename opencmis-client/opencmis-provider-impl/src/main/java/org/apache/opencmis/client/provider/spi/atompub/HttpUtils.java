@@ -165,7 +165,6 @@ public class HttpUtils {
     private String fResponseMessage;
     private Map<String, List<String>> fHeaders;
     private InputStream fStream;
-    private InputStream fErrorStream;
     private String fErrorContent;
 
     public Response(int responseCode, String responseMessage, Map<String, List<String>> headers,
@@ -173,7 +172,6 @@ public class HttpUtils {
       fResponseCode = responseCode;
       fResponseMessage = responseMessage;
       fStream = stream;
-      fErrorStream = errorStream;
 
       fHeaders = new HashMap<String, List<String>>();
       if (headers != null) {

@@ -20,7 +20,7 @@ package org.apache.opencmis.client.runtime;
 
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
-import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.provider.ObjectData;
 
 public class PersistentPolicyImpl extends AbstractPersistentFilableCmisObject implements Policy {
@@ -34,7 +34,7 @@ public class PersistentPolicyImpl extends AbstractPersistentFilableCmisObject im
   }
 
   public String getPolicyText() {
-    throw new CmisRuntimeException("not implemented");
+    return getPropertyValue(PropertyIds.CMIS_POLICY_TEXT);
   }
 
 }

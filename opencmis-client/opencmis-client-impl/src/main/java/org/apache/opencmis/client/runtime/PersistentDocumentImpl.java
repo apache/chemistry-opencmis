@@ -27,6 +27,7 @@ import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.Rendition;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
+import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.ObjectData;
@@ -41,6 +42,65 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     initialize(session, objectType, objectData);
   }
 
+  // properties
+
+  public String getCheckinComment() {
+    return getPropertyValue(PropertyIds.CMIS_CHECKIN_COMMENT);
+  }
+
+  public String getVersionLabel() {
+    return getPropertyValue(PropertyIds.CMIS_VERSION_LABEL);
+  }
+
+  public String getVersionSeriesId() {
+    return getPropertyValue(PropertyIds.CMIS_VERSION_SERIES_ID);
+  }
+
+  public String getVersionSeriesCheckedOutId() {
+    return getPropertyValue(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID);
+  }
+
+  public String getVersionSeriesCheckedOutBy() {
+    return getPropertyValue(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY);
+  }
+
+  public Boolean isImmutable() {
+    return getPropertyValue(PropertyIds.CMIS_IS_IMMUTABLE);
+  }
+
+  public Boolean isLatestMajorVersion() {
+    return getPropertyValue(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION);
+  }
+
+  public Boolean isLatestVersion() {
+    return getPropertyValue(PropertyIds.CMIS_IS_LATEST_VERSION);
+  }
+
+  public Boolean isMajorVersion() {
+    return getPropertyValue(PropertyIds.CMIS_IS_MAJOR_VERSION);
+  }
+
+  public Boolean isVersionSeriesCheckedOut() {
+    return getPropertyValue(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT);
+  }
+
+  // operations
+
+  public Document copy(List<Property<?>> properties, VersioningState versioningState,
+      List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs) {
+    throw new CmisRuntimeException("not implemented");
+  }
+
+  public void deleteAllVersions() {
+    delete(true);
+  }
+
+  // versioning
+
+  public boolean checkOut() {
+    throw new CmisRuntimeException("not implemented");
+  }
+
   public void cancelCheckOut() {
     throw new CmisRuntimeException("not implemented");
   }
@@ -51,32 +111,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   }
 
-  public boolean checkOut() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public Document copy(List<Property<?>> properties, VersioningState versioningState,
-      List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public void deleteAllVersions() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public void deleteContentStream() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
   public List<Document> getAllVersions() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public String getCheckinComment() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public ContentStream getContentStream() {
     throw new CmisRuntimeException("not implemented");
   }
 
@@ -92,47 +127,23 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     throw new CmisRuntimeException("not implemented");
   }
 
-  public List<Rendition> getRenditions() {
-    throw new CmisRuntimeException("not implemented");
-  }
+  // content operations
 
-  public String getVersionLabel() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public String getVersionSeries() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public String getVersionSeriesCheckedOut() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public String getVersionSeriesCheckedOutBy() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public boolean isImmutable() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public boolean isLatestMajorVersion() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public boolean isLatestVersion() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public boolean isMajorVersion() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public boolean isVersionSeriesCheckedOut() {
+  public ContentStream getContentStream() {
     throw new CmisRuntimeException("not implemented");
   }
 
   public void setContentStream(boolean overwrite, ContentStream contentStream) {
+    throw new CmisRuntimeException("not implemented");
+  }
+
+  public void deleteContentStream() {
+    throw new CmisRuntimeException("not implemented");
+  }
+
+  // renditions
+
+  public List<Rendition> getRenditions() {
     throw new CmisRuntimeException("not implemented");
   }
 }
