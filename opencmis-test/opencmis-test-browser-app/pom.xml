@@ -28,11 +28,16 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
   
-  <artifactId>opencmis-test-browser</artifactId>
-  <name>OpenCMIS Browser</name>
-  <packaging>jar</packaging>
+  <artifactId>opencmis-test-browser-app</artifactId>
+  <name>OpenCMIS Browser Application</name>
+  <packaging>war</packaging>
 
   <dependencies>
+    <dependency>
+      <groupId>org.opencmis</groupId>
+      <artifactId>opencmis-test-browser</artifactId>
+      <version>${version}</version>
+    </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -40,5 +45,5 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
+  
 </project>
