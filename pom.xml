@@ -149,6 +149,7 @@
 		<module>opencmis-test/opencmis-test-tools</module>
 		<module>opencmis-test/opencmis-test-util</module>
 		<module>opencmis-test/opencmis-test-browser</module>
+		<module>opencmis-test/opencmis-test-browser-app</module>
 	</modules>
 
 	<build>
