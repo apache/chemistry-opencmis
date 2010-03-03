@@ -38,6 +38,7 @@ import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.client.runtime.util.AbstractPagingList;
+import org.apache.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.UnfileObjects;
@@ -47,8 +48,10 @@ import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.FailedToDeleteData;
 import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
+import org.apache.opencmis.commons.provider.ObjectInFolderContainer;
 import org.apache.opencmis.commons.provider.ObjectInFolderData;
 import org.apache.opencmis.commons.provider.ObjectInFolderList;
+import org.apache.opencmis.commons.provider.ObjectList;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
@@ -142,9 +145,57 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     return getCheckedOutDocs(getSession().getDefaultContext(), itemsPerPage);
   }
 
-  public PagingList<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+  /*
+   * (non-Javadoc)
+   * 
+   * @seeorg.apache.opencmis.client.api.Folder#getCheckedOutDocs(org.apache.opencmis.client.api.
+   * OperationContext, int)
+   */
+  public PagingList<Document> getCheckedOutDocs(final OperationContext context,
+      final int itemsPerPage) {
+    if (itemsPerPage < 1) {
+      throw new IllegalArgumentException("itemsPerPage must be > 0!");
+    }
+
+    final String objectId = getObjectId();
+    final NavigationService nagivationService = getProvider().getNavigationService();
+    final ObjectFactory objectFactory = getSession().getObjectFactory();
+
+    return new AbstractPagingList<Document>() {
+
+      @Override
+      protected FetchResult fetchPage(int pageNumber) {
+        int skipCount = pageNumber * getMaxItemsPerPage();
+
+        // get checked out documents for this folder
+        ObjectList checkedOutDocs = nagivationService.getCheckedOutDocs(getRepositoryId(),
+            objectId, context.getFullFilter(), context.getOrderBy(), context
+                .getIncludeAllowableActions(), context.getIncludeRelationships(), context
+                .getRenditionFilter(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
+                .valueOf(skipCount), null);
+
+        // convert objects
+        List<Document> page = new ArrayList<Document>();
+        if (checkedOutDocs.getObjects() != null) {
+          for (ObjectData objectData : checkedOutDocs.getObjects()) {
+            CmisObject doc = objectFactory.convertObject(objectData);
+            if (!(doc instanceof Document)) {
+              // should not happen...
+              continue;
+            }
+
+            page.add((Document) doc);
+          }
+        }
+
+        return new FetchResult(page, checkedOutDocs.getNumItems(), checkedOutDocs.hasMoreItems());
+      }
+
+      @Override
+      public int getMaxItemsPerPage() {
+        return itemsPerPage;
+      }
+    };
   }
 
   /*
@@ -212,9 +263,23 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     return getDescendants(depth, getSession().getDefaultContext());
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#getDescendants(int,
+   * org.apache.opencmis.client.api.OperationContext)
+   */
   public List<Container<FileableCmisObject>> getDescendants(int depth, OperationContext context) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+    String objectId = getObjectId();
+
+    // get the descendants
+    List<ObjectInFolderContainer> providerContainerList = getProvider().getNavigationService()
+        .getDescendants(getRepositoryId(), objectId, BigInteger.valueOf(depth),
+            context.getFullFilter(), context.getIncludeAllowableActions(),
+            context.getIncludeRelationships(), context.getRenditionFilter(),
+            context.getIncludePathSegments(), null);
+
+    return convertProviderContainer(providerContainerList);
   }
 
   /*
@@ -227,8 +292,51 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
   }
 
   public List<Container<FileableCmisObject>> getFolderTree(int depth, OperationContext context) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+    String objectId = getObjectId();
+
+    // get the folder tree
+    List<ObjectInFolderContainer> providerContainerList = getProvider().getNavigationService()
+        .getFolderTree(getRepositoryId(), objectId, BigInteger.valueOf(depth),
+            context.getFullFilter(), context.getIncludeAllowableActions(),
+            context.getIncludeRelationships(), context.getRenditionFilter(),
+            context.getIncludePathSegments(), null);
+
+    return convertProviderContainer(providerContainerList);
+  }
+
+  /**
+   * Converts a provider container into an API container.
+   */
+  private List<Container<FileableCmisObject>> convertProviderContainer(
+      List<ObjectInFolderContainer> providerContainerList) {
+    if (providerContainerList == null) {
+      return null;
+    }
+
+    ObjectFactory of = getSession().getObjectFactory();
+
+    List<Container<FileableCmisObject>> result = new ArrayList<Container<FileableCmisObject>>();
+    for (ObjectInFolderContainer oifc : providerContainerList) {
+      if ((oifc.getObject() == null) || (oifc.getObject().getObject() == null)) {
+        // shouldn't happen ...
+        continue;
+      }
+
+      // convert the object
+      CmisObject object = of.convertObject(oifc.getObject().getObject());
+      if (!(object instanceof FileableCmisObject)) {
+        // the repository must not return objects that are not fileable, but you never know...
+        continue;
+      }
+
+      // convert the children
+      List<Container<FileableCmisObject>> children = convertProviderContainer(oifc.getChildren());
+
+      // add both to current container
+      result.add(new ContainerImpl<FileableCmisObject>((FileableCmisObject) object, children));
+    }
+
+    return result;
   }
 
   /*

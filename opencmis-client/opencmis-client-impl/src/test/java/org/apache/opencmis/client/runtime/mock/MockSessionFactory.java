@@ -512,10 +512,9 @@ public class MockSessionFactory implements SessionFactory {
 		byte[] b = "abc".getBytes();
 		ByteArrayInputStream bais = new ByteArrayInputStream(b);
 
-		expect(cs.getId()).andReturn(UUID.randomUUID().toString()).anyTimes();
 		expect(cs.getFileName()).andReturn("file.txt").anyTimes();
 		expect(cs.getMimeType()).andReturn("text/html").anyTimes();
-		expect(cs.getLength()).andReturn(b.length).anyTimes();
+		expect(cs.getLength()).andReturn((long) b.length).anyTimes();
 		expect(cs.getStream()).andReturn(bais).anyTimes();
 
 		replay(cs);

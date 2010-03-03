@@ -63,7 +63,9 @@ import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.opencmis.commons.provider.CmisProvider;
+import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
+import org.apache.opencmis.commons.provider.ObjectList;
 import org.apache.opencmis.commons.provider.RepositoryService;
 import org.apache.opencmis.util.repository.ObjectGenerator;
 
@@ -227,8 +229,49 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * @seeorg.apache.opencmis.client.api.Session#getCheckedOutDocs(org.apache.opencmis.client.api.
    * OperationContext, int)
    */
-  public PagingList<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage) {
-    throw new CmisRuntimeException("not implemented");
+  public PagingList<Document> getCheckedOutDocs(final OperationContext context,
+      final int itemsPerPage) {
+    if (itemsPerPage < 1) {
+      throw new IllegalArgumentException("itemsPerPage must be > 0!");
+    }
+
+    final NavigationService nagivationService = getProvider().getNavigationService();
+    final ObjectFactory objectFactory = getObjectFactory();
+
+    return new AbstractPagingList<Document>() {
+
+      @Override
+      protected FetchResult fetchPage(int pageNumber) {
+        int skipCount = pageNumber * getMaxItemsPerPage();
+
+        // get all checked out documents
+        ObjectList checkedOutDocs = nagivationService.getCheckedOutDocs(getRepositoryId(), null,
+            context.getFullFilter(), context.getOrderBy(), context.getIncludeAllowableActions(),
+            context.getIncludeRelationships(), context.getRenditionFilter(), BigInteger
+                .valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
+
+        // convert objects
+        List<Document> page = new ArrayList<Document>();
+        if (checkedOutDocs.getObjects() != null) {
+          for (ObjectData objectData : checkedOutDocs.getObjects()) {
+            CmisObject doc = objectFactory.convertObject(objectData);
+            if (!(doc instanceof Document)) {
+              // should not happen...
+              continue;
+            }
+
+            page.add((Document) doc);
+          }
+        }
+
+        return new FetchResult(page, checkedOutDocs.getNumItems(), checkedOutDocs.hasMoreItems());
+      }
+
+      @Override
+      public int getMaxItemsPerPage() {
+        return itemsPerPage;
+      }
+    };
   }
 
   /*

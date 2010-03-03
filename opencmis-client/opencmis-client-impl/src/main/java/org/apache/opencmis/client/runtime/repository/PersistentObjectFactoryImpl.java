@@ -37,6 +37,7 @@ import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.runtime.AceImpl;
 import org.apache.opencmis.client.runtime.AclImpl;
 import org.apache.opencmis.client.runtime.AllowableActionsImpl;
+import org.apache.opencmis.client.runtime.ContentStreamImpl;
 import org.apache.opencmis.client.runtime.PersistentDocumentImpl;
 import org.apache.opencmis.client.runtime.PersistentFolderImpl;
 import org.apache.opencmis.client.runtime.PersistentPolicyImpl;
@@ -72,9 +73,9 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
     return new AclImpl(aces, isExact);
   }
 
-  public ContentStream createContentStream(int length, String mimetype, String filename,
+  public ContentStream createContentStream(String filename, long length, String mimetype,
       InputStream stream) {
-    throw new CmisRuntimeException("not implemented");
+    return new ContentStreamImpl(filename, length, mimetype, stream);
   }
 
   public Document createDocument(Folder parentfolder, String name) {

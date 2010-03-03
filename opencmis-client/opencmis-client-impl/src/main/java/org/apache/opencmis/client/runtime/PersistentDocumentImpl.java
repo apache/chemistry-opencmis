@@ -18,9 +18,11 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.opencmis.client.api.Ace;
+import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.OperationContext;
@@ -28,9 +30,11 @@ import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.Rendition;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
+import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.opencmis.commons.provider.ContentStreamData;
 import org.apache.opencmis.commons.provider.ObjectData;
 
 public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject implements Document {
@@ -92,6 +96,11 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     throw new CmisRuntimeException("not implemented");
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#deleteAllVersions()
+   */
   public void deleteAllVersions() {
     delete(true);
   }
@@ -117,12 +126,38 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * @see org.apache.opencmis.client.api.Document#getAllVersions()
    */
   public List<Document> getAllVersions() {
-    return getAllVersions(null);
+    return getAllVersions(getSession().getDefaultContext());
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @seeorg.apache.opencmis.client.api.Document#getAllVersions(org.apache.opencmis.client.api.
+   * OperationContext)
+   */
   public List<Document> getAllVersions(OperationContext context) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+    String objectId = getObjectId();
+
+    List<ObjectData> versions = getProvider().getVersioningService().getAllVersions(
+        getRepositoryId(), objectId, context.getFullFilter(), context.getIncludeAllowableActions(),
+        null);
+
+    ObjectFactory objectFactory = getSession().getObjectFactory();
+
+    List<Document> result = new ArrayList<Document>();
+    if (versions != null) {
+      for (ObjectData objectData : versions) {
+        CmisObject doc = objectFactory.convertObject(objectData);
+        if (!(doc instanceof Document)) {
+          // should not happen...
+          continue;
+        }
+
+        result.add((Document) doc);
+      }
+    }
+
+    return result;
   }
 
   /*
@@ -141,8 +176,24 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   // content operations
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#getContentStream()
+   */
   public ContentStream getContentStream() {
-    throw new CmisRuntimeException("not implemented");
+    String objectId = getObjectId();
+
+    // get the stream
+    ContentStreamData contentStream = getProvider().getObjectService().getContentStream(
+        getRepositoryId(), objectId, null, null, null, null);
+
+    // TODO: what should happen if the length is not set?
+    long length = (contentStream.getLength() == null ? -1 : contentStream.getLength().longValue());
+
+    // convert and return stream object
+    return getSession().getObjectFactory().createContentStream(contentStream.getFilename(), length,
+        contentStream.getMimeType(), contentStream.getStream());
   }
 
   public void setContentStream(boolean overwrite, ContentStream contentStream) {

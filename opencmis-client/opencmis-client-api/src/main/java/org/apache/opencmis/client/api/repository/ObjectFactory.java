@@ -50,7 +50,8 @@ public interface ObjectFactory {
 
   Acl createAcl(List<Ace> aces, Boolean isExact);
 
-  ContentStream createContentStream(int length, String mimetype, String filename, InputStream stream);
+  ContentStream createContentStream(String filename, long length, String mimetype,
+      InputStream stream);
 
   // object service
 

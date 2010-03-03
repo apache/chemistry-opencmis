@@ -43,7 +43,6 @@ import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.RelationshipDirection;
 import org.apache.opencmis.commons.enums.Updatability;
-import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.Holder;
 import org.apache.opencmis.commons.provider.ObjectData;
@@ -123,6 +122,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         }
       }
     }
+
+    isChanged = false;
   }
 
   /**
@@ -648,8 +649,16 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * )
    */
   public void refresh(OperationContext context) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+    String objectId = getObjectId();
+
+    // get the latest data from the repository
+    ObjectData objectData = getSession().getProvider().getObjectService().getObject(
+        getRepositoryId(), objectId, context.getFullFilter(), context.getIncludeAllowableActions(),
+        context.getIncludeRelationships(), context.getRenditionFilter(),
+        context.getIncludePolicies(), context.getIncludeAcls(), null);
+
+    // reset this object
+    initialize(getSession(), getObjectType(), objectData);
   }
 
 }

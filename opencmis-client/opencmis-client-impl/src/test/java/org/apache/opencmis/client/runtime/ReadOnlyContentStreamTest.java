@@ -38,7 +38,6 @@ public class ReadOnlyContentStreamTest extends AbstractSessionTest {
 
     ContentStream s = document.getContentStream();
 
-    Assert.assertNotNull(s.getId());
     Assert.assertNotNull(s.getMimeType());
     Assert.assertTrue(s.getLength() > 0);
     Assert.assertNotNull(s.getFileName());

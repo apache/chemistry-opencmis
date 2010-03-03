@@ -16,23 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api;
+package org.apache.opencmis.client.runtime;
 
 import java.io.InputStream;
 
+import org.apache.opencmis.client.api.ContentStream;
+
 /**
- * {@see Document#getContentStream()}, {@see Document#setContentStream(boolean, ContentStream), and
- * {@see Session#createContentStream(BigInteger, String, String, InputStream)}. Domain Model 2.4.1
- * 
+ * Content stream implementation.
  */
-public interface ContentStream {
+public class ContentStreamImpl implements ContentStream {
 
-  long getLength();
+  private String filename;
+  private long length;
+  private String mimetype;
+  private InputStream stream;
 
-  String getMimeType();
+  public ContentStreamImpl(String filename, long length, String mimetype, InputStream stream) {
+    this.filename = filename;
+    this.length = length;
+    this.mimetype = mimetype;
+    this.stream = stream;
+  }
 
-  String getFileName();
+  public String getFileName() {
+    return filename;
+  }
 
-  InputStream getStream();
+  public long getLength() {
+    return length;
+  }
+
+  public String getMimeType() {
+    return mimetype;
+  }
+
+  public InputStream getStream() {
+    return stream;
+  }
 
 }
