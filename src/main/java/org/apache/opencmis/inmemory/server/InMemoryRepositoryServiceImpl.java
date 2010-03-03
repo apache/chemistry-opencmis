@@ -134,55 +134,61 @@ public class InMemoryRepositoryServiceImpl extends AbstractServiceImpl implement
       // spec says that depth must be ignored in this case
         Collection<TypeDefinitionContainer> typeColl = fStoreManager.getTypeDefinitionList(repositoryId);
         result = new ArrayList<TypeDefinitionContainer>(typeColl);
+        if (!includePropertyDefinitions) {
+          // copy list and omit properties
+          for (TypeDefinitionContainer c : result) {
+            AbstractTypeDefinition td = ((AbstractTypeDefinition)c.getTypeDefinition()).clone();
+            TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
+            tdc.setChildren(c.getChildren());
+            td.setPropertyDefinitions(null);
+          }
+        }
     }
     else {
       TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId);
       if (tc != null) {
-        if (null==depth || depth.intValue() == -1)
+        if (null==depth || depth.intValue() == -1) {
           result = tc.getChildren();
+          if (!includePropertyDefinitions)
+            cloneTypeList(depth.intValue()-1, false, result);
+        } else if (depth.intValue() == 0 || depth.intValue() < -1)
+          throw new CmisInvalidArgumentException("illegal depth value: " + depth.intValue());        
         else {
-          result = getLimitedChildrenTypeList(depth.intValue(), tc.getChildren());
+          result = tc.getChildren();
+          cloneTypeList(depth.intValue()-1, includePropertyDefinitions, result);
         }
       }
       else
         throw new CmisInvalidArgumentException("unknown type id: " + typeId);        
     }
     
-    if (!includePropertyDefinitions) {
-      // copy list and omit properties
-      List<TypeDefinitionContainer> newResult = new ArrayList<TypeDefinitionContainer>(result.size());
-      for (TypeDefinitionContainer c : result) {
-        AbstractTypeDefinition td = ((AbstractTypeDefinition)c.getTypeDefinition()).clone();
-        TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
-        tdc.setChildren(c.getChildren());
-        td.setPropertyDefinitions(null);
-        newResult.add(tdc);
-      }
-      result = newResult;
-    }
     return result;
   }
 
-  private List<TypeDefinitionContainer> getLimitedChildrenTypeList(int depth,
+  /**
+   * traverse tree and replace each need node with a clone. remove properties on 
+   * clone if requested, cut children of clone if depth is exceeded.
+   * @param depth
+   * @param types
+   */
+  private void cloneTypeList(int depth, boolean includePropertyDefinitions,
       List<TypeDefinitionContainer> types) {
-    List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
-
-    for (TypeDefinitionContainer type : types) {
-      result.addAll(getLimitedChildrenTypeList(depth, type));
-    }
-    return result;
-  }
-
-  private List<TypeDefinitionContainer> getLimitedChildrenTypeList(int depth,
-      TypeDefinitionContainer root) {
-    List<TypeDefinitionContainer> typeDescs = new ArrayList<TypeDefinitionContainer>();
-    if (depth > 0 && root != null) {
-      typeDescs.add(root);
-      for (TypeDefinitionContainer c : root.getChildren()) {
-        typeDescs.addAll(getLimitedChildrenTypeList(depth - 1, c));
+  
+    ListIterator<TypeDefinitionContainer> it = types.listIterator();
+    while (it.hasNext()) {
+      TypeDefinitionContainer tdc = it.next();
+      AbstractTypeDefinition td = ((AbstractTypeDefinition)tdc.getTypeDefinition()).clone();
+      if (!includePropertyDefinitions)
+        td.setPropertyDefinitions(null);
+      TypeDefinitionContainerImpl tdcClone = new TypeDefinitionContainerImpl(td);
+      if (depth > 0) {
+        ArrayList<TypeDefinitionContainer> children = new ArrayList<TypeDefinitionContainer>(tdc.getChildren().size());
+        children.addAll(tdc.getChildren());
+        tdcClone.setChildren(children);
+        cloneTypeList(depth-1, includePropertyDefinitions, children);
       }
+      it.set(tdcClone);       
     }
-    return typeDescs;
   }
 
   private RepositoryInfoData getRepositoryInfoFromStoreManager(String repositoryId ) {
