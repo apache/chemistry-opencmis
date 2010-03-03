@@ -32,9 +32,6 @@ import org.apache.opencmis.commons.enums.VersioningState;
 public interface Folder extends FileableCmisObject {
 
   // object service
-
-  Document createDocument(String name);
-
   Document createDocument(String name, String typeId);
 
   Document createDocument(List<Property<?>> properties, ContentStream contentstream,
@@ -60,18 +57,28 @@ public interface Folder extends FileableCmisObject {
 
   List<Container<FileableCmisObject>> getFolderTree(int depth);
 
+  List<Container<FileableCmisObject>> getFolderTree(int depth, OperationContext context);
+
   List<Container<FileableCmisObject>> getDescendants(int depth);
 
-  PagingList<CmisObject> getChildren(String orderBy, int itemsPerPage);
+  List<Container<FileableCmisObject>> getDescendants(int depth, OperationContext context);
+
+  PagingList<CmisObject> getChildren(int itemsPerPage);
+
+  PagingList<CmisObject> getChildren(OperationContext context, int itemsPerPage);
 
   Folder getFolderParent();
 
   String getPath();
 
-  PagingList<Document> getCheckedOutDocs(String orderby, int itemsPerPage);
+  /**
+   * Returns all checked out documents of this folder.
+   */
+  PagingList<Document> getCheckedOutDocs(int itemsPerPage);
+
+  PagingList<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage);
 
   // folder specific properties
 
   List<ObjectType> getAllowedChildObjectTypes(); // cmis:allowedChildObjectTypeIds
-
 }

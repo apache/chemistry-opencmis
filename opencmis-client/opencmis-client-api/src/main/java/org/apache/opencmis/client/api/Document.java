@@ -26,8 +26,8 @@ import org.apache.opencmis.commons.enums.VersioningState;
  * Domain Model 2.4
  */
 public interface Document extends FileableCmisObject {
-	
-	List<Rendition> getRenditions();
+
+  List<Rendition> getRenditions();
 
   // object service
 
@@ -48,11 +48,11 @@ public interface Document extends FileableCmisObject {
 
   Document getObjectOfLatestVersion(boolean major);
 
-  List<Property<?>> getPropertiesOfLatestVersion(boolean major);
-
-  List<Property<?>> getPropertiesOfLatestVersion(boolean major, String filter);
+  Document getObjectOfLatestVersion(boolean major, OperationContext context);
 
   List<Document> getAllVersions();
+
+  List<Document> getAllVersions(OperationContext context);
 
   // document specific properties
 
@@ -75,7 +75,7 @@ public interface Document extends FileableCmisObject {
   String getVersionSeriesCheckedOutId(); // cmis:versionSeriesCheckedOutId
 
   void deleteAllVersions();
-  
+
   String getCheckinComment(); // cmis:checkinComment
 
   /**
@@ -88,7 +88,7 @@ public interface Document extends FileableCmisObject {
    * @param removeACEs
    * @return
    */
-  Document copy(List<Property<?>> properties, VersioningState versioningState, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs);
+  Document copy(List<Property<?>> properties, VersioningState versioningState,
+      List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs);
 
 }

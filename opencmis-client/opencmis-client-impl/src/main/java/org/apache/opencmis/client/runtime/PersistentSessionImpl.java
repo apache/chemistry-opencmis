@@ -33,10 +33,10 @@ import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.ExtensionHandler;
 import org.apache.opencmis.client.api.Folder;
+import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.PersistentSession;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.Session;
-import org.apache.opencmis.client.api.SessionContext;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.api.repository.PropertyFactory;
@@ -46,14 +46,11 @@ import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.client.api.util.Testable;
 import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.client.runtime.cache.Cache;
-import org.apache.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
 import org.apache.opencmis.client.runtime.repository.PersistentPropertyFactoryImpl;
 import org.apache.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.opencmis.client.runtime.util.ContainerImpl;
-import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.SessionParameter;
-import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.api.TypeDefinition;
 import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinitionList;
@@ -72,12 +69,15 @@ import org.apache.opencmis.util.repository.ObjectGenerator;
 
 public class PersistentSessionImpl implements PersistentSession, Testable, Serializable {
 
+  private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false,
+      true, false, IncludeRelationships.NONE, null, true, null);
+
   private static Log log = LogFactory.getLog(PersistentSessionImpl.class);
 
   /*
    * default session context (serializable)
    */
-  private SessionContextImpl context = new SessionContextImpl();
+  private OperationContext context = DEFAULT_CONTEXT;
 
   /*
    * root folder containing generated test data (not serializable)
@@ -108,7 +108,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
   /*
    * Object cache (serializable)
    */
-  private Cache cache = null;
+  // private Cache cache = null;
 
   /*
    * Lazy loaded repository info. Will be invalid after clear(). Access by getter always.
@@ -133,15 +133,15 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     this.locale = this.determineLocale(parameters);
     PersistentSessionImpl.log.info("Session Locale: " + this.locale.toString());
 
-    int cacheSize = this.determineCacheSize(parameters);
-
-    if (cacheSize == -1) {
-      this.cache = CacheImpl.newInstance();
-    }
-    else {
-      this.cache = CacheImpl.newInstance(cacheSize);
-    }
-    PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.size());
+    // int cacheSize = this.determineCacheSize(parameters);
+    //
+    // if (cacheSize == -1) {
+    // this.cache = CacheImpl.newInstance();
+    // }
+    // else {
+    // this.cache = CacheImpl.newInstance(cacheSize);
+    // }
+    // PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.size());
   }
 
   private int determineCacheSize(Map<String, String> parameters) {
@@ -186,86 +186,152 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     return locale;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#clear()
+   */
   public void clear() {
     /*
      * clear cache
      */
 
-    int cacheSize = this.determineCacheSize(this.parameters);
-    if (cacheSize == -1) {
-      this.cache = CacheImpl.newInstance();
-    }
-    else {
-      this.cache = CacheImpl.newInstance(cacheSize);
-    }
-    PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.size());
+    // int cacheSize = this.determineCacheSize(this.parameters);
+    // if (cacheSize == -1) {
+    // this.cache = CacheImpl.newInstance();
+    // }
+    // else {
+    // this.cache = CacheImpl.newInstance(cacheSize);
+    // }
+    // PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.size());
 
     /*
      * clear repository info
      */
 
-    this.repositoryInfo.clear();
+    getProvider().clearAllCaches();
   }
 
-  public PagingList<Document> getCheckedOutDocs(Folder folder, String orderby, int itemsPerPage) {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getCheckedOutDocs(int)
+   */
+  public PagingList<Document> getCheckedOutDocs(int itemsPerPage) {
+    return getCheckedOutDocs(getDefaultContext(), itemsPerPage);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @seeorg.apache.opencmis.client.api.Session#getCheckedOutDocs(org.apache.opencmis.client.api.
+   * OperationContext, int)
+   */
+  public PagingList<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage) {
     throw new CmisRuntimeException("not implemented");
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getContentChanges(java.lang.String, int)
+   */
   public PagingList<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage) {
     throw new CmisRuntimeException("not implemented");
   }
 
-  public SessionContext getContext() {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getDefaultContext()
+   */
+  public OperationContext getDefaultContext() {
     return this.context;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @seeorg.apache.opencmis.client.api.Session#setDefaultContext(org.apache.opencmis.client.api.
+   * OperationContext)
+   */
+  public void setDefaultContext(OperationContext context) {
+    this.context = (context == null ? DEFAULT_CONTEXT : context);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#createOperationContext(java.lang.String, boolean,
+   * boolean, boolean, org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+   * boolean, java.lang.String)
+   */
+  public OperationContext createOperationContext(String filter, boolean includeAcls,
+      boolean includeAllowableActions, boolean includePolicies,
+      IncludeRelationships includeRelationships, String renditionFilter,
+      boolean includePathSegments, String orderBy) {
+    return new OperationContextImpl(filter, includeAcls, includeAllowableActions, includePolicies,
+        includeRelationships, renditionFilter, includePathSegments, orderBy);
   }
 
   public Locale getLocale() {
     return this.locale;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getObject(java.lang.String)
+   */
   public CmisObject getObject(String objectId) {
-    CmisObject obj = null;
-    if (this.cache.containsId(objectId)) {
-      obj = this.cache.get(objectId);
-    }
-    else {
-      /* query context */
-      String filter = this.context.getIncludeProperties();
-      boolean includeAllowableActions = this.context.getIncludeAllowableActions();
-      IncludeRelationships includeRelationships = this.context.getIncludeRelationships();
-      String renditionFilter = this.context.getIncludeRenditions();
-      boolean includePolicyIds = this.context.getIncludePolicies();
-      boolean includeAcl = this.context.getIncludeAcls();
-      ExtensionsData extension = null;
-
-      // add object id, base type id and type id to filter
-      if ((filter != null) && (filter.indexOf('*') == -1)) {
-        if (filter.indexOf(PropertyIds.CMIS_OBJECT_ID) == -1) {
-          filter = PropertyIds.CMIS_OBJECT_ID + "," + filter;
-        }
-        if (filter.indexOf(PropertyIds.CMIS_BASE_TYPE_ID) == -1) {
-          filter = PropertyIds.CMIS_BASE_TYPE_ID + "," + filter;
-        }
-        if (filter.indexOf(PropertyIds.CMIS_OBJECT_TYPE_ID) == -1) {
-          filter = PropertyIds.CMIS_OBJECT_TYPE_ID + "," + filter;
-        }
-      }
-
-      /* ask backend */
-      String repositoryId = this.getRepositoryId();
-      ObjectData od = this.provider.getObjectService().getObject(repositoryId, objectId, filter,
-          includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds,
-          includeAcl, extension);
-
-      obj = getObjectFactory().convertObject(od);
-
-      this.cache.put(obj);
-    }
-    return obj;
+    return getObject(objectId, getDefaultContext());
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getObject(java.lang.String,
+   * org.apache.opencmis.client.api.OperationContext)
+   */
+  public CmisObject getObject(String objectId, OperationContext context) {
+    if (objectId == null) {
+      throw new IllegalArgumentException("Object Id must be set!");
+    }
+
+    ObjectData objectData = this.provider.getObjectService().getObject(getRepositoryId(), objectId,
+        context.getFullFilter(), context.getIncludeAllowableActions(),
+        context.getIncludeRelationships(), context.getRenditionFilter(),
+        context.getIncludePolicies(), context.getIncludeAcls(), null);
+
+    return getObjectFactory().convertObject(objectData);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getObjectByPath(java.lang.String)
+   */
   public CmisObject getObjectByPath(String path) {
-    throw new CmisRuntimeException("not implemented");
+    return getObjectByPath(path, getDefaultContext());
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getObjectByPath(java.lang.String,
+   * org.apache.opencmis.client.api.OperationContext)
+   */
+  public CmisObject getObjectByPath(String path, OperationContext context) {
+    if (path == null) {
+      throw new IllegalArgumentException("Path must be set!");
+    }
+
+    ObjectData objectData = this.provider.getObjectService().getObjectByPath(getRepositoryId(),
+        path, context.getFullFilter(), context.getIncludeAllowableActions(),
+        context.getIncludeRelationships(), context.getRenditionFilter(),
+        context.getIncludePolicies(), context.getIncludeAcls(), null);
+
+    return getObjectFactory().convertObject(objectData);
   }
 
   public ObjectFactory getObjectFactory() {
@@ -276,6 +342,11 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     return this.propertyFactory;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getRepositoryInfo()
+   */
   public RepositoryInfo getRepositoryInfo() {
     if (this.repositoryInfo == null) {
       /* get initial repository id from session parameter */
@@ -286,24 +357,30 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     return this.repositoryInfo;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getRootFolder()
+   */
   public Folder getRootFolder() {
-    Folder rootFolder = null;
+    return getRootFolder(getDefaultContext());
+  }
 
-    if (this.cache.containsPath("/")) {
-      rootFolder = (Folder) this.cache.getByPath("/");
+  /*
+   * (non-Javadoc)
+   * 
+   * @seeorg.apache.opencmis.client.api.Session#getRootFolder(org.apache.opencmis.client.api.
+   * OperationContext)
+   */
+  public Folder getRootFolder(OperationContext context) {
+    String rootFolderId = getRepositoryInfo().getRootFolderId();
+
+    CmisObject rootFolder = getObject(rootFolderId, context);
+    if (!(rootFolder instanceof Folder)) {
+      throw new CmisRuntimeException("Root folder object is not a folder!");
     }
-    else {
-      String rootFolderId = this.getRepositoryInfo().getRootFolderId();
-      String repositoryId = this.getRepositoryId();
-      ObjectData od = this.provider.getObjectService().getObject(repositoryId, rootFolderId, null,
-          false, IncludeRelationships.NONE, null, false, false, null);
 
-      ObjectType type = SessionUtil.getTypeFromObjectData(this, od);
-      rootFolder = new PersistentFolderImpl(this, type, od);
-      this.cache.put(rootFolder);
-    }
-
-    return rootFolder;
+    return (Folder) rootFolder;
   }
 
   /*
@@ -321,6 +398,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     final String repositoryId = getRepositoryId();
     final RepositoryService repositoryService = getProvider().getRepositoryService();
 
+    // set up PagingList object
     return new AbstractPagingList<ObjectType>() {
 
       @Override
@@ -391,12 +469,13 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     return result;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#query(java.lang.String, boolean, int)
+   */
   public PagingList<CmisObject> query(String statement, boolean searchAllVersions, int itemsPerPage) {
     throw new CmisRuntimeException("not implemented");
-  }
-
-  public void setContext(SessionContext context) {
-    this.context = (SessionContextImpl) context;
   }
 
   public String setExtensionContext(String context) {
@@ -489,6 +568,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
       throw new CmisRuntimeException("Session parameter not set!");
     }
 
+    if (!this.parameters.containsKey(SessionParameter.BINDING_TYPE)) {
+      this.parameters.put(SessionParameter.BINDING_TYPE, BindingType.CUSTOM.value());
+    }
+
     BindingType bt = BindingType.fromValue(this.parameters.get(SessionParameter.BINDING_TYPE));
 
     switch (bt) {
@@ -498,21 +581,27 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     case WEBSERVICES:
       this.provider = this.createWebServiceProvider(this.parameters);
       break;
-    case UNSPECIFIC:
-      this.provider = this.createUnspecificProvider(this.parameters);
+    case CUSTOM:
+      this.provider = this.createCustomProvider(this.parameters);
       break;
     default:
       throw new CmisRuntimeException("Ambiguous session parameter: " + this.parameters);
     }
   }
 
-  private CmisProvider createUnspecificProvider(Map<String, String> parameters) {
+  /**
+   * Creates a provider with custom parameters.
+   */
+  private CmisProvider createCustomProvider(Map<String, String> parameters) {
     CmisProviderFactory factory = CmisProviderFactory.newInstance();
     CmisProvider provider = factory.createCmisProvider(parameters);
 
     return provider;
   }
 
+  /**
+   * Creates a Web Services provider.
+   */
   private CmisProvider createWebServiceProvider(Map<String, String> parameters) {
     CmisProviderFactory factory = CmisProviderFactory.newInstance();
     CmisProvider provider = factory.createCmisWebServicesProvider(parameters);
@@ -520,6 +609,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     return provider;
   }
 
+  /**
+   * Creates an AtomPub provider.
+   */
   private CmisProvider createAtomPubProvider(Map<String, String> parameters) {
     CmisProviderFactory factory = CmisProviderFactory.newInstance();
     CmisProvider provider = factory.createCmisAtomPubProvider(parameters);
@@ -532,9 +624,12 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
   }
 
   public Cache getCache() {
-    return this.cache;
+    return null; // this.cache;
   }
 
+  /**
+   * Returns the repository id.
+   */
   public String getRepositoryId() {
     return this.getRepositoryInfo().getId();
   }

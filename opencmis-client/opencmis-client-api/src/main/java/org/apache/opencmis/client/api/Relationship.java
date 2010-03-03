@@ -27,6 +27,9 @@ public interface Relationship extends CmisObject {
 
   CmisObject getSource(); // cmis:sourceId
 
+  CmisObject getSource(OperationContext context);
+
   CmisObject getTarget(); // cmis:targetId
 
+  CmisObject getTarget(OperationContext context);
 }

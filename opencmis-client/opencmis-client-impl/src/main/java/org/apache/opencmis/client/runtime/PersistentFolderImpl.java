@@ -30,9 +30,9 @@ import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.FileableCmisObject;
 import org.apache.opencmis.client.api.Folder;
+import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
-import org.apache.opencmis.client.api.SessionContext;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.api.util.Container;
@@ -67,10 +67,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     initialize(session, null, null);
   }
 
-  public Document createDocument(String name) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
   public Document createDocument(String name, String typeId) {
     throw new CmisRuntimeException("not implemented");
   }
@@ -100,6 +96,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     throw new CmisRuntimeException("not implemented");
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#deleteTree(boolean,
+   * org.apache.opencmis.commons.enums.UnfileObjects, boolean)
+   */
   public List<String> deleteTree(boolean allVersions, UnfileObjects unfile,
       boolean continueOnFailure) {
     String repositoryId = getRepositoryId();
@@ -111,26 +113,62 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     return failed.getIds();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#getAllowedChildObjectTypes()
+   */
   public List<ObjectType> getAllowedChildObjectTypes() {
-    throw new CmisRuntimeException("not implemented");
+    List<ObjectType> result = new ArrayList<ObjectType>();
+
+    List<String> otids = getPropertyMultivalue(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS);
+    if (otids == null) {
+      return result;
+    }
+
+    for (String otid : otids) {
+      result.add(getSession().getTypeDefinition(otid));
+    }
+
+    return result;
   }
 
-  public PagingList<Document> getCheckedOutDocs(String orderby, int itemsPerPage) {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#getCheckedOutDocs(int)
+   */
+  public PagingList<Document> getCheckedOutDocs(int itemsPerPage) {
+    return getCheckedOutDocs(getSession().getDefaultContext(), itemsPerPage);
+  }
+
+  public PagingList<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage) {
+    // TODO Auto-generated method stub
     throw new CmisRuntimeException("not implemented");
   }
 
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Folder#getChildren(java.lang.String, int)
+   * @see org.apache.opencmis.client.api.Folder#getChildren(int)
    */
-  public PagingList<CmisObject> getChildren(final String orderBy, final int itemsPerPage) {
+  public PagingList<CmisObject> getChildren(int itemsPerPage) {
+    return getChildren(getSession().getDefaultContext(), itemsPerPage);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.apache.opencmis.client.api.Folder#getChildren(org.apache.opencmis.client.api.OperationContext
+   * , int)
+   */
+  public PagingList<CmisObject> getChildren(final OperationContext context, final int itemsPerPage) {
     if (itemsPerPage < 1) {
       throw new IllegalArgumentException("itemsPerPage must be > 0!");
     }
 
     final String objectId = getObjectId();
-    final SessionContext context = getSession().getContext();
     final NavigationService navigationService = getProvider().getNavigationService();
     final ObjectFactory objectFactory = getSession().getObjectFactory();
 
@@ -142,8 +180,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
         // get the children
         ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId,
-            context.getIncludeProperties(), orderBy, context.getIncludeAllowableActions(), context
-                .getIncludeRelationships(), context.getIncludeRenditions(), context
+            context.getFullFilter(), context.getOrderBy(), context.getIncludeAllowableActions(),
+            context.getIncludeRelationships(), context.getRenditionFilter(), context
                 .getIncludePathSegments(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
                 .valueOf(skipCount), null);
 
@@ -165,14 +203,39 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     };
   }
 
-  public List<Container<FileableCmisObject>> getFolderTree(int depth) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#getDescendants(int)
+   */
   public List<Container<FileableCmisObject>> getDescendants(int depth) {
+    return getDescendants(depth, getSession().getDefaultContext());
+  }
+
+  public List<Container<FileableCmisObject>> getDescendants(int depth, OperationContext context) {
+    // TODO Auto-generated method stub
     throw new CmisRuntimeException("not implemented");
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#getFolderTree(int)
+   */
+  public List<Container<FileableCmisObject>> getFolderTree(int depth) {
+    return getFolderTree(depth, getSession().getDefaultContext());
+  }
+
+  public List<Container<FileableCmisObject>> getFolderTree(int depth, OperationContext context) {
+    // TODO Auto-generated method stub
+    throw new CmisRuntimeException("not implemented");
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#getFolderParent()
+   */
   public Folder getFolderParent() {
     List<Folder> parents = getParents();
 
@@ -183,6 +246,11 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     return parents.get(0);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#getPath()
+   */
   public String getPath() {
     List<String> paths = getPaths();
     if ((paths == null) || (paths.isEmpty())) {
@@ -286,5 +354,4 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     return pd;
   }
-
 }

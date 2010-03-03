@@ -30,6 +30,7 @@ import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
 import org.apache.opencmis.client.api.AllowableActions;
 import org.apache.opencmis.client.api.CmisObject;
+import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.Relationship;
@@ -419,28 +420,6 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.apache.opencmis.client.api.CmisObject#setType(org.apache.opencmis.client.api.objecttype
-   * .ObjectType)
-   */
-  public void setType(ObjectType type) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.CmisObject#setTypeId(java.lang.String)
-   */
-  public void setTypeId(String typeId) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
    * @see org.apache.opencmis.client.api.CmisObject#getType()
    */
   public ObjectType getType() {
@@ -596,11 +575,12 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * 
    * @see org.apache.opencmis.client.api.CmisObject#getRelationships(boolean,
    * org.apache.opencmis.commons.enums.RelationshipDirection,
-   * org.apache.opencmis.client.api.objecttype.ObjectType, java.lang.String, java.lang.Boolean, int)
+   * org.apache.opencmis.client.api.objecttype.ObjectType,
+   * org.apache.opencmis.client.api.OperationContext, int)
    */
   public PagingList<Relationship> getRelationships(final boolean includeSubRelationshipTypes,
-      final RelationshipDirection relationshipDirection, ObjectType type, final String filter,
-      final Boolean includeAllowableActions, final int itemsPerPage) {
+      final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context,
+      final int itemsPerPage) {
     if (itemsPerPage < 1) {
       throw new IllegalArgumentException("itemsPerPage must be > 0!");
     }
@@ -608,6 +588,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     final String objectId = getObjectId();
     final String typeId = (type == null ? null : type.getId());
     final RelationshipService relationshipService = getProvider().getRelationshipService();
+    final OperationContext ctxt = (context != null ? context : new OperationContextImpl(
+        getSession().getDefaultContext()));
 
     return new AbstractPagingList<Relationship>() {
 
@@ -617,9 +599,9 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
         // fetch the relationships
         ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(),
-            objectId, includeSubRelationshipTypes, relationshipDirection, typeId, filter,
-            includeAllowableActions, BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
-                .valueOf(skipCount), null);
+            objectId, includeSubRelationshipTypes, relationshipDirection, typeId, ctxt
+                .getFullFilter(), ctxt.getIncludeAllowableActions(), BigInteger
+                .valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
 
         // convert relationship objects
         List<Relationship> page = new ArrayList<Relationship>();
@@ -657,4 +639,17 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   protected void setChanged() {
     isChanged = true;
   }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.apache.opencmis.client.api.CmisObject#refresh(org.apache.opencmis.client.api.OperationContext
+   * )
+   */
+  public void refresh(OperationContext context) {
+    // TODO Auto-generated method stub
+    throw new CmisRuntimeException("not implemented");
+  }
+
 }

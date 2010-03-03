@@ -30,7 +30,7 @@ public class ReadOnlySessionTest extends AbstractSessionTest {
 
   @Test
   public void testSession() {
-    Assert.assertNotNull(this.session.getContext());
+    Assert.assertNotNull(this.session.getDefaultContext());
     Assert.assertNotNull(this.session.getLocale());
     Assert.assertNotNull(this.session.getObjectFactory());
     Assert.assertNotNull(this.session.getRepositoryInfo());

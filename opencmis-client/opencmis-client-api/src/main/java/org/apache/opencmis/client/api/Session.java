@@ -27,6 +27,7 @@ import org.apache.opencmis.client.api.repository.PropertyFactory;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
+import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.provider.CmisProvider;
 
 /**
@@ -47,20 +48,28 @@ public interface Session {
    * Gets the underlying provider object.
    */
   CmisProvider getProvider();
-  
+
   /**
-   * Get the current session parameters for filtering and paging.
+   * Get the current default operation parameters for filtering and paging.
    */
-  SessionContext getContext();
+  OperationContext getDefaultContext();
 
   /**
    * Set the current session parameters for filtering and paging.
    * 
    * @param context
-   *          the <code>SessionContext</code> to be used for the session; if <code>null</code>, a
+   *          the <code>OperationContext</code> to be used for the session; if <code>null</code>, a
    *          default context is used
    */
-  void setContext(SessionContext context);
+  void setDefaultContext(OperationContext context);
+
+  /**
+   * Creates an operation context object.
+   */
+  OperationContext createOperationContext(String filter, boolean includeAcls,
+      boolean includeAllowableActions, boolean includePolicies,
+      IncludeRelationships includeRelationships, String renditionFilter,
+      boolean includePathSegments, String orderBy);
 
   // localization
 
@@ -83,48 +92,60 @@ public interface Session {
   ObjectFactory getObjectFactory();
 
   /**
-   * Get the factory for <code>Property</code> objects.
+   * Gets the factory for <code>Property</code> objects.
    */
   PropertyFactory getPropertyFactory();
 
+  // types
+
+  /**
+   * Returns the type definition of the given type id.
+   */
   ObjectType getTypeDefinition(String typeId);
 
+  /**
+   * Returns the type children of the given type id.
+   */
   PagingList<ObjectType> getTypeChildren(String typeId, boolean includePropertyDefinitions,
       int itemsPerPage);
 
-  List<Container<ObjectType>> getTypeDescendants(String typeId, int depth, boolean includePropertyDefinitions);
+  /**
+   * Returns the type descendants of the given type id.
+   */
+  List<Container<ObjectType>> getTypeDescendants(String typeId, int depth,
+      boolean includePropertyDefinitions);
 
   // navigation
 
   /**
-   * Get the root folder for the repository.
+   * Gets the root folder for the repository.
    */
   Folder getRootFolder();
 
+  Folder getRootFolder(OperationContext context);
+
   /**
-   * Navigation service <code>getCheckedOutDocs</code>.
+   * Returns all checked out documents.
    * 
-   * @param folder
-   * @param orderby
-   * @return @
+   * @see Folder#getCheckedOutDocs(int)
    */
-  PagingList<Document> getCheckedOutDocs(Folder folder, String orderby, int itemsPerPage);
+  PagingList<Document> getCheckedOutDocs(int itemsPerPage);
+
+  PagingList<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage);
 
   /**
    * Object service <code>getObject</code>.
-   * 
-   * @param objectid
-   * @return @
    */
-  CmisObject getObject(String objectid);
+  CmisObject getObject(String objectId);
+
+  CmisObject getObject(String objectId, OperationContext context);
 
   /**
    * Object service <code>getObjectByPath</code>.
-   * 
-   * @param path
-   * @return @
    */
   CmisObject getObjectByPath(String path);
+
+  CmisObject getObjectByPath(String path, OperationContext context);
 
   // discovery
 
@@ -135,8 +156,6 @@ public interface Session {
 
   /**
    * Discovery service <code>getContentChanges</code>.
-   * 
-   * @return
    */
   PagingList<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage);
 

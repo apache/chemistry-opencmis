@@ -38,17 +38,16 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
   private int cacheSize = 0;
   private LinkedHashMap<Integer, FetchResult> cache = null;
 
-  /**
-   * Initializes the cache.
+  /*
+   * (non-Javadoc)
    * 
-   * @param cacheSize
-   *          size of the cache in pages. cacheSize < 1 disables the cache.
+   * @see org.apache.opencmis.client.api.util.PagingList#setCacheSize(int)
    */
-  protected void initializeCache(final int cacheSize) {
+  public void setCacheSize(final int cacheSize) {
     this.cacheSize = cacheSize;
 
     if (cacheSize > 0) {
-      cache = new LinkedHashMap<Integer, FetchResult>(cacheSize + 1, 0.70f, true) {
+      this.cache = new LinkedHashMap<Integer, FetchResult>(cacheSize + 1, 0.70f, true) {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -56,6 +55,9 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
           return size() > cacheSize;
         }
       };
+    }
+    else {
+      this.cache = null;
     }
   }
 
@@ -134,6 +136,28 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
     }
 
     return (int) Math.ceil(((double) getNumItems() / (double) getMaxItemsPerPage()));
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.util.PagingList#isEmpty()
+   */
+  public boolean isEmpty() {
+    if (getNumItems() > 0) {
+      return false;
+    }
+
+    if (getNumItems() == 0) {
+      return true;
+    }
+
+    List<T> page = get(0);
+    if (page == null) {
+      return true;
+    }
+
+    return page.isEmpty();
   }
 
   /*

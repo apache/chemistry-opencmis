@@ -95,16 +95,6 @@ public interface CmisObject {
   BaseObjectTypeIds getBaseTypeId();
 
   /**
-   * Set the object's type id. {@code Property<ObjectType> 'cmis:objectTypeId'}
-   */
-  void setTypeId(String typeId);
-
-  /**
-   * Set the object's type. Shortcut for {@code setTypeId(type.getId())}.
-   */
-  void setType(ObjectType type);
-
-  /**
    * Get the change token for this object (maintained by the repository). {@code Property<String>
    * 'cmis:changeToken'}
    */
@@ -135,8 +125,8 @@ public interface CmisObject {
   // relationship service
 
   PagingList<Relationship> getRelationships(boolean includeSubRelationshipTypes,
-      RelationshipDirection relationshipDirection, ObjectType type, String filter, 
-      Boolean includeAllowableActions, int itemsPerPage);
+      RelationshipDirection relationshipDirection, ObjectType type, OperationContext context,
+      int itemsPerPage);
 
   // policy service
 
@@ -179,4 +169,8 @@ public interface CmisObject {
    */
   boolean isChanged();
 
+  /**
+   * Reloads the data from the repository.
+   */
+  void refresh(OperationContext context);
 }

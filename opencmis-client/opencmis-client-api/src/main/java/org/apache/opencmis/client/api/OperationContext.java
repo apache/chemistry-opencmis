@@ -19,44 +19,44 @@
 package org.apache.opencmis.client.api;
 
 import org.apache.opencmis.commons.enums.IncludeRelationships;
-import org.apache.opencmis.commons.exceptions.CmisFilterNotValidException;
 
-/**
- * A container for some session parameters, like paging cursors, etc.
- * 
- * @see Session.getContext
- * @see Session.setContext
- */
-public interface SessionContext {
+public interface OperationContext {
 
-  // filtering and additional data ((pre-)populating objects)
+  String getFilter();
 
-  void setIncludeProperties(String filter) throws CmisFilterNotValidException;
+  void setFilter(String filter);
 
-  void setIncludeRelationships(IncludeRelationships filter) throws CmisFilterNotValidException;
-
-  void setIncludePolicies(boolean include);
-
-  void setIncludeRenditions(String filter) throws CmisFilterNotValidException;
-
-  void setIncludeAcls(boolean include);
-
-  void setIncludeAllowableActions(boolean include);
-
-  void setIncludePathSegments(boolean include);
-
-  String getIncludeProperties();
-
-  IncludeRelationships getIncludeRelationships();
-
-  boolean getIncludePolicies();
-
-  String getIncludeRenditions();
-
-  boolean getIncludeAcls();
+  /**
+   * Returns the filter extended by cmis:objectId, cmis:objectTypeId and cmis:baseTypeId.
+   */
+  String getFullFilter();
 
   boolean getIncludeAllowableActions();
 
+  void setIncludeAllowableActions(boolean include);
+
+  boolean getIncludeAcls();
+
+  void setIncludeAcls(boolean include);
+
+  IncludeRelationships getIncludeRelationships();
+
+  void setIncludeRelationships(IncludeRelationships include);
+
+  boolean getIncludePolicies();
+
+  void setIncludePolicies(boolean include);
+
+  String getRenditionFilter();
+
+  void setRenditionFilter(String filter);
+
   boolean getIncludePathSegments();
+
+  void setIncludePathSegments(boolean include);
+
+  String getOrderBy();
+
+  void setOrderBy(String orderBy);
 
 }

@@ -19,6 +19,7 @@
 package org.apache.opencmis.client.runtime;
 
 import org.apache.opencmis.client.api.CmisObject;
+import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Relationship;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.commons.PropertyIds;
@@ -26,9 +27,6 @@ import org.apache.opencmis.commons.provider.ObjectData;
 
 public class PersistentRelationshipImpl extends AbstractPersistentCmisObject implements
     Relationship {
-
-  private CmisObject source;
-  private CmisObject target;
 
   /**
    * Constructor.
@@ -38,22 +36,27 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
     initialize(session, objectType, objectData);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.apache.opencmis.client.api.Relationship#getSource()
    */
   public CmisObject getSource() {
-    if (this.source != null) {
-      return this.source;
-    }
+    return getSource(getSession().getDefaultContext());
+  }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Relationship#getSource()
+   */
+  public CmisObject getSource(OperationContext context) {
     String sourceId = getPropertyValue(PropertyIds.CMIS_SOURCE_ID);
     if (sourceId == null) {
       return null;
     }
 
-    this.source = getSession().getObject(sourceId);
-
-    return this.source;
+    return getSession().getObject(sourceId, context);
   }
 
   /*
@@ -62,17 +65,21 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
    * @see org.apache.opencmis.client.api.Relationship#getTarget()
    */
   public CmisObject getTarget() {
-    if (this.target != null) {
-      return this.target;
-    }
+    return getTarget(getSession().getDefaultContext());
+  }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Relationship#getTarget()
+   */
+  public CmisObject getTarget(OperationContext context) {
     String targetId = getPropertyValue(PropertyIds.CMIS_TARGET_ID);
     if (targetId == null) {
       return null;
     }
 
-    this.target = getSession().getObject(targetId);
-
-    return this.target;
+    return getSession().getObject(targetId, context);
   }
+
 }

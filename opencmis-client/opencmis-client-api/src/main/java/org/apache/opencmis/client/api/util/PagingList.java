@@ -30,24 +30,24 @@ import java.util.List;
 public interface PagingList<T> extends Iterable<List<T>> {
 
   /**
-   * If the repository knows the total number of items in a result set, the repository SHOULD
-   * include the number here. If the repository does not know the number of items in a result set,
-   * this parameter SHOULD not be set. The value in the parameter MAY NOT be accurate the next time
-   * the client retrieves the result set or the next page in the result set.
+   * Returns the total number of items. If the repository knows the total number of items in a
+   * result set, the repository SHOULD include the number here. If the repository does not know the
+   * number of items in a result set, this parameter SHOULD not be set. The value in the parameter
+   * MAY NOT be accurate the next time the client retrieves the result set or the next page in the
+   * result set.
    * 
    * @return total number of items or (-1)
    */
   int getNumItems();
 
   /**
-   * This is the maximum number of items to return in one page. The repository MUST NOT exceed this
-   * maximum.
+   * Returns the maximum number of items in one page. The repository MUST NOT exceed this maximum.
    */
   int getMaxItemsPerPage();
 
   /**
-   * This is the maximum number of pages calculated from number of <code>totalItems</code> and
-   * <code>maxItems</code>. If the number of <code>totalItems</code> is not known then -1 is
+   * Returns the maximum number of pages calculated from number of <code>numItems</code> and
+   * <code>maxItemsPerPage</code>. If the number of <code>numItems</code> is not known then -1 is
    * returned.
    * 
    * @return Number of pages or (-1)
@@ -62,4 +62,21 @@ public interface PagingList<T> extends Iterable<List<T>> {
    * @return a page of items
    */
   List<T> get(int pageNumber);
+
+  /**
+   * Returns if the list contains items. This method might fetch the first page to determine the
+   * return value!
+   * 
+   * @return <code>true</code> if the list does not contain items, <code>false</code>otherwise
+   */
+  boolean isEmpty();
+
+  /**
+   * Sets the size of the page LRU cache. A size &lt; 1 de-activates the cache. Default cache size
+   * is 0. Re-setting the cache size clears the cache.
+   * 
+   * @param cacheSize
+   *          size of the cache in pages
+   */
+  void setCacheSize(int cacheSize);
 }

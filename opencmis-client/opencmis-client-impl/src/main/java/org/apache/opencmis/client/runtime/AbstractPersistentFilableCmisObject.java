@@ -33,11 +33,11 @@ import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.PropertyIdData;
 import org.apache.opencmis.commons.provider.PropertyStringData;
 
+/**
+ * Base class for all filable persistent session object impl classes.
+ */
 public abstract class AbstractPersistentFilableCmisObject extends AbstractPersistentCmisObject
     implements FileableCmisObject {
-
-  private List<Folder> parents;
-  private List<String> paths;
 
   /*
    * (non-Javadoc)
@@ -45,18 +45,13 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
    * @see org.apache.opencmis.client.api.FileableCmisObject#getParents()
    */
   public List<Folder> getParents() {
-    if (this.parents != null) {
-      return this.parents;
-    }
-
-    // get object ids and paths of the parent folders
+    // get object ids of the parent folders
     String objectId = getObjectId();
     List<ObjectParentData> providerParents = getProvider().getNavigationService().getObjectParents(
-        getRepositoryId(), objectId, PropertyIds.CMIS_OBJECT_ID + "," + PropertyIds.CMIS_PATH,
-        false, IncludeRelationships.NONE, null, true, null);
+        getRepositoryId(), objectId, PropertyIds.CMIS_OBJECT_ID, false, IncludeRelationships.NONE,
+        null, false, null);
 
-    this.parents = new ArrayList<Folder>();
-    this.paths = new ArrayList<String>();
+    List<Folder> parents = new ArrayList<Folder>();
 
     for (ObjectParentData p : providerParents) {
       if ((p == null) || (p.getObject() == null) || (p.getObject().getProperties() == null)) {
@@ -72,6 +67,39 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
         throw new CmisRuntimeException("Repository sent invalid data! No object id!");
       }
 
+      // fetch the object and make sure it is a folder
+      CmisObject parentFolder = getSession().getObject((String) idProperty.getFirstValue());
+      if (!(parentFolder instanceof Folder)) {
+        // the repository sent an object that is not a folder...
+        throw new CmisRuntimeException("Repository sent invalid data! Object is not a folder!");
+      }
+
+      parents.add((Folder) parentFolder);
+    }
+
+    return parents;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.FileableCmisObject#getPaths()
+   */
+  public List<String> getPaths() {
+    // get object paths of the parent folders
+    String objectId = getObjectId();
+    List<ObjectParentData> providerParents = getProvider().getNavigationService().getObjectParents(
+        getRepositoryId(), objectId, PropertyIds.CMIS_PATH, false, IncludeRelationships.NONE, null,
+        true, null);
+
+    List<String> paths = new ArrayList<String>();
+
+    for (ObjectParentData p : providerParents) {
+      if ((p == null) || (p.getObject() == null) || (p.getObject().getProperties() == null)) {
+        // should not happen...
+        throw new CmisRuntimeException("Repository sent invalid data!");
+      }
+
       // get path property
       PropertyData<?> pathProperty = p.getObject().getProperties().getProperties().get(
           PropertyIds.CMIS_PATH);
@@ -85,36 +113,11 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
         throw new CmisRuntimeException("Repository sent invalid data! No relative path segement!");
       }
 
-      // fetch the object and make sure it is a folder
-      CmisObject parentFolder = getSession().getObject((String) idProperty.getFirstValue());
-      if (!(parentFolder instanceof Folder)) {
-        // the repository sent an object that is not a folder...
-        throw new CmisRuntimeException("Repository sent invalid data! Object is not a folder!");
-      }
-
-      this.parents.add((Folder) parentFolder);
-
       String folderPath = ((String) pathProperty.getFirstValue());
-      this.paths.add(folderPath + (folderPath.endsWith("/") ? "" : "/")
-          + p.getRelativePathSegment());
+      paths.add(folderPath + (folderPath.endsWith("/") ? "" : "/") + p.getRelativePathSegment());
     }
 
-    return this.parents;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.FileableCmisObject#getPaths()
-   */
-  public List<String> getPaths() {
-    if (this.paths != null) {
-      return this.paths;
-    }
-
-    getParents(); // fills the paths list too
-
-    return this.paths;
+    return paths;
   }
 
   /*

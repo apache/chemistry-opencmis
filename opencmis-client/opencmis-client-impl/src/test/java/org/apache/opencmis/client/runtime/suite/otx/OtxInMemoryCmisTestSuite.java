@@ -64,7 +64,7 @@ public class OtxInMemoryCmisTestSuite extends AbstractCmisTestSuite {
 				.getISO3Country());
 		parameter.put(SessionParameter.LOCALE_ISO639_LANGUAGE, Locale.GERMANY
 				.getISO3Language());
-		parameter.put(SessionParameter.BINDING_TYPE, BindingType.UNSPECIFIC
+		parameter.put(SessionParameter.BINDING_TYPE, BindingType.CUSTOM
 				.value());
 		parameter.put(SessionParameter.REPOSITORY_ID, "InMemory");
 		parameter.put(SessionParameter.BINDING_SPI_CLASS,

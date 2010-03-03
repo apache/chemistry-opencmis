@@ -176,7 +176,7 @@ public class PagingListTest {
   class TestPagingList extends AbstractPagingList<String> {
 
     public TestPagingList(int cacheSize) {
-      initializeCache(cacheSize);
+      setCacheSize(cacheSize);
     }
 
     @Override

@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
+import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.Rendition;
@@ -108,22 +109,33 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
   public void checkIn(boolean major, List<Property<?>> properties, ContentStream contentStream,
       String checkinComment, List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs) {
     throw new CmisRuntimeException("not implemented");
-
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#getAllVersions()
+   */
   public List<Document> getAllVersions() {
+    return getAllVersions(null);
+  }
+
+  public List<Document> getAllVersions(OperationContext context) {
+    // TODO Auto-generated method stub
     throw new CmisRuntimeException("not implemented");
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#getObjectOfLatestVersion(boolean)
+   */
   public Document getObjectOfLatestVersion(boolean major) {
-    throw new CmisRuntimeException("not implemented");
+    return getObjectOfLatestVersion(major, null);
   }
 
-  public List<Property<?>> getPropertiesOfLatestVersion(boolean major) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public List<Property<?>> getPropertiesOfLatestVersion(boolean major, String filter) {
+  public Document getObjectOfLatestVersion(boolean major, OperationContext context) {
+    // TODO Auto-generated method stub
     throw new CmisRuntimeException("not implemented");
   }
 
