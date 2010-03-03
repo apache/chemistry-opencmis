@@ -69,7 +69,15 @@ public class TypeManager {
    * @return
    */
   public synchronized Collection<TypeDefinitionContainer> getTypeDefinitionList() {
-    return fTypesMap.values();
+    
+    List<TypeDefinitionContainer> typeRoots = new ArrayList<TypeDefinitionContainer>();
+    // iterate types map and return a list collecting the root types:
+    for (TypeDefinitionContainer typeDef : fTypesMap.values()) {
+      if (typeDef.getTypeDefinition().getParentId()==null)
+        typeRoots.add(typeDef);
+    }
+    
+    return typeRoots;
   }
 
   /**

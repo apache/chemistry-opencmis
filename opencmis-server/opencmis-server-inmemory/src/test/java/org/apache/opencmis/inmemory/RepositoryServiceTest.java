@@ -174,10 +174,15 @@ public class RepositoryServiceTest extends AbstractServiceTst {
         repositoryId, null/* all types */, BigInteger.valueOf(-1), Boolean.TRUE, null);
     assertNotNull(types);
     log.info("Repository " + repositoryId + " contains " + types.size() + " type(s).");
+    
+    
     // check that we got all types
     int expectedSize = RepositoryTestTypeSystemCreator.getTypesList().size()
         + DocumentTypeCreationHelper.getDefaultTypes().size();
-    assertEquals(expectedSize, types.size());
+    int totalSize = getRecursiveSize(types);
+
+    assertEquals(expectedSize, totalSize);
+    assertEquals(2, types.size());
 
     for (TypeDefinitionContainer type : types) {
       assertNotNull(type);
@@ -203,9 +208,9 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     String repositoryId = getRepositoryId();
 
     // get types
-    int depth = 2;
+    int depth = 1;
     List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(
-        repositoryId, null/* all types */, BigInteger.valueOf(depth), Boolean.TRUE, null);
+        repositoryId, BaseObjectTypeIds.CMIS_DOCUMENT.value(), BigInteger.valueOf(depth), Boolean.TRUE, null);
     assertNotNull(types);
     log.info("Found in repository " + repositoryId + " " + types.size() + " type(s) with depth "
         + depth + ".");
@@ -218,15 +223,15 @@ public class RepositoryServiceTest extends AbstractServiceTst {
       containsAllBasePropertyDefinitions(typeDef);
     }
 
-    assertEquals(21, types.size()); // Note that spec says that has to be ignored if type is null.
-    assertTrue(containsTypeById(BaseObjectTypeIds.CMIS_DOCUMENT.value(), types));
-    assertTrue(containsTypeById(BaseObjectTypeIds.CMIS_FOLDER.value(), types));
-    // Commented out, because spec requires not to deliver these types if policies and relations
-    // are not supported
-//    assertTrue(containsTypeById(BaseObjectTypeIds.CMIS_RELATIONSHIP.value(), types));
-//    assertTrue(containsTypeById(BaseObjectTypeIds.CMIS_POLICY.value(), types));
-    assertTrue(containsTypeById("MyDocType1", types));
-    assertTrue(containsTypeById("MyDocType2", types));
+    int totalSize = getRecursiveSize(types);
+    assertEquals(4, totalSize); // all RepositoryTestTypeSystemCreator types minus one in level two plus cmis.docment
+    assertFalse(containsTypeByIdRecursive(BaseObjectTypeIds.CMIS_DOCUMENT.value(), types));
+    assertFalse(containsTypeByIdRecursive(BaseObjectTypeIds.CMIS_FOLDER.value(), types));
+    
+    assertTrue(containsTypeByIdRecursive("MyDocType1", types));
+    assertTrue(containsTypeByIdRecursive("MyDocType2", types));
+
+    assertFalse(containsTypeByIdRecursive(RepositoryTestTypeSystemCreator.LEVEL2_TYPE, types));
 
     for (TypeDefinitionContainer type : types) {
       assertNotNull(type);
@@ -254,12 +259,11 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     log.info("Found in repository " + repositoryId + " for type " + typeId + ", " + types.size()
         + " type(s) with depth " + depth + ".");
 
-    assertEquals(4, types.size());
-    assertTrue(containsTypeById("MyDocType1.1", types));
-    assertTrue(containsTypeById("MyDocType1.1.1", types));
-    assertTrue(containsTypeById("MyDocType1.1.2", types));
-    assertTrue(containsTypeById("MyDocType1.2", types));
-
+    assertEquals(4, getRecursiveSize(types));
+    assertTrue(containsTypeByIdRecursive("MyDocType1.1", types));
+    assertTrue(containsTypeByIdRecursive("MyDocType1.2", types));
+    assertTrue(containsTypeByIdRecursive("MyDocType1.1.1", types));
+    assertTrue(containsTypeByIdRecursive("MyDocType1.1.2", types));
     for (TypeDefinitionContainer type : types) {
       assertNotNull(type);
       TypeDefinition typeDef = type.getTypeDefinition();
@@ -493,6 +497,25 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     return false;
   }
   
+  private boolean containsTypeByIdRecursive(String typeId, List<TypeDefinitionContainer> types) {
+    for (TypeDefinitionContainer type : types) {
+      if (containsTypeByIdRecursive(typeId, type))
+        return true;
+    }
+    return false;
+  }
+  
+  private boolean containsTypeByIdRecursive(String typeId, TypeDefinitionContainer typeContainer) {
+    if (typeId.equals(typeContainer.getTypeDefinition().getId()))
+      return true;
+    
+    for (TypeDefinitionContainer type : typeContainer.getChildren()) {
+      if (containsTypeByIdRecursive(typeId, type))
+        return true;      
+    }
+    return false;
+  }
+
   private void containsAllBasePropertyDefinitions(TypeDefinition typeDef) {
     Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
     String baseTypeId = typeDef.getBaseId().value();
@@ -534,6 +557,17 @@ public class RepositoryServiceTest extends AbstractServiceTst {
       assertTrue(propDefs.containsKey(PropertyIds.CMIS_TARGET_ID));            
     } else
       fail("Unknown base type id in type definition");
+  }
+  
+  private int getRecursiveSize(List<TypeDefinitionContainer> types) {
+    if (null == types)
+      return 0;
+    
+    int size = types.size();
+    for (TypeDefinitionContainer type: types)
+      size += getRecursiveSize(type.getChildren());
+    
+    return size;
   }
   
   public static class RepositoryTestTypeSystemCreator implements TypeCreator {
