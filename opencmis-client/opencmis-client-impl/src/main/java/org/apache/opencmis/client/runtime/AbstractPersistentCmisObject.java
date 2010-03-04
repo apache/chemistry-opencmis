@@ -34,7 +34,9 @@ import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.Relationship;
+import org.apache.opencmis.client.api.Rendition;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
+import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.opencmis.commons.PropertyIds;
@@ -48,6 +50,7 @@ import org.apache.opencmis.commons.provider.Holder;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectList;
 import org.apache.opencmis.commons.provider.RelationshipService;
+import org.apache.opencmis.commons.provider.RenditionData;
 
 /**
  * Base class for all persistent session object impl classes.
@@ -58,6 +61,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   private ObjectType objectType;
   private Map<String, Property<?>> properties;
   private AllowableActions allowableActions;
+  private List<Rendition> renditions;
   private Acl acl;
   private List<Policy> policies;
   private List<Relationship> relationships;
@@ -93,13 +97,21 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
       // handle allowable actions
       if (objectData.getAllowableActions() != null) {
-        this.allowableActions = SessionUtil.convertAllowableActions(getSession(), objectData
+        this.allowableActions = SessionUtil.convertAllowableActions(session, objectData
             .getAllowableActions());
+      }
+
+      // handle renditions
+      if (objectData.getRenditions() != null) {
+        this.renditions = new ArrayList<Rendition>();
+        for (RenditionData rd : objectData.getRenditions()) {
+          this.renditions.add(SessionUtil.convertRendition(session, getId(), rd));
+        }
       }
 
       // handle ACL
       if (objectData.getAcl() != null) {
-        acl = SessionUtil.convertAcl(getSession(), objectData.getAcl());
+        acl = SessionUtil.convertAcl(session, objectData.getAcl());
       }
 
       // handle policies
@@ -116,9 +128,12 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       // handle relationships
       if (objectData.getRelationships() != null) {
         relationships = new ArrayList<Relationship>();
+        ObjectFactory of = session.getObjectFactory();
         for (ObjectData rod : objectData.getRelationships()) {
-          relationships.add(new PersistentRelationshipImpl(getSession(), SessionUtil
-              .getTypeFromObjectData(getSession(), rod), rod));
+          CmisObject relationship = of.convertObject(rod);
+          if (relationship instanceof Relationship) {
+            relationships.add((Relationship) relationship);
+          }
         }
       }
     }
@@ -436,6 +451,17 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    */
   public AllowableActions getAllowableActions() {
     return this.allowableActions;
+  }
+
+  // --- renditions ---
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.CmisObject#getRenditions()
+   */
+  public List<Rendition> getRenditions() {
+    return this.renditions;
   }
 
   // --- ACL ---

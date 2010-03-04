@@ -27,8 +27,6 @@ import org.apache.opencmis.commons.enums.VersioningState;
  */
 public interface Document extends FileableCmisObject {
 
-  List<Rendition> getRenditions();
-
   // object service
 
   ContentStream getContentStream();

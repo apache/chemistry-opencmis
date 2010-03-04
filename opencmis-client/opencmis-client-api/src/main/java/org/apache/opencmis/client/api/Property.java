@@ -34,24 +34,24 @@ public interface Property<T> {
 
   // property
 
-  public boolean isMultiValued();
+  boolean isMultiValued();
 
-  public PropertyType getType();
+  PropertyType getType();
 
-  public PropertyDefinition<T> getDefinition();
+  PropertyDefinition<T> getDefinition();
 
-  public String getId();
+  String getId();
 
-  public String getLocalName();
+  String getLocalName();
 
-  public String getDisplayName();
+  String getDisplayName();
 
-  public String getQueryName();
+  String getQueryName();
 
-  public String getValueAsString();
+  String getValueAsString();
 
-  public T getValue();
+  T getValue();
 
-  public List<T> getValues();
+  List<T> getValues();
 
 }

@@ -18,26 +18,18 @@
  */
 package org.apache.opencmis.client.api;
 
+import java.util.List;
+
 /**
- * {@see Document#getRenditions()}. Domain Model 2.4.2
+ * Query Property.
  */
-public interface Rendition {
+public interface QueryProperty<T> {
 
-  String getMimeType();
+  String getId();
 
-  long getLength();
+  String getQueryName();
 
-  String getKind();
+  T getValue();
 
-  String getTitle();
-
-  int getHeight();
-
-  int getWidth();
-
-  Document getRenditionDocument();
-
-  Document getRenditionDocument(OperationContext context);
-
-  ContentStream getContentStream();
+  List<T> getValues();
 }

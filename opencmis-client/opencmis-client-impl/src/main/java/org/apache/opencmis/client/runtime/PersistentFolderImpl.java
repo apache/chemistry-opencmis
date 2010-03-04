@@ -151,8 +151,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * @seeorg.apache.opencmis.client.api.Folder#getCheckedOutDocs(org.apache.opencmis.client.api.
    * OperationContext, int)
    */
-  public PagingList<Document> getCheckedOutDocs(final OperationContext context,
-      final int itemsPerPage) {
+  public PagingList<Document> getCheckedOutDocs(OperationContext context, final int itemsPerPage) {
     if (itemsPerPage < 1) {
       throw new IllegalArgumentException("itemsPerPage must be > 0!");
     }
@@ -160,6 +159,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     final String objectId = getObjectId();
     final NavigationService nagivationService = getProvider().getNavigationService();
     final ObjectFactory objectFactory = getSession().getObjectFactory();
+    final OperationContext ctxt = new OperationContextImpl(context);
 
     return new AbstractPagingList<Document>() {
 
@@ -169,10 +169,9 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
         // get checked out documents for this folder
         ObjectList checkedOutDocs = nagivationService.getCheckedOutDocs(getRepositoryId(),
-            objectId, context.getFullFilter(), context.getOrderBy(), context
-                .getIncludeAllowableActions(), context.getIncludeRelationships(), context
-                .getRenditionFilter(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
-                .valueOf(skipCount), null);
+            objectId, ctxt.getFullFilter(), ctxt.getOrderBy(), ctxt.getIncludeAllowableActions(),
+            ctxt.getIncludeRelationships(), ctxt.getRenditionFilter(), BigInteger
+                .valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
 
         // convert objects
         List<Document> page = new ArrayList<Document>();
@@ -214,7 +213,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * org.apache.opencmis.client.api.Folder#getChildren(org.apache.opencmis.client.api.OperationContext
    * , int)
    */
-  public PagingList<CmisObject> getChildren(final OperationContext context, final int itemsPerPage) {
+  public PagingList<CmisObject> getChildren(OperationContext context, final int itemsPerPage) {
     if (itemsPerPage < 1) {
       throw new IllegalArgumentException("itemsPerPage must be > 0!");
     }
@@ -222,6 +221,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     final String objectId = getObjectId();
     final NavigationService navigationService = getProvider().getNavigationService();
     final ObjectFactory objectFactory = getSession().getObjectFactory();
+    final OperationContext ctxt = new OperationContextImpl(context);
 
     return new AbstractPagingList<CmisObject>() {
 
@@ -231,8 +231,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
         // get the children
         ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId,
-            context.getFullFilter(), context.getOrderBy(), context.getIncludeAllowableActions(),
-            context.getIncludeRelationships(), context.getRenditionFilter(), context
+            ctxt.getFullFilter(), ctxt.getOrderBy(), ctxt.getIncludeAllowableActions(), ctxt
+                .getIncludeRelationships(), ctxt.getRenditionFilter(), ctxt
                 .getIncludePathSegments(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
                 .valueOf(skipCount), null);
 

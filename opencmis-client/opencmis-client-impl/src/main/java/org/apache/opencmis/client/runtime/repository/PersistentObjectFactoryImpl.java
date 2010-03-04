@@ -31,6 +31,7 @@ import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
+import org.apache.opencmis.client.api.QueryResult;
 import org.apache.opencmis.client.api.Relationship;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
@@ -43,6 +44,7 @@ import org.apache.opencmis.client.runtime.PersistentFolderImpl;
 import org.apache.opencmis.client.runtime.PersistentPolicyImpl;
 import org.apache.opencmis.client.runtime.PersistentRelationshipImpl;
 import org.apache.opencmis.client.runtime.PersistentSessionImpl;
+import org.apache.opencmis.client.runtime.QueryResultImpl;
 import org.apache.opencmis.client.runtime.SessionUtil;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
@@ -138,5 +140,13 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
     default:
       throw new CmisRuntimeException("unsupported type: " + objectData.getBaseTypeId());
     }
+  }
+
+  public QueryResult convertQueryResult(ObjectData objectData) {
+    if (objectData == null) {
+      throw new IllegalArgumentException("Object data is null!");
+    }
+
+    return new QueryResultImpl(session, objectData);
   }
 }

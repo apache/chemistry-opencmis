@@ -152,7 +152,10 @@ public interface Session {
   /**
    * Discovery service <code>query</code>.
    */
-  PagingList<CmisObject> query(String statement, boolean searchAllVersions, int itemsPerPage);
+  PagingList<QueryResult> query(String statement, boolean searchAllVersions, int itemsPerPage);
+
+  PagingList<QueryResult> query(String statement, boolean searchAllVersions,
+      OperationContext context, int itemsPerPage);
 
   /**
    * Discovery service <code>getContentChanges</code>.

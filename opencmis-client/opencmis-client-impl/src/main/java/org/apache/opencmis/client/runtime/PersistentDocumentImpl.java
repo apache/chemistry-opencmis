@@ -28,7 +28,6 @@ import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
-import org.apache.opencmis.client.api.Rendition;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.commons.PropertyIds;
@@ -201,12 +200,6 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
   }
 
   public void deleteContentStream() {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  // renditions
-
-  public List<Rendition> getRenditions() {
     throw new CmisRuntimeException("not implemented");
   }
 }

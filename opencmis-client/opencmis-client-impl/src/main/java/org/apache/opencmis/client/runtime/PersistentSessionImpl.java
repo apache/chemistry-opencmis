@@ -36,6 +36,7 @@ import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.PersistentSession;
 import org.apache.opencmis.client.api.Property;
+import org.apache.opencmis.client.api.QueryResult;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
@@ -63,6 +64,7 @@ import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
 import org.apache.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.opencmis.commons.provider.CmisProvider;
+import org.apache.opencmis.commons.provider.DiscoveryService;
 import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectList;
@@ -229,14 +231,14 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * @seeorg.apache.opencmis.client.api.Session#getCheckedOutDocs(org.apache.opencmis.client.api.
    * OperationContext, int)
    */
-  public PagingList<Document> getCheckedOutDocs(final OperationContext context,
-      final int itemsPerPage) {
+  public PagingList<Document> getCheckedOutDocs(OperationContext context, final int itemsPerPage) {
     if (itemsPerPage < 1) {
       throw new IllegalArgumentException("itemsPerPage must be > 0!");
     }
 
     final NavigationService nagivationService = getProvider().getNavigationService();
     final ObjectFactory objectFactory = getObjectFactory();
+    final OperationContext ctxt = new OperationContextImpl(context);
 
     return new AbstractPagingList<Document>() {
 
@@ -246,8 +248,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
 
         // get all checked out documents
         ObjectList checkedOutDocs = nagivationService.getCheckedOutDocs(getRepositoryId(), null,
-            context.getFullFilter(), context.getOrderBy(), context.getIncludeAllowableActions(),
-            context.getIncludeRelationships(), context.getRenditionFilter(), BigInteger
+            ctxt.getFullFilter(), ctxt.getOrderBy(), ctxt.getIncludeAllowableActions(), ctxt
+                .getIncludeRelationships(), ctxt.getRenditionFilter(), BigInteger
                 .valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
 
         // convert objects
@@ -517,8 +519,57 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * 
    * @see org.apache.opencmis.client.api.Session#query(java.lang.String, boolean, int)
    */
-  public PagingList<CmisObject> query(String statement, boolean searchAllVersions, int itemsPerPage) {
-    throw new CmisRuntimeException("not implemented");
+  public PagingList<QueryResult> query(final String statement, final boolean searchAllVersions,
+      final int itemsPerPage) {
+    return query(statement, searchAllVersions, getDefaultContext(), itemsPerPage);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#query(java.lang.String, boolean,
+   * org.apache.opencmis.client.api.OperationContext, int)
+   */
+  public PagingList<QueryResult> query(final String statement, final boolean searchAllVersions,
+      OperationContext context, final int itemsPerPage) {
+
+    final DiscoveryService discoveryService = getProvider().getDiscoveryService();
+    final ObjectFactory of = getObjectFactory();
+    final OperationContext ctxt = new OperationContextImpl(context);
+
+    // set up PagingList object
+    return new AbstractPagingList<QueryResult>() {
+
+      @Override
+      protected FetchResult fetchPage(int pageNumber) {
+        int skipCount = pageNumber * getMaxItemsPerPage();
+
+        // fetch the data
+        ObjectList resultList = discoveryService.query(getRepositoryId(), statement,
+            searchAllVersions, ctxt.getIncludeAllowableActions(), ctxt.getIncludeRelationships(),
+            ctxt.getRenditionFilter(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
+                .valueOf(skipCount), null);
+
+        // convert type definitions
+        List<QueryResult> page = new ArrayList<QueryResult>();
+        if (resultList.getObjects() != null) {
+          for (ObjectData objectData : resultList.getObjects()) {
+            if (objectData == null) {
+              continue;
+            }
+
+            page.add(of.convertQueryResult(objectData));
+          }
+        }
+
+        return new FetchResult(page, resultList.getNumItems(), resultList.hasMoreItems());
+      }
+
+      @Override
+      public int getMaxItemsPerPage() {
+        return itemsPerPage;
+      }
+    };
   }
 
   public String setExtensionContext(String context) {

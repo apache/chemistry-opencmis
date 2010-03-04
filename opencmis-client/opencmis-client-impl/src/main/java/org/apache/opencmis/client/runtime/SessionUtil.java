@@ -31,6 +31,8 @@ import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
 import org.apache.opencmis.client.api.AllowableActions;
 import org.apache.opencmis.client.api.Property;
+import org.apache.opencmis.client.api.QueryProperty;
+import org.apache.opencmis.client.api.Rendition;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
@@ -62,6 +64,7 @@ import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.PropertyIdData;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
+import org.apache.opencmis.commons.provider.RenditionData;
 
 /**
  * Utility methods.
@@ -221,6 +224,27 @@ public final class SessionUtil {
   }
 
   /**
+   * Converts query properties.
+   */
+  @SuppressWarnings("unchecked")
+  public static List<QueryProperty<?>> convertQueryProperties(Session session,
+      PropertiesData properties) {
+    // check input
+    if ((properties == null) || (properties.getProperties() == null)) {
+      throw new IllegalArgumentException("Properties must be set!");
+    }
+
+    // iterate through properties and convert them
+    List<QueryProperty<?>> result = new ArrayList<QueryProperty<?>>();
+    for (PropertyData<?> property : properties.getProperties().values()) {
+      result.add(new QueryPropertyImpl(property.getId(), property.getQueryName(), property
+          .getValues()));
+    }
+
+    return result;
+  }
+
+  /**
    * Converts allowable actions.
    */
   public static AllowableActions convertAllowableActions(Session session,
@@ -271,6 +295,24 @@ public final class SessionUtil {
     }
 
     return of.createAcl(aces, acl.isExact());
+  }
+
+  /**
+   * Converts rendition.
+   */
+  public static Rendition convertRendition(Session session, String objectId, RenditionData rendition) {
+    if (rendition == null) {
+      throw new IllegalArgumentException("Rendition must be set!");
+    }
+
+    // TODO: what should happen if the length is not set?
+    long length = (rendition.getLength() == null ? -1 : rendition.getLength().longValue());
+    int height = (rendition.getHeight() == null ? -1 : rendition.getHeight().intValue());
+    int width = (rendition.getWidth() == null ? -1 : rendition.getWidth().intValue());
+
+    return new RenditionImpl(session, objectId, rendition.getStreamId(), rendition
+        .getRenditionDocumentId(), rendition.getKind(), length, rendition.getMimeType(), rendition
+        .getTitle(), height, width);
   }
 
   /**

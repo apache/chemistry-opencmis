@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.opencmis.client.api.ChangeEvent;
 import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.Property;
+import org.apache.opencmis.client.api.QueryResult;
 import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.commons.enums.CapabilityChanges;
 import org.apache.opencmis.commons.enums.CapabilityQuery;
@@ -46,11 +47,11 @@ public class ReadOnlyDiscoverTest extends AbstractSessionTest {
       ReadOnlyDiscoverTest.log.info("queries not supported");
       break;
     default:
-      PagingList<CmisObject> resultSet = this.session.query(Fixture.QUERY, false, -1);
+      PagingList<QueryResult> resultSet = this.session.query(Fixture.QUERY, false, -1);
       Assert.assertNotNull(resultSet);
       //Assert.assertFalse(resultSet.isEmpty());
-      for (List<CmisObject> lo : resultSet) {
-        for (CmisObject o : lo) {
+      for (List<QueryResult> lo : resultSet) {
+        for (QueryResult o : lo) {
           Assert.assertNotNull(o);
         }
       }

@@ -31,6 +31,7 @@ import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
+import org.apache.opencmis.client.api.QueryResult;
 import org.apache.opencmis.client.api.Relationship;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.provider.ObjectData;
@@ -76,4 +77,6 @@ public interface ObjectFactory {
       List<Ace> addACEs, List<Ace> removeACEs);
 
   CmisObject convertObject(ObjectData objectData);
+
+  QueryResult convertQueryResult(ObjectData objectData);
 }

@@ -128,6 +128,10 @@ public interface CmisObject {
       RelationshipDirection relationshipDirection, ObjectType type, OperationContext context,
       int itemsPerPage);
 
+  // renditions
+
+  List<Rendition> getRenditions();
+
   // policy service
 
   void applyPolicy(Policy policy);

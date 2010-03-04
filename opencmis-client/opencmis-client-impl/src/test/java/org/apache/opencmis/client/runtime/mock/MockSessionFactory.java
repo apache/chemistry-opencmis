@@ -44,6 +44,8 @@ import org.apache.opencmis.client.api.FileableCmisObject;
 import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Property;
+import org.apache.opencmis.client.api.QueryProperty;
+import org.apache.opencmis.client.api.QueryResult;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
 import org.apache.opencmis.client.api.objecttype.DocumentType;
@@ -185,9 +187,11 @@ public class MockSessionFactory implements SessionFactory {
 		expect(session.getContentChanges(null, -1)).andReturn(plce).anyTimes();
 
 		/* query support */
-		List<CmisObject> queryList = new ArrayList<CmisObject>(
-				this.idObjectIndex.values());
-		PagingList<CmisObject> plq = this.createMockPaging(queryList);
+		List<QueryResult> queryList = new ArrayList<QueryResult>();
+		for(CmisObject cm :this.idObjectIndex.values()) {
+		  queryList.add(createMockQueryResult(cm));
+		}
+		PagingList<QueryResult> plq = this.createMockPaging(queryList);
 		expect(session.query(Fixture.QUERY, false, -1)).andReturn(plq)
 				.anyTimes();
 
@@ -553,6 +557,13 @@ public class MockSessionFactory implements SessionFactory {
 		return f;
 	}
 
+	private QueryResult createMockQueryResult(CmisObject cmisObject) {
+	  QueryResult qr = createNiceMock(QueryResult.class);
+  
+	  return qr;
+	}
+	
+	
 	@SuppressWarnings( { "unchecked" })
 	private <T> PagingList<T> createMockPaging(List<T> items) {
 		PagingList<T> pl = createNiceMock(PagingList.class);
