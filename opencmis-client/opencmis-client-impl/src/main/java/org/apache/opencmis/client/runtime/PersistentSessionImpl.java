@@ -564,9 +564,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
       rootFolder = this.getRootFolder();
     }
 
-    PropertyIdDefinitionImpl objectIdPropertyType = new PropertyIdDefinitionImpl();
-    objectIdPropertyType.setId(CmisProperties.OBJECT_ID.value());
-    objectIdPropertyType.setCardinality(Cardinality.SINGLE);
+    PropertyIdDefinitionImpl objectTypeIdPropertyType = new PropertyIdDefinitionImpl();
+    objectTypeIdPropertyType.setId(CmisProperties.OBJECT_TYPE_ID.value());
+    objectTypeIdPropertyType.setCardinality(Cardinality.SINGLE);
 
     PropertyStringDefinitionImpl namePropertyType = new PropertyStringDefinitionImpl();
     namePropertyType.setId(CmisProperties.NAME.value());
@@ -577,7 +577,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     Property<String> nameProperty = this.getPropertyFactory().createProperty(namePropertyType,
         UUID.randomUUID().toString());
     properties.add(nameProperty);
-    Property<String> typeProperty = this.getPropertyFactory().createProperty(objectIdPropertyType,
+    Property<String> typeProperty = this.getPropertyFactory().createProperty(objectTypeIdPropertyType,
         folderTypeId);
     properties.add(typeProperty);
 

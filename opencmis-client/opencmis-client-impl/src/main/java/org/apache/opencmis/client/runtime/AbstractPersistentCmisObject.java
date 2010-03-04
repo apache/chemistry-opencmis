@@ -76,7 +76,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       throw new IllegalArgumentException("Object type must be set!");
     }
 
-    if (objectType.getPropertyDefintions().size() >= 9) {
+    if (objectType.getPropertyDefintions().size() < 9) {
       // there must be at least the 9 standard properties that all objects have
       throw new IllegalArgumentException("Object type must have property defintions!");
     }
@@ -216,7 +216,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getBaseTypeId()
    */
   public BaseObjectTypeIds getBaseTypeId() {
-    return getPropertyValue(PropertyIds.CMIS_BASE_TYPE_ID);
+    return BaseObjectTypeIds.fromValue((String)getPropertyValue(PropertyIds.CMIS_BASE_TYPE_ID));
   }
 
   /*

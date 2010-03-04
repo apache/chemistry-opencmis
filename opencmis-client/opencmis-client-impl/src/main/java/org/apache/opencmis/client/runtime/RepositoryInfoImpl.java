@@ -125,7 +125,7 @@ public class RepositoryInfoImpl implements RepositoryInfo, Serializable {
 	}
 
 	public String getProductVersion() {
-		return this.getProductVersion();
+		return this.riData.getProductVersion();
 	}
 
 	public String getRootFolderId() {

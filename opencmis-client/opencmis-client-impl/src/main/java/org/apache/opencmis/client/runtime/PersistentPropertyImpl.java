@@ -67,9 +67,9 @@ public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
       throw new IllegalArgumentException("Values must be set!");
     }
 
-    if (values.isEmpty()) {
-      throw new IllegalArgumentException("Values must not be empyt!");
-    }
+//    if (values.isEmpty()) {
+//      throw new IllegalArgumentException("Values must not be empyt!");
+//    }
 
     this.type = type;
     this.values = values;
@@ -100,10 +100,16 @@ public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
   }
 
   public T getValue() {
+    if (this.values.size() == 0) {
+        return null;
+    }
     return this.values.get(0);
   }
 
   public String getValueAsString() {
+    if (this.values.size() == 0) {
+        return null;
+    }
     switch (this.type.getPropertyType()) {
     default:
       return this.values.get(0).toString();
@@ -111,6 +117,9 @@ public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
   }
 
   public List<T> getValues() {
+    if (this.values.size() == 0) {
+        return null;
+    }
     return this.values;
   }
 
