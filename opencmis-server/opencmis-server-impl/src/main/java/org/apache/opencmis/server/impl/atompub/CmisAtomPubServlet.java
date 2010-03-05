@@ -166,24 +166,15 @@ public class CmisAtomPubServlet extends HttpServlet {
   protected void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    // create a context object
+    // create a context object, dispatch and handle exceptions
     CallContext context = null;
     try {
       context = createContext(request);
-    }
-    catch (Exception e) {
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Context creation failed: "
-          + e.getMessage());
-      return;
-    }
-
-    // dispatch and handle exceptions
-    try {
       dispatch(context, request, response);
     }
     catch (Exception e) {
       if (e instanceof CmisPermissionDeniedException) {
-        if (context.getUsername() == null) {
+        if ((context == null) || (context.getUsername() == null)) {
           response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\"");
           response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
         }
