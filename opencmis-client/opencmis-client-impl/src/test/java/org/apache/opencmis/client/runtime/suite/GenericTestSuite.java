@@ -18,17 +18,6 @@
  */
 package org.apache.opencmis.client.runtime.suite;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Map.Entry;
-
-import org.apache.opencmis.client.api.SessionFactory;
-import org.apache.opencmis.client.runtime.Fixture;
 import org.apache.opencmis.client.runtime.ReadOnlyAclCapabilityTest;
 import org.apache.opencmis.client.runtime.ReadOnlyContentStreamTest;
 import org.apache.opencmis.client.runtime.ReadOnlyCreateSessionTest;
@@ -38,9 +27,7 @@ import org.apache.opencmis.client.runtime.ReadOnlyObjectTest;
 import org.apache.opencmis.client.runtime.ReadOnlyRepositoryInfoTest;
 import org.apache.opencmis.client.runtime.ReadOnlySessionTest;
 import org.apache.opencmis.client.runtime.ReadOnlyTypeTest;
-import org.apache.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.opencmis.client.runtime.misc.CacheTest;
-import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
@@ -54,7 +41,7 @@ import org.junit.runners.model.RunnerBuilder;
  * parameter is specified then session parameters are read from this file else
  * the whole environment variable map is used for session parameter. All entries
  * have to follow the {@code org.apache.opencmis...} convention as defined in
- * class {@code SessionParameter0
+ * class {@code SessionParameter}
  */
 @RunWith(GenericTestSuite.class)
 @SuiteClasses( { CacheTest.class, ReadOnlyCreateSessionTest.class,
