@@ -37,7 +37,7 @@ import org.apache.opencmis.commons.provider.CmisProvider;
 public class SessionFactory {
 
   private static final String HOST = "localhost";
-  private static final int PORT = 9080;
+  private static final int PORT = 19080;
 
   private static final String REPOSITORY_ID = "test";
   private static final String USER = "test";
