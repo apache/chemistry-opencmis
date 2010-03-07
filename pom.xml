@@ -56,9 +56,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:svn:https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</connection>
-		<developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</developerConnection>
-		<url>https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk/</url>
+		<connection>$ svn checkout http://svn.apache.org/repos/asf/incubator/chemistry/trunk/opencmis</connection>
+		<developerConnection>$ svn checkout https://svn.apache.org/repos/asf/incubator/chemistry/trunk/opencmis</developerConnection>
+		<url>http://svn.apache.org/viewvc/incubator/chemistry/trunk/opencmis/</url>
 	</scm>
 
 	<issueManagement>
