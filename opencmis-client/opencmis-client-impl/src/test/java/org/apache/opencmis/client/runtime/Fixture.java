@@ -31,6 +31,8 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
 import org.apache.opencmis.client.api.util.Testable;
@@ -43,6 +45,8 @@ import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
  * 
  */
 public class Fixture {
+
+	private static Log log = LogFactory.getLog(Fixture.class);
 
 	public static String PROPERTY_FILTER = "*";
 	/*
@@ -162,7 +166,7 @@ public class Fixture {
 	public static void init() {
 		/* get optional path from system properties */
 		String pathname = System.getProperty(Fixture.CONFIG_PATH);
-		pathname = (pathname != null) ? pathname.trim() : null; 
+		pathname = (pathname != null) ? pathname.trim() : null;
 		Properties properties = null;
 		Map<String, String> sessionParameter = null;
 		SessionFactory factory = null;
@@ -203,14 +207,12 @@ public class Fixture {
 				factory = SessionFactoryImpl.newInstance();
 			}
 			Fixture.setSessionFactory(factory);
-		} catch (InstantiationException e) {
-			throw new CmisRuntimeException(factoryClassName, e);
-		} catch (IllegalAccessException e) {
-			throw new CmisRuntimeException(factoryClassName, e);
-		} catch (ClassNotFoundException e) {
-			throw new CmisRuntimeException(factoryClassName, e);
 		} catch (IOException e) {
+			Fixture.log.error(pathname, e);
 			throw new CmisRuntimeException(pathname, e);
+		} catch (Exception e) {
+			Fixture.log.error(factoryClassName, e);
+			throw new CmisRuntimeException(factoryClassName, e);
 		}
 	}
 
@@ -230,4 +232,31 @@ public class Fixture {
 			((Testable) session).cleanUpTestData();
 		}
 	}
+
+	private static boolean isLogged = false;
+
+	public static void logHeader() {
+		if (!Fixture.isLogged) {
+			/*
+			 * log header only once
+			 */
+			Fixture.log
+					.info("---------------------------------------------------------------");
+			Fixture.log
+					.info("--- OpenCMIS Client Test Suite --------------------------------");
+			Fixture.log
+					.info("---------------------------------------------------------------");
+			Fixture.log.info("config path (prop): "
+					+ System.getProperty(Fixture.CONFIG_PATH));
+			Fixture.log.info("session factory:    "
+					+ Fixture.getSessionFactory().getClass());
+			Fixture.log.info("session parameter:  " + Fixture.getParamter());
+
+			Fixture.log
+					.info("---------------------------------------------------------------");
+
+			Fixture.isLogged = true;
+		}
+	}
+
 }
