@@ -150,7 +150,7 @@
 		<module>opencmis-server/opencmis-server-support</module>
 		<module>opencmis-server/opencmis-server-inmemory</module>
 		<module>opencmis-server/opencmis-server-fileshare</module>
-		<!-- 		<module>opencmis-test/opencmis-test-fit</module> -->
+		<module>opencmis-test/opencmis-test-fit</module> 
 		<module>opencmis-test/opencmis-test-tck</module>
 		<module>opencmis-test/opencmis-test-tools</module>
 		<module>opencmis-test/opencmis-test-util</module>
