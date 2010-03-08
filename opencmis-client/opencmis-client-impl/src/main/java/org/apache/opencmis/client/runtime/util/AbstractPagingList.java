@@ -254,7 +254,7 @@ public abstract class AbstractPagingList<T> implements PagingList<T> {
         hasMoreItems = next.getHasMoreItems().booleanValue();
       }
 
-      return (next == null ? null : next.getPage());
+      return next.getPage();
     }
 
     public void remove() {

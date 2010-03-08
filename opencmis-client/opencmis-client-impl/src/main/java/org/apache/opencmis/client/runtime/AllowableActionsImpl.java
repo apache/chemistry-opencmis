@@ -18,6 +18,7 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.opencmis.client.api.AllowableActions;
@@ -26,7 +27,9 @@ import org.apache.opencmis.commons.provider.AllowableActionsData;
 /**
  * Allowable actions implementation.
  */
-public class AllowableActionsImpl implements AllowableActions {
+public class AllowableActionsImpl implements AllowableActions, Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private Map<String, Boolean> actions;
 

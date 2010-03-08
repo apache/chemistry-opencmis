@@ -18,6 +18,7 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.opencmis.client.api.Ace;
@@ -25,7 +26,9 @@ import org.apache.opencmis.client.api.Ace;
 /**
  * ACE implementation.
  */
-public class AceImpl implements Ace {
+public class AceImpl implements Ace, Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private String principalId;
   private List<String> permissions;

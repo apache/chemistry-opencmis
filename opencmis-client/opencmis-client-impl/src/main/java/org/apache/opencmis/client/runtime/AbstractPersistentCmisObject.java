@@ -231,7 +231,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getBaseTypeId()
    */
   public BaseObjectTypeIds getBaseTypeId() {
-    return BaseObjectTypeIds.fromValue((String)getPropertyValue(PropertyIds.CMIS_BASE_TYPE_ID));
+    return BaseObjectTypeIds.fromValue((String) getPropertyValue(PropertyIds.CMIS_BASE_TYPE_ID));
   }
 
   /*
@@ -385,7 +385,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     if ((value == null) || (value.isEmpty())) {
       typeMatch = true;
-      if (value.isEmpty()) {
+      if (value != null) {
         value = null;
       }
     }
