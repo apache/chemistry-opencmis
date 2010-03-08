@@ -51,8 +51,6 @@
 					</archive>
 					<overlays>
 						<overlay>
-						</overlay>
-						<overlay>
 							<groupId>org.opencmis</groupId>
 							<artifactId>opencmis-test-browser</artifactId>
 						</overlay>
@@ -68,7 +66,7 @@
 			<groupId>org.opencmis</groupId>
 			<artifactId>opencmis-test-browser</artifactId>
 			<version>${version}</version>
-			<type>jar</type>
+			<type>war</type>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
