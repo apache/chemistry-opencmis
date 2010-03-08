@@ -68,7 +68,7 @@
 			<groupId>org.opencmis</groupId>
 			<artifactId>opencmis-test-browser</artifactId>
 			<version>${version}</version>
-			<type>war</type>
+			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
