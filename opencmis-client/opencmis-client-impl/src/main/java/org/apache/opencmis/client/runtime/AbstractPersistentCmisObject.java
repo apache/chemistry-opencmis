@@ -627,7 +627,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         // fetch the relationships
         ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(),
             objectId, includeSubRelationshipTypes, relationshipDirection, typeId, ctxt
-                .getFullFilter(), ctxt.getIncludeAllowableActions(), BigInteger
+                .getFilterString(), ctxt.isIncludeAllowableActions(), BigInteger
                 .valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
 
         // convert relationship objects
@@ -679,9 +679,10 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     // get the latest data from the repository
     ObjectData objectData = getSession().getProvider().getObjectService().getObject(
-        getRepositoryId(), objectId, context.getFullFilter(), context.getIncludeAllowableActions(),
-        context.getIncludeRelationships(), context.getRenditionFilter(),
-        context.getIncludePolicies(), context.getIncludeAcls(), null);
+        getRepositoryId(), objectId, context.getFilterString(),
+        context.isIncludeAllowableActions(), context.getIncludeRelationships(),
+        context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(),
+        null);
 
     // reset this object
     initialize(getSession(), getObjectType(), objectData);

@@ -169,8 +169,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
         // get checked out documents for this folder
         ObjectList checkedOutDocs = nagivationService.getCheckedOutDocs(getRepositoryId(),
-            objectId, ctxt.getFullFilter(), ctxt.getOrderBy(), ctxt.getIncludeAllowableActions(),
-            ctxt.getIncludeRelationships(), ctxt.getRenditionFilter(), BigInteger
+            objectId, ctxt.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(),
+            ctxt.getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger
                 .valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
 
         // convert objects
@@ -231,9 +231,9 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
         // get the children
         ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId,
-            ctxt.getFullFilter(), ctxt.getOrderBy(), ctxt.getIncludeAllowableActions(), ctxt
-                .getIncludeRelationships(), ctxt.getRenditionFilter(), ctxt
-                .getIncludePathSegments(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
+            ctxt.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
+                .getIncludeRelationships(), ctxt.getRenditionFilterString(), ctxt
+                .isIncludePathSegments(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
                 .valueOf(skipCount), null);
 
         // convert objects
@@ -275,9 +275,9 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     // get the descendants
     List<ObjectInFolderContainer> providerContainerList = getProvider().getNavigationService()
         .getDescendants(getRepositoryId(), objectId, BigInteger.valueOf(depth),
-            context.getFullFilter(), context.getIncludeAllowableActions(),
-            context.getIncludeRelationships(), context.getRenditionFilter(),
-            context.getIncludePathSegments(), null);
+            context.getFilterString(), context.isIncludeAllowableActions(),
+            context.getIncludeRelationships(), context.getRenditionFilterString(),
+            context.isIncludePathSegments(), null);
 
     return convertProviderContainer(providerContainerList);
   }
@@ -297,9 +297,9 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     // get the folder tree
     List<ObjectInFolderContainer> providerContainerList = getProvider().getNavigationService()
         .getFolderTree(getRepositoryId(), objectId, BigInteger.valueOf(depth),
-            context.getFullFilter(), context.getIncludeAllowableActions(),
-            context.getIncludeRelationships(), context.getRenditionFilter(),
-            context.getIncludePathSegments(), null);
+            context.getFilterString(), context.isIncludeAllowableActions(),
+            context.getIncludeRelationships(), context.getRenditionFilterString(),
+            context.isIncludePathSegments(), null);
 
     return convertProviderContainer(providerContainerList);
   }
@@ -342,9 +342,25 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
   /*
    * (non-Javadoc)
    * 
+   * @see org.apache.opencmis.client.api.Folder#isRootFolder()
+   */
+  public boolean isRootFolder() {
+    String objectId = getObjectId();
+    String rootFolderId = getSession().getRepositoryInfo().getRootFolderId();
+
+    return objectId.equals(rootFolderId);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.apache.opencmis.client.api.Folder#getFolderParent()
    */
   public Folder getFolderParent() {
+    if (isRootFolder()) {
+      return null;
+    }
+
     List<Folder> parents = getParents();
 
     if ((parents == null) || (parents.isEmpty())) {
@@ -360,6 +376,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * @see org.apache.opencmis.client.api.Folder#getPath()
    */
   public String getPath() {
+    if (isRootFolder()) {
+      return "/";
+    }
+
     List<String> paths = getPaths();
     if ((paths == null) || (paths.isEmpty())) {
       return null;

@@ -20,6 +20,7 @@ package org.apache.opencmis.client.api;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
@@ -66,10 +67,10 @@ public interface Session {
   /**
    * Creates an operation context object.
    */
-  OperationContext createOperationContext(String filter, boolean includeAcls,
+  OperationContext createOperationContext(Set<String> filter, boolean includeAcls,
       boolean includeAllowableActions, boolean includePolicies,
-      IncludeRelationships includeRelationships, String renditionFilter,
-      boolean includePathSegments, String orderBy);
+      IncludeRelationships includeRelationships, Set<String> renditionFilter,
+      boolean includePathSegments, String orderBy, boolean cacheEnabled);
 
   // localization
 

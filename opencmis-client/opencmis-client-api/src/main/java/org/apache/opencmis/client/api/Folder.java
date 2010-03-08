@@ -67,6 +67,8 @@ public interface Folder extends FileableCmisObject {
 
   PagingList<CmisObject> getChildren(OperationContext context, int itemsPerPage);
 
+  boolean isRootFolder();
+  
   Folder getFolderParent();
 
   String getPath();

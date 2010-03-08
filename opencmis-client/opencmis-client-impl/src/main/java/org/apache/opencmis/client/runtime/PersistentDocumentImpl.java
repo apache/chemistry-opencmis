@@ -138,7 +138,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     String objectId = getObjectId();
 
     List<ObjectData> versions = getProvider().getVersioningService().getAllVersions(
-        getRepositoryId(), objectId, context.getFullFilter(), context.getIncludeAllowableActions(),
+        getRepositoryId(), objectId, context.getFilterString(), context.isIncludeAllowableActions(),
         null);
 
     ObjectFactory objectFactory = getSession().getObjectFactory();

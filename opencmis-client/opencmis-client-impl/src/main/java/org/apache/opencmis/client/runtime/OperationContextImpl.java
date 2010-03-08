@@ -19,6 +19,9 @@
 package org.apache.opencmis.client.runtime;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.commons.PropertyIds;
@@ -31,77 +34,120 @@ public class OperationContextImpl implements OperationContext, Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String filter;
+  private TreeSet<String> filter;
   private boolean includeAcls;
   private boolean includeAllowableActions;
   private boolean includePolicies;
   private IncludeRelationships includeRelationships;
-  private String renditionFilter;
+  private TreeSet<String> renditionFilter;
   private boolean includePathSegments;
   private String orderBy;
+  private boolean cacheEnabled;
 
   public OperationContextImpl() {
-    this.filter = null;
-    this.includeAcls = false;
-    this.includeAllowableActions = true;
-    this.includePolicies = true;
-    this.includeRelationships = IncludeRelationships.NONE;
-    this.renditionFilter = null;
-    this.includePathSegments = true;
-    this.orderBy = null;
+    setFilter(null);
+    setIncludeAcls(false);
+    setIncludeAllowableActions(true);
+    setIncludePolicies(false);
+    setIncludeRelationships(IncludeRelationships.NONE);
+    setRenditionFilter(null);
+    setIncludePathSegments(true);
+    setOrderBy(null);
+    setCacheEnabled(false);
   }
 
   public OperationContextImpl(OperationContext source) {
-    this.filter = source.getFilter();
-    this.includeAcls = source.getIncludeAcls();
-    this.includeAllowableActions = source.getIncludeAllowableActions();
-    this.includePolicies = source.getIncludePolicies();
-    this.includeRelationships = source.getIncludeRelationships();
-    this.renditionFilter = source.getRenditionFilter();
-    this.includePathSegments = source.getIncludePathSegments();
-    this.orderBy = source.getOrderBy();
+    setFilter(source.getFilter());
+    setIncludeAcls(source.isIncludeAcls());
+    setIncludeAllowableActions(source.isIncludeAllowableActions());
+    setIncludePolicies(source.isIncludePolicies());
+    setIncludeRelationships(source.getIncludeRelationships());
+    setRenditionFilter(source.getRenditionFilter());
+    setIncludePathSegments(source.isIncludePathSegments());
+    setOrderBy(source.getOrderBy());
+    setCacheEnabled(source.isCacheEnabled());
   }
 
-  public OperationContextImpl(String filter, boolean includeAcls, boolean includeAllowableActions,
-      boolean includePolicies, IncludeRelationships includeRelationships, String renditionFilter,
-      boolean includePathSegments, String orderBy) {
-    this.filter = filter;
-    this.includeAcls = includeAcls;
-    this.includeAllowableActions = includeAllowableActions;
-    this.includePolicies = includePolicies;
-    this.includeRelationships = includeRelationships;
-    this.renditionFilter = renditionFilter;
-    this.includePathSegments = includePathSegments;
-    this.orderBy = orderBy;
+  public OperationContextImpl(Set<String> propertyFilter, boolean includeAcls,
+      boolean includeAllowableActions, boolean includePolicies,
+      IncludeRelationships includeRelationships, Set<String> renditionFilter,
+      boolean includePathSegments, String orderBy, boolean cacheEnabled) {
+    setFilter(filter);
+    setIncludeAcls(includeAcls);
+    setIncludeAllowableActions(includeAllowableActions);
+    setIncludePolicies(includePolicies);
+    setIncludeRelationships(includeRelationships);
+    setRenditionFilter(renditionFilter);
+    setIncludePathSegments(includePathSegments);
+    setOrderBy(orderBy);
+    setCacheEnabled(cacheEnabled);
   }
 
-  public String getFilter() {
-    return this.filter;
+  public Set<String> getFilter() {
+    return Collections.unmodifiableSet(this.filter);
   }
 
-  public void setFilter(String filter) {
-    this.filter = filter;
-  }
+  public void setFilter(Set<String> propertyFilter) {
+    if (propertyFilter != null) {
+      TreeSet<String> tempSet = new TreeSet<String>();
 
-  public String getFullFilter() {
-    String fullFilter = filter;
+      for (String oid : propertyFilter) {
+        if (oid == null) {
+          continue;
+        }
 
-    if ((fullFilter != null) && (fullFilter.indexOf('*') == -1)) {
-      if (fullFilter.indexOf(PropertyIds.CMIS_OBJECT_ID) == -1) {
-        fullFilter = PropertyIds.CMIS_OBJECT_ID + "," + fullFilter;
+        String toid = oid.trim();
+        if (toid.length() == 0) {
+          continue;
+        }
+        if (toid.equals("*")) {
+          tempSet = new TreeSet<String>();
+          tempSet.add("*");
+          break;
+        }
+
+        tempSet.add(toid);
       }
-      if (fullFilter.indexOf(PropertyIds.CMIS_BASE_TYPE_ID) == -1) {
-        fullFilter = PropertyIds.CMIS_BASE_TYPE_ID + "," + fullFilter;
+
+      if (tempSet.size() == 0) {
+        this.filter = null;
       }
-      if (fullFilter.indexOf(PropertyIds.CMIS_OBJECT_TYPE_ID) == -1) {
-        fullFilter = PropertyIds.CMIS_OBJECT_TYPE_ID + "," + fullFilter;
+      else {
+        this.filter = tempSet;
       }
     }
-
-    return fullFilter;
+    else {
+      this.filter = null;
+    }
   }
 
-  public boolean getIncludeAcls() {
+  public String getFilterString() {
+    if (this.filter == null) {
+      return null;
+    }
+
+    if (this.filter.contains("*")) {
+      return "*";
+    }
+
+    this.filter.add(PropertyIds.CMIS_OBJECT_ID);
+    this.filter.add(PropertyIds.CMIS_BASE_TYPE_ID);
+    this.filter.add(PropertyIds.CMIS_OBJECT_TYPE_ID);
+
+    StringBuilder sb = new StringBuilder();
+
+    for (String oid : this.filter) {
+      if (sb.length() > 0) {
+        sb.append(",");
+      }
+
+      sb.append(oid);
+    }
+
+    return sb.toString();
+  }
+
+  public boolean isIncludeAcls() {
     return includeAcls;
   }
 
@@ -109,7 +155,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
     this.includeAcls = include;
   }
 
-  public boolean getIncludeAllowableActions() {
+  public boolean isIncludeAllowableActions() {
     return this.includeAllowableActions;
   }
 
@@ -117,7 +163,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
     this.includeAllowableActions = include;
   }
 
-  public boolean getIncludePolicies() {
+  public boolean isIncludePolicies() {
     return this.includePolicies;
   }
 
@@ -133,15 +179,57 @@ public class OperationContextImpl implements OperationContext, Serializable {
     this.includeRelationships = include;
   }
 
-  public String getRenditionFilter() {
-    return this.renditionFilter;
+  public Set<String> getRenditionFilter() {
+    return Collections.unmodifiableSet(this.renditionFilter);
   }
 
-  public void setRenditionFilter(String filter) {
-    this.renditionFilter = filter;
+  public void setRenditionFilter(Set<String> renditionFilter) {
+    TreeSet<String> tempSet = new TreeSet<String>();
+
+    if (renditionFilter != null) {
+      for (String rf : renditionFilter) {
+        if (rf == null) {
+          continue;
+        }
+
+        String trf = rf.trim();
+        if (trf.length() == 0) {
+          continue;
+        }
+
+        tempSet.add(trf);
+      }
+
+      if (tempSet.size() == 0) {
+        tempSet.add("cmis:none");
+      }
+    }
+    else {
+      tempSet.add("cmis:none");
+    }
+
+    this.renditionFilter = tempSet;
   }
 
-  public boolean getIncludePathSegments() {
+  public String getRenditionFilterString() {
+    if (this.renditionFilter == null) {
+      return null;
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    for (String rf : this.renditionFilter) {
+      if (sb.length() > 0) {
+        sb.append(",");
+      }
+
+      sb.append(rf);
+    }
+
+    return sb.toString();
+  }
+
+  public boolean isIncludePathSegments() {
     return includePathSegments;
   }
 
@@ -157,4 +245,16 @@ public class OperationContextImpl implements OperationContext, Serializable {
     this.orderBy = orderBy;
   }
 
+  public boolean isCacheEnabled() {
+    return cacheEnabled;
+  }
+
+  public void setCacheEnabled(boolean cacheEnabled) {
+    this.cacheEnabled = cacheEnabled;
+  }
+
+  public String getCacheKey() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

@@ -18,24 +18,26 @@
  */
 package org.apache.opencmis.client.api;
 
+import java.util.Set;
+
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 
 public interface OperationContext {
 
-  String getFilter();
+  Set<String> getFilter();
 
-  void setFilter(String filter);
+  void setFilter(Set<String> propertyFilter);
 
   /**
    * Returns the filter extended by cmis:objectId, cmis:objectTypeId and cmis:baseTypeId.
    */
-  String getFullFilter();
+  String getFilterString();
 
-  boolean getIncludeAllowableActions();
+  boolean isIncludeAllowableActions();
 
   void setIncludeAllowableActions(boolean include);
 
-  boolean getIncludeAcls();
+  boolean isIncludeAcls();
 
   void setIncludeAcls(boolean include);
 
@@ -43,15 +45,17 @@ public interface OperationContext {
 
   void setIncludeRelationships(IncludeRelationships include);
 
-  boolean getIncludePolicies();
+  boolean isIncludePolicies();
 
   void setIncludePolicies(boolean include);
 
-  String getRenditionFilter();
+  Set<String> getRenditionFilter();
 
-  void setRenditionFilter(String filter);
+  void setRenditionFilter(Set<String> renditionFilter);
 
-  boolean getIncludePathSegments();
+  String getRenditionFilterString();
+
+  boolean isIncludePathSegments();
 
   void setIncludePathSegments(boolean include);
 
@@ -59,4 +63,9 @@ public interface OperationContext {
 
   void setOrderBy(String orderBy);
 
+  boolean isCacheEnabled();
+
+  void setCacheEnabled(boolean cacheEnabled);
+
+  String getCacheKey();
 }

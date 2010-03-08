@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.logging.Log;
@@ -74,7 +75,7 @@ import org.apache.opencmis.util.repository.ObjectGenerator;
 public class PersistentSessionImpl implements PersistentSession, Testable, Serializable {
 
   private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false,
-      true, false, IncludeRelationships.NONE, null, true, null);
+      true, false, IncludeRelationships.NONE, null, true, null, true);
 
   private static Log log = LogFactory.getLog(PersistentSessionImpl.class);
 
@@ -248,8 +249,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
 
         // get all checked out documents
         ObjectList checkedOutDocs = nagivationService.getCheckedOutDocs(getRepositoryId(), null,
-            ctxt.getFullFilter(), ctxt.getOrderBy(), ctxt.getIncludeAllowableActions(), ctxt
-                .getIncludeRelationships(), ctxt.getRenditionFilter(), BigInteger
+            ctxt.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
+                .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger
                 .valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
 
         // convert objects
@@ -307,16 +308,16 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Session#createOperationContext(java.lang.String, boolean,
-   * boolean, boolean, org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-   * boolean, java.lang.String)
+   * @see org.apache.opencmis.client.api.Session#createOperationContext(java.util.Set, boolean,
+   * boolean, boolean, org.apache.opencmis.commons.enums.IncludeRelationships, java.util.Set,
+   * boolean, java.lang.String, boolean)
    */
-  public OperationContext createOperationContext(String filter, boolean includeAcls,
+  public OperationContext createOperationContext(Set<String> filter, boolean includeAcls,
       boolean includeAllowableActions, boolean includePolicies,
-      IncludeRelationships includeRelationships, String renditionFilter,
-      boolean includePathSegments, String orderBy) {
+      IncludeRelationships includeRelationships, Set<String> renditionFilter,
+      boolean includePathSegments, String orderBy, boolean cacheEnabled) {
     return new OperationContextImpl(filter, includeAcls, includeAllowableActions, includePolicies,
-        includeRelationships, renditionFilter, includePathSegments, orderBy);
+        includeRelationships, renditionFilter, includePathSegments, orderBy, cacheEnabled);
   }
 
   public Locale getLocale() {
@@ -344,9 +345,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     }
 
     ObjectData objectData = this.provider.getObjectService().getObject(getRepositoryId(), objectId,
-        context.getFullFilter(), context.getIncludeAllowableActions(),
-        context.getIncludeRelationships(), context.getRenditionFilter(),
-        context.getIncludePolicies(), context.getIncludeAcls(), null);
+        context.getFilterString(), context.isIncludeAllowableActions(),
+        context.getIncludeRelationships(), context.getRenditionFilterString(),
+        context.isIncludePolicies(), context.isIncludeAcls(), null);
 
     return getObjectFactory().convertObject(objectData);
   }
@@ -372,9 +373,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     }
 
     ObjectData objectData = this.provider.getObjectService().getObjectByPath(getRepositoryId(),
-        path, context.getFullFilter(), context.getIncludeAllowableActions(),
-        context.getIncludeRelationships(), context.getRenditionFilter(),
-        context.getIncludePolicies(), context.getIncludeAcls(), null);
+        path, context.getFilterString(), context.isIncludeAllowableActions(),
+        context.getIncludeRelationships(), context.getRenditionFilterString(),
+        context.isIncludePolicies(), context.isIncludeAcls(), null);
 
     return getObjectFactory().convertObject(objectData);
   }
@@ -546,8 +547,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
 
         // fetch the data
         ObjectList resultList = discoveryService.query(getRepositoryId(), statement,
-            searchAllVersions, ctxt.getIncludeAllowableActions(), ctxt.getIncludeRelationships(),
-            ctxt.getRenditionFilter(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
+            searchAllVersions, ctxt.isIncludeAllowableActions(), ctxt.getIncludeRelationships(),
+            ctxt.getRenditionFilterString(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
                 .valueOf(skipCount), null);
 
         // convert type definitions
@@ -628,8 +629,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     Property<String> nameProperty = this.getPropertyFactory().createProperty(namePropertyType,
         UUID.randomUUID().toString());
     properties.add(nameProperty);
-    Property<String> typeProperty = this.getPropertyFactory().createProperty(objectTypeIdPropertyType,
-        folderTypeId);
+    Property<String> typeProperty = this.getPropertyFactory().createProperty(
+        objectTypeIdPropertyType, folderTypeId);
     properties.add(typeProperty);
 
     this.testRootFolder = rootFolder.createFolder(properties, null, null, null);

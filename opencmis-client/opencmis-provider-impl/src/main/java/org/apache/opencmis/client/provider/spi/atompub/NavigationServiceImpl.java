@@ -301,7 +301,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
     String link = loadLink(repositoryId, objectId, Constants.REL_UP, Constants.MEDIATYPE_FEED);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or folder!");
+      throw new CmisObjectNotFoundException("Unknown repository or folder or object has no parents!");
     }
 
     UrlBuilder url = new UrlBuilder(link);
