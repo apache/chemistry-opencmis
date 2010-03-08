@@ -25,10 +25,9 @@
     </dependency>
     <dependency>
       <groupId>org.opencmis</groupId>
-      <artifactId>opencmis-server-impl</artifactId>
+      <artifactId>opencmis-commons-api</artifactId>
       <version>${version}</version>
-      <type>war</type>
-    </dependency>
+    </dependency>	
   </dependencies>
 
 </project>

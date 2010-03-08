@@ -141,12 +141,22 @@
   <dependencies>
     <dependency>
       <groupId>org.opencmis</groupId>
+      <artifactId>opencmis-commons-api</artifactId>
+      <version>${version}</version>
+    </dependency>  
+    <dependency>
+      <groupId>org.opencmis</groupId>
       <artifactId>opencmis-client-api</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.opencmis</groupId>
       <artifactId>opencmis-client-impl</artifactId>
+      <version>${version}</version>
+    </dependency>
+	<dependency>
+      <groupId>org.opencmis</groupId>
+      <artifactId>opencmis-provider-impl</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>
