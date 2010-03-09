@@ -18,6 +18,7 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +87,23 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   public Boolean isVersionSeriesCheckedOut() {
     return getPropertyValue(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT);
+  }
+
+  public long getContentStreamLength() {
+    BigInteger bigInt = getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_LENGTH);
+    return (bigInt == null) ? (long)-1 : bigInt.longValue();
+  }
+  
+  public String getContentStreamMimeType() {
+    return getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE);
+  }
+  
+  public String getContentStreamFileName() {
+    return getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME);
+  }
+  
+  public String getContentStreamId() {
+    return getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_ID);
   }
 
   // operations
