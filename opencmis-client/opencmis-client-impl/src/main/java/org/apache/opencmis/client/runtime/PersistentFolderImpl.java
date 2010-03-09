@@ -240,9 +240,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
         // convert objects
         List<CmisObject> page = new ArrayList<CmisObject>();
-        for (ObjectInFolderData objectData : children.getObjects()) {
-          if (objectData.getObject() != null) {
-            page.add(objectFactory.convertObject(objectData.getObject(), ctxt));
+        List<ObjectInFolderData> childObjects = children.getObjects();
+        if (childObjects != null) {
+          for (ObjectInFolderData objectData : childObjects) {
+            if (objectData.getObject() != null) {
+              page.add(objectFactory.convertObject(objectData.getObject(), ctxt));
+            }
           }
         }
 
