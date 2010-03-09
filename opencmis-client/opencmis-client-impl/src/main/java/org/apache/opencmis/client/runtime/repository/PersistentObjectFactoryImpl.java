@@ -27,13 +27,8 @@ import org.apache.opencmis.client.api.Acl;
 import org.apache.opencmis.client.api.AllowableActions;
 import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.ContentStream;
-import org.apache.opencmis.client.api.Document;
-import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.OperationContext;
-import org.apache.opencmis.client.api.Policy;
-import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.QueryResult;
-import org.apache.opencmis.client.api.Relationship;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.runtime.AceImpl;
@@ -47,7 +42,6 @@ import org.apache.opencmis.client.runtime.PersistentRelationshipImpl;
 import org.apache.opencmis.client.runtime.PersistentSessionImpl;
 import org.apache.opencmis.client.runtime.QueryResultImpl;
 import org.apache.opencmis.client.runtime.SessionUtil;
-import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.ObjectData;
 
@@ -80,44 +74,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
       InputStream stream) {
     return new ContentStreamImpl(filename, length, mimetype, stream);
   }
-
-  public Document createDocument(Folder parentfolder, String name) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public Document createDocument(List<Property<?>> properties, Folder parentfolder,
-      ContentStream contentstream, VersioningState versioningState, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public Document createDocumentFromSource(Document source, List<Property<?>> properties,
-      Folder parentfolder, VersioningState versioningState, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public Folder createFolder(Folder parent, List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs) {
-
-    PersistentFolderImpl f = new PersistentFolderImpl(this.session);
-
-    /* create folder in backend */
-    f.create(parent, properties, policies, addACEs, removeACEs);
-
-    return f;
-  }
-
-  public Policy createPolicy(List<Property<?>> properties, Folder parentfolder,
-      List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public Relationship createRelationship(List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
+  
   /**
    * Converts object data into an API object.
    */

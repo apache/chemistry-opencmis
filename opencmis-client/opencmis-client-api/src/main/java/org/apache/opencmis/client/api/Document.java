@@ -18,7 +18,6 @@
  */
 package org.apache.opencmis.client.api;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.opencmis.commons.enums.VersioningState;
@@ -32,9 +31,9 @@ public interface Document extends FileableCmisObject {
 
   ContentStream getContentStream();
 
-  void setContentStream(boolean overwrite, ContentStream contentStream);
+  String setContentStream(boolean overwrite, ContentStream contentStream);
 
-  void deleteContentStream();
+  String deleteContentStream();
 
   // versioning service
 
@@ -78,14 +77,13 @@ public interface Document extends FileableCmisObject {
   String getCheckinComment(); // cmis:checkinComment
 
   long getContentStreamLength(); // cmis:contentStreamLength
-  
+
   String getContentStreamMimeType(); // cmis:contentStreamMimeType
-  
+
   String getContentStreamFileName(); // cmis:contentStreamFileName
-  
+
   String getContentStreamId(); // cmis:contentStreamId
-  
-  
+
   /**
    * Shortcut for ObjectFactory.createDocumentFromSource(this, ...).
    * 

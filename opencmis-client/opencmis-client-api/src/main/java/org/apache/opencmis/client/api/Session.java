@@ -29,6 +29,7 @@ import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
+import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.provider.CmisProvider;
 
 /**
@@ -163,4 +164,22 @@ public interface Session {
    */
   PagingList<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage);
 
+  // create
+
+  String createDocument(List<Property<?>> properties, String folderId, ContentStream contentStream,
+      VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces);
+
+  String createDocumentFromSource(Document source, List<Property<?>> properties, String folderId,
+      VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces);
+
+  String createFolder(List<Property<?>> properties, String folderId, List<Policy> policies,
+      List<Ace> addAces, List<Ace> removeAces);
+
+  String createPolicy(List<Property<?>> properties, String folderId, List<Policy> policies,
+      List<Ace> addAces, List<Ace> removeAces);
+
+  String createRelationship(List<Property<?>> properties, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces);
 }

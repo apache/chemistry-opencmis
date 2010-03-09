@@ -30,6 +30,8 @@ import java.util.Map;
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
 import org.apache.opencmis.client.api.AllowableActions;
+import org.apache.opencmis.client.api.ContentStream;
+import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.QueryProperty;
 import org.apache.opencmis.client.api.Rendition;
@@ -59,6 +61,7 @@ import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.AccessControlEntry;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.AllowableActionsData;
+import org.apache.opencmis.commons.provider.ContentStreamData;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
@@ -298,6 +301,25 @@ public final class SessionUtil {
   }
 
   /**
+   * Converts policies.
+   */
+  public static List<String> convertPolicies(List<Policy> policies) {
+    if (policies == null) {
+      return null;
+    }
+
+    List<String> result = new ArrayList<String>();
+
+    for (Policy policy : policies) {
+      if ((policy != null) && (policy.getId() != null)) {
+        result.add(policy.getId());
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Converts rendition.
    */
   public static Rendition convertRendition(Session session, String objectId, RenditionData rendition) {
@@ -313,6 +335,23 @@ public final class SessionUtil {
     return new RenditionImpl(session, objectId, rendition.getStreamId(), rendition
         .getRenditionDocumentId(), rendition.getKind(), length, rendition.getMimeType(), rendition
         .getTitle(), height, width);
+  }
+
+  /**
+   * Converts a content stream.
+   */
+  public static ContentStreamData convertContentStream(Session session, ContentStream contentStream) {
+    if (contentStream == null) {
+      return null;
+    }
+
+    ProviderObjectFactory pof = session.getProvider().getObjectFactory();
+
+    BigInteger length = (contentStream.getLength() < 0 ? null : BigInteger.valueOf(contentStream
+        .getLength()));
+
+    return pof.createContentStream(length, contentStream.getMimeType(),
+        contentStream.getFileName(), contentStream.getStream());
   }
 
   /**

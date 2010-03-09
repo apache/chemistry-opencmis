@@ -32,21 +32,19 @@ import org.apache.opencmis.commons.enums.VersioningState;
 public interface Folder extends FileableCmisObject {
 
   // object service
-  Document createDocument(String name, String typeId);
-
-  Document createDocument(List<Property<?>> properties, ContentStream contentstream,
-      VersioningState versioningState, List<Policy> policies, List<Ace> addACEs,
-      List<Ace> removeACEs);
+  Document createDocument(List<Property<?>> properties, ContentStream contentStream,
+      VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces, OperationContext context);
 
   Document createDocumentFromSource(Document source, List<Property<?>> properties,
-      VersioningState versioningState, List<Policy> policies, List<Ace> addACEs,
-      List<Ace> removeACEs);
+      VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces, OperationContext context);
 
-  Folder createFolder(List<Property<?>> properties, List<Policy> policies, List<Ace> addACEs,
-      List<Ace> removeACEs);
+  Folder createFolder(List<Property<?>> properties, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces, OperationContext context);
 
-  Policy createPolicy(List<Property<?>> properties, List<Policy> policies, List<Ace> addACEs,
-      List<Ace> removeACEs);
+  Policy createPolicy(List<Property<?>> properties, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces, OperationContext context);
 
   /**
    * @return list of object ids which failed to be deleted
@@ -68,7 +66,7 @@ public interface Folder extends FileableCmisObject {
   PagingList<CmisObject> getChildren(OperationContext context, int itemsPerPage);
 
   boolean isRootFolder();
-  
+
   Folder getFolderParent();
 
   String getPath();

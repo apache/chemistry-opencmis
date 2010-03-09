@@ -57,26 +57,6 @@ public interface ObjectFactory {
 
   // object service
 
-  // shortcut
-  Document createDocument(Folder parentfolder, String name);
-
-  Document createDocument(List<Property<?>> properties, Folder parentfolder,
-      ContentStream contentstream, VersioningState versioningState, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs);
-
-  Document createDocumentFromSource(Document source, List<Property<?>> properties,
-      Folder parentfolder, VersioningState versioningState, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs);
-
-  Relationship createRelationship(List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs);
-
-  Policy createPolicy(List<Property<?>> properties, Folder parentfolder, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs);
-
-  Folder createFolder(Folder parent, List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs);
-
   CmisObject convertObject(ObjectData objectData, OperationContext context);
 
   QueryResult convertQueryResult(ObjectData objectData);

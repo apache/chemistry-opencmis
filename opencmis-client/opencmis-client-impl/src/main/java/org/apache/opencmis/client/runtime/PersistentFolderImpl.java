@@ -68,37 +68,132 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     initialize(session, objectType, objectData, context);
   }
 
-  public PersistentFolderImpl(PersistentSessionImpl session) {
-    initialize(session, null, null, null);
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#createDocument(java.util.List,
+   * org.apache.opencmis.client.api.ContentStream,
+   * org.apache.opencmis.commons.enums.VersioningState, java.util.List, java.util.List,
+   * java.util.List, org.apache.opencmis.client.api.OperationContext)
+   */
+  public Document createDocument(List<Property<?>> properties, ContentStream contentStream,
+      VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces, OperationContext context) {
+    String objectId = getObjectId();
+
+    String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
+        SessionUtil.convertProperties(getSession(), properties), objectId,
+        SessionUtil.convertContentStream(getSession(), contentStream), versioningState,
+        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(getSession(), addAces),
+        SessionUtil.convertAces(getSession(), removeAces), null);
+
+    // if no context is provided the object will not be fetched
+    if (context == null) {
+      return null;
+    }
+
+    // get the new object
+    CmisObject object = getSession().getObject(newId, context);
+    if (!(object instanceof Document)) {
+      throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
+    }
+
+    return (Document) object;
   }
 
-  public Document createDocument(String name, String typeId) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
-  public Document createDocument(List<Property<?>> properties, ContentStream contentstream,
-      VersioningState versioningState, List<Policy> policies, List<Ace> addACEs,
-      List<Ace> removeACEs) {
-    throw new CmisRuntimeException("not implemented");
-  }
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.apache.opencmis.client.api.Folder#createDocumentFromSource(org.apache.opencmis.client.api
+   * .Document, java.util.List, org.apache.opencmis.commons.enums.VersioningState, java.util.List,
+   * java.util.List, java.util.List, org.apache.opencmis.client.api.OperationContext)
+   */
   public Document createDocumentFromSource(Document source, List<Property<?>> properties,
-      VersioningState versioningState, List<Policy> policies, List<Ace> addACEs,
-      List<Ace> removeACEs) {
-    throw new CmisRuntimeException("not implemented");
+      VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces, OperationContext context) {
+    String objectId = getObjectId();
+
+    if ((source == null) || (source.getId() == null)) {
+      throw new IllegalArgumentException("Source document has no id!");
+    }
+
+    String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
+        source.getId(), SessionUtil.convertProperties(getSession(), properties), objectId,
+        versioningState, SessionUtil.convertPolicies(policies),
+        SessionUtil.convertAces(getSession(), addAces),
+        SessionUtil.convertAces(getSession(), removeAces), null);
+
+    // if no context is provided the object will not be fetched
+    if (context == null) {
+      return null;
+    }
+
+    // get the new object
+    CmisObject object = getSession().getObject(newId, context);
+    if (!(object instanceof Document)) {
+      throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
+    }
+
+    return (Document) object;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#createFolder(java.util.List, java.util.List,
+   * java.util.List, java.util.List, org.apache.opencmis.client.api.OperationContext)
+   */
   public Folder createFolder(List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs) {
+      List<Ace> addAces, List<Ace> removeAces, OperationContext context) {
+    String objectId = getObjectId();
 
-    Folder f = getSession().getObjectFactory().createFolder(this, properties, policies, addACEs,
-        removeACEs);
-    return f;
+    String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
+        SessionUtil.convertProperties(getSession(), properties), objectId,
+        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(getSession(), addAces),
+        SessionUtil.convertAces(getSession(), removeAces), null);
+
+    // if no context is provided the object will not be fetched
+    if (context == null) {
+      return null;
+    }
+
+    // get the new object
+    CmisObject object = getSession().getObject(newId, context);
+    if (!(object instanceof Folder)) {
+      throw new CmisRuntimeException("Newly created object is not a folder! New id: " + newId);
+    }
+
+    return (Folder) object;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#createPolicy(java.util.List, java.util.List,
+   * java.util.List, java.util.List, org.apache.opencmis.client.api.OperationContext)
+   */
   public Policy createPolicy(List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addACEs, List<Ace> removeACEs) {
-    throw new CmisRuntimeException("not implemented");
+      List<Ace> addAces, List<Ace> removeAces, OperationContext context) {
+    String objectId = getObjectId();
+
+    String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
+        SessionUtil.convertProperties(getSession(), properties), objectId,
+        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(getSession(), addAces),
+        SessionUtil.convertAces(getSession(), removeAces), null);
+
+    // if no context is provided the object will not be fetched
+    if (context == null) {
+      return null;
+    }
+
+    // get the new object
+    CmisObject object = getSession().getObject(newId, context);
+    if (!(object instanceof Policy)) {
+      throw new CmisRuntimeException("Newly created object is not a policy! New id: " + newId);
+    }
+
+    return (Policy) object;
   }
 
   /*

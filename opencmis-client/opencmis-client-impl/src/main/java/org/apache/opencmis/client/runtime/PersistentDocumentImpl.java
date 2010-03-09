@@ -35,6 +35,7 @@ import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.ContentStreamData;
+import org.apache.opencmis.commons.provider.Holder;
 import org.apache.opencmis.commons.provider.ObjectData;
 
 public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject implements Document {
@@ -91,17 +92,17 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   public long getContentStreamLength() {
     BigInteger bigInt = getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_LENGTH);
-    return (bigInt == null) ? (long)-1 : bigInt.longValue();
+    return (bigInt == null) ? (long) -1 : bigInt.longValue();
   }
-  
+
   public String getContentStreamMimeType() {
     return getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE);
   }
-  
+
   public String getContentStreamFileName() {
     return getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME);
   }
-  
+
   public String getContentStreamId() {
     return getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_ID);
   }
@@ -156,8 +157,8 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     String objectId = getObjectId();
 
     List<ObjectData> versions = getProvider().getVersioningService().getAllVersions(
-        getRepositoryId(), objectId, context.getFilterString(), context.isIncludeAllowableActions(),
-        null);
+        getRepositoryId(), objectId, context.getFilterString(),
+        context.isIncludeAllowableActions(), null);
 
     ObjectFactory objectFactory = getSession().getObjectFactory();
 
@@ -213,11 +214,40 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
         contentStream.getMimeType(), contentStream.getStream());
   }
 
-  public void setContentStream(boolean overwrite, ContentStream contentStream) {
-    throw new CmisRuntimeException("not implemented");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#setContentStream(boolean,
+   * org.apache.opencmis.client.api.ContentStream)
+   */
+  public String setContentStream(boolean overwrite, ContentStream contentStream) {
+    String objectId = getObjectId();
+    Holder<String> objectIdHolder = new Holder<String>(objectId);
+
+    String changeToken = getPropertyValue(PropertyIds.CMIS_CHANGE_TOKEN);
+    Holder<String> changeTokenHolder = new Holder<String>(changeToken);
+
+    getProvider().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, overwrite,
+        changeTokenHolder, SessionUtil.convertContentStream(getSession(), contentStream), null);
+
+    return objectIdHolder.getValue();
   }
 
-  public void deleteContentStream() {
-    throw new CmisRuntimeException("not implemented");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#deleteContentStream()
+   */
+  public String deleteContentStream() {
+    String objectId = getObjectId();
+    Holder<String> objectIdHolder = new Holder<String>(objectId);
+
+    String changeToken = getPropertyValue(PropertyIds.CMIS_CHANGE_TOKEN);
+    Holder<String> changeTokenHolder = new Holder<String>(changeToken);
+
+    getProvider().getObjectService().deleteContentStream(getRepositoryId(), objectIdHolder,
+        changeTokenHolder, null);
+
+    return objectIdHolder.getValue();
   }
 }
