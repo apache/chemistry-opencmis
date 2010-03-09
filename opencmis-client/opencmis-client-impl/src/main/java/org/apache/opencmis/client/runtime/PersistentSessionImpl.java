@@ -36,6 +36,7 @@ import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.ExtensionHandler;
 import org.apache.opencmis.client.api.Folder;
+import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.PersistentSession;
 import org.apache.opencmis.client.api.Policy;
@@ -323,6 +324,15 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
         includeRelationships, renditionFilter, includePathSegments, orderBy, cacheEnabled);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#createObjectId(java.lang.String)
+   */
+  public ObjectId createObjectId(String id) {
+    return new ObjectIdImpl(id);
+  }
+
   public Locale getLocale() {
     return this.locale;
   }
@@ -332,7 +342,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * 
    * @see org.apache.opencmis.client.api.Session#getObject(java.lang.String)
    */
-  public CmisObject getObject(String objectId) {
+  public CmisObject getObject(ObjectId objectId) {
     return getObject(objectId, getDefaultContext());
   }
 
@@ -342,8 +352,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * @see org.apache.opencmis.client.api.Session#getObject(java.lang.String,
    * org.apache.opencmis.client.api.OperationContext)
    */
-  public CmisObject getObject(String objectId, OperationContext context) {
-    if (objectId == null) {
+  public CmisObject getObject(ObjectId objectId, OperationContext context) {
+    if ((objectId == null) || (objectId.getId() == null)) {
       throw new IllegalArgumentException("Object Id must be set!");
     }
     if (context == null) {
@@ -354,15 +364,15 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
 
     // ask the cache first
     if (context.isCacheEnabled()) {
-      result = this.cache.getById(objectId, context.getCacheKey());
+      result = this.cache.getById(objectId.getId(), context.getCacheKey());
       if (result != null) {
         return result;
       }
     }
 
     // get the object
-    ObjectData objectData = this.provider.getObjectService().getObject(getRepositoryId(), objectId,
-        context.getFilterString(), context.isIncludeAllowableActions(),
+    ObjectData objectData = this.provider.getObjectService().getObject(getRepositoryId(),
+        objectId.getId(), context.getFilterString(), context.isIncludeAllowableActions(),
         context.getIncludeRelationships(), context.getRenditionFilterString(),
         context.isIncludePolicies(), context.isIncludeAcls(), null);
 
@@ -466,7 +476,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
   public Folder getRootFolder(OperationContext context) {
     String rootFolderId = getRepositoryInfo().getRootFolderId();
 
-    CmisObject rootFolder = getObject(rootFolderId, context);
+    CmisObject rootFolder = getObject(createObjectId(rootFolderId), context);
     if (!(rootFolder instanceof Folder)) {
       throw new CmisRuntimeException("Root folder object is not a folder!");
     }
@@ -654,7 +664,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     if (parameter.containsKey(Testable.ROOT_FOLDER_ID_PARAMETER)) {
       // test root folder
       String testRootId = parameter.get(Testable.ROOT_FOLDER_ID_PARAMETER);
-      rootFolder = (Folder) this.getObject(testRootId);
+      rootFolder = (Folder) this.getObject(createObjectId(testRootId));
     }
     else {
       // repository root
@@ -678,7 +688,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
         objectTypeIdPropertyType, folderTypeId);
     properties.add(typeProperty);
 
-    this.testRootFolder = rootFolder.createFolder(properties, null, null, null, getDefaultContext());
+    this.testRootFolder = rootFolder
+        .createFolder(properties, null, null, null, getDefaultContext());
 
     og.setContentSizeInKB(10);
     og.setDocumentTypeId(documentTypeId);
@@ -779,19 +790,30 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Session#createDocument(java.util.List, java.lang.String,
-   * org.apache.opencmis.client.api.ContentStream,
+   * @see org.apache.opencmis.client.api.Session#createDocument(java.util.List,
+   * org.apache.opencmis.client.api.ObjectId, org.apache.opencmis.client.api.ContentStream,
    * org.apache.opencmis.commons.enums.VersioningState, java.util.List, java.util.List,
    * java.util.List)
    */
-  public String createDocument(List<Property<?>> properties, String folderId,
+  public ObjectId createDocument(List<Property<?>> properties, ObjectId folderId,
       ContentStream contentStream, VersioningState versioningState, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces) {
-    return getProvider().getObjectService().createDocument(getRepositoryId(),
-        SessionUtil.convertProperties(this, properties), folderId,
+    if ((folderId != null) && (folderId.getId() == null)) {
+      throw new IllegalArgumentException("Folder Id must be set!");
+    }
+
+    String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
+        SessionUtil.convertProperties(this, properties),
+        (folderId == null ? null : folderId.getId()),
         SessionUtil.convertContentStream(this, contentStream), versioningState,
         SessionUtil.convertPolicies(policies), SessionUtil.convertAces(this, addAces),
         SessionUtil.convertAces(this, removeAces), null);
+
+    if (newId == null) {
+      return null;
+    }
+
+    return createObjectId(newId);
   }
 
   /*
@@ -803,13 +825,24 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * org.apache.opencmis.commons.enums.VersioningState, java.util.List, java.util.List,
    * java.util.List)
    */
-  public String createDocumentFromSource(Document source, List<Property<?>> properties,
-      String folderId, VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
+  public ObjectId createDocumentFromSource(ObjectId source, List<Property<?>> properties,
+      ObjectId folderId, VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces) {
-    return getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
-        source.getId(), SessionUtil.convertProperties(this, properties), folderId, versioningState,
+    if ((folderId != null) && (folderId.getId() == null)) {
+      throw new IllegalArgumentException("Folder Id must be set!");
+    }
+
+    String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
+        source.getId(), SessionUtil.convertProperties(this, properties),
+        (folderId == null ? null : folderId.getId()), versioningState,
         SessionUtil.convertPolicies(policies), SessionUtil.convertAces(this, addAces),
         SessionUtil.convertAces(this, removeAces), null);
+
+    if (newId == null) {
+      return null;
+    }
+
+    return createObjectId(newId);
   }
 
   /*
@@ -818,12 +851,22 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * @see org.apache.opencmis.client.api.Session#createFolder(java.util.List, java.lang.String,
    * java.util.List, java.util.List, java.util.List)
    */
-  public String createFolder(List<Property<?>> properties, String folderId, List<Policy> policies,
-      List<Ace> addAces, List<Ace> removeAces) {
-    return getProvider().getObjectService().createFolder(getRepositoryId(),
-        SessionUtil.convertProperties(this, properties), folderId,
-        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(this, addAces),
-        SessionUtil.convertAces(this, removeAces), null);
+  public ObjectId createFolder(List<Property<?>> properties, ObjectId folderId,
+      List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+    if ((folderId != null) && (folderId.getId() == null)) {
+      throw new IllegalArgumentException("Folder Id must be set!");
+    }
+
+    String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
+        SessionUtil.convertProperties(this, properties),
+        (folderId == null ? null : folderId.getId()), SessionUtil.convertPolicies(policies),
+        SessionUtil.convertAces(this, addAces), SessionUtil.convertAces(this, removeAces), null);
+
+    if (newId == null) {
+      return null;
+    }
+
+    return createObjectId(newId);
   }
 
   /*
@@ -832,12 +875,22 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * @see org.apache.opencmis.client.api.Session#createPolicy(java.util.List, java.lang.String,
    * java.util.List, java.util.List, java.util.List)
    */
-  public String createPolicy(List<Property<?>> properties, String folderId, List<Policy> policies,
-      List<Ace> addAces, List<Ace> removeAces) {
-    return getProvider().getObjectService().createPolicy(getRepositoryId(),
-        SessionUtil.convertProperties(this, properties), folderId,
-        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(this, addAces),
-        SessionUtil.convertAces(this, removeAces), null);
+  public ObjectId createPolicy(List<Property<?>> properties, ObjectId folderId,
+      List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+    if ((folderId != null) && (folderId.getId() == null)) {
+      throw new IllegalArgumentException("Folder Id must be set!");
+    }
+
+    String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
+        SessionUtil.convertProperties(this, properties),
+        (folderId == null ? null : folderId.getId()), SessionUtil.convertPolicies(policies),
+        SessionUtil.convertAces(this, addAces), SessionUtil.convertAces(this, removeAces), null);
+
+    if (newId == null) {
+      return null;
+    }
+
+    return createObjectId(newId);
   }
 
   /*
@@ -846,11 +899,16 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * @see org.apache.opencmis.client.api.Session#createRelationship(java.util.List, java.util.List,
    * java.util.List, java.util.List)
    */
-  public String createRelationship(List<Property<?>> properties, List<Policy> policies,
+  public ObjectId createRelationship(List<Property<?>> properties, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces) {
-
-    return getProvider().getObjectService().createRelationship(getRepositoryId(),
+    String newId = getProvider().getObjectService().createRelationship(getRepositoryId(),
         SessionUtil.convertProperties(this, properties), SessionUtil.convertPolicies(policies),
         SessionUtil.convertAces(this, addAces), SessionUtil.convertAces(this, removeAces), null);
+
+    if (newId == null) {
+      return null;
+    }
+
+    return createObjectId(newId);
   }
 }

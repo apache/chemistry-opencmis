@@ -36,7 +36,7 @@ public interface Folder extends FileableCmisObject {
       VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces, OperationContext context);
 
-  Document createDocumentFromSource(Document source, List<Property<?>> properties,
+  Document createDocumentFromSource(ObjectId source, List<Property<?>> properties,
       VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces, OperationContext context);
 

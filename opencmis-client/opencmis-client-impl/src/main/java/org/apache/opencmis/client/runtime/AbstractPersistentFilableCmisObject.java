@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.FileableCmisObject;
 import org.apache.opencmis.client.api.Folder;
+import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
@@ -68,7 +69,8 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
       }
 
       // fetch the object and make sure it is a folder
-      CmisObject parentFolder = getSession().getObject((String) idProperty.getFirstValue());
+      ObjectId parentId = getSession().createObjectId((String) idProperty.getFirstValue());
+      CmisObject parentFolder = getSession().getObject(parentId);
       if (!(parentFolder instanceof Folder)) {
         // the repository sent an object that is not a folder...
         throw new CmisRuntimeException("Repository sent invalid data! Object is not a folder!");
@@ -124,51 +126,35 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.api.FileableCmisObject#move(org.apache.opencmis.client.api.Folder,
-   * org.apache.opencmis.client.api.Folder)
+   * org.apache.opencmis.client.api.FileableCmisObject#move(org.apache.opencmis.client.api.ObjectId,
+   * org.apache.opencmis.client.api.ObjectId)
    */
-  public FileableCmisObject move(Folder sourceFolder, Folder targetFolder) {
-    if (sourceFolder == null) {
-      throw new IllegalArgumentException("Source folder must be set!");
-    }
-
-    if (targetFolder == null) {
-      throw new IllegalArgumentException("Target folder must be set!");
-    }
-
-    return move(sourceFolder.getId(), targetFolder.getId());
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.FileableCmisObject#move(java.lang.String, java.lang.String)
-   */
-  public FileableCmisObject move(String sourceFolderId, String targetFolderId) {
+  public FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId) {
     String objectId = getObjectId();
     Holder<String> objectIdHolder = new Holder<String>(objectId);
 
-    if (sourceFolderId == null) {
+    if ((sourceFolderId == null) || (sourceFolderId.getId() == null)) {
       throw new IllegalArgumentException("Source folder id must be set!");
     }
 
-    if (targetFolderId == null) {
+    if ((targetFolderId == null) || (targetFolderId.getId() == null)) {
       throw new IllegalArgumentException("Target folder id must be set!");
     }
 
-    getProvider().getObjectService().moveObject(getRepositoryId(), objectIdHolder, targetFolderId,
-        sourceFolderId, null);
+    getProvider().getObjectService().moveObject(getRepositoryId(), objectIdHolder,
+        targetFolderId.getId(), sourceFolderId.getId(), null);
 
     if (objectIdHolder.getValue() == null) {
       return null;
     }
 
-    CmisObject movedObject = getSession().getObject(objectIdHolder.getValue());
-    if (movedObject instanceof FileableCmisObject) {
-      return (FileableCmisObject) movedObject;
+    CmisObject movedObject = getSession().getObject(
+        getSession().createObjectId(objectIdHolder.getValue()));
+    if (!(movedObject instanceof FileableCmisObject)) {
+      throw new CmisRuntimeException("Moved object is invalid!");
     }
 
-    return null;
+    return (FileableCmisObject) movedObject;
   }
 
   /*
@@ -176,21 +162,17 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
    * 
    * @see
    * org.apache.opencmis.client.api.FileableCmisObject#addToFolder(org.apache.opencmis.client.api
-   * .Folder, boolean)
+   * .ObjectId, boolean)
    */
-  public void addToFolder(Folder folder, boolean allVersions) {
+  public void addToFolder(ObjectId folderId, boolean allVersions) {
     String objectId = getObjectId();
 
-    if (folder == null) {
-      throw new IllegalArgumentException("Folder must be set!");
-    }
-
-    if (folder.getId() == null) {
-      throw new IllegalArgumentException("Folder must contain an object id!");
+    if ((folderId == null) || (folderId.getId() == null)) {
+      throw new IllegalArgumentException("Folder Id must be set!");
     }
 
     getProvider().getMultiFilingService().addObjectToFolder(getRepositoryId(), objectId,
-        folder.getId(), allVersions, null);
+        folderId.getId(), allVersions, null);
   }
 
   /*
@@ -198,20 +180,16 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
    * 
    * @see
    * org.apache.opencmis.client.api.FileableCmisObject#removeFromFolder(org.apache.opencmis.client
-   * .api.Folder)
+   * .api.ObjectId)
    */
-  public void removeFromFolder(Folder folder) {
+  public void removeFromFolder(ObjectId folderId) {
     String objectId = getObjectId();
 
-    if (folder == null) {
-      throw new IllegalArgumentException("Folder must be set!");
-    }
-
-    if (folder.getId() == null) {
-      throw new IllegalArgumentException("Folder must contain an object id!");
+    if ((folderId == null) || (folderId.getId() == null)) {
+      throw new IllegalArgumentException("Folder Id must be set!");
     }
 
     getProvider().getMultiFilingService().removeObjectFromFolder(getRepositoryId(), objectId,
-        folder.getId(), null);
+        folderId.getId(), null);
   }
 }

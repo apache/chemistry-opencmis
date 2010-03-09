@@ -29,11 +29,13 @@ public interface Document extends FileableCmisObject {
 
   // object service
 
+  void deleteAllVersions();
+
   ContentStream getContentStream();
 
-  String setContentStream(boolean overwrite, ContentStream contentStream);
+  ObjectId setContentStream(boolean overwrite, ContentStream contentStream);
 
-  String deleteContentStream();
+  ObjectId deleteContentStream();
 
   // versioning service
 
@@ -71,8 +73,6 @@ public interface Document extends FileableCmisObject {
   String getVersionSeriesCheckedOutBy(); // cmis:versionSeriesCheckedOutBy
 
   String getVersionSeriesCheckedOutId(); // cmis:versionSeriesCheckedOutId
-
-  void deleteAllVersions();
 
   String getCheckinComment(); // cmis:checkinComment
 

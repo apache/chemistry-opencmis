@@ -16,43 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.api;
+package org.apache.opencmis.client.runtime;
 
-import java.util.List;
+import org.apache.opencmis.client.api.ObjectId;
 
 /**
- * Fileable CMIS object.
+ * Implementation of <code>ObjectId</code>.
  */
-public interface FileableCmisObject extends CmisObject {
+public class ObjectIdImpl implements ObjectId {
 
-  // object service
-
-  /**
-   * Moves the object.
-   */
-  FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId);
-
-  // navigation service
+  private String id;
 
   /**
-   * Returns the parents of this object.
+   * Constructor.
    */
-  List<Folder> getParents();
+  public ObjectIdImpl(String id) {
+    setId(id);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.ObjectId#getId()
+   */
+  public String getId() {
+    return id;
+  }
 
   /**
-   * Returns the paths of this object.
+   * Sets the id.
    */
-  List<String> getPaths();
+  public void setId(String id) {
+    if ((id == null) || (id.length() == 0)) {
+      throw new IllegalArgumentException("Id must be set!");
+    }
 
-  // multifiling service
-
-  /**
-   * Adds this object to a folder.
-   */
-  void addToFolder(ObjectId folderId, boolean allVersions);
-
-  /**
-   * Removes this object from a folder.
-   */
-  void removeFromFolder(ObjectId folderId);
+    this.id = id;
+  }
 }

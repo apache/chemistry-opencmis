@@ -56,7 +56,7 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
       return null;
     }
 
-    return getSession().getObject(sourceId, context);
+    return getSession().getObject(getSession().createObjectId(sourceId), context);
   }
 
   /*
@@ -79,7 +79,7 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
       return null;
     }
 
-    return getSession().getObject(targetId, context);
+    return getSession().getObject(getSession().createObjectId(targetId), context);
   }
 
 }

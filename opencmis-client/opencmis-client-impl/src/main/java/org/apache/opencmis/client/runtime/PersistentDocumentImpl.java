@@ -26,6 +26,7 @@ import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
+import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
@@ -220,7 +221,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * @see org.apache.opencmis.client.api.Document#setContentStream(boolean,
    * org.apache.opencmis.client.api.ContentStream)
    */
-  public String setContentStream(boolean overwrite, ContentStream contentStream) {
+  public ObjectId setContentStream(boolean overwrite, ContentStream contentStream) {
     String objectId = getObjectId();
     Holder<String> objectIdHolder = new Holder<String>(objectId);
 
@@ -230,7 +231,11 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     getProvider().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, overwrite,
         changeTokenHolder, SessionUtil.convertContentStream(getSession(), contentStream), null);
 
-    return objectIdHolder.getValue();
+    if (objectIdHolder.getValue() == null) {
+      return null;
+    }
+
+    return getSession().createObjectId(objectIdHolder.getValue());
   }
 
   /*
@@ -238,7 +243,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * 
    * @see org.apache.opencmis.client.api.Document#deleteContentStream()
    */
-  public String deleteContentStream() {
+  public ObjectId deleteContentStream() {
     String objectId = getObjectId();
     Holder<String> objectIdHolder = new Holder<String>(objectId);
 
@@ -248,6 +253,10 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     getProvider().getObjectService().deleteContentStream(getRepositoryId(), objectIdHolder,
         changeTokenHolder, null);
 
-    return objectIdHolder.getValue();
+    if (objectIdHolder.getValue() == null) {
+      return null;
+    }
+
+    return getSession().createObjectId(objectIdHolder.getValue());
   }
 }

@@ -42,9 +42,9 @@ import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.FileableCmisObject;
 import org.apache.opencmis.client.api.Folder;
+import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Property;
-import org.apache.opencmis.client.api.QueryProperty;
 import org.apache.opencmis.client.api.QueryResult;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
@@ -131,12 +131,17 @@ public class MockSessionFactory implements SessionFactory {
 				this.createMockRepositoryInfo()).anyTimes();
 		expect(session.getRootFolder()).andReturn(rootFolder).anyTimes();
 
+    String id = rootFolder.getId();
+    ObjectId objectId = createMockObjectId(id);
+    expect(session.createObjectId(id)).andReturn(objectId).anyTimes();
+
+		
 		expect(session.getDefaultContext()).andReturn(this.createMockOperationContext())
 				.anyTimes();
 		expect(session.getLocale()).andReturn(new Locale("EN")).anyTimes();
 		expect(session.getObjectFactory()).andReturn(
 				this.createMockObjectFactory()).anyTimes();
-
+		
 		expect(session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID))
 				.andReturn(
 						this.idTypeIndex.get(ObjectType.DOCUMENT_BASETYPE_ID))
@@ -228,7 +233,8 @@ public class MockSessionFactory implements SessionFactory {
 			id = e.nextElement();
 			obj = this.idObjectIndex.get(id);
 
-			expect(s.getObject(id)).andReturn(obj).anyTimes();
+			ObjectId objectId = createMockObjectId(id);
+			expect(s.getObject(objectId)).andReturn(obj).anyTimes();
 		}
 	}
 
@@ -240,6 +246,16 @@ public class MockSessionFactory implements SessionFactory {
 		return of;
 	}
 
+	private ObjectId createMockObjectId(String id) {
+	  ObjectId oid = createNiceMock(ObjectId.class);
+	  
+	  expect(oid.getId()).andReturn(id).anyTimes();
+	  
+	  replay(oid);
+	  
+	  return oid;
+	}
+	
 	private OperationContext createMockOperationContext() {
 	  OperationContext oc = createNiceMock(OperationContext.class);
 

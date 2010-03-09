@@ -32,15 +32,9 @@ import org.apache.opencmis.commons.enums.RelationshipDirection;
  * 
  * See CMIS Domain Model - section 2.1.2.
  */
-public interface CmisObject {
+public interface CmisObject extends ObjectId {
 
   // common properties
-
-  /**
-   * Get the object's unique id (maintained by the repository). {@code Property<String>
-   * 'cmis:objectId'}
-   */
-  String getId();
 
   /**
    * Get the name of this object. {@code Property<String> 'cmis:name'}
@@ -134,13 +128,9 @@ public interface CmisObject {
 
   // policy service
 
-  void applyPolicy(Policy policy);
+  void applyPolicy(ObjectId policyId);
 
-  void removePolicy(Policy policy);
-
-  void applyPolicy(String policyId);
-
-  void removePolicy(String policyId);
+  void removePolicy(ObjectId policyId);
 
   List<Policy> getPolicies();
 

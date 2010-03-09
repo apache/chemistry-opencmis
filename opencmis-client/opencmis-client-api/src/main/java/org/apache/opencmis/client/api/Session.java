@@ -73,6 +73,11 @@ public interface Session {
       IncludeRelationships includeRelationships, Set<String> renditionFilter,
       boolean includePathSegments, String orderBy, boolean cacheEnabled);
 
+  /**
+   * Creates an object id.
+   */
+  ObjectId createObjectId(String id);
+
   // localization
 
   /**
@@ -138,9 +143,9 @@ public interface Session {
   /**
    * Object service <code>getObject</code>.
    */
-  CmisObject getObject(String objectId);
+  CmisObject getObject(ObjectId objectId);
 
-  CmisObject getObject(String objectId, OperationContext context);
+  CmisObject getObject(ObjectId objectId, OperationContext context);
 
   /**
    * Object service <code>getObjectByPath</code>.
@@ -166,20 +171,20 @@ public interface Session {
 
   // create
 
-  String createDocument(List<Property<?>> properties, String folderId, ContentStream contentStream,
-      VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
-      List<Ace> removeAces);
-
-  String createDocumentFromSource(Document source, List<Property<?>> properties, String folderId,
-      VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
-      List<Ace> removeAces);
-
-  String createFolder(List<Property<?>> properties, String folderId, List<Policy> policies,
+  ObjectId createDocument(List<Property<?>> properties, ObjectId folderId,
+      ContentStream contentStream, VersioningState versioningState, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces);
 
-  String createPolicy(List<Property<?>> properties, String folderId, List<Policy> policies,
+  ObjectId createDocumentFromSource(ObjectId source, List<Property<?>> properties,
+      ObjectId folderId, VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces);
+
+  ObjectId createFolder(List<Property<?>> properties, ObjectId folderId, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces);
 
-  String createRelationship(List<Property<?>> properties, List<Policy> policies, List<Ace> addAces,
-      List<Ace> removeAces);
+  ObjectId createPolicy(List<Property<?>> properties, ObjectId folderId, List<Policy> policies,
+      List<Ace> addAces, List<Ace> removeAces);
+
+  ObjectId createRelationship(List<Property<?>> properties, List<Policy> policies,
+      List<Ace> addAces, List<Ace> removeAces);
 }

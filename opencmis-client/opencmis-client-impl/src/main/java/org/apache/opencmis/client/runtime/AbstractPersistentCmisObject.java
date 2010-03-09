@@ -30,6 +30,7 @@ import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
 import org.apache.opencmis.client.api.AllowableActions;
 import org.apache.opencmis.client.api.CmisObject;
+import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
@@ -120,7 +121,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       if ((objectData.getPolicyIds() != null) && (objectData.getPolicyIds().getPolicyIds() != null)) {
         policies = new ArrayList<Policy>();
         for (String pid : objectData.getPolicyIds().getPolicyIds()) {
-          CmisObject policy = session.getObject(pid);
+          CmisObject policy = session.getObject(getSession().createObjectId(pid));
           if (policy instanceof Policy) {
             policies.add((Policy) policy);
           }
@@ -527,56 +528,38 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.api.CmisObject#applyPolicy(org.apache.opencmis.client.api.Policy)
+   * org.apache.opencmis.client.api.CmisObject#applyPolicy(org.apache.opencmis.client.api.ObjectId)
    */
-  public void applyPolicy(Policy policy) {
-    if (policy == null) {
+  public void applyPolicy(ObjectId policyId) {
+    if (policyId == null) {
       throw new IllegalArgumentException("Policy is not set!");
     }
-
-    applyPolicy(policy.getId());
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.CmisObject#applyPolicy(java.lang.String)
-   */
-  public void applyPolicy(String policyId) {
-    if (policyId == null) {
+    if (policyId.getId() == null) {
       throw new IllegalArgumentException("Policy id is not set!");
     }
 
     String objectId = getObjectId();
-    getProvider().getPolicyService().applyPolicy(getRepositoryId(), policyId, objectId, null);
+    getProvider().getPolicyService().applyPolicy(getRepositoryId(), policyId.getId(), objectId,
+        null);
   }
 
   /*
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.api.CmisObject#removePolicy(org.apache.opencmis.client.api.Policy)
+   * org.apache.opencmis.client.api.CmisObject#removePolicy(org.apache.opencmis.client.api.ObjectId)
    */
-  public void removePolicy(Policy policy) {
-    if (policy == null) {
+  public void removePolicy(ObjectId policyId) {
+    if (policyId == null) {
       throw new IllegalArgumentException("Policy is not set!");
     }
-
-    removePolicy(policy.getId());
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.CmisObject#removePolicy(java.lang.String)
-   */
-  public void removePolicy(String policyId) {
-    if (policyId == null) {
+    if (policyId.getId() == null) {
       throw new IllegalArgumentException("Policy id is not set!");
     }
 
     String objectId = getObjectId();
-    getProvider().getPolicyService().removePolicy(getRepositoryId(), policyId, objectId, null);
+    getProvider().getPolicyService().removePolicy(getRepositoryId(), policyId.getId(), objectId,
+        null);
   }
 
   /*

@@ -18,11 +18,9 @@
  */
 package org.apache.opencmis.client.runtime;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.opencmis.client.api.Ace;
@@ -31,6 +29,7 @@ import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.FileableCmisObject;
 import org.apache.opencmis.client.api.Folder;
+import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
@@ -45,7 +44,6 @@ import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.FailedToDeleteData;
 import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
@@ -53,10 +51,8 @@ import org.apache.opencmis.commons.provider.ObjectInFolderContainer;
 import org.apache.opencmis.commons.provider.ObjectInFolderData;
 import org.apache.opencmis.commons.provider.ObjectInFolderList;
 import org.apache.opencmis.commons.provider.ObjectList;
-import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.PropertyStringData;
-import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 
 public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject implements Folder {
 
@@ -88,12 +84,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         SessionUtil.convertAces(getSession(), removeAces), null);
 
     // if no context is provided the object will not be fetched
-    if (context == null) {
+    if ((context == null) || (newId == null)) {
       return null;
     }
 
     // get the new object
-    CmisObject object = getSession().getObject(newId, context);
+    CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
     if (!(object instanceof Document)) {
       throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
     }
@@ -106,16 +102,16 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * 
    * @see
    * org.apache.opencmis.client.api.Folder#createDocumentFromSource(org.apache.opencmis.client.api
-   * .Document, java.util.List, org.apache.opencmis.commons.enums.VersioningState, java.util.List,
+   * .ObjectId, java.util.List, org.apache.opencmis.commons.enums.VersioningState, java.util.List,
    * java.util.List, java.util.List, org.apache.opencmis.client.api.OperationContext)
    */
-  public Document createDocumentFromSource(Document source, List<Property<?>> properties,
+  public Document createDocumentFromSource(ObjectId source, List<Property<?>> properties,
       VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces, OperationContext context) {
     String objectId = getObjectId();
 
     if ((source == null) || (source.getId() == null)) {
-      throw new IllegalArgumentException("Source document has no id!");
+      throw new IllegalArgumentException("Source must be set!");
     }
 
     String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
@@ -125,12 +121,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         SessionUtil.convertAces(getSession(), removeAces), null);
 
     // if no context is provided the object will not be fetched
-    if (context == null) {
+    if ((context == null) || (newId == null)) {
       return null;
     }
 
     // get the new object
-    CmisObject object = getSession().getObject(newId, context);
+    CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
     if (!(object instanceof Document)) {
       throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
     }
@@ -154,12 +150,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         SessionUtil.convertAces(getSession(), removeAces), null);
 
     // if no context is provided the object will not be fetched
-    if (context == null) {
+    if ((context == null) || (newId == null)) {
       return null;
     }
 
     // get the new object
-    CmisObject object = getSession().getObject(newId, context);
+    CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
     if (!(object instanceof Folder)) {
       throw new CmisRuntimeException("Newly created object is not a folder! New id: " + newId);
     }
@@ -183,12 +179,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         SessionUtil.convertAces(getSession(), removeAces), null);
 
     // if no context is provided the object will not be fetched
-    if (context == null) {
+    if ((context == null) || (newId == null)) {
       return null;
     }
 
     // get the new object
-    CmisObject object = getSession().getObject(newId, context);
+    CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
     if (!(object instanceof Policy)) {
       throw new CmisRuntimeException("Newly created object is not a policy! New id: " + newId);
     }
@@ -519,100 +515,5 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
   @Override
   public List<String> getPaths() {
     return Collections.singletonList(getPath());
-  }
-
-  /**
-   * Create folder in backend
-   * 
-   * @param parent
-   * @param properties
-   * @param policies
-   * @param addACEs
-   * @param removeACEs
-   */
-  public void create(Folder parent, List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addAce, List<Ace> removeAce) {
-
-    String repositoryId = getRepositoryId();
-    String parentFolderId = parent.getId();
-    PropertiesData pd = this.convertToPropertiesData(properties);
-    List<String> pol = this.convertToPoliciesData(policies);
-    AccessControlList addAcl = SessionUtil.convertAces(getSession(), addAce);
-    AccessControlList removeAcl = SessionUtil.convertAces(getSession(), removeAce);
-
-    String objectId = getProvider().getObjectService().createFolder(repositoryId, pd,
-        parentFolderId, pol, addAcl, removeAcl, null);
-    ObjectData newObjectData = getProvider().getObjectService().getObject(repositoryId, objectId,
-        null, false, IncludeRelationships.NONE, null, true, true, null);
-
-    // getSession().getCache().put(this);
-  }
-
-  private List<String> convertToPoliciesData(List<Policy> policies) {
-    List<String> pList = null;
-
-    if (policies != null) {
-      pList = new ArrayList<String>();
-      for (Policy pol : policies) {
-        pList.add(pol.getId());
-      }
-    }
-    return pList;
-  }
-
-  @SuppressWarnings("unchecked")
-  private PropertiesData convertToPropertiesData(List<Property<?>> origProperties) {
-    ProviderObjectFactory of = getProvider().getObjectFactory();
-
-    List<PropertyData<?>> convProperties = new ArrayList<PropertyData<?>>();
-    PropertyData<?> convProperty = null;
-
-    convProperties.add(of.createPropertyStringData(PropertyIds.CMIS_NAME, "testfolder"));
-    convProperties.add(of.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, "cmis_Folder"));
-
-    for (Property<?> origProperty : origProperties) {
-
-      switch (origProperty.getType()) {
-      case BOOLEAN:
-        Property<Boolean> pb = (Property<Boolean>) origProperty;
-        convProperty = of.createPropertyBooleanData(pb.getId(), pb.getValue());
-        break;
-      case DATETIME:
-        Property<GregorianCalendar> pg = (Property<GregorianCalendar>) origProperty;
-        convProperty = of.createPropertyDateTimeData(pg.getId(), pg.getValue());
-        break;
-      case DECIMAL:
-        Property<BigDecimal> pd = (Property<BigDecimal>) origProperty;
-        convProperty = of.createPropertyDecimalData(pd.getId(), pd.getValue());
-        break;
-      case HTML:
-        Property<String> ph = (Property<String>) origProperty;
-        convProperty = of.createPropertyHtmlData(ph.getId(), ph.getValue());
-        break;
-      case ID:
-        Property<String> pi = (Property<String>) origProperty;
-        convProperty = of.createPropertyIdData(pi.getId(), pi.getValue());
-        break;
-      case INTEGER:
-        Property<BigInteger> pn = (Property<BigInteger>) origProperty;
-        convProperty = of.createPropertyIntegerData(pn.getId(), pn.getValue());
-        break;
-      case STRING:
-        Property<String> ps = (Property<String>) origProperty;
-        convProperty = of.createPropertyStringData(ps.getId(), ps.getValue());
-        break;
-      case URI:
-        Property<String> pu = (Property<String>) origProperty;
-        convProperty = of.createPropertyUriData(pu.getId(), pu.getValue());
-        break;
-      default:
-        throw new CmisRuntimeException("unsupported property type" + origProperty.getType());
-      }
-      convProperties.add(convProperty);
-    }
-
-    PropertiesData pd = of.createPropertiesData(convProperties);
-
-    return pd;
   }
 }

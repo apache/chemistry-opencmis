@@ -138,7 +138,8 @@ public class RenditionImpl implements Rendition, Serializable {
       return null;
     }
 
-    CmisObject rendDoc = session.getObject(this.renditionDocumentId, context);
+    CmisObject rendDoc = session.getObject(session.createObjectId(this.renditionDocumentId),
+        context);
     if (!(rendDoc instanceof Document)) {
       return null;
     }

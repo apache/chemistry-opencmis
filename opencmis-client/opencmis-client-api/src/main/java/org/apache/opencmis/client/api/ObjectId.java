@@ -18,41 +18,13 @@
  */
 package org.apache.opencmis.client.api;
 
-import java.util.List;
-
 /**
- * Fileable CMIS object.
+ * Holds an object id.
  */
-public interface FileableCmisObject extends CmisObject {
-
-  // object service
+public interface ObjectId {
 
   /**
-   * Moves the object.
+   * Returns the id.
    */
-  FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId);
-
-  // navigation service
-
-  /**
-   * Returns the parents of this object.
-   */
-  List<Folder> getParents();
-
-  /**
-   * Returns the paths of this object.
-   */
-  List<String> getPaths();
-
-  // multifiling service
-
-  /**
-   * Adds this object to a folder.
-   */
-  void addToFolder(ObjectId folderId, boolean allVersions);
-
-  /**
-   * Removes this object from a folder.
-   */
-  void removeFromFolder(ObjectId folderId);
+  String getId();
 }
