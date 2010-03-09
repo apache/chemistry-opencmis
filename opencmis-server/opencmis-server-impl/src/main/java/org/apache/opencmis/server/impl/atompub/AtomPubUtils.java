@@ -199,10 +199,11 @@ public final class AtomPubUtils {
       Method m = clazz.getMethod("fromValue", new Class[] { String.class });
       return (T) m.invoke(null, new Object[] { value });
     }
-    catch (IllegalArgumentException iae) {
-      throw new CmisInvalidArgumentException("Invalid parameter '" + name + "'!");
-    }
     catch (Exception e) {
+      if (e instanceof IllegalArgumentException) {
+        throw new CmisInvalidArgumentException("Invalid parameter '" + name + "'!");
+      }
+
       throw new CmisRuntimeException(e.getMessage(), e);
     }
   }

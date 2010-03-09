@@ -21,6 +21,7 @@ package org.apache.opencmis.commons.impl;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.RelationshipDirection;
 import org.apache.opencmis.commons.enums.UnfileObjects;
@@ -180,6 +181,9 @@ public class UrlBuilder {
     }
     else if (value instanceof ReturnVersion) {
       return ((ReturnVersion) value).value();
+    }
+    else if (value instanceof AclPropagation) {
+      return ((AclPropagation) value).value();
     }
 
     return value.toString();
