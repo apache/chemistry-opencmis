@@ -28,6 +28,8 @@ public interface OperationContext {
 
   void setFilter(Set<String> propertyFilter);
 
+  void setFilterString(String propertyFilter);
+
   /**
    * Returns the filter extended by cmis:objectId, cmis:objectTypeId and cmis:baseTypeId.
    */
@@ -52,6 +54,8 @@ public interface OperationContext {
   Set<String> getRenditionFilter();
 
   void setRenditionFilter(Set<String> renditionFilter);
+
+  void setRenditionFilterString(String renditionFilter);
 
   String getRenditionFilterString();
 

@@ -48,6 +48,7 @@ import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.client.api.util.Testable;
 import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.client.runtime.cache.Cache;
+import org.apache.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
 import org.apache.opencmis.client.runtime.repository.PersistentPropertyFactoryImpl;
 import org.apache.opencmis.client.runtime.util.AbstractPagingList;
@@ -113,7 +114,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
   /*
    * Object cache (serializable)
    */
-  // private Cache cache = null;
+  private Cache cache = null;
 
   /*
    * Lazy loaded repository info. Will be invalid after clear(). Access by getter always.
@@ -138,15 +139,15 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     this.locale = this.determineLocale(parameters);
     PersistentSessionImpl.log.info("Session Locale: " + this.locale.toString());
 
-    // int cacheSize = this.determineCacheSize(parameters);
-    //
-    // if (cacheSize == -1) {
-    // this.cache = CacheImpl.newInstance();
-    // }
-    // else {
-    // this.cache = CacheImpl.newInstance(cacheSize);
-    // }
-    // PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.size());
+    int cacheSize = this.determineCacheSize(parameters);
+
+    if (cacheSize == -1) {
+      this.cache = CacheImpl.newInstance();
+    }
+    else {
+      this.cache = CacheImpl.newInstance(cacheSize);
+    }
+    PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
   }
 
   private int determineCacheSize(Map<String, String> parameters) {
@@ -200,20 +201,18 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     /*
      * clear cache
      */
-
-    // int cacheSize = this.determineCacheSize(this.parameters);
-    // if (cacheSize == -1) {
-    // this.cache = CacheImpl.newInstance();
-    // }
-    // else {
-    // this.cache = CacheImpl.newInstance(cacheSize);
-    // }
-    // PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.size());
+    int cacheSize = this.determineCacheSize(this.parameters);
+    if (cacheSize == -1) {
+      this.cache = CacheImpl.newInstance();
+    }
+    else {
+      this.cache = CacheImpl.newInstance(cacheSize);
+    }
+    PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
 
     /*
-     * clear repository info
+     * clear provider cache
      */
-
     getProvider().clearAllCaches();
   }
 
@@ -257,7 +256,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
         List<Document> page = new ArrayList<Document>();
         if (checkedOutDocs.getObjects() != null) {
           for (ObjectData objectData : checkedOutDocs.getObjects()) {
-            CmisObject doc = objectFactory.convertObject(objectData);
+            CmisObject doc = objectFactory.convertObject(objectData, ctxt);
             if (!(doc instanceof Document)) {
               // should not happen...
               continue;
@@ -343,13 +342,34 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     if (objectId == null) {
       throw new IllegalArgumentException("Object Id must be set!");
     }
+    if (context == null) {
+      throw new IllegalArgumentException("Operation context must be set!");
+    }
 
+    CmisObject result = null;
+
+    // ask the cache first
+    if (context.isCacheEnabled()) {
+      result = this.cache.getById(objectId, context.getCacheKey());
+      if (result != null) {
+        return result;
+      }
+    }
+
+    // get the object
     ObjectData objectData = this.provider.getObjectService().getObject(getRepositoryId(), objectId,
         context.getFilterString(), context.isIncludeAllowableActions(),
         context.getIncludeRelationships(), context.getRenditionFilterString(),
         context.isIncludePolicies(), context.isIncludeAcls(), null);
 
-    return getObjectFactory().convertObject(objectData);
+    result = getObjectFactory().convertObject(objectData, context);
+
+    // put into cache
+    if (context.isCacheEnabled()) {
+      this.cache.put(result, context.getCacheKey());
+    }
+
+    return result;
   }
 
   /*
@@ -371,13 +391,34 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     if (path == null) {
       throw new IllegalArgumentException("Path must be set!");
     }
+    if (context == null) {
+      throw new IllegalArgumentException("Operation context must be set!");
+    }
 
+    CmisObject result = null;
+
+    // ask the cache first
+    if (context.isCacheEnabled()) {
+      result = this.cache.getByPath(path, context.getCacheKey());
+      if (result != null) {
+        return result;
+      }
+    }
+
+    // get the object
     ObjectData objectData = this.provider.getObjectService().getObjectByPath(getRepositoryId(),
         path, context.getFilterString(), context.isIncludeAllowableActions(),
         context.getIncludeRelationships(), context.getRenditionFilterString(),
         context.isIncludePolicies(), context.isIncludeAcls(), null);
 
-    return getObjectFactory().convertObject(objectData);
+    result = getObjectFactory().convertObject(objectData, context);
+
+    // put into cache
+    if (context.isCacheEnabled()) {
+      this.cache.putPath(path, result, context.getCacheKey());
+    }
+
+    return result;
   }
 
   public ObjectFactory getObjectFactory() {

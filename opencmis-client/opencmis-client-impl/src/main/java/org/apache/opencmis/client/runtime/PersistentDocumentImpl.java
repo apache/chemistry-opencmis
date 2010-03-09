@@ -42,8 +42,8 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * Constructor.
    */
   public PersistentDocumentImpl(PersistentSessionImpl session, ObjectType objectType,
-      ObjectData objectData) {
-    initialize(session, objectType, objectData);
+      ObjectData objectData, OperationContext context) {
+    initialize(session, objectType, objectData, context);
   }
 
   // properties
@@ -146,7 +146,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     List<Document> result = new ArrayList<Document>();
     if (versions != null) {
       for (ObjectData objectData : versions) {
-        CmisObject doc = objectFactory.convertObject(objectData);
+        CmisObject doc = objectFactory.convertObject(objectData, context);
         if (!(doc instanceof Document)) {
           // should not happen...
           continue;

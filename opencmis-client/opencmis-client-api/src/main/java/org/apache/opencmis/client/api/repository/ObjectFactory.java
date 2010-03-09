@@ -29,6 +29,7 @@ import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.Folder;
+import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.QueryResult;
@@ -76,7 +77,7 @@ public interface ObjectFactory {
   Folder createFolder(Folder parent, List<Property<?>> properties, List<Policy> policies,
       List<Ace> addACEs, List<Ace> removeACEs);
 
-  CmisObject convertObject(ObjectData objectData);
+  CmisObject convertObject(ObjectData objectData, OperationContext context);
 
   QueryResult convertQueryResult(ObjectData objectData);
 }

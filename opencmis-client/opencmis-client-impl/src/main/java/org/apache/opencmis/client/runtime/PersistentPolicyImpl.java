@@ -18,6 +18,7 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.commons.PropertyIds;
@@ -29,8 +30,8 @@ public class PersistentPolicyImpl extends AbstractPersistentFilableCmisObject im
    * Constructor.
    */
   public PersistentPolicyImpl(PersistentSessionImpl session, ObjectType objectType,
-      ObjectData objectData) {
-    initialize(session, objectType, objectData);
+      ObjectData objectData, OperationContext context) {
+    initialize(session, objectType, objectData, context);
   }
 
   public String getPolicyText() {

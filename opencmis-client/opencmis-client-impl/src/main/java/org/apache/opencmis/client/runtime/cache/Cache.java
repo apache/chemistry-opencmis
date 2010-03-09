@@ -18,31 +18,33 @@
  */
 package org.apache.opencmis.client.runtime.cache;
 
-import java.util.List;
-
 import org.apache.opencmis.client.api.CmisObject;
 
 /**
  * Implements a session cache providing following capabilities:
  * <p>
- * <lu>
+ * <ul>
  * <li>access CmisObject by object id</li>
  * <li>access CmisObject by object path</li>
- * <li>access CmisObjects by paging parameter</li>
- * </lu>
+ * </ul>
  */
 public interface Cache {
 
-	boolean containsId(String objectId);
-	boolean containsPath(String path);
+  boolean containsId(String objectId, String cacheKey);
 
-	void put(CmisObject object);
-	// public void put(List<CmisObject> pageRange, int pageNumber);
-	
-	CmisObject get(String objectId);
-	CmisObject getByPath(String path);
-	// public List<CmisObject> get(int pageNumber);
-	
-	void clear();
-	int size();
+  boolean containsPath(String path, String cacheKey);
+
+  void put(CmisObject object, String cacheKey);
+
+  void putPath(String path, CmisObject object, String cacheKey);
+
+  CmisObject getById(String objectId, String cacheKey);
+
+  CmisObject getByPath(String path, String cacheKey);
+
+  void clear();
+
+  void resetPathCache();
+
+  int getCacheSize();
 }

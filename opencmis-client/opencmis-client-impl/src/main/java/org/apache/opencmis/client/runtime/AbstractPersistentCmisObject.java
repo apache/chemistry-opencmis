@@ -65,13 +65,14 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   private Acl acl;
   private List<Policy> policies;
   private List<Relationship> relationships;
+  private OperationContext creationContext;
   private boolean isChanged = false;
 
   /**
    * Initializes the object.
    */
   protected void initialize(PersistentSessionImpl session, ObjectType objectType,
-      ObjectData objectData) {
+      ObjectData objectData, OperationContext context) {
     if (session == null) {
       throw new IllegalArgumentException("Session must be set!");
     }
@@ -87,6 +88,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     this.session = session;
     this.objectType = objectType;
+    this.creationContext = new OperationContextImpl(context);
 
     if (objectData != null) {
       // handle properties
@@ -130,7 +132,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         relationships = new ArrayList<Relationship>();
         ObjectFactory of = session.getObjectFactory();
         for (ObjectData rod : objectData.getRelationships()) {
-          CmisObject relationship = of.convertObject(rod);
+          CmisObject relationship = of.convertObject(rod, this.creationContext);
           if (relationship instanceof Relationship) {
             relationships.add((Relationship) relationship);
           }
@@ -634,8 +636,10 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         List<Relationship> page = new ArrayList<Relationship>();
         if (relList.getObjects() != null) {
           for (ObjectData rod : relList.getObjects()) {
-            page.add(new PersistentRelationshipImpl(getSession(), SessionUtil
-                .getTypeFromObjectData(getSession(), rod), rod));
+            Relationship relationship = new PersistentRelationshipImpl(getSession(), SessionUtil
+                .getTypeFromObjectData(getSession(), rod), rod, ctxt);
+
+            page.add(relationship);
           }
         }
 
@@ -674,18 +678,18 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * org.apache.opencmis.client.api.CmisObject#refresh(org.apache.opencmis.client.api.OperationContext
    * )
    */
-  public void refresh(OperationContext context) {
+  public void refresh() {
     String objectId = getObjectId();
 
     // get the latest data from the repository
     ObjectData objectData = getSession().getProvider().getObjectService().getObject(
-        getRepositoryId(), objectId, context.getFilterString(),
-        context.isIncludeAllowableActions(), context.getIncludeRelationships(),
-        context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(),
-        null);
+        getRepositoryId(), objectId, creationContext.getFilterString(),
+        creationContext.isIncludeAllowableActions(), creationContext.getIncludeRelationships(),
+        creationContext.getRenditionFilterString(), creationContext.isIncludePolicies(),
+        creationContext.isIncludeAcls(), null);
 
     // reset this object
-    initialize(getSession(), getObjectType(), objectData);
+    initialize(getSession(), getObjectType(), objectData, this.creationContext);
   }
 
 }

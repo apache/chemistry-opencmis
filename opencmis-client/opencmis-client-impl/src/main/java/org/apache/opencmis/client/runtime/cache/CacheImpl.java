@@ -19,95 +19,216 @@
 package org.apache.opencmis.client.runtime.cache;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.opencmis.client.api.CmisObject;
+import org.apache.opencmis.commons.PropertyIds;
 
 /**
- * Non synchronized cache implementation. The cache is limited to a specific
- * size of entries and works in a LRU mode
+ * Non synchronized cache implementation. The cache is limited to a specific size of entries and
+ * works in a LRU mode.
  */
 public class CacheImpl implements Cache, Serializable {
 
-	private LinkedHashMap<String, CmisObject> idMap = null;
-	private LinkedHashMap<String, CmisObject> pathMap = null;
+  private static final long serialVersionUID = 1L;
 
-	private static final float hashTableLoadFactor = 0.75f;
+  private static final float HASHTABLE_LOAD_FACTOR = 0.75f;
 
-	private int cacheSize = 1000; // default
+  private int cacheSize;
 
-	/**
-	 * serialization
-	 */
-	private static final long serialVersionUID = 1978445442452564094L;
+  private LinkedHashMap<String, Map<String, CmisObject>> objectMap;
+  private Map<String, String> pathToIdMap;
 
-	public static Cache newInstance() {
-		return new CacheImpl();
-	}
+  /**
+   * Creates a new cache instance with a default size.
+   */
+  public static Cache newInstance() {
+    return new CacheImpl();
+  }
 
-	public static Cache newInstance(int cacheSize) {
-		return new CacheImpl(cacheSize);
-	}
+  /**
+   * Creates a new cache instance with the given size.
+   */
+  public static Cache newInstance(int cacheSize) {
+    return new CacheImpl(cacheSize);
+  }
 
-	protected CacheImpl() {
-		this.idMap = this.createLruCache();
-		this.pathMap = this.createLruCache();
-	}
+  /**
+   * Default constructor.
+   */
+  protected CacheImpl() {
+    this(1000); // default cache size
+  }
 
-	protected CacheImpl(int cacheSize) {
-		this.cacheSize = cacheSize;
+  /**
+   * Constructor taking a cache size.
+   */
+  protected CacheImpl(int cacheSize) {
+    this.cacheSize = cacheSize;
+    initialize();
+  }
 
-		this.idMap = this.createLruCache();
-		this.pathMap = this.createLruCache();
-	}
+  /**
+   * Sets up the internal objects.
+   */
+  protected void initialize() {
+    int hashTableCapacity = (int) Math.ceil(cacheSize / HASHTABLE_LOAD_FACTOR) + 1;
 
-	private LinkedHashMap<String, CmisObject> createLruCache() {
-		int hashTableCapacity = (int) Math
-				.ceil(cacheSize / hashTableLoadFactor) + 1;
+    final int cs = cacheSize;
 
-		LinkedHashMap<String, CmisObject> map = new LinkedHashMap<String, CmisObject>(
-				hashTableCapacity, hashTableLoadFactor) {
+    objectMap = new LinkedHashMap<String, Map<String, CmisObject>>(hashTableCapacity,
+        HASHTABLE_LOAD_FACTOR) {
 
-			// (an anonymous inner class)
-			private static final long serialVersionUID = -3928413932856712672L;
+      private static final long serialVersionUID = 1L;
 
-			@Override
-			protected boolean removeEldestEntry(
-					Map.Entry<String, CmisObject> eldest) {
-				return size() > CacheImpl.this.cacheSize;
-			}
-		};
-		return map;
-	}
+      @Override
+      protected boolean removeEldestEntry(Map.Entry<String, Map<String, CmisObject>> eldest) {
+        return size() > cs;
+      }
+    };
 
-	public boolean containsId(String objectId) {
-		return this.idMap.containsKey(objectId);
-	}
+    resetPathCache();
+  }
 
-	public void clear() {
-		this.idMap.clear();
-		this.pathMap.clear();
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.runtime.cache.Cache#clear()
+   */
+  public void clear() {
+    initialize();
+  }
 
-	public boolean containsPath(String path) {
-		return this.pathMap.containsKey(path);
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.runtime.cache.Cache#resetPathCache()
+   */
+  public void resetPathCache() {
+    pathToIdMap = new HashMap<String, String>();
+  }
 
-	public CmisObject get(String objectId) {
-		return this.idMap.get(objectId);
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.runtime.cache.Cache#containsId(java.lang.String,
+   * java.lang.String)
+   */
+  public boolean containsId(String objectId, String cacheKey) {
+    if (!objectMap.containsKey(objectId)) {
+      return false;
+    }
 
-	public CmisObject getByPath(String path) {
-		return this.pathMap.get(path);
-	}
+    return objectMap.get(objectId).containsKey(cacheKey);
+  }
 
-	public void put(CmisObject object) {
-		this.idMap.put(object.getId(), object);
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.runtime.cache.Cache#containsPath(java.lang.String,
+   * java.lang.String)
+   */
+  public boolean containsPath(String path, String cacheKey) {
+    if (!pathToIdMap.containsKey(path)) {
+      return false;
+    }
 
-	public int size() {
-		return this.cacheSize;
-	}
+    return containsId(pathToIdMap.get(path), cacheKey);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.runtime.cache.Cache#getById(java.lang.String, java.lang.String)
+   */
+  public CmisObject getById(String objectId, String cacheKey) {
+    Map<String, CmisObject> cacheKeyMap = objectMap.get(objectId);
+    if (cacheKeyMap == null) {
+      return null; // not found
+    }
+
+    return cacheKeyMap.get(cacheKey);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.runtime.cache.Cache#getByPath(java.lang.String,
+   * java.lang.String)
+   */
+  public CmisObject getByPath(String path, String cacheKey) {
+    String id = pathToIdMap.get(path);
+    if (id == null) {
+      return null; // not found
+    }
+
+    CmisObject object = getById(id, cacheKey);
+    if ((object == null) && (!objectMap.containsKey(id))) {
+      // clean up
+      pathToIdMap.remove(path);
+    }
+
+    return object;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.apache.opencmis.client.runtime.cache.Cache#put(org.apache.opencmis.client.api.CmisObject,
+   * java.lang.String)
+   */
+  public void put(CmisObject object, String cacheKey) {
+    // no object, no cache key - no cache
+    if ((object == null) || (cacheKey == null)) {
+      return;
+    }
+
+    // no id - no cache
+    if (object.getId() == null) {
+      return;
+    }
+
+    // get cache key map
+    Map<String, CmisObject> cacheKeyMap = objectMap.get(object.getId());
+    if (cacheKeyMap == null) {
+      cacheKeyMap = new HashMap<String, CmisObject>();
+      objectMap.put(object.getId(), cacheKeyMap);
+    }
+
+    // put into id cache
+    cacheKeyMap.put(cacheKey, object);
+
+    // folders may have a path, use it!
+    String path = object.getPropertyValue(PropertyIds.CMIS_PATH);
+    if (path != null) {
+      pathToIdMap.put(path, object.getId());
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.runtime.cache.Cache#putPath(java.lang.String,
+   * org.apache.opencmis.client.api.CmisObject, java.lang.String)
+   */
+  public void putPath(String path, CmisObject object, String cacheKey) {
+    put(object, cacheKey);
+
+    if ((object != null) && (object.getId() != null) && (cacheKey != null)) {
+      pathToIdMap.put(path, object.getId());
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.runtime.cache.Cache#getCacheSize()
+   */
+  public int getCacheSize() {
+    return this.cacheSize;
+  }
 
 }

@@ -176,5 +176,5 @@ public interface CmisObject {
   /**
    * Reloads the data from the repository.
    */
-  void refresh(OperationContext context);
+  void refresh();
 }

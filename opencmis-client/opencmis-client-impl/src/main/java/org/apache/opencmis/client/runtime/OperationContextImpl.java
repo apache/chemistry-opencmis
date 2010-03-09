@@ -32,6 +32,9 @@ import org.apache.opencmis.commons.enums.IncludeRelationships;
  */
 public class OperationContextImpl implements OperationContext, Serializable {
 
+  public static final String PROPERTIES_STAR = "*";
+  public static final String RENDITION_NONE = "cmis:none";
+
   private static final long serialVersionUID = 1L;
 
   private TreeSet<String> filter;
@@ -43,7 +46,11 @@ public class OperationContextImpl implements OperationContext, Serializable {
   private boolean includePathSegments;
   private String orderBy;
   private boolean cacheEnabled;
+  private String cacheKey;
 
+  /**
+   * Default constructor.
+   */
   public OperationContextImpl() {
     setFilter(null);
     setIncludeAcls(false);
@@ -54,8 +61,12 @@ public class OperationContextImpl implements OperationContext, Serializable {
     setIncludePathSegments(true);
     setOrderBy(null);
     setCacheEnabled(false);
+    generateCacheKey();
   }
 
+  /**
+   * Copy constructor.
+   */
   public OperationContextImpl(OperationContext source) {
     setFilter(source.getFilter());
     setIncludeAcls(source.isIncludeAcls());
@@ -66,8 +77,12 @@ public class OperationContextImpl implements OperationContext, Serializable {
     setIncludePathSegments(source.isIncludePathSegments());
     setOrderBy(source.getOrderBy());
     setCacheEnabled(source.isCacheEnabled());
+    generateCacheKey();
   }
 
+  /**
+   * Constructor with parameters.
+   */
   public OperationContextImpl(Set<String> propertyFilter, boolean includeAcls,
       boolean includeAllowableActions, boolean includePolicies,
       IncludeRelationships includeRelationships, Set<String> renditionFilter,
@@ -81,12 +96,27 @@ public class OperationContextImpl implements OperationContext, Serializable {
     setIncludePathSegments(includePathSegments);
     setOrderBy(orderBy);
     setCacheEnabled(cacheEnabled);
+    generateCacheKey();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#getFilter()
+   */
   public Set<String> getFilter() {
+    if (this.filter == null) {
+      return null;
+    }
+
     return Collections.unmodifiableSet(this.filter);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setFilter(java.util.Set)
+   */
   public void setFilter(Set<String> propertyFilter) {
     if (propertyFilter != null) {
       TreeSet<String> tempSet = new TreeSet<String>();
@@ -100,10 +130,13 @@ public class OperationContextImpl implements OperationContext, Serializable {
         if (toid.length() == 0) {
           continue;
         }
-        if (toid.equals("*")) {
+        if (toid.equals(PROPERTIES_STAR)) {
           tempSet = new TreeSet<String>();
-          tempSet.add("*");
+          tempSet.add(PROPERTIES_STAR);
           break;
+        }
+        if (toid.indexOf(',') > -1) {
+          throw new IllegalArgumentException("Property id must not contain a comma!");
         }
 
         tempSet.add(toid);
@@ -119,15 +152,42 @@ public class OperationContextImpl implements OperationContext, Serializable {
     else {
       this.filter = null;
     }
+
+    generateCacheKey();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setFilter(java.lang.String)
+   */
+  public void setFilterString(String propertyFilter) {
+    if (propertyFilter == null) {
+      setFilter(null);
+      return;
+    }
+
+    String[] propertyIds = propertyFilter.split(",");
+    TreeSet<String> tempSet = new TreeSet<String>();
+    for (String pid : propertyIds) {
+      tempSet.add(pid);
+    }
+
+    setFilter(tempSet);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#getFilterString()
+   */
   public String getFilterString() {
     if (this.filter == null) {
       return null;
     }
 
-    if (this.filter.contains("*")) {
-      return "*";
+    if (this.filter.contains(PROPERTIES_STAR)) {
+      return PROPERTIES_STAR;
     }
 
     this.filter.add(PropertyIds.CMIS_OBJECT_ID);
@@ -147,42 +207,102 @@ public class OperationContextImpl implements OperationContext, Serializable {
     return sb.toString();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#isIncludeAcls()
+   */
   public boolean isIncludeAcls() {
     return includeAcls;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setIncludeAcls(boolean)
+   */
   public void setIncludeAcls(boolean include) {
     this.includeAcls = include;
+    generateCacheKey();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#isIncludeAllowableActions()
+   */
   public boolean isIncludeAllowableActions() {
     return this.includeAllowableActions;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setIncludeAllowableActions(boolean)
+   */
   public void setIncludeAllowableActions(boolean include) {
     this.includeAllowableActions = include;
+    generateCacheKey();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#isIncludePolicies()
+   */
   public boolean isIncludePolicies() {
     return this.includePolicies;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setIncludePolicies(boolean)
+   */
   public void setIncludePolicies(boolean include) {
     this.includePolicies = include;
+    generateCacheKey();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#getIncludeRelationships()
+   */
   public IncludeRelationships getIncludeRelationships() {
     return this.includeRelationships;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.apache.opencmis.client.api.OperationContext#setIncludeRelationships(org.apache.opencmis
+   * .commons.enums.IncludeRelationships)
+   */
   public void setIncludeRelationships(IncludeRelationships include) {
     this.includeRelationships = include;
+    generateCacheKey();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#getRenditionFilter()
+   */
   public Set<String> getRenditionFilter() {
+    if (this.renditionFilter == null) {
+      return null;
+    }
+
     return Collections.unmodifiableSet(this.renditionFilter);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setRenditionFilter(java.util.Set)
+   */
   public void setRenditionFilter(Set<String> renditionFilter) {
     TreeSet<String> tempSet = new TreeSet<String>();
 
@@ -196,21 +316,50 @@ public class OperationContextImpl implements OperationContext, Serializable {
         if (trf.length() == 0) {
           continue;
         }
+        if (trf.indexOf(',') > -1) {
+          throw new IllegalArgumentException("Rendition must not contain a comma!");
+        }
 
         tempSet.add(trf);
       }
 
       if (tempSet.size() == 0) {
-        tempSet.add("cmis:none");
+        tempSet.add(RENDITION_NONE);
       }
     }
     else {
-      tempSet.add("cmis:none");
+      tempSet.add(RENDITION_NONE);
     }
 
     this.renditionFilter = tempSet;
+    generateCacheKey();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setRenditionFilterString(java.lang.String)
+   */
+  public void setRenditionFilterString(String renditionFilter) {
+    if (renditionFilter == null) {
+      setRenditionFilter(null);
+      return;
+    }
+
+    String[] renditions = renditionFilter.split(",");
+    TreeSet<String> tempSet = new TreeSet<String>();
+    for (String rend : renditions) {
+      tempSet.add(rend);
+    }
+
+    setRenditionFilter(tempSet);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#getRenditionFilterString()
+   */
   public String getRenditionFilterString() {
     if (this.renditionFilter == null) {
       return null;
@@ -229,32 +378,90 @@ public class OperationContextImpl implements OperationContext, Serializable {
     return sb.toString();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#isIncludePathSegments()
+   */
   public boolean isIncludePathSegments() {
     return includePathSegments;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setIncludePathSegments(boolean)
+   */
   public void setIncludePathSegments(boolean include) {
     this.includePathSegments = include;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#getOrderBy()
+   */
   public String getOrderBy() {
     return this.orderBy;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setOrderBy(java.lang.String)
+   */
   public void setOrderBy(String orderBy) {
     this.orderBy = orderBy;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#isCacheEnabled()
+   */
   public boolean isCacheEnabled() {
     return cacheEnabled;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#setCacheEnabled(boolean)
+   */
   public void setCacheEnabled(boolean cacheEnabled) {
     this.cacheEnabled = cacheEnabled;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.OperationContext#getCacheKey()
+   */
   public String getCacheKey() {
-    // TODO Auto-generated method stub
-    return null;
+    return cacheKey;
+  }
+
+  /**
+   * Generates a new cache key from all parameters that are relevant for caching.
+   */
+  protected void generateCacheKey() {
+    if (!cacheEnabled) {
+      cacheKey = null;
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append(includeAcls ? "1" : "0");
+    sb.append(includeAllowableActions ? "1" : "0");
+    sb.append(includePolicies ? "1" : "0");
+    sb.append("|");
+    sb.append(filter == null ? "" : getFilterString());
+    sb.append("|");
+    sb.append(includeRelationships == null ? "" : includeRelationships.value());
+
+    sb.append("|");
+    sb.append(renditionFilter == null ? "" : getRenditionFilterString());
+
+    cacheKey = sb.toString();
   }
 }

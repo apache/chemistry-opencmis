@@ -79,7 +79,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
         relationships = new ArrayList<Relationship>();
         ObjectFactory of = session.getObjectFactory();
         for (ObjectData rod : objectData.getRelationships()) {
-          CmisObject relationship = of.convertObject(rod);
+          CmisObject relationship = of.convertObject(rod, session.getDefaultContext());
           if (relationship instanceof Relationship) {
             relationships.add((Relationship) relationship);
           }

@@ -29,6 +29,7 @@ import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.Folder;
+import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.QueryResult;
@@ -120,7 +121,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
   /**
    * Converts object data into an API object.
    */
-  public CmisObject convertObject(ObjectData objectData) {
+  public CmisObject convertObject(ObjectData objectData, OperationContext context) {
     if (objectData == null) {
       throw new IllegalArgumentException("Object data is null!");
     }
@@ -130,13 +131,13 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
     /* determine type */
     switch (objectData.getBaseTypeId()) {
     case CMIS_DOCUMENT:
-      return new PersistentDocumentImpl(this.session, type, objectData);
+      return new PersistentDocumentImpl(this.session, type, objectData, context);
     case CMIS_FOLDER:
-      return new PersistentFolderImpl(this.session, type, objectData);
+      return new PersistentFolderImpl(this.session, type, objectData, context);
     case CMIS_POLICY:
-      return new PersistentPolicyImpl(this.session, type, objectData);
+      return new PersistentPolicyImpl(this.session, type, objectData, context);
     case CMIS_RELATIONSHIP:
-      return new PersistentRelationshipImpl(this.session, type, objectData);
+      return new PersistentRelationshipImpl(this.session, type, objectData, context);
     default:
       throw new CmisRuntimeException("unsupported type: " + objectData.getBaseTypeId());
     }

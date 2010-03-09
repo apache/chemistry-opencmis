@@ -32,8 +32,8 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
    * Constructor.
    */
   public PersistentRelationshipImpl(PersistentSessionImpl session, ObjectType objectType,
-      ObjectData objectData) {
-    initialize(session, objectType, objectData);
+      ObjectData objectData, OperationContext context) {
+    initialize(session, objectType, objectData, context);
   }
 
   /*

@@ -64,12 +64,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * Constructor.
    */
   public PersistentFolderImpl(PersistentSessionImpl session, ObjectType objectType,
-      ObjectData objectData) {
-    initialize(session, objectType, objectData);
+      ObjectData objectData, OperationContext context) {
+    initialize(session, objectType, objectData, context);
   }
 
   public PersistentFolderImpl(PersistentSessionImpl session) {
-    initialize(session, null, null);
+    initialize(session, null, null, null);
   }
 
   public Document createDocument(String name, String typeId) {
@@ -179,7 +179,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         List<Document> page = new ArrayList<Document>();
         if (checkedOutDocs.getObjects() != null) {
           for (ObjectData objectData : checkedOutDocs.getObjects()) {
-            CmisObject doc = objectFactory.convertObject(objectData);
+            CmisObject doc = objectFactory.convertObject(objectData, ctxt);
             if (!(doc instanceof Document)) {
               // should not happen...
               continue;
@@ -242,7 +242,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         List<CmisObject> page = new ArrayList<CmisObject>();
         for (ObjectInFolderData objectData : children.getObjects()) {
           if (objectData.getObject() != null) {
-            page.add(objectFactory.convertObject(objectData.getObject()));
+            page.add(objectFactory.convertObject(objectData.getObject(), ctxt));
           }
         }
 
@@ -281,7 +281,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
             context.getIncludeRelationships(), context.getRenditionFilterString(),
             context.isIncludePathSegments(), null);
 
-    return convertProviderContainer(providerContainerList);
+    return convertProviderContainer(providerContainerList, context);
   }
 
   /*
@@ -293,6 +293,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     return getFolderTree(depth, getSession().getDefaultContext());
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Folder#getFolderTree(int,
+   * org.apache.opencmis.client.api.OperationContext)
+   */
   public List<Container<FileableCmisObject>> getFolderTree(int depth, OperationContext context) {
     String objectId = getObjectId();
 
@@ -303,14 +309,14 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
             context.getIncludeRelationships(), context.getRenditionFilterString(),
             context.isIncludePathSegments(), null);
 
-    return convertProviderContainer(providerContainerList);
+    return convertProviderContainer(providerContainerList, context);
   }
 
   /**
    * Converts a provider container into an API container.
    */
   private List<Container<FileableCmisObject>> convertProviderContainer(
-      List<ObjectInFolderContainer> providerContainerList) {
+      List<ObjectInFolderContainer> providerContainerList, OperationContext context) {
     if (providerContainerList == null) {
       return null;
     }
@@ -325,14 +331,15 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
       }
 
       // convert the object
-      CmisObject object = of.convertObject(oifc.getObject().getObject());
+      CmisObject object = of.convertObject(oifc.getObject().getObject(), context);
       if (!(object instanceof FileableCmisObject)) {
         // the repository must not return objects that are not fileable, but you never know...
         continue;
       }
 
       // convert the children
-      List<Container<FileableCmisObject>> children = convertProviderContainer(oifc.getChildren());
+      List<Container<FileableCmisObject>> children = convertProviderContainer(oifc.getChildren(),
+          context);
 
       // add both to current container
       result.add(new ContainerImpl<FileableCmisObject>((FileableCmisObject) object, children));
@@ -440,7 +447,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     ObjectData newObjectData = getProvider().getObjectService().getObject(repositoryId, objectId,
         null, false, IncludeRelationships.NONE, null, true, true, null);
 
-    getSession().getCache().put(this);
+    // getSession().getCache().put(this);
   }
 
   private List<String> convertToPoliciesData(List<Policy> policies) {
