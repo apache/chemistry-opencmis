@@ -126,17 +126,58 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   // versioning
 
-  public boolean checkOut() {
-    throw new CmisRuntimeException("not implemented");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#checkOut()
+   */
+  public ObjectId checkOut() {
+    String objectId = getObjectId();
+    Holder<String> objectIdHolder = new Holder<String>(objectId);
+
+    getProvider().getVersioningService().checkOut(getRepositoryId(), objectIdHolder, null, null);
+
+    if (objectIdHolder.getValue() == null) {
+      return null;
+    }
+
+    return getSession().createObjectId(objectIdHolder.getValue());
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#cancelCheckOut()
+   */
   public void cancelCheckOut() {
-    throw new CmisRuntimeException("not implemented");
+    String objectId = getObjectId();
+
+    getProvider().getVersioningService().cancelCheckOut(getRepositoryId(), objectId, null);
   }
 
-  public void checkIn(boolean major, List<Property<?>> properties, ContentStream contentStream,
-      String checkinComment, List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs) {
-    throw new CmisRuntimeException("not implemented");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#checkIn(boolean, java.util.List,
+   * org.apache.opencmis.client.api.ContentStream, java.lang.String, java.util.List, java.util.List,
+   * java.util.List)
+   */
+  public ObjectId checkIn(boolean major, List<Property<?>> properties, ContentStream contentStream,
+      String checkinComment, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+    String objectId = getObjectId();
+    Holder<String> objectIdHolder = new Holder<String>(objectId);
+
+    getProvider().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
+        SessionUtil.convertProperties(getSession(), properties),
+        SessionUtil.convertContentStream(getSession(), contentStream), checkinComment,
+        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(getSession(), addAces),
+        SessionUtil.convertAces(getSession(), removeAces), null);
+
+    if (objectIdHolder.getValue() == null) {
+      return null;
+    }
+
+    return getSession().createObjectId(objectIdHolder.getValue());
   }
 
   /*
@@ -188,9 +229,32 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     return getObjectOfLatestVersion(major, null);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Document#getObjectOfLatestVersion(boolean,
+   * org.apache.opencmis.client.api.OperationContext)
+   */
   public Document getObjectOfLatestVersion(boolean major, OperationContext context) {
-    // TODO Auto-generated method stub
-    throw new CmisRuntimeException("not implemented");
+    String versionSeriesId = getVersionSeriesId();
+    if (versionSeriesId == null) {
+      throw new CmisRuntimeException("Version series id is unknown!");
+    }
+
+    ObjectData objectData = getProvider().getVersioningService().getObjectOfLatestVersion(
+        getRepositoryId(), versionSeriesId, major, context.getFilterString(),
+        context.isIncludeAllowableActions(), context.getIncludeRelationships(),
+        context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(),
+        null);
+
+    ObjectFactory objectFactory = getSession().getObjectFactory();
+
+    CmisObject result = objectFactory.convertObject(objectData, context);
+    if (!(result instanceof Document)) {
+      throw new CmisRuntimeException("Latest version is not a document!");
+    }
+
+    return (Document) result;
   }
 
   // content operations

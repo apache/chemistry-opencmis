@@ -39,12 +39,12 @@ public interface Document extends FileableCmisObject {
 
   // versioning service
 
-  boolean checkOut(); // returns contentCopied
+  ObjectId checkOut(); // returns the PWC id
 
   void cancelCheckOut();
 
-  void checkIn(boolean major, List<Property<?>> properties, ContentStream contentStream,
-      String checkinComment, List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs);
+  ObjectId checkIn(boolean major, List<Property<?>> properties, ContentStream contentStream,
+      String checkinComment, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
 
   Document getObjectOfLatestVersion(boolean major);
 
