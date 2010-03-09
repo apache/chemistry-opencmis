@@ -21,6 +21,7 @@ package org.apache.opencmis.client.runtime;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -54,6 +55,7 @@ import org.apache.opencmis.commons.provider.ObjectInFolderList;
 import org.apache.opencmis.commons.provider.ObjectList;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
+import org.apache.opencmis.commons.provider.PropertyStringData;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 
 public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject implements Folder {
@@ -361,8 +363,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
       return null;
     }
 
-    List<Folder> parents = getParents();
-
+    List<Folder> parents = super.getParents();
     if ((parents == null) || (parents.isEmpty())) {
       return null;
     }
@@ -376,16 +377,43 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * @see org.apache.opencmis.client.api.Folder#getPath()
    */
   public String getPath() {
-    if (isRootFolder()) {
-      return "/";
+    // get the path property
+    String path = getPropertyValue(PropertyIds.CMIS_PATH);
+
+    // if the path property isn't set, get it
+    if (path == null) {
+      String objectId = getObjectId();
+      ObjectData objectData = getProvider().getObjectService().getObject(getRepositoryId(),
+          objectId, PropertyIds.CMIS_PATH, false, IncludeRelationships.NONE, "cmis:none", false,
+          false, null);
+
+      if ((objectData.getProperties() != null)
+          && (objectData.getProperties().getProperties() != null)) {
+        PropertyData<?> pathProperty = objectData.getProperties().getProperties().get(
+            PropertyIds.CMIS_PATH);
+
+        if (pathProperty instanceof PropertyStringData) {
+          path = ((PropertyStringData) pathProperty).getFirstValue();
+        }
+      }
     }
 
-    List<String> paths = getPaths();
-    if ((paths == null) || (paths.isEmpty())) {
-      return null;
+    // we still don't know the path ... it's not a CMIS compliant repository
+    if (path == null) {
+      throw new CmisRuntimeException("Repository didn't return " + PropertyIds.CMIS_PATH + "!");
     }
 
-    return paths.get(0);
+    return path;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.runtime.AbstractPersistentFilableCmisObject#getPaths()
+   */
+  @Override
+  public List<String> getPaths() {
+    return Collections.singletonList(getPath());
   }
 
   /**
