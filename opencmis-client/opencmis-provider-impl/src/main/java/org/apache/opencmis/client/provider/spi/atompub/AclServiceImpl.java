@@ -24,7 +24,6 @@ import org.apache.opencmis.client.provider.spi.Session;
 import org.apache.opencmis.client.provider.spi.atompub.objects.Acl;
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.enums.AclPropagation;
-import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.Constants;
 import org.apache.opencmis.commons.impl.UrlBuilder;
 import org.apache.opencmis.commons.provider.AccessControlList;
@@ -90,7 +89,7 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
     String link = loadLink(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object or ACLs are not support!");
+      throwLinkException(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
     }
 
     UrlBuilder url = new UrlBuilder(link);

@@ -68,7 +68,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
     String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -98,7 +98,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
     String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -146,7 +146,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
     String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
     }
 
     UrlBuilder url = new UrlBuilder(link);

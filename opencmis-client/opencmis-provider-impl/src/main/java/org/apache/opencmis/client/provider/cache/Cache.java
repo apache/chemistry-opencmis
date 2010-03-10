@@ -30,7 +30,8 @@ import java.io.Serializable;
  * <br/>
  * Level configuration string format: "
  * <code>&lt;class name&gt; [param1=value1,param2=value2,...]</code>".<br/>
- * For example: <code>org.apache.opencmis.client.provider.cache.impl.MapCacheLevelImpl capacity=10</code><br/>
+ * For example:
+ * <code>org.apache.opencmis.client.provider.cache.impl.MapCacheLevelImpl capacity=10</code><br/>
  * </p>
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
@@ -58,7 +59,7 @@ public interface Cache extends Serializable {
   void put(Object value, String... keys);
 
   /**
-   * Retrieves an object from the cache
+   * Retrieves an object from the cache.
    * 
    * @param keys
    *          the keys
@@ -73,4 +74,15 @@ public interface Cache extends Serializable {
    *          the keys of the branch or leaf
    */
   void remove(String... keys);
+
+  /**
+   * Checks if a given key is in the cache.
+   * 
+   * @param keys
+   *          the keys of the branch or leaf
+   * 
+   * @return the index of the first key part that is not in the cache or <code>keys.length</code> if
+   *         the object is in the cache
+   */
+  int check(String... keys);
 }

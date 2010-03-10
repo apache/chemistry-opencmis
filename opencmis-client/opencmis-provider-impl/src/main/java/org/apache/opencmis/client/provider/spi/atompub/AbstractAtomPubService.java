@@ -189,6 +189,29 @@ public class AbstractAtomPubService {
   }
 
   /**
+   * Checks a link throw an appropriate exception.
+   */
+  protected void throwLinkException(String repositoryId, String id, String rel, String type) {
+    int index = getLinkCache().checkLink(repositoryId, id, rel, type);
+
+    switch (index) {
+    case 0:
+      throw new CmisObjectNotFoundException("Unknown repository!");
+    case 1:
+      throw new CmisObjectNotFoundException("Unknown object!");
+    case 2:
+      throw new CmisNotSupportedException(
+          "Operation not supported by the repository for this object!");
+    case 3:
+      throw new CmisNotSupportedException("No link with matching media type!");
+    case 4:
+      throw new CmisRuntimeException("Nothing wrong! Either this is a bug or threading issue.");
+    default:
+      throw new CmisRuntimeException("Unknown error!");
+    }
+  }
+
+  /**
    * Gets a type link from the cache.
    */
   protected String getTypeLink(String repositoryId, String typeId, String rel, String type) {
@@ -721,8 +744,7 @@ public class AbstractAtomPubService {
     String link = loadLink(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException(
-          "Unknown repository or object or ACLs are not supported!");
+      throwLinkException(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
     }
 
     UrlBuilder aclUrl = new UrlBuilder(link);

@@ -127,7 +127,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
     String link = loadLink(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
     }
 
     delete(new UrlBuilder(link));
@@ -138,9 +138,11 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
    * 
    * @see org.apache.opencmis.client.provider.VersioningService#checkIn(java.lang.String,
    * org.apache.opencmis.client.provider.Holder, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.PropertiesData, org.apache.opencmis.client.provider.ContentStreamData,
-   * java.lang.String, java.util.List, org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.AccessControlList, org.apache.opencmis.client.provider.ExtensionsData)
+   * org.apache.opencmis.client.provider.PropertiesData,
+   * org.apache.opencmis.client.provider.ContentStreamData, java.lang.String, java.util.List,
+   * org.apache.opencmis.client.provider.AccessControlList,
+   * org.apache.opencmis.client.provider.AccessControlList,
+   * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
       PropertiesData properties, ContentStreamData contentStream, String checkinComment,
@@ -156,7 +158,8 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         Constants.MEDIATYPE_ENTRY);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId.getValue(), Constants.REL_SELF,
+          Constants.MEDIATYPE_ENTRY);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -169,10 +172,10 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
     object.setProperties(convert(properties));
     object.setPolicyIds(convertPolicyIds(policies));
 
-    if(object.getProperties() == null) {
+    if (object.getProperties() == null) {
       object.setProperties(new CmisPropertiesType());
     }
-    
+
     String mediaType = null;
     InputStream stream = null;
 
@@ -243,7 +246,8 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         Constants.MEDIATYPE_FEED);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or folder!");
+      throwLinkException(repositoryId, versionSeriesId, Constants.REL_VERSIONHISTORY,
+          Constants.MEDIATYPE_FEED);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -284,8 +288,9 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.VersioningService#getObjectOfLatestVersion(java.lang.String,
-   * java.lang.String, java.lang.Boolean, java.lang.String, java.lang.Boolean,
+   * @see
+   * org.apache.opencmis.client.provider.VersioningService#getObjectOfLatestVersion(java.lang.String
+   * , java.lang.String, java.lang.Boolean, java.lang.String, java.lang.Boolean,
    * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean,
    * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
    */
@@ -308,8 +313,8 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.VersioningService#getPropertiesOfLatestVersion(java.lang.String,
-   * java.lang.String, java.lang.Boolean, java.lang.String,
+   * org.apache.opencmis.client.provider.VersioningService#getPropertiesOfLatestVersion(java.lang
+   * .String, java.lang.String, java.lang.Boolean, java.lang.String,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public PropertiesData getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId,

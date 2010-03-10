@@ -60,7 +60,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
     String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
     }
 
     UrlBuilder url = new UrlBuilder(link);

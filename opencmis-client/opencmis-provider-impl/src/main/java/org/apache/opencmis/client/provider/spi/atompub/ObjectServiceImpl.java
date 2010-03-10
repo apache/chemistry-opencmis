@@ -40,7 +40,6 @@ import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.Constants;
 import org.apache.opencmis.commons.impl.ReturnVersion;
 import org.apache.opencmis.commons.impl.UrlBuilder;
@@ -96,7 +95,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -170,7 +169,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -216,7 +215,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -274,7 +273,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         Constants.MEDIATYPE_FEED);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or source object!");
+      throwLinkException(repositoryId, sourceId, Constants.REL_RELATIONSHIPS,
+          Constants.MEDIATYPE_FEED);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -322,7 +322,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         Constants.MEDIATYPE_ENTRY);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId.getValue(), Constants.REL_SELF,
+          Constants.MEDIATYPE_ENTRY);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -403,7 +404,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     String link = loadLink(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -427,7 +428,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         Constants.MEDIATYPE_DESCENDANTS);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or folder!");
+      throwLinkException(repositoryId, folderId, Constants.REL_DOWN,
+          Constants.MEDIATYPE_DESCENDANTS);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -461,7 +463,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         Constants.MEDIATYPE_ALLOWABLEACTION);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId, Constants.REL_ALLOWABLEACTIONS,
+          Constants.MEDIATYPE_ALLOWABLEACTION);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -488,7 +491,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     String link = loadLink(repositoryId, objectId, AtomPubParser.LINK_REL_CONTENT, null);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId, AtomPubParser.LINK_REL_CONTENT, null);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -604,7 +607,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         Constants.MEDIATYPE_CHILDREN);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, targetFolderId, Constants.REL_DOWN,
+          Constants.MEDIATYPE_CHILDREN);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -652,7 +656,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     String link = loadLink(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -709,7 +713,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     String link = loadLink(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or object!");
+      throwLinkException(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
     }
 
     UrlBuilder url = new UrlBuilder(link);

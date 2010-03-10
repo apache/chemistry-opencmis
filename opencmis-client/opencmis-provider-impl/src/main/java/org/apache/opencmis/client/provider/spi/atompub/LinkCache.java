@@ -137,6 +137,13 @@ public class LinkCache implements Serializable {
   }
 
   /**
+   * Checks a link.
+   */
+  public int checkLink(String repositoryId, String id, String rel, String type) {
+    return fLinkCache.check(repositoryId, id, rel, type);
+  }
+
+  /**
    * Adds a type link.
    */
   public void addTypeLink(String repositoryId, String id, String rel, String type, String link) {

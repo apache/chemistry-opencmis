@@ -237,6 +237,34 @@ public class CacheImpl implements Cache {
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.provider.cache.Cache#check(java.lang.String[])
+   */
+  public int check(String... keys) {
+    if (keys == null) {
+      return -1;
+    }
+
+    CacheLevel cacheLevel = fRoot;
+
+    // follow the branch
+    for (int i = 0; i < keys.length - 1; i++) {
+      Object level = cacheLevel.get(keys[i]);
+
+      // does the branch exist?
+      if (level == null) {
+        return i;
+      }
+
+      // next level
+      cacheLevel = (CacheLevel) level;
+    }
+
+    return keys.length;
+  }
+
   // ---- internal ----
 
   /**

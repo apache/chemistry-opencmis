@@ -30,7 +30,6 @@ import org.apache.opencmis.client.provider.spi.atompub.objects.AtomFeed;
 import org.apache.opencmis.client.provider.spi.atompub.objects.AtomLink;
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.enums.RelationshipDirection;
-import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.Constants;
 import org.apache.opencmis.commons.impl.UrlBuilder;
 import org.apache.opencmis.commons.impl.dataobjects.ObjectListImpl;
@@ -57,8 +56,9 @@ public class RelationshipServiceImpl extends AbstractAtomPubService implements R
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.RelationshipService#getObjectRelationships(java.lang.String,
-   * java.lang.String, java.lang.Boolean, org.apache.opencmis.commons.enums.RelationshipDirection,
+   * @see
+   * org.apache.opencmis.client.provider.RelationshipService#getObjectRelationships(java.lang.String
+   * , java.lang.String, java.lang.Boolean, org.apache.opencmis.commons.enums.RelationshipDirection,
    * java.lang.String, java.lang.String, java.lang.Boolean, java.math.BigInteger,
    * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
    */
@@ -73,7 +73,8 @@ public class RelationshipServiceImpl extends AbstractAtomPubService implements R
         Constants.MEDIATYPE_FEED);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or source object!");
+      throwLinkException(repositoryId, objectId, Constants.REL_RELATIONSHIPS,
+          Constants.MEDIATYPE_FEED);
     }
 
     UrlBuilder url = new UrlBuilder(link);

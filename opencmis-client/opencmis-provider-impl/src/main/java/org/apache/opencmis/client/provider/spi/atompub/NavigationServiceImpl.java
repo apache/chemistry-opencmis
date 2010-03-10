@@ -83,7 +83,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
     String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or folder!");
+      throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -166,7 +166,8 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         Constants.MEDIATYPE_DESCENDANTS);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or folder!");
+      throwLinkException(repositoryId, folderId, Constants.REL_DOWN,
+          Constants.MEDIATYPE_DESCENDANTS);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -201,7 +202,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
     String link = loadLink(repositoryId, folderId, Constants.REL_UP, Constants.MEDIATYPE_ENTRY);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or folder!");
+      throwLinkException(repositoryId, folderId, Constants.REL_UP, Constants.MEDIATYPE_ENTRY);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -263,7 +264,8 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         Constants.MEDIATYPE_DESCENDANTS);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or folder!");
+      throwLinkException(repositoryId, folderId, Constants.REL_FOLDERTREE,
+          Constants.MEDIATYPE_DESCENDANTS);
     }
 
     UrlBuilder url = new UrlBuilder(link);
@@ -301,7 +303,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
     String link = loadLink(repositoryId, objectId, Constants.REL_UP, Constants.MEDIATYPE_FEED);
 
     if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or folder or object has no parents!");
+      throwLinkException(repositoryId, objectId, Constants.REL_UP, Constants.MEDIATYPE_FEED);
     }
 
     UrlBuilder url = new UrlBuilder(link);
