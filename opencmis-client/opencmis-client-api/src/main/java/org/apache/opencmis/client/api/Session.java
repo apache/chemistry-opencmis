@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
-import org.apache.opencmis.client.api.repository.PropertyFactory;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
@@ -97,11 +96,6 @@ public interface Session {
    * <code>Acl</code>s, <code>Ace</code>s, and <code>ContentStream</code>.
    */
   ObjectFactory getObjectFactory();
-
-  /**
-   * Gets the factory for <code>Property</code> objects.
-   */
-  PropertyFactory getPropertyFactory();
 
   // types
 

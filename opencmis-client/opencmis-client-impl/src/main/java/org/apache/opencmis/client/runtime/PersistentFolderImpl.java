@@ -77,11 +77,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
       List<Ace> removeAces, OperationContext context) {
     String objectId = getObjectId();
 
+    ObjectFactory of = getObjectFactory();
+
     String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
-        SessionUtil.convertProperties(getSession(), properties), objectId,
-        SessionUtil.convertContentStream(getSession(), contentStream), versioningState,
-        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(getSession(), addAces),
-        SessionUtil.convertAces(getSession(), removeAces), null);
+        of.convertProperties(properties), objectId, of.convertContentStream(contentStream),
+        versioningState, of.convertPolicies(policies), of.convertAces(addAces),
+        of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
     if ((context == null) || (newId == null)) {
@@ -114,11 +115,11 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
       throw new IllegalArgumentException("Source must be set!");
     }
 
+    ObjectFactory of = getObjectFactory();
+
     String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
-        source.getId(), SessionUtil.convertProperties(getSession(), properties), objectId,
-        versioningState, SessionUtil.convertPolicies(policies),
-        SessionUtil.convertAces(getSession(), addAces),
-        SessionUtil.convertAces(getSession(), removeAces), null);
+        source.getId(), of.convertProperties(properties), objectId, versioningState,
+        of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
     if ((context == null) || (newId == null)) {
@@ -144,10 +145,11 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
       List<Ace> addAces, List<Ace> removeAces, OperationContext context) {
     String objectId = getObjectId();
 
+    ObjectFactory of = getObjectFactory();
+
     String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
-        SessionUtil.convertProperties(getSession(), properties), objectId,
-        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(getSession(), addAces),
-        SessionUtil.convertAces(getSession(), removeAces), null);
+        of.convertProperties(properties), objectId, of.convertPolicies(policies),
+        of.convertAces(addAces), of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
     if ((context == null) || (newId == null)) {
@@ -173,10 +175,11 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
       List<Ace> addAces, List<Ace> removeAces, OperationContext context) {
     String objectId = getObjectId();
 
+    ObjectFactory of = getObjectFactory();
+
     String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
-        SessionUtil.convertProperties(getSession(), properties), objectId,
-        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(getSession(), addAces),
-        SessionUtil.convertAces(getSession(), removeAces), null);
+        of.convertProperties(properties), objectId, of.convertPolicies(policies),
+        of.convertAces(addAces), of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
     if ((context == null) || (newId == null)) {

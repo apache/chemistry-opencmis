@@ -54,13 +54,15 @@ public class QueryResultImpl implements QueryResult, Serializable {
   public QueryResultImpl(Session session, ObjectData objectData) {
     if (objectData != null) {
 
+      ObjectFactory of = session.getObjectFactory();
+
       // handle properties
       if (objectData.getProperties() != null) {
         propertiesById = new LinkedHashMap<String, QueryProperty<?>>();
         propertiesByQueryName = new LinkedHashMap<String, QueryProperty<?>>();
 
-        List<QueryProperty<?>> queryProperties = SessionUtil.convertQueryProperties(session,
-            objectData.getProperties());
+        List<QueryProperty<?>> queryProperties = of.convertQueryProperties(objectData
+            .getProperties());
 
         for (QueryProperty<?> property : queryProperties) {
           propertiesById.put(property.getId(), property);
@@ -70,14 +72,12 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
       // handle allowable actions
       if (objectData.getAllowableActions() != null) {
-        this.allowableActions = SessionUtil.convertAllowableActions(session, objectData
-            .getAllowableActions());
+        this.allowableActions = of.convertAllowableActions(objectData.getAllowableActions());
       }
 
       // handle relationships
       if (objectData.getRelationships() != null) {
         relationships = new ArrayList<Relationship>();
-        ObjectFactory of = session.getObjectFactory();
         for (ObjectData rod : objectData.getRelationships()) {
           CmisObject relationship = of.convertObject(rod, session.getDefaultContext());
           if (relationship instanceof Relationship) {
@@ -90,7 +90,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
       if (objectData.getRenditions() != null) {
         this.renditions = new ArrayList<Rendition>();
         for (RenditionData rd : objectData.getRenditions()) {
-          this.renditions.add(SessionUtil.convertRendition(session, null, rd));
+          this.renditions.add(of.convertRendition(null, rd));
         }
       }
     }

@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
-import org.apache.opencmis.client.api.util.Testable;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
@@ -217,20 +216,20 @@ public class Fixture {
 	}
 
 	public static void setUpTestData(Session session) {
-		if (session instanceof Testable) {
-			Map<String, String> p = new Hashtable<String, String>();
-			p.put(Testable.FOLDER_TYPE_ID_PARAMETER, Fixture.FOLDER_TYPE_ID);
-			p
-					.put(Testable.DOCUMENT_TYPE_ID_PARAMETER,
-							Fixture.DOCUMENT_TYPE_ID);
-			((Testable) session).generateTestData(p);
-		}
+//		if (session instanceof Testable) {
+//			Map<String, String> p = new Hashtable<String, String>();
+//			p.put(Testable.FOLDER_TYPE_ID_PARAMETER, Fixture.FOLDER_TYPE_ID);
+//			p
+//					.put(Testable.DOCUMENT_TYPE_ID_PARAMETER,
+//							Fixture.DOCUMENT_TYPE_ID);
+//			((Testable) session).generateTestData(p);
+//		}
 	}
 
 	public static void teardownTestData(Session session) {
-		if (session instanceof Testable) {
-			((Testable) session).cleanUpTestData();
-		}
+//		if (session instanceof Testable) {
+//			((Testable) session).cleanUpTestData();
+//		}
 	}
 
 	private static boolean isLogged = false;

@@ -91,30 +91,30 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     this.objectType = objectType;
     this.creationContext = new OperationContextImpl(context);
 
+    ObjectFactory of = getObjectFactory();
+
     if (objectData != null) {
       // handle properties
       if (objectData.getProperties() != null) {
-        this.properties = SessionUtil.convertProperties(session, objectType, objectData
-            .getProperties());
+        this.properties = of.convertProperties(objectType, objectData.getProperties());
       }
 
       // handle allowable actions
       if (objectData.getAllowableActions() != null) {
-        this.allowableActions = SessionUtil.convertAllowableActions(session, objectData
-            .getAllowableActions());
+        this.allowableActions = of.convertAllowableActions(objectData.getAllowableActions());
       }
 
       // handle renditions
       if (objectData.getRenditions() != null) {
         this.renditions = new ArrayList<Rendition>();
         for (RenditionData rd : objectData.getRenditions()) {
-          this.renditions.add(SessionUtil.convertRendition(session, getId(), rd));
+          this.renditions.add(of.convertRendition(getId(), rd));
         }
       }
 
       // handle ACL
       if (objectData.getAcl() != null) {
-        acl = SessionUtil.convertAcl(session, objectData.getAcl());
+        acl = of.convertAcl(objectData.getAcl());
       }
 
       // handle policies
@@ -131,7 +131,6 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       // handle relationships
       if (objectData.getRelationships() != null) {
         relationships = new ArrayList<Relationship>();
-        ObjectFactory of = session.getObjectFactory();
         for (ObjectData rod : objectData.getRelationships()) {
           CmisObject relationship = of.convertObject(rod, this.creationContext);
           if (relationship instanceof Relationship) {
@@ -173,6 +172,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   }
 
   /**
+   * Returns the object factory.
+   */
+  protected ObjectFactory getObjectFactory() {
+    return getSession().getObjectFactory();
+  }
+
+  /**
    * Returns the id of this object or throws an exception if the id is unknown.
    */
   protected String getObjectId() {
@@ -209,7 +215,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
     getProvider().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
-        changeTokenHolder, SessionUtil.convertProperties(getSession(), properties.values()), null);
+        changeTokenHolder, getObjectFactory().convertProperties(properties.values()), null);
   }
 
   // --- properties ---
@@ -234,7 +240,12 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getBaseTypeId()
    */
   public BaseObjectTypeIds getBaseTypeId() {
-    return BaseObjectTypeIds.fromValue((String) getPropertyValue(PropertyIds.CMIS_BASE_TYPE_ID));
+    String baseType = getPropertyValue(PropertyIds.CMIS_BASE_TYPE_ID);
+    if (baseType == null) {
+      return null;
+    }
+
+    return BaseObjectTypeIds.fromValue(baseType);
   }
 
   /*
@@ -429,7 +440,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       throw new IllegalArgumentException("Value does not match property type!");
     }
 
-    Property<T> newProperty = (Property<T>) getSession().getPropertyFactory()
+    Property<T> newProperty = (Property<T>) getSession().getObjectFactory()
         .createPropertyMultivalue((PropertyDefinition<T>) propertyDefinition, value);
 
     setChanged();
@@ -476,8 +487,11 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    */
   public Acl getAcl(boolean onlyBasicPermissions) {
     String objectId = getObjectId();
-    return SessionUtil.convertAcl(getSession(), getProvider().getAclService().getAcl(
-        getRepositoryId(), objectId, onlyBasicPermissions, null));
+
+    ObjectFactory of = getObjectFactory();
+
+    return of.convertAcl(getProvider().getAclService().getAcl(getRepositoryId(), objectId,
+        onlyBasicPermissions, null));
   }
 
   /*
@@ -488,9 +502,11 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    */
   public Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation) {
     String objectId = getObjectId();
-    return SessionUtil.convertAcl(getSession(), getProvider().getAclService().applyAcl(
-        getRepositoryId(), objectId, SessionUtil.convertAces(getSession(), addAces),
-        SessionUtil.convertAces(getSession(), removeAces), aclPropagation, null));
+
+    ObjectFactory of = getObjectFactory();
+
+    return of.convertAcl(getProvider().getAclService().applyAcl(getRepositoryId(), objectId,
+        of.convertAces(addAces), of.convertAces(removeAces), aclPropagation, null));
   }
 
   /*
@@ -531,11 +547,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * org.apache.opencmis.client.api.CmisObject#applyPolicy(org.apache.opencmis.client.api.ObjectId)
    */
   public void applyPolicy(ObjectId policyId) {
-    if (policyId == null) {
-      throw new IllegalArgumentException("Policy is not set!");
-    }
-    if (policyId.getId() == null) {
-      throw new IllegalArgumentException("Policy id is not set!");
+    if ((policyId == null) || (policyId.getId() == null)) {
+      throw new IllegalArgumentException("Policy Id is not set!");
     }
 
     String objectId = getObjectId();
@@ -550,11 +563,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * org.apache.opencmis.client.api.CmisObject#removePolicy(org.apache.opencmis.client.api.ObjectId)
    */
   public void removePolicy(ObjectId policyId) {
-    if (policyId == null) {
-      throw new IllegalArgumentException("Policy is not set!");
-    }
-    if (policyId.getId() == null) {
-      throw new IllegalArgumentException("Policy id is not set!");
+    if ((policyId == null) || (policyId.getId() == null)) {
+      throw new IllegalArgumentException("Policy Id is not set!");
     }
 
     String objectId = getObjectId();
@@ -619,8 +629,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         List<Relationship> page = new ArrayList<Relationship>();
         if (relList.getObjects() != null) {
           for (ObjectData rod : relList.getObjects()) {
-            Relationship relationship = new PersistentRelationshipImpl(getSession(), SessionUtil
-                .getTypeFromObjectData(getSession(), rod), rod, ctxt);
+            Relationship relationship = new PersistentRelationshipImpl(getSession(),
+                getObjectFactory().getTypeFromObjectData(rod), rod, ctxt);
 
             page.add(relationship);
           }

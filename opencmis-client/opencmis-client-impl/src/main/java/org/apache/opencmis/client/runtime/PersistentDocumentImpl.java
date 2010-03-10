@@ -167,11 +167,11 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     String objectId = getObjectId();
     Holder<String> objectIdHolder = new Holder<String>(objectId);
 
+    ObjectFactory of = getObjectFactory();
+
     getProvider().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
-        SessionUtil.convertProperties(getSession(), properties),
-        SessionUtil.convertContentStream(getSession(), contentStream), checkinComment,
-        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(getSession(), addAces),
-        SessionUtil.convertAces(getSession(), removeAces), null);
+        of.convertProperties(properties), of.convertContentStream(contentStream), checkinComment,
+        of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
 
     if (objectIdHolder.getValue() == null) {
       return null;
@@ -293,7 +293,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
     getProvider().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, overwrite,
-        changeTokenHolder, SessionUtil.convertContentStream(getSession(), contentStream), null);
+        changeTokenHolder, getObjectFactory().convertContentStream(contentStream), null);
 
     if (objectIdHolder.getValue() == null) {
       return null;

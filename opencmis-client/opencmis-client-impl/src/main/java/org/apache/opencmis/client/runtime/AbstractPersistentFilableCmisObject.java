@@ -46,8 +46,9 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
    * @see org.apache.opencmis.client.api.FileableCmisObject#getParents()
    */
   public List<Folder> getParents() {
-    // get object ids of the parent folders
     String objectId = getObjectId();
+
+    // get object ids of the parent folders
     List<ObjectParentData> providerParents = getProvider().getNavigationService().getObjectParents(
         getRepositoryId(), objectId, PropertyIds.CMIS_OBJECT_ID, false, IncludeRelationships.NONE,
         null, false, null);
@@ -88,8 +89,9 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
    * @see org.apache.opencmis.client.api.FileableCmisObject#getPaths()
    */
   public List<String> getPaths() {
-    // get object paths of the parent folders
     String objectId = getObjectId();
+
+    // get object paths of the parent folders
     List<ObjectParentData> providerParents = getProvider().getNavigationService().getObjectParents(
         getRepositoryId(), objectId, PropertyIds.CMIS_PATH, false, IncludeRelationships.NONE, null,
         true, null);

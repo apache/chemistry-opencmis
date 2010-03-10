@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,19 +41,15 @@ import org.apache.opencmis.client.api.PersistentSession;
 import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.QueryResult;
-import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
-import org.apache.opencmis.client.api.repository.PropertyFactory;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
-import org.apache.opencmis.client.api.util.Testable;
 import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.client.runtime.cache.Cache;
 import org.apache.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
-import org.apache.opencmis.client.runtime.repository.PersistentPropertyFactoryImpl;
 import org.apache.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.opencmis.commons.SessionParameter;
@@ -62,23 +57,20 @@ import org.apache.opencmis.commons.api.TypeDefinition;
 import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinitionList;
 import org.apache.opencmis.commons.enums.BindingType;
-import org.apache.opencmis.commons.enums.Cardinality;
-import org.apache.opencmis.commons.enums.CmisProperties;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
-import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
-import org.apache.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.DiscoveryService;
 import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectList;
 import org.apache.opencmis.commons.provider.RepositoryService;
-import org.apache.opencmis.util.repository.ObjectGenerator;
 
-public class PersistentSessionImpl implements PersistentSession, Testable, Serializable {
+/**
+ * Persistent model session.
+ */
+public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false,
       true, false, IncludeRelationships.NONE, null, true, null, true);
@@ -89,11 +81,6 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * default session context (serializable)
    */
   private OperationContext context = DEFAULT_CONTEXT;
-
-  /*
-   * root folder containing generated test data (not serializable)
-   */
-  private transient Folder testRootFolder = null;
 
   /*
    * session parameter (serializable)
@@ -109,12 +96,6 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    * Session Locale, determined from session parameter (serializable)
    */
   private Locale locale = null;
-
-  /*
-   * helper factory (non serializable)
-   */
-  private transient PropertyFactory propertyFactory = PersistentPropertyFactoryImpl
-      .newInstance(this);
 
   /*
    * Object cache (serializable)
@@ -137,6 +118,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
    */
   private static final long serialVersionUID = -4287481628831198383L;
 
+  /**
+   * Constructor.
+   */
   public PersistentSessionImpl(Map<String, String> parameters) {
     this.parameters = parameters;
     PersistentSessionImpl.log.info("Session Parameters: " + parameters);
@@ -219,6 +203,15 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
      * clear provider cache
      */
     getProvider().clearAllCaches();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getObjectFactory()
+   */
+  public ObjectFactory getObjectFactory() {
+    return this.objectFactory;
   }
 
   /*
@@ -435,14 +428,6 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     return result;
   }
 
-  public ObjectFactory getObjectFactory() {
-    return this.objectFactory;
-  }
-
-  public PropertyFactory getPropertyFactory() {
-    return this.propertyFactory;
-  }
-
   /*
    * (non-Javadoc)
    * 
@@ -495,7 +480,6 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
       throw new IllegalArgumentException("itemsPerPage must be > 0!");
     }
 
-    final Session thisSession = this;
     final String repositoryId = getRepositoryId();
     final RepositoryService repositoryService = getProvider().getRepositoryService();
 
@@ -514,7 +498,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
         // convert type definitions
         List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
         for (TypeDefinition typeDefinition : tdl.getList()) {
-          page.add(SessionUtil.convertTypeDefinition(thisSession, typeDefinition));
+          page.add(objectFactory.convertTypeDefinition(typeDefinition));
         }
 
         return new FetchResult(page, tdl.getNumItems(), tdl.hasMoreItems());
@@ -535,7 +519,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
   public ObjectType getTypeDefinition(String typeId) {
     TypeDefinition typeDefinition = getProvider().getRepositoryService().getTypeDefinition(
         getRepositoryId(), typeId, null);
-    return SessionUtil.convertTypeDefinition(this, typeDefinition);
+    return objectFactory.convertTypeDefinition(typeDefinition);
   }
 
   /*
@@ -560,8 +544,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     List<Container<ObjectType>> result = new ArrayList<Container<ObjectType>>();
 
     for (TypeDefinitionContainer container : descendantsList) {
-      ObjectType objectType = SessionUtil
-          .convertTypeDefinition(this, container.getTypeDefinition());
+      ObjectType objectType = objectFactory.convertTypeDefinition(container.getTypeDefinition());
       List<Container<ObjectType>> children = convertTypeDescendants(container.getChildren());
 
       result.add(new ContainerImpl<ObjectType>(objectType, children));
@@ -636,78 +619,6 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     throw new CmisRuntimeException("not implemented");
   }
 
-  public void generateTestData(Map<String, String> parameter) {
-    String repositoryId = this.getRepositoryId();
-    ObjectGenerator og = new ObjectGenerator(this.provider.getObjectFactory(), this.provider
-        .getNavigationService(), this.provider.getObjectService(), repositoryId);
-    Folder rootFolder = null;
-    String documentTypeId = null;
-    String folderTypeId = null;
-
-    // check preconditions (mandatory parameter)
-    if (!parameter.containsKey(Testable.DOCUMENT_TYPE_ID_PARAMETER)) {
-      throw new CmisRuntimeException("Can't genereate test data! Paramter missing: "
-          + Testable.DOCUMENT_TYPE_ID_PARAMETER);
-    }
-    else {
-      documentTypeId = parameter.get(Testable.DOCUMENT_TYPE_ID_PARAMETER);
-    }
-    if (!parameter.containsKey(Testable.FOLDER_TYPE_ID_PARAMETER)) {
-      throw new CmisRuntimeException("Can't genereate test data! Paramter missing: "
-          + Testable.FOLDER_TYPE_ID_PARAMETER);
-    }
-    else {
-      folderTypeId = parameter.get(Testable.FOLDER_TYPE_ID_PARAMETER);
-    }
-
-    // optional test root folder:
-    if (parameter.containsKey(Testable.ROOT_FOLDER_ID_PARAMETER)) {
-      // test root folder
-      String testRootId = parameter.get(Testable.ROOT_FOLDER_ID_PARAMETER);
-      rootFolder = (Folder) this.getObject(createObjectId(testRootId));
-    }
-    else {
-      // repository root
-      rootFolder = this.getRootFolder();
-    }
-
-    PropertyIdDefinitionImpl objectTypeIdPropertyType = new PropertyIdDefinitionImpl();
-    objectTypeIdPropertyType.setId(CmisProperties.OBJECT_TYPE_ID.value());
-    objectTypeIdPropertyType.setCardinality(Cardinality.SINGLE);
-
-    PropertyStringDefinitionImpl namePropertyType = new PropertyStringDefinitionImpl();
-    namePropertyType.setId(CmisProperties.NAME.value());
-    namePropertyType.setCardinality(Cardinality.SINGLE);
-
-    // create test root folder
-    List<Property<?>> properties = new ArrayList<Property<?>>();
-    Property<String> nameProperty = this.getPropertyFactory().createProperty(namePropertyType,
-        UUID.randomUUID().toString());
-    properties.add(nameProperty);
-    Property<String> typeProperty = this.getPropertyFactory().createProperty(
-        objectTypeIdPropertyType, folderTypeId);
-    properties.add(typeProperty);
-
-    this.testRootFolder = rootFolder
-        .createFolder(properties, null, null, null, getDefaultContext());
-
-    og.setContentSizeInKB(10);
-    og.setDocumentTypeId(documentTypeId);
-    og.setFolderTypeId(folderTypeId);
-    og.setNumberOfDocumentsToCreatePerFolder(2);
-    og.setDocumentPropertiesToGenerate(new ArrayList<String>());
-    og.setFolderPropertiesToGenerate(new ArrayList<String>());
-
-    og.createFolderHierachy(2, 2, this.testRootFolder.getId());
-  }
-
-  public void cleanUpTestData() {
-    if (this.testRootFolder != null) {
-      this.testRootFolder.deleteTree(true, UnfileObjects.DELETE, true);
-      this.testRootFolder = null;
-    }
-  }
-
   /**
    * Connect session object to the provider. This is the very first call after a session is created.
    * <p>
@@ -775,7 +686,7 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
   }
 
   public Cache getCache() {
-    return null; // this.cache;
+    return this.cache;
   }
 
   /**
@@ -803,11 +714,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     }
 
     String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
-        SessionUtil.convertProperties(this, properties),
-        (folderId == null ? null : folderId.getId()),
-        SessionUtil.convertContentStream(this, contentStream), versioningState,
-        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(this, addAces),
-        SessionUtil.convertAces(this, removeAces), null);
+        objectFactory.convertProperties(properties), (folderId == null ? null : folderId.getId()),
+        objectFactory.convertContentStream(contentStream), versioningState,
+        objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+        objectFactory.convertAces(removeAces), null);
 
     if (newId == null) {
       return null;
@@ -833,10 +743,10 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     }
 
     String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
-        source.getId(), SessionUtil.convertProperties(this, properties),
+        source.getId(), objectFactory.convertProperties(properties),
         (folderId == null ? null : folderId.getId()), versioningState,
-        SessionUtil.convertPolicies(policies), SessionUtil.convertAces(this, addAces),
-        SessionUtil.convertAces(this, removeAces), null);
+        objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+        objectFactory.convertAces(removeAces), null);
 
     if (newId == null) {
       return null;
@@ -858,9 +768,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     }
 
     String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
-        SessionUtil.convertProperties(this, properties),
-        (folderId == null ? null : folderId.getId()), SessionUtil.convertPolicies(policies),
-        SessionUtil.convertAces(this, addAces), SessionUtil.convertAces(this, removeAces), null);
+        objectFactory.convertProperties(properties), (folderId == null ? null : folderId.getId()),
+        objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+        objectFactory.convertAces(removeAces), null);
 
     if (newId == null) {
       return null;
@@ -882,9 +792,9 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
     }
 
     String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
-        SessionUtil.convertProperties(this, properties),
-        (folderId == null ? null : folderId.getId()), SessionUtil.convertPolicies(policies),
-        SessionUtil.convertAces(this, addAces), SessionUtil.convertAces(this, removeAces), null);
+        objectFactory.convertProperties(properties), (folderId == null ? null : folderId.getId()),
+        objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+        objectFactory.convertAces(removeAces), null);
 
     if (newId == null) {
       return null;
@@ -902,8 +812,8 @@ public class PersistentSessionImpl implements PersistentSession, Testable, Seria
   public ObjectId createRelationship(List<Property<?>> properties, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces) {
     String newId = getProvider().getObjectService().createRelationship(getRepositoryId(),
-        SessionUtil.convertProperties(this, properties), SessionUtil.convertPolicies(policies),
-        SessionUtil.convertAces(this, addAces), SessionUtil.convertAces(this, removeAces), null);
+        objectFactory.convertProperties(properties), objectFactory.convertPolicies(policies),
+        objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
 
     if (newId == null) {
       return null;
