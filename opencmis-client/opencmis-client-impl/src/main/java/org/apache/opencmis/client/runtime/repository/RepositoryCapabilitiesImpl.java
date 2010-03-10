@@ -18,6 +18,8 @@
  */
 package org.apache.opencmis.client.runtime.repository;
 
+import java.io.Serializable;
+
 import org.apache.opencmis.client.api.repository.RepositoryCapabilities;
 import org.apache.opencmis.commons.enums.CapabilityAcl;
 import org.apache.opencmis.commons.enums.CapabilityChanges;
@@ -27,68 +29,70 @@ import org.apache.opencmis.commons.enums.CapabilityQuery;
 import org.apache.opencmis.commons.enums.CapabilityRendition;
 import org.apache.opencmis.commons.provider.RepositoryCapabilitiesData;
 
-public class RepositoryCapabilitiesImpl implements RepositoryCapabilities {
+public class RepositoryCapabilitiesImpl implements RepositoryCapabilities, Serializable {
 
-	private RepositoryCapabilitiesData capabilities = null;
-	
-	public RepositoryCapabilitiesImpl(RepositoryCapabilitiesData rcd) {
-		this.capabilities = rcd;
-	}
+  private static final long serialVersionUID = 1L;
 
-	public CapabilityAcl getAclSupport() {
-		return this.capabilities.getCapabilityAcl();
-	}
+  private RepositoryCapabilitiesData capabilities = null;
 
-	public CapabilityChanges getChangesSupport() {
-		return this.capabilities.getCapabilityChanges();
-	}
+  public RepositoryCapabilitiesImpl(RepositoryCapabilitiesData rcd) {
+    this.capabilities = rcd;
+  }
 
-	public CapabilityContentStreamUpdates getContentStreamUpdatabilitySupport() {
-		return this.capabilities.getCapabilityContentStreamUpdatability();
-	}
+  public CapabilityAcl getAclSupport() {
+    return this.capabilities.getCapabilityAcl();
+  }
 
-	public CapabilityJoin getJoinSupport() {
-		return this.capabilities.getCapabilityJoin();
-	}
+  public CapabilityChanges getChangesSupport() {
+    return this.capabilities.getCapabilityChanges();
+  }
 
-	public CapabilityQuery getQuerySupport() {
-		return this.capabilities.getCapabilityQuery();
-	}
+  public CapabilityContentStreamUpdates getContentStreamUpdatabilitySupport() {
+    return this.capabilities.getCapabilityContentStreamUpdatability();
+  }
 
-	public CapabilityRendition getRenditionsSupport() {
-		return this.capabilities.getCapabilityRenditions();
-	}
+  public CapabilityJoin getJoinSupport() {
+    return this.capabilities.getCapabilityJoin();
+  }
 
-	public boolean isAllVersionsSearchableSupported() {
-		return this.capabilities.allVersionsSearchable();
-	}
+  public CapabilityQuery getQuerySupport() {
+    return this.capabilities.getCapabilityQuery();
+  }
 
-	public boolean isGetDescendantsSupported() {
-		return this.capabilities.supportsGetDescendants();
-	}
+  public CapabilityRendition getRenditionsSupport() {
+    return this.capabilities.getCapabilityRenditions();
+  }
 
-	public boolean isGetFolderTreeSupported() {
-		return this.capabilities.supportsGetFolderTree();
-	}
+  public boolean isAllVersionsSearchableSupported() {
+    return this.capabilities.allVersionsSearchable();
+  }
 
-	public boolean isMultifilingSupported() {
-		return this.capabilities.supportsMultifiling();
-	}
+  public boolean isGetDescendantsSupported() {
+    return this.capabilities.supportsGetDescendants();
+  }
 
-	public boolean isPwcSearchableSupported() {
-		return this.capabilities.isPwcSearchable();
-	}
+  public boolean isGetFolderTreeSupported() {
+    return this.capabilities.supportsGetFolderTree();
+  }
 
-	public boolean isPwcUpdatableSupported() {
-		return this.capabilities.isPwcUpdatable();
-	}
+  public boolean isMultifilingSupported() {
+    return this.capabilities.supportsMultifiling();
+  }
 
-	public boolean isUnfilingSupported() {
-		return this.capabilities.supportsUnfiling();
-	}
+  public boolean isPwcSearchableSupported() {
+    return this.capabilities.isPwcSearchable();
+  }
 
-	public boolean isVersionSpecificFilingSupported() {
-		return this.capabilities.supportsVersionSpecificFiling();
-	}
+  public boolean isPwcUpdatableSupported() {
+    return this.capabilities.isPwcUpdatable();
+  }
+
+  public boolean isUnfilingSupported() {
+    return this.capabilities.supportsUnfiling();
+  }
+
+  public boolean isVersionSpecificFilingSupported() {
+    return this.capabilities.supportsVersionSpecificFiling();
+  }
 
 }

@@ -18,18 +18,24 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
+import org.apache.opencmis.client.api.repository.Repository;
+import org.apache.opencmis.client.runtime.repository.RepositoryImpl;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.enums.SessionType;
 import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.opencmis.commons.provider.CmisProvider;
+import org.apache.opencmis.commons.provider.RepositoryInfoData;
 
 /**
- * Default implementation of a session factory. Used by unit tests or
- * applications that depend directly on runtime implementation.
+ * Default implementation of a session factory. Used by unit tests or applications that depend
+ * directly on runtime implementation.
  * <p>
  * <code>
  * SessionFactory sf = new SessionFactoryImpl();<br>
@@ -46,42 +52,65 @@ import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
  */
 public class SessionFactoryImpl implements SessionFactory {
 
-	protected SessionFactoryImpl() {
+  protected SessionFactoryImpl() {
 
-	}
+  }
 
-	public static SessionFactory newInstance() {
-		return new SessionFactoryImpl();
-	}
+  public static SessionFactory newInstance() {
+    return new SessionFactoryImpl();
+  }
 
-	@SuppressWarnings("unchecked")
-	public <T extends Session> T createSession(Map<String, String> parameters) {
-		Session s = null;
-		SessionType t = null;
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.SessionFactory#createSession(java.util.Map)
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends Session> T createSession(Map<String, String> parameters) {
+    Session s = null;
+    SessionType t = null;
 
-		// determine session type
-		if (parameters.containsKey(SessionParameter.SESSION_TYPE)) {
-			t = SessionType.fromValue(parameters
-					.get(SessionParameter.SESSION_TYPE));
-		} else {
-			// default session type if type is not set
-			t = SessionType.PERSISTENT;
-		}
+    // determine session type
+    if (parameters.containsKey(SessionParameter.SESSION_TYPE)) {
+      t = SessionType.fromValue(parameters.get(SessionParameter.SESSION_TYPE));
+    }
+    else {
+      // default session type if type is not set
+      t = SessionType.PERSISTENT;
+    }
 
-		switch (t) {
-		case PERSISTENT:
-			PersistentSessionImpl ps = new PersistentSessionImpl(parameters);
-			ps.connect(); // connect session with provider
-			s = ps;
-			break;
-		case TRANSIENT:
-			throw new CmisNotSupportedException("SessionType " + t
-					+ "not implemented!");
-		default:
-			throw new CmisRuntimeException("SessionType " + t + "not known!");
-		}
+    switch (t) {
+    case PERSISTENT:
+      PersistentSessionImpl ps = new PersistentSessionImpl(parameters);
+      ps.connect(); // connect session with provider
+      s = ps;
+      break;
+    case TRANSIENT:
+      throw new CmisNotSupportedException("SessionType " + t + "not implemented!");
+    default:
+      throw new CmisRuntimeException("SessionType " + t + "not known!");
+    }
 
-		return (T) s;
-	}
+    return (T) s;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.SessionFactory#getRepositories(java.util.Map)
+   */
+  public List<Repository> getRepositories(Map<String, String> parameters) {
+    CmisProvider provider = CmisProviderHelper.createProvider(parameters);
+
+    List<RepositoryInfoData> repositoryInfos = provider.getRepositoryService().getRepositoryInfos(
+        null);
+
+    List<Repository> result = new ArrayList<Repository>();
+    for (RepositoryInfoData data : repositoryInfos) {
+      result.add(new RepositoryImpl(data, parameters, this));
+    }
+
+    return result;
+  }
 
 }

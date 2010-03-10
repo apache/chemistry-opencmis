@@ -18,22 +18,23 @@
  */
 package org.apache.opencmis.client.api;
 
+import java.util.List;
 import java.util.Map;
 
+import org.apache.opencmis.client.api.repository.Repository;
+
 /**
- * Entry point into the OpenCMIS Client API. The <code>SessionFactory</code>
- * class implementation needs to be retrieved by any runtime lookup call. This
- * can for instance be a J2EE JNDI lookup or an OSGi service lookup.
+ * Entry point into the OpenCMIS Client API. The <code>SessionFactory</code> class implementation
+ * needs to be retrieved by any runtime lookup call. This can for instance be a J2EE JNDI lookup or
+ * an OSGi service lookup.
  * <p>
- * The entries of parameter map are defined by <code>SessionParameter</code>
- * class which is part of the commons package. Parameters specify connection
- * settings (user name, authentication, connection url, binding type (soap or
- * atom pub) ...).
+ * The entries of parameter map are defined by <code>SessionParameter</code> class which is part of
+ * the commons package. Parameters specify connection settings (user name, authentication,
+ * connection url, binding type (soap or atom pub) ...).
  * <p>
- * The <code>Session</code> class which is constructed is either the
- * <code>session</code> base class which is the default implementation or it can
- * be derived from that implementing special behavior for the session. Which
- * session finally is returned can be controlled by the
+ * The <code>Session</code> class which is constructed is either the <code>session</code> base class
+ * which is the default implementation or it can be derived from that implementing special behavior
+ * for the session. Which session finally is returned can be controlled by the
  * <code>SessionParameter.SESSION_TYPE</code> parameter.
  * <p>
  * Example Coding:
@@ -50,21 +51,27 @@ import java.util.Map;
  * <br>TransientSession s = factory.createSession(parameters);
  * </code>
  *<p>
- * If the <code>SessionType</code> parameter is not specified then the default
- * persistent session is returned.
+ * If the <code>SessionType</code> parameter is not specified then the default persistent session is
+ * returned.
  * 
  */
 public interface SessionFactory {
 
-	/**
-	 * Obtain a new session using parameter configuration.
-	 * 
-	 * @param T A from the {@code Session} interface derived sub type 
-	 * @param parameters
-	 *            a {@code Map} of name/value pairs with parameters for the
-	 *            session. See class {@code SessionParameter}.
-	 * @return a {@code session} to the CMIS repository specified by the {@code
-	 *         parameters}. 
-	 */
-	<T extends Session> T createSession(Map<String, String> parameters);
+  /**
+   * Obtain a new session using parameter configuration.
+   * 
+   * @param T
+   *          A from the {@code Session} interface derived sub type
+   * @param parameters
+   *          a {@code Map} of name/value pairs with parameters for the session. See class {@code
+   *          SessionParameter}.
+   * @return a {@code session} to the CMIS repository specified by the {@code parameters}.
+   */
+  <T extends Session> T createSession(Map<String, String> parameters);
+
+  /**
+   * Returns all repositories that are available at the endpoint. See {@link #createSession(Map)}
+   * for parameter details. The parameter {@code SessionParameter.REPOSITORY_ID} should not be set.
+   */
+  List<Repository> getRepositories(Map<String, String> parameters);
 }

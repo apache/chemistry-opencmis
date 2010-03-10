@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
@@ -54,6 +55,7 @@ import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.objecttype.PolicyType;
 import org.apache.opencmis.client.api.objecttype.RelationshipType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
+import org.apache.opencmis.client.api.repository.Repository;
 import org.apache.opencmis.client.api.repository.RepositoryCapabilities;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.api.util.Container;
@@ -736,5 +738,9 @@ public class MockSessionFactory implements SessionFactory {
 
 	private interface BooleanProperty extends Property<Boolean> {
 	}
+
+  public List<Repository> getRepositories(Map<String, String> parameters) {
+    return null;
+  }
 
 }

@@ -46,17 +46,16 @@ import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
-import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.client.runtime.cache.Cache;
 import org.apache.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
+import org.apache.opencmis.client.runtime.repository.RepositoryInfoImpl;
 import org.apache.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.api.TypeDefinition;
 import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinitionList;
-import org.apache.opencmis.commons.enums.BindingType;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
@@ -65,6 +64,7 @@ import org.apache.opencmis.commons.provider.DiscoveryService;
 import org.apache.opencmis.commons.provider.NavigationService;
 import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.ObjectList;
+import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.commons.provider.RepositoryService;
 
 /**
@@ -437,9 +437,16 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     if (this.repositoryInfo == null) {
       /* get initial repository id from session parameter */
       String repositoryId = this.determineRepositoryId(this.parameters);
-      RepositoryInfoImpl rii = new RepositoryInfoImpl(this, repositoryId);
-      this.repositoryInfo = rii;
+      if (repositoryId == null) {
+        throw new IllegalStateException("Repository Id is not set!");
+      }
+
+      RepositoryInfoData data = getProvider().getRepositoryService().getRepositoryInfo(
+          repositoryId, null);
+
+      this.repositoryInfo = new RepositoryInfoImpl(data);
     }
+
     return this.repositoryInfo;
   }
 
@@ -626,59 +633,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * InMemory} provider is selected.
    */
   public void connect() {
-    if (this.parameters == null || this.parameters.isEmpty()) {
-      throw new CmisRuntimeException("Session parameter not set!");
-    }
-
-    if (!this.parameters.containsKey(SessionParameter.BINDING_TYPE)) {
-      this.parameters.put(SessionParameter.BINDING_TYPE, BindingType.CUSTOM.value());
-    }
-
-    BindingType bt = BindingType.fromValue(this.parameters.get(SessionParameter.BINDING_TYPE));
-
-    switch (bt) {
-    case ATOMPUB:
-      this.provider = this.createAtomPubProvider(this.parameters);
-      break;
-    case WEBSERVICES:
-      this.provider = this.createWebServiceProvider(this.parameters);
-      break;
-    case CUSTOM:
-      this.provider = this.createCustomProvider(this.parameters);
-      break;
-    default:
-      throw new CmisRuntimeException("Ambiguous session parameter: " + this.parameters);
-    }
-  }
-
-  /**
-   * Creates a provider with custom parameters.
-   */
-  private CmisProvider createCustomProvider(Map<String, String> parameters) {
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
-    CmisProvider provider = factory.createCmisProvider(parameters);
-
-    return provider;
-  }
-
-  /**
-   * Creates a Web Services provider.
-   */
-  private CmisProvider createWebServiceProvider(Map<String, String> parameters) {
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
-    CmisProvider provider = factory.createCmisWebServicesProvider(parameters);
-
-    return provider;
-  }
-
-  /**
-   * Creates an AtomPub provider.
-   */
-  private CmisProvider createAtomPubProvider(Map<String, String> parameters) {
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
-    CmisProvider provider = factory.createCmisAtomPubProvider(parameters);
-
-    return provider;
+    this.provider = CmisProviderHelper.createProvider(this.parameters);
   }
 
   public CmisProvider getProvider() {
