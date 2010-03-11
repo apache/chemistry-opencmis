@@ -49,12 +49,6 @@
 							<Web-ContextPath>browser</Web-ContextPath>
 						</manifestEntries>
 					</archive>
-					<overlays>
-						<overlay>
-							<groupId>org.opencmis</groupId>
-							<artifactId>opencmis-test-browser</artifactId>
-						</overlay>
-					</overlays>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -66,7 +60,6 @@
 			<groupId>org.opencmis</groupId>
 			<artifactId>opencmis-test-browser</artifactId>
 			<version>${version}</version>
-			<type>war</type>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
