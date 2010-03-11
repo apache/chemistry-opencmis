@@ -38,7 +38,7 @@ import org.apache.opencmis.commons.provider.AclService;
  */
 public class AclServiceImpl extends AbstractWebServicesService implements AclService {
 
-  private PortProvider fPortProvider;
+  private final PortProvider fPortProvider;
 
   /**
    * Constructor.

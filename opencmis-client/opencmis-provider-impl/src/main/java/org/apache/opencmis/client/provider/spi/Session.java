@@ -57,4 +57,24 @@ public interface Session extends Serializable {
    * Removes a session value.
    */
   void remove(String key);
+
+  /**
+   * Acquires a read lock.
+   */
+  void readLock();
+
+  /**
+   * Releases a read lock.
+   */
+  void readUnlock();
+
+  /**
+   * Acquires a write lock.
+   */
+  void writeLock();
+
+  /**
+   * Releases a write lock.
+   */
+  void writeUnlock();
 }

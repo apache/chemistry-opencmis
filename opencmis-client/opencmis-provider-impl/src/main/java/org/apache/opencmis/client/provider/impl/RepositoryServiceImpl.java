@@ -19,14 +19,15 @@
 
 package org.apache.opencmis.client.provider.impl;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.opencmis.client.provider.spi.CmisSpi;
 import org.apache.opencmis.client.provider.spi.Session;
 import org.apache.opencmis.commons.api.ExtensionsData;
-import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinition;
+import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinitionList;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.commons.provider.RepositoryService;
@@ -39,9 +40,11 @@ import org.apache.opencmis.commons.provider.RepositoryService;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class RepositoryServiceImpl implements RepositoryService {
+public class RepositoryServiceImpl implements RepositoryService, Serializable {
 
-  private Session fSession;
+  private static final long serialVersionUID = 1L;
+
+  private final Session fSession;
 
   /**
    * Constructor.
@@ -86,8 +89,8 @@ public class RepositoryServiceImpl implements RepositoryService {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos(org.apache.opencmis.client.provider
-   * .ExtensionsData)
+   * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos(org.apache.opencmis
+   * .client.provider .ExtensionsData)
    */
   public List<RepositoryInfoData> getRepositoryInfos(ExtensionsData extension) {
     List<RepositoryInfoData> result = null;

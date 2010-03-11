@@ -19,6 +19,7 @@
 package org.apache.opencmis.client.provider.spi.webservices;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,7 @@ public class PortProvider {
 
   private static final int CHUNK_SIZE = 64 * 1024;
 
-  private Session fSession;
+  private final Session fSession;
 
   /**
    * Constructor.
@@ -169,15 +170,48 @@ public class PortProvider {
 
     // does the port map exist?
     if (portMap == null) {
-      // create and store map
-      portMap = new HashMap<String, Object>();
-      fSession.put(SpiSessionParameter.PORTS, portMap, true);
+      fSession.writeLock();
+      try {
+        // try again
+        portMap = (Map<String, Object>) fSession.get(SpiSessionParameter.PORTS);
+        if (portMap == null) {
+          portMap = Collections.synchronizedMap(new HashMap<String, Object>());
+          fSession.put(SpiSessionParameter.PORTS, portMap, true);
+        }
+
+        if (portMap.containsKey(portKey)) {
+          return portMap.get(portKey);
+        }
+
+        // create object
+        Object portObject = initPortObject(portKey);
+        portMap.put(portKey, portObject);
+
+        return portObject;
+      }
+      finally {
+        fSession.writeUnlock();
+      }
     }
 
     // is the port in the port map?
     if (!portMap.containsKey(portKey)) {
-      // create and add port object
-      portMap.put(portKey, initPortObject(portKey));
+      fSession.writeLock();
+      try {
+        // try again
+        if (portMap.containsKey(portKey)) {
+          return portMap.get(portKey);
+        }
+
+        // create object
+        Object portObject = initPortObject(portKey);
+        portMap.put(portKey, portObject);
+
+        return portObject;
+      }
+      finally {
+        fSession.writeUnlock();
+      }
     }
 
     return portMap.get(portKey);

@@ -46,7 +46,7 @@ import org.apache.opencmis.commons.provider.RepositoryService;
  */
 public class RepositoryServiceImpl extends AbstractWebServicesService implements RepositoryService {
 
-  private PortProvider fPortProvider;
+  private final PortProvider fPortProvider;
 
   /**
    * Constructor.

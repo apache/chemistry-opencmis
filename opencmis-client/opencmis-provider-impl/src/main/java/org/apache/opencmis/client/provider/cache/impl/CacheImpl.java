@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +47,8 @@ public class CacheImpl implements Cache {
   private String fName;
 
   private CacheLevel fRoot;
+
+  private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
 
   /**
    * Constructor.
@@ -75,22 +78,28 @@ public class CacheImpl implements Cache {
       throw new IllegalArgumentException("Cache config must not be empty!");
     }
 
-    fLevels = new ArrayList<Class<?>>();
-    fLevelParameters = new ArrayList<Map<String, String>>();
+    fLock.writeLock().lock();
+    try {
+      fLevels = new ArrayList<Class<?>>();
+      fLevelParameters = new ArrayList<Map<String, String>>();
 
-    // build level lists
-    for (String config : cacheLevelConfig) {
-      int x = config.indexOf(' ');
-      if (x == -1) {
-        addLevel(config, null);
+      // build level lists
+      for (String config : cacheLevelConfig) {
+        int x = config.indexOf(' ');
+        if (x == -1) {
+          addLevel(config, null);
+        }
+        else {
+          addLevel(config.substring(0, x), config.substring(x + 1));
+        }
       }
-      else {
-        addLevel(config.substring(0, x), config.substring(x + 1));
-      }
+
+      // create root
+      fRoot = createCacheLevel(0);
     }
-
-    // create root
-    fRoot = createCacheLevel(0);
+    finally {
+      fLock.writeLock().unlock();
+    }
   }
 
   private void addLevel(String className, String parameters) {
@@ -147,23 +156,33 @@ public class CacheImpl implements Cache {
       throw new IllegalArgumentException("Wrong number of keys!");
     }
 
-    CacheLevel cacheLevel = fRoot;
+    Object result = null;
 
-    // follow the branch
-    for (int i = 0; i < keys.length - 1; i++) {
-      Object level = cacheLevel.get(keys[i]);
+    fLock.readLock().lock();
+    try {
+      CacheLevel cacheLevel = fRoot;
 
-      // does the branch exist?
-      if (level == null) {
-        return null;
+      // follow the branch
+      for (int i = 0; i < keys.length - 1; i++) {
+        Object level = cacheLevel.get(keys[i]);
+
+        // does the branch exist?
+        if (level == null) {
+          return null;
+        }
+
+        // next level
+        cacheLevel = (CacheLevel) level;
       }
 
-      // next level
-      cacheLevel = (CacheLevel) level;
+      // get the value
+      result = cacheLevel.get(keys[keys.length - 1]);
+    }
+    finally {
+      fLock.readLock().unlock();
     }
 
-    // get the value and return
-    return cacheLevel.get(keys[keys.length - 1]);
+    return result;
   }
 
   /*
@@ -182,26 +201,32 @@ public class CacheImpl implements Cache {
       throw new IllegalArgumentException("Wrong number of keys!");
     }
 
-    CacheLevel cacheLevel = fRoot;
+    fLock.writeLock().lock();
+    try {
+      CacheLevel cacheLevel = fRoot;
 
-    // follow the branch
-    for (int i = 0; i < keys.length - 1; i++) {
-      Object level = cacheLevel.get(keys[i]);
+      // follow the branch
+      for (int i = 0; i < keys.length - 1; i++) {
+        Object level = cacheLevel.get(keys[i]);
 
-      // does the branch exist?
-      if (level == null) {
-        level = createCacheLevel(i + 1);
-        cacheLevel.put(level, keys[i]);
+        // does the branch exist?
+        if (level == null) {
+          level = createCacheLevel(i + 1);
+          cacheLevel.put(level, keys[i]);
+        }
+
+        // next level
+        cacheLevel = (CacheLevel) level;
       }
 
-      // next level
-      cacheLevel = (CacheLevel) level;
+      cacheLevel.put(value, keys[keys.length - 1]);
+
+      if (log.isDebugEnabled()) {
+        log.debug(fName + ": put [" + getFormattedKeys(keys) + "] = " + value);
+      }
     }
-
-    cacheLevel.put(value, keys[keys.length - 1]);
-
-    if (log.isDebugEnabled()) {
-      log.debug(fName + ": put [" + getFormattedKeys(keys) + "] = " + value);
+    finally {
+      fLock.writeLock().unlock();
     }
   }
 
@@ -215,25 +240,31 @@ public class CacheImpl implements Cache {
       return;
     }
 
-    CacheLevel cacheLevel = fRoot;
+    fLock.writeLock().lock();
+    try {
+      CacheLevel cacheLevel = fRoot;
 
-    // follow the branch
-    for (int i = 0; i < keys.length - 1; i++) {
-      Object level = cacheLevel.get(keys[i]);
+      // follow the branch
+      for (int i = 0; i < keys.length - 1; i++) {
+        Object level = cacheLevel.get(keys[i]);
 
-      // does the branch exist?
-      if (level == null) {
-        return;
+        // does the branch exist?
+        if (level == null) {
+          return;
+        }
+
+        // next level
+        cacheLevel = (CacheLevel) level;
       }
 
-      // next level
-      cacheLevel = (CacheLevel) level;
+      cacheLevel.remove(keys[keys.length - 1]);
+
+      if (log.isDebugEnabled()) {
+        log.debug(fName + ": removed [" + getFormattedKeys(keys) + "]");
+      }
     }
-
-    cacheLevel.remove(keys[keys.length - 1]);
-
-    if (log.isDebugEnabled()) {
-      log.debug(fName + ": removed [" + getFormattedKeys(keys) + "]");
+    finally {
+      fLock.writeLock().unlock();
     }
   }
 
@@ -247,19 +278,25 @@ public class CacheImpl implements Cache {
       return -1;
     }
 
-    CacheLevel cacheLevel = fRoot;
+    fLock.readLock().lock();
+    try {
+      CacheLevel cacheLevel = fRoot;
 
-    // follow the branch
-    for (int i = 0; i < keys.length - 1; i++) {
-      Object level = cacheLevel.get(keys[i]);
+      // follow the branch
+      for (int i = 0; i < keys.length - 1; i++) {
+        Object level = cacheLevel.get(keys[i]);
 
-      // does the branch exist?
-      if (level == null) {
-        return i;
+        // does the branch exist?
+        if (level == null) {
+          return i;
+        }
+
+        // next level
+        cacheLevel = (CacheLevel) level;
       }
-
-      // next level
-      cacheLevel = (CacheLevel) level;
+    }
+    finally {
+      fLock.readLock().unlock();
     }
 
     return keys.length;

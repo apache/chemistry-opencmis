@@ -43,7 +43,7 @@ import org.apache.opencmis.commons.provider.PolicyService;
  */
 public class PolicyServiceImpl extends AbstractWebServicesService implements PolicyService {
 
-  private PortProvider fPortProvider;
+  private final PortProvider fPortProvider;
 
   /**
    * Constructor.

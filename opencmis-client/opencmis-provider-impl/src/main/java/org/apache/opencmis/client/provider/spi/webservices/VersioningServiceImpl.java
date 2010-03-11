@@ -51,7 +51,7 @@ import org.apache.opencmis.commons.provider.VersioningService;
  */
 public class VersioningServiceImpl extends AbstractWebServicesService implements VersioningService {
 
-  private PortProvider fPortProvider;
+  private final PortProvider fPortProvider;
 
   /**
    * Constructor.

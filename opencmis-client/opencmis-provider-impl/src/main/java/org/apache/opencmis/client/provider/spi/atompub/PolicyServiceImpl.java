@@ -32,7 +32,6 @@ import org.apache.opencmis.client.provider.spi.atompub.objects.AtomLink;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.Constants;
 import org.apache.opencmis.commons.impl.UrlBuilder;
 import org.apache.opencmis.commons.impl.jaxb.CmisObjectType;

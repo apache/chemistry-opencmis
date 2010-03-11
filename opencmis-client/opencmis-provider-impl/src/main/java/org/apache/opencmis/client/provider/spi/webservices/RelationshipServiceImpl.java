@@ -41,7 +41,7 @@ import org.apache.opencmis.commons.provider.RelationshipService;
 public class RelationshipServiceImpl extends AbstractWebServicesService implements
     RelationshipService {
 
-  private PortProvider fPortProvider;
+  private final PortProvider fPortProvider;
 
   /**
    * Constructor.

@@ -66,8 +66,8 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.spi.CMISSPIFactory#getSPIInstance(org.apache.opencmis.client.provider
-   * .spi.Session)
+   * org.apache.opencmis.client.provider.spi.CMISSPIFactory#getSPIInstance(org.apache.opencmis.client
+   * .provider .spi.Session)
    */
   public CmisSpi getSpiInstance(Session session) {
     if (log.isDebugEnabled()) {
@@ -76,6 +76,16 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
 
     fSession = session;
     fPortProvider = new PortProvider(fSession);
+
+    fRepositoryService = new RepositoryServiceImpl(fSession, fPortProvider);
+    fNavigationService = new NavigationServiceImpl(fSession, fPortProvider);
+    fObjectService = new ObjectServiceImpl(fSession, fPortProvider);
+    fVersioningService = new VersioningServiceImpl(fSession, fPortProvider);
+    fDiscoveryService = new DiscoveryServiceImpl(fSession, fPortProvider);
+    fMultiFilingService = new MultiFilingServiceImpl(fSession, fPortProvider);
+    fRelationshipService = new RelationshipServiceImpl(fSession, fPortProvider);
+    fPolicyService = new PolicyServiceImpl(fSession, fPortProvider);
+    fACLService = new AclServiceImpl(fSession, fPortProvider);
 
     return this;
   }
@@ -86,10 +96,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getRepositoryService()
    */
   public RepositoryService getRepositoryService() {
-    if (fRepositoryService == null) {
-      fRepositoryService = new RepositoryServiceImpl(fSession, fPortProvider);
-    }
-
     return fRepositoryService;
   }
 
@@ -99,10 +105,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getNavigationService()
    */
   public NavigationService getNavigationService() {
-    if (fNavigationService == null) {
-      fNavigationService = new NavigationServiceImpl(fSession, fPortProvider);
-    }
-
     return fNavigationService;
   }
 
@@ -112,10 +114,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getObjectService()
    */
   public ObjectService getObjectService() {
-    if (fObjectService == null) {
-      fObjectService = new ObjectServiceImpl(fSession, fPortProvider);
-    }
-
     return fObjectService;
   }
 
@@ -125,10 +123,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getDiscoveryService()
    */
   public DiscoveryService getDiscoveryService() {
-    if (fDiscoveryService == null) {
-      fDiscoveryService = new DiscoveryServiceImpl(fSession, fPortProvider);
-    }
-
     return fDiscoveryService;
   }
 
@@ -138,10 +132,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getVersioningService()
    */
   public VersioningService getVersioningService() {
-    if (fVersioningService == null) {
-      fVersioningService = new VersioningServiceImpl(fSession, fPortProvider);
-    }
-
     return fVersioningService;
   }
 
@@ -151,10 +141,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getMultiFilingService()
    */
   public MultiFilingService getMultiFilingService() {
-    if (fMultiFilingService == null) {
-      fMultiFilingService = new MultiFilingServiceImpl(fSession, fPortProvider);
-    }
-
     return fMultiFilingService;
   }
 
@@ -164,10 +150,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getRelationshipService()
    */
   public RelationshipService getRelationshipService() {
-    if (fRelationshipService == null) {
-      fRelationshipService = new RelationshipServiceImpl(fSession, fPortProvider);
-    }
-
     return fRelationshipService;
   }
 
@@ -177,10 +159,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getPolicyService()
    */
   public PolicyService getPolicyService() {
-    if (fPolicyService == null) {
-      fPolicyService = new PolicyServiceImpl(fSession, fPortProvider);
-    }
-
     return fPolicyService;
   }
 
@@ -190,10 +168,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
    * @see org.apache.opencmis.client.provider.spi.CMISSPI#getACLService()
    */
   public AclService getAclService() {
-    if (fACLService == null) {
-      fACLService = new AclServiceImpl(fSession, fPortProvider);
-    }
-
     return fACLService;
   }
 

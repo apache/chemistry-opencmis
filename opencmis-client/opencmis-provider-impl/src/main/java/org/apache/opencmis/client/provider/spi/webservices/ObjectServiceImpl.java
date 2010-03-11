@@ -59,7 +59,7 @@ import org.apache.opencmis.commons.provider.RenditionData;
  */
 public class ObjectServiceImpl extends AbstractWebServicesService implements ObjectService {
 
-  private PortProvider fPortProvider;
+  private final PortProvider fPortProvider;
 
   /**
    * Constructor.

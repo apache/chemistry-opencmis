@@ -48,7 +48,7 @@ import org.apache.opencmis.commons.provider.ObjectParentData;
  */
 public class NavigationServiceImpl extends AbstractWebServicesService implements NavigationService {
 
-  private PortProvider fPortProvider;
+  private final PortProvider fPortProvider;
 
   /**
    * Constructor.

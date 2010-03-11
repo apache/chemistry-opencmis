@@ -44,7 +44,7 @@ import org.apache.opencmis.commons.provider.ObjectList;
  */
 public class DiscoveryServiceImpl extends AbstractWebServicesService implements DiscoveryService {
 
-  private PortProvider fPortProvider;
+  private final PortProvider fPortProvider;
 
   /**
    * Constructor.
@@ -58,8 +58,9 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
    * (non-Javadoc)
    * 
    * @see org.apache.opencmis.client.provider.DiscoveryService#getContentChanges(java.lang.String,
-   * org.apache.opencmis.client.provider.Holder, java.lang.Boolean, java.lang.String, java.lang.Boolean,
-   * java.lang.Boolean, java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
+   * org.apache.opencmis.client.provider.Holder, java.lang.Boolean, java.lang.String,
+   * java.lang.Boolean, java.lang.Boolean, java.math.BigInteger,
+   * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken,
       Boolean includeProperties, String filter, Boolean includePolicyIds, Boolean includeACL,
@@ -88,10 +89,10 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.DiscoveryService#query(java.lang.String, java.lang.String,
-   * java.lang.Boolean, java.lang.Boolean, org.apache.opencmis.commons.enums.IncludeRelationships,
-   * java.lang.String, java.math.BigInteger, java.math.BigInteger,
-   * org.apache.opencmis.client.provider.ExtensionsData)
+   * @see org.apache.opencmis.client.provider.DiscoveryService#query(java.lang.String,
+   * java.lang.String, java.lang.Boolean, java.lang.Boolean,
+   * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.math.BigInteger,
+   * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
    */
   public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
       Boolean includeAllowableActions, IncludeRelationships includeRelationships,

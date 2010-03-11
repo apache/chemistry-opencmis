@@ -62,30 +62,42 @@ public final class CmisProviderHelper {
       return spi;
     }
 
-    // ok, we have to create it...
+    session.writeLock();
     try {
-      String spiFactoryName = (String) session.get(SessionParameter.BINDING_SPI_CLASS);
-      Class<?> spiFactoryClass = Class.forName(spiFactoryName);
-      Object spiFactory = spiFactoryClass.newInstance();
-
-      if (!(spiFactory instanceof CmisSpiFactory)) {
-        throw new CmisRuntimeException("Not a CMISSPIFactory class!");
+      // try again
+      spi = (CmisSpi) session.get(SPI_OBJECT);
+      if (spi != null) {
+        return spi;
       }
 
-      spi = ((CmisSpiFactory) spiFactory).getSpiInstance(session);
-      if (spi == null) {
-        throw new CmisRuntimeException("SPI factory returned null!");
-      }
-    }
-    catch (CmisBaseException e) {
-      throw e;
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("SPI cannot be initialized: " + e.getMessage(), e);
-    }
+      // ok, we have to create it...
+      try {
+        String spiFactoryName = (String) session.get(SessionParameter.BINDING_SPI_CLASS);
+        Class<?> spiFactoryClass = Class.forName(spiFactoryName);
+        Object spiFactory = spiFactoryClass.newInstance();
 
-    // we have a SPI object -> put it into the session
-    session.put(SPI_OBJECT, spi, true);
+        if (!(spiFactory instanceof CmisSpiFactory)) {
+          throw new CmisRuntimeException("Not a CMISSPIFactory class!");
+        }
+
+        spi = ((CmisSpiFactory) spiFactory).getSpiInstance(session);
+        if (spi == null) {
+          throw new CmisRuntimeException("SPI factory returned null!");
+        }
+      }
+      catch (CmisBaseException e) {
+        throw e;
+      }
+      catch (Exception e) {
+        throw new CmisRuntimeException("SPI cannot be initialized: " + e.getMessage(), e);
+      }
+
+      // we have a SPI object -> put it into the session
+      session.put(SPI_OBJECT, spi, true);
+    }
+    finally {
+      session.writeUnlock();
+    }
 
     return spi;
   }

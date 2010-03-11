@@ -48,8 +48,8 @@ public class CmisProviderImpl implements CmisProvider {
   private static final long serialVersionUID = 1L;
 
   private Session fSession;
-  private transient ProviderObjectFactory fObjectFactory;
-  private transient RepositoryService fRepositoryService;
+  private ProviderObjectFactory fObjectFactory;
+  private RepositoryService fRepositoryService;
 
   /**
    * Constructor.
@@ -99,6 +99,12 @@ public class CmisProviderImpl implements CmisProvider {
 
     // initialize the SPI
     CmisProviderHelper.getSPI(fSession);
+
+    // set up object factory
+    fObjectFactory = new ProviderObjectFactoryImpl();
+
+    // set up repository service
+    fRepositoryService = new RepositoryServiceImpl(fSession);
   }
 
   /*
@@ -107,10 +113,6 @@ public class CmisProviderImpl implements CmisProvider {
    * @see org.apache.opencmis.client.provider.CMISProvider#getRepositoryService()
    */
   public RepositoryService getRepositoryService() {
-    if (fRepositoryService == null) {
-      fRepositoryService = new RepositoryServiceImpl(fSession);
-    }
-
     return fRepositoryService;
   }
 
@@ -200,10 +202,6 @@ public class CmisProviderImpl implements CmisProvider {
    * @see org.apache.opencmis.client.provider.CMISProvider#getObjectFactory()
    */
   public ProviderObjectFactory getObjectFactory() {
-    if (fObjectFactory == null) {
-      fObjectFactory = new ProviderObjectFactoryImpl();
-    }
-
     return fObjectFactory;
   }
 
@@ -213,11 +211,17 @@ public class CmisProviderImpl implements CmisProvider {
    * @see org.apache.opencmis.client.provider.CMISProvider#clearAllCaches()
    */
   public void clearAllCaches() {
-    fSession.put(CmisProviderHelper.REPOSITORY_INFO_CACHE, new RepositoryInfoCache(fSession));
-    fSession.put(CmisProviderHelper.TYPE_DEFINTION_CACHE, new TypeDefinitionCache(fSession));
+    fSession.writeLock();
+    try {
+      fSession.put(CmisProviderHelper.REPOSITORY_INFO_CACHE, new RepositoryInfoCache(fSession));
+      fSession.put(CmisProviderHelper.TYPE_DEFINTION_CACHE, new TypeDefinitionCache(fSession));
 
-    CmisSpi spi = CmisProviderHelper.getSPI(fSession);
-    spi.clearAllCaches();
+      CmisSpi spi = CmisProviderHelper.getSPI(fSession);
+      spi.clearAllCaches();
+    }
+    finally {
+      fSession.writeUnlock();
+    }
   }
 
   /*
@@ -230,15 +234,21 @@ public class CmisProviderImpl implements CmisProvider {
       return;
     }
 
-    RepositoryInfoCache repInfoCache = (RepositoryInfoCache) fSession
-        .get(CmisProviderHelper.REPOSITORY_INFO_CACHE);
-    repInfoCache.remove(repositoryId);
+    fSession.writeLock();
+    try {
+      RepositoryInfoCache repInfoCache = (RepositoryInfoCache) fSession
+          .get(CmisProviderHelper.REPOSITORY_INFO_CACHE);
+      repInfoCache.remove(repositoryId);
 
-    TypeDefinitionCache typeDefCache = (TypeDefinitionCache) fSession
-        .get(CmisProviderHelper.TYPE_DEFINTION_CACHE);
-    typeDefCache.remove(repositoryId);
+      TypeDefinitionCache typeDefCache = (TypeDefinitionCache) fSession
+          .get(CmisProviderHelper.TYPE_DEFINTION_CACHE);
+      typeDefCache.remove(repositoryId);
 
-    CmisSpi spi = CmisProviderHelper.getSPI(fSession);
-    spi.clearRepositoryCache(repositoryId);
+      CmisSpi spi = CmisProviderHelper.getSPI(fSession);
+      spi.clearRepositoryCache(repositoryId);
+    }
+    finally {
+      fSession.writeUnlock();
+    }
   }
 }

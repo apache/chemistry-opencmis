@@ -38,7 +38,7 @@ import org.apache.opencmis.commons.provider.MultiFilingService;
 public class MultiFilingServiceImpl extends AbstractWebServicesService implements
     MultiFilingService {
 
-  private PortProvider fPortProvider;
+  private final PortProvider fPortProvider;
 
   /**
    * Constructor.

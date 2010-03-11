@@ -21,6 +21,7 @@ package org.apache.opencmis.client.provider.impl;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.opencmis.client.provider.spi.Session;
 
@@ -36,6 +37,8 @@ public class SessionImpl implements Session {
 
   private Map<String, Object> fData;
 
+  private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
+
   /**
    * Constructor.
    */
@@ -49,7 +52,15 @@ public class SessionImpl implements Session {
    * @see org.apache.opencmis.client.provider.spi.Session#get(java.lang.String)
    */
   public Object get(String key) {
-    Object value = fData.get(key);
+    Object value = null;
+
+    fLock.readLock().lock();
+    try {
+      value = fData.get(key);
+    }
+    finally {
+      fLock.readLock().unlock();
+    }
 
     if (value instanceof TransientWrapper) {
       return ((TransientWrapper) value).getObject();
@@ -94,16 +105,24 @@ public class SessionImpl implements Session {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.spi.Session#put(java.lang.String, java.io.Serializable)
+   * @see org.apache.opencmis.client.provider.spi.Session#put(java.lang.String,
+   * java.io.Serializable)
    */
   public void put(String key, Serializable obj) {
-    fData.put(key, obj);
+    fLock.writeLock().lock();
+    try {
+      fData.put(key, obj);
+    }
+    finally {
+      fLock.writeLock().unlock();
+    }
   }
 
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.spi.Session#put(java.lang.String, java.lang.Object, boolean)
+   * @see org.apache.opencmis.client.provider.spi.Session#put(java.lang.String, java.lang.Object,
+   * boolean)
    */
   public void put(String key, Object obj, boolean isTransient) {
     Object value = (isTransient ? new TransientWrapper(obj) : obj);
@@ -111,7 +130,13 @@ public class SessionImpl implements Session {
       throw new IllegalArgumentException("Object must be serializable!");
     }
 
-    fData.put(key, value);
+    fLock.writeLock().lock();
+    try {
+      fData.put(key, value);
+    }
+    finally {
+      fLock.writeLock().unlock();
+    }
   }
 
   /*
@@ -120,7 +145,49 @@ public class SessionImpl implements Session {
    * @see org.apache.opencmis.client.provider.spi.Session#remove(java.lang.String)
    */
   public void remove(String key) {
-    fData.remove(key);
+    fLock.writeLock().lock();
+    try {
+      fData.remove(key);
+    }
+    finally {
+      fLock.writeLock().unlock();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.provider.spi.Session#readLock()
+   */
+  public void readLock() {
+    fLock.readLock().lock();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.provider.spi.Session#readUnlock()
+   */
+  public void readUnlock() {
+    fLock.readLock().unlock();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.provider.spi.Session#writeLock()
+   */
+  public void writeLock() {
+    fLock.writeLock().lock();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.provider.spi.Session#writeUnlock()
+   */
+  public void writeUnlock() {
+    fLock.writeLock().unlock();
   }
 
   @Override

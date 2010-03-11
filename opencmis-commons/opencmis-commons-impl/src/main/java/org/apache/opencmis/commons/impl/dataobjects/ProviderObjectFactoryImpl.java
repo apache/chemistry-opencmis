@@ -19,6 +19,7 @@
 package org.apache.opencmis.commons.impl.dataobjects;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
@@ -58,7 +59,9 @@ import org.apache.opencmis.commons.provider.ProviderObjectFactory;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
+public class ProviderObjectFactoryImpl implements ProviderObjectFactory, Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   public ProviderObjectFactoryImpl() {
   }
@@ -67,8 +70,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createAccessControlEntry(java.lang.String,
-   * java.util.List)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createAccessControlEntry(java.lang
+   * .String, java.util.List)
    */
   public AccessControlEntry createAccessControlEntry(String principal, List<String> permissions) {
     return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principal), permissions);
@@ -77,7 +80,9 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.ProviderObjectFactory#createAccessControlList(java.util.List)
+   * @see
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createAccessControlList(java.util
+   * .List)
    */
   public AccessControlList createAccessControlList(List<AccessControlEntry> aces) {
     return new AccessControlListImpl(aces);
@@ -87,8 +92,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createContentStream(java.math.BigInteger,
-   * java.lang.String, java.lang.String, java.io.InputStream)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createContentStream(java.math.BigInteger
+   * , java.lang.String, java.lang.String, java.io.InputStream)
    */
   public ContentStreamData createContentStream(BigInteger length, String mimetype, String filename,
       InputStream stream) {
@@ -98,7 +103,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertiesData(java.util.List)
+   * @see
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertiesData(java.util.List)
    */
   public PropertiesData createPropertiesData(List<PropertyData<?>> properties) {
     return new PropertiesDataImpl(properties);
@@ -108,8 +114,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyBooleanData(java.lang.String,
-   * java.util.List)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyBooleanData(java.lang
+   * .String, java.util.List)
    */
   public PropertyBooleanData createPropertyBooleanData(String id, List<Boolean> values) {
     return new PropertyBooleanDataImpl(id, values);
@@ -119,8 +125,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyBooleanData(java.lang.String,
-   * java.lang.Boolean)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyBooleanData(java.lang
+   * .String, java.lang.Boolean)
    */
   public PropertyBooleanData createPropertyBooleanData(String id, Boolean value) {
     return new PropertyBooleanDataImpl(id, value);
@@ -130,8 +136,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyDateTimeData(java.lang.String,
-   * java.util.List)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyDateTimeData(java.lang
+   * .String, java.util.List)
    */
   public PropertyDateTimeData createPropertyDateTimeData(String id, List<GregorianCalendar> values) {
     return new PropertyDateTimeDataImpl(id, values);
@@ -141,8 +147,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyDateTimeData(java.lang.String,
-   * java.util.GregorianCalendar)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyDateTimeData(java.lang
+   * .String, java.util.GregorianCalendar)
    */
   public PropertyDateTimeData createPropertyDateTimeData(String id, GregorianCalendar value) {
     return new PropertyDateTimeDataImpl(id, value);
@@ -152,8 +158,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyDecimalData(java.lang.String,
-   * java.util.List)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyDecimalData(java.lang
+   * .String, java.util.List)
    */
   public PropertyDecimalData createPropertyDecimalData(String id, List<BigDecimal> values) {
     return new PropertyDecimalDataImpl(id, values);
@@ -163,8 +169,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyDecimalData(java.lang.String,
-   * java.math.BigDecimal)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyDecimalData(java.lang
+   * .String, java.math.BigDecimal)
    */
   public PropertyDecimalData createPropertyDecimalData(String id, BigDecimal value) {
     return new PropertyDecimalDataImpl(id, value);
@@ -174,8 +180,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyHtmlData(java.lang.String,
-   * java.util.List)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyHtmlData(java.lang.
+   * String, java.util.List)
    */
   public PropertyHtmlData createPropertyHtmlData(String id, List<String> values) {
     return new PropertyHtmlDataImpl(id, values);
@@ -185,8 +191,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyHtmlData(java.lang.String,
-   * java.lang.String)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyHtmlData(java.lang.
+   * String, java.lang.String)
    */
   public PropertyHtmlData createPropertyHtmlData(String id, String value) {
     return new PropertyHtmlDataImpl(id, value);
@@ -195,8 +201,9 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyIdData(java.lang.String,
-   * java.util.List)
+   * @see
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyIdData(java.lang.String
+   * , java.util.List)
    */
   public PropertyIdData createPropertyIdData(String id, List<String> values) {
     return new PropertyIdDataImpl(id, values);
@@ -205,8 +212,9 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyIdData(java.lang.String,
-   * java.lang.String)
+   * @see
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyIdData(java.lang.String
+   * , java.lang.String)
    */
   public PropertyIdData createPropertyIdData(String id, String value) {
     return new PropertyIdDataImpl(id, value);
@@ -216,8 +224,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyIntegerData(java.lang.String,
-   * java.util.List)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyIntegerData(java.lang
+   * .String, java.util.List)
    */
   public PropertyIntegerData createPropertyIntegerData(String id, List<BigInteger> values) {
     return new PropertyIntegerDataImpl(id, values);
@@ -227,8 +235,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyIntegerData(java.lang.String,
-   * java.math.BigInteger)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyIntegerData(java.lang
+   * .String, java.math.BigInteger)
    */
   public PropertyIntegerData createPropertyIntegerData(String id, BigInteger value) {
     return new PropertyIntegerDataImpl(id, value);
@@ -238,8 +246,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyStringData(java.lang.String,
-   * java.util.List)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyStringData(java.lang
+   * .String, java.util.List)
    */
   public PropertyStringData createPropertyStringData(String id, List<String> values) {
     return new PropertyStringDataImpl(id, values);
@@ -249,8 +257,8 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyStringData(java.lang.String,
-   * java.lang.String)
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyStringData(java.lang
+   * .String, java.lang.String)
    */
   public PropertyStringData createPropertyStringData(String id, String value) {
     return new PropertyStringDataImpl(id, value);
@@ -259,8 +267,9 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyUriData(java.lang.String,
-   * java.util.List)
+   * @see
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyUriData(java.lang.String
+   * , java.util.List)
    */
   public PropertyUriData createPropertyUriData(String id, List<String> values) {
     return new PropertyUriDataImpl(id, values);
@@ -269,8 +278,9 @@ public class ProviderObjectFactoryImpl implements ProviderObjectFactory {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyUriData(java.lang.String,
-   * java.lang.String)
+   * @see
+   * org.apache.opencmis.client.provider.ProviderObjectFactory#createPropertyUriData(java.lang.String
+   * , java.lang.String)
    */
   public PropertyUriData createPropertyUriData(String id, String value) {
     return new PropertyUriDataImpl(id, value);
