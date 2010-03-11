@@ -359,35 +359,41 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
       changeToken.setValue(null); // just in case
     }
 
-    // clean up cache
-    removeLinks(repositoryId, entry.getId());
+    lockLinks();
+    try {
+      // clean up cache
+      removeLinks(repositoryId, entry.getId());
 
-    // walk through the entry
-    for (AtomElement element : entry.getElements()) {
-      if (element.getObject() instanceof AtomLink) {
-        addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-      }
-      else if (element.getObject() instanceof CmisObjectType) {
-        // extract new change token
-        if (changeToken != null) {
-          object = (CmisObjectType) element.getObject();
+      // walk through the entry
+      for (AtomElement element : entry.getElements()) {
+        if (element.getObject() instanceof AtomLink) {
+          addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+        }
+        else if (element.getObject() instanceof CmisObjectType) {
+          // extract new change token
+          if (changeToken != null) {
+            object = (CmisObjectType) element.getObject();
 
-          if (object.getProperties() != null) {
-            for (CmisProperty property : object.getProperties().getProperty()) {
-              if (PropertyIds.CMIS_CHANGE_TOKEN.equals(property.getPropertyDefinitionId())
-                  && (property instanceof CmisPropertyString)) {
+            if (object.getProperties() != null) {
+              for (CmisProperty property : object.getProperties().getProperty()) {
+                if (PropertyIds.CMIS_CHANGE_TOKEN.equals(property.getPropertyDefinitionId())
+                    && (property instanceof CmisPropertyString)) {
 
-                CmisPropertyString changeTokenProperty = (CmisPropertyString) property;
-                if (!changeTokenProperty.getValue().isEmpty()) {
-                  changeToken.setValue(changeTokenProperty.getValue().get(0));
+                  CmisPropertyString changeTokenProperty = (CmisPropertyString) property;
+                  if (!changeTokenProperty.getValue().isEmpty()) {
+                    changeToken.setValue(changeTokenProperty.getValue().get(0));
+                  }
+
+                  break;
                 }
-
-                break;
               }
             }
           }
         }
       }
+    }
+    finally {
+      unlockLinks();
     }
   }
 

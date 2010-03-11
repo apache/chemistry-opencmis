@@ -109,23 +109,30 @@ public class RelationshipServiceImpl extends AbstractAtomPubService implements R
       for (AtomEntry entry : feed.getEntries()) {
         ObjectData relationship = null;
 
-        // clean up cache
-        removeLinks(repositoryId, entry.getId());
+        lockLinks();
+        try {
+          // clean up cache
+          removeLinks(repositoryId, entry.getId());
 
-        // walk through the entry
-        for (AtomElement element : entry.getElements()) {
-          if (element.getObject() instanceof AtomLink) {
-            addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+          // walk through the entry
+          for (AtomElement element : entry.getElements()) {
+            if (element.getObject() instanceof AtomLink) {
+              addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+            }
+            else if (element.getObject() instanceof CmisObjectType) {
+              relationship = convert((CmisObjectType) element.getObject());
+            }
           }
-          else if (element.getObject() instanceof CmisObjectType) {
-            relationship = convert((CmisObjectType) element.getObject());
-          }
+        }
+        finally {
+          unlockLinks();
         }
 
         if (relationship != null) {
           result.getObjects().add(relationship);
         }
       }
+
     }
 
     return result;

@@ -120,21 +120,27 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         ObjectInFolderDataImpl child = null;
         String pathSegment = null;
 
-        // clean up cache
-        removeLinks(repositoryId, entry.getId());
+        lockLinks();
+        try {
+          // clean up cache
+          removeLinks(repositoryId, entry.getId());
 
-        // walk through the entry
-        for (AtomElement element : entry.getElements()) {
-          if (element.getObject() instanceof AtomLink) {
-            addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+          // walk through the entry
+          for (AtomElement element : entry.getElements()) {
+            if (element.getObject() instanceof AtomLink) {
+              addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+            }
+            else if (isStr(NAME_PATH_SEGMENT, element)) {
+              pathSegment = (String) element.getObject();
+            }
+            else if (element.getObject() instanceof CmisObjectType) {
+              child = new ObjectInFolderDataImpl();
+              child.setObject(convert((CmisObjectType) element.getObject()));
+            }
           }
-          else if (isStr(NAME_PATH_SEGMENT, element)) {
-            pathSegment = (String) element.getObject();
-          }
-          else if (element.getObject() instanceof CmisObjectType) {
-            child = new ObjectInFolderDataImpl();
-            child.setObject(convert((CmisObjectType) element.getObject()));
-          }
+        }
+        finally {
+          unlockLinks();
         }
 
         if (child != null) {
@@ -229,17 +235,23 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
       throw new CmisRuntimeException("Unexpected document!");
     }
 
-    // clean up cache
-    removeLinks(repositoryId, entry.getId());
+    lockLinks();
+    try {
+      // clean up cache
+      removeLinks(repositoryId, entry.getId());
 
-    // walk through the entry
-    for (AtomElement element : entry.getElements()) {
-      if (element.getObject() instanceof AtomLink) {
-        addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+      // walk through the entry
+      for (AtomElement element : entry.getElements()) {
+        if (element.getObject() instanceof AtomLink) {
+          addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+        }
+        else if (element.getObject() instanceof CmisObjectType) {
+          result = convert((CmisObjectType) element.getObject());
+        }
       }
-      else if (element.getObject() instanceof CmisObjectType) {
-        result = convert((CmisObjectType) element.getObject());
-      }
+    }
+    finally {
+      unlockLinks();
     }
 
     return result;
@@ -349,20 +361,26 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
     ObjectParentDataImpl result = null;
     String relativePathSegment = null;
 
-    // clean up cache
-    removeLinks(repositoryId, entry.getId());
+    lockLinks();
+    try {
+      // clean up cache
+      removeLinks(repositoryId, entry.getId());
 
-    // walk through the entry
-    for (AtomElement element : entry.getElements()) {
-      if (element.getObject() instanceof AtomLink) {
-        addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+      // walk through the entry
+      for (AtomElement element : entry.getElements()) {
+        if (element.getObject() instanceof AtomLink) {
+          addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+        }
+        else if (element.getObject() instanceof CmisObjectType) {
+          result = new ObjectParentDataImpl(convert((CmisObjectType) element.getObject()));
+        }
+        else if (is(NAME_RELATIVE_PATH_SEGMENT, element)) {
+          relativePathSegment = (String) element.getObject();
+        }
       }
-      else if (element.getObject() instanceof CmisObjectType) {
-        result = new ObjectParentDataImpl(convert((CmisObjectType) element.getObject()));
-      }
-      else if (is(NAME_RELATIVE_PATH_SEGMENT, element)) {
-        relativePathSegment = (String) element.getObject();
-      }
+    }
+    finally {
+      unlockLinks();
     }
 
     if (result != null) {
@@ -426,17 +444,23 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
       for (AtomEntry entry : feed.getEntries()) {
         ObjectData child = null;
 
-        // clean up cache
-        removeLinks(repositoryId, entry.getId());
+        lockLinks();
+        try {
+          // clean up cache
+          removeLinks(repositoryId, entry.getId());
 
-        // walk through the entry
-        for (AtomElement element : entry.getElements()) {
-          if (element.getObject() instanceof AtomLink) {
-            addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+          // walk through the entry
+          for (AtomElement element : entry.getElements()) {
+            if (element.getObject() instanceof AtomLink) {
+              addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+            }
+            else if (element.getObject() instanceof CmisObjectType) {
+              child = convert((CmisObjectType) element.getObject());
+            }
           }
-          else if (element.getObject() instanceof CmisObjectType) {
-            child = convert((CmisObjectType) element.getObject());
-          }
+        }
+        finally {
+          unlockLinks();
         }
 
         if (child != null) {
@@ -465,23 +489,30 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
       String pathSegment = null;
       List<ObjectInFolderContainer> childContainerList = new ArrayList<ObjectInFolderContainer>();
 
-      // clean up cache
-      removeLinks(repositoryId, entry.getId());
+      lockLinks();
+      try {
+        // clean up cache
+        removeLinks(repositoryId, entry.getId());
 
-      // walk through the entry
-      for (AtomElement element : entry.getElements()) {
-        if (element.getObject() instanceof AtomLink) {
-          addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+        // walk through the entry
+        for (AtomElement element : entry.getElements()) {
+          if (element.getObject() instanceof AtomLink) {
+            addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+          }
+          else if (element.getObject() instanceof CmisObjectType) {
+            objectInFolder = new ObjectInFolderDataImpl(convert((CmisObjectType) element
+                .getObject()));
+          }
+          else if (is(NAME_PATH_SEGMENT, element)) {
+            pathSegment = (String) element.getObject();
+          }
+          else if (element.getObject() instanceof AtomFeed) {
+            addDescendantsLevel(repositoryId, (AtomFeed) element.getObject(), childContainerList);
+          }
         }
-        else if (element.getObject() instanceof CmisObjectType) {
-          objectInFolder = new ObjectInFolderDataImpl(convert((CmisObjectType) element.getObject()));
-        }
-        else if (is(NAME_PATH_SEGMENT, element)) {
-          pathSegment = (String) element.getObject();
-        }
-        else if (element.getObject() instanceof AtomFeed) {
-          addDescendantsLevel(repositoryId, (AtomFeed) element.getObject(), childContainerList);
-        }
+      }
+      finally {
+        unlockLinks();
       }
 
       if (objectInFolder != null) {

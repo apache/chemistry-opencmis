@@ -189,6 +189,20 @@ public class AbstractAtomPubService {
   }
 
   /**
+   * Locks the link cache.
+   */
+  protected void lockLinks() {
+    getLinkCache().lockLinks();
+  }
+
+  /**
+   * Unlocks the link cache.
+   */
+  protected void unlockLinks() {
+    getLinkCache().unlockLinks();
+  }
+
+  /**
    * Checks a link throw an appropriate exception.
    */
   protected void throwLinkException(String repositoryId, String id, String rel, String type) {
@@ -266,6 +280,20 @@ public class AbstractAtomPubService {
    */
   protected void removeTypeLinks(String repositoryId, String id) {
     getLinkCache().removeTypeLinks(repositoryId, id);
+  }
+
+  /**
+   * Locks the type link cache.
+   */
+  protected void lockTypeLinks() {
+    getLinkCache().lockTypeLinks();
+  }
+
+  /**
+   * Unlocks the type link cache.
+   */
+  protected void unlockTypeLinks() {
+    getLinkCache().unlockTypeLinks();
   }
 
   /**
@@ -678,17 +706,23 @@ public class AbstractAtomPubService {
       throw new CmisConnectionException("Received Atom entry is not a CMIS entry!");
     }
 
-    // clean up cache
-    removeLinks(repositoryId, entry.getId());
+    lockLinks();
+    try {
+      // clean up cache
+      removeLinks(repositoryId, entry.getId());
 
-    // walk through the entry
-    for (AtomElement element : entry.getElements()) {
-      if (element.getObject() instanceof AtomLink) {
-        addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+      // walk through the entry
+      for (AtomElement element : entry.getElements()) {
+        if (element.getObject() instanceof AtomLink) {
+          addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+        }
+        else if (element.getObject() instanceof CmisObjectType) {
+          result = convert((CmisObjectType) element.getObject());
+        }
       }
-      else if (element.getObject() instanceof CmisObjectType) {
-        result = convert((CmisObjectType) element.getObject());
-      }
+    }
+    finally {
+      unlockLinks();
     }
 
     return result;
@@ -717,18 +751,24 @@ public class AbstractAtomPubService {
       throw new CmisConnectionException("Received Atom entry is not a CMIS entry!");
     }
 
-    // clean up cache
-    removeTypeLinks(repositoryId, entry.getId());
+    lockTypeLinks();
+    try {
+      // clean up cache
+      removeTypeLinks(repositoryId, entry.getId());
 
-    // walk through the entry
-    for (AtomElement element : entry.getElements()) {
-      if (element.getObject() instanceof AtomLink) {
-        addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+      // walk through the entry
+      for (AtomElement element : entry.getElements()) {
+        if (element.getObject() instanceof AtomLink) {
+          addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+        }
+        else if (element.getObject() instanceof CmisTypeDefinitionType) {
+          result = convert((CmisTypeDefinitionType) element.getObject());
+          break;
+        }
       }
-      else if (element.getObject() instanceof CmisTypeDefinitionType) {
-        result = convert((CmisTypeDefinitionType) element.getObject());
-        break;
-      }
+    }
+    finally {
+      unlockTypeLinks();
     }
 
     return result;

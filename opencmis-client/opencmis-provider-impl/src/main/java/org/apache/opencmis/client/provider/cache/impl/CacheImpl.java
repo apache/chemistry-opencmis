@@ -302,6 +302,24 @@ public class CacheImpl implements Cache {
     return keys.length;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.provider.cache.Cache#writeLock()
+   */
+  public void writeLock() {
+    fLock.writeLock().lock();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.provider.cache.Cache#writeUnlock()
+   */
+  public void writeUnlock() {
+    fLock.writeLock().unlock();
+  }
+
   // ---- internal ----
 
   /**

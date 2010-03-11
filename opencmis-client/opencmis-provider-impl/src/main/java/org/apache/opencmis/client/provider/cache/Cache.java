@@ -85,4 +85,14 @@ public interface Cache extends Serializable {
    *         the object is in the cache
    */
   int check(String... keys);
+
+  /**
+   * Applies a write lock.
+   */
+  void writeLock();
+
+  /**
+   * Releases a write lock.
+   */
+  void writeUnlock();
 }

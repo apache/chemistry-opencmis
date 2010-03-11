@@ -101,14 +101,20 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 
     objectId.setValue(entry.getId());
 
-    // clean up cache
-    removeLinks(repositoryId, entry.getId());
+    lockLinks();
+    try {
+      // clean up cache
+      removeLinks(repositoryId, entry.getId());
 
-    // walk through the entry
-    for (AtomElement element : entry.getElements()) {
-      if (element.getObject() instanceof AtomLink) {
-        addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+      // walk through the entry
+      for (AtomElement element : entry.getElements()) {
+        if (element.getObject() instanceof AtomLink) {
+          addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+        }
       }
+    }
+    finally {
+      unlockLinks();
     }
 
     if (contentCopied != null) {
@@ -204,20 +210,27 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
     // set object id
     objectId.setValue(entry.getId());
 
-    // clean up cache
-    removeLinks(repositoryId, entry.getId());
-
-    // walk through the entry
     AccessControlList originalAces = null;
-    for (AtomElement element : entry.getElements()) {
-      if (element.getObject() instanceof AtomLink) {
-        addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+
+    lockLinks();
+    try {
+      // clean up cache
+      removeLinks(repositoryId, entry.getId());
+
+      // walk through the entry
+      for (AtomElement element : entry.getElements()) {
+        if (element.getObject() instanceof AtomLink) {
+          addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+        }
+        else if (element.getObject() instanceof CmisObjectType) {
+          // extract current ACL
+          object = (CmisObjectType) element.getObject();
+          originalAces = convert(object.getAcl(), object.isExactACL());
+        }
       }
-      else if (element.getObject() instanceof CmisObjectType) {
-        // extract current ACL
-        object = (CmisObjectType) element.getObject();
-        originalAces = convert(object.getAcl(), object.isExactACL());
-      }
+    }
+    finally {
+      unlockLinks();
     }
 
     // handle ACL modifications
@@ -263,17 +276,23 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
       for (AtomEntry entry : feed.getEntries()) {
         ObjectData version = null;
 
-        // clean up cache
-        removeLinks(repositoryId, entry.getId());
+        lockLinks();
+        try {
+          // clean up cache
+          removeLinks(repositoryId, entry.getId());
 
-        // walk through the entry
-        for (AtomElement element : entry.getElements()) {
-          if (element.getObject() instanceof AtomLink) {
-            addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+          // walk through the entry
+          for (AtomElement element : entry.getElements()) {
+            if (element.getObject() instanceof AtomLink) {
+              addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+            }
+            else if (element.getObject() instanceof CmisObjectType) {
+              version = convert((CmisObjectType) element.getObject());
+            }
           }
-          else if (element.getObject() instanceof CmisObjectType) {
-            version = convert((CmisObjectType) element.getObject());
-          }
+        }
+        finally {
+          unlockLinks();
         }
 
         if (version != null) {

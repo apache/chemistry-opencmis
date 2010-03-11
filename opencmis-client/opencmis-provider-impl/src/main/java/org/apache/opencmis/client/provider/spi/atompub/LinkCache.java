@@ -144,6 +144,20 @@ public class LinkCache implements Serializable {
   }
 
   /**
+   * Locks the link cache.
+   */
+  public void lockLinks() {
+    fLinkCache.writeLock();
+  }
+
+  /**
+   * Unlocks the link cache.
+   */
+  public void unlockLinks() {
+    fLinkCache.writeUnlock();
+  }
+
+  /**
    * Adds a type link.
    */
   public void addTypeLink(String repositoryId, String id, String rel, String type, String link) {
@@ -169,6 +183,20 @@ public class LinkCache implements Serializable {
    */
   public String getTypeLink(String repositoryId, String id, String rel) {
     return getLink(repositoryId, id, rel, null);
+  }
+
+  /**
+   * Locks the type link cache.
+   */
+  public void lockTypeLinks() {
+    fTypeLinkCache.writeLock();
+  }
+
+  /**
+   * Unlocks the type link cache.
+   */
+  public void unlockTypeLinks() {
+    fTypeLinkCache.writeUnlock();
   }
 
   /**
