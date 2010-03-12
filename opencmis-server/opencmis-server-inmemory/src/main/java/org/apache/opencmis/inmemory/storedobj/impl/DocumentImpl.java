@@ -91,8 +91,12 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
 
     // fill the version related properties (versions should override this but the spec requires some
     // properties always to be set
+    
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_LATEST_VERSION, requestedIds)) {
       properties.put(PropertyIds.CMIS_IS_LATEST_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_VERSION, true));
+    }
+    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_IMMUTABLE, requestedIds)) {
+      properties.put(PropertyIds.CMIS_IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_IMMUTABLE, false));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_MAJOR_VERSION, requestedIds)) {
       properties.put(PropertyIds.CMIS_IS_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_MAJOR_VERSION, true));
