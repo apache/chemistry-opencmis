@@ -165,7 +165,7 @@ public class DocumentTypeCreationHelper {
     propB = PropertyCreationHelper.createBooleanDefinition(
         PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, "CMIS Is Version Series Checked Out Property");
     propB.setUpdatability(Updatability.READONLY);
-    propertyDefinitions.put(propB.getId(), propS);
+    propertyDefinitions.put(propB.getId(), propB);
         
     propS = PropertyCreationHelper.createStringDefinition(
         PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, "CMIS Version Series Checked Out By Property");
