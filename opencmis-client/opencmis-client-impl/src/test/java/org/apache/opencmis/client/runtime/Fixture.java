@@ -33,9 +33,16 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
+import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
+import org.apache.opencmis.commons.SessionParameter;
+import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.opencmis.commons.provider.CmisProvider;
+import org.apache.opencmis.util.repository.ObjectGenerator;
+import org.junit.Assert;
 
 /**
  * Definition of unit environment for running test cases. Default implementation
@@ -89,16 +96,9 @@ public class Fixture {
 	public static final String PROPERTY_NAME_STRING_MULTI_VALUED = "MultiValuedStringProperty";
 
 	/*
-	 * session parameter
+	 * test data setup
 	 */
-	private static final String X_FOLDER_TYPE_ID = "org.apache.opencmis.fixture.folder.type.id";
-	private static final String X_DOCUMENT_TYPE_ID = "org.apache.opencmis.fixture.document.type.id";
-
-	/*
-	 * environment
-	 */
-	private static final String CONFIG_PATH = "org.apache.opencmis.client.runtime.suite.config.path";
-	private static final String SESSION_FACTORY = "org.apache.opencmis.client.runtime.suite.session.factory";
+	private static TestDataSetup testData = new TestDataSetup();
 
 	static {
 		Fixture.TEST_ROOT_FOLDER_NAME = "test_" + UUID.randomUUID().toString();
@@ -108,7 +108,7 @@ public class Fixture {
 	 * @return session parameter
 	 */
 	public static Map<String, String> getParamter() {
-		return paramter;
+		return parameter;
 	}
 
 	/**
@@ -117,16 +117,16 @@ public class Fixture {
 	 * @param paramter
 	 */
 	public static void setParamter(Map<String, String> paramter) {
-		Fixture.paramter = paramter;
+		Fixture.parameter = paramter;
 
 		/* overload fixture values */
 		String value;
 
-		value = Fixture.paramter.get(Fixture.X_DOCUMENT_TYPE_ID);
+		value = Fixture.parameter.get(TestSessionParameter.DOCUMENT_TYPE_ID);
 		Fixture.DOCUMENT_TYPE_ID = (value != null ? value
 				: Fixture.DOCUMENT_TYPE_ID);
 
-		value = Fixture.paramter.get(Fixture.X_FOLDER_TYPE_ID);
+		value = Fixture.parameter.get(TestSessionParameter.FOLDER_TYPE_ID);
 		Fixture.FOLDER_TYPE_ID = (value != null ? value
 				: Fixture.FOLDER_TYPE_ID);
 	}
@@ -134,7 +134,7 @@ public class Fixture {
 	/**
 	 * session parameter.
 	 */
-	private static Map<String, String> paramter = null;
+	private static Map<String, String> parameter = null;
 
 	/**
 	 * Overwriting default session factory.
@@ -164,7 +164,7 @@ public class Fixture {
 
 	public static void init() {
 		/* get optional path from system properties */
-		String pathname = System.getProperty(Fixture.CONFIG_PATH);
+		String pathname = System.getProperty(TestSessionParameter.CONFIG_PATH);
 		pathname = (pathname != null) ? pathname.trim() : null;
 		Properties properties = null;
 		Map<String, String> sessionParameter = null;
@@ -196,7 +196,8 @@ public class Fixture {
 			Fixture.setParamter(sessionParameter);
 
 			/* load factory class */
-			factoryClassName = sessionParameter.get(Fixture.SESSION_FACTORY);
+			factoryClassName = sessionParameter
+					.get(TestSessionParameter.SESSION_FACTORY);
 			if (factoryClassName != null
 					&& !"".equalsIgnoreCase(factoryClassName)) {
 				Class<?> clazz = Class.forName(factoryClassName);
@@ -216,20 +217,11 @@ public class Fixture {
 	}
 
 	public static void setUpTestData(Session session) {
-//		if (session instanceof Testable) {
-//			Map<String, String> p = new Hashtable<String, String>();
-//			p.put(Testable.FOLDER_TYPE_ID_PARAMETER, Fixture.FOLDER_TYPE_ID);
-//			p
-//					.put(Testable.DOCUMENT_TYPE_ID_PARAMETER,
-//							Fixture.DOCUMENT_TYPE_ID);
-//			((Testable) session).generateTestData(p);
-//		}
+		Fixture.testData.setup();
 	}
 
 	public static void teardownTestData(Session session) {
-//		if (session instanceof Testable) {
-//			((Testable) session).cleanUpTestData();
-//		}
+		Fixture.testData.teardown();
 	}
 
 	private static boolean isLogged = false;
@@ -246,7 +238,7 @@ public class Fixture {
 			Fixture.log
 					.info("---------------------------------------------------------------");
 			Fixture.log.info("config path (prop): "
-					+ System.getProperty(Fixture.CONFIG_PATH));
+					+ System.getProperty(TestSessionParameter.CONFIG_PATH));
 			Fixture.log.info("session factory:    "
 					+ Fixture.getSessionFactory().getClass());
 			Fixture.log.info("session parameter:  " + Fixture.getParamter());

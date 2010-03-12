@@ -21,7 +21,6 @@ package org.apache.opencmis.client.runtime;
 import junit.framework.Assert;
 
 import org.apache.opencmis.client.api.Folder;
-import org.apache.opencmis.client.api.ObjectId;
 import org.junit.Test;
 
 /**
