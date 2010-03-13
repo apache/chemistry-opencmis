@@ -25,18 +25,15 @@ import java.util.UUID;
 import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.SessionParameter;
-import org.apache.opencmis.commons.enums.CmisProperties;
 import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.provider.CmisProvider;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
-import org.apache.opencmis.commons.provider.PropertyIdData;
-import org.apache.opencmis.commons.provider.PropertyStringData;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.util.repository.ObjectGenerator;
 import org.junit.Assert;
 
-public class TestDataSetup {
+public class DataSetup {
 
 	private CmisProvider provider = null;
 	private String rootFolderId = null; // root

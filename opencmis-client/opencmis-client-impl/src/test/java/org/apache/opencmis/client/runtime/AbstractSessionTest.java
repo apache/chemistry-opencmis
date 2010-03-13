@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
+import org.apache.opencmis.client.runtime.mock.MockSessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -67,7 +68,9 @@ public abstract class AbstractSessionTest {
 		SessionFactory factory = Fixture.getSessionFactory();
 		this.session = factory.createSession(Fixture.getParamter());
 
-		Fixture.setUpTestData(this.session);
+		if (!(factory instanceof MockSessionFactory)) {
+			Fixture.setUpTestData(this.session);
+		}
 	}
 
 	@After

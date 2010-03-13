@@ -33,16 +33,9 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
-import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
-import org.apache.opencmis.commons.SessionParameter;
-import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.opencmis.commons.provider.CmisProvider;
-import org.apache.opencmis.util.repository.ObjectGenerator;
-import org.junit.Assert;
 
 /**
  * Definition of unit environment for running test cases. Default implementation
@@ -98,7 +91,7 @@ public class Fixture {
 	/*
 	 * test data setup
 	 */
-	private static TestDataSetup testData = new TestDataSetup();
+	private static DataSetup testData = new DataSetup();
 
 	static {
 		Fixture.TEST_ROOT_FOLDER_NAME = "test_" + UUID.randomUUID().toString();
