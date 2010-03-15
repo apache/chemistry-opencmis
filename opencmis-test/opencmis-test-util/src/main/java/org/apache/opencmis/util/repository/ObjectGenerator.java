@@ -102,12 +102,10 @@ public class ObjectGenerator {
   private int fContentSizeInK = 0;
   
 
-  private static final String NAMEPROPVALPREFIXDOC = "My Document ";
-  private static final String NAMEPROPVALPREFIXFOLDER = "My Folder ";
+  private static final String NAMEPROPVALPREFIXDOC = "My_Document-";
+  private static final String NAMEPROPVALPREFIXFOLDER = "My_Folder-";
   private static final String STRINGPROPVALPREFIXDOC = "My Doc StringProperty ";
   private static final String STRINGPROPVALPREFIXFOLDER = "My Folder StringProperty ";
-  private static int PROPVALCOUNTER_DOC_NAME = 0;
-  private static int PROPVALCOUNTER_FOLDER_NAME = 0;
   private static int PROPVALCOUNTER_DOC_STRING_PROP = 0;
   private static int PROPVALCOUNTER_FOLDER_STRING_PROP = 0;
   /**
@@ -226,18 +224,18 @@ public class ObjectGenerator {
   }
 
   public void createSingleDocument(String folderId) {
-	  createDocument(folderId);      
+	  createDocument(folderId, 0, 0);      
   }
 	  
   private void createFolderHierachy(String parentId, int level, int levels, int childrenPerLevel) {
     
     if (level>=levels)
       return;
-//    log.info(" create folder for parent id: " + parentId + ", in level " + level 
-//         + ", max levels " + levels);
+    log.debug(" create folder for parent id: " + parentId + ", in level " + level 
+         + ", max levels " + levels);
     
     for (int i = 0; i < childrenPerLevel; i++) {
-      PropertiesData props = createFolderProperties();      
+      PropertiesData props = createFolderProperties(i, level);      
       String id = fObjSvc.createFolder(fRepositoryId, props, parentId, null, null, null, null);
       if (id != null) {
         ++fObjectsInTotalCount;
@@ -245,11 +243,11 @@ public class ObjectGenerator {
       }
     }
     for (int j=0; j<fNoDocumentsToCreate; j++) {
-      createDocument(parentId);
+      createDocument(parentId, j, level);
     }
   }
 
-  private String createDocument(String folderId) {
+  private String createDocument(String folderId, int no, int level) {
     ContentStreamData contentStream = null;
     VersioningState versioningState = VersioningState.NONE;
     List<String> policies = null;
@@ -258,7 +256,7 @@ public class ObjectGenerator {
     ExtensionsData extension = null;
 
     // log.info("create document in folder " + folderId);
-    PropertiesData props = createDocumentProperties();
+    PropertiesData props = createDocumentProperties(no, level);
     String id = null;
     if (fContentSizeInK > 0)
       contentStream = createContent();
@@ -294,9 +292,9 @@ public class ObjectGenerator {
     return content;
   }
 
-  private PropertiesData createFolderProperties() {
+  private PropertiesData createFolderProperties(int no, int level) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, generateFolderNameValue()));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, generateFolderNameValue(no, level)));
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, fFolderTypeId));
     // Generate some property values for custom attributes
     for (String stringPropId : fStringPropertyIdsToSetForFolder) {
@@ -306,9 +304,9 @@ public class ObjectGenerator {
     return props;
   }
 
-  private PropertiesData createDocumentProperties() {
+  private PropertiesData createDocumentProperties(int no, int level) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, generateDocNameValue()));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, generateDocNameValue(no, level)));
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, fDocTypeId));
     // Generate some property values for custom attributes
     for (String stringPropId : fStringPropertyIdsToSetForDocument) {
@@ -318,31 +316,26 @@ public class ObjectGenerator {
     return props;
   }
   
-  private static synchronized int incrementPropCounterDocName() {
-    return PROPVALCOUNTER_DOC_NAME++;
-  }
-  private static synchronized int incrementPropCounterFolderName() {
-    return PROPVALCOUNTER_FOLDER_NAME++;
-  }
   private static synchronized int incrementPropCounterDocStringProp() {
     return PROPVALCOUNTER_DOC_STRING_PROP++;
   }
+  
   private static synchronized int incrementPropCounterFolderStringProp() {
     return PROPVALCOUNTER_FOLDER_STRING_PROP++;
   }
 
-  private String generateDocNameValue() {
+  private String generateDocNameValue(int no, int level) {
     if (fUseUuids)
       return UUID.randomUUID().toString();
     else
-      return NAMEPROPVALPREFIXDOC + incrementPropCounterDocName();
+      return NAMEPROPVALPREFIXDOC + level + "-" + no;
   }
   
-  private String generateFolderNameValue() {
+  private String generateFolderNameValue(int no, int level) {
     if (fUseUuids)
       return UUID.randomUUID().toString();
     else
-      return NAMEPROPVALPREFIXFOLDER + incrementPropCounterFolderName();
+      return NAMEPROPVALPREFIXFOLDER + level + "-" + no;
   }
 
   private static String generateStringPropValueDoc() {
