@@ -30,8 +30,8 @@ import org.apache.opencmis.client.provider.spi.atompub.objects.AtomEntry;
 import org.apache.opencmis.client.provider.spi.atompub.objects.AtomFeed;
 import org.apache.opencmis.client.provider.spi.atompub.objects.AtomLink;
 import org.apache.opencmis.commons.api.ExtensionsData;
-import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinition;
+import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinitionList;
 import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.Constants;
@@ -61,8 +61,8 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos(org.apache.opencmis.client.provider
-   * .ExtensionsData)
+   * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos(org.apache.opencmis
+   * .client.provider .ExtensionsData)
    */
   public List<RepositoryInfoData> getRepositoryInfos(ExtensionsData extension) {
     return getRepositoriesInternal(null);
@@ -149,21 +149,27 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
       }
     }
 
+    result.setList(new ArrayList<TypeDefinition>(feed.getEntries().size()));
+
     // get the children
     if (!feed.getEntries().isEmpty()) {
-      result.setList(new ArrayList<TypeDefinition>(feed.getEntries().size()));
-
       for (AtomEntry entry : feed.getEntries()) {
         TypeDefinition child = null;
 
-        // walk through the entry
-        for (AtomElement element : entry.getElements()) {
-          if (element.getObject() instanceof AtomLink) {
-            addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+        lockTypeLinks();
+        try {
+          // walk through the entry
+          for (AtomElement element : entry.getElements()) {
+            if (element.getObject() instanceof AtomLink) {
+              addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+            }
+            else if (element.getObject() instanceof CmisTypeDefinitionType) {
+              child = convert((CmisTypeDefinitionType) element.getObject());
+            }
           }
-          else if (element.getObject() instanceof CmisTypeDefinitionType) {
-            child = convert((CmisTypeDefinitionType) element.getObject());
-          }
+        }
+        finally {
+          unlockTypeLinks();
         }
 
         if (child != null) {
@@ -229,17 +235,24 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
       List<TypeDefinitionContainer> childContainerList = new ArrayList<TypeDefinitionContainer>();
 
       // walk through the entry
-      for (AtomElement element : entry.getElements()) {
-        if (element.getObject() instanceof AtomLink) {
-          addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+      lockTypeLinks();
+      try {
+        for (AtomElement element : entry.getElements()) {
+          if (element.getObject() instanceof AtomLink) {
+            addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+          }
+          else if (element.getObject() instanceof CmisTypeDefinitionType) {
+            childContainer = new TypeDefinitionContainerImpl(
+                convert((CmisTypeDefinitionType) element.getObject()));
+          }
+          else if (element.getObject() instanceof AtomFeed) {
+            addTypeDescendantsLevel(repositoryId, (AtomFeed) element.getObject(),
+                childContainerList);
+          }
         }
-        else if (element.getObject() instanceof CmisTypeDefinitionType) {
-          childContainer = new TypeDefinitionContainerImpl(convert((CmisTypeDefinitionType) element
-              .getObject()));
-        }
-        else if (element.getObject() instanceof AtomFeed) {
-          addTypeDescendantsLevel(repositoryId, (AtomFeed) element.getObject(), childContainerList);
-        }
+      }
+      finally {
+        unlockTypeLinks();
       }
 
       if (childContainer != null) {

@@ -763,7 +763,6 @@ public class AbstractAtomPubService {
         }
         else if (element.getObject() instanceof CmisTypeDefinitionType) {
           result = convert((CmisTypeDefinitionType) element.getObject());
-          break;
         }
       }
     }
