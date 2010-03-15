@@ -26,7 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
@@ -61,6 +60,7 @@ import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.client.api.util.Container;
 import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.client.runtime.Fixture;
+import org.apache.opencmis.client.runtime.FixtureData;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
@@ -133,17 +133,16 @@ public class MockSessionFactory implements SessionFactory {
 				this.createMockRepositoryInfo()).anyTimes();
 		expect(session.getRootFolder()).andReturn(rootFolder).anyTimes();
 
-    String id = rootFolder.getId();
-    ObjectId objectId = createMockObjectId(id);
-    expect(session.createObjectId(id)).andReturn(objectId).anyTimes();
+		String id = rootFolder.getId();
+		ObjectId objectId = createMockObjectId(id);
+		expect(session.createObjectId(id)).andReturn(objectId).anyTimes();
 
-		
-		expect(session.getDefaultContext()).andReturn(this.createMockOperationContext())
-				.anyTimes();
+		expect(session.getDefaultContext()).andReturn(
+				this.createMockOperationContext()).anyTimes();
 		expect(session.getLocale()).andReturn(new Locale("EN")).anyTimes();
 		expect(session.getObjectFactory()).andReturn(
 				this.createMockObjectFactory()).anyTimes();
-		
+
 		expect(session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID))
 				.andReturn(
 						this.idTypeIndex.get(ObjectType.DOCUMENT_BASETYPE_ID))
@@ -159,34 +158,53 @@ public class MockSessionFactory implements SessionFactory {
 						this.idTypeIndex
 								.get(ObjectType.RELATIONSHIP_BASETYPE_ID))
 				.anyTimes();
-		expect(session.getTypeDefinition(Fixture.DOCUMENT_TYPE_ID)).andReturn(
-				this.idTypeIndex.get(Fixture.DOCUMENT_TYPE_ID)).anyTimes();
-		expect(session.getTypeDefinition(Fixture.FOLDER_TYPE_ID)).andReturn(
-				this.idTypeIndex.get(Fixture.FOLDER_TYPE_ID)).anyTimes();
 
+		if (!FixtureData.DOCUMENT_TYPE_ID.toString().equalsIgnoreCase(
+				ObjectType.DOCUMENT_BASETYPE_ID)) {
+			expect(
+					session.getTypeDefinition(FixtureData.DOCUMENT_TYPE_ID
+							.toString())).andReturn(
+					this.idTypeIndex.get(FixtureData.DOCUMENT_TYPE_ID
+							.toString())).anyTimes();
+		}
+		if (!FixtureData.FOLDER_TYPE_ID.toString().equalsIgnoreCase(
+				ObjectType.FOLDER_BASETYPE_ID)) {
+			expect(
+					session.getTypeDefinition(FixtureData.FOLDER_TYPE_ID
+							.toString()))
+					.andReturn(
+							this.idTypeIndex.get(FixtureData.FOLDER_TYPE_ID
+									.toString())).anyTimes();
+		}
 		/* document child/descendants types */
 		List<ObjectType> dtl = new ArrayList<ObjectType>();
-		dtl.add(this.idTypeIndex.get(Fixture.DOCUMENT_TYPE_ID));
+		dtl.add(this.idTypeIndex.get(FixtureData.DOCUMENT_TYPE_ID.toString()));
 		PagingList<ObjectType> plot = this.createMockPaging(dtl);
-		Container<ObjectType> ctdoc = this.createMockContainer(this.idTypeIndex.get(Fixture.DOCUMENT_TYPE_ID), null);
+		Container<ObjectType> ctdoc = this.createMockContainer(this.idTypeIndex
+				.get(FixtureData.DOCUMENT_TYPE_ID.toString()), null);
 		expect(
-				session.getTypeChildren(BaseObjectTypeIds.CMIS_DOCUMENT.value(), true, -1))
-						.andReturn(plot).anyTimes();
+				session.getTypeChildren(
+						BaseObjectTypeIds.CMIS_DOCUMENT.value(), true, 2))
+				.andReturn(plot).anyTimes();
 		expect(
-				session.getTypeDescendants(BaseObjectTypeIds.CMIS_DOCUMENT.value(), 1, true))
-						.andReturn(Collections.singletonList(ctdoc)).anyTimes();
+				session.getTypeDescendants(BaseObjectTypeIds.CMIS_DOCUMENT
+						.value(), 1, true)).andReturn(
+				Collections.singletonList(ctdoc)).anyTimes();
 
 		/* folder child/descendants types */
 		List<ObjectType> ftl = new ArrayList<ObjectType>();
-		ftl.add(this.idTypeIndex.get(Fixture.FOLDER_TYPE_ID));
+		ftl.add(this.idTypeIndex.get(FixtureData.FOLDER_TYPE_ID.toString()));
 		PagingList<ObjectType> plfot = this.createMockPaging(ftl);
-    Container<ObjectType> ctfolder = this.createMockContainer(this.idTypeIndex.get(Fixture.FOLDER_TYPE_ID), null);
+		Container<ObjectType> ctfolder = this.createMockContainer(
+				this.idTypeIndex.get(FixtureData.FOLDER_TYPE_ID.toString()),
+				null);
 		expect(
-				session.getTypeChildren(BaseObjectTypeIds.CMIS_FOLDER.value(), true, -1))
-				    .andReturn(plfot).anyTimes();
+				session.getTypeChildren(BaseObjectTypeIds.CMIS_FOLDER.value(),
+						true, 2)).andReturn(plfot).anyTimes();
 		expect(
-				session.getTypeDescendants(BaseObjectTypeIds.CMIS_FOLDER.value(), 1, true))
-						.andReturn(Collections.singletonList(ctfolder)).anyTimes();
+				session.getTypeDescendants(BaseObjectTypeIds.CMIS_FOLDER
+						.value(), 1, true)).andReturn(
+				Collections.singletonList(ctfolder)).anyTimes();
 
 		/* change support */
 		List<ChangeEvent> cel = this.createMockChangeEvents();
@@ -195,12 +213,12 @@ public class MockSessionFactory implements SessionFactory {
 
 		/* query support */
 		List<QueryResult> queryList = new ArrayList<QueryResult>();
-		for(CmisObject cm :this.idObjectIndex.values()) {
-		  queryList.add(createMockQueryResult(cm));
+		for (CmisObject cm : this.idObjectIndex.values()) {
+			queryList.add(createMockQueryResult(cm));
 		}
 		PagingList<QueryResult> plq = this.createMockPaging(queryList);
-		expect(session.query(Fixture.QUERY, false, -1)).andReturn(plq)
-				.anyTimes();
+		expect(session.query(FixtureData.QUERY.toString(), false, -1))
+				.andReturn(plq).anyTimes();
 
 		this.makeObjectsAccessible(session);
 
@@ -249,17 +267,17 @@ public class MockSessionFactory implements SessionFactory {
 	}
 
 	private ObjectId createMockObjectId(String id) {
-	  ObjectId oid = createNiceMock(ObjectId.class);
-	  
-	  expect(oid.getId()).andReturn(id).anyTimes();
-	  
-	  replay(oid);
-	  
-	  return oid;
+		ObjectId oid = createNiceMock(ObjectId.class);
+
+		expect(oid.getId()).andReturn(id).anyTimes();
+
+		replay(oid);
+
+		return oid;
 	}
-	
+
 	private OperationContext createMockOperationContext() {
-	  OperationContext oc = createNiceMock(OperationContext.class);
+		OperationContext oc = createNiceMock(OperationContext.class);
 
 		replay(oc);
 
@@ -273,34 +291,46 @@ public class MockSessionFactory implements SessionFactory {
 		expect(f.getName()).andReturn(Fixture.TEST_ROOT_FOLDER_NAME).anyTimes();
 		expect(f.getFolderParent()).andReturn(parent).anyTimes();
 		expect(f.getType()).andReturn(
-				this.idTypeIndex.get(Fixture.FOLDER_TYPE_ID)).anyTimes();
+				this.idTypeIndex.get(FixtureData.FOLDER_TYPE_ID.toString()))
+				.anyTimes();
 		expect(f.getBaseType()).andReturn(
 				this.idTypeIndex.get(BaseObjectTypeIds.CMIS_FOLDER.value()))
 				.anyTimes();
 		List<CmisObject> children = new ArrayList<CmisObject>();
 		children.add(this.createMockTestFolder(f, "/"
-				+ Fixture.TEST_ROOT_FOLDER_NAME + "/" + Fixture.FOLDER1_NAME,
-				Fixture.FOLDER1_NAME));
+				+ Fixture.TEST_ROOT_FOLDER_NAME + "/"
+				+ FixtureData.FOLDER1_NAME.toString(), FixtureData.FOLDER1_NAME
+				.toString()));
 		children.add(this.createMockTestFolder(f, "/"
-				+ Fixture.TEST_ROOT_FOLDER_NAME + "/" + Fixture.FOLDER2_NAME,
-				Fixture.FOLDER2_NAME));
+				+ Fixture.TEST_ROOT_FOLDER_NAME + "/"
+				+ FixtureData.FOLDER2_NAME.toString(), FixtureData.FOLDER2_NAME
+				.toString()));
 		children.add(this.createMockTestDocument(f, "/"
-				+ Fixture.TEST_ROOT_FOLDER_NAME + "/" + Fixture.DOCUMENT1_NAME,
-				Fixture.DOCUMENT1_NAME));
+				+ Fixture.TEST_ROOT_FOLDER_NAME + "/"
+				+ FixtureData.DOCUMENT1_NAME.toString(),
+				FixtureData.DOCUMENT1_NAME.toString()));
 
 		PagingList<CmisObject> pl = this.createMockPaging(children);
-		expect(f.getChildren(null, -1)).andReturn(pl).anyTimes();
+		expect(f.getChildren(1)).andReturn(pl).anyTimes();
+		expect(f.getChildren(2)).andReturn(pl).anyTimes();
+		expect(f.getChildren(1000)).andReturn(pl).anyTimes();
 
 		List<Container<FileableCmisObject>> ct = new ArrayList<Container<FileableCmisObject>>();
-		Folder f1 = this.createMockTestFolder(f, "/" + Fixture.FOLDER1_NAME,
-				Fixture.FOLDER1_NAME);
-		Folder f2 = this.createMockTestFolder(f, "/" + Fixture.FOLDER2_NAME,
-				Fixture.FOLDER2_NAME);
+		Folder f1 = this.createMockTestFolder(f, "/"
+				+ FixtureData.FOLDER1_NAME.toString(), FixtureData.FOLDER1_NAME
+				.toString());
+		Folder f2 = this.createMockTestFolder(f, "/"
+				+ FixtureData.FOLDER2_NAME.toString(), FixtureData.FOLDER2_NAME
+				.toString());
 		ct.add(this.createMockContainer((FileableCmisObject) f1, null));
-    ct.add(this.createMockContainer((FileableCmisObject) f2, null));
-		
-		expect(f.getDescendants(-1)).andReturn(ct).anyTimes();
-		expect(f.getFolderTree(-1)).andReturn(ct).anyTimes();
+		ct.add(this.createMockContainer((FileableCmisObject) f2, null));
+
+		expect(f.getDescendants(1)).andReturn(ct).anyTimes();
+		expect(f.getDescendants(2)).andReturn(ct).anyTimes();
+		expect(f.getDescendants(1000)).andReturn(ct).anyTimes();
+		expect(f.getFolderTree(1)).andReturn(ct).anyTimes();
+		expect(f.getFolderTree(2)).andReturn(ct).anyTimes();
+		expect(f.getFolderTree(1000)).andReturn(ct).anyTimes();
 		this.createMockProperties(f);
 
 		replay(f);
@@ -343,8 +373,8 @@ public class MockSessionFactory implements SessionFactory {
 			a.add(this.createMockUriProperty(UUID.randomUUID().toString()));
 
 			expect(o.getProperties()).andReturn(a).anyTimes();
-			//expect(o.getProperties(Fixture.PROPERTY_FILTER)).andReturn(a)
-			//		.anyTimes();
+			// expect(o.getProperties(Fixture.PROPERTY_FILTER)).andReturn(a)
+			// .anyTimes();
 
 			/* single property */
 			Property<Object> p1 = (Property<Object>) createMockStringProperty(CmisProperties.OBJECT_ID
@@ -513,7 +543,8 @@ public class MockSessionFactory implements SessionFactory {
 		expect(d.getId()).andReturn(UUID.randomUUID().toString()).anyTimes();
 		expect(d.getName()).andReturn(name).anyTimes();
 		expect(d.getType()).andReturn(
-				this.idTypeIndex.get(Fixture.DOCUMENT_TYPE_ID)).anyTimes();
+				this.idTypeIndex.get(FixtureData.DOCUMENT_TYPE_ID.toString()))
+				.anyTimes();
 		expect(d.getBaseType()).andReturn(
 				this.idTypeIndex.get(BaseObjectTypeIds.CMIS_DOCUMENT.value()))
 				.anyTimes();
@@ -551,15 +582,18 @@ public class MockSessionFactory implements SessionFactory {
 		expect(f.getName()).andReturn(name).anyTimes();
 		expect(f.getFolderParent()).andReturn(parent).anyTimes();
 		expect(f.getType()).andReturn(
-				this.idTypeIndex.get(Fixture.FOLDER_TYPE_ID)).anyTimes();
+				this.idTypeIndex.get(FixtureData.FOLDER_TYPE_ID.toString()))
+				.anyTimes();
 		expect(f.getBaseType()).andReturn(
 				this.idTypeIndex.get(BaseObjectTypeIds.CMIS_FOLDER.value()))
 				.anyTimes();
 		List<CmisObject> children = new ArrayList<CmisObject>();
 		children.add(this.createMockTestDocument(f, path + "/"
-				+ Fixture.DOCUMENT1_NAME, Fixture.DOCUMENT1_NAME));
+				+ FixtureData.DOCUMENT1_NAME.toString(),
+				FixtureData.DOCUMENT1_NAME.toString()));
 		children.add(this.createMockTestDocument(f, path + "/"
-				+ Fixture.DOCUMENT2_NAME, Fixture.DOCUMENT2_NAME));
+				+ FixtureData.DOCUMENT2_NAME.toString(),
+				FixtureData.DOCUMENT2_NAME.toString()));
 
 		PagingList<CmisObject> pl = this.createMockPaging(children);
 		expect(f.getChildren(null, -1)).andReturn(pl).anyTimes();
@@ -576,12 +610,11 @@ public class MockSessionFactory implements SessionFactory {
 	}
 
 	private QueryResult createMockQueryResult(CmisObject cmisObject) {
-	  QueryResult qr = createNiceMock(QueryResult.class);
-  
-	  return qr;
+		QueryResult qr = createNiceMock(QueryResult.class);
+
+		return qr;
 	}
-	
-	
+
 	@SuppressWarnings( { "unchecked" })
 	private <T> PagingList<T> createMockPaging(List<T> items) {
 		PagingList<T> pl = createNiceMock(PagingList.class);
@@ -591,7 +624,7 @@ public class MockSessionFactory implements SessionFactory {
 		Iterator<List<T>> i = a.iterator();
 
 		expect(pl.get(0)).andReturn(items).anyTimes();
-		//expect(pl.isEmpty()).andReturn(false).anyTimes();
+		// expect(pl.isEmpty()).andReturn(false).anyTimes();
 		expect(pl.iterator()).andReturn(i).anyTimes();
 
 		replay(pl);
@@ -599,18 +632,19 @@ public class MockSessionFactory implements SessionFactory {
 		return pl;
 	}
 
-  @SuppressWarnings("unchecked")
-  private <T> Container<T> createMockContainer(T item, List<Container<T>> children) {
-    Container<T> c = createNiceMock(Container.class);
-	  
-	  expect(c.getItem()).andReturn(item).anyTimes();
-	  expect(c.getChildren()).andReturn(children).anyTimes();
-	  
-	  replay(c);
-	  
-	  return c;
+	@SuppressWarnings("unchecked")
+	private <T> Container<T> createMockContainer(T item,
+			List<Container<T>> children) {
+		Container<T> c = createNiceMock(Container.class);
+
+		expect(c.getItem()).andReturn(item).anyTimes();
+		expect(c.getChildren()).andReturn(children).anyTimes();
+
+		replay(c);
+
+		return c;
 	}
-	
+
 	private void createMockGlobalTypes() {
 		FolderType bft = createNiceMock(FolderType.class);
 		expect(bft.getId()).andReturn(ObjectType.FOLDER_BASETYPE_ID).anyTimes();
@@ -618,7 +652,8 @@ public class MockSessionFactory implements SessionFactory {
 		expect(bft.getBaseType()).andReturn(null).anyTimes();
 
 		FolderType ft = createNiceMock(FolderType.class);
-		expect(ft.getId()).andReturn(Fixture.FOLDER_TYPE_ID).anyTimes();
+		expect(ft.getId()).andReturn(FixtureData.FOLDER_TYPE_ID.toString())
+				.anyTimes();
 		expect(ft.isBaseType()).andReturn(false);
 		expect(ft.getBaseType()).andReturn(bft).anyTimes();
 
@@ -640,7 +675,8 @@ public class MockSessionFactory implements SessionFactory {
 		expect(bdt.getBaseType()).andReturn(null).anyTimes();
 
 		DocumentType dt = createNiceMock(DocumentType.class);
-		expect(dt.getId()).andReturn(Fixture.DOCUMENT_TYPE_ID).anyTimes();
+		expect(dt.getId()).andReturn(FixtureData.DOCUMENT_TYPE_ID.toString())
+				.anyTimes();
 		expect(dt.isBaseType()).andReturn(false);
 		expect(dt.getBaseType()).andReturn(bft).anyTimes();
 
@@ -651,10 +687,12 @@ public class MockSessionFactory implements SessionFactory {
 		replay(bpt);
 		replay(brt);
 
-		this.idTypeIndex.put(bft.getId(), bft);
 		this.idTypeIndex.put(ft.getId(), ft);
-		this.idTypeIndex.put(bdt.getId(), bdt);
+		this.idTypeIndex.put(bft.getId(), bft); // can overwrite ft
+
 		this.idTypeIndex.put(dt.getId(), dt);
+		this.idTypeIndex.put(bdt.getId(), bdt); // can overwrite dt
+
 		this.idTypeIndex.put(bpt.getId(), bpt);
 		this.idTypeIndex.put(brt.getId(), brt);
 
@@ -667,7 +705,8 @@ public class MockSessionFactory implements SessionFactory {
 		expect(f.getName()).andReturn("").anyTimes(); // or "root" ?
 		expect(f.getFolderParent()).andReturn(null).anyTimes();
 		expect(f.getType()).andReturn(
-				this.idTypeIndex.get(Fixture.FOLDER_TYPE_ID)).anyTimes();
+				this.idTypeIndex.get(FixtureData.FOLDER_TYPE_ID.toString()))
+				.anyTimes();
 		this.createMockProperties(f);
 
 		replay(f);
@@ -739,8 +778,8 @@ public class MockSessionFactory implements SessionFactory {
 	private interface BooleanProperty extends Property<Boolean> {
 	}
 
-  public List<Repository> getRepositories(Map<String, String> parameters) {
-    return null;
-  }
+	public List<Repository> getRepositories(Map<String, String> parameters) {
+		return null;
+	}
 
 }

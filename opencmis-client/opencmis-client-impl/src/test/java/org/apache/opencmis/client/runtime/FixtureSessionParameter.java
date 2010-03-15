@@ -18,18 +18,17 @@
  */
 package org.apache.opencmis.client.runtime;
 
-public interface TestSessionParameter {
+public interface FixtureSessionParameter {
 
 	/*
 	 * session parameter
 	 */
-	static final String FOLDER_TYPE_ID =   "org.apache.opencmis.client.runtime.test.folder.type.id";
-	static final String DOCUMENT_TYPE_ID = "org.apache.opencmis.client.runtime.test.document.type.id";
 
-	/*
-	 * environment
+	/**
+	 * CONFIG_PATH is referenced in pom.xml! If you change here then change pom.
 	 */
 	static final String CONFIG_PATH =         "org.apache.opencmis.client.runtime.test.config.path";
+
 	static final String SESSION_FACTORY =     "org.apache.opencmis.client.runtime.test.session.factory";
 	static final String TEST_ROOT_FOLDER_ID = "org.apache.opencmis.client.runtime.test.root.folder.id";
 

@@ -44,17 +44,11 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
     Folder root = this.session.getRootFolder();
     Assert.assertNotNull(root);
 
-    Assert.assertEquals("", root.getName());
+    root.getName();
     Assert.assertNotNull(root.getId());
     Assert.assertNull(root.getFolderParent());
     Assert.assertNotNull(root.getType());
-    Assert.assertEquals(Fixture.FOLDER_TYPE_ID, root.getType().getId());
-
-    Assert.assertEquals("", root.getName());
-    Assert.assertNotNull(root.getId());
-    Assert.assertNull(root.getFolderParent());
-    Assert.assertNotNull(root.getType());
-    Assert.assertEquals(Fixture.FOLDER_TYPE_ID, root.getType().getId());
+    Assert.assertEquals(FixtureData.FOLDER_TYPE_ID.toString(), root.getType().getId());
   }
 
   @Test
@@ -67,7 +61,7 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
     Assert.assertNotNull(folder.getId());
     Assert.assertNotNull(folder.getFolderParent());
     Assert.assertNotNull(folder.getType());
-    Assert.assertEquals(Fixture.FOLDER_TYPE_ID, folder.getType().getId());
+    Assert.assertEquals(FixtureData.FOLDER_TYPE_ID.toString(), folder.getType().getId());
     Assert.assertNotNull(folder.getBaseType());
     Assert.assertEquals(ObjectType.FOLDER_BASETYPE_ID, folder.getBaseType().getId());
 
@@ -83,21 +77,20 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 
   @Test
   public void readTestDocument() {
-    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + Fixture.DOCUMENT1_NAME;
+    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
     Document document = (Document) this.session.getObjectByPath(path);
     Assert.assertNotNull("document not found: " + path, document);
 
     Assert.assertNotNull(document.getId());
     Assert.assertNotNull(document.getBaseType());
     Assert.assertEquals(ObjectType.DOCUMENT_BASETYPE_ID, document.getBaseType().getId());
-    Assert.assertEquals(Fixture.DOCUMENT1_NAME, document.getName());
+    Assert.assertEquals(FixtureData.DOCUMENT1_NAME.toString(), document.getName());
     Assert.assertNotNull(document.getType());
-    Assert.assertEquals(Fixture.DOCUMENT_TYPE_ID, document.getType().getId());
-
+    Assert.assertEquals(FixtureData.DOCUMENT_TYPE_ID.toString(), document.getType().getId());
   }
 
   public void readDocumentDefaultProperties() {
-    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + Fixture.DOCUMENT1_NAME;
+    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
     Document document = (Document) this.session.getObjectByPath(path);
     Assert.assertNotNull("document not found: " + path, document);
 
@@ -112,7 +105,7 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 
   @Test
   public void readDocumentPropertiesWithFilter() {
-    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + Fixture.DOCUMENT1_NAME;
+    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
     Document document = (Document) this.session.getObjectByPath(path);
     Assert.assertNotNull("document not found: " + path, document);
 
@@ -187,7 +180,7 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 
   @Test
   public void readDocumentProperties() {
-    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + Fixture.DOCUMENT1_NAME;
+    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
     Document document = (Document) this.session.getObjectByPath(path);
     Assert.assertNotNull("document not found: " + path, document);
 
@@ -261,7 +254,7 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 
   @Test
   public void readSingleProperty() {
-    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + Fixture.DOCUMENT1_NAME;
+    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
     Document document = (Document) this.session.getObjectByPath(path);
     Assert.assertNotNull("document not found: " + path, document);
 
@@ -278,7 +271,7 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 
   @Test
   public void readMultiValueProperty() {
-    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + Fixture.DOCUMENT1_NAME;
+    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
     Document document = (Document) this.session.getObjectByPath(path);
     Assert.assertNotNull("document not found: " + path, document);
 

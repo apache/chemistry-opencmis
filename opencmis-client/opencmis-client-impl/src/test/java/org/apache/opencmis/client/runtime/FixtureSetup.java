@@ -33,7 +33,7 @@ import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.util.repository.ObjectGenerator;
 import org.junit.Assert;
 
-public class DataSetup {
+public class FixtureSetup {
 
 	private CmisProvider provider = null;
 	private String rootFolderId = null; // root
@@ -63,10 +63,10 @@ public class DataSetup {
 
 		// root folder
 		if (Fixture.getParamter().containsKey(
-				TestSessionParameter.TEST_ROOT_FOLDER_ID)) {
+				FixtureSessionParameter.TEST_ROOT_FOLDER_ID)) {
 			// test root folder
 			this.rootFolderId = Fixture.getParamter().get(
-					TestSessionParameter.TEST_ROOT_FOLDER_ID);
+					FixtureSessionParameter.TEST_ROOT_FOLDER_ID);
 			Assert.assertNotNull(this.rootFolderId);
 		} else {
 			RepositoryInfoData rid = this.provider.getRepositoryService()
@@ -77,18 +77,15 @@ public class DataSetup {
 		}
 
 		// object types
-		String documentTypeId = Fixture.getParamter().get(
-				TestSessionParameter.DOCUMENT_TYPE_ID);
+		String documentTypeId = FixtureData.DOCUMENT_TYPE_ID.value();
 		Assert.assertNotNull(documentTypeId);
-		String folderTypeId = Fixture.getParamter().get(
-				TestSessionParameter.FOLDER_TYPE_ID);
-		;
+		String folderTypeId = FixtureData.FOLDER_TYPE_ID.value();
 		Assert.assertNotNull(folderTypeId);
 
 		// create test root folder
 		List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
 		propList.add(this.provider.getObjectFactory().createPropertyStringData(
-				PropertyIds.CMIS_NAME, UUID.randomUUID().toString()));
+				PropertyIds.CMIS_NAME, Fixture.TEST_ROOT_FOLDER_NAME));
 		propList.add(this.provider.getObjectFactory().createPropertyIdData(
 				PropertyIds.CMIS_OBJECT_TYPE_ID, folderTypeId));
 
@@ -107,6 +104,6 @@ public class DataSetup {
 		og.setFolderPropertiesToGenerate(new ArrayList<String>());
 
 		og.createFolderHierachy(2, 2, this.testRootFolderId);
-
 	}
+	
 }

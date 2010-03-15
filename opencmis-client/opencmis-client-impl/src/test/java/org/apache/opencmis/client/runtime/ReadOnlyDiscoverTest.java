@@ -47,7 +47,7 @@ public class ReadOnlyDiscoverTest extends AbstractSessionTest {
       ReadOnlyDiscoverTest.log.info("queries not supported");
       break;
     default:
-      PagingList<QueryResult> resultSet = this.session.query(Fixture.QUERY, false, -1);
+      PagingList<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false, -1);
       Assert.assertNotNull(resultSet);
       //Assert.assertFalse(resultSet.isEmpty());
       for (List<QueryResult> lo : resultSet) {

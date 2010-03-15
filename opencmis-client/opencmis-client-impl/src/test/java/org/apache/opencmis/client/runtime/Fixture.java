@@ -47,22 +47,10 @@ public class Fixture {
 
 	private static Log log = LogFactory.getLog(Fixture.class);
 
-	public static String PROPERTY_FILTER = "*";
 	/*
 	 * general
 	 */
-	public static String TEST_ROOT_FOLDER_NAME = null;
-	public static String FOLDER_TYPE_ID = "test.folder";
-	public static String DOCUMENT_TYPE_ID = "test.file";
-	public static String QUERY = "SELECT * FROM cmis:document";
-
-	/*
-	 * cmis objects
-	 */
-	public static String FOLDER1_NAME = "folder.1";
-	public static String FOLDER2_NAME = "folder.2";
-	public static String DOCUMENT1_NAME = "document.1.txt";
-	public static String DOCUMENT2_NAME = "document.2.txt";
+	public static String TEST_ROOT_FOLDER_NAME = "test_" + UUID.randomUUID().toString();
 
 	/*
 	 * properties
@@ -91,11 +79,7 @@ public class Fixture {
 	/*
 	 * test data setup
 	 */
-	private static DataSetup testData = new DataSetup();
-
-	static {
-		Fixture.TEST_ROOT_FOLDER_NAME = "test_" + UUID.randomUUID().toString();
-	}
+	private static FixtureSetup testData = new FixtureSetup();
 
 	/**
 	 * @return session parameter
@@ -110,18 +94,8 @@ public class Fixture {
 	 * @param paramter
 	 */
 	public static void setParamter(Map<String, String> paramter) {
+		FixtureData.changeValues(paramter);
 		Fixture.parameter = paramter;
-
-		/* overload fixture values */
-		String value;
-
-		value = Fixture.parameter.get(TestSessionParameter.DOCUMENT_TYPE_ID);
-		Fixture.DOCUMENT_TYPE_ID = (value != null ? value
-				: Fixture.DOCUMENT_TYPE_ID);
-
-		value = Fixture.parameter.get(TestSessionParameter.FOLDER_TYPE_ID);
-		Fixture.FOLDER_TYPE_ID = (value != null ? value
-				: Fixture.FOLDER_TYPE_ID);
 	}
 
 	/**
@@ -157,7 +131,7 @@ public class Fixture {
 
 	public static void init() {
 		/* get optional path from system properties */
-		String pathname = System.getProperty(TestSessionParameter.CONFIG_PATH);
+		String pathname = System.getProperty(FixtureSessionParameter.CONFIG_PATH);
 		pathname = (pathname != null) ? pathname.trim() : null;
 		Properties properties = null;
 		Map<String, String> sessionParameter = null;
@@ -190,7 +164,7 @@ public class Fixture {
 
 			/* load factory class */
 			factoryClassName = sessionParameter
-					.get(TestSessionParameter.SESSION_FACTORY);
+					.get(FixtureSessionParameter.SESSION_FACTORY);
 			if (factoryClassName != null
 					&& !"".equalsIgnoreCase(factoryClassName)) {
 				Class<?> clazz = Class.forName(factoryClassName);
@@ -231,7 +205,7 @@ public class Fixture {
 			Fixture.log
 					.info("---------------------------------------------------------------");
 			Fixture.log.info("config path (prop): "
-					+ System.getProperty(TestSessionParameter.CONFIG_PATH));
+					+ System.getProperty(FixtureSessionParameter.CONFIG_PATH));
 			Fixture.log.info("session factory:    "
 					+ Fixture.getSessionFactory().getClass());
 			Fixture.log.info("session parameter:  " + Fixture.getParamter());

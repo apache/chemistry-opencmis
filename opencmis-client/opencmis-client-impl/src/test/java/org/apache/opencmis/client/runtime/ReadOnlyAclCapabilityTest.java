@@ -38,8 +38,6 @@ public class ReadOnlyAclCapabilityTest extends AbstractSessionTest {
 
   @Before
   public void setup() throws Exception {
-    super.setUp();
-
     RepositoryInfo r = this.session.getRepositoryInfo();
     // capabilities
     RepositoryCapabilities repcap = r.getCapabilities();

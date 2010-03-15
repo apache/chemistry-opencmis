@@ -84,7 +84,7 @@
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-surefire-plugin</artifactId>
 							<configuration>
-								<argLine>-Dorg.apache.opencmis.client.runtime.suite.config.path=${org.apache.opencmis.client.runtime.suite.config.path}</argLine>
+								<argLine>-Dorg.apache.opencmis.client.runtime.test.config.path=${org.apache.opencmis.client.runtime.test.config.path}</argLine>
 							</configuration>
 						</plugin>
 					</plugins>
