@@ -74,7 +74,7 @@
 			-->
 			<activation>
 				<property>
-					<name>org.apache.opencmis.client.runtime.suite.config.path</name>
+					<name>org.apache.opencmis.client.runtime.test.config.path</name>
 				</property>
 			</activation>
 			<build>
