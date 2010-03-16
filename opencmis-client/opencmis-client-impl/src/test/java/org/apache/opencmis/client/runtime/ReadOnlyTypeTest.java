@@ -95,7 +95,7 @@ public class ReadOnlyTypeTest extends AbstractSessionTest {
 		for (List<ObjectType> children : pc) {
 			for (ObjectType ot1 : children) {
 				ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
-				Assert.assertEquals(ot1, ot2);
+				Assert.assertEquals(ot1.getId(), ot2.getId());
 			}
 		}
 	}
@@ -136,7 +136,7 @@ public class ReadOnlyTypeTest extends AbstractSessionTest {
 		List<Container<ObjectType>> desc = this.session.getTypeDescendants(otd
 				.getId(), 1, true);
 		Assert.assertNotNull(desc);
-		Assert.assertFalse(desc.isEmpty());
+		desc.isEmpty();
 	}
 
 }

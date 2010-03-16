@@ -53,30 +53,6 @@ public class Fixture {
 	public static String TEST_ROOT_FOLDER_NAME = "test_" + UUID.randomUUID().toString();
 
 	/*
-	 * properties
-	 */
-	public static String PROPERTY_NAME_STRING = "StringProperty";
-	public static String PROPERTY_VALUE_STRING = "abc";
-	public static String PROPERTY_NAME_INTEGER = "IntegerProperty";
-	public static Integer PROPERTY_VALUE_INTEGER = new Integer(4711);
-	public static String PROPERTY_NAME_BOOLEAN = "BooleanProperty";
-	public static Boolean PROPERTY_VALUE_BOOLEAN = new Boolean(true);
-	public static String PROPERTY_NAME_DOUBLE = "DoubleProperty";
-	public static Double PROPERTY_VALUE_DOUBLE = new Double(1.0);
-	public static String PROPERTY_NAME_FLOAT = "FloatProperty";
-	public static Float PROPERTY_VALUE_FLOAT = new Float(1.0);
-	public static String PROPERTY_NAME_ID = "DoubleProperty";
-	public static String PROPERTY_VALUE_ID = "xyz";
-	public static String PROPERTY_NAME_HTML = "HtmlProperty";
-	public static String PROPERTY_VALUE_HTML = "<html><body>html value</body></html>";
-	public static String PROPERTY_NAME_DATETIME = "DateTimeProperty";
-	public static Calendar PROPERTY_VALUE_DATETIME = GregorianCalendar
-			.getInstance();
-	public static String PROPERTY_NAME_URI = "UriProperty";
-	public static URI PROPERTY_VALUE_URI = URI.create("http://foo.com");
-	public static final String PROPERTY_NAME_STRING_MULTI_VALUED = "MultiValuedStringProperty";
-
-	/*
 	 * test data setup
 	 */
 	private static FixtureSetup testData = new FixtureSetup();

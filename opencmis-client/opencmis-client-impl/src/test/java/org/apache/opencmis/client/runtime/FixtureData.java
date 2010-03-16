@@ -33,7 +33,9 @@ public enum FixtureData {
 			"org.apache.opencmis.client.runtime.test.document1.name",
 			"document1.txt"), DOCUMENT2_NAME(
 			"org.apache.opencmis.client.runtime.test.document2.name",
-			"document2.txt"), ;
+			"document2.txt"), 
+			PROPERTY_NAME_STRING_MULTI_VALUED("org.apache.opencmis.client.runtime.test.multi.valued.property.name", null);
+			;
 
 	// XXX("org.apache.opencmis.client.runtime.test.XXX", "XXX"),
 

@@ -280,7 +280,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * @see org.apache.opencmis.client.api.Session#getContentChanges(java.lang.String, int)
    */
   public PagingList<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage) {
-    throw new CmisRuntimeException("not implemented");
+	  throw new CmisRuntimeException("not implemented");
   }
 
   /*

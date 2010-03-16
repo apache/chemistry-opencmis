@@ -94,6 +94,20 @@ public class MockSessionFactory implements SessionFactory {
 	private Hashtable<String, ObjectType> idTypeIndex = null;
 	private Hashtable<String, CmisObject> pathObjectIndex = null;
 
+	/*
+	 * properties
+	 */
+	private static String PROPERTY_VALUE_STRING = "abc";
+	private static Integer PROPERTY_VALUE_INTEGER = new Integer(4711);
+	private static Boolean PROPERTY_VALUE_BOOLEAN = new Boolean(true);
+	private static Double PROPERTY_VALUE_DOUBLE = new Double(1.0);
+	private static Float PROPERTY_VALUE_FLOAT = new Float(1.0);
+	private static String PROPERTY_VALUE_ID = "xyz";
+	private static String PROPERTY_VALUE_HTML = "<html><body>html value</body></html>";
+	private static Calendar PROPERTY_VALUE_DATETIME = GregorianCalendar
+			.getInstance();
+	private static URI PROPERTY_VALUE_URI = URI.create("http://foo.com");
+
 	@SuppressWarnings("unchecked")
 	public <T extends Session> T createSession(Map<String, String> parameters) {
 		T session = null;
@@ -217,7 +231,7 @@ public class MockSessionFactory implements SessionFactory {
 			queryList.add(createMockQueryResult(cm));
 		}
 		PagingList<QueryResult> plq = this.createMockPaging(queryList);
-		expect(session.query(FixtureData.QUERY.toString(), false, -1))
+		expect(session.query(FixtureData.QUERY.toString(), false, 2))
 				.andReturn(plq).anyTimes();
 
 		this.makeObjectsAccessible(session);
@@ -385,12 +399,12 @@ public class MockSessionFactory implements SessionFactory {
 					.andReturn(p1.getValue()).anyTimes();
 
 			/* multi valued property */
-			Property<Object> p2 = (Property<Object>) createMockMultiValuedStringProperty(Fixture.PROPERTY_NAME_STRING_MULTI_VALUED);
-			expect(o.getProperty(Fixture.PROPERTY_NAME_STRING_MULTI_VALUED))
+			Property<Object> p2 = (Property<Object>) createMockMultiValuedStringProperty(FixtureData.PROPERTY_NAME_STRING_MULTI_VALUED.toString());
+			expect(o.getProperty(FixtureData.PROPERTY_NAME_STRING_MULTI_VALUED.toString()))
 					.andReturn(p2).anyTimes();
 			expect(
 					o
-							.getPropertyMultivalue(Fixture.PROPERTY_NAME_STRING_MULTI_VALUED))
+							.getPropertyMultivalue(FixtureData.PROPERTY_NAME_STRING_MULTI_VALUED.toString()))
 					.andReturn(p2.getValues()).anyTimes();
 		}
 
@@ -400,12 +414,12 @@ public class MockSessionFactory implements SessionFactory {
 		Property<String> p = createNiceMock(StringProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.STRING).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_STRING)
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_STRING)
 				.anyTimes();
 		expect(p.isMultiValued()).andReturn(true).anyTimes();
 		List<String> v = new ArrayList<String>();
-		v.add(Fixture.PROPERTY_VALUE_STRING);
-		v.add(Fixture.PROPERTY_VALUE_STRING);
+		v.add(MockSessionFactory.PROPERTY_VALUE_STRING);
+		v.add(MockSessionFactory.PROPERTY_VALUE_STRING);
 		expect(p.getValues()).andReturn(v).anyTimes();
 		expect(p.getValueAsString()).andReturn(v.toString()).anyTimes();
 
@@ -418,10 +432,10 @@ public class MockSessionFactory implements SessionFactory {
 		Property<Calendar> p = createNiceMock(DateTimeProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.DATETIME).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_DATETIME)
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_DATETIME)
 				.anyTimes();
 		expect(p.getValueAsString()).andReturn(
-				Fixture.PROPERTY_VALUE_DATETIME.toString()).anyTimes();
+				MockSessionFactory.PROPERTY_VALUE_DATETIME.toString()).anyTimes();
 
 		replay(p);
 
@@ -432,9 +446,9 @@ public class MockSessionFactory implements SessionFactory {
 		Property<String> p = createNiceMock(StringProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.HTML).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_HTML).anyTimes();
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_HTML).anyTimes();
 		expect(p.getValueAsString()).andReturn(
-				Fixture.PROPERTY_VALUE_HTML.toString()).anyTimes();
+				MockSessionFactory.PROPERTY_VALUE_HTML.toString()).anyTimes();
 
 		replay(p);
 
@@ -445,9 +459,9 @@ public class MockSessionFactory implements SessionFactory {
 		Property<String> p = createNiceMock(StringProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.ID).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_ID).anyTimes();
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_ID).anyTimes();
 		expect(p.getValueAsString()).andReturn(
-				Fixture.PROPERTY_VALUE_ID.toString()).anyTimes();
+				MockSessionFactory.PROPERTY_VALUE_ID.toString()).anyTimes();
 
 		replay(p);
 
@@ -458,9 +472,9 @@ public class MockSessionFactory implements SessionFactory {
 		Property<URI> p = createNiceMock(UriProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.URI).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_URI).anyTimes();
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_URI).anyTimes();
 		expect(p.getValueAsString()).andReturn(
-				Fixture.PROPERTY_VALUE_URI.toString()).anyTimes();
+				MockSessionFactory.PROPERTY_VALUE_URI.toString()).anyTimes();
 
 		replay(p);
 
@@ -471,10 +485,10 @@ public class MockSessionFactory implements SessionFactory {
 		Property<Double> p = createNiceMock(DoubleProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.DECIMAL).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_DOUBLE)
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_DOUBLE)
 				.anyTimes();
 		expect(p.getValueAsString()).andReturn(
-				Fixture.PROPERTY_VALUE_DOUBLE.toString()).anyTimes();
+				MockSessionFactory.PROPERTY_VALUE_DOUBLE.toString()).anyTimes();
 
 		replay(p);
 
@@ -485,9 +499,9 @@ public class MockSessionFactory implements SessionFactory {
 		Property<Float> p = createNiceMock(FloatProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.DECIMAL).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_FLOAT).anyTimes();
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_FLOAT).anyTimes();
 		expect(p.getValueAsString()).andReturn(
-				Fixture.PROPERTY_VALUE_FLOAT.toString()).anyTimes();
+				MockSessionFactory.PROPERTY_VALUE_FLOAT.toString()).anyTimes();
 
 		replay(p);
 
@@ -498,10 +512,10 @@ public class MockSessionFactory implements SessionFactory {
 		Property<Boolean> p = createNiceMock(BooleanProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.BOOLEAN).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_BOOLEAN)
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_BOOLEAN)
 				.anyTimes();
 		expect(p.getValueAsString()).andReturn(
-				Fixture.PROPERTY_VALUE_BOOLEAN.toString()).anyTimes();
+				MockSessionFactory.PROPERTY_VALUE_BOOLEAN.toString()).anyTimes();
 
 		replay(p);
 
@@ -512,10 +526,10 @@ public class MockSessionFactory implements SessionFactory {
 		Property<Integer> p = createNiceMock(IntegerProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.INTEGER).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_INTEGER)
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_INTEGER)
 				.anyTimes();
 		expect(p.getValueAsString()).andReturn(
-				Fixture.PROPERTY_VALUE_INTEGER.toString()).anyTimes();
+				MockSessionFactory.PROPERTY_VALUE_INTEGER.toString()).anyTimes();
 
 		replay(p);
 
@@ -526,10 +540,10 @@ public class MockSessionFactory implements SessionFactory {
 		Property<String> p = createNiceMock(StringProperty.class);
 
 		expect(p.getType()).andReturn(PropertyType.STRING).anyTimes();
-		expect(p.getValue()).andReturn(Fixture.PROPERTY_VALUE_STRING)
+		expect(p.getValue()).andReturn(MockSessionFactory.PROPERTY_VALUE_STRING)
 				.anyTimes();
 		expect(p.getValueAsString()).andReturn(
-				Fixture.PROPERTY_VALUE_STRING.toString()).anyTimes();
+				MockSessionFactory.PROPERTY_VALUE_STRING.toString()).anyTimes();
 
 		replay(p);
 
