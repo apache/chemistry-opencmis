@@ -18,6 +18,7 @@
  */
 package org.apache.opencmis.client.provider.atompub;
 
+import java.net.CookiePolicy;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,6 +46,13 @@ public class SimpleReadWriteTests extends AbstractSimpleReadWriteTests {
 
   @Override
   protected CmisProvider createProvider() {
+    // Add the default Java cookie manager from Java 1.6 to optimize authentication
+    // by reusing the common case where a token is stored in a cookie.
+    // Note: Enable cookie management requires Java 1.6, uncomment the following two lines to 
+    //       enable cookie management for the tests.
+//    java.net.CookieManager cm = new java.net.CookieManager(null, CookiePolicy.ACCEPT_ALL);
+//    java.net.CookieHandler.setDefault(cm);
+
     return AtomPubTestProviderFactory.createProvider(getAtomPubURL(), getUsername(), getPassword());
   }
 
