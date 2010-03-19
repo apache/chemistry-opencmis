@@ -90,9 +90,9 @@ public interface ObjectFactory {
 
   // properties
 
-  <T> Property<T> createProperty(PropertyDefinition<T> type, T value);
+  <T> Property<T> createProperty(PropertyDefinition<?> type, T value);
 
-  <T> Property<T> createPropertyMultivalue(PropertyDefinition<T> type, List<T> values);
+  <T> Property<T> createPropertyMultivalue(PropertyDefinition<?> type, List<T> values);
 
   Map<String, Property<?>> convertProperties(ObjectType objectType, PropertiesData properties);
 

@@ -42,7 +42,8 @@ public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
   /**
    * Constructs a single-value property.
    */
-  public PersistentPropertyImpl(PropertyDefinition<T> type, T value) {
+  @SuppressWarnings("unchecked")
+  public PersistentPropertyImpl(PropertyDefinition<?> type, T value) {
     if (type == null) {
       throw new IllegalArgumentException("Type must be set!");
     }
@@ -51,19 +52,20 @@ public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
       throw new IllegalArgumentException("Value must be set!");
     }
 
-    this.type = type;
+    this.type = (PropertyDefinition<T>) type;
     this.values = Collections.singletonList(value);
   }
 
   /**
    * Constructs a multi-value property.
    */
-  public PersistentPropertyImpl(PropertyDefinition<T> type, List<T> values) {
+  @SuppressWarnings("unchecked")
+  public PersistentPropertyImpl(PropertyDefinition<?> type, List<T> values) {
     if (type == null) {
       throw new IllegalArgumentException("Type must be set!");
     }
 
-    this.type = type;
+    this.type = (PropertyDefinition<T>) type;
     this.values = values;
   }
 

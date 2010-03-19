@@ -24,61 +24,84 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
 import org.apache.opencmis.client.runtime.mock.MockSessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.MethodRule;
+import org.junit.rules.TestWatchman;
+import org.junit.runners.model.FrameworkMethod;
 
 /**
  * Create a OpenCMIS test session based on fixture parameter.
  */
 public abstract class AbstractSessionTest {
 
-	protected Log log = LogFactory.getLog(this.getClass());
+  protected Log log = LogFactory.getLog(this.getClass());
 
-	@BeforeClass
-	public static void classSetup() {
-		AbstractSessionTest.initializeLogging();
-		Fixture.logHeader();
-	}
+  /**
+   * trace each junit error
+   */
+  @Rule
+  public MethodRule watch = new TestWatchman() {
+    @Override
+    public void failed(Throwable e, FrameworkMethod method) {
+      super.failed(e, method);
+      AbstractSessionTest.this.log.error(method.getName(), e);
+    }
+  };
 
-	/**
-	 * Initialize logging support.
-	 */
-	private static void initializeLogging() {
-		Properties p = new Properties();
-		try {
-			p.load(AbstractSessionTest.class
-					.getResourceAsStream("/log4j.properties"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		PropertyConfigurator.configure(p);
-	}
+  @BeforeClass
+  public static void classSetup() {
+    AbstractSessionTest.initializeLogging();
+    Fixture.logHeader();
+  }
 
-	/**
-	 * test session
-	 */
-	protected Session session = null;
+  /**
+   * Initialize logging support.
+   */
+  private static void initializeLogging() {
+    Properties p = new Properties();
+    try {
+      p.load(AbstractSessionTest.class.getResourceAsStream("/log4j.properties"));
+    }
+    catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    PropertyConfigurator.configure(p);
+  }
 
-	@Before
-	public void setUp() throws Exception {
-		SessionFactory factory = Fixture.getSessionFactory();
-		this.session = factory.createSession(Fixture.getParamter());
+  /**
+   * test session
+   */
+  protected Session session = null;
 
-		if (!(factory instanceof MockSessionFactory)) {
-			Fixture.setUpTestData(this.session);
-		}
-	}
+  @Before
+  public void setUp() throws Exception {
+    SessionFactory factory = Fixture.getSessionFactory();
+    this.session = factory.createSession(Fixture.getParamter());
 
-	@After
-	public void tearDown() throws Exception {
-		SessionFactory factory = Fixture.getSessionFactory();
-		if (!(factory instanceof MockSessionFactory)) {
-			Fixture.teardownTestData(this.session);
-		}
-	}
+    if (!(factory instanceof MockSessionFactory)) {
+      Fixture.setUpTestData(this.session);
+    }
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    SessionFactory factory = Fixture.getSessionFactory();
+    if (!(factory instanceof MockSessionFactory)) {
+      Fixture.teardownTestData(this.session);
+    }
+  }
+
+  /**
+   * skip tests not supported by mock implementation
+   * @return flag
+   */
+  protected boolean isMock() {
+    return Fixture.getSessionFactory() instanceof MockSessionFactory;
+  }
 }

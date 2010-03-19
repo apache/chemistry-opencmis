@@ -173,7 +173,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
    */
   public AccessControlList convertAces(List<Ace> aces) {
     if (aces == null) {
-      throw new IllegalArgumentException("ACEs must be set!");
+      return null;
     }
 
     ProviderObjectFactory pof = getProviderObjectFactory();
@@ -349,7 +349,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
    * org.apache.opencmis.client.api.repository.ObjectFactory#createProperty(org.apache.opencmis.
    * commons.api.PropertyDefinition, java.lang.Object)
    */
-  public <T> Property<T> createProperty(PropertyDefinition<T> type, T value) {
+  public <T> Property<T> createProperty(PropertyDefinition<?> type, T value) {
     return new PersistentPropertyImpl<T>(type, value);
   }
 
@@ -360,7 +360,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
    * org.apache.opencmis.client.api.repository.ObjectFactory#createPropertyMultivalue(org.apache
    * .opencmis.commons.api.PropertyDefinition, java.util.List)
    */
-  public <T> Property<T> createPropertyMultivalue(PropertyDefinition<T> type, List<T> values) {
+  public <T> Property<T> createPropertyMultivalue(PropertyDefinition<?> type, List<T> values) {
     return new PersistentPropertyImpl<T>(type, values);
   }
 

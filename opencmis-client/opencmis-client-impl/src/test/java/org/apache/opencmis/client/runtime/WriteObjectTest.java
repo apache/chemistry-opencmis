@@ -18,133 +18,136 @@
  */
 package org.apache.opencmis.client.runtime;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import junit.framework.Assert;
 
-import org.apache.opencmis.client.api.Ace;
+import org.apache.opencmis.client.api.ContentStream;
+import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.ObjectId;
-import org.apache.opencmis.client.api.Policy;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.commons.api.PropertyDefinition;
-import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.CmisProperties;
+import org.apache.opencmis.commons.enums.VersioningState;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class WriteObjectTest extends AbstractSessionTest {
 
-	@Test
-	public void createFolder() {
-		ObjectId parentId = this.session
-				.createObjectId(Fixture.getTestRootId());
-		String folderName = UUID.randomUUID().toString();
-		String typeId = FixtureData.FOLDER_TYPE_ID.value();
+  @Test
+  public void createFolder() {
+    ObjectId parentId = this.session.createObjectId(Fixture.getTestRootId());
+    String folderName = UUID.randomUUID().toString();
+    String typeId = FixtureData.FOLDER_TYPE_ID.value();
 
-		ObjectType ot = this.session.getTypeDefinition(typeId);
-		Map<String, PropertyDefinition<?>> pdefs = ot.getPropertyDefintions();
-		List<Property<?>> properties = new ArrayList<Property<?>>();
-		Property<?> prop = null;
+    ObjectType ot = this.session.getTypeDefinition(typeId);
+    Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions().values();
+    List<Property<?>> properties = new ArrayList<Property<?>>();
+    Property<?> prop = null;
 
-		for (PropertyDefinition<?> pd : pdefs.values()) {
-			try {
-				CmisProperties cmisp = CmisProperties.fromValue(pd.getId());
-				switch (cmisp) {
-				case NAME:
-					prop = this.session.getObjectFactory().createProperty(
-							(PropertyDefinition<String>) pd, folderName);
-					properties.add(prop);
-					break;
-				case OBJECT_TYPE_ID:
-					prop = this.session.getObjectFactory().createProperty(
-							(PropertyDefinition<String>) pd, typeId);
-					properties.add(prop);
-					break;
-				default:
-					break;
-				}
-			} catch (Exception e) {
-				// custom property definition
-			}
+    for (PropertyDefinition<?> pd : pdefs) {
+      try {
+        CmisProperties cmisp = CmisProperties.fromValue(pd.getId());
+        switch (cmisp) {
+        case NAME:
+          prop = this.session.getObjectFactory().createProperty(pd, folderName);
+          properties.add(prop);
+          break;
+        case OBJECT_TYPE_ID:
+          prop = this.session.getObjectFactory().createProperty(pd, typeId);
+          properties.add(prop);
+          break;
+        default:
+          break;
+        }
+      }
+      catch (Exception e) {
+        // custom property definition
+      }
 
-		}
+    }
 
-		List<Ace> addAce = new ArrayList<Ace>();
-		List<Ace> removeAce = new ArrayList<Ace>();
-		List<Policy> policies = new ArrayList<Policy>();
-		ObjectId id = this.session.createFolder(properties, parentId, policies,
-				addAce, removeAce);
-		Assert.assertNotNull(id);
-	}
+    ObjectId id = this.session.createFolder(properties, parentId, null, null, null);
+    Assert.assertNotNull(id);
+  }
 
-	/**
-	 * Method to create named and typed folder using a given parent id.
-	 * 
-	 * @param foldeName
-	 *            Name of folder to create
-	 * @param parentId
-	 *            Id of parent folder to create this folder as a child
-	 */
-	@SuppressWarnings("unchecked")
-	public void createFolder(String folderName, ObjectId parentId) {
-		// retrieve all property definitions for specific cmis type
-		ObjectType ot = this.session.getTypeDefinition("cmis:folder");
-		Map<String, PropertyDefinition<?>> pdefs = ot.getPropertyDefintions();
+  @Test
+  public void createDocument() throws IOException {
+    ObjectId parentId = this.session.createObjectId(Fixture.getTestRootId());
+    String folderName = UUID.randomUUID().toString();
+    String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
-		// get property definitions from object type
-		PropertyDefinition<String> pdName = (PropertyDefinition<String>) pdefs
-				.get(CmisProperties.NAME.value());
-		PropertyDefinition<String> pdType = (PropertyDefinition<String>) pdefs
-				.get(CmisProperties.OBJECT_TYPE_ID.value());
+    ObjectType ot = this.session.getTypeDefinition(typeId);
+    Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions().values();
+    List<Property<?>> properties = new ArrayList<Property<?>>();
+    Property<?> prop = null;
 
-		// create mandatory properties of object type
-		Property<?> propName = this.session.getObjectFactory().createProperty(
-				pdName, folderName);
-		Property<?> propType = this.session.getObjectFactory().createProperty(
-				pdType, "cmis:folder");
+    for (PropertyDefinition<?> pd : pdefs) {
+      try {
+        CmisProperties cmisp = CmisProperties.fromValue(pd.getId());
+        switch (cmisp) {
+        case NAME:
+          prop = this.session.getObjectFactory().createProperty(pd, folderName);
+          properties.add(prop);
+          break;
+        case OBJECT_TYPE_ID:
+          prop = this.session.getObjectFactory().createProperty(pd, typeId);
+          properties.add(prop);
+          break;
+        default:
+          break;
+        }
+      }
+      catch (Exception e) {
+        // custom property definition (note: document type should not have further mandatory
+        // properties)
+      }
 
-		// fill properties list
-		List<Property<?>> properties = new ArrayList<Property<?>>();
-		properties.add(propName);
-		properties.add(propType);
+    }
 
-		// create additional optional parameter
-		List<Ace> ace = new ArrayList<Ace>();
-		List<Policy> pol = null;
+    String filename = UUID.randomUUID().toString();
+    String mimetype = "text/html; charset=UTF-8";
+    String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
 
-		// ready steady go
-		ObjectId id = this.session.createFolder(properties, parentId, pol, ace,
-				ace);
-		Assert.assertNotNull(id);
-	}
+    byte[] buf1 = content1.getBytes("UTF-8");
+    ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
+    ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename,
+        buf1.length, mimetype, in1);
+    Assert.assertNotNull(contentStream);
 
-	// public void createFolderOptimzed(String folderName, ObjectId parentId) {
-	// // retrieve all property definitions for specific cmis type
-	// ObjectType ot =
-	// this.session.getTypeDefinition(BaseObjectTypeIds.CMIS_FOLDER);
-	// Map<String, PropertyDefinition<?>> pdefs = ot.getPropertyDefintions();
-	//
-	// // get property definitions from object type
-	// PropertyDefinition<?> pdName = pdefs.get(CmisProperties.NAME);
-	// PropertyDefinition<?> pdType = pdefs.get(CmisProperties.OBJECT_TYPE_ID);
-	//
-	// // create mandatory properties of object type
-	// Property<?> propName = this.session.getObjectFactory().createProperty(
-	// pdName, folderName);
-	// Property<?> propType = this.session.getObjectFactory().createProperty(
-	// pdType, "cmis:folder");
-	//
-	// // fill properties list
-	// List<Property<?>> properties = new ArrayList<Property<?>>();
-	// properties.add(propName);
-	// properties.add(propType);
-	//
-	// // ready steady go
-	// ObjectId id = this.session.createFolder(properties, parentId);
-	// Assert.assertNotNull(id);
-	// }
+    ObjectId id = this.session.createDocument(properties, parentId, contentStream,
+        VersioningState.NONE, null, null, null);
+    Assert.assertNotNull(id);
 
+    // verify content (which is not supported by mock)
+    if (this.isMock()) {
+      return;  
+    }
+    Document doc = (Document) this.session.getObject(id);
+    Assert.assertNotNull(doc);
+//    Assert.assertEquals(buf1.length, doc.getContentStreamLength());
+//    Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
+//    Assert.assertEquals(filename, doc.getContentStreamFileName());
+    ContentStream readStream = doc.getContentStream();
+    InputStream in2 = readStream.getStream();
+    StringBuffer sbuf = null;
+    sbuf = new StringBuffer(in2.available());
+    int count;
+    byte[] buf2 = new byte[100];
+    while ((count = in2.read(buf2)) != -1) {
+      for (int i = 0; i < count; i++) {
+        sbuf.append((char) buf2[i]);
+      }
+    }
+    in2.close();
+    String content2 = sbuf.toString();
+    Assert.assertEquals(content1, content2);
+  }
 }
