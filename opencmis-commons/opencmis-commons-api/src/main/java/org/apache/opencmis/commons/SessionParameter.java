@@ -24,10 +24,7 @@ package org.apache.opencmis.commons;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public final class SessionParameter {
-
-	private SessionParameter() {
-	}
+public interface SessionParameter {
 
 	// ---- general parameter ----
 	public static final String USER = "org.apache.opencmis.user";

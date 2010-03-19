@@ -18,7 +18,6 @@
  */
 package org.apache.opencmis.client.provider.atompub;
 
-import java.net.CookiePolicy;
 import java.util.HashSet;
 import java.util.Set;
 

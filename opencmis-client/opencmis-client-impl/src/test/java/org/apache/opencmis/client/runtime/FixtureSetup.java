@@ -20,7 +20,6 @@ package org.apache.opencmis.client.runtime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.opencmis.client.provider.factory.CmisProviderFactory;
 import org.apache.opencmis.commons.PropertyIds;
@@ -41,11 +40,8 @@ public class FixtureSetup {
 	private String repositoryId = null;
 
 	public void teardown() {
-		if (this.testRootFolderId != null) {
-			this.provider.getObjectService().deleteTree(this.repositoryId,
-					this.testRootFolderId, true, UnfileObjects.DELETE, true,
-					null);
-		}
+		this.provider.getObjectService().deleteTree(this.repositoryId,
+				this.testRootFolderId, true, UnfileObjects.DELETE, true, null);
 	}
 
 	public void setup() {
@@ -57,10 +53,6 @@ public class FixtureSetup {
 				Fixture.getParamter());
 		Assert.assertNotNull(this.provider);
 
-		ObjectGenerator og = new ObjectGenerator(provider.getObjectFactory(),
-				provider.getNavigationService(), provider.getObjectService(),
-				this.repositoryId);
-
 		// root folder
 		if (Fixture.getParamter().containsKey(
 				FixtureSessionParameter.TEST_ROOT_FOLDER_ID)) {
@@ -70,7 +62,7 @@ public class FixtureSetup {
 			Assert.assertNotNull(this.rootFolderId);
 		} else {
 			RepositoryInfoData rid = this.provider.getRepositoryService()
-					.getRepositoryInfo(repositoryId, null);
+					.getRepositoryInfo(this.repositoryId, null);
 			Assert.assertNotNull(rid);
 			this.rootFolderId = rid.getRootFolderId();
 			Assert.assertNotNull(this.rootFolderId);
@@ -92,10 +84,15 @@ public class FixtureSetup {
 		PropertiesData properties = this.provider.getObjectFactory()
 				.createPropertiesData(propList);
 
-		this.testRootFolderId = this.provider.getObjectService().createFolder(this.repositoryId, properties,
-				this.rootFolderId, null, null, null, null);
+		this.testRootFolderId = this.provider.getObjectService().createFolder(
+				this.repositoryId, properties, this.rootFolderId, null, null,
+				null, null);
 		Assert.assertNotNull(this.testRootFolderId);
-		
+
+		ObjectGenerator og = new ObjectGenerator(provider.getObjectFactory(),
+				provider.getNavigationService(), provider.getObjectService(),
+				this.repositoryId);
+
 		og.setContentSizeInKB(10);
 		og.setDocumentTypeId(documentTypeId);
 		og.setFolderTypeId(folderTypeId);
@@ -105,5 +102,12 @@ public class FixtureSetup {
 
 		og.createFolderHierachy(2, 2, this.testRootFolderId);
 	}
-	
+
+	public String getTestRootId() {
+		if (this.testRootFolderId == null) {
+			this.testRootFolderId = Fixture.TEST_ROOT_FOLDER_NAME;
+		}
+		return this.testRootFolderId;
+	}
+
 }

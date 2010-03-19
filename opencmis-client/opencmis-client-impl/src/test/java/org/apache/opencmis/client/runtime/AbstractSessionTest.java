@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
 import org.apache.opencmis.client.runtime.mock.MockSessionFactory;
@@ -75,6 +76,9 @@ public abstract class AbstractSessionTest {
 
 	@After
 	public void tearDown() throws Exception {
-		Fixture.teardownTestData(this.session);
+		SessionFactory factory = Fixture.getSessionFactory();
+		if (!(factory instanceof MockSessionFactory)) {
+			Fixture.teardownTestData(this.session);
+		}
 	}
 }

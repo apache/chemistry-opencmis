@@ -22,9 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
@@ -33,6 +30,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
@@ -50,7 +48,8 @@ public class Fixture {
 	/*
 	 * general
 	 */
-	public static String TEST_ROOT_FOLDER_NAME = "test_" + UUID.randomUUID().toString();
+	public static String TEST_ROOT_FOLDER_NAME = "test_"
+			+ UUID.randomUUID().toString();
 
 	/*
 	 * test data setup
@@ -107,7 +106,8 @@ public class Fixture {
 
 	public static void init() {
 		/* get optional path from system properties */
-		String pathname = System.getProperty(FixtureSessionParameter.CONFIG_PATH);
+		String pathname = System
+				.getProperty(FixtureSessionParameter.CONFIG_PATH);
 		pathname = (pathname != null) ? pathname.trim() : null;
 		Properties properties = null;
 		Map<String, String> sessionParameter = null;
@@ -191,6 +191,10 @@ public class Fixture {
 
 			Fixture.isLogged = true;
 		}
+	}
+
+	public static String getTestRootId() {
+		return Fixture.testData.getTestRootId();
 	}
 
 }
