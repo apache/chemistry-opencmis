@@ -191,7 +191,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
     }
 
     xsw.writeStartElement(Constants.NAMESPACE_ATOM, "title");
-    xsw.writeAttribute("type", text);
+    xsw.writeAttribute("type", "text");
     xsw.writeCharacters(text);
     xsw.writeEndElement();
 
