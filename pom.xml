@@ -28,7 +28,7 @@
 
 	<!-- Project Information -->
 
-	<groupId>org.opencmis</groupId>
+	<groupId>org.apache.opencmis</groupId>
 	<artifactId>opencmis</artifactId>
 	<name>OpenCMIS</name>
 	<version>0.1-SNAPSHOT</version>
@@ -40,6 +40,10 @@
 	</organization>
 
 	<url>http://incubator.apache.org/chemistry/</url>
+	<ciManagement>
+		<system>Hudson Zones Apache</system>
+		<url>http://hudson.zones.apache.org/hudson/view/Chemistry/</url>
+	</ciManagement>
 	<inceptionYear>2009</inceptionYear>
 	<description>
     OpenCMIS is an open source implementation of the OASIS CMIS specification.
@@ -54,8 +58,8 @@
 	</licenses>
 
 	<scm>
-		<connection>$ svn checkout http://svn.apache.org/repos/asf/incubator/chemistry/trunk/opencmis</connection>
-		<developerConnection>$ svn checkout https://svn.apache.org/repos/asf/incubator/chemistry/trunk/opencmis</developerConnection>
+		<connection>svn checkout http://svn.apache.org/repos/asf/incubator/chemistry/trunk/opencmis</connection>
+		<developerConnection>svn checkout https://svn.apache.org/repos/asf/incubator/chemistry/trunk/opencmis</developerConnection>
 		<url>http://svn.apache.org/viewvc/incubator/chemistry/trunk/opencmis/</url>
 	</scm>
 
@@ -87,13 +91,6 @@
 
 	<developers>
 		<developer>
-			<name>Dieter Guendisch</name>
-			<id>dguendisch</id>
-			<roles>
-				<role>committer</role>
-			</roles>
-		</developer>
-		<developer>
 			<name>Florian Müller</name>
 			<id>fmui</id>
 			<roles>
@@ -108,8 +105,8 @@
 			</roles>
 		</developer>
 		<developer>
-			<name>Juergen Schneider</name>
-			<id>jschneider</id>
+			<name>David Ward</name>
+			<id>dward</id>
 			<roles>
 				<role>committer</role>
 			</roles>
@@ -117,6 +114,15 @@
 		<developer>
 			<name>Stephan Klevenz</name>
 			<id>klevenzs</id>
+			<roles>
+				<role>committer</role>
+			</roles>
+			<email>sklevenz@apache.org</email>
+			<timezone>CET</timezone>
+		</developer>
+		<developer>
+			<name>Martin Hermes</name>
+			<id>hermesm</id>
 			<roles>
 				<role>committer</role>
 			</roles>
@@ -150,7 +156,7 @@
 		<module>opencmis-server/opencmis-server-support</module>
 		<module>opencmis-server/opencmis-server-inmemory</module>
 		<module>opencmis-server/opencmis-server-fileshare</module>
-		<module>opencmis-test/opencmis-test-fit</module> 
+		<module>opencmis-test/opencmis-test-fit</module>
 		<module>opencmis-test/opencmis-test-tck</module>
 		<module>opencmis-test/opencmis-test-tools</module>
 		<module>opencmis-test/opencmis-test-util</module>
@@ -274,7 +280,6 @@
 			</plugin>
 		</plugins>
 	</reporting>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
