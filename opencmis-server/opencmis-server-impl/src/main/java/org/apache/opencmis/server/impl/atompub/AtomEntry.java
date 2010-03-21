@@ -65,6 +65,7 @@ public class AtomEntry extends AtomDocumentBase {
       writeNamespace(Constants.NAMESPACE_ATOM);
       writeNamespace(Constants.NAMESPACE_CMIS);
       writeNamespace(Constants.NAMESPACE_RESTATOM);
+      writeNamespace(Constants.NAMESPACE_APP);
     }
   }
 

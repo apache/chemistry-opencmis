@@ -136,6 +136,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
    * Writes an Atom updated tag.
    */
   public void writeUpdated(GregorianCalendar updated) throws XMLStreamException {
+    writeSimpleDate(Constants.NAMESPACE_APP, "edited", updated);
     writeSimpleDate(Constants.NAMESPACE_ATOM, "updated", updated);
   }
 
@@ -143,6 +144,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
    * Writes an Atom updated tag.
    */
   public void writeUpdated(long updated) throws XMLStreamException {
+    writeSimpleDate(Constants.NAMESPACE_APP, "edited", updated);
     writeSimpleDate(Constants.NAMESPACE_ATOM, "updated", updated);
   }
 

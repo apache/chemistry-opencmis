@@ -41,6 +41,8 @@ import org.apache.opencmis.commons.impl.Constants;
 import org.apache.opencmis.commons.impl.Converter;
 import org.apache.opencmis.commons.impl.JaxBHelper;
 import org.apache.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
+import org.apache.opencmis.commons.impl.dataobjects.PropertiesDataImpl;
+import org.apache.opencmis.commons.impl.dataobjects.PropertyStringDataImpl;
 import org.apache.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.ContentStreamData;
@@ -48,6 +50,7 @@ import org.apache.opencmis.commons.provider.ObjectData;
 import org.apache.opencmis.commons.provider.PropertiesData;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.PropertyIdData;
+import org.apache.opencmis.commons.provider.PropertyStringData;
 
 /**
  * Parser for Atom Entries.
@@ -58,6 +61,7 @@ import org.apache.opencmis.commons.provider.PropertyIdData;
 public class AtomEntryParser {
 
   private final static String TAG_ENTRY = "entry";
+  private final static String TAG_TITLE = "title";
   private final static String TAG_OBJECT = "object";
   private final static String TAG_CONTENT = "content";
   private final static String TAG_BASE64 = "base64";
@@ -186,6 +190,8 @@ public class AtomEntryParser {
    * Parses an Atom entry.
    */
   private void parseEntry(XMLStreamReader parser) throws Exception {
+    String atomTitle = null;
+
     next(parser);
 
     // walk through all tags in entry
@@ -209,6 +215,9 @@ public class AtomEntryParser {
           if (TAG_CONTENT.equals(name.getLocalPart())) {
             parseAtomContent(parser);
           }
+          else if (TAG_TITLE.equals(name.getLocalPart())) {
+            atomTitle = readText(parser);
+          }
           else {
             skip(parser);
           }
@@ -225,6 +234,12 @@ public class AtomEntryParser {
           break;
         }
       }
+    }
+
+    // overwrite cmis:name with Atom title
+    if ((fObject != null) && (fObject.getProperties() != null) && (atomTitle != null)) {
+      PropertyStringData nameProperty = new PropertyStringDataImpl(PropertyIds.CMIS_NAME, atomTitle);
+      ((PropertiesDataImpl) fObject.getProperties()).addProperty(nameProperty);
     }
   }
 
