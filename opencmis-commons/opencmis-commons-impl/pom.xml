@@ -61,7 +61,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.opencmis</groupId>
+      <groupId>org.apache.opencmis</groupId>
       <artifactId>opencmis-commons-api</artifactId>
       <version>${version}</version>
     </dependency>

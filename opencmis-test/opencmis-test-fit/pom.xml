@@ -42,7 +42,7 @@
             <overlay>
             </overlay>
             <overlay>
-              <groupId>org.opencmis</groupId>
+              <groupId>org.apache.opencmis</groupId>
               <artifactId>opencmis-server-inmemory</artifactId>
             </overlay>
           </overlays>
@@ -140,27 +140,27 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.opencmis</groupId>
+      <groupId>org.apache.opencmis</groupId>
       <artifactId>opencmis-commons-api</artifactId>
       <version>${version}</version>
     </dependency>  
     <dependency>
-      <groupId>org.opencmis</groupId>
+      <groupId>org.apache.opencmis</groupId>
       <artifactId>opencmis-client-api</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opencmis</groupId>
+      <groupId>org.apache.opencmis</groupId>
       <artifactId>opencmis-client-impl</artifactId>
       <version>${version}</version>
     </dependency>
-	<dependency>
-      <groupId>org.opencmis</groupId>
+    <dependency>
+      <groupId>org.apache.opencmis</groupId>
       <artifactId>opencmis-provider-impl</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opencmis</groupId>
+      <groupId>org.apache.opencmis</groupId>
       <artifactId>opencmis-server-inmemory</artifactId>
       <version>${version}</version>
       <type>war</type>
