@@ -33,9 +33,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.opencmis</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>opencmis-commons-api</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

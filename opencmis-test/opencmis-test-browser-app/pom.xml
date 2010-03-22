@@ -57,9 +57,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.opencmis</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>opencmis-test-browser</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
