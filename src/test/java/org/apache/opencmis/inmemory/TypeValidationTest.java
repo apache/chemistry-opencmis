@@ -566,7 +566,7 @@ public class TypeValidationTest extends TestCase {
     return cmisType;
   }
 
-  private static InMemoryDocumentTypeDefinition buildTypeWithPickList(Cardinality cardinality) {
+  public static InMemoryDocumentTypeDefinition buildTypeWithPickList(Cardinality cardinality) {
     InMemoryDocumentTypeDefinition cmisType = new InMemoryDocumentTypeDefinition(PICK_LIST_DOC_TYPE,
         "PickList Document Type for Validation", InMemoryDocumentTypeDefinition.getRootDocumentType());
 
@@ -601,7 +601,7 @@ public class TypeValidationTest extends TestCase {
     return cmisType;
   }
 
-  private static InMemoryDocumentTypeDefinition buildTypeWithMultiPickList() {
+  public static InMemoryDocumentTypeDefinition buildTypeWithMultiPickList() {
     InMemoryDocumentTypeDefinition cmisType = new InMemoryDocumentTypeDefinition(PICK_LIST_DOC_TYPE,
         "PickList Document Type for Validation", InMemoryDocumentTypeDefinition.getRootDocumentType());
 
@@ -639,7 +639,7 @@ public class TypeValidationTest extends TestCase {
     return cmisType;
   }
 
-  private static InMemoryDocumentTypeDefinition buildTypeWithHierachicalPickList(
+  public static InMemoryDocumentTypeDefinition buildTypeWithHierachicalPickList(
       Cardinality cardinality) {
     InMemoryDocumentTypeDefinition cmisType = new InMemoryDocumentTypeDefinition(PICK_LIST_DOC_TYPE,
         "PickList Document Type for Validation", InMemoryDocumentTypeDefinition.getRootDocumentType());

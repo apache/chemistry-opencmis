@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.opencmis.inmemory.RepositoryInfo;
 
 /**
  * interface to a repository implementation. This interface is the entry point to a 
@@ -74,16 +73,7 @@ public interface StoreManager {
    *    TypeCreator
    */
   void createAndInitRepository(String repositoryId, String typeCreatorClassName);
-  
-  /**
-   * load an existing repository with the given id
-   * 
-   * @param repositoryId
-   *    id of repository
-   */
-  RepositoryInfo loadRepository(String repositoryId);
-  
-  
+    
   /**
    * retrieve a list with all type definitions. 
    * @param repositoryId
