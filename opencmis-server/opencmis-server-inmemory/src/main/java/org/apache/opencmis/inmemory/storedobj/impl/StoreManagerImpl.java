@@ -38,7 +38,6 @@ import org.apache.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataIm
 import org.apache.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.opencmis.inmemory.RepositoryInfo;
 import org.apache.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.opencmis.inmemory.TypeCreator;
 import org.apache.opencmis.inmemory.TypeManager;
@@ -205,10 +204,6 @@ public class StoreManagerImpl implements StoreManager {
       // create a default repository info
       createDefaultRepositoryInfo(repositoryId);
     }
-  }
-  
-  public RepositoryInfo loadRepository(String repositoryId) {
-    return null;
   }
   
   private RepositoryInfoData createDefaultRepositoryInfo(String repositoryId) {
