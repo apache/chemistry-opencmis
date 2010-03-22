@@ -294,7 +294,7 @@ public class ObjectGenerator {
 
   private PropertiesData createFolderProperties(int no, int level) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, generateFolderNameValue(no, level)));
+    properties.add(fFactory.createPropertyStringData(PropertyIds.CMIS_NAME, generateFolderNameValue(no, level)));
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, fFolderTypeId));
     // Generate some property values for custom attributes
     for (String stringPropId : fStringPropertyIdsToSetForFolder) {
@@ -306,7 +306,7 @@ public class ObjectGenerator {
 
   private PropertiesData createDocumentProperties(int no, int level) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, generateDocNameValue(no, level)));
+    properties.add(fFactory.createPropertyStringData(PropertyIds.CMIS_NAME, generateDocNameValue(no, level)));
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, fDocTypeId));
     // Generate some property values for custom attributes
     for (String stringPropId : fStringPropertyIdsToSetForDocument) {
