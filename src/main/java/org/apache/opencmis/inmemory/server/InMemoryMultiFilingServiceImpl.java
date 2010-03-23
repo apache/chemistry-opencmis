@@ -50,59 +50,69 @@ public class InMemoryMultiFilingServiceImpl extends AbstractServiceImpl implemen
   public ObjectData addObjectToFolder(CallContext context, String repositoryId, String objectId,
       String folderId, Boolean allVersions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-    LOG.debug("Begin addObjectToFolder()");
+    try {
+      LOG.debug("Begin addObjectToFolder()");
 
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    StoredObject[] so2 = checkParams(repositoryId, objectId, folderId);
-    if (allVersions != null && allVersions.booleanValue() == false)
-      throw new CmisNotSupportedException(
-          "Cannot add object to folder, version specific filing is not supported.");
-    StoredObject so = so2[0];
-    StoredObject folder = so2[1];
-    checkObjects(so, folder);
+      StoredObject[] so2 = checkParams(repositoryId, objectId, folderId);
+      if (allVersions != null && allVersions.booleanValue() == false)
+        throw new CmisNotSupportedException(
+            "Cannot add object to folder, version specific filing is not supported.");
+      StoredObject so = so2[0];
+      StoredObject folder = so2[1];
+      checkObjects(so, folder);
 
-    Folder newParent = (Folder) folder;
-    MultiFiling obj = (MultiFiling) so;
-    obj.addParent(newParent);
+      Folder newParent = (Folder) folder;
+      MultiFiling obj = (MultiFiling) so;
+      obj.addParent(newParent);
 
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
 
-    ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
-        IncludeRelationships.NONE, null, false, false, extension);
+      ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
+          IncludeRelationships.NONE, null, false, false, extension);
 
-    LOG.debug("End addObjectToFolder()");
-    return od;
+      LOG.debug("End addObjectToFolder()");
+      return od;
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   public ObjectData removeObjectFromFolder(CallContext context, String repositoryId,
       String objectId, String folderId, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-    LOG.debug("Begin removeObjectFromFolder()");
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      LOG.debug("Begin removeObjectFromFolder()");
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    StoredObject so = checkStandardParameters(repositoryId, objectId);
-    ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-    StoredObject folder = checkExistingObjectId(objectStore, folderId);
+      StoredObject so = checkStandardParameters(repositoryId, objectId);
+      ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+      StoredObject folder = checkExistingObjectId(objectStore, folderId);
 
-    checkObjects(so, folder);
-    Folder parent = (Folder) folder;
-    MultiFiling obj = (MultiFiling) so;
-    obj.removeParent(parent);
+      checkObjects(so, folder);
+      Folder parent = (Folder) folder;
+      MultiFiling obj = (MultiFiling) so;
+      obj.removeParent(parent);
 
-    // To be able to provide all Atom links in the response we need additional information:
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
+      // To be able to provide all Atom links in the response we need additional information:
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
 
-    ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
-        IncludeRelationships.NONE, null, false, false, extension);
+      ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
+          IncludeRelationships.NONE, null, false, false, extension);
 
-    LOG.debug("End removeObjectFromFolder()");
+      LOG.debug("End removeObjectFromFolder()");
 
-    return od;
+      return od;
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   private StoredObject[] checkParams(String repositoryId, String objectId, String folderId) {

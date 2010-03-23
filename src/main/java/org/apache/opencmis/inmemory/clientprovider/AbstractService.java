@@ -18,13 +18,15 @@
  */
 package org.apache.opencmis.inmemory.clientprovider;
 
+import org.apache.opencmis.inmemory.server.RuntimeContext;
 import org.apache.opencmis.server.spi.CallContext;
 
 public class AbstractService  {
   protected CallContext fDummyCallContext;
   
   protected AbstractService() {
-    fDummyCallContext = null; // currently always set to null
+    // use an existing context if there is one, otherwise use null
+    fDummyCallContext = RuntimeContext.getCurrentContext(); 
   }
   
   public void setCallContext(CallContext ctx) {

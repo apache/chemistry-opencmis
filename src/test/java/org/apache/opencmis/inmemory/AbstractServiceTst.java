@@ -54,7 +54,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
   protected RepositoryService fRepSvc;
   protected VersioningService fVerSvc;
   protected MultiFilingService fMultiSvc;
-  
+  protected DummyCallContext fTestCallContext;
   private String fTypeCreatorClassName;
   private boolean fUseClientProviderInterface;
   
@@ -92,6 +92,10 @@ public class AbstractServiceTst /* extends TestCase*/ {
     // give subclasses a chance to provide additional parameters for special tests
     addParameters(parameters);
     
+    fTestCallContext = new DummyCallContext();
+    // Attach a standatrd CallContext to a thread before the services are initialized.
+    RuntimeContext.attachCfg(fTestCallContext);
+
     if (fUseClientProviderInterface)
       initializeUsingClientProvider(parameters);
     else
@@ -106,10 +110,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
     fRepositoryId = rep.getRepositoryId();
     
     assertNotNull(fRepositoryId);
-    assertNotNull(fRootFolderId);
-    
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(new DummyCallContext());
+    assertNotNull(fRootFolderId);    
   }
   
   // Override this method in subclasses if you want to provide additional configuration

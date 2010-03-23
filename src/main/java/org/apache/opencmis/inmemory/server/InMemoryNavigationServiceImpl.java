@@ -77,50 +77,55 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
       String filter, String orderBy, Boolean includeAllowableActions,
       IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems,
       BigInteger skipCount, ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
-    ObjectListImpl res = new ObjectListImpl();
-    List<ObjectData> odList = new ArrayList<ObjectData>();
+    try {
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    LOG.debug("start getCheckedOutDocs()");
-    if (null != folderId)
-      checkStandardParameters(repositoryId, folderId);
-    else
-      checkRepositoryId(repositoryId);
+      ObjectListImpl res = new ObjectListImpl();
+      List<ObjectData> odList = new ArrayList<ObjectData>();
 
-    if (null == folderId) {
-      List<VersionedDocument> checkedOuts = fStoreManager.getObjectStore(repositoryId)
-          .getCheckedOutDocuments(orderBy);
-      for (VersionedDocument checkedOut : checkedOuts) {
-        ObjectData od = PropertyCreationHelper
-            .getObjectData(fStoreManager, checkedOut, filter, includeAllowableActions,
-                includeRelationships, renditionFilter, false, false, extension);
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, checkedOut, objectInfos);
-        odList.add(od);
-      }
-    }
-    else {
-      ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
-          includeAllowableActions, includeRelationships, renditionFilter, false, -1, -1, false,
-          objectInfos);
-      for (ObjectInFolderData child : children.getObjects()) {
-        ObjectData obj = child.getObject();
-        StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(obj.getId());
-        LOG.info("Checked out: children:" + obj.getId());
-        if (so instanceof DocumentVersion
-            && ((DocumentVersion) so).getParentDocument().isCheckedOut()) {
-          odList.add(obj);
-          fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+      LOG.debug("start getCheckedOutDocs()");
+      if (null != folderId)
+        checkStandardParameters(repositoryId, folderId);
+      else
+        checkRepositoryId(repositoryId);
+
+      if (null == folderId) {
+        List<VersionedDocument> checkedOuts = fStoreManager.getObjectStore(repositoryId)
+            .getCheckedOutDocuments(orderBy);
+        for (VersionedDocument checkedOut : checkedOuts) {
+          ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, checkedOut, filter,
+              includeAllowableActions, includeRelationships, renditionFilter, false, false,
+              extension);
+          fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, checkedOut, objectInfos);
+          odList.add(od);
         }
       }
-    }
-    res.setObjects(odList);
-    res.setNumItems(BigInteger.valueOf(odList.size()));
+      else {
+        ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
+            includeAllowableActions, includeRelationships, renditionFilter, false, -1, -1, false,
+            objectInfos);
+        for (ObjectInFolderData child : children.getObjects()) {
+          ObjectData obj = child.getObject();
+          StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(obj.getId());
+          LOG.info("Checked out: children:" + obj.getId());
+          if (so instanceof DocumentVersion
+              && ((DocumentVersion) so).getParentDocument().isCheckedOut()) {
+            odList.add(obj);
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+          }
+        }
+      }
+      res.setObjects(odList);
+      res.setNumItems(BigInteger.valueOf(odList.size()));
 
-    LOG.debug("end getCheckedOutDocs()");
-    return res;
+      LOG.debug("end getCheckedOutDocs()");
+      return res;
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   public ObjectInFolderList getChildren(CallContext context, String repositoryId, String folderId,
@@ -129,20 +134,25 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
       Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount,
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-    LOG.debug("start getChildren()");
-    
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      LOG.debug("start getChildren()");
 
-    checkStandardParameters(repositoryId, folderId);
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    int maxItemsInt = maxItems == null ? -1 : maxItems.intValue();
-    int skipCountInt = skipCount == null ? -1 : skipCount.intValue();
-    ObjectInFolderList res = getChildrenIntern(repositoryId, folderId, filter, orderBy,
-        includeAllowableActions, includeRelationships, renditionFilter, includePathSegment,
-        maxItemsInt, skipCountInt, false, objectInfos);
-    LOG.debug("stop getChildren()");
-    return res;
+      checkStandardParameters(repositoryId, folderId);
+
+      int maxItemsInt = maxItems == null ? -1 : maxItems.intValue();
+      int skipCountInt = skipCount == null ? -1 : skipCount.intValue();
+      ObjectInFolderList res = getChildrenIntern(repositoryId, folderId, filter, orderBy,
+          includeAllowableActions, includeRelationships, renditionFilter, includePathSegment,
+          maxItemsInt, skipCountInt, false, objectInfos);
+      LOG.debug("stop getChildren()");
+      return res;
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   public List<ObjectInFolderContainer> getDescendants(CallContext context, String repositoryId,
@@ -150,54 +160,64 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
       IncludeRelationships includeRelationships, String renditionFilter,
       Boolean includePathSegment, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-    LOG.debug("start getDescendants()");
-    
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      LOG.debug("start getDescendants()");
 
-    checkStandardParameters(repositoryId, folderId);
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    int levels;
-    if (depth == null)
-      levels = 2; // one of the recommended defaults (should it be -1?)
-    else if (depth.intValue() == 0)
-      throw new CmisInvalidArgumentException("A zero depth is not allowed for getDescendants().");
-    else
-      levels = depth.intValue();
+      checkStandardParameters(repositoryId, folderId);
 
-    int level = 0;
-    List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
-        includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, level,
-        levels, false, objectInfos);
+      int levels;
+      if (depth == null)
+        levels = 2; // one of the recommended defaults (should it be -1?)
+      else if (depth.intValue() == 0)
+        throw new CmisInvalidArgumentException("A zero depth is not allowed for getDescendants().");
+      else
+        levels = depth.intValue();
 
-    LOG.debug("stop getDescendants()");
-    return result;
+      int level = 0;
+      List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
+          includeAllowableActions, includeRelationships, renditionFilter, includePathSegment,
+          level, levels, false, objectInfos);
+
+      LOG.debug("stop getDescendants()");
+      return result;
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   public ObjectData getFolderParent(CallContext context, String repositoryId, String folderId,
       String filter, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-    LOG.debug("start getFolderParent()");
-    
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      LOG.debug("start getFolderParent()");
 
-    StoredObject so = checkStandardParameters(repositoryId, folderId);
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    Folder folder = null;
-    if (so instanceof Folder)
-      folder = (Folder) so;
-    else
-      throw new CmisInvalidArgumentException(
-          "Can't get folder parent, id does not refer to a folder: " + folderId);
+      StoredObject so = checkStandardParameters(repositoryId, folderId);
 
-    ObjectData res = getFolderParentIntern(repositoryId, folder, filter, objectInfos);
+      Folder folder = null;
+      if (so instanceof Folder)
+        folder = (Folder) so;
+      else
+        throw new CmisInvalidArgumentException(
+            "Can't get folder parent, id does not refer to a folder: " + folderId);
 
-    // To be able to provide all Atom links in the response we need additional information:
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+      ObjectData res = getFolderParentIntern(repositoryId, folder, filter, objectInfos);
 
-    LOG.debug("stop getFolderParent()");
-    return res;
+      // To be able to provide all Atom links in the response we need additional information:
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+
+      LOG.debug("stop getFolderParent()");
+      return res;
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   public List<ObjectInFolderContainer> getFolderTree(CallContext context, String repositoryId,
@@ -205,57 +225,66 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
       IncludeRelationships includeRelationships, String renditionFilter,
       Boolean includePathSegment, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-    LOG.debug("start getFolderTree()");
-    
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      LOG.debug("start getFolderTree()");
 
-    checkStandardParameters(repositoryId, folderId);
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    if (depth != null && depth.intValue() == 0)
-      throw new CmisInvalidArgumentException("A zero depth is not allowed for getFolderTree().");
+      checkStandardParameters(repositoryId, folderId);
 
-    int levels = depth == null ? 2 : depth.intValue();
-    int level = 0;
-    List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
-        includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, level,
-        levels, true, objectInfos);
+      if (depth != null && depth.intValue() == 0)
+        throw new CmisInvalidArgumentException("A zero depth is not allowed for getFolderTree().");
 
-    LOG.debug("stop getFolderTree()");
-    return result;
+      int levels = depth == null ? 2 : depth.intValue();
+      int level = 0;
+      List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
+          includeAllowableActions, includeRelationships, renditionFilter, includePathSegment,
+          level, levels, true, objectInfos);
+
+      LOG.debug("stop getFolderTree()");
+      return result;
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   public List<ObjectParentData> getObjectParents(CallContext context, String repositoryId,
       String objectId, String filter, Boolean includeAllowableActions,
       IncludeRelationships includeRelationships, String renditionFilter,
       Boolean includeRelativePathSegment, ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    
-    LOG.debug("start getObjectParents()");
 
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      LOG.debug("start getObjectParents()");
 
-    StoredObject so = checkStandardParameters(repositoryId, objectId);
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    // for now we have only folders that have a parent and the in-memory provider only has one
-    // parent for each object (no multi-filing)
-    List<ObjectParentData> result = null;
+      StoredObject so = checkStandardParameters(repositoryId, objectId);
 
-    Filing spo = null;
-    if (so instanceof Filing)
-      spo = (Filing) so;
-    else
-      throw new CmisInvalidArgumentException(
-          "Can't get object parent, id does not refer to a folder or document: " + objectId);
+      // for now we have only folders that have a parent and the in-memory provider only has one
+      // parent for each object (no multi-filing)
+      List<ObjectParentData> result = null;
 
-    result = getObjectParentsIntern(repositoryId, spo, filter, objectInfos);
+      Filing spo = null;
+      if (so instanceof Filing)
+        spo = (Filing) so;
+      else
+        throw new CmisInvalidArgumentException(
+            "Can't get object parent, id does not refer to a folder or document: " + objectId);
 
-    // To be able to provide all Atom links in the response we need additional information:
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+      result = getObjectParentsIntern(repositoryId, spo, filter, objectInfos);
 
+      // To be able to provide all Atom links in the response we need additional information:
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-    LOG.debug("stop getObjectParents()");
-    return result;
+      LOG.debug("stop getObjectParents()");
+      return result;
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   // private helpers
@@ -355,13 +384,14 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 
     List<ObjectParentData> result = null;
     if (sop instanceof SingleFiling) {
-      ObjectData parent = getFolderParentIntern(repositoryId, (SingleFiling) sop, filter, objectInfos);
+      ObjectData parent = getFolderParentIntern(repositoryId, (SingleFiling) sop, filter,
+          objectInfos);
       if (null != parent) {
         ObjectParentDataImpl parentData = new ObjectParentDataImpl();
         parentData.setObject(parent);
         String path = ((SingleFiling) sop).getPath();
         int beginIndex = path.lastIndexOf(Filing.PATH_SEPARATOR) + 1; // Note: if / not found
-                                                                      // results in 0
+        // results in 0
         String relPathSeg = path.substring(beginIndex, path.length());
         parentData.setRelativePathSegment(relPathSeg);
         result = Collections.singletonList((ObjectParentData) parentData);
@@ -387,7 +417,8 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
     return result;
   }
 
-  private ObjectData getFolderParentIntern(String repositoryId, SingleFiling sop, String filter, ObjectInfoHolder objectInfos) {
+  private ObjectData getFolderParentIntern(String repositoryId, SingleFiling sop, String filter,
+      ObjectInfoHolder objectInfos) {
 
     ObjectDataImpl parent = new ObjectDataImpl();
 
