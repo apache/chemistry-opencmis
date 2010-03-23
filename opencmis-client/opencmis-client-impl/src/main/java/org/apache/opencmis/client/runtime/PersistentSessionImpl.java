@@ -21,6 +21,7 @@ package org.apache.opencmis.client.runtime;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,6 +58,7 @@ import org.apache.opencmis.commons.api.TypeDefinition;
 import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinitionList;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
+import org.apache.opencmis.commons.enums.Updatability;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.CmisProvider;
@@ -74,6 +76,12 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false,
       true, false, IncludeRelationships.NONE, null, true, null, true);
+
+  private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
+  static {
+    CREATE_UPDATABILITY.add(Updatability.ONCREATE);
+    CREATE_UPDATABILITY.add(Updatability.READWRITE);
+  }
 
   private static Log log = LogFactory.getLog(PersistentSessionImpl.class);
 
@@ -280,7 +288,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * @see org.apache.opencmis.client.api.Session#getContentChanges(java.lang.String, int)
    */
   public PagingList<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage) {
-	  throw new CmisRuntimeException("not implemented");
+    throw new CmisRuntimeException("not implemented");
   }
 
   /*
@@ -669,7 +677,8 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     }
 
     String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
-        objectFactory.convertProperties(properties), (folderId == null ? null : folderId.getId()),
+        objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
+        (folderId == null ? null : folderId.getId()),
         objectFactory.convertContentStream(contentStream), versioningState,
         objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
         objectFactory.convertAces(removeAces), null);
@@ -698,7 +707,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     }
 
     String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
-        source.getId(), objectFactory.convertProperties(properties),
+        source.getId(), objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
         (folderId == null ? null : folderId.getId()), versioningState,
         objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
         objectFactory.convertAces(removeAces), null);
@@ -723,9 +732,9 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     }
 
     String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
-        objectFactory.convertProperties(properties), (folderId == null ? null : folderId.getId()),
-        objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
-        objectFactory.convertAces(removeAces), null);
+        objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
+        (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
+        objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
 
     if (newId == null) {
       return null;
@@ -747,9 +756,9 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     }
 
     String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
-        objectFactory.convertProperties(properties), (folderId == null ? null : folderId.getId()),
-        objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
-        objectFactory.convertAces(removeAces), null);
+        objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
+        (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
+        objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
 
     if (newId == null) {
       return null;
@@ -767,8 +776,9 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   public ObjectId createRelationship(List<Property<?>> properties, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces) {
     String newId = getProvider().getObjectService().createRelationship(getRepositoryId(),
-        objectFactory.convertProperties(properties), objectFactory.convertPolicies(policies),
-        objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
+        objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
+        objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+        objectFactory.convertAces(removeAces), null);
 
     if (newId == null) {
       return null;

@@ -51,12 +51,18 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
    * @see org.apache.opencmis.client.api.Relationship#getSource()
    */
   public CmisObject getSource(OperationContext context) {
-    String sourceId = getPropertyValue(PropertyIds.CMIS_SOURCE_ID);
-    if (sourceId == null) {
-      return null;
-    }
+    readLock();
+    try {
+      String sourceId = getPropertyValue(PropertyIds.CMIS_SOURCE_ID);
+      if (sourceId == null) {
+        return null;
+      }
 
-    return getSession().getObject(getSession().createObjectId(sourceId), context);
+      return getSession().getObject(getSession().createObjectId(sourceId), context);
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   /*
@@ -74,12 +80,18 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
    * @see org.apache.opencmis.client.api.Relationship#getTarget()
    */
   public CmisObject getTarget(OperationContext context) {
-    String targetId = getPropertyValue(PropertyIds.CMIS_TARGET_ID);
-    if (targetId == null) {
-      return null;
-    }
+    readLock();
+    try {
+      String targetId = getPropertyValue(PropertyIds.CMIS_TARGET_ID);
+      if (targetId == null) {
+        return null;
+      }
 
-    return getSession().getObject(getSession().createObjectId(targetId), context);
+      return getSession().getObject(getSession().createObjectId(targetId), context);
+    }
+    finally {
+      readUnlock();
+    }
   }
 
 }

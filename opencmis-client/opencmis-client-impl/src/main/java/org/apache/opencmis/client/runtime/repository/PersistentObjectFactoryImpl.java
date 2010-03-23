@@ -27,6 +27,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
@@ -73,6 +74,7 @@ import org.apache.opencmis.commons.api.PropertyStringDefinition;
 import org.apache.opencmis.commons.api.PropertyUriDefinition;
 import org.apache.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.opencmis.commons.api.TypeDefinition;
+import org.apache.opencmis.commons.enums.Updatability;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.AccessControlEntry;
 import org.apache.opencmis.commons.provider.AccessControlList;
@@ -441,10 +443,12 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.api.repository.ObjectFactory#convertProperties(java.util.Collection)
+   * org.apache.opencmis.client.api.repository.ObjectFactory#convertProperties(java.util.Collection,
+   * java.util.Set)
    */
   @SuppressWarnings("unchecked")
-  public PropertiesData convertProperties(Collection<Property<?>> properties) {
+  public PropertiesData convertProperties(Collection<Property<?>> properties,
+      Set<Updatability> updatabilityFilter) {
     // check input
     if (properties == null) {
       throw new IllegalArgumentException("Properties must be set!");
@@ -455,8 +459,23 @@ public class PersistentObjectFactoryImpl implements ObjectFactory {
     // iterate through properties and convert them
     List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
     for (Property<?> property : properties) {
+      if (property == null) {
+        continue;
+      }
 
       PropertyDefinition<?> definition = property.getDefinition();
+      if (definition == null) {
+        throw new IllegalArgumentException("Property +'" + property.getId()
+            + "' has no property defintion!");
+      }
+
+      // check updatability
+      if (updatabilityFilter != null) {
+        if (!updatabilityFilter.contains(definition.getUpdatability())) {
+          continue;
+        }
+      }
+
       if (definition instanceof PropertyStringDefinition) {
         propertyList.add(pof.createPropertyStringData(property.getId(), (List<String>) property
             .getValues()));

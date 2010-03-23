@@ -114,7 +114,7 @@ public interface CmisObject extends ObjectId {
 
   void delete(boolean allVersions);
 
-  void updateProperties();
+  ObjectId updateProperties();
 
   // relationship service
 

@@ -20,7 +20,9 @@ package org.apache.opencmis.client.runtime;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.CmisObject;
@@ -33,6 +35,7 @@ import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.commons.PropertyIds;
+import org.apache.opencmis.commons.enums.Updatability;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.ContentStreamData;
@@ -169,9 +172,14 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
     ObjectFactory of = getObjectFactory();
 
+    Set<Updatability> updatebility = new HashSet<Updatability>();
+    updatebility.add(Updatability.READWRITE);
+    updatebility.add(Updatability.WHENCHECKEDOUT);
+
     getProvider().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
-        of.convertProperties(properties), of.convertContentStream(contentStream), checkinComment,
-        of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
+        of.convertProperties(properties, updatebility), of.convertContentStream(contentStream),
+        checkinComment, of.convertPolicies(policies), of.convertAces(addAces),
+        of.convertAces(removeAces), null);
 
     if (objectIdHolder.getValue() == null) {
       return null;
@@ -286,10 +294,19 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * org.apache.opencmis.client.api.ContentStream)
    */
   public ObjectId setContentStream(boolean overwrite, ContentStream contentStream) {
-    String objectId = getObjectId();
-    Holder<String> objectIdHolder = new Holder<String>(objectId);
+    String objectId = null;
+    String changeToken = null;
 
-    String changeToken = getPropertyValue(PropertyIds.CMIS_CHANGE_TOKEN);
+    readLock();
+    try {
+      objectId = getObjectId();
+      changeToken = getPropertyValue(PropertyIds.CMIS_CHANGE_TOKEN);
+    }
+    finally {
+      readUnlock();
+    }
+
+    Holder<String> objectIdHolder = new Holder<String>(objectId);
     Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
     getProvider().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, overwrite,
@@ -308,10 +325,19 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * @see org.apache.opencmis.client.api.Document#deleteContentStream()
    */
   public ObjectId deleteContentStream() {
-    String objectId = getObjectId();
-    Holder<String> objectIdHolder = new Holder<String>(objectId);
+    String objectId = null;
+    String changeToken = null;
 
-    String changeToken = getPropertyValue(PropertyIds.CMIS_CHANGE_TOKEN);
+    readLock();
+    try {
+      objectId = getObjectId();
+      changeToken = getPropertyValue(PropertyIds.CMIS_CHANGE_TOKEN);
+    }
+    finally {
+      readUnlock();
+    }
+
+    Holder<String> objectIdHolder = new Holder<String>(objectId);
     Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
     getProvider().getObjectService().deleteContentStream(getRepositoryId(), objectIdHolder,

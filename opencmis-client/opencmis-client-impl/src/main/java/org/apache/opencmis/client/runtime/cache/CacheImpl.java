@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.opencmis.client.api.CmisObject;
 import org.apache.opencmis.commons.PropertyIds;
@@ -40,6 +41,8 @@ public class CacheImpl implements Cache, Serializable {
 
   private LinkedHashMap<String, Map<String, CmisObject>> objectMap;
   private Map<String, String> pathToIdMap;
+
+  private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
 
   /**
    * Creates a new cache instance with a default size.
@@ -74,22 +77,28 @@ public class CacheImpl implements Cache, Serializable {
    * Sets up the internal objects.
    */
   protected void initialize() {
-    int hashTableCapacity = (int) Math.ceil(cacheSize / HASHTABLE_LOAD_FACTOR) + 1;
+    fLock.writeLock().lock();
+    try {
+      int hashTableCapacity = (int) Math.ceil(cacheSize / HASHTABLE_LOAD_FACTOR) + 1;
 
-    final int cs = cacheSize;
+      final int cs = cacheSize;
 
-    objectMap = new LinkedHashMap<String, Map<String, CmisObject>>(hashTableCapacity,
-        HASHTABLE_LOAD_FACTOR) {
+      objectMap = new LinkedHashMap<String, Map<String, CmisObject>>(hashTableCapacity,
+          HASHTABLE_LOAD_FACTOR) {
 
-      private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-      @Override
-      protected boolean removeEldestEntry(Map.Entry<String, Map<String, CmisObject>> eldest) {
-        return size() > cs;
-      }
-    };
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, Map<String, CmisObject>> eldest) {
+          return size() > cs;
+        }
+      };
 
-    resetPathCache();
+      resetPathCache();
+    }
+    finally {
+      fLock.writeLock().unlock();
+    }
   }
 
   /*
@@ -107,7 +116,13 @@ public class CacheImpl implements Cache, Serializable {
    * @see org.apache.opencmis.client.runtime.cache.Cache#resetPathCache()
    */
   public void resetPathCache() {
-    pathToIdMap = new HashMap<String, String>();
+    fLock.writeLock().lock();
+    try {
+      pathToIdMap = new HashMap<String, String>();
+    }
+    finally {
+      fLock.writeLock().unlock();
+    }
   }
 
   /*
@@ -117,11 +132,17 @@ public class CacheImpl implements Cache, Serializable {
    * java.lang.String)
    */
   public boolean containsId(String objectId, String cacheKey) {
-    if (!objectMap.containsKey(objectId)) {
-      return false;
-    }
+    fLock.readLock().lock();
+    try {
+      if (!objectMap.containsKey(objectId)) {
+        return false;
+      }
 
-    return objectMap.get(objectId).containsKey(cacheKey);
+      return objectMap.get(objectId).containsKey(cacheKey);
+    }
+    finally {
+      fLock.readLock().unlock();
+    }
   }
 
   /*
@@ -131,11 +152,17 @@ public class CacheImpl implements Cache, Serializable {
    * java.lang.String)
    */
   public boolean containsPath(String path, String cacheKey) {
-    if (!pathToIdMap.containsKey(path)) {
-      return false;
-    }
+    fLock.readLock().lock();
+    try {
+      if (!pathToIdMap.containsKey(path)) {
+        return false;
+      }
 
-    return containsId(pathToIdMap.get(path), cacheKey);
+      return containsId(pathToIdMap.get(path), cacheKey);
+    }
+    finally {
+      fLock.readLock().unlock();
+    }
   }
 
   /*
@@ -144,12 +171,18 @@ public class CacheImpl implements Cache, Serializable {
    * @see org.apache.opencmis.client.runtime.cache.Cache#getById(java.lang.String, java.lang.String)
    */
   public CmisObject getById(String objectId, String cacheKey) {
-    Map<String, CmisObject> cacheKeyMap = objectMap.get(objectId);
-    if (cacheKeyMap == null) {
-      return null; // not found
-    }
+    fLock.readLock().lock();
+    try {
+      Map<String, CmisObject> cacheKeyMap = objectMap.get(objectId);
+      if (cacheKeyMap == null) {
+        return null; // not found
+      }
 
-    return cacheKeyMap.get(cacheKey);
+      return cacheKeyMap.get(cacheKey);
+    }
+    finally {
+      fLock.readLock().unlock();
+    }
   }
 
   /*
@@ -159,18 +192,30 @@ public class CacheImpl implements Cache, Serializable {
    * java.lang.String)
    */
   public CmisObject getByPath(String path, String cacheKey) {
-    String id = pathToIdMap.get(path);
-    if (id == null) {
-      return null; // not found
-    }
+    fLock.readLock().lock();
+    try {
+      String id = pathToIdMap.get(path);
+      if (id == null) {
+        return null; // not found
+      }
 
-    CmisObject object = getById(id, cacheKey);
-    if ((object == null) && (!objectMap.containsKey(id))) {
-      // clean up
-      pathToIdMap.remove(path);
-    }
+      CmisObject object = getById(id, cacheKey);
+      if ((object == null) && (!objectMap.containsKey(id))) {
+        // clean up
+        fLock.writeLock().lock();
+        try {
+          pathToIdMap.remove(path);
+        }
+        finally {
+          fLock.writeLock().unlock();
+        }
+      }
 
-    return object;
+      return object;
+    }
+    finally {
+      fLock.readLock().unlock();
+    }
   }
 
   /*
@@ -191,20 +236,26 @@ public class CacheImpl implements Cache, Serializable {
       return;
     }
 
-    // get cache key map
-    Map<String, CmisObject> cacheKeyMap = objectMap.get(object.getId());
-    if (cacheKeyMap == null) {
-      cacheKeyMap = new HashMap<String, CmisObject>();
-      objectMap.put(object.getId(), cacheKeyMap);
+    fLock.writeLock().lock();
+    try {
+      // get cache key map
+      Map<String, CmisObject> cacheKeyMap = objectMap.get(object.getId());
+      if (cacheKeyMap == null) {
+        cacheKeyMap = new HashMap<String, CmisObject>();
+        objectMap.put(object.getId(), cacheKeyMap);
+      }
+
+      // put into id cache
+      cacheKeyMap.put(cacheKey, object);
+
+      // folders may have a path, use it!
+      String path = object.getPropertyValue(PropertyIds.CMIS_PATH);
+      if (path != null) {
+        pathToIdMap.put(path, object.getId());
+      }
     }
-
-    // put into id cache
-    cacheKeyMap.put(cacheKey, object);
-
-    // folders may have a path, use it!
-    String path = object.getPropertyValue(PropertyIds.CMIS_PATH);
-    if (path != null) {
-      pathToIdMap.put(path, object.getId());
+    finally {
+      fLock.writeLock().unlock();
     }
   }
 
@@ -215,10 +266,16 @@ public class CacheImpl implements Cache, Serializable {
    * org.apache.opencmis.client.api.CmisObject, java.lang.String)
    */
   public void putPath(String path, CmisObject object, String cacheKey) {
-    put(object, cacheKey);
+    fLock.writeLock().lock();
+    try {
+      put(object, cacheKey);
 
-    if ((object != null) && (object.getId() != null) && (cacheKey != null)) {
-      pathToIdMap.put(path, object.getId());
+      if ((object != null) && (object.getId() != null) && (cacheKey != null)) {
+        pathToIdMap.put(path, object.getId());
+      }
+    }
+    finally {
+      fLock.writeLock().unlock();
     }
   }
 
@@ -230,5 +287,4 @@ public class CacheImpl implements Cache, Serializable {
   public int getCacheSize() {
     return this.cacheSize;
   }
-
 }

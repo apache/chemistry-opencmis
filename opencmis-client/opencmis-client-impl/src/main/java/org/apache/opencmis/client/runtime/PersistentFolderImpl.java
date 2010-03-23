@@ -21,7 +21,9 @@ package org.apache.opencmis.client.runtime;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.CmisObject;
@@ -42,6 +44,7 @@ import org.apache.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.UnfileObjects;
+import org.apache.opencmis.commons.enums.Updatability;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.FailedToDeleteData;
@@ -55,6 +58,12 @@ import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.PropertyStringData;
 
 public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject implements Folder {
+
+  private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
+  static {
+    CREATE_UPDATABILITY.add(Updatability.ONCREATE);
+    CREATE_UPDATABILITY.add(Updatability.READWRITE);
+  }
 
   /**
    * Constructor.
@@ -80,9 +89,9 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     ObjectFactory of = getObjectFactory();
 
     String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
-        of.convertProperties(properties), objectId, of.convertContentStream(contentStream),
-        versioningState, of.convertPolicies(policies), of.convertAces(addAces),
-        of.convertAces(removeAces), null);
+        of.convertProperties(properties, CREATE_UPDATABILITY), objectId,
+        of.convertContentStream(contentStream), versioningState, of.convertPolicies(policies),
+        of.convertAces(addAces), of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
     if ((context == null) || (newId == null)) {
@@ -117,8 +126,11 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     ObjectFactory of = getObjectFactory();
 
+    Set<Updatability> updatebility = new HashSet<Updatability>();
+    updatebility.add(Updatability.READWRITE);
+
     String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
-        source.getId(), of.convertProperties(properties), objectId, versioningState,
+        source.getId(), of.convertProperties(properties, updatebility), objectId, versioningState,
         of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
@@ -148,8 +160,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     ObjectFactory of = getObjectFactory();
 
     String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
-        of.convertProperties(properties), objectId, of.convertPolicies(policies),
-        of.convertAces(addAces), of.convertAces(removeAces), null);
+        of.convertProperties(properties, CREATE_UPDATABILITY), objectId,
+        of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
     if ((context == null) || (newId == null)) {
@@ -178,8 +190,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     ObjectFactory of = getObjectFactory();
 
     String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
-        of.convertProperties(properties), objectId, of.convertPolicies(policies),
-        of.convertAces(addAces), of.convertAces(removeAces), null);
+        of.convertProperties(properties, CREATE_UPDATABILITY), objectId,
+        of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
     if ((context == null) || (newId == null)) {
@@ -220,13 +232,19 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
   public List<ObjectType> getAllowedChildObjectTypes() {
     List<ObjectType> result = new ArrayList<ObjectType>();
 
-    List<String> otids = getPropertyMultivalue(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS);
-    if (otids == null) {
-      return result;
-    }
+    readLock();
+    try {
+      List<String> otids = getPropertyMultivalue(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS);
+      if (otids == null) {
+        return result;
+      }
 
-    for (String otid : otids) {
-      result.add(getSession().getTypeDefinition(otid));
+      for (String otid : otids) {
+        result.add(getSession().getTypeDefinition(otid));
+      }
+    }
+    finally {
+      readUnlock();
     }
 
     return result;

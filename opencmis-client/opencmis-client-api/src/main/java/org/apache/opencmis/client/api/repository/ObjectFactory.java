@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
@@ -37,6 +38,7 @@ import org.apache.opencmis.client.api.Rendition;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.api.TypeDefinition;
+import org.apache.opencmis.commons.enums.Updatability;
 import org.apache.opencmis.commons.provider.AccessControlList;
 import org.apache.opencmis.commons.provider.AllowableActionsData;
 import org.apache.opencmis.commons.provider.ContentStreamData;
@@ -96,7 +98,8 @@ public interface ObjectFactory {
 
   Map<String, Property<?>> convertProperties(ObjectType objectType, PropertiesData properties);
 
-  PropertiesData convertProperties(Collection<Property<?>> properties);
+  PropertiesData convertProperties(Collection<Property<?>> properties,
+      Set<Updatability> updatabilityFilter);
 
   List<QueryProperty<?>> convertQueryProperties(PropertiesData properties);
 

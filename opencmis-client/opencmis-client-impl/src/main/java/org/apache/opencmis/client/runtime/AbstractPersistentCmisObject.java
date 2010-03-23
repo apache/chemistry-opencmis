@@ -23,8 +23,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.opencmis.client.api.Ace;
 import org.apache.opencmis.client.api.Acl;
@@ -68,6 +71,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   private List<Relationship> relationships;
   private OperationContext creationContext;
   private boolean isChanged = false;
+
+  private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
 
   /**
    * Initializes the object.
@@ -144,6 +149,34 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   }
 
   /**
+   * Acquires a write lock.
+   */
+  protected void writeLock() {
+    fLock.writeLock().lock();
+  }
+
+  /**
+   * Releases a write lock.
+   */
+  protected void writeUnlock() {
+    fLock.writeLock().unlock();
+  }
+
+  /**
+   * Acquires a read lock.
+   */
+  protected void readLock() {
+    fLock.readLock().lock();
+  }
+
+  /**
+   * Releases a read lock.
+   */
+  protected void readUnlock() {
+    fLock.readLock().unlock();
+  }
+
+  /**
    * Returns the session object.
    */
   protected PersistentSessionImpl getSession() {
@@ -161,7 +194,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * Returns the object type.
    */
   protected ObjectType getObjectType() {
-    return this.objectType;
+    readLock();
+    try {
+      return this.objectType;
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   /**
@@ -207,15 +246,37 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * 
    * @see org.apache.opencmis.client.api.CmisObject#updateProperties()
    */
-  public void updateProperties() {
-    String objectId = getObjectId();
-    Holder<String> objectIdHolder = new Holder<String>(objectId);
+  public ObjectId updateProperties() {
+    readLock();
+    try {
+      String objectId = getObjectId();
+      Holder<String> objectIdHolder = new Holder<String>(objectId);
 
-    String changeToken = getChangeToken();
-    Holder<String> changeTokenHolder = new Holder<String>(changeToken);
+      String changeToken = getChangeToken();
+      Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
-    getProvider().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
-        changeTokenHolder, getObjectFactory().convertProperties(properties.values()), null);
+      Set<Updatability> updatebility = new HashSet<Updatability>();
+      updatebility.add(Updatability.READWRITE);
+
+      // check if checked out
+      Boolean isCheckedOut = getPropertyValue(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT);
+      if ((isCheckedOut != null) && isCheckedOut.booleanValue()) {
+        updatebility.add(Updatability.WHENCHECKEDOUT);
+      }
+
+      getProvider().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
+          changeTokenHolder,
+          getObjectFactory().convertProperties(this.properties.values(), updatebility), null);
+
+      if (objectIdHolder.getValue() == null) {
+        return null;
+      }
+
+      return getSession().createObjectId(objectIdHolder.getValue());
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   // --- properties ---
@@ -317,7 +378,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getProperties()
    */
   public List<Property<?>> getProperties() {
-    return new ArrayList<Property<?>>(properties.values());
+    readLock();
+    try {
+      return new ArrayList<Property<?>>(this.properties.values());
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   /*
@@ -327,7 +394,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    */
   @SuppressWarnings("unchecked")
   public <T> Property<T> getProperty(String id) {
-    return (Property<T>) properties.get(id);
+    readLock();
+    try {
+      return (Property<T>) this.properties.get(id);
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   /*
@@ -384,67 +457,73 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    */
   @SuppressWarnings("unchecked")
   public <T> void setPropertyMultivalue(String id, List<T> value) {
-    // get and check property type
-    PropertyDefinition<?> propertyDefinition = getObjectType().getPropertyDefintions().get(id);
-    if (propertyDefinition == null) {
-      throw new IllegalArgumentException("Unknown property!");
-    }
-
-    // check updatability
-    if (propertyDefinition.getUpdatability() == Updatability.READONLY) {
-      throw new IllegalArgumentException("Property is read-only!");
-    }
-
-    boolean typeMatch = false;
-
-    if ((value == null) || (value.isEmpty())) {
-      typeMatch = true;
-      if (value != null) {
-        value = null;
+    writeLock();
+    try {
+      // get and check property type
+      PropertyDefinition<?> propertyDefinition = getObjectType().getPropertyDefintions().get(id);
+      if (propertyDefinition == null) {
+        throw new IllegalArgumentException("Unknown property!");
       }
-    }
-    else {
-      // check if list contains null values
-      for (Object o : value) {
-        if (o == null) {
-          throw new IllegalArgumentException("List contains null values!");
+
+      // check updatability
+      if (propertyDefinition.getUpdatability() == Updatability.READONLY) {
+        throw new IllegalArgumentException("Property is read-only!");
+      }
+
+      boolean typeMatch = false;
+
+      if ((value == null) || (value.isEmpty())) {
+        typeMatch = true;
+        if (value != null) {
+          value = null;
+        }
+      }
+      else {
+        // check if list contains null values
+        for (Object o : value) {
+          if (o == null) {
+            throw new IllegalArgumentException("List contains null values!");
+          }
+        }
+
+        // take a sample and test the data type
+        Object firstValue = value.get(0);
+
+        switch (propertyDefinition.getPropertyType()) {
+        case STRING:
+        case ID:
+        case URI:
+        case HTML:
+          typeMatch = (firstValue instanceof String);
+          break;
+        case INTEGER:
+          typeMatch = (firstValue instanceof BigInteger);
+          break;
+        case DECIMAL:
+          typeMatch = (firstValue instanceof BigDecimal);
+          break;
+        case BOOLEAN:
+          typeMatch = (firstValue instanceof Boolean);
+          break;
+        case DATETIME:
+          typeMatch = (firstValue instanceof GregorianCalendar);
+          break;
         }
       }
 
-      // take a sample and test the data type
-      Object firstValue = value.get(0);
-
-      switch (propertyDefinition.getPropertyType()) {
-      case STRING:
-      case ID:
-      case URI:
-      case HTML:
-        typeMatch = (firstValue instanceof String);
-        break;
-      case INTEGER:
-        typeMatch = (firstValue instanceof BigInteger);
-        break;
-      case DECIMAL:
-        typeMatch = (firstValue instanceof BigDecimal);
-        break;
-      case BOOLEAN:
-        typeMatch = (firstValue instanceof Boolean);
-        break;
-      case DATETIME:
-        typeMatch = (firstValue instanceof GregorianCalendar);
-        break;
+      if (!typeMatch) {
+        throw new IllegalArgumentException("Value does not match property type!");
       }
+
+      Property<T> newProperty = (Property<T>) getSession().getObjectFactory()
+          .createPropertyMultivalue((PropertyDefinition<T>) propertyDefinition, value);
+
+      setChanged();
+      this.properties.put(id, newProperty);
     }
-
-    if (!typeMatch) {
-      throw new IllegalArgumentException("Value does not match property type!");
+    finally {
+      writeUnlock();
     }
-
-    Property<T> newProperty = (Property<T>) getSession().getObjectFactory()
-        .createPropertyMultivalue((PropertyDefinition<T>) propertyDefinition, value);
-
-    setChanged();
-    this.properties.put(id, newProperty);
   }
 
   /*
@@ -453,7 +532,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getType()
    */
   public ObjectType getType() {
-    return this.objectType;
+    readLock();
+    try {
+      return this.objectType;
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   // --- allowable actions ---
@@ -464,7 +549,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getAllowableActions()
    */
   public AllowableActions getAllowableActions() {
-    return this.allowableActions;
+    readLock();
+    try {
+      return this.allowableActions;
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   // --- renditions ---
@@ -475,7 +566,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getRenditions()
    */
   public List<Rendition> getRenditions() {
-    return this.renditions;
+    readLock();
+    try {
+      return this.renditions;
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   // --- ACL ---
@@ -535,7 +632,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getAcl()
    */
   public Acl getAcl() {
-    return this.acl;
+    readLock();
+    try {
+      return this.acl;
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   // --- policies ---
@@ -578,7 +681,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getPolicies()
    */
   public List<Policy> getPolicies() {
-    return policies;
+    readLock();
+    try {
+      return this.policies;
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   // --- relationships ---
@@ -589,7 +698,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getRelationships()
    */
   public List<Relationship> getRelationships() {
-    return relationships;
+    readLock();
+    try {
+      return this.relationships;
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   /*
@@ -654,14 +769,26 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#isChanged()
    */
   public boolean isChanged() {
-    return isChanged;
+    readLock();
+    try {
+      return isChanged;
+    }
+    finally {
+      readUnlock();
+    }
   }
 
   /**
    * Sets the isChanged flag to <code>true</code>
    */
   protected void setChanged() {
-    isChanged = true;
+    writeLock();
+    try {
+      isChanged = true;
+    }
+    finally {
+      writeUnlock();
+    }
   }
 
   /*
@@ -672,17 +799,22 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * )
    */
   public void refresh() {
-    String objectId = getObjectId();
+    writeLock();
+    try {
+      String objectId = getObjectId();
 
-    // get the latest data from the repository
-    ObjectData objectData = getSession().getProvider().getObjectService().getObject(
-        getRepositoryId(), objectId, creationContext.getFilterString(),
-        creationContext.isIncludeAllowableActions(), creationContext.getIncludeRelationships(),
-        creationContext.getRenditionFilterString(), creationContext.isIncludePolicies(),
-        creationContext.isIncludeAcls(), null);
+      // get the latest data from the repository
+      ObjectData objectData = getSession().getProvider().getObjectService().getObject(
+          getRepositoryId(), objectId, creationContext.getFilterString(),
+          creationContext.isIncludeAllowableActions(), creationContext.getIncludeRelationships(),
+          creationContext.getRenditionFilterString(), creationContext.isIncludePolicies(),
+          creationContext.isIncludeAcls(), null);
 
-    // reset this object
-    initialize(getSession(), getObjectType(), objectData, this.creationContext);
+      // reset this object
+      initialize(getSession(), getObjectType(), objectData, this.creationContext);
+    }
+    finally {
+      writeUnlock();
+    }
   }
-
 }
