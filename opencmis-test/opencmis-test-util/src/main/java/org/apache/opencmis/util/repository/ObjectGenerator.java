@@ -92,10 +92,15 @@ public class ObjectGenerator {
   private List<String> fStringPropertyIdsToSetForFolder;
   
   /**
-   * number of objects created in total
+   * number of documents created in total
    */
-  private int fObjectsInTotalCount = 0;
+  private int fDocumentsInTotalCount = 0;
   
+  /**
+   * number of folders created in total
+   */
+  private int fFoldersInTotalCount = 0;
+
   /**
    * size of content in KB, if 0 create documents without content 
    */
@@ -152,6 +157,7 @@ public class ObjectGenerator {
   }
   
   public void createFolderHierachy(int levels, int childrenPerLevel, String rootFolderId) {
+    resetCounters();
     createFolderHierachy(rootFolderId, 0, levels, childrenPerLevel);
   }
   
@@ -216,17 +222,37 @@ public class ObjectGenerator {
   }
   
   /**
+   * return the total number of documents created
+   * @return
+   */
+  public int getDocumentsInTotal() {
+    return fDocumentsInTotalCount;
+  }
+
+  /**
+   * return the total number of folders created
+   * @return
+   */
+  public int getFoldersInTotal() {
+    return fFoldersInTotalCount;
+  }
+
+  /**
    * return the total number of objects created
    * @return
    */
   public int getObjectsInTotal() {
-    return fObjectsInTotalCount;
+    return fDocumentsInTotalCount + fFoldersInTotalCount;
   }
 
   public void createSingleDocument(String folderId) {
 	  createDocument(folderId, 0, 0);      
   }
 	  
+  public void resetCounters() {
+    fDocumentsInTotalCount = fFoldersInTotalCount = 0;
+  }
+  
   private void createFolderHierachy(String parentId, int level, int levels, int childrenPerLevel) {
     
     if (level>=levels)
@@ -238,7 +264,7 @@ public class ObjectGenerator {
       PropertiesData props = createFolderProperties(i, level);      
       String id = fObjSvc.createFolder(fRepositoryId, props, parentId, null, null, null, null);
       if (id != null) {
-        ++fObjectsInTotalCount;
+        ++fFoldersInTotalCount;
         createFolderHierachy(id, level+1, levels, childrenPerLevel);
       }
     }
@@ -264,7 +290,7 @@ public class ObjectGenerator {
         policies, addACEs, removeACEs, extension);
     if (null == id)
       throw new RuntimeException("createDocument failed.");
-    ++fObjectsInTotalCount;
+    ++fDocumentsInTotalCount;
     return id;
   }
   
