@@ -20,6 +20,7 @@ package org.apache.opencmis.client.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -155,6 +156,11 @@ public class WriteObjectTest extends AbstractSessionTest {
 	@Test
 	public void createDocumentFromSource() throws IOException {
 		try {
+			// verify content (which is not supported by mock)
+			if (this.isMock()) {
+				return;
+			}
+
 			String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
 					+ FixtureData.DOCUMENT1_NAME;
 			Document srcDocument = (Document) this.session
@@ -199,6 +205,11 @@ public class WriteObjectTest extends AbstractSessionTest {
 
 	@Test
 	public void deleteAndCreateContent() throws IOException {
+		// verify content (which is not supported by mock)
+		if (this.isMock()) {
+			return;
+		}
+
 		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
 				+ FixtureData.DOCUMENT1_NAME;
 		Document document = (Document) this.session.getObjectByPath(path);
@@ -237,12 +248,19 @@ public class WriteObjectTest extends AbstractSessionTest {
 
 	@Test
 	public void updateProperties() {
-//		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
-//				+ FixtureData.DOCUMENT1_NAME;
-//		Document document = (Document) this.session.getObjectByPath(path);
-//		assertNotNull("Document not found: " + path, document);
-//	
-//		document.updateProperties();
+		// verify content (which is not supported by mock)
+		if (this.isMock()) {
+			return;
+		}
+
+		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
+				+ FixtureData.DOCUMENT1_NAME;
+		Document document = (Document) this.session.getObjectByPath(path);
+		assertNotNull("Document not found: " + path, document);
+
+		document.setProperty(CmisProperties.NAME.value(), "Neuer Name");
+		document.updateProperties();
+		assertTrue(true);
 	}
 
 	private String getContentAsString(ContentStream stream) throws IOException {
