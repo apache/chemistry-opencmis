@@ -19,6 +19,7 @@
 package org.apache.opencmis.client.runtime.repository;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -90,7 +91,9 @@ import org.apache.opencmis.commons.provider.RenditionData;
 /**
  * Persistent model object factory.
  */
-public class PersistentObjectFactoryImpl implements ObjectFactory {
+public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private PersistentSessionImpl session = null;
 

@@ -87,7 +87,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
       boolean includeAllowableActions, boolean includePolicies,
       IncludeRelationships includeRelationships, Set<String> renditionFilter,
       boolean includePathSegments, String orderBy, boolean cacheEnabled) {
-    setFilter(filter);
+    setFilter(propertyFilter);
     setIncludeAcls(includeAcls);
     setIncludeAllowableActions(includeAllowableActions);
     setIncludePolicies(includePolicies);

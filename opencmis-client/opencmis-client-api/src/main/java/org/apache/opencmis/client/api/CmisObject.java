@@ -20,6 +20,7 @@ package org.apache.opencmis.client.api;
 
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.util.PagingList;
@@ -115,6 +116,8 @@ public interface CmisObject extends ObjectId {
   void delete(boolean allVersions);
 
   ObjectId updateProperties();
+
+  ObjectId updateProperties(Map<String, Object> properties);
 
   // relationship service
 

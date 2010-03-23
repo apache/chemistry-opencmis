@@ -47,6 +47,7 @@ import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.opencmis.commons.enums.Cardinality;
 import org.apache.opencmis.commons.enums.RelationshipDirection;
 import org.apache.opencmis.commons.enums.Updatability;
 import org.apache.opencmis.commons.provider.CmisProvider;
@@ -264,9 +265,63 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         updatebility.add(Updatability.WHENCHECKEDOUT);
       }
 
+      // it's time to update
       getProvider().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
           changeTokenHolder,
           getObjectFactory().convertProperties(this.properties.values(), updatebility), null);
+
+      if (objectIdHolder.getValue() == null) {
+        return null;
+      }
+
+      return getSession().createObjectId(objectIdHolder.getValue());
+    }
+    finally {
+      readUnlock();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.CmisObject#updateProperties(java.util.Map)
+   */
+  public ObjectId updateProperties(Map<String, Object> updateProperties) {
+    if ((updateProperties == null) || (updateProperties.isEmpty())) {
+      throw new IllegalArgumentException("Properties must not be empty!");
+    }
+
+    readLock();
+    try {
+      String objectId = getObjectId();
+      Holder<String> objectIdHolder = new Holder<String>(objectId);
+
+      String changeToken = getChangeToken();
+      Holder<String> changeTokenHolder = new Holder<String>(changeToken);
+
+      Set<Updatability> updatebility = new HashSet<Updatability>();
+      updatebility.add(Updatability.READWRITE);
+
+      // check if checked out
+      Boolean isCheckedOut = getPropertyValue(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT);
+      if ((isCheckedOut != null) && isCheckedOut.booleanValue()) {
+        updatebility.add(Updatability.WHENCHECKEDOUT);
+      }
+
+      // build property list
+      ObjectFactory of = getObjectFactory();
+      List<Property<?>> propertyList = new ArrayList<Property<?>>();
+      for (Map.Entry<String, Object> property : updateProperties.entrySet()) {
+        PropertyDefinition<?> propertyDefinition = checkProperty(property.getKey(), property
+            .getValue());
+
+        // create property
+        propertyList.add(of.createProperty(propertyDefinition, property.getValue()));
+      }
+
+      // it's time to update
+      getProvider().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
+          changeTokenHolder, of.convertProperties(propertyList, updatebility), null);
 
       if (objectIdHolder.getValue() == null) {
         return null;
@@ -445,8 +500,27 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * 
    * @see org.apache.opencmis.client.api.CmisObject#setProperty(java.lang.String, java.lang.Object)
    */
+  @SuppressWarnings("unchecked")
   public <T> void setProperty(String id, T value) {
-    setPropertyMultivalue(id, (value == null ? null : Collections.singletonList(value)));
+    PropertyDefinition<?> propertyDefinition = checkProperty(id, value);
+
+    // check updatability
+    if (propertyDefinition.getUpdatability() == Updatability.READONLY) {
+      throw new IllegalArgumentException("Property is read-only!");
+    }
+
+    // create property
+    Property<T> newProperty = (Property<T>) getObjectFactory().createProperty(
+        (PropertyDefinition<T>) propertyDefinition, value);
+
+    writeLock();
+    try {
+      setChanged();
+      this.properties.put(id, newProperty);
+    }
+    finally {
+      writeUnlock();
+    }
   }
 
   /*
@@ -457,67 +531,19 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    */
   @SuppressWarnings("unchecked")
   public <T> void setPropertyMultivalue(String id, List<T> value) {
+    PropertyDefinition<?> propertyDefinition = checkProperty(id, value);
+
+    // check updatability
+    if (propertyDefinition.getUpdatability() == Updatability.READONLY) {
+      throw new IllegalArgumentException("Property is read-only!");
+    }
+
+    // create property
+    Property<T> newProperty = (Property<T>) getObjectFactory().createPropertyMultivalue(
+        (PropertyDefinition<T>) propertyDefinition, value);
+
     writeLock();
     try {
-      // get and check property type
-      PropertyDefinition<?> propertyDefinition = getObjectType().getPropertyDefintions().get(id);
-      if (propertyDefinition == null) {
-        throw new IllegalArgumentException("Unknown property!");
-      }
-
-      // check updatability
-      if (propertyDefinition.getUpdatability() == Updatability.READONLY) {
-        throw new IllegalArgumentException("Property is read-only!");
-      }
-
-      boolean typeMatch = false;
-
-      if ((value == null) || (value.isEmpty())) {
-        typeMatch = true;
-        if (value != null) {
-          value = null;
-        }
-      }
-      else {
-        // check if list contains null values
-        for (Object o : value) {
-          if (o == null) {
-            throw new IllegalArgumentException("List contains null values!");
-          }
-        }
-
-        // take a sample and test the data type
-        Object firstValue = value.get(0);
-
-        switch (propertyDefinition.getPropertyType()) {
-        case STRING:
-        case ID:
-        case URI:
-        case HTML:
-          typeMatch = (firstValue instanceof String);
-          break;
-        case INTEGER:
-          typeMatch = (firstValue instanceof BigInteger);
-          break;
-        case DECIMAL:
-          typeMatch = (firstValue instanceof BigDecimal);
-          break;
-        case BOOLEAN:
-          typeMatch = (firstValue instanceof Boolean);
-          break;
-        case DATETIME:
-          typeMatch = (firstValue instanceof GregorianCalendar);
-          break;
-        }
-      }
-
-      if (!typeMatch) {
-        throw new IllegalArgumentException("Value does not match property type!");
-      }
-
-      Property<T> newProperty = (Property<T>) getSession().getObjectFactory()
-          .createPropertyMultivalue((PropertyDefinition<T>) propertyDefinition, value);
-
       setChanged();
       this.properties.put(id, newProperty);
     }
@@ -816,5 +842,84 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     finally {
       writeUnlock();
     }
+  }
+
+  // --- internal ---
+
+  /**
+   * Checks if a value matches a property definition.
+   */
+  private PropertyDefinition<?> checkProperty(String id, Object value) {
+    PropertyDefinition<?> propertyDefinition = getObjectType().getPropertyDefintions().get(id);
+    if (propertyDefinition == null) {
+      throw new IllegalArgumentException("Unknown property '" + id + "'!");
+    }
+
+    // null values are ok for updates
+    if (value == null) {
+      return propertyDefinition;
+    }
+
+    // single and multi value check
+    List<?> values = null;
+    if (value instanceof List<?>) {
+      if (propertyDefinition.getCardinality() != Cardinality.MULTI) {
+        throw new IllegalArgumentException("Property '" + propertyDefinition.getId()
+            + "' is not a multi value property!");
+      }
+
+      values = (List<?>) value;
+      if (values.isEmpty()) {
+        return propertyDefinition;
+      }
+    }
+    else {
+      if (propertyDefinition.getCardinality() != Cardinality.SINGLE) {
+        throw new IllegalArgumentException("Property '" + propertyDefinition.getId()
+            + "' is not a single value property!");
+      }
+
+      values = Collections.singletonList(value);
+    }
+
+    // check if list contains null values
+    for (Object o : values) {
+      if (o == null) {
+        throw new IllegalArgumentException("Property '" + propertyDefinition.getId()
+            + "' contains null values!");
+      }
+    }
+
+    // take a sample and test the data type
+    boolean typeMatch = false;
+    Object firstValue = values.get(0);
+
+    switch (propertyDefinition.getPropertyType()) {
+    case STRING:
+    case ID:
+    case URI:
+    case HTML:
+      typeMatch = (firstValue instanceof String);
+      break;
+    case INTEGER:
+      typeMatch = (firstValue instanceof BigInteger);
+      break;
+    case DECIMAL:
+      typeMatch = (firstValue instanceof BigDecimal);
+      break;
+    case BOOLEAN:
+      typeMatch = (firstValue instanceof Boolean);
+      break;
+    case DATETIME:
+      typeMatch = (firstValue instanceof GregorianCalendar);
+      break;
+    }
+
+    if (!typeMatch) {
+      throw new IllegalArgumentException("Value of property '" + propertyDefinition.getId()
+          + "' does not match property type!");
+    }
+
+    return propertyDefinition;
   }
 }

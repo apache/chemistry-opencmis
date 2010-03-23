@@ -202,12 +202,14 @@ public class CacheImpl implements Cache, Serializable {
       CmisObject object = getById(id, cacheKey);
       if ((object == null) && (!objectMap.containsKey(id))) {
         // clean up
+        fLock.readLock().unlock();
         fLock.writeLock().lock();
         try {
           pathToIdMap.remove(path);
         }
         finally {
           fLock.writeLock().unlock();
+          fLock.readLock().lock();
         }
       }
 

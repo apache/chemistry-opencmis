@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -85,6 +86,8 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   private static Log log = LogFactory.getLog(PersistentSessionImpl.class);
 
+  private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
+
   /*
    * default session context (serializable)
    */
@@ -119,7 +122,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   /*
    * helper factory (non serializable)
    */
-  private transient ObjectFactory objectFactory = PersistentObjectFactoryImpl.newInstance(this);
+  private final ObjectFactory objectFactory = PersistentObjectFactoryImpl.newInstance(this);
 
   /**
    * required for serialization
@@ -195,22 +198,25 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * @see org.apache.opencmis.client.api.Session#clear()
    */
   public void clear() {
-    /*
-     * clear cache
-     */
-    int cacheSize = this.determineCacheSize(this.parameters);
-    if (cacheSize == -1) {
-      this.cache = CacheImpl.newInstance();
-    }
-    else {
-      this.cache = CacheImpl.newInstance(cacheSize);
-    }
-    PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
+    fLock.writeLock().lock();
+    try {
+      int cacheSize = this.determineCacheSize(this.parameters);
+      if (cacheSize == -1) {
+        this.cache = CacheImpl.newInstance();
+      }
+      else {
+        this.cache = CacheImpl.newInstance(cacheSize);
+      }
+      PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
 
-    /*
-     * clear provider cache
-     */
-    getProvider().clearAllCaches();
+      /*
+       * clear provider cache
+       */
+      getProvider().clearAllCaches();
+    }
+    finally {
+      fLock.writeLock().unlock();
+    }
   }
 
   /*
@@ -297,7 +303,13 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * @see org.apache.opencmis.client.api.Session#getDefaultContext()
    */
   public OperationContext getDefaultContext() {
-    return this.context;
+    fLock.readLock().lock();
+    try {
+      return this.context;
+    }
+    finally {
+      fLock.readLock().unlock();
+    }
   }
 
   /*
@@ -307,7 +319,13 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * OperationContext)
    */
   public void setDefaultContext(OperationContext context) {
-    this.context = (context == null ? DEFAULT_CONTEXT : context);
+    fLock.writeLock().lock();
+    try {
+      this.context = (context == null ? DEFAULT_CONTEXT : context);
+    }
+    finally {
+      fLock.writeLock().unlock();
+    }
   }
 
   /*
@@ -442,20 +460,39 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * @see org.apache.opencmis.client.api.Session#getRepositoryInfo()
    */
   public RepositoryInfo getRepositoryInfo() {
-    if (this.repositoryInfo == null) {
-      /* get initial repository id from session parameter */
-      String repositoryId = this.determineRepositoryId(this.parameters);
-      if (repositoryId == null) {
-        throw new IllegalStateException("Repository Id is not set!");
+    fLock.readLock().lock();
+    try {
+      if (this.repositoryInfo == null) {
+        fLock.readLock().unlock();
+        fLock.writeLock().lock();
+        try {
+          // try again
+          if (this.repositoryInfo != null) {
+            return this.repositoryInfo;
+          }
+
+          /* get initial repository id from session parameter */
+          String repositoryId = this.determineRepositoryId(this.parameters);
+          if (repositoryId == null) {
+            throw new IllegalStateException("Repository Id is not set!");
+          }
+
+          RepositoryInfoData data = getProvider().getRepositoryService().getRepositoryInfo(
+              repositoryId, null);
+
+          this.repositoryInfo = new RepositoryInfoImpl(data);
+        }
+        finally {
+          fLock.writeLock().unlock();
+          fLock.readLock().lock();
+        }
       }
 
-      RepositoryInfoData data = getProvider().getRepositoryService().getRepositoryInfo(
-          repositoryId, null);
-
-      this.repositoryInfo = new RepositoryInfoImpl(data);
+      return this.repositoryInfo;
     }
-
-    return this.repositoryInfo;
+    finally {
+      fLock.readLock().unlock();
+    }
   }
 
   /*
@@ -641,22 +678,45 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * InMemory} provider is selected.
    */
   public void connect() {
-    this.provider = CmisProviderHelper.createProvider(this.parameters);
+    fLock.writeLock().lock();
+    try {
+      this.provider = CmisProviderHelper.createProvider(this.parameters);
+    }
+    finally {
+      fLock.writeLock().unlock();
+    }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.Session#getProvider()
+   */
   public CmisProvider getProvider() {
-    return this.provider;
+    fLock.readLock().lock();
+    try {
+      return this.provider;
+    }
+    finally {
+      fLock.readLock().unlock();
+    }
   }
 
   public Cache getCache() {
-    return this.cache;
+    fLock.readLock().lock();
+    try {
+      return this.cache;
+    }
+    finally {
+      fLock.readLock().unlock();
+    }
   }
 
   /**
    * Returns the repository id.
    */
   public String getRepositoryId() {
-    return this.getRepositoryInfo().getId();
+    return getRepositoryInfo().getId();
   }
 
   // creates
