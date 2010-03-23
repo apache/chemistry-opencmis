@@ -64,116 +64,138 @@ public class InMemoryVersioningServiceImpl extends AbstractServiceImpl implement
   public void cancelCheckOut(CallContext context, String repositoryId, String objectId,
       ExtensionsData extension) {
 
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    StoredObject so = checkStandardParameters(repositoryId, objectId);
-    String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
-    VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
+      StoredObject so = checkStandardParameters(repositoryId, objectId);
+      String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+      VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
-    verDoc.cancelCheckOut(user);
+      verDoc.cancelCheckOut(user);
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId,
       Boolean major, PropertiesData properties, ContentStreamData contentStream,
       String checkinComment, List<String> policies, AccessControlList addAces,
       AccessControlList removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
-    StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
-    String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
-    VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
+    try {
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    DocumentVersion pwc = verDoc.getPwc();
+      StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
+      String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+      VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
-    if (null != contentStream)
-      pwc.setContent(contentStream, false);
+      DocumentVersion pwc = verDoc.getPwc();
 
-    if (null != properties && null != properties.getProperties())
-      pwc.setCustomProperties(properties.getProperties());
+      if (null != contentStream)
+        pwc.setContent(contentStream, false);
 
-    verDoc.checkIn(major, checkinComment, user);
+      if (null != properties && null != properties.getProperties())
+        pwc.setCustomProperties(properties.getProperties());
 
-    // To be able to provide all Atom links in the response we need additional information:
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+      verDoc.checkIn(major, checkinComment, user);
 
-    ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
-        IncludeRelationships.NONE, null, false, false, extension);
+      // To be able to provide all Atom links in the response we need additional information:
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-    return od;
+      ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
+          IncludeRelationships.NONE, null, false, false, extension);
+
+      return od;
+    }
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   public ObjectData checkOut(CallContext context, String repositoryId, Holder<String> objectId,
       ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHolder objectInfos) {
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
-    StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
-    TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
-    if (!typeDef.getBaseId().equals(BaseObjectTypeIds.CMIS_DOCUMENT))
-      throw new CmisNotSupportedException("Only documents can be checked-out.");
-    else if (!((DocumentTypeDefinition) typeDef).isVersionable())
-      throw new CmisNotSupportedException("Object can't be checked-out, type is not versionable.");
+    try {
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    checkIsVersionableObject(so);
+      StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
+      TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
+      if (!typeDef.getBaseId().equals(BaseObjectTypeIds.CMIS_DOCUMENT))
+        throw new CmisNotSupportedException("Only documents can be checked-out.");
+      else if (!((DocumentTypeDefinition) typeDef).isVersionable())
+        throw new CmisNotSupportedException("Object can't be checked-out, type is not versionable.");
 
-    VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
+      checkIsVersionableObject(so);
 
-    ContentStreamData content = null;
+      VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
 
-    if (so instanceof DocumentVersion) {
-      // get document the version is contained in to c
-      content = ((DocumentVersion) so).getContent(0, -1);
+      ContentStreamData content = null;
+
+      if (so instanceof DocumentVersion) {
+        // get document the version is contained in to c
+        content = ((DocumentVersion) so).getContent(0, -1);
+      }
+      else {
+        content = ((VersionedDocument) so).getLatestVersion(false).getContent(0, -1);
+      }
+
+      if (verDoc.isCheckedOut())
+        throw new CmisUpdateConflictException("Document " + objectId.getValue()
+            + " is already checked out.");
+
+      String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+      checkHasUser(user);
+
+      DocumentVersion pwc = verDoc.checkOut(content, user);
+      objectId.setValue(pwc.getId()); // return the id of the created pwc
+
+      // To be able to provide all Atom links in the response we need additional information:
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+
+      ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
+          IncludeRelationships.NONE, null, false, false, extension);
+
+      return od;
     }
-    else {
-      content = ((VersionedDocument) so).getLatestVersion(false).getContent(0, -1);
+    finally {
+      RuntimeContext.remove();
     }
-
-    if (verDoc.isCheckedOut())
-      throw new CmisUpdateConflictException("Document " + objectId.getValue()
-          + " is already checked out.");
-
-    String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
-    checkHasUser(user);
-
-    DocumentVersion pwc = verDoc.checkOut(content, user);
-    objectId.setValue(pwc.getId()); // return the id of the created pwc
-
-    // To be able to provide all Atom links in the response we need additional information:
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-
-    ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
-        IncludeRelationships.NONE, null, false, false, extension);
-
-    return od;
   }
 
   public List<ObjectData> getAllVersions(CallContext context, String repositoryId,
       String versionSeriesId, String filter, Boolean includeAllowableActions,
       ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
+      StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
 
-    if (!(so instanceof VersionedDocument))
-      throw new RuntimeException("Object is not instance of a VersionedDocument (version series)");
+      if (!(so instanceof VersionedDocument))
+        throw new RuntimeException("Object is not instance of a VersionedDocument (version series)");
 
-    VersionedDocument verDoc = (VersionedDocument) so;
-    List<ObjectData> res = new ArrayList<ObjectData>();
-    List<DocumentVersion> versions = verDoc.getAllVersions();
-    for (DocumentVersion version : versions) {
-      ObjectData objData = getObject(context, repositoryId, version.getId(), filter,
-          includeAllowableActions, extension, objectInfos);
-      res.add(objData);
+      VersionedDocument verDoc = (VersionedDocument) so;
+      List<ObjectData> res = new ArrayList<ObjectData>();
+      List<DocumentVersion> versions = verDoc.getAllVersions();
+      for (DocumentVersion version : versions) {
+        ObjectData objData = getObject(context, repositoryId, version.getId(), filter,
+            includeAllowableActions, extension, objectInfos);
+        res.add(objData);
+      }
+
+      // provide information for Atom links for version series:
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+
+      return res;
     }
-
-    // provide information for Atom links for version series:
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-
-    return res;
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId,
@@ -181,54 +203,65 @@ public class InMemoryVersioningServiceImpl extends AbstractServiceImpl implement
       IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
       Boolean includeAcl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
-    ObjectData objData = null;
+      StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
+      ObjectData objData = null;
 
-    if (so instanceof VersionedDocument) {
-      VersionedDocument verDoc = (VersionedDocument) so;
-      DocumentVersion latestVersion = verDoc.getLatestVersion(major);
-      objData = getObject(context, repositoryId, latestVersion.getId(), filter,
-          includeAllowableActions, extension, objectInfos);
+      if (so instanceof VersionedDocument) {
+        VersionedDocument verDoc = (VersionedDocument) so;
+        DocumentVersion latestVersion = verDoc.getLatestVersion(major);
+        objData = getObject(context, repositoryId, latestVersion.getId(), filter,
+            includeAllowableActions, extension, objectInfos);
+      }
+      else if (so instanceof Document) {
+        objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions,
+            extension, objectInfos);
+      }
+      else
+        throw new RuntimeException("Object is not instance of a document (version series)");
+
+      // provide information for Atom links for version series:
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+
+      return objData;
     }
-    else if (so instanceof Document) {
-      objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions,
-          extension, objectInfos);
+    finally {
+      RuntimeContext.remove();
     }
-    else
-      throw new RuntimeException("Object is not instance of a document (version series)");
-
-    // provide information for Atom links for version series:
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-
-    return objData;
   }
 
   public PropertiesData getPropertiesOfLatestVersion(CallContext context, String repositoryId,
       String versionSeriesId, Boolean major, String filter, ExtensionsData extension) {
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
 
-    StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
-    StoredObject latestVersionObject = null;
+    try {
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    if (so instanceof VersionedDocument) {
-      VersionedDocument verDoc = (VersionedDocument) so;
-      latestVersionObject = verDoc.getLatestVersion(major);
+      StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
+      StoredObject latestVersionObject = null;
+
+      if (so instanceof VersionedDocument) {
+        VersionedDocument verDoc = (VersionedDocument) so;
+        latestVersionObject = verDoc.getLatestVersion(major);
+      }
+      else if (so instanceof Document) {
+        latestVersionObject = so;
+      }
+      else
+        throw new RuntimeException("Object is not instance of a document (version series)");
+
+      List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
+      PropertiesData props = PropertyCreationHelper.getPropertiesFromObject(repositoryId,
+          latestVersionObject, fStoreManager, requestedIds);
+
+      return props;
     }
-    else if (so instanceof Document) {
-      latestVersionObject = so;
+    finally {
+      RuntimeContext.remove();
     }
-    else
-      throw new RuntimeException("Object is not instance of a document (version series)");
-
-    List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-    PropertiesData props = PropertyCreationHelper.getPropertiesFromObject(repositoryId,
-        latestVersionObject, fStoreManager, requestedIds);
-
-    return props;
   }
 
   private ObjectData getObject(CallContext context, String repositoryId, String objectId,

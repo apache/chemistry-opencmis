@@ -28,6 +28,8 @@ import org.apache.opencmis.server.spi.CallContext;
  * @author jens
  *
  */
+
+/*
 public class RuntimeContext {
   public static class ThreadLocalRuntimeConfig extends ThreadLocal<CallContext> {    
 
@@ -53,6 +55,36 @@ public class RuntimeContext {
 
   public static String getRuntimeConfigValue(String key) {
     return CONN.getConfigValue(key);
+  }
+  
+  public static void remove() {
+    CONN.remove();
+  }
+}
+*/
+
+public class RuntimeContext {
+  
+  private static ThreadLocal<CallContext> CTX_TLS =  new ThreadLocal<CallContext>(); 
+
+  public static void attachCfg(CallContext ctx) {      
+    CTX_TLS.set(ctx);      
+  }
+
+  public static synchronized String getRuntimeConfigValue(String key) {
+    CallContext ctx = CTX_TLS.get();
+    if (null == ctx)
+      return null;
+    else      
+      return CTX_TLS.get().get(key) ;
+  }
+  
+  public static void remove() {
+    CTX_TLS.remove();
+  }
+
+  public static final CallContext getCurrentContext() {
+    return CTX_TLS.get();
   }
   
 }

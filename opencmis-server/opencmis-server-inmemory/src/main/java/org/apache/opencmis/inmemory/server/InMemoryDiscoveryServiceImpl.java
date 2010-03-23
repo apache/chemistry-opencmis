@@ -46,8 +46,8 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
   InMemoryNavigationServiceImpl fNavigationService; // real implementation of the service
   InMemoryRepositoryServiceImpl fRepositoryService;
 
-  public InMemoryDiscoveryServiceImpl(StoreManager storeManager, InMemoryRepositoryServiceImpl repSvc,
-      InMemoryNavigationServiceImpl navSvc) {
+  public InMemoryDiscoveryServiceImpl(StoreManager storeManager,
+      InMemoryRepositoryServiceImpl repSvc, InMemoryNavigationServiceImpl navSvc) {
     fStoreManager = storeManager;
     fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
     fNavigationService = navSvc;
@@ -60,28 +60,33 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
       ObjectInfoHolder objectInfos) {
     // dummy implementation using hard coded values
 
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    RepositoryInfoData rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
-    String rootFolderId = rep.getRootFolderId();
+      RepositoryInfoData rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
+      String rootFolderId = rep.getRootFolderId();
 
-    ObjectListImpl objList = new ObjectListImpl();
-    List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context,
-        repositoryId, rootFolderId, BigInteger.valueOf(3), filter, false,
-        IncludeRelationships.NONE, null, false, extension, null);
+      ObjectListImpl objList = new ObjectListImpl();
+      List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context,
+          repositoryId, rootFolderId, BigInteger.valueOf(3), filter, false,
+          IncludeRelationships.NONE, null, false, extension, null);
 
-    // convert ObjectInFolderContainerList to objectList
-    List<ObjectData> lod = new ArrayList<ObjectData>();
-    for (ObjectInFolderContainer obj : tempRes) {
-      convertList(lod, obj);
+      // convert ObjectInFolderContainerList to objectList
+      List<ObjectData> lod = new ArrayList<ObjectData>();
+      for (ObjectInFolderContainer obj : tempRes) {
+        convertList(lod, obj);
+      }
+      objList.setObjects(lod);
+      objList.setNumItems(BigInteger.valueOf(lod.size()));
+
+      // To be able to provide all Atom links in the response we need additional information:
+      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, null, objectInfos, objList);
+      return objList;
     }
-    objList.setObjects(lod);
-    objList.setNumItems(BigInteger.valueOf(lod.size()));
-
-    // To be able to provide all Atom links in the response we need additional information:
-    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, null, objectInfos, objList);
-    return objList;
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
   private void convertList(List<ObjectData> lod, ObjectInFolderContainer obj) {
@@ -106,26 +111,31 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
       BigInteger skipCount, ExtensionsData extension) {
     // dummy implementation using hard coded values
 
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
-    RuntimeContext.getRuntimeConfig().attachCfg(context);
+    try {
+      // Attach the CallContext to a thread local context that can be accessed from everywhere
+      RuntimeContext.attachCfg(context);
 
-    // use descendants of root folder as result
-    RepositoryInfoData rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
-    String rootFolderId = rep.getRootFolderId();
-    ObjectListImpl objList = new ObjectListImpl();
-    List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context,
-        repositoryId, rootFolderId, BigInteger.valueOf(3), "*", includeAllowableActions,
-        includeRelationships, renditionFilter, false, extension, null);
+      // use descendants of root folder as result
+      RepositoryInfoData rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
+      String rootFolderId = rep.getRootFolderId();
+      ObjectListImpl objList = new ObjectListImpl();
+      List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context,
+          repositoryId, rootFolderId, BigInteger.valueOf(3), "*", includeAllowableActions,
+          includeRelationships, renditionFilter, false, extension, null);
 
-    // convert ObjectInFolderContainerList to objectList
-    List<ObjectData> lod = new ArrayList<ObjectData>();
-    for (ObjectInFolderContainer obj : tempRes) {
-      convertList(lod, obj);
+      // convert ObjectInFolderContainerList to objectList
+      List<ObjectData> lod = new ArrayList<ObjectData>();
+      for (ObjectInFolderContainer obj : tempRes) {
+        convertList(lod, obj);
+      }
+      objList.setObjects(lod);
+      objList.setNumItems(BigInteger.valueOf(lod.size()));
+
+      return objList;
     }
-    objList.setObjects(lod);
-    objList.setNumItems(BigInteger.valueOf(lod.size()));
-
-    return objList;
+    finally {
+      RuntimeContext.remove();
+    }
   }
 
 }
