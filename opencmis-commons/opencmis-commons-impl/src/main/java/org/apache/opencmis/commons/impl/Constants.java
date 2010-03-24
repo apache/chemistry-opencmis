@@ -103,7 +103,7 @@ public final class Constants {
   public static final String PARAM_CHANGE_LOG_TOKEN = "changeLogToken";
   public static final String PARAM_CHANGE_TOKEN = "changeToken";
   public static final String PARAM_CHECKIN_COMMENT = "checkinComment";
-  public static final String PARAM_CHECK_IN = "checkIn";
+  public static final String PARAM_CHECK_IN = "checkin";
   public static final String PARAM_CHILD_TYPES = "childTypes";
   public static final String PARAM_CONTINUE_ON_FAILURE = "continueOnFailure";
   public static final String PARAM_DEPTH = "depth";
