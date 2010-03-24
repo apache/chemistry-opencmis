@@ -128,15 +128,30 @@ public final class AtomPubUtils {
   /**
    * Extracts a string parameter.
    */
+  @SuppressWarnings("unchecked")
   public static String getStringParameter(HttpServletRequest request, String name) {
-    return request.getParameter(name);
+    if (name == null) {
+      return null;
+    }
+
+    Map<String, String[]> parameters = (Map<String, String[]>) request.getParameterMap();
+    for (Map.Entry<String, String[]> parameter : parameters.entrySet()) {
+      if (name.equalsIgnoreCase(parameter.getKey())) {
+        if (parameter.getValue() == null) {
+          return null;
+        }
+        return parameter.getValue()[0];
+      }
+    }
+
+    return null;
   }
 
   /**
    * Extracts a boolean parameter (with default).
    */
   public static boolean getBooleanParameter(HttpServletRequest request, String name, boolean def) {
-    String value = request.getParameter(name);
+    String value = getStringParameter(request, name);
     if (value == null) {
       return def;
     }
@@ -148,7 +163,7 @@ public final class AtomPubUtils {
    * Extracts a boolean parameter.
    */
   public static Boolean getBooleanParameter(HttpServletRequest request, String name) {
-    String value = request.getParameter(name);
+    String value = getStringParameter(request, name);
     if (value == null) {
       return null;
     }
@@ -172,7 +187,7 @@ public final class AtomPubUtils {
    * Extracts an integer parameter.
    */
   public static BigInteger getBigIntegerParameter(HttpServletRequest request, String name) {
-    String value = request.getParameter(name);
+    String value = getStringParameter(request, name);
     if (value == null) {
       return null;
     }
@@ -190,7 +205,7 @@ public final class AtomPubUtils {
    */
   @SuppressWarnings("unchecked")
   public static <T> T getEnumParameter(HttpServletRequest request, String name, Class<T> clazz) {
-    String value = request.getParameter(name);
+    String value = getStringParameter(request, name);
     if (value == null) {
       return null;
     }
