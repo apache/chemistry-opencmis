@@ -92,41 +92,27 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     // fill the version related properties (versions should override this but the spec requires some
     // properties always to be set
     
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_LATEST_VERSION, requestedIds)) {
-      properties.put(PropertyIds.CMIS_IS_LATEST_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_VERSION, true));
-    }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_IMMUTABLE, requestedIds)) {
       properties.put(PropertyIds.CMIS_IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_IMMUTABLE, false));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_MAJOR_VERSION, requestedIds)) {
-      properties.put(PropertyIds.CMIS_IS_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_MAJOR_VERSION, true));
+        
+    // Set the content related properties
+    if (null != fContent) {
+      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, requestedIds)) {
+        properties.put(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, objFactory
+            .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, fContent
+                .getFileName()));
+      }
+      // omit: PropertyIds.CMIS_CONTENT_STREAM_ID
+      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, requestedIds)) {
+        properties.put(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, objFactory
+            .createPropertyIntegerData(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, fContent.getLength()));
+      }
+      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, requestedIds)) {
+        properties.put(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, objFactory
+            .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
+      }      
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, requestedIds)) {
-      properties.put(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, true));
-    }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_ID, requestedIds)) {
-      // return id of document itself
-      properties.put(PropertyIds.CMIS_VERSION_SERIES_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_ID, getId()));
-    }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
-      properties.put(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, false));
-    }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, requestedIds)) {
-      properties.put(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, (String)null));
-    }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, requestedIds)) {
-      properties.put(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, (String)null));
-    }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CHECKIN_COMMENT, requestedIds)) {
-      properties.put(PropertyIds.CMIS_CHECKIN_COMMENT, objFactory.createPropertyStringData(PropertyIds.CMIS_CHECKIN_COMMENT, (String)null));
-    }
-    
-    // optional:
-//    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_LABEL, requestedIds)) {
-//      properties.add(objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_LABEL, ""));
-//    }
-    
-    
   }
 
 }

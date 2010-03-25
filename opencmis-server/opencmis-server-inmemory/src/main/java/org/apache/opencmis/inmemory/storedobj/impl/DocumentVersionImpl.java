@@ -194,6 +194,26 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_LABEL, requestedIds)) {
       properties.put(PropertyIds.CMIS_VERSION_LABEL, objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_LABEL, getVersionLabel()));
     }
+
+    // Set the content related properties
+    if (null != fContent) {
+      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, requestedIds)) {
+        properties.put(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, objFactory
+            .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, fContent
+                .getFileName()));
+      }
+      
+      // omit: PropertyIds.CMIS_CONTENT_STREAM_ID
+
+      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, requestedIds)) {
+        properties.put(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, objFactory
+            .createPropertyIntegerData(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, fContent.getLength()));
+      }
+      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, requestedIds)) {
+        properties.put(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, objFactory
+            .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
+      }      
+    }
   }
 
   public List<Folder> getParents() {
