@@ -58,7 +58,8 @@ public class DataObjectCreator {
     boolean canCheckOut = false;
     boolean canCheckIn = false;
     boolean isVersioned = so instanceof Version || so instanceof VersionedDocument;
-    
+    boolean hasContent = so instanceof Content && ((Content) so).hasContent();
+      
     String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
     if (so instanceof Version) {
       isCheckedOut = ((Version)so).isPwc();
@@ -73,33 +74,51 @@ public class DataObjectCreator {
     Map<String, Boolean> actions = new HashMap<String, Boolean>();
     actions.put(AllowableActionsData.ACTION_CAN_DELETE_OBJECT, Boolean.TRUE);
     actions.put(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_PROPERTIES, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS, Boolean.FALSE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, !so.equals(objStore.getRootFolder()));
-    actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT, !so.equals(objStore.getRootFolder()));
-    actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, isFolder);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS, isFolder);
-    actions.put(AllowableActionsData.ACTION_CAN_MOVE_OBJECT, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM, isDocument);
-    actions.put(AllowableActionsData.ACTION_CAN_CHECK_OUT, canCheckOut);
-    actions.put(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT, isCheckedOut);
-    actions.put(AllowableActionsData.ACTION_CAN_CHECK_IN, canCheckIn);
-    actions.put(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM, isVersioned ? canCheckIn: isDocument);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS, so instanceof VersionedDocument);
-    actions.put(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER, isFolder);
-    actions.put(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER, isFolder);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM, isDocument);
+    
     actions.put(AllowableActionsData.ACTION_CAN_APPLY_POLICY, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_GET_APPLIED_POLICIES, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_REMOVE_POLICY, Boolean.FALSE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_CHILDREN, isFolder);
-    actions.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, isFolder);
-    actions.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, isFolder);
-    actions.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, Boolean.FALSE);
-    actions.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, isFolder);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_RENDITIONS, Boolean.FALSE);
+
     actions.put(AllowableActionsData.ACTION_CAN_GET_ACL, Boolean.FALSE);
     actions.put(AllowableActionsData.ACTION_CAN_APPLY_ACL, Boolean.FALSE);
+
+    if (isFolder || isDocument) {
+      actions.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, Boolean.FALSE);
+      actions.put(AllowableActionsData.ACTION_CAN_GET_PROPERTIES, Boolean.TRUE);
+      actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS, Boolean.FALSE);
+      actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, !so.equals(objStore.getRootFolder()));
+      actions.put(AllowableActionsData.ACTION_CAN_MOVE_OBJECT, Boolean.TRUE);      
+    }
+
+    if (isFolder) {
+      actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT, !so.equals(objStore.getRootFolder()));
+      actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, true);
+      actions.put(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS, true);
+      actions.put(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER, true);
+      actions.put(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER, true);
+      actions.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, true);
+      actions.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, true);
+      actions.put(AllowableActionsData.ACTION_CAN_GET_CHILDREN, true);
+      actions.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, isFolder);
+    }
+    
+    if (hasContent) { 
+      actions.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM, isDocument);
+      actions.put(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM, isDocument);
+      actions.put(AllowableActionsData.ACTION_CAN_GET_RENDITIONS, Boolean.FALSE);
+    }        
+
+   if (isVersioned) { 
+      actions.put(AllowableActionsData.ACTION_CAN_CHECK_OUT, canCheckOut);
+      actions.put(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT, isCheckedOut);
+      actions.put(AllowableActionsData.ACTION_CAN_CHECK_IN, canCheckIn);
+      actions.put(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS, so instanceof VersionedDocument);
+    }
+    
+    if (isDocument) {
+      actions.put(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM, isVersioned ? canCheckIn: isDocument);      
+    }
+    
     allowableActions.setAllowableActions(actions);
     return allowableActions;
   }

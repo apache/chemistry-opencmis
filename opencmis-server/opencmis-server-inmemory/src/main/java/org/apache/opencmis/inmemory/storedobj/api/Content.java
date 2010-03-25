@@ -21,6 +21,13 @@ package org.apache.opencmis.inmemory.storedobj.api;
 import org.apache.opencmis.commons.provider.ContentStreamData;
 
 public interface Content {
+  
+  /** 
+   * return true if this object has content or false if there is no content attached.
+   * @return
+   */
+  boolean hasContent();
+  
   /**
    * retrieve the content of a document
    * @return

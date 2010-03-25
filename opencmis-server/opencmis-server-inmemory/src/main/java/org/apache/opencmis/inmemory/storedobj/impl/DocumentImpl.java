@@ -53,7 +53,9 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
    * @see org.opencmis.client.provider.spi.inmemory.IDocument#getContent()
    */
   public ContentStreamData getContent(long offset, long length) {
-    if (offset<=0 && length<0)
+    if (null == fContent)
+      return null;
+    else if (offset<=0 && length<0)
       return fContent;
     else
       return fContent.getCloneWithLimits(offset, length);
@@ -114,5 +116,10 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
       }      
     }
   }
+
+  public boolean hasContent() {
+    return null != fContent;
+  }
+
 
 }
