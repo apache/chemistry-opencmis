@@ -29,7 +29,7 @@ public class FolderInfo extends ObjectInfoImpl {
     setFileName(null);
     setHasAcl(true);
     setHasContent(false);
-    setHasVersionHistory(false);
+    setVersionSeriesId(null);
     setIsCurrentVersion(true);
     setRelationshipSourceIds(null);
     setRelationshipTargetIds(null);

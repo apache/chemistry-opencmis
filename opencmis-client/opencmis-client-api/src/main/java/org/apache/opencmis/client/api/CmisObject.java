@@ -160,14 +160,23 @@ public interface CmisObject extends ObjectId {
   // session handling
 
   /**
-   * returns true, if this object has pending changes which are not synced with the backend.
-   * 
-   * @return
+   * Returns true, if this object has pending changes which are not synced with the backend.
    */
   boolean isChanged();
+
+  /**
+   * Returns the timestamp (in milliseconds) of the last refresh.
+   */
+  long getRefreshTimestamp();
 
   /**
    * Reloads the data from the repository.
    */
   void refresh();
+
+  /**
+   * Reloads the data from the repository if the last refresh did not occur within
+   * <code>durationInMillis</code>.
+   */
+  void refreshIfOld(long durationInMillis);
 }

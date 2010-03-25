@@ -39,7 +39,7 @@ public class ObjectInfoImpl implements ObjectInfo {
   private String fTypeId;
   private BaseObjectTypeIds fBaseObjectTypeId;
   private boolean fIsCurrentVersion = true;
-  private boolean fHasVersionHistory = false;
+  private String fVersionSeriesId = null;
   private String fWorkingCopyId = null;
   private String fWorkingCopyOriginalId = null;
   private boolean fHasContent = true;
@@ -127,12 +127,12 @@ public class ObjectInfoImpl implements ObjectInfo {
     fIsCurrentVersion = currentVersion;
   }
 
-  public boolean hasVersionHistory() {
-    return fHasVersionHistory;
+  public String getVersionSeriesId() {
+    return fVersionSeriesId;
   }
 
-  public void setHasVersionHistory(boolean hasVersionHistory) {
-    fHasVersionHistory = hasVersionHistory;
+  public void setVersionSeriesId(String versionSeriesId) {
+    fVersionSeriesId = versionSeriesId;
   }
 
   public String getWorkingCopyId() {

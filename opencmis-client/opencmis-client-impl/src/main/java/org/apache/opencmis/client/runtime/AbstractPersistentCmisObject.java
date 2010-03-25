@@ -72,6 +72,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   private List<Relationship> relationships;
   private OperationContext creationContext;
   private boolean isChanged = false;
+  private long refreshTimestamp;
 
   private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
 
@@ -820,6 +821,21 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   /*
    * (non-Javadoc)
    * 
+   * @see org.apache.opencmis.client.api.CmisObject#getRefreshTimestamp()
+   */
+  public long getRefreshTimestamp() {
+    readLock();
+    try {
+      return this.refreshTimestamp;
+    }
+    finally {
+      readUnlock();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see
    * org.apache.opencmis.client.api.CmisObject#refresh(org.apache.opencmis.client.api.OperationContext
    * )
@@ -838,6 +854,23 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
       // reset this object
       initialize(getSession(), getObjectType(), objectData, this.creationContext);
+    }
+    finally {
+      writeUnlock();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.CmisObject#refreshIfOld(long)
+   */
+  public void refreshIfOld(long durationInMillis) {
+    writeLock();
+    try {
+      if (this.refreshTimestamp < System.currentTimeMillis() - durationInMillis) {
+        refresh();
+      }
     }
     finally {
       writeUnlock();

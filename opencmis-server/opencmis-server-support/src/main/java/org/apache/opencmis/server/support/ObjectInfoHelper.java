@@ -208,12 +208,12 @@ public class ObjectInfoHelper
         // versioning information: 
         if (isVersioned) {          
           objInfo.setIsCurrentVersion(getBooleanProperty(properties, PropertyIds.CMIS_IS_LATEST_VERSION)); 
-          objInfo.setHasVersionHistory(true);
+          objInfo.setVersionSeriesId(getStringProperty(properties, PropertyIds.CMIS_VERSION_SERIES_ID));
           objInfo.setWorkingCopyId(getStringProperty(properties, PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID));
           objInfo.setWorkingCopyOriginalId(getStringProperty(properties, PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID));
         } else { // unversioned document
           objInfo.setIsCurrentVersion (true); 
-          objInfo.setHasVersionHistory(false);
+          objInfo.setVersionSeriesId(null);
           objInfo.setWorkingCopyId(null);
           objInfo.setWorkingCopyOriginalId(null);
         }

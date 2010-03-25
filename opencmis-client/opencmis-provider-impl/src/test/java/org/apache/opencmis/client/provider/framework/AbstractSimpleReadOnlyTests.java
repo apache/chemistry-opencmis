@@ -528,7 +528,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
         PropertyIds.CMIS_BASE_TYPE_ID).getFirstValue();
     if (isVersionable(typeName)) {
       List<ObjectData> allVersions = getProvider().getVersioningService().getAllVersions(
-          getTestRepositoryId(), versionSeriesId, "*", Boolean.FALSE, null);
+          getTestRepositoryId(), objectId, versionSeriesId, "*", Boolean.FALSE, null);
       assertNotNull(allVersions);
       assertTrue(allVersions.size() > 0);
 

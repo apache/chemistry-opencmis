@@ -74,10 +74,10 @@ public interface ObjectInfo {
   boolean isCurrentVersion();
 
   /**
-   * Returns <code>true</code> if the object is a document and it is versionable, <code>false</code>
-   * otherwise.
+   * Returns the version series id if the object is a document and it is versionable,
+   * <code>null</code> otherwise.
    */
-  boolean hasVersionHistory();
+  String getVersionSeriesId();
 
   /**
    * Returns the working copy id if the object is a document and a working copy exists,

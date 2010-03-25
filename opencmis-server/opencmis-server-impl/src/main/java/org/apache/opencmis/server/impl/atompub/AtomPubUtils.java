@@ -321,8 +321,9 @@ public final class AtomPubUtils {
       }
     }
 
-    if (info.hasVersionHistory()) {
-      entry.writeVersionHistoryLink(compileUrl(baseUrl, RESOURCE_VERSIONS, info.getId()));
+    if (info.getVersionSeriesId() != null) {
+      entry.writeVersionHistoryLink(compileUrl(baseUrl, RESOURCE_VERSIONS, info
+          .getVersionSeriesId()));
     }
 
     if (!info.isCurrentVersion()) {

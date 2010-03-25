@@ -28,7 +28,7 @@ public class DocumentInfo extends ObjectInfoImpl {
     setHasAcl(true);
     setHasContent(true);
     setHasParent(true);
-    setHasVersionHistory(false);
+    setVersionSeriesId(null);
     setIsCurrentVersion(true);
     setRelationshipSourceIds(null);
     setRelationshipTargetIds(null);

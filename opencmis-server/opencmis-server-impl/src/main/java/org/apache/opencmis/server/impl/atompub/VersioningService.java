@@ -101,23 +101,23 @@ public class VersioningService {
     CmisVersioningService service = factory.getVersioningService();
 
     // get parameters
-    String objectId = getStringParameter(request, Constants.PARAM_ID);
+    String versionSeriesId = getStringParameter(request, Constants.PARAM_ID);
     String filter = getStringParameter(request, Constants.PARAM_FILTER);
     Boolean includeAllowableActions = getBooleanParameter(request,
         Constants.PARAM_ALLOWABLE_ACTIONS);
 
     // execute
     ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-    List<ObjectData> versions = service.getAllVersions(context, repositoryId, objectId, filter,
-        includeAllowableActions, null, objectInfoHolder);
+    List<ObjectData> versions = service.getAllVersions(context, repositoryId, versionSeriesId,
+        filter, includeAllowableActions, null, objectInfoHolder);
 
     if (versions == null) {
       throw new CmisRuntimeException("Versions are null!");
     }
 
-    ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(objectId);
+    ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(versionSeriesId);
     if (objectInfo == null) {
-      throw new CmisRuntimeException("Object Info is missing!");
+      throw new CmisRuntimeException("Version Series Info is missing!");
     }
 
     // set headers
@@ -140,7 +140,7 @@ public class VersioningService {
 
     feed.writeSelfLink(compileUrl(baseUrl, RESOURCE_VERSIONS, objectInfo.getId()), null);
 
-    feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, objectId));
+    feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, versionSeriesId));
 
     // write entries
     AtomEntry entry = new AtomEntry(feed.getWriter());

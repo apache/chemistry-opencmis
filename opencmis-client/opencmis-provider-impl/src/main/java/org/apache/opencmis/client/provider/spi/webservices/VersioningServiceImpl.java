@@ -120,9 +120,11 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
    * 
    * @see org.apache.opencmis.client.provider.VersioningService#checkIn(java.lang.String,
    * org.apache.opencmis.client.provider.Holder, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.PropertiesData, org.apache.opencmis.client.provider.ContentStreamData,
-   * java.lang.String, java.util.List, org.apache.opencmis.client.provider.AccessControlList,
-   * org.apache.opencmis.client.provider.AccessControlList, org.apache.opencmis.client.provider.ExtensionsData)
+   * org.apache.opencmis.client.provider.PropertiesData,
+   * org.apache.opencmis.client.provider.ContentStreamData, java.lang.String, java.util.List,
+   * org.apache.opencmis.client.provider.AccessControlList,
+   * org.apache.opencmis.client.provider.AccessControlList,
+   * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
       PropertiesData properties, ContentStreamData contentStream, String checkinComment,
@@ -146,6 +148,19 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
     catch (Exception e) {
       throw new CmisRuntimeException("Error: " + e.getMessage(), e);
     }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.commons.provider.VersioningService#getAllVersions(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
+   * org.apache.opencmis.commons.api.ExtensionsData)
+   */
+  public List<ObjectData> getAllVersions(String repositoryId, String objectId,
+      String versionSeriesId, String filter, Boolean includeAllowableActions,
+      ExtensionsData extension) {
+    return getAllVersions(repositoryId, versionSeriesId, filter, includeAllowableActions, extension);
   }
 
   /*
@@ -187,8 +202,9 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.VersioningService#getObjectOfLatestVersion(java.lang.String,
-   * java.lang.String, java.lang.Boolean, java.lang.String, java.lang.Boolean,
+   * @see
+   * org.apache.opencmis.client.provider.VersioningService#getObjectOfLatestVersion(java.lang.String
+   * , java.lang.String, java.lang.Boolean, java.lang.String, java.lang.Boolean,
    * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.lang.Boolean,
    * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
    */
@@ -215,8 +231,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
    * (non-Javadoc)
    * 
    * @see
-   * org.apache.opencmis.client.provider.VersioningService#getPropertiesOfLatestVersion(java.lang.String,
-   * java.lang.String, java.lang.Boolean, java.lang.String,
+   * org.apache.opencmis.client.provider.VersioningService#getPropertiesOfLatestVersion(java.lang
+   * .String, java.lang.String, java.lang.Boolean, java.lang.String,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public PropertiesData getPropertiesOfLatestVersion(String repositoryId, String VersionSeriesId,

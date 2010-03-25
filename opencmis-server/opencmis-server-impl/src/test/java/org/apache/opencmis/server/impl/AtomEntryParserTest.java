@@ -19,7 +19,8 @@
 package org.apache.opencmis.server.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +28,6 @@ import java.io.ByteArrayOutputStream;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.provider.ContentStreamData;
-import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.PropertyStringData;
 import org.apache.opencmis.server.impl.atompub.AtomEntryParser;
 import org.junit.Test;

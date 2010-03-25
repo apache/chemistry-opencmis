@@ -365,7 +365,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     // there must be only one version in the version series
     List<ObjectData> allVersions = getProvider().getVersioningService().getAllVersions(
-        getTestRepositoryId(), getVersionSeriesId(docId), "*", Boolean.FALSE, null);
+        getTestRepositoryId(), docId, getVersionSeriesId(docId), "*", Boolean.FALSE, null);
     assertNotNull(allVersions);
     assertEquals(1, allVersions.size());
 
@@ -404,7 +404,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     assertFalse(isCheckedOut(docId));
 
     // there must be exactly two versions in the version series
-    allVersions = getProvider().getVersioningService().getAllVersions(getTestRepositoryId(),
+    allVersions = getProvider().getVersioningService().getAllVersions(getTestRepositoryId(), docId,
         getVersionSeriesId(docId), "*", Boolean.FALSE, null);
     assertNotNull(allVersions);
     assertEquals(2, allVersions.size());

@@ -35,6 +35,7 @@ import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.Constants;
 import org.apache.opencmis.commons.impl.ReturnVersion;
@@ -246,20 +247,35 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
   /*
    * (non-Javadoc)
    * 
+   * @see org.apache.opencmis.commons.provider.VersioningService#getAllVersions(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.Boolean,
+   * org.apache.opencmis.commons.api.ExtensionsData)
+   */
+  public List<ObjectData> getAllVersions(String repositoryId, String versionSeriesId,
+      String filter, Boolean includeAllowableActions, ExtensionsData extension) {
+    throw new CmisNotSupportedException("Not supported by Atom binding! "
+        + "Use 'getAllVersions(String repositoryId, String objectId, String versionSeriesId, "
+        + "String filter, Boolean includeAllowableActions, ExtensionsData extension)' instead!'");
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.apache.opencmis.client.provider.VersioningService#getAllVersions(java.lang.String,
    * java.lang.String, java.lang.String, java.lang.Boolean,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public List<ObjectData> getAllVersions(String repositoryId, String versionSeriesId,
-      String filter, Boolean includeAllowableActions, ExtensionsData extension) {
+  public List<ObjectData> getAllVersions(String repositoryId, String objectId,
+      String versionSeriesId, String filter, Boolean includeAllowableActions,
+      ExtensionsData extension) {
     List<ObjectData> result = new ArrayList<ObjectData>();
 
     // find the link
-    String link = loadLink(repositoryId, versionSeriesId, Constants.REL_VERSIONHISTORY,
+    String link = loadLink(repositoryId, objectId, Constants.REL_VERSIONHISTORY,
         Constants.MEDIATYPE_FEED);
 
     if (link == null) {
-      throwLinkException(repositoryId, versionSeriesId, Constants.REL_VERSIONHISTORY,
+      throwLinkException(repositoryId, objectId, Constants.REL_VERSIONHISTORY,
           Constants.MEDIATYPE_FEED);
     }
 
@@ -350,5 +366,4 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 
     return object.getProperties();
   }
-
 }
