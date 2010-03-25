@@ -59,6 +59,12 @@ public class VersioningServiceImpl extends AbstractService implements Versioning
         null);
   }
 
+  public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId,
+      String filter, Boolean includeAllowableActions, ExtensionsData extension) {
+
+    return getAllVersions(repositoryId, versionSeriesId, filter, includeAllowableActions, extension);
+  }
+  
   public List<ObjectData> getAllVersions(String repositoryId, String versionSeriesId,
       String filter, Boolean includeAllowableActions, ExtensionsData extension) {
 
