@@ -236,5 +236,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     fContainer.removeParent(parent);
   }
 
- 
+  public boolean hasContent() {
+    return null != fContent;
+  }
+
 }

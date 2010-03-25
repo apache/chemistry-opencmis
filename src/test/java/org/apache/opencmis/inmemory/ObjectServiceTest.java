@@ -636,7 +636,8 @@ public class ObjectServiceTest extends AbstractServiceTst {
   @Test
   public void testAllowableActions() {
     log.info("starting testAllowableActions() ...");
-    String id = createDocument(fRootFolderId, false);
+    final boolean withContent = false;
+    String id = createDocument(fRootFolderId, withContent);
     
     // get allowable actions via getObject
     ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", true, IncludeRelationships.NONE,
@@ -644,48 +645,64 @@ public class ObjectServiceTest extends AbstractServiceTst {
     assertNotNull(res.getAllowableActions());
     Map<String, Boolean> actions = res.getAllowableActions().getAllowableActions();
     assertNotNull(actions);
-    verifyAllowableActions(actions);
+    verifyAllowableActionsDocument(actions, false, withContent);
     
     // get allowable actions via getAllowableActions
     AllowableActionsData allowableActions = fObjSvc.getAllowableActions(fRepositoryId, id, null);
     assertNotNull(allowableActions);
     actions = allowableActions.getAllowableActions();
     assertNotNull(actions);
-    verifyAllowableActions(actions);
+    verifyAllowableActionsDocument(actions, false, withContent);
 
     // cleanup
     fObjSvc.deleteObject(fRepositoryId, id, true, null);
     log.info("... testAllowableActions() finished.");    
   }
   
-  private void verifyAllowableActions(Map<String, Boolean> actions) {
+  private void verifyAllowableActionsDocument(Map<String, Boolean> actions, boolean isVersioned, boolean hasContent) {
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_OBJECT));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_PROPERTIES));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS));
+    
+    assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT));
+    assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE));
+    assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_MOVE_OBJECT));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_OUT));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_IN));
+    if (hasContent) {
+      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM));
+      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM));
+      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_RENDITIONS));
+    } else {
+      assertNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM));
+      assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM));
+      assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_RENDITIONS));
+    }
+    assertNull(actions.get(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER));
+    assertNull(actions.get(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER));
+    
+    if (isVersioned) {
+      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT));
+      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_IN));      
+      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_OUT));
+      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS));
+
+    } else {
+      assertNull(actions.get(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT));
+      assertNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_IN));      
+      assertNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_OUT));
+      assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS));
+    }
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_APPLY_POLICY));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_APPLIED_POLICIES));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_REMOVE_POLICY));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_CHILDREN));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_FOLDER));
+    assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_CHILDREN));
+    assertNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT));
+    assertNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_FOLDER));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_TREE));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_RENDITIONS));
+    assertNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_TREE));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_ACL));
     assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_APPLY_ACL));
   }
