@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,7 +41,7 @@ import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.junit.Test;
 
-public class WriteObjectTest extends AbstractSessionTest {
+public class WriteObjectIT extends AbstractSessionTest {
 
 	@Test
 	public void createFolder() {
@@ -140,10 +140,7 @@ public class WriteObjectTest extends AbstractSessionTest {
 				contentStream, VersioningState.NONE, null, null, null);
 		assertNotNull(id);
 
-		// verify content (which is not supported by mock)
-		if (this.isMock()) {
-			return;
-		}
+		// verify content 
 		Document doc = (Document) this.session.getObject(id);
 		assertNotNull(doc);
 		// Assert.assertEquals(buf1.length, doc.getContentStreamLength());
@@ -156,11 +153,7 @@ public class WriteObjectTest extends AbstractSessionTest {
 	@Test
 	public void createDocumentFromSource() throws IOException {
 		try {
-			// verify content (which is not supported by mock)
-			if (this.isMock()) {
-				return;
-			}
-
+			// verify content 
 			String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
 					+ FixtureData.DOCUMENT1_NAME;
 			Document srcDocument = (Document) this.session
@@ -199,16 +192,13 @@ public class WriteObjectTest extends AbstractSessionTest {
 
 		} catch (CmisNotSupportedException e) {
 			// not an error
-			this.log.info(e.getMessage(), e);
+			this.log.info(e.getMessage());
 		}
 	}
 
 	@Test
 	public void deleteAndCreateContent() throws IOException {
-		// verify content (which is not supported by mock)
-		if (this.isMock()) {
-			return;
-		}
+		// verify content
 
 		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
 				+ FixtureData.DOCUMENT1_NAME;
@@ -222,7 +212,8 @@ public class WriteObjectTest extends AbstractSessionTest {
 		assertNotNull(contentString);
 
 		// delete and set new content
-		ObjectId id = document.deleteContentStream();
+		// ObjectId id = (return id not supported by AtomPub)
+			document.deleteContentStream();
 		// assertNotNull(id);
 
 		String filename = UUID.randomUUID().toString();
@@ -248,11 +239,7 @@ public class WriteObjectTest extends AbstractSessionTest {
 
 	@Test
 	public void updateProperties() {
-		// verify content (which is not supported by mock)
-		if (this.isMock()) {
-			return;
-		}
-
+		// verify content
 		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
 				+ FixtureData.DOCUMENT1_NAME;
 		Document document = (Document) this.session.getObjectByPath(path);

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,11 +24,11 @@ import java.io.InputStream;
 
 import junit.framework.Assert;
 
-import org.junit.Test;
 import org.apache.opencmis.client.api.ContentStream;
 import org.apache.opencmis.client.api.Document;
+import org.junit.Test;
 
-public class ReadOnlyContentStreamTest extends AbstractSessionTest {
+public class ReadOnlyContentStreamIT extends AbstractSessionTest {
 
 	@Test
 	public void readContentStream() throws IOException {

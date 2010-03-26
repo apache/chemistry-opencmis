@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import junit.framework.Assert;
 
@@ -33,7 +33,7 @@ import org.junit.Test;
 /**
  * Testing folder and files.
  */
-public class ReadOnlyRepositoryInfoTest extends AbstractSessionTest {
+public class ReadOnlyRepositoryInfoIT extends AbstractSessionTest {
 
 	@Test
 	public void changesIncomplete() {

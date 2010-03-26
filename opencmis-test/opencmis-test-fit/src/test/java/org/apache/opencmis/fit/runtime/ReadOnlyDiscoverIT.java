@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import java.util.List;
 
@@ -24,19 +24,15 @@ import junit.framework.Assert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.opencmis.client.api.ChangeEvent;
-import org.apache.opencmis.client.api.CmisObject;
-import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.QueryResult;
 import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.commons.enums.CapabilityChanges;
 import org.apache.opencmis.commons.enums.CapabilityQuery;
-import org.apache.opencmis.commons.enums.TypeOfChanges;
 import org.junit.Test;
 
-public class ReadOnlyDiscoverTest extends AbstractSessionTest {
+public class ReadOnlyDiscoverIT extends AbstractSessionTest {
 
-  private static Log log = LogFactory.getLog(ReadOnlyDiscoverTest.class);
+  private static Log log = LogFactory.getLog(ReadOnlyDiscoverIT.class);
 
   @Test
   public void query() {
@@ -44,7 +40,7 @@ public class ReadOnlyDiscoverTest extends AbstractSessionTest {
 
     switch (query) {
     case NONE:
-      ReadOnlyDiscoverTest.log.info("queries not supported");
+      ReadOnlyDiscoverIT.log.info("queries not supported");
       break;
     default:
       PagingList<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false, 2);
@@ -68,29 +64,9 @@ public class ReadOnlyDiscoverTest extends AbstractSessionTest {
 
     switch (changes) {
     case NONE:
-      ReadOnlyDiscoverTest.log.info("changes not supported");
+      ReadOnlyDiscoverIT.log.info("changes not supported");
       break;
     default:
-//      PagingList<ChangeEvent> cep = this.session.getContentChanges(null, 2);
-//      Assert.assertNotNull(cep);
-//      for (List<ChangeEvent> cel : cep)
-//        for (ChangeEvent ce : cel) {
-//          TypeOfChanges toc = ce.getChangeType();
-//          Assert.assertNotNull(toc);
-//          switch (toc) {
-//          case CREATED:
-//          case DELETED:
-//          case SECURITY:
-//          case UPDATED:
-//            break;
-//          default:
-//            Assert.fail("change type not supported: " + toc);
-//          }
-//          List<Property<?>> pl = ce.getNewProperties();
-//          Assert.assertNotNull(pl);
-//          String id = ce.getObjectId();
-//          Assert.assertNotNull(id);
-//        }
       break;
     }
   }

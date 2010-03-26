@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import junit.framework.Assert;
 
@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * Testing session
  */
-public class ReadOnlySessionTest extends AbstractSessionTest {
+public class ReadOnlySessionIT extends AbstractSessionTest {
 
 	@Test
 	public void testSession() {
@@ -41,6 +41,7 @@ public class ReadOnlySessionTest extends AbstractSessionTest {
 		Folder root = this.session.getRootFolder();
 		Assert.assertNotNull(root);
 		String id = root.getId();
+		Assert.assertNotNull(id);
 	}
 
 	@Test

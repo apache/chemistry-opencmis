@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 public interface FixtureSessionParameter {
 
@@ -27,9 +27,9 @@ public interface FixtureSessionParameter {
 	/**
 	 * CONFIG_PATH is referenced in pom.xml! If you change here then change pom.
 	 */
-	static final String CONFIG_PATH =         "org.apache.opencmis.client.runtime.test.config.path";
+	static final String CONFIG_PATH =         "org.apache.opencmis.fit.runtime.config.path";
 
-	static final String SESSION_FACTORY =     "org.apache.opencmis.client.runtime.test.session.factory";
-	static final String TEST_ROOT_FOLDER_ID = "org.apache.opencmis.client.runtime.test.root.folder.id";
+	static final String SESSION_FACTORY =     "org.apache.opencmis.fit.runtime.session.factory";
+	static final String TEST_ROOT_FOLDER_ID = "org.apache.opencmis.fit.runtime.root.folder.id";
 
 }

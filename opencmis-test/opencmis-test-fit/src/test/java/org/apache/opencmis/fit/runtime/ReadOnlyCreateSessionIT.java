@@ -16,26 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import java.util.Hashtable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
 import org.apache.opencmis.client.api.TransientSession;
 import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.enums.SessionType;
 import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Independent session creation test (read only)
  */
-public class ReadOnlyCreateSessionTest {
+public class ReadOnlyCreateSessionIT {
 
   protected Log log = LogFactory.getLog(this.getClass());
 

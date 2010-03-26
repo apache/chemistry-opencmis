@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,9 +30,9 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
+import org.apache.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
@@ -43,12 +43,16 @@ import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
  */
 public class Fixture {
 
+	private static String CONNECTION_PATH = Fixture.CONNECTION_ATOM_PATH;
+	private static final String CONNECTION_ATOM_PATH = "/inmemory.atom.properties";
+	private static final String CONNECTION_WS_PATH = "/inmemory.ws.properties";
+
 	private static Log log = LogFactory.getLog(Fixture.class);
 
 	/*
 	 * general
 	 */
-	public static String TEST_ROOT_FOLDER_NAME = "test_"
+	public static String TEST_ROOT_FOLDER_NAME = "fit_"
 			+ UUID.randomUUID().toString();
 
 	/*
@@ -122,7 +126,7 @@ public class Fixture {
 			} else {
 				// get default settings
 				InputStream in = Fixture.class
-						.getResourceAsStream("/mock.properties");
+						.getResourceAsStream(Fixture.CONNECTION_PATH);
 				properties = new Properties();
 				properties.load(in);
 			}
@@ -177,7 +181,7 @@ public class Fixture {
 			Fixture.log
 					.info("---------------------------------------------------------------");
 			Fixture.log
-					.info("--- OpenCMIS Client Test Suite --------------------------------");
+					.info("--- OpenCMIS FIT Test Suite (1) --------------------------------");
 			Fixture.log
 					.info("---------------------------------------------------------------");
 			Fixture.log.info("config path (prop): "
@@ -193,6 +197,13 @@ public class Fixture {
 		}
 	}
 
+	public static void enableAtomPub() {
+		Fixture.CONNECTION_PATH = Fixture.CONNECTION_ATOM_PATH;
+	}
+	
+	public static void enableWebServices() {
+		Fixture.CONNECTION_PATH = Fixture.CONNECTION_WS_PATH;
+	}
 	public static String getTestRootId() {
 		return Fixture.testData.getTestRootId();
 	}

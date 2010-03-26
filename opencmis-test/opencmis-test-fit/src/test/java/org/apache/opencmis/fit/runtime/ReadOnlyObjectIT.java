@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -37,7 +38,7 @@ import org.junit.Test;
 /**
  * Readonly tests on files and documents
  */
-public class ReadOnlyObjectTest extends AbstractSessionTest {
+public class ReadOnlyObjectIT extends AbstractSessionTest {
 
 	@Test
 	public void verifyRoot() {
@@ -134,11 +135,11 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 
 			switch (t) {
 			case INTEGER:
-				Integer n = (Integer) value;
+				BigInteger n = (BigInteger) value;
 				Assert.assertNotNull(n);
 				break;
 			case STRING:
-				String s = (String) value;
+				// String s = (String) value;
 				// can be null Assert.assertNotNull(s);
 				break;
 			case BOOLEAN:
@@ -166,7 +167,7 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 				Assert.assertNotNull(html);
 				break;
 			case ID:
-				String id = (String) value;
+				// String id = (String) value;
 				// can be null Assert.assertNotNull(id);
 				break;
 			case URI:
@@ -201,11 +202,11 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 
 			switch (t) {
 			case INTEGER:
-				Integer n = (Integer) value;
+				BigInteger n = (BigInteger) value;
 				Assert.assertNotNull(n);
 				break;
 			case STRING:
-				String s = (String) value;
+				// String s = (String) value;
 				// can be null Assert.assertNotNull(s);
 				break;
 			case BOOLEAN:
@@ -233,7 +234,7 @@ public class ReadOnlyObjectTest extends AbstractSessionTest {
 				Assert.assertNotNull(html);
 				break;
 			case ID:
-				String id = (String) value;
+				// String id = (String) value;
 				// can be null Assert.assertNotNull(id);
 				break;
 			case URI:

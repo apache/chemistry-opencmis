@@ -16,14 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
 import org.apache.opencmis.client.api.AclPermission;
 import org.apache.opencmis.client.api.repository.AclPermissionMapping;
 import org.apache.opencmis.client.api.repository.RepositoryAclCapabilities;
@@ -31,8 +27,12 @@ import org.apache.opencmis.client.api.repository.RepositoryCapabilities;
 import org.apache.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.opencmis.commons.enums.AclPropagation;
 import org.apache.opencmis.commons.enums.CapabilityAcl;
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ReadOnlyAclCapabilityTest extends AbstractSessionTest {
+public class ReadOnlyAclCapabilityIT extends AbstractSessionTest {
 
   private RepositoryAclCapabilities aclCapabilities = null;
 

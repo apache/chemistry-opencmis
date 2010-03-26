@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.opencmis.client.api.Session;
 import org.apache.opencmis.client.api.SessionFactory;
-import org.apache.opencmis.client.runtime.mock.MockSessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -83,25 +82,12 @@ public abstract class AbstractSessionTest {
   public void setUp() throws Exception {
     SessionFactory factory = Fixture.getSessionFactory();
     this.session = factory.createSession(Fixture.getParamter());
-
-    if (!(factory instanceof MockSessionFactory)) {
-      Fixture.setUpTestData(this.session);
-    }
+    Fixture.setUpTestData(this.session);
   }
 
   @After
   public void tearDown() throws Exception {
-    SessionFactory factory = Fixture.getSessionFactory();
-    if (!(factory instanceof MockSessionFactory)) {
-      Fixture.teardownTestData(this.session);
-    }
+    Fixture.teardownTestData(this.session);
   }
 
-  /**
-   * skip tests not supported by mock implementation
-   * @return flag
-   */
-  protected boolean isMock() {
-    return Fixture.getSessionFactory() instanceof MockSessionFactory;
-  }
 }

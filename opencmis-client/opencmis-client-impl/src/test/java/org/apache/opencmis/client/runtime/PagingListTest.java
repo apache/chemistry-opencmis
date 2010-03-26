@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime.util;
+package org.apache.opencmis.client.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.opencmis.client.api.util.PagingList;
+import org.apache.opencmis.client.runtime.util.AbstractPagingList;
 import org.junit.Before;
 import org.junit.Test;
 

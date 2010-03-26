@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.fit.runtime;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.junit.Test;
 
-public class ReadOnlyTypeTest extends AbstractSessionTest {
+public class ReadOnlyTypeIT extends AbstractSessionTest {
 
 	@Test
 	public void readOptionalBaseTypePolicy() {
