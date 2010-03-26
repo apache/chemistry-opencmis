@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.opencmis.inmemory.NameValidator;
 
@@ -74,7 +75,7 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
 
   private void init(String id, String displayName) {
     if (!NameValidator.isValidId(id))
-      throw new IllegalArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+      throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
     setBaseId(BaseObjectTypeIds.CMIS_RELATIONSHIP);
     setId(id);

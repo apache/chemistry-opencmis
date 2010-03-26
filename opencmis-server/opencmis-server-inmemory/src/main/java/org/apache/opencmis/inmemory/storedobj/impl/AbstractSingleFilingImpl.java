@@ -21,6 +21,8 @@ package org.apache.opencmis.inmemory.storedobj.impl;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.opencmis.inmemory.NameValidator;
 import org.apache.opencmis.inmemory.storedobj.api.Document;
 import org.apache.opencmis.inmemory.storedobj.api.Folder;
@@ -93,11 +95,11 @@ public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implemen
   
   public void rename(String newName) {
     if (!NameValidator.isValidId(newName))
-      throw new IllegalArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+      throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
     if (getParent() == null)
-      throw new IllegalArgumentException("Root folder cannot be renamed.");
+      throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
     if (getParent().hasChild(newName))
-      throw new IllegalArgumentException("Cannot rename object to " + newName
+      throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
           + ". This path already exists.");
 
     setName(newName);

@@ -35,6 +35,7 @@ import org.apache.opencmis.commons.enums.Cardinality;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.PropertyType;
 import org.apache.opencmis.commons.enums.Updatability;
+import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.opencmis.commons.impl.dataobjects.ChoiceImpl;
@@ -185,7 +186,7 @@ public class PropertyCreationHelper {
 
     if (!NameValidator.isValidId(id))
       if (!NameValidator.isValidId(id))
-        throw new IllegalArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+        throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
     prop.setId(id);
     if (displayName == null)
