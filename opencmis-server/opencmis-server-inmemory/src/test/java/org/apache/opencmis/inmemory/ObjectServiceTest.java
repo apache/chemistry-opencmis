@@ -35,6 +35,7 @@ import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.opencmis.commons.exceptions.CmisUpdateConflictException;
@@ -104,6 +105,26 @@ public class ObjectServiceTest extends AbstractServiceTst {
     if (id != null)
       log.info("createDocument succeeded with created id: " + id);
     log.info("... testCreateObject() finished.");
+    
+    // test create a document with a folder type, should fail:
+    try {
+      PropertiesData props = createDocumentProperties("DocumentWithAFolderType", FOLDER_TYPE_ID);
+      id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE,
+          null, null, null, null);
+      fail("Creating  document with a folder type should fail.");
+    } catch (Exception e) {
+      log.info("Creating  document with a folder type failed as expected.");
+    }
+    // test create a document with an illegal name, should fail:
+    try {
+      PropertiesData props = createDocumentProperties("abc ()", DOCUMENT_TYPE_ID);
+      id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE,
+          null, null, null, null);
+      fail("Creating  document with an illegal should fail.");
+    } catch (Exception e) {
+      assertTrue(e instanceof CmisInvalidArgumentException);
+      log.info("Creating  document with an illegal name failed as expected.");
+    }
   }
 
 
