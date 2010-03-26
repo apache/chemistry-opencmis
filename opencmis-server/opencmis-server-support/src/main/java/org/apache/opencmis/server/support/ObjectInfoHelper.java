@@ -210,7 +210,7 @@ public class ObjectInfoHelper
           objInfo.setIsCurrentVersion(getBooleanProperty(properties, PropertyIds.CMIS_IS_LATEST_VERSION)); 
           objInfo.setVersionSeriesId(getStringProperty(properties, PropertyIds.CMIS_VERSION_SERIES_ID));
           objInfo.setWorkingCopyId(getStringProperty(properties, PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID));
-          objInfo.setWorkingCopyOriginalId(getStringProperty(properties, PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID));
+          objInfo.setWorkingCopyOriginalId(null);
         } else { // unversioned document
           objInfo.setIsCurrentVersion (true); 
           objInfo.setVersionSeriesId(null);
@@ -250,7 +250,7 @@ public class ObjectInfoHelper
         List<String> targetIds = new ArrayList<String>();
         getRelationshipIds(objData, sourceIds, targetIds);
         
-        // Relationships, currently not supported by in-memory provider
+        // Relationships, currently not supported
         objInfo.setSupportsRelationships(supportsRelationships);
         objInfo.setRelationshipSourceIds(sourceIds);
         objInfo.setRelationshipTargetIds(targetIds);
