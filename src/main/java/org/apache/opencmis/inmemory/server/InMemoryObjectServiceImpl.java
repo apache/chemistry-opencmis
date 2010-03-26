@@ -809,8 +809,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     }
 
     // check if the given type is a document type
-    if (!typeDef.getBaseId().equals(
-        InMemoryDocumentTypeDefinition.getRootDocumentType().getBaseId()))
+    if (!typeDef.getBaseId().equals(BaseObjectTypeIds.CMIS_DOCUMENT))
       throw new RuntimeException("Cannot create a document, with a non-document type: "
           + typeDef.getId());
 
@@ -880,7 +879,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     TypeDefinition typeDef = getTypeDefinition(repositoryId, properties);
 
     // check if the given type is a folder type
-    if (!typeDef.getBaseId().equals(InMemoryFolderTypeDefinition.getRootFolderType().getBaseId()))
+    if (!typeDef.getBaseId().equals(BaseObjectTypeIds.CMIS_FOLDER))
       throw new RuntimeException("Cannot create a folder, with a non-folder type: "
           + typeDef.getId());
 

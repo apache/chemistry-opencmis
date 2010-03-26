@@ -9,15 +9,16 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.opencmis.commons.PropertyIds;
+import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.inmemory.FilterParser;
 import org.apache.opencmis.inmemory.NameValidator;
 import org.apache.opencmis.inmemory.storedobj.api.Document;
 import org.apache.opencmis.inmemory.storedobj.api.DocumentVersion;
+import org.apache.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.opencmis.inmemory.storedobj.api.MultiFiling;
-import org.apache.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -63,7 +64,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
   private void addChildObject(StoredObject so) {
     String name = so.getName();
     if (!NameValidator.isValidId(name))
-      throw new IllegalArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+      throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
     boolean hasChild;
     hasChild = hasChild(name);
@@ -182,7 +183,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
   // Helper functions
   private void init(String name, Folder parent) {
     if (!NameValidator.isValidId(name))
-      throw new IllegalArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+      throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
     setName(name);
     setParent(parent);
   }

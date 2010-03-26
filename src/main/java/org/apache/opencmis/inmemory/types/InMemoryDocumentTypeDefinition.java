@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.ContentStreamAllowed;
+import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.opencmis.inmemory.NameValidator;
 
@@ -84,7 +85,7 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
   
   private void init(String id, String displayName) {
     if (!NameValidator.isValidId(id))
-      throw new IllegalArgumentException(NameValidator.ERROR_ILLEGAL_ID);
+      throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_ID);
 
     setBaseId(BaseObjectTypeIds.CMIS_DOCUMENT);
     setId(id);
