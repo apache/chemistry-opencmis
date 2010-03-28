@@ -19,7 +19,6 @@
 package org.apache.opencmis.client.api.repository;
 
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -98,7 +97,7 @@ public interface ObjectFactory {
 
   Map<String, Property<?>> convertProperties(ObjectType objectType, PropertiesData properties);
 
-  PropertiesData convertProperties(Collection<Property<?>> properties,
+  PropertiesData convertProperties(Map<String, ?> properties, ObjectType type,
       Set<Updatability> updatabilityFilter);
 
   List<QueryProperty<?>> convertQueryProperties(PropertiesData properties);

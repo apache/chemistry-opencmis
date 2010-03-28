@@ -117,7 +117,7 @@ public interface CmisObject extends ObjectId {
 
   ObjectId updateProperties();
 
-  ObjectId updateProperties(Map<String, Object> properties);
+  ObjectId updateProperties(Map<String, ?> properties);
 
   // relationship service
 

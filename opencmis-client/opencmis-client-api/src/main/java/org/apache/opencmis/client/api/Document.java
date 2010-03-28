@@ -19,6 +19,7 @@
 package org.apache.opencmis.client.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.opencmis.commons.enums.VersioningState;
 
@@ -43,7 +44,7 @@ public interface Document extends FileableCmisObject {
 
   void cancelCheckOut();
 
-  ObjectId checkIn(boolean major, List<Property<?>> properties, ContentStream contentStream,
+  ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream,
       String checkinComment, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
 
   Document getObjectOfLatestVersion(boolean major);

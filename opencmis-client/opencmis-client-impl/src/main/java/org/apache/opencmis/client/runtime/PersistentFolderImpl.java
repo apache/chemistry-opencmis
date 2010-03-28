@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.opencmis.client.api.Ace;
@@ -34,7 +35,6 @@ import org.apache.opencmis.client.api.Folder;
 import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.Policy;
-import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
 import org.apache.opencmis.client.api.util.Container;
@@ -42,6 +42,7 @@ import org.apache.opencmis.client.api.util.PagingList;
 import org.apache.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.opencmis.commons.PropertyIds;
+import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.Updatability;
@@ -76,12 +77,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Folder#createDocument(java.util.List,
+   * @see org.apache.opencmis.client.api.Folder#createDocument(java.util.Map,
    * org.apache.opencmis.client.api.ContentStream,
    * org.apache.opencmis.commons.enums.VersioningState, java.util.List, java.util.List,
    * java.util.List, org.apache.opencmis.client.api.OperationContext)
    */
-  public Document createDocument(List<Property<?>> properties, ContentStream contentStream,
+  public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
       VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces, OperationContext context) {
     String objectId = getObjectId();
@@ -89,7 +90,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     ObjectFactory of = getObjectFactory();
 
     String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
-        of.convertProperties(properties, CREATE_UPDATABILITY), objectId,
+        of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId,
         of.convertContentStream(contentStream), versioningState, of.convertPolicies(policies),
         of.convertAces(addAces), of.convertAces(removeAces), null);
 
@@ -112,16 +113,30 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * 
    * @see
    * org.apache.opencmis.client.api.Folder#createDocumentFromSource(org.apache.opencmis.client.api
-   * .ObjectId, java.util.List, org.apache.opencmis.commons.enums.VersioningState, java.util.List,
+   * .ObjectId, java.util.Map, org.apache.opencmis.commons.enums.VersioningState, java.util.List,
    * java.util.List, java.util.List, org.apache.opencmis.client.api.OperationContext)
    */
-  public Document createDocumentFromSource(ObjectId source, List<Property<?>> properties,
+  public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties,
       VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces, OperationContext context) {
-    String objectId = getObjectId();
-
     if ((source == null) || (source.getId() == null)) {
       throw new IllegalArgumentException("Source must be set!");
+    }
+
+    String objectId = getObjectId();
+
+    // get the type of the source document
+    ObjectType type = null;
+    if (source instanceof CmisObject) {
+      type = ((CmisObject) source).getBaseType();
+    }
+    else {
+      CmisObject sourceObj = getSession().getObject(source);
+      type = sourceObj.getType();
+    }
+
+    if (type.getBaseTypeId() != BaseObjectTypeIds.CMIS_DOCUMENT) {
+      throw new IllegalArgumentException("Source object must be a document!");
     }
 
     ObjectFactory of = getObjectFactory();
@@ -130,8 +145,9 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     updatebility.add(Updatability.READWRITE);
 
     String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
-        source.getId(), of.convertProperties(properties, updatebility), objectId, versioningState,
-        of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
+        source.getId(), of.convertProperties(properties, type, updatebility), objectId,
+        versioningState, of.convertPolicies(policies), of.convertAces(addAces),
+        of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
     if ((context == null) || (newId == null)) {
@@ -150,17 +166,17 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Folder#createFolder(java.util.List, java.util.List,
+   * @see org.apache.opencmis.client.api.Folder#createFolder(java.util.Map, java.util.List,
    * java.util.List, java.util.List, org.apache.opencmis.client.api.OperationContext)
    */
-  public Folder createFolder(List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addAces, List<Ace> removeAces, OperationContext context) {
+  public Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces, OperationContext context) {
     String objectId = getObjectId();
 
     ObjectFactory of = getObjectFactory();
 
     String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
-        of.convertProperties(properties, CREATE_UPDATABILITY), objectId,
+        of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId,
         of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched
@@ -180,17 +196,17 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Folder#createPolicy(java.util.List, java.util.List,
+   * @see org.apache.opencmis.client.api.Folder#createPolicy(java.util.Map, java.util.List,
    * java.util.List, java.util.List, org.apache.opencmis.client.api.OperationContext)
    */
-  public Policy createPolicy(List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addAces, List<Ace> removeAces, OperationContext context) {
+  public Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces, OperationContext context) {
     String objectId = getObjectId();
 
     ObjectFactory of = getObjectFactory();
 
     String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
-        of.convertProperties(properties, CREATE_UPDATABILITY), objectId,
+        of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId,
         of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
 
     // if no context is provided the object will not be fetched

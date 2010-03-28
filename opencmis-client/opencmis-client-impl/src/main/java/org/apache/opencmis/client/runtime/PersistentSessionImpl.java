@@ -41,7 +41,6 @@ import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.OperationContext;
 import org.apache.opencmis.client.api.PersistentSession;
 import org.apache.opencmis.client.api.Policy;
-import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.QueryResult;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.repository.ObjectFactory;
@@ -58,6 +57,7 @@ import org.apache.opencmis.commons.SessionParameter;
 import org.apache.opencmis.commons.api.TypeDefinition;
 import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinitionList;
+import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
 import org.apache.opencmis.commons.enums.Updatability;
 import org.apache.opencmis.commons.enums.VersioningState;
@@ -72,6 +72,14 @@ import org.apache.opencmis.commons.provider.RepositoryService;
 
 /**
  * Persistent model session.
+ */
+/**
+ * @author florianm
+ *
+ */
+/**
+ * @author florianm
+ * 
  */
 public class PersistentSessionImpl implements PersistentSession, Serializable {
 
@@ -724,12 +732,12 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Session#createDocument(java.util.List,
+   * @see org.apache.opencmis.client.api.Session#createDocument(java.util.Map,
    * org.apache.opencmis.client.api.ObjectId, org.apache.opencmis.client.api.ContentStream,
    * org.apache.opencmis.commons.enums.VersioningState, java.util.List, java.util.List,
    * java.util.List)
    */
-  public ObjectId createDocument(List<Property<?>> properties, ObjectId folderId,
+  public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId,
       ContentStream contentStream, VersioningState versioningState, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces) {
     if ((folderId != null) && (folderId.getId() == null)) {
@@ -737,7 +745,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     }
 
     String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
-        objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
+        objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
         (folderId == null ? null : folderId.getId()),
         objectFactory.convertContentStream(contentStream), versioningState,
         objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
@@ -755,19 +763,33 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * 
    * @see
    * org.apache.opencmis.client.api.Session#createDocumentFromSource(org.apache.opencmis.client.
-   * api.Document, java.util.List, java.lang.String,
+   * api.ObjectId, java.util.Map, org.apache.opencmis.client.api.ObjectId,
    * org.apache.opencmis.commons.enums.VersioningState, java.util.List, java.util.List,
    * java.util.List)
    */
-  public ObjectId createDocumentFromSource(ObjectId source, List<Property<?>> properties,
+  public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties,
       ObjectId folderId, VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces) {
     if ((folderId != null) && (folderId.getId() == null)) {
       throw new IllegalArgumentException("Folder Id must be set!");
     }
 
+    // get the type of the source document
+    ObjectType type = null;
+    if (source instanceof CmisObject) {
+      type = ((CmisObject) source).getBaseType();
+    }
+    else {
+      CmisObject sourceObj = getObject(source);
+      type = sourceObj.getType();
+    }
+
+    if (type.getBaseTypeId() != BaseObjectTypeIds.CMIS_DOCUMENT) {
+      throw new IllegalArgumentException("Source object must be a document!");
+    }
+
     String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
-        source.getId(), objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
+        source.getId(), objectFactory.convertProperties(properties, type, CREATE_UPDATABILITY),
         (folderId == null ? null : folderId.getId()), versioningState,
         objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
         objectFactory.convertAces(removeAces), null);
@@ -782,17 +804,17 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Session#createFolder(java.util.List, java.lang.String,
-   * java.util.List, java.util.List, java.util.List)
+   * @see org.apache.opencmis.client.api.Session#createFolder(java.util.Map,
+   * org.apache.opencmis.client.api.ObjectId, java.util.List, java.util.List, java.util.List)
    */
-  public ObjectId createFolder(List<Property<?>> properties, ObjectId folderId,
-      List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+  public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
+      List<Ace> addAces, List<Ace> removeAces) {
     if ((folderId != null) && (folderId.getId() == null)) {
       throw new IllegalArgumentException("Folder Id must be set!");
     }
 
     String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
-        objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
+        objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
         (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
         objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
 
@@ -806,17 +828,17 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Session#createPolicy(java.util.List, java.lang.String,
-   * java.util.List, java.util.List, java.util.List)
+   * @see org.apache.opencmis.client.api.Session#createPolicy(java.util.Map,
+   * org.apache.opencmis.client.api.ObjectId, java.util.List, java.util.List, java.util.List)
    */
-  public ObjectId createPolicy(List<Property<?>> properties, ObjectId folderId,
-      List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+  public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
+      List<Ace> addAces, List<Ace> removeAces) {
     if ((folderId != null) && (folderId.getId() == null)) {
       throw new IllegalArgumentException("Folder Id must be set!");
     }
 
     String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
-        objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
+        objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
         (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
         objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
 
@@ -830,13 +852,13 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Session#createRelationship(java.util.List, java.util.List,
+   * @see org.apache.opencmis.client.api.Session#createRelationship(java.util.Map, java.util.List,
    * java.util.List, java.util.List)
    */
-  public ObjectId createRelationship(List<Property<?>> properties, List<Policy> policies,
+  public ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces) {
     String newId = getProvider().getObjectService().createRelationship(getRepositoryId(),
-        objectFactory.convertProperties(properties, CREATE_UPDATABILITY),
+        objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
         objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
         objectFactory.convertAces(removeAces), null);
 

@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.opencmis.client.api.Ace;
@@ -161,31 +162,37 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Document#checkIn(boolean, java.util.List,
+   * @see org.apache.opencmis.client.api.Document#checkIn(boolean, java.util.Map,
    * org.apache.opencmis.client.api.ContentStream, java.lang.String, java.util.List, java.util.List,
    * java.util.List)
    */
-  public ObjectId checkIn(boolean major, List<Property<?>> properties, ContentStream contentStream,
+  public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream,
       String checkinComment, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
-    String objectId = getObjectId();
-    Holder<String> objectIdHolder = new Holder<String>(objectId);
+    readLock();
+    try {
+      String objectId = getObjectId();
+      Holder<String> objectIdHolder = new Holder<String>(objectId);
 
-    ObjectFactory of = getObjectFactory();
+      ObjectFactory of = getObjectFactory();
 
-    Set<Updatability> updatebility = new HashSet<Updatability>();
-    updatebility.add(Updatability.READWRITE);
-    updatebility.add(Updatability.WHENCHECKEDOUT);
+      Set<Updatability> updatebility = new HashSet<Updatability>();
+      updatebility.add(Updatability.READWRITE);
+      updatebility.add(Updatability.WHENCHECKEDOUT);
 
-    getProvider().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
-        of.convertProperties(properties, updatebility), of.convertContentStream(contentStream),
-        checkinComment, of.convertPolicies(policies), of.convertAces(addAces),
-        of.convertAces(removeAces), null);
+      getProvider().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
+          of.convertProperties(properties, getType(), updatebility),
+          of.convertContentStream(contentStream), checkinComment, of.convertPolicies(policies),
+          of.convertAces(addAces), of.convertAces(removeAces), null);
 
-    if (objectIdHolder.getValue() == null) {
-      return null;
+      if (objectIdHolder.getValue() == null) {
+        return null;
+      }
+
+      return getSession().createObjectId(objectIdHolder.getValue());
     }
-
-    return getSession().createObjectId(objectIdHolder.getValue());
+    finally {
+      readUnlock();
+    }
   }
 
   /*

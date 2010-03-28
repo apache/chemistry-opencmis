@@ -20,6 +20,7 @@ package org.apache.opencmis.client.api;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.opencmis.client.api.objecttype.ObjectType;
@@ -165,20 +166,20 @@ public interface Session {
 
   // create
 
-  ObjectId createDocument(List<Property<?>> properties, ObjectId folderId,
+  ObjectId createDocument(Map<String, ?> properties, ObjectId folderId,
       ContentStream contentStream, VersioningState versioningState, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces);
 
-  ObjectId createDocumentFromSource(ObjectId source, List<Property<?>> properties,
-      ObjectId folderId, VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
+  ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
+      VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces);
 
-  ObjectId createFolder(List<Property<?>> properties, ObjectId folderId, List<Policy> policies,
+  ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces);
 
-  ObjectId createPolicy(List<Property<?>> properties, ObjectId folderId, List<Policy> policies,
+  ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces);
 
-  ObjectId createRelationship(List<Property<?>> properties, List<Policy> policies,
-      List<Ace> addAces, List<Ace> removeAces);
+  ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
+      List<Ace> removeAces);
 }

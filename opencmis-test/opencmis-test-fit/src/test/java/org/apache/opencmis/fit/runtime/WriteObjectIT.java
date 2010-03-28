@@ -27,7 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.opencmis.client.api.ContentStream;
@@ -35,6 +37,7 @@ import org.apache.opencmis.client.api.Document;
 import org.apache.opencmis.client.api.ObjectId;
 import org.apache.opencmis.client.api.Property;
 import org.apache.opencmis.client.api.objecttype.ObjectType;
+import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.api.PropertyDefinition;
 import org.apache.opencmis.commons.enums.CmisProperties;
 import org.apache.opencmis.commons.enums.VersioningState;
@@ -50,6 +53,8 @@ public class WriteObjectIT extends AbstractSessionTest {
 		String folderName = UUID.randomUUID().toString();
 		String typeId = FixtureData.FOLDER_TYPE_ID.value();
 
+		
+		/*
 		ObjectType ot = this.session.getTypeDefinition(typeId);
 		Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions()
 				.values();
@@ -78,7 +83,12 @@ public class WriteObjectIT extends AbstractSessionTest {
 			}
 
 		}
+		*/
 
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put(PropertyIds.CMIS_NAME, folderName);
+		properties.put(PropertyIds.CMIS_OBJECT_TYPE_ID, typeId);
+		
 		ObjectId id = this.session.createFolder(properties, parentId, null,
 				null, null);
 		assertNotNull(id);
@@ -91,6 +101,7 @@ public class WriteObjectIT extends AbstractSessionTest {
 		String folderName = UUID.randomUUID().toString();
 		String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
+		/*
 		ObjectType ot = this.session.getTypeDefinition(typeId);
 		Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions()
 				.values();
@@ -119,13 +130,18 @@ public class WriteObjectIT extends AbstractSessionTest {
 				 * custom property definition (note: document type should not
 				 * have further mandatory properties)
 				 */
-				this.log
+/*				this.log
 						.info(
 								"Custom property found but not supported in test case!",
 								e);
 			}
 		}
-
+*/
+		
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put(PropertyIds.CMIS_NAME, folderName);
+		properties.put(PropertyIds.CMIS_OBJECT_TYPE_ID, typeId);
+		
 		String filename = UUID.randomUUID().toString();
 		String mimetype = "text/html; charset=UTF-8";
 		String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
@@ -164,6 +180,7 @@ public class WriteObjectIT extends AbstractSessionTest {
 
 			ObjectId parentFolder = session.createObjectId(Fixture
 					.getTestRootId());
+			/*
 			List<Property<?>> srcProperties = srcDocument.getProperties();
 			assertNotNull(srcProperties);
 			List<Property<?>> dstProperties = new ArrayList<Property<?>>();
@@ -179,9 +196,14 @@ public class WriteObjectIT extends AbstractSessionTest {
 					dstProperties.add(p);
 				}
 			}
-
+*/
+			String name = UUID.randomUUID().toString();
+			
+			Map<String, Object> properties = new HashMap<String, Object>();
+			properties.put(PropertyIds.CMIS_NAME, name);
+			
 			ObjectId dstDocumentId = this.session.createDocumentFromSource(
-					srcDocument, dstProperties, parentFolder,
+					srcDocument, properties, parentFolder,
 					VersioningState.NONE, null, null, null);
 			assertNotNull(dstDocumentId);
 			Document dstDocument = (Document) this.session

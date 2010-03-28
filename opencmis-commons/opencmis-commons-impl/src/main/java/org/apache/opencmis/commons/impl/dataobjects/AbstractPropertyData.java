@@ -19,6 +19,7 @@
 package org.apache.opencmis.commons.impl.dataobjects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.opencmis.commons.provider.PropertyData;
@@ -101,12 +102,22 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
   }
 
   public void setValues(List<T> values) {
-    fValues = values;
+    if (values == null) {
+      fValues = Collections.emptyList();
+    }
+    else {
+      fValues = values;
+    }
   }
 
   public void setValue(T value) {
-    fValues = new ArrayList<T>(1);
-    fValues.add(value);
+    if (value == null) {
+      fValues = Collections.emptyList();
+    }
+    else {
+      fValues = new ArrayList<T>(1);
+      fValues.add(value);
+    }
   }
 
   /*

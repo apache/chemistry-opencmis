@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -75,6 +75,7 @@ import org.apache.opencmis.commons.api.PropertyStringDefinition;
 import org.apache.opencmis.commons.api.PropertyUriDefinition;
 import org.apache.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.opencmis.commons.api.TypeDefinition;
+import org.apache.opencmis.commons.enums.Cardinality;
 import org.apache.opencmis.commons.enums.Updatability;
 import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.opencmis.commons.provider.AccessControlEntry;
@@ -445,31 +446,54 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.apache.opencmis.client.api.repository.ObjectFactory#convertProperties(java.util.Collection,
-   * java.util.Set)
+   * @see org.apache.opencmis.client.api.repository.ObjectFactory#convertProperties(java.util.Map,
+   * org.apache.opencmis.client.api.objecttype.ObjectType, java.util.Set)
    */
   @SuppressWarnings("unchecked")
-  public PropertiesData convertProperties(Collection<Property<?>> properties,
+  public PropertiesData convertProperties(Map<String, ?> properties, ObjectType type,
       Set<Updatability> updatabilityFilter) {
     // check input
     if (properties == null) {
       throw new IllegalArgumentException("Properties must be set!");
     }
 
-    ProviderObjectFactory pof = getProviderObjectFactory();
+    // get the type
+    if (type == null) {
+      Object typeId = properties.get(PropertyIds.CMIS_OBJECT_TYPE_ID);
+      if (!(typeId instanceof String)) {
+        throw new IllegalArgumentException("Type or type property must be set!");
+      }
 
-    // iterate through properties and convert them
+      type = session.getTypeDefinition(typeId.toString());
+    }
+
+    // some preparation
+    ProviderObjectFactory pof = getProviderObjectFactory();
     List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
-    for (Property<?> property : properties) {
-      if (property == null) {
+
+    // the big loop
+    for (Map.Entry<String, ?> property : properties.entrySet()) {
+      if ((property == null) || (property.getKey() == null)) {
         continue;
       }
 
-      PropertyDefinition<?> definition = property.getDefinition();
+      String id = property.getKey();
+      Object value = property.getValue();
+
+      if (value instanceof Property<?>) {
+        Property<?> p = (Property<?>) value;
+        if (!id.equals(p.getId())) {
+          throw new IllegalArgumentException("Property id mismatch: '" + id + "' != '" + p.getId()
+              + "'!");
+        }
+        value = (p.getDefinition().getCardinality() == Cardinality.SINGLE ? p.getValue() : p
+            .getValues());
+      }
+
+      // get the property definition
+      PropertyDefinition<?> definition = type.getPropertyDefintions().get(id);
       if (definition == null) {
-        throw new IllegalArgumentException("Property +'" + property.getId()
-            + "' has no property defintion!");
+        throw new IllegalArgumentException("Property +'" + id + "' is not valid for this type!");
       }
 
       // check updatability
@@ -479,38 +503,151 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
         }
       }
 
+      // single and multi value check
+      List<?> values;
+      if (value == null) {
+        values = null;
+      }
+      else if (value instanceof List<?>) {
+        if (definition.getCardinality() != Cardinality.MULTI) {
+          throw new IllegalArgumentException("Property '" + id + "' is not a multi value property!");
+        }
+        values = (List<?>) value;
+
+        // check if the list is homogeneous and does not contain null values
+        Class<?> valueClazz = null;
+        for (Object o : values) {
+          if (o == null) {
+            throw new IllegalArgumentException("Property '" + id + "' contains null values!");
+          }
+          if (valueClazz == null) {
+            valueClazz = o.getClass();
+          }
+          else {
+            if (!valueClazz.isInstance(o)) {
+              throw new IllegalArgumentException("Property '" + id + "' is inhomogeneous!");
+            }
+          }
+        }
+      }
+      else {
+        if (definition.getCardinality() != Cardinality.SINGLE) {
+          throw new IllegalArgumentException("Property '" + id
+              + "' is not a single value property!");
+        }
+        values = Collections.singletonList(value);
+      }
+
+      // assemble property
+      PropertyData<?> propertyData = null;
+      Object firstValue = (values == null ? null : values.get(0));
+
       if (definition instanceof PropertyStringDefinition) {
-        propertyList.add(pof.createPropertyStringData(property.getId(), (List<String>) property
-            .getValues()));
+        if (firstValue == null) {
+          propertyData = pof.createPropertyStringData(id, (List<String>) null);
+        }
+        else if (firstValue instanceof String) {
+          propertyData = pof.createPropertyStringData(id, (List<String>) values);
+        }
+        else {
+          throw new IllegalArgumentException("Property '" + id + "' is a String property!");
+        }
       }
       else if (definition instanceof PropertyIdDefinition) {
-        propertyList.add(pof.createPropertyIdData(property.getId(), (List<String>) property
-            .getValues()));
+        if (firstValue == null) {
+          propertyData = pof.createPropertyIdData(id, (List<String>) null);
+        }
+        else if (firstValue instanceof String) {
+          propertyData = pof.createPropertyIdData(id, (List<String>) values);
+        }
+        else {
+          throw new IllegalArgumentException("Property '" + id + "' is an Id property!");
+        }
       }
       else if (definition instanceof PropertyHtmlDefinition) {
-        propertyList.add(pof.createPropertyHtmlData(property.getId(), (List<String>) property
-            .getValues()));
+        if (firstValue == null) {
+          propertyData = pof.createPropertyHtmlData(id, (List<String>) values);
+        }
+        else if (firstValue instanceof String) {
+          propertyData = pof.createPropertyHtmlData(id, (List<String>) values);
+        }
+        else {
+          throw new IllegalArgumentException("Property '" + id + "' is a HTML property!");
+        }
       }
       else if (definition instanceof PropertyUriDefinition) {
-        propertyList.add(pof.createPropertyUriData(property.getId(), (List<String>) property
-            .getValues()));
+        if (firstValue == null) {
+          propertyData = pof.createPropertyUriData(id, (List<String>) null);
+        }
+        else if (firstValue instanceof String) {
+          propertyData = pof.createPropertyUriData(id, (List<String>) values);
+        }
+        else {
+          throw new IllegalArgumentException("Property '" + id + "' is an URI property!");
+        }
       }
       else if (definition instanceof PropertyIntegerDefinition) {
-        propertyList.add(pof.createPropertyIntegerData(property.getId(),
-            (List<BigInteger>) property.getValues()));
+        if (firstValue == null) {
+          propertyData = pof.createPropertyIntegerData(id, (List<BigInteger>) null);
+        }
+        else if (firstValue instanceof BigInteger) {
+          propertyData = pof.createPropertyIntegerData(id, (List<BigInteger>) values);
+        }
+        else if ((firstValue instanceof Byte) || (firstValue instanceof Short)
+            || (firstValue instanceof Integer) || (firstValue instanceof Long)) {
+          // we accept all kinds of integers
+          List<BigInteger> list = new ArrayList<BigInteger>(values.size());
+          for (Object v : values) {
+            list.add(BigInteger.valueOf(((Number) v).longValue()));
+          }
+
+          propertyData = pof.createPropertyIntegerData(id, list);
+        }
+        else {
+          throw new IllegalArgumentException("Property '" + id + "' is an Integer property!");
+        }
       }
       else if (definition instanceof PropertyBooleanDefinition) {
-        propertyList.add(pof.createPropertyBooleanData(property.getId(), (List<Boolean>) property
-            .getValues()));
+        if (firstValue == null) {
+          propertyData = pof.createPropertyBooleanData(id, (List<Boolean>) null);
+        }
+        else if (firstValue instanceof Boolean) {
+          propertyData = pof.createPropertyBooleanData(id, (List<Boolean>) values);
+        }
+        else {
+          throw new IllegalArgumentException("Property '" + id + "' is a Boolean property!");
+        }
       }
       else if (definition instanceof PropertyDecimalDefinition) {
-        propertyList.add(pof.createPropertyDecimalData(property.getId(),
-            (List<BigDecimal>) property.getValues()));
+        if (firstValue == null) {
+          propertyData = pof.createPropertyDecimalData(id, (List<BigDecimal>) null);
+        }
+        else if (firstValue instanceof BigDecimal) {
+          propertyData = pof.createPropertyDecimalData(id, (List<BigDecimal>) values);
+        }
+        else {
+          throw new IllegalArgumentException("Property '" + id + "' is a Decimal property!");
+        }
       }
       else if (definition instanceof PropertyDateTimeDefinition) {
-        propertyList.add(pof.createPropertyDateTimeData(property.getId(),
-            (List<GregorianCalendar>) property.getValues()));
+        if (firstValue == null) {
+          propertyData = pof.createPropertyDateTimeData(id, (List<GregorianCalendar>) null);
+        }
+        else if (firstValue instanceof GregorianCalendar) {
+          propertyData = pof.createPropertyDateTimeData(id, (List<GregorianCalendar>) values);
+        }
+        else {
+          throw new IllegalArgumentException("Property '" + id + "' is a Decimal property!");
+        }
       }
+
+      // do we have something?
+      if (propertyData == null) {
+        throw new IllegalArgumentException("Property '" + id
+            + "' doesn't match the property defintion!");
+      }
+
+      propertyList.add(propertyData);
     }
 
     return pof.createPropertiesData(propertyList);

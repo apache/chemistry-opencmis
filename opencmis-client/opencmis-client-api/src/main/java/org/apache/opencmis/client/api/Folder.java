@@ -19,6 +19,7 @@
 package org.apache.opencmis.client.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.opencmis.client.api.objecttype.ObjectType;
 import org.apache.opencmis.client.api.util.Container;
@@ -32,18 +33,18 @@ import org.apache.opencmis.commons.enums.VersioningState;
 public interface Folder extends FileableCmisObject {
 
   // object service
-  Document createDocument(List<Property<?>> properties, ContentStream contentStream,
+  Document createDocument(Map<String, ?> properties, ContentStream contentStream,
       VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces, OperationContext context);
 
-  Document createDocumentFromSource(ObjectId source, List<Property<?>> properties,
+  Document createDocumentFromSource(ObjectId source, Map<String, ?> properties,
       VersioningState versioningState, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces, OperationContext context);
 
-  Folder createFolder(List<Property<?>> properties, List<Policy> policies, List<Ace> addAces,
+  Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces, OperationContext context);
 
-  Policy createPolicy(List<Property<?>> properties, List<Policy> policies, List<Ace> addAces,
+  Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
       List<Ace> removeAces, OperationContext context);
 
   /**

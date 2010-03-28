@@ -97,6 +97,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     this.session = session;
     this.objectType = objectType;
     this.creationContext = new OperationContextImpl(context);
+    this.refreshTimestamp = System.currentTimeMillis();
 
     ObjectFactory of = getObjectFactory();
 
@@ -269,7 +270,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       // it's time to update
       getProvider().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
           changeTokenHolder,
-          getObjectFactory().convertProperties(this.properties.values(), updatebility), null);
+          getObjectFactory().convertProperties(this.properties, this.objectType, updatebility),
+          null);
 
       if (objectIdHolder.getValue() == null) {
         return null;
@@ -287,8 +289,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * 
    * @see org.apache.opencmis.client.api.CmisObject#updateProperties(java.util.Map)
    */
-  public ObjectId updateProperties(Map<String, Object> updateProperties) {
-    if ((updateProperties == null) || (updateProperties.isEmpty())) {
+  public ObjectId updateProperties(Map<String, ?> properties) {
+    if ((properties == null) || (properties.isEmpty())) {
       throw new IllegalArgumentException("Properties must not be empty!");
     }
 
@@ -309,20 +311,10 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         updatebility.add(Updatability.WHENCHECKEDOUT);
       }
 
-      // build property list
-      ObjectFactory of = getObjectFactory();
-      List<Property<?>> propertyList = new ArrayList<Property<?>>();
-      for (Map.Entry<String, Object> property : updateProperties.entrySet()) {
-        PropertyDefinition<?> propertyDefinition = checkProperty(property.getKey(), property
-            .getValue());
-
-        // create property
-        propertyList.add(of.createProperty(propertyDefinition, property.getValue()));
-      }
-
       // it's time to update
       getProvider().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
-          changeTokenHolder, of.convertProperties(propertyList, updatebility), null);
+          changeTokenHolder,
+          getObjectFactory().convertProperties(properties, this.objectType, updatebility), null);
 
       if (objectIdHolder.getValue() == null) {
         return null;
