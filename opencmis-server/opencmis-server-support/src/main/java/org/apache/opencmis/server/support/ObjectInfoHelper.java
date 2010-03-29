@@ -348,7 +348,7 @@ public class ObjectInfoHelper
         ObjectInFolderList objList,
         ObjectInfoHolder objectInfos)
     {
-        if (null == objectInfos || null == objList)
+        if (null == objectInfos || null == objList || objList.getObjects() == null)
             return;
 
         // Fill object information for all children in result list
@@ -405,7 +405,6 @@ public class ObjectInfoHelper
     {
         if (null == objectInfos || null == oifcList)
             return;
-
           
         for (ObjectInFolderContainer object : oifcList) {
             fillObjectInfoHolderFolderContainer(context, repositoryId, object, objectInfos);
@@ -418,16 +417,17 @@ public class ObjectInfoHelper
         ObjectInFolderContainer oifc,
         ObjectInfoHolder objectInfos)
     {
-        if (null == objectInfos || null == oifc)
-            return;
+      if (null == objectInfos || null == oifc || oifc.getObject() == null
+          || oifc.getObject().getObject() == null)
+        return;
 
-        fillObjectInfoHolder(context, repositoryId, oifc.getObject().getObject(), objectInfos);
+      fillObjectInfoHolder(context, repositoryId, oifc.getObject().getObject(), objectInfos);
 
-        if (null!=oifc.getChildren())
-            for (ObjectInFolderContainer object : oifc.getChildren()) {
-                // call recursively
-                fillObjectInfoHolderFolderContainer(context, repositoryId, object, objectInfos);
-            }    
+      if (null!=oifc.getChildren())
+        for (ObjectInFolderContainer object : oifc.getChildren()) {
+          // call recursively
+          fillObjectInfoHolderFolderContainer(context, repositoryId, object, objectInfos);
+        }    
     }
 
     private Boolean getBooleanProperty(Map<String, PropertyData<?>> props, String key) {
