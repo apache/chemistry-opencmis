@@ -29,9 +29,9 @@ import org.apache.opencmis.client.api.Acl;
 public class AclImpl implements Acl {
 
   private List<Ace> aces;
-  private boolean isExact;
+  private Boolean isExact;
 
-  public AclImpl(List<Ace> aces, boolean isExact) {
+  public AclImpl(List<Ace> aces, Boolean isExact) {
     this.aces = aces;
     this.isExact = isExact;
   }
@@ -40,7 +40,7 @@ public class AclImpl implements Acl {
     return this.aces;
   }
 
-  public boolean isExact() {
+  public Boolean isExact() {
     return this.isExact;
   }
 

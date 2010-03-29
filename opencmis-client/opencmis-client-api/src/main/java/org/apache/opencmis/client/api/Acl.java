@@ -44,6 +44,6 @@ public interface Acl {
    * @return {@code true} if the ACL describes the permissions for the object it has been retrieved
    *         for completely, {@code false} if other security constraints might be effective as well
    */
-  boolean isExact();
+  Boolean isExact();
 
 }

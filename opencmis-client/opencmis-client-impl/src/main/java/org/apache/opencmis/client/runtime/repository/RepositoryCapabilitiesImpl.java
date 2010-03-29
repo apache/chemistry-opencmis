@@ -35,6 +35,9 @@ public class RepositoryCapabilitiesImpl implements RepositoryCapabilities, Seria
 
   private RepositoryCapabilitiesData capabilities = null;
 
+  /**
+   * Constructor.
+   */
   public RepositoryCapabilitiesImpl(RepositoryCapabilitiesData rcd) {
     this.capabilities = rcd;
   }
@@ -63,36 +66,35 @@ public class RepositoryCapabilitiesImpl implements RepositoryCapabilities, Seria
     return this.capabilities.getCapabilityRenditions();
   }
 
-  public boolean isAllVersionsSearchableSupported() {
+  public Boolean isAllVersionsSearchableSupported() {
     return this.capabilities.allVersionsSearchable();
   }
 
-  public boolean isGetDescendantsSupported() {
+  public Boolean isGetDescendantsSupported() {
     return this.capabilities.supportsGetDescendants();
   }
 
-  public boolean isGetFolderTreeSupported() {
+  public Boolean isGetFolderTreeSupported() {
     return this.capabilities.supportsGetFolderTree();
   }
 
-  public boolean isMultifilingSupported() {
+  public Boolean isMultifilingSupported() {
     return this.capabilities.supportsMultifiling();
   }
 
-  public boolean isPwcSearchableSupported() {
+  public Boolean isPwcSearchableSupported() {
     return this.capabilities.isPwcSearchable();
   }
 
-  public boolean isPwcUpdatableSupported() {
+  public Boolean isPwcUpdatableSupported() {
     return this.capabilities.isPwcUpdatable();
   }
 
-  public boolean isUnfilingSupported() {
+  public Boolean isUnfilingSupported() {
     return this.capabilities.supportsUnfiling();
   }
 
-  public boolean isVersionSpecificFilingSupported() {
+  public Boolean isVersionSpecificFilingSupported() {
     return this.capabilities.supportsVersionSpecificFiling();
   }
-
 }

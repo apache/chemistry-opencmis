@@ -60,25 +60,30 @@ public class RepositoryInfoImpl implements RepositoryInfo, Serializable {
    * Sets the data object.
    */
   protected void setRepositoryInfoData(RepositoryInfoData data) {
+    if (data == null) {
+      throw new IllegalArgumentException("Repository info data must be set!");
+    }
+
     this.riData = data;
+
+    if (this.riData.getRepositoryCapabilities() != null) {
+      this.capabilites = new RepositoryCapabilitiesImpl(this.riData.getRepositoryCapabilities());
+    }
+
+    if (this.riData.getAclCapabilities() != null) {
+      this.aclCapabilites = new RepositoryAclCapabilitiesImpl(this.riData.getAclCapabilities());
+    }
   }
 
-  public boolean changesIncomplete() {
+  public Boolean changesIncomplete() {
     return this.riData.changesIncomplete();
   }
 
   public RepositoryAclCapabilities getAclCapabilities() {
-    if (this.aclCapabilites == null) {
-      this.aclCapabilites = new RepositoryAclCapabilitiesImpl(this.riData.getAclCapabilities());
-    }
     return this.aclCapabilites;
   }
 
   public RepositoryCapabilities getCapabilities() {
-    if (this.capabilites == null) {
-      capabilites = new RepositoryCapabilitiesImpl(this.riData.getRepositoryCapabilities());
-    }
-
     return this.capabilites;
   }
 

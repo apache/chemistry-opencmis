@@ -73,14 +73,6 @@ import org.apache.opencmis.commons.provider.RepositoryService;
 /**
  * Persistent model session.
  */
-/**
- * @author florianm
- *
- */
-/**
- * @author florianm
- * 
- */
 public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false,

@@ -20,7 +20,8 @@ package org.apache.opencmis.client.runtime.repository;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,210 +29,224 @@ import org.apache.opencmis.client.api.AclPermission;
 import org.apache.opencmis.client.api.repository.AclPermissionMapping;
 import org.apache.opencmis.client.api.repository.RepositoryAclCapabilities;
 import org.apache.opencmis.commons.enums.AclPropagation;
-import org.apache.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.opencmis.commons.enums.SupportedPermissions;
 import org.apache.opencmis.commons.provider.AclCapabilitiesData;
+import org.apache.opencmis.commons.provider.PermissionDefinitionData;
 import org.apache.opencmis.commons.provider.PermissionMappingData;
 
-public class RepositoryAclCapabilitiesImpl implements
-		RepositoryAclCapabilities, Serializable {
+public class RepositoryAclCapabilitiesImpl implements RepositoryAclCapabilities, Serializable {
 
-	/*
-	 * serialization
-	 */
-	private static final long serialVersionUID = 2824818352611088504L;
+  /*
+   * serialization
+   */
+  private static final long serialVersionUID = 2824818352611088504L;
 
-	/*
-	 * provider data (serializable)
-	 */
-	private AclCapabilitiesData aclCapabilities;
+  /*
+   * provider data (serializable)
+   */
+  private AclCapabilitiesData aclCapabilities;
 
-	/*
-	 * permission mapping (serializable)
-	 */
-	private Map<String, AclPermissionMapping> aclPermissionMapping = null;
+  /*
+   * permission mapping (serializable)
+   */
+  private Map<String, AclPermissionMapping> aclPermissionMapping = null;
 
-	/*
-	 * permissions (serializable)
-	 */
-	List<AclPermission> aclPermissions = null;
+  /*
+   * permissions (serializable)
+   */
+  private List<AclPermission> aclPermissions = null;
 
-	public RepositoryAclCapabilitiesImpl(AclCapabilitiesData aclCapabilities) {
-		this.aclCapabilities = aclCapabilities;
-	}
+  /**
+   * Constructor.
+   */
+  public RepositoryAclCapabilitiesImpl(AclCapabilitiesData aclCapabilities) {
+    this.aclCapabilities = aclCapabilities;
+    this.aclPermissions = new ArrayList<AclPermission>();
+    this.aclPermissionMapping = new HashMap<String, AclPermissionMapping>();
 
-	public AclPropagation getAclPropagation() {
-		return this.aclCapabilities.getAclPropagation();
-	}
+    if (this.aclCapabilities != null) {
+      // copy permissions
+      Map<String, AclPermission> permissionMap = new HashMap<String, AclPermission>();
+      for (PermissionDefinitionData permission : this.aclCapabilities.getPermissionDefinitionData()) {
+        AclPermission ap = new AclPermissionImpl(permission.getPermission(), permission
+            .getDescription());
+        aclPermissions.add(ap);
+        permissionMap.put(ap.getName(), ap);
+      }
 
-	public AclPermissionMapping getAddPolicyObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+      // copy mappings
+      for (PermissionMappingData pmd : this.aclCapabilities.getPermissionMappingData()) {
+        AclPermissionMapping apm = new AclPermissionMappingImpl(pmd, permissionMap);
+        this.aclPermissionMapping.put(pmd.getKey(), apm);
+      }
+    }
+  }
 
-	public AclPermissionMapping getAddPolicyPolicyPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public SupportedPermissions getSupportedPermissions() {
+    return this.aclCapabilities.getSupportedPermissions();
+  }
 
-	public AclPermissionMapping getAddToFolderFolderPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPropagation getAclPropagation() {
+    return this.aclCapabilities.getAclPropagation();
+  }
 
-	public AclPermissionMapping getAddToFolderObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public Map<String, AclPermissionMapping> getPermissionMapping() {
+    return Collections.unmodifiableMap(this.aclPermissionMapping);
+  }
 
-	public AclPermissionMapping getApplyAclObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public List<AclPermission> getPermissions() {
+    return Collections.unmodifiableList(this.aclPermissions);
+  }
 
-	public AclPermissionMapping getCancelCheckoutDocumentPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getAddPolicyObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_ADD_POLICY_OBJECT);
+  }
 
-	public AclPermissionMapping getCheckinDocumentPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getAddPolicyPolicyPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_ADD_POLICY_POLICY);
+  }
 
-	public AclPermissionMapping getCheckoutDocumentPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getAddToFolderFolderPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_ADD_TO_FOLDER_FOLDER);
+  }
 
-	public AclPermissionMapping getCreateDocumentFolderPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getAddToFolderObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_ADD_TO_FOLDER_OBJECT);
+  }
 
-	public AclPermissionMapping getCreateDocumentTypePermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getApplyAclObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_APPLY_ACL_OBJECT);
+  }
 
-	public AclPermissionMapping getCreateFolderFolderPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCancelCheckoutDocumentPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CANCEL_CHECKOUT_DOCUMENT);
+  }
 
-	public AclPermissionMapping getCreateFolderTypePermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCheckinDocumentPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CHECKIN_DOCUMENT);
+  }
 
-	public AclPermissionMapping getCreatePolicyTypePermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCheckoutDocumentPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CHECKOUT_DOCUMENT);
+  }
 
-	public AclPermissionMapping getCreateRelationshipSourcePermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCreateDocumentFolderPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CREATE_DOCUMENT_FOLDER);
+  }
 
-	public AclPermissionMapping getCreateRelationshipTargetPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCreateDocumentTypePermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CREATE_DOCUMENT_TYPE);
+  }
 
-	public AclPermissionMapping getCreateRelationshipTypePermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCreateFolderFolderPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CREATE_FOLDER_FOLDER);
+  }
 
-	public AclPermissionMapping getDeleteContentDocumentPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCreateFolderTypePermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CREATE_FOLDER_TYPE);
+  }
 
-	public AclPermissionMapping getDeleteObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCreatePolicyTypePermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CREATE_POLICY_TYPE);
+  }
 
-	public AclPermissionMapping getDeleteTreeFolderPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCreateRelationshipSourcePermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CREATE_RELATIONSHIP_SOURCE);
+  }
 
-	public AclPermissionMapping getGetAclObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCreateRelationshipTargetPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CREATE_RELATIONSHIP_TARGET);
+  }
 
-	public AclPermissionMapping getGetAllVersionsVersionSeriesPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getCreateRelationshipTypePermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_CREATE_RELATIONSHIP_TYPE);
+  }
 
-	public AclPermissionMapping getGetAppliedPoliciesObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getDeleteContentDocumentPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_DELETE_CONTENT_DOCUMENT);
+  }
 
-	public AclPermissionMapping getGetChildrenFolderPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getDeleteObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_DELETE_OBJECT);
+  }
 
-	public AclPermissionMapping getGetDescendentsFolderPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getDeleteTreeFolderPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_DELETE_TREE_FOLDER);
+  }
 
-	public AclPermissionMapping getGetFolderParentObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getGetAclObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_GET_ACL_OBJECT);
+  }
 
-	public AclPermissionMapping getGetObjectRelationshipsObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getGetAllVersionsVersionSeriesPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_GET_ALL_VERSIONS_VERSION_SERIES);
+  }
 
-	public AclPermissionMapping getGetParentsFolderPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getGetAppliedPoliciesObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_GET_APPLIED_POLICIES_OBJECT);
+  }
 
-	public AclPermissionMapping getGetPropertiesObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getGetChildrenFolderPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_GET_CHILDREN_FOLDER);
+  }
 
-	public AclPermissionMapping getMoveObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getGetDescendentsFolderPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_GET_DESCENDENTS_FOLDER);
+  }
 
-	public AclPermissionMapping getMoveSourcePermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getGetFolderParentObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_GET_FOLDER_PARENT_OBJECT);
+  }
 
-	public AclPermissionMapping getMoveTargetPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getGetObjectRelationshipsObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_GET_OBJECT_RELATIONSHIPS_OBJECT);
+  }
 
-	public Map<String, AclPermissionMapping> getPermissionMapping() {
-		if (this.aclPermissionMapping == null) {
-			this.aclPermissionMapping = new Hashtable<String, AclPermissionMapping>();
-			AclPermissionMapping apm = null;
-			for (PermissionMappingData pmd : this.aclCapabilities
-					.getPermissionMappingData()) {
-				apm = new AclPermissionMappingImpl(pmd);
-				this.aclPermissionMapping.put(pmd.getKey(), apm);
-			}
-		}
-		return this.aclPermissionMapping;
-	}
+  public AclPermissionMapping getGetParentsFolderPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_GET_PARENTS_FOLDER);
+  }
 
-	public List<AclPermission> getPermissions() {
-		if (this.aclPermissions == null) {
-			this.aclPermissions = new ArrayList<AclPermission>();
-		}
-		return this.aclPermissions;
-	}
+  public AclPermissionMapping getGetPropertiesObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_GET_PROPERTIES_OBJECT);
+  }
 
-	public AclPermissionMapping getRemoveFromFolderFolderPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getMoveObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_MOVE_OBJECT);
+  }
 
-	public AclPermissionMapping getRemoveFromFolderObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getMoveSourcePermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_MOVE_SOURCE);
+  }
 
-	public AclPermissionMapping getRemovePolicyObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getMoveTargetPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_MOVE_TARGET);
+  }
 
-	public AclPermissionMapping getRemovePolicyPolicyPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getRemoveFromFolderFolderPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_REMOVE_FROM_FOLDER_FOLDER);
+  }
 
-	public AclPermissionMapping getSetContentDocumentPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getRemoveFromFolderObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_REMOVE_FROM_FOLDER_OBJECT);
+  }
 
-	public AclPermissionMapping getUpdatePropertiesObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getRemovePolicyObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_REMOVE_POLICY_OBJECT);
+  }
 
-	public AclPermissionMapping getViewContentObjectPermissions() {
-		throw new CmisRuntimeException("not implemented");
-	}
+  public AclPermissionMapping getRemovePolicyPolicyPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_REMOVE_POLICY_POLICY);
+  }
+
+  public AclPermissionMapping getSetContentDocumentPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_SET_CONTENT_DOCUMENT);
+  }
+
+  public AclPermissionMapping getUpdatePropertiesObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_UPDATE_PROPERTIES_OBJECT);
+  }
+
+  public AclPermissionMapping getViewContentObjectPermissions() {
+    return this.aclPermissionMapping.get(AclPermissionMapping.CAN_VIEW_CONTENT_OBJECT);
+  }
 }

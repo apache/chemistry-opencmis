@@ -44,25 +44,25 @@ public interface RepositoryCapabilities {
 
   // Navigation
 
-  boolean isGetDescendantsSupported();
+  Boolean isGetDescendantsSupported();
 
-  boolean isGetFolderTreeSupported();
+  Boolean isGetFolderTreeSupported();
 
   // Filing
 
-  boolean isMultifilingSupported();
+  Boolean isMultifilingSupported();
 
-  boolean isUnfilingSupported();
+  Boolean isUnfilingSupported();
 
-  boolean isVersionSpecificFilingSupported();
+  Boolean isVersionSpecificFilingSupported();
 
   // Versioning
 
-  boolean isPwcUpdatableSupported();
+  Boolean isPwcUpdatableSupported();
 
-  boolean isPwcSearchableSupported();
+  Boolean isPwcSearchableSupported();
 
-  boolean isAllVersionsSearchableSupported();
+  Boolean isAllVersionsSearchableSupported();
 
   // Query
 

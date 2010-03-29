@@ -50,6 +50,6 @@ public interface Ace {
    * @return {@code true} if the ACE is directly assigned to the object is has been retrieved from,
    *         {@code false} if it was inherited somehow
    */
-  boolean isDirect();
+  Boolean isDirect();
 
 }

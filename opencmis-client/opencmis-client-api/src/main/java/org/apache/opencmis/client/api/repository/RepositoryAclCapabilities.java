@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.opencmis.client.api.AclPermission;
 import org.apache.opencmis.commons.enums.AclPropagation;
+import org.apache.opencmis.commons.enums.SupportedPermissions;
 
 /**
  * Information about a repositories ACL capabilities, as provided by RepositoryInfo.
@@ -33,6 +34,8 @@ import org.apache.opencmis.commons.enums.AclPropagation;
  */
 public interface RepositoryAclCapabilities {
 
+  SupportedPermissions getSupportedPermissions();
+  
   AclPropagation getAclPropagation();
 
   List<AclPermission> getPermissions();

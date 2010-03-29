@@ -32,9 +32,9 @@ public class AceImpl implements Ace, Serializable {
 
   private String principalId;
   private List<String> permissions;
-  private boolean isDirect;
+  private Boolean isDirect;
 
-  public AceImpl(String principalId, List<String> permissions, boolean isDirect) {
+  public AceImpl(String principalId, List<String> permissions, Boolean isDirect) {
     this.principalId = principalId;
     this.permissions = permissions;
     this.isDirect = isDirect;
@@ -48,7 +48,7 @@ public class AceImpl implements Ace, Serializable {
     return this.permissions;
   }
 
-  public boolean isDirect() {
+  public Boolean isDirect() {
     return this.isDirect;
   }
 }

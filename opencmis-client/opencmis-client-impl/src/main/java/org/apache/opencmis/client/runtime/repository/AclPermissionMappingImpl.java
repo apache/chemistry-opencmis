@@ -21,48 +21,61 @@ package org.apache.opencmis.client.runtime.repository;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.opencmis.client.api.AclPermission;
 import org.apache.opencmis.client.api.repository.AclPermissionMapping;
-import org.apache.opencmis.client.runtime.AclPermissionImpl;
 import org.apache.opencmis.commons.provider.PermissionMappingData;
 
-public class AclPermissionMappingImpl implements AclPermissionMapping,
-		Serializable {
+public class AclPermissionMappingImpl implements AclPermissionMapping, Serializable {
 
-	/**
-	 * serialization
-	 */
-	private static final long serialVersionUID = -8682418497088386853L;
+  /**
+   * serialization
+   */
+  private static final long serialVersionUID = -8682418497088386853L;
 
-	/*
-	 * permission mapping data (serializable)
-	 */
-	private PermissionMappingData pmd = null;
+  /*
+   * permission mapping key (serializable)
+   */
+  private String key;
 
-	/*
-	 * permission list (serializable)
-	 */
-	private List<AclPermission> permissionList = null;
+  /*
+   * permission list (serializable)
+   */
+  private List<AclPermission> permissionList;
 
-	public AclPermissionMappingImpl(PermissionMappingData pmd) {
-		this.pmd = pmd;
-	}
+  /**
+   * Constructor.
+   */
+  public AclPermissionMappingImpl(PermissionMappingData pmd, Map<String, AclPermission> permissions) {
+    this.key = pmd.getKey();
+    this.permissionList = new ArrayList<AclPermission>();
 
-	public String getKey() {
-		return this.pmd.getKey();
-	}
+    for (String permission : pmd.getPermissions()) {
+      AclPermission aclPermission = permissions.get(permission);
+      if (aclPermission == null) {
+        aclPermission = new AclPermissionImpl(permission, permission);
+      }
 
-	public List<AclPermission> getPermissions() {
-		if (this.permissionList == null) {
-			this.permissionList = new ArrayList<AclPermission>();
+      this.permissionList.add(aclPermission);
+    }
+  }
 
-			for (String descr : this.pmd.getPermissions()) {
-				AclPermission acl = new AclPermissionImpl(descr);
-				this.permissionList.add(acl);
-			}
-		}
-		return permissionList;
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.repository.AclPermissionMapping#getKey()
+   */
+  public String getKey() {
+    return this.key;
+  }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.repository.AclPermissionMapping#getPermissions()
+   */
+  public List<AclPermission> getPermissions() {
+    return permissionList;
+  }
 }

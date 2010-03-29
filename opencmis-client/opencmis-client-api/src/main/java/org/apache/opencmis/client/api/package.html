@@ -49,30 +49,7 @@ causing the client to be blocked during that call.</p>
 
 <h2>Usage of the API</h2>
 <p>
-The following example code illustrates how the session is obtained, used and finally released.
-<pre>
-  SessionFactory factory;
-  Session session;
-  try {
-    // acquire the session factory  
-    factory = (SessionFactory) new InitialContext().lookup(JNDI_LOOKUP_KEY);
-    // provide some basic configuration
-    HashMap parameters = new HashMap();
-    parameters.put(SessionParameter.USER, "user");
-    parameters.put(SessionParamter.PASSWORD, encode("password"));
-    parameters.put(SessionParameter.URL, "http://server:port/path");
-    // get the session
-    session = factory.getSession(parameters);
-    // sample: get the root folder and create a new top-level folder
-    Folder rootFolder = session.getRootFolder();
-    Document document = session.getObjectFactory().createDocument(rootFolder, "test");
-    document.setProperty("myProperty", "stringpropertyvalue");
-    document.save(); // create document with property
-  } // end try
-  finally {
-    //cleanup
-  }    
-</pre>
+See <a href="http://cwiki.apache.org/CMIS/opencmis-client-api.html">OpenCMIS Wiki</a>.
 </p>
 <p>
 @see org.opencmis.client.api.SessionFactory

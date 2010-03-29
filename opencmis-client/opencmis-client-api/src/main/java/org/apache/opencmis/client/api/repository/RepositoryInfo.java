@@ -47,7 +47,7 @@ public interface RepositoryInfo {
 
   String getThinClientUri();
 
-  boolean changesIncomplete();
+  Boolean changesIncomplete();
 
   List<BaseObjectTypeIds> getChangesOnType();
 

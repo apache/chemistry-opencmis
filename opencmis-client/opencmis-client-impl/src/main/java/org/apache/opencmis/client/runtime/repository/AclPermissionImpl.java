@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.opencmis.client.runtime;
+package org.apache.opencmis.client.runtime.repository;
 
 import java.io.Serializable;
 
@@ -24,23 +24,37 @@ import org.apache.opencmis.client.api.AclPermission;
 
 public class AclPermissionImpl implements AclPermission, Serializable {
 
-	/**
-	 * serialization
-	 */
-	private static final long serialVersionUID = -3820947135577677874L;
+  /**
+   * serialization
+   */
+  private static final long serialVersionUID = -3820947135577677874L;
 
-	private String description = null;
+  private String name;
+  private String description;
 
-	public AclPermissionImpl(String descr) {
-		this.description = descr;
-	}
+  /**
+   * Constructor.
+   */
+  public AclPermissionImpl(String name, String description) {
+    this.name = name;
+    this.description = description;
+  }
 
-	public String getDescription() {
-		return this.description;
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.AclPermission#getName()
+   */
+  public String getName() {
+    return this.name;
+  }
 
-	public String getName() {
-		return this.description;
-	}
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.api.AclPermission#getDescription()
+   */
+  public String getDescription() {
+    return this.description;
+  }
 }
