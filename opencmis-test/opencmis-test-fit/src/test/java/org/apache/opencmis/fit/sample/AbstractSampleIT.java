@@ -83,7 +83,7 @@ public abstract class AbstractSampleIT {
     assertNotNull(ri.getRootFolderId());
     assertNotNull(ri.getCmisVersionSupported());
     assertNotNull(ri.getCapabilities());
-    assertNotNull(ri.getAclCapabilities());
+    //assertNotNull(ri.getAclCapabilities());
   }
 
   /**
