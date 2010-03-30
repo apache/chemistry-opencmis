@@ -61,12 +61,16 @@ public class ObjGenApp {
   private final static String FILLER_CONTENT_SIZE = "ContentSizeInKB";
   private final static String COUNT = "Count";
   private final static String BINDING = "Binding";
+  private final static String CLEANUP = "Cleanup";
+  private final static String ROOTFOLDER = "RootFolder";
+  
   private final static String BINDING_ATOM = "AtomPub";
   private final static String BINDING_WS = "WebService";
 
   private CmisProvider fProvider;
   private boolean fUsingAtom; 
   private String fUrlStr;
+  private boolean fDoCleanup;
   
   OptionSpec<String> fCmd;
   OptionSpec<Integer> fDepth;
@@ -78,6 +82,9 @@ public class ObjGenApp {
   OptionSpec<String> fRepoId;
   OptionSpec<Integer> fCount;
   OptionSpec<String> fBinding;
+  OptionSpec<Boolean> fCleanup;
+  OptionSpec<String> fRootFolder;
+  
   
   public static void main(String[] args) {
 
@@ -121,7 +128,11 @@ public class ObjGenApp {
         .describedAs("Repeat a command n times (not yet implemented)");
     fBinding = parser.accepts(BINDING).withOptionalArg().ofType(String.class).defaultsTo(BINDING_ATOM)
       .describedAs("Protocol Binding: " + BINDING_ATOM + " or " + BINDING_WS);
-
+    fCleanup = parser.accepts(CLEANUP).withOptionalArg().ofType(Boolean.class).defaultsTo(false)
+    .describedAs("Clean all created objects at the end");
+    fRootFolder = parser.accepts(ROOTFOLDER).withOptionalArg().ofType(String.class)
+      .describedAs("folder id used as root to create objects (default repository root folder)");
+    
     OptionSet options = parser.parse(args);
 
     if (options.valueOf(fCmd) == null || options.has("?"))
@@ -139,6 +150,8 @@ public class ObjGenApp {
       return;
     }
 
+    fDoCleanup = options.valueOf(fCleanup);
+    
     if (options.valueOf(fCmd).equals("FillRepository")) {
       fillRepository(options);
     } else if (options.valueOf(fCmd).equals("CreateDocument")) {
@@ -189,34 +202,9 @@ public class ObjGenApp {
     }
   }
 
-  private void fillRepository(OptionSet options) {
-    if (fUsingAtom)
-      System.out.println("Connecting to  " + getAtomPubUrl());
-    else
-      System.out.println("Connecting to  " + getWsUrl());
-      
-    System.out.println("Filling repository " + options.valueOf(fRepoId)
-        + " with following arguments:");
-    System.out.println("Documents per folder: " + options.valueOf(fDocsPerFolder));
-    System.out.println("Folder per folder: " + options.valueOf(fFolderPerFolder));
-    System.out.println("Depth: " + options.valueOf(fDepth));
-    System.out.println("Content size: " + options.valueOf(fContentSize));
-    System.out.println("Document Type: " + options.valueOf(fDocType));
-    System.out.println("Folder Type: " + options.valueOf(fFolderType));
-
-    try {
-      fillRepository(options.valueOf(fRepoId), options.valueOf(fDocsPerFolder), options
-          .valueOf(fFolderPerFolder), options.valueOf(fDepth), options.valueOf(fDocType), options
-          .valueOf(fFolderType), options.valueOf(fContentSize));
-    }
-    catch (Exception e) {
-      System.out.println("Filling repository failed with exception: " + e);
-      e.printStackTrace();
-    }
-  }
 
   private void fillRepository(String repoId, int docsPerFolder, int foldersPerFolders, int depth,
-      String documentType, String folderType, int contentSizeInKB) {
+      String documentType, String folderType, int contentSizeInKB, String rootFolderId) {
 
     ProviderObjectFactory objectFactory = getObjectFactory();
     NavigationService navSvc = getProvider().getNavigationService();
@@ -232,29 +220,59 @@ public class ObjGenApp {
     gen.setFolderTypeId(folderType);
     // Set contentSize
     gen.setContentSizeInKB(contentSizeInKB);
-    // Simulate a runtime context with configuration parameters
-    // Attach the CallContext to a thread local context that can be accessed from everywhere
+    gen.setCleanUpAfterCreate(fDoCleanup);
 
     // Build the tree
     RepositoryInfoData rep = repSvc.getRepositoryInfo(repoId, null);
-    String rootFolderId = rep.getRootFolderId();
+    if (null == rootFolderId || rootFolderId.length() == 0)
+      rootFolderId = rep.getRootFolderId();
 
     gen.resetCounters();
     gen.createFolderHierachy(depth, foldersPerFolders, rootFolderId);
+    System.out.println();
+    System.out.println("Result:");
     System.out.println("Filling repository succeeded.");
+    System.out.println("Folder used as root for creation (null=rootFolderId): " + rootFolderId);
     System.out.println("Number of documents created: " + gen.getDocumentsInTotal());
     System.out.println("Number of folders created: " + gen.getFoldersInTotal());
     gen.printTimings();
   }
 
+  private void printParameters(OptionSet options) {    
+    if (fUsingAtom)
+      System.out.println("Connecting to  " + getAtomPubUrl());
+    else
+      System.out.println("Connecting to  " + getWsUrl());
+      
+    System.out.println("Repository id is: " + options.valueOf(fRepoId));
+    System.out.println("Content size: " + options.valueOf(fContentSize));
+    System.out.println("Document Type: " + options.valueOf(fDocType));
+    System.out.println("Folder used as root: " + options.valueOf(fRootFolder));
+    System.out.println("Delete all objects after creation: " + fDoCleanup);
+  }
+  
   private void createSingleDocument(OptionSet options) {
-    System.out.println("Connecting to  " + getAtomPubUrl());
-    System.out.println("Creating doc in repository " + options.valueOf(fRepoId));
+    System.out.println();
+    System.out.println("Creating document with parameters:");
+    printParameters(options);
+    createSingleDocument(options.valueOf(fRepoId), options.valueOf(fContentSize), options.valueOf(fRootFolder));
+  }
+  
+  private void fillRepository(OptionSet options) {
+    System.out.println();
+    System.out.println("Creating object tree with folowing parameters: ");
+    System.out.println("Documents per folder: " + options.valueOf(fDocsPerFolder));
+    System.out.println("Folder per folder: " + options.valueOf(fFolderPerFolder));
+    System.out.println("Depth: " + options.valueOf(fDepth));
+    System.out.println("Folder Type: " + options.valueOf(fFolderType));
+    printParameters(options);
 
-    createSingleDocument(options.valueOf(fRepoId), options.valueOf(fContentSize));
+    fillRepository(options.valueOf(fRepoId), options.valueOf(fDocsPerFolder), options
+        .valueOf(fFolderPerFolder), options.valueOf(fDepth), options.valueOf(fDocType), options
+        .valueOf(fFolderType), options.valueOf(fContentSize), options.valueOf(fRootFolder));
   }
 
-  private void createSingleDocument(String repoId, int contentSizeInKB) {
+  private void createSingleDocument(String repoId, int contentSizeInKB, String rootFolderId) {
 
     ProviderObjectFactory objectFactory = getObjectFactory();
     NavigationService navSvc = getProvider().getNavigationService();
@@ -266,31 +284,37 @@ public class ObjGenApp {
     RepositoryInfoData rep = repSvc.getRepositoryInfo(repoId, null);
     timeLogger.stop();
     timeLogger.printTimes();
-    String rootFolderId = rep.getRootFolderId();
+    if (null == rootFolderId || rootFolderId.length() == 0)
+      rootFolderId = rep.getRootFolderId();
     gen.setContentSizeInKB(contentSizeInKB);
     gen.setUseUuidsForNames(true);
-    gen.createSingleDocument(rootFolderId);
+    gen.setCleanUpAfterCreate(fDoCleanup);
+    String id = gen.createSingleDocument(rootFolderId);
+    System.out.println();
+    System.out.println("Result:");
     System.out.println("Document creation succeeded.");
+    System.out.println("Folder used as root for creation: " + rootFolderId);
+    System.out.println("Id of created document: " + id);
     gen.printTimings();
-
     gen.resetCounters();
   }
 
-  private void callRepoInfo(String repositoryId) {
+  private void callRepoInfo(String repositoryId, int count) {
     RepositoryService repSvc = getProvider().getRepositoryService();
     TimeLogger timeLogger = new TimeLogger("RepoInfoTest");
-    int n = 5;
-    for (int i = 0; i < n; i++) {
+    RepositoryInfoData repoInfo = null;
+    for (int i = 0; i < count; i++) {
       fProvider.clearRepositoryCache(repositoryId);
       timeLogger.start();
-      repSvc.getRepositoryInfo(repositoryId, null);
+      repoInfo = repSvc.getRepositoryInfo(repositoryId, null);
       timeLogger.stop();
     }
+    System.out.println("Root Folder id is: " + (repoInfo==null ? "<unknown>" : repoInfo.getRootFolderId()) );
     timeLogger.printTimes();
   }
 
   private void repositoryInfo(OptionSet options) {
-    callRepoInfo(options.valueOf(fRepoId));
+    callRepoInfo(options.valueOf(fRepoId), options.valueOf(fCount));
   }
 
   private ProviderObjectFactory getObjectFactory() {

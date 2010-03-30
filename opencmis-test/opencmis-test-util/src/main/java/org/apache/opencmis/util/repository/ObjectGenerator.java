@@ -35,6 +35,7 @@ import org.apache.opencmis.commons.PropertyIds;
 import org.apache.opencmis.commons.api.ExtensionsData;
 import org.apache.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.opencmis.commons.enums.IncludeRelationships;
+import org.apache.opencmis.commons.enums.UnfileObjects;
 import org.apache.opencmis.commons.enums.VersioningState;
 import org.apache.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
 import org.apache.opencmis.commons.provider.AccessControlList;
@@ -64,8 +65,11 @@ public class ObjectGenerator {
   private String fRepositoryId;
   private TimeLogger fTimeLoggerCreateDoc;
   private TimeLogger fTimeLoggerCreateFolder;
+  private TimeLogger fTimeLoggerDelete;
+  private boolean fCleanup;
+  List<String> fTopLevelDocsCreated; // list of ids created on first level
+  List<String> fTopLevelFoldersCreated; // list of ids created on first level
   
-    
   /**
    * Indicates if / how many documents are created in each folder
    */
@@ -135,6 +139,10 @@ public class ObjectGenerator {
     fUseUuids = false;
     fTimeLoggerCreateDoc = new TimeLogger("createDocument()");
     fTimeLoggerCreateFolder = new TimeLogger("createFolder()");
+    fTimeLoggerDelete = new TimeLogger("Delete");
+    fCleanup = false;
+    fTopLevelDocsCreated = new ArrayList<String>();
+    fTopLevelFoldersCreated = new ArrayList<String>();    
   }
   
   public void setNumberOfDocumentsToCreatePerFolder(int noDocumentsToCreate) {
@@ -161,11 +169,19 @@ public class ObjectGenerator {
     fContentSizeInK = sizeInK;
   }
   
+  public void setCleanUpAfterCreate(boolean doCleanup) {
+    fCleanup = doCleanup;
+  }
+  
   public void createFolderHierachy(int levels, int childrenPerLevel, String rootFolderId) {
     resetCounters();
     fTimeLoggerCreateDoc.reset();
     fTimeLoggerCreateFolder.reset();
+    fTopLevelFoldersCreated.clear();
+    fTopLevelDocsCreated.clear();
     createFolderHierachy(rootFolderId, 0, levels, childrenPerLevel);
+    if (fCleanup)
+      deleteTree();
   }
   
   public void setUseUuidsForNames(boolean useUuids) {
@@ -252,9 +268,12 @@ public class ObjectGenerator {
     return fDocumentsInTotalCount + fFoldersInTotalCount;
   }
 
-  public void createSingleDocument(String folderId) {
+  public String createSingleDocument(String folderId) {
     fTimeLoggerCreateDoc.reset();
-	  createDocument(folderId, 0, 0);      
+	  String objectId = createDocument(folderId, 0, 0);
+    if (fCleanup)
+      deleteObject(objectId);	  
+    return objectId;
   }
 	  
   public void resetCounters() {
@@ -263,27 +282,34 @@ public class ObjectGenerator {
   
   public void printTimings() {
     fTimeLoggerCreateDoc.printTimes();
-    fTimeLoggerCreateFolder.printTimes();    
+    fTimeLoggerCreateFolder.printTimes();
+    if (fCleanup)
+      fTimeLoggerDelete.printTimes();
   }
   
   public void logTimings() {
     fTimeLoggerCreateDoc.logTimes();
     fTimeLoggerCreateFolder.logTimes();    
+    if (fCleanup)
+      fTimeLoggerDelete.logTimes();
   }
   
   private void createFolderHierachy(String parentId, int level, int levels, int childrenPerLevel) {
-    
+    String id = null;
+
     if (level>=levels)
       return;
+
     log.debug(" create folder for parent id: " + parentId + ", in level " + level 
          + ", max levels " + levels);
     
     for (int i = 0; i < childrenPerLevel; i++) {
       PropertiesData props = createFolderProperties(i, level);
-      String id = null;
       try {
         fTimeLoggerCreateFolder.start();
         id = fObjSvc.createFolder(fRepositoryId, props, parentId, null, null, null, null);
+        if (level==0)
+          fTopLevelFoldersCreated.add(id);
       } finally {
         fTimeLoggerCreateFolder.stop();
       }
@@ -294,7 +320,9 @@ public class ObjectGenerator {
       }
     }
     for (int j=0; j<fNoDocumentsToCreate; j++) {
-      createDocument(parentId, j, level);
+      id = createDocument(parentId, j, level);
+      if (level==0)
+        fTopLevelDocsCreated.add(id);
     }
   }
 
@@ -325,6 +353,33 @@ public class ObjectGenerator {
     return id;
   }
   
+  private void deleteTree() {
+    
+    // delete all documents from first level
+    for (String id : fTopLevelDocsCreated) {
+      deleteObject(id);
+    }
+    
+    // delete recursively all folders from first level
+    for (String id : fTopLevelFoldersCreated) {
+      try {
+        fTimeLoggerDelete.start();
+        fObjSvc.deleteTree(fRepositoryId, id, true, UnfileObjects.DELETE, true, null);
+      } finally {
+        fTimeLoggerDelete.stop();
+      }    
+    }
+  }
+  
+  private void deleteObject(String objectId) {
+    try {
+      fTimeLoggerDelete.start();
+      fObjSvc.deleteObject(fRepositoryId, objectId, true, null);
+    } finally {
+      fTimeLoggerDelete.stop();
+    }    
+  }
+
   private ContentStreamData createContent() {
     ContentStreamDataImpl content = new ContentStreamDataImpl();
     content.setFilename("data.txt");

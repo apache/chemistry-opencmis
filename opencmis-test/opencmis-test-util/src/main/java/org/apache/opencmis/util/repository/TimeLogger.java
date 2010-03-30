@@ -72,7 +72,7 @@ public class TimeLogger {
     else if (size==1)
       LOG.info("Time elapsed for " + fAction + ": " + getLastTime());
     else {
-      LOG.info("Timings for " + size + " samples: ");
+      LOG.info("Timings for " + size + " samples for action " + fAction + ": ");
       LOG.info("  Average: " + getAverageTime() + "ms");
       LOG.info("  Min    : " + getMinTime() + "ms");
       LOG.info("  Max    : " + getMaxTime() + "ms");
@@ -87,7 +87,7 @@ public class TimeLogger {
     else if (size==1)
       System.out.println("Time elapsed for " + fAction + ": " + getLastTime());
     else {
-      System.out.println("Timings for " + size + " samples: ");
+      System.out.println("Timings for " + size + " samples for action " + fAction + ": ");
       System.out.println("  Average: " + getAverageTime() + "ms");
       System.out.println("  Min    : " + getMinTime() + "ms");
       System.out.println("  Max    : " + getMaxTime() + "ms");
