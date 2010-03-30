@@ -54,6 +54,7 @@ import org.apache.opencmis.commons.provider.PropertyData;
 import org.apache.opencmis.commons.provider.RenditionData;
 import org.apache.opencmis.inmemory.DataObjectCreator;
 import org.apache.opencmis.inmemory.FilterParser;
+import org.apache.opencmis.inmemory.NameValidator;
 import org.apache.opencmis.inmemory.TypeValidator;
 import org.apache.opencmis.inmemory.storedobj.api.Content;
 import org.apache.opencmis.inmemory.storedobj.api.Document;
@@ -813,6 +814,10 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
       throw new RuntimeException("Cannot create a document, with a non-document type: "
           + typeDef.getId());
 
+    // check name syntax
+    if (!NameValidator.isValidId(name))
+      throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+
     TypeValidator.validateVersionStateForCreate((DocumentTypeDefinition) typeDef, versioningState);
     TypeValidator.validateProperties(typeDef, properties, true);
 
@@ -873,6 +878,11 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     String folderName = (String) pd.getFirstValue();
     if (null == folderName || folderName.length() == 0)
       throw new CmisInvalidArgumentException("Cannot create a folder without a name.");
+
+    // check name syntax
+    if (!NameValidator.isValidId(folderName))
+      throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+
 
     TypeValidator.validateRequiredSystemProperties(properties);
 

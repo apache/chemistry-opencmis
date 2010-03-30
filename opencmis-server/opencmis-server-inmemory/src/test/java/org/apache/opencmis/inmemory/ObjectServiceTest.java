@@ -120,7 +120,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       PropertiesData props = createDocumentProperties("abc ()", DOCUMENT_TYPE_ID);
       id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE,
           null, null, null, null);
-      fail("Creating  document with an illegal should fail.");
+      fail("Creating  document with an illegal name should fail.");
     } catch (Exception e) {
       assertTrue(e instanceof CmisInvalidArgumentException);
       log.info("Creating  document with an illegal name failed as expected.");
