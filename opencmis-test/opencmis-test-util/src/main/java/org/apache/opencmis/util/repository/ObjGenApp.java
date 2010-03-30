@@ -99,30 +99,34 @@ public class ObjGenApp {
   private void processCmdLine(String[] args) {
 
     OptionParser parser = new OptionParser();
-    fCmd = parser.accepts(CMD).withRequiredArg();
-    fRepoId = parser.accepts(REPOSITORY_ID).withOptionalArg();
+    fCmd = parser.accepts(CMD).withRequiredArg()
+      .describedAs("Command to perform (see below)");
+    fRepoId = parser.accepts(REPOSITORY_ID).withOptionalArg()
+      .describedAs("Repository used");
     fDocType = parser.accepts(FILLER_DOCUMENT_TYPE_ID).withOptionalArg().defaultsTo(
-        BaseObjectTypeIds.CMIS_DOCUMENT.value());
+        BaseObjectTypeIds.CMIS_DOCUMENT.value())
+      .describedAs("Document type created");
     fFolderType = parser.accepts(FILLER_FOLDER_TYPE_ID).withOptionalArg().defaultsTo(
-        BaseObjectTypeIds.CMIS_FOLDER.value());
-    fDocsPerFolder = parser.accepts(FILLER_DOCS_PER_FOLDER).withOptionalArg().ofType(Integer.class);
+        BaseObjectTypeIds.CMIS_FOLDER.value())
+        .describedAs("Folder type created");
+    fDocsPerFolder = parser.accepts(FILLER_DOCS_PER_FOLDER).withOptionalArg().ofType(Integer.class)
+      .describedAs("Documents on each level").defaultsTo(1);
     fFolderPerFolder = parser.accepts(FILLER_FOLDERS_PER_FOLDER).withOptionalArg().ofType(
-        Integer.class);
-    fDepth = parser.accepts(FILLER_DEPTH).withOptionalArg().ofType(Integer.class);
-    fContentSize = parser.accepts(FILLER_CONTENT_SIZE).withOptionalArg().ofType(Integer.class);
-    fCount = parser.accepts(COUNT).withOptionalArg().ofType(Integer.class).defaultsTo(10);
-    fBinding = parser.accepts(BINDING).withOptionalArg().ofType(String.class).defaultsTo(BINDING_ATOM);
+        Integer.class).describedAs(" Folders on each level").defaultsTo(0);
+    fDepth = parser.accepts(FILLER_DEPTH).withOptionalArg().ofType(Integer.class)
+      .describedAs("Levels of folders").defaultsTo(1);
+    fContentSize = parser.accepts(FILLER_CONTENT_SIZE).withOptionalArg().ofType(Integer.class)
+      .describedAs("Content size of each doc").defaultsTo(0);
+    fCount = parser.accepts(COUNT).withOptionalArg().ofType(Integer.class).defaultsTo(1)
+        .describedAs("Repeat a command n times (not yet implemented)");
+    fBinding = parser.accepts(BINDING).withOptionalArg().ofType(String.class).defaultsTo(BINDING_ATOM)
+      .describedAs("Protocol Binding: " + BINDING_ATOM + " or " + BINDING_WS);
 
     OptionSet options = parser.parse(args);
 
-    if (options.has("?"))
-      try {
-        parser.printHelpOn(System.out);
-      }
-      catch (IOException e) {
-        e.printStackTrace();
-      }
-
+    if (options.valueOf(fCmd) == null || options.has("?"))
+      usage(parser);
+    
     if (options.valueOf(fBinding).equals(BINDING_WS)) {
       System.out.println("Using Web Service binding.");
       fUsingAtom = false;
@@ -145,6 +149,7 @@ public class ObjGenApp {
       getUrl(getConfiguredUrl());
     } else {
       System.out.println("Unknown cmd: " + options.valueOf(fCmd));
+      usage(parser);
     }
   }
 
@@ -163,8 +168,28 @@ public class ObjGenApp {
 //    logger.printTimes();    
 //  }
 
+  private void usage(OptionParser parser) {
+    try {
+      System.out.println();
+      System.out.println("ObjGenApp is a command line tool for testing a CMIS repository.");
+      System.out.println("Usage:");
+      parser.printHelpOn(System.out);
+      System.out.println();
+      System.out.println("Command is one of [CreateDocument, FillRepository, RepositoryInfo]");
+      System.out.println("JVM system properties: " + PROP_ATOMPUB_URL + ", " + PROP_WS_URL);
+      System.out.println();
+      System.out.println("Example: ");
+      System.out.println("java -D" + PROP_ATOMPUB_URL + "=http://localhost:8080/opencmis/atom -cp ... " +
+          "org.apache.opencmis.util.repository.ObjGenApp --Binding=AtomPub --Command=CreateDocument " +
+          "--RepositoryId=A1 --ContentSizeInKB=25");
+      return;
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   private void fillRepository(OptionSet options) {
-    System.out.println();
     if (fUsingAtom)
       System.out.println("Connecting to  " + getAtomPubUrl());
     else
@@ -223,12 +248,10 @@ public class ObjGenApp {
   }
 
   private void createSingleDocument(OptionSet options) {
-    System.out.println();
     System.out.println("Connecting to  " + getAtomPubUrl());
     System.out.println("Creating doc in repository " + options.valueOf(fRepoId));
 
     createSingleDocument(options.valueOf(fRepoId), options.valueOf(fContentSize));
-
   }
 
   private void createSingleDocument(String repoId, int contentSizeInKB) {
