@@ -62,6 +62,10 @@ public class ObjectGenerator {
   NavigationService fNavSvc;
   ObjectService fObjSvc;
   private String fRepositoryId;
+  private TimeLogger fTimeLoggerCreateDoc;
+  private TimeLogger fTimeLoggerCreateFolder;
+  
+    
   /**
    * Indicates if / how many documents are created in each folder
    */
@@ -106,7 +110,6 @@ public class ObjectGenerator {
    */
   private int fContentSizeInK = 0;
   
-
   private static final String NAMEPROPVALPREFIXDOC = "My_Document-";
   private static final String NAMEPROPVALPREFIXFOLDER = "My_Folder-";
   private static final String STRINGPROPVALPREFIXDOC = "My Doc StringProperty ";
@@ -130,6 +133,8 @@ public class ObjectGenerator {
     fStringPropertyIdsToSetForFolder = new ArrayList<String>();
     fNoDocumentsToCreate = 0;
     fUseUuids = false;
+    fTimeLoggerCreateDoc = new TimeLogger("createDocument()");
+    fTimeLoggerCreateFolder = new TimeLogger("createFolder()");
   }
   
   public void setNumberOfDocumentsToCreatePerFolder(int noDocumentsToCreate) {
@@ -158,6 +163,8 @@ public class ObjectGenerator {
   
   public void createFolderHierachy(int levels, int childrenPerLevel, String rootFolderId) {
     resetCounters();
+    fTimeLoggerCreateDoc.reset();
+    fTimeLoggerCreateFolder.reset();
     createFolderHierachy(rootFolderId, 0, levels, childrenPerLevel);
   }
   
@@ -246,11 +253,22 @@ public class ObjectGenerator {
   }
 
   public void createSingleDocument(String folderId) {
+    fTimeLoggerCreateDoc.reset();
 	  createDocument(folderId, 0, 0);      
   }
 	  
   public void resetCounters() {
     fDocumentsInTotalCount = fFoldersInTotalCount = 0;
+  }
+  
+  public void printTimings() {
+    fTimeLoggerCreateDoc.printTimes();
+    fTimeLoggerCreateFolder.printTimes();    
+  }
+  
+  public void logTimings() {
+    fTimeLoggerCreateDoc.logTimes();
+    fTimeLoggerCreateFolder.logTimes();    
   }
   
   private void createFolderHierachy(String parentId, int level, int levels, int childrenPerLevel) {
@@ -261,8 +279,15 @@ public class ObjectGenerator {
          + ", max levels " + levels);
     
     for (int i = 0; i < childrenPerLevel; i++) {
-      PropertiesData props = createFolderProperties(i, level);      
-      String id = fObjSvc.createFolder(fRepositoryId, props, parentId, null, null, null, null);
+      PropertiesData props = createFolderProperties(i, level);
+      String id = null;
+      try {
+        fTimeLoggerCreateFolder.start();
+        id = fObjSvc.createFolder(fRepositoryId, props, parentId, null, null, null, null);
+      } finally {
+        fTimeLoggerCreateFolder.stop();
+      }
+
       if (id != null) {
         ++fFoldersInTotalCount;
         createFolderHierachy(id, level+1, levels, childrenPerLevel);
@@ -286,8 +311,14 @@ public class ObjectGenerator {
     String id = null;
     if (fContentSizeInK > 0)
       contentStream = createContent();
-    id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState,
-        policies, addACEs, removeACEs, extension);
+    try {
+      fTimeLoggerCreateDoc.start();
+      id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState,
+          policies, addACEs, removeACEs, extension);
+    } finally {
+      fTimeLoggerCreateDoc.stop();
+    }
+    
     if (null == id)
       throw new RuntimeException("createDocument failed.");
     ++fDocumentsInTotalCount;

@@ -42,5 +42,15 @@
       <artifactId>opencmis-commons-impl</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>net.sf.jopt-simple</groupId>
+      <artifactId>jopt-simple</artifactId>
+      <version>3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>opencmis-provider-impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
