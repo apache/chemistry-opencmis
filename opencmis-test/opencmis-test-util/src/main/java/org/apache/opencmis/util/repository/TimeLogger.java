@@ -161,4 +161,97 @@ public class TimeLogger {
     return sum; 
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////
+  //
+  // Same methods used for multithreaded logging
+  
+  public static void logTimes(TimeLogger[] loggers) {
+    long size=0;    
+    if (null == loggers)
+      return;
+    
+    for (int i=0; i<loggers.length; i++)
+      size += loggers[i].fTimeRecs.size();
+    
+    LOG.info("Timings for " + size + " samples for action " + loggers[0].fAction + ": ");
+    LOG.info("  Average: " + getAverageTime(loggers) + "ms");
+    LOG.info("  Min    : " + getMinTime(loggers) + "ms");
+    LOG.info("  Max    : " + getMaxTime(loggers) + "ms");
+    LOG.info("  Total  : " + getTotalTime(loggers) + "ms");
+  }
+  
+  public static void printTimes(TimeLogger[] loggers) {
+    long size=0;    
+    if (null == loggers)
+      return;
+    
+    for (int i=0; i<loggers.length; i++)
+      size += loggers[i].fTimeRecs.size();
+    
+    System.out.println("Timings for " + size + " samples for action " + loggers[0].fAction + ": ");
+    System.out.println("  Average: " + getAverageTime(loggers) + "ms");
+    System.out.println("  Min    : " + getMinTime(loggers) + "ms");
+    System.out.println("  Max    : " + getMaxTime(loggers) + "ms");
+    System.out.println("  Total  : " + getTotalTime(loggers) + "ms");
+
+  }
+  
+  static private long getAverageTime(TimeLogger[] loggers) {
+    long sum = 0;
+    long size=0;
+    
+    for (int i=0; i<loggers.length; i++)
+      size += loggers[i].fTimeRecs.size();
+    
+    if (size==0)
+      return 0;
+    
+    for (int i=0; i<loggers.length; i++) {
+      if (0 == loggers[i].fTimeRecs.size())
+        continue;
+      
+      for (TimeRecord tm : loggers[i].fTimeRecs) {
+        sum += tm.fStop - tm.fStart;
+      }
+    }
+    
+    return (sum + size/2) / size; 
+  }
+  
+  static private long getMaxTime(TimeLogger[] loggers) {
+    long max = Long.MIN_VALUE;
+
+    for (int i=0; i<loggers.length; i++) {
+      long val = loggers[i].getMaxTime();
+      if (val > max)
+        max = val;
+    }
+
+    return max; 
+  }
+
+  static private long getMinTime(TimeLogger[] loggers) {
+    long min = Long.MAX_VALUE;
+    
+    for (int i=0; i<loggers.length; i++) {
+      long val = loggers[i].getMinTime();
+      if (val < min)
+        min = val;
+    }
+    
+    return min; 
+  }
+ 
+  static private long getTotalTime(TimeLogger[] loggers) {
+    long totalTime = Long.MIN_VALUE;
+
+    for (int i=0; i<loggers.length; i++) {
+      long val = loggers[i].getTotalTime();
+      if (val > totalTime)
+        totalTime = val;
+    }
+
+    return totalTime; 
+  }
+  
 }

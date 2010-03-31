@@ -173,6 +173,18 @@ public class ObjectGenerator {
     fCleanup = doCleanup;
   }
   
+  public TimeLogger getCreateDocumentTimeLogger() {
+    return fTimeLoggerCreateDoc;
+  }
+  
+  public TimeLogger getCreateFolderTimeLogger() {
+    return fTimeLoggerCreateFolder;
+  }
+
+  public TimeLogger getDeleteTimeLogger() {
+    return fTimeLoggerDelete;
+  }
+  
   public void createFolderHierachy(int levels, int childrenPerLevel, String rootFolderId) {
     resetCounters();
     fTimeLoggerCreateDoc.reset();
@@ -276,6 +288,45 @@ public class ObjectGenerator {
     return objectId;
   }
 	  
+  public String[] createDocuments(String folderId, int count) {
+    
+    String result[];
+    
+    fTimeLoggerCreateDoc.reset();
+    for (int i=0; i<count; i++) {
+      String id = createDocument(folderId, 0, 0);
+      fTopLevelDocsCreated.add(id);
+    }
+    if (fCleanup) {
+      deleteTree();
+      result = null;
+    } else {
+      result = new String[count];
+      for (int i=0; i<fTopLevelDocsCreated.size(); i++) 
+        result[i] = fTopLevelDocsCreated.get(i);
+    }
+    return result;
+  }
+
+  public String[] createFolders(String folderId, int count) {
+    
+    String result[];
+    
+    fTimeLoggerCreateFolder.reset();
+    for (int i=0; i<count; i++) {
+      createFolder(folderId);
+    }
+    if (fCleanup) {
+      deleteTree();
+      result = null;
+    } else {
+      result = new String[count];
+      for (int i=0; i<fTopLevelFoldersCreated.size(); i++) 
+        result[i] = fTopLevelFoldersCreated.get(i);
+    }
+    return result;
+  }
+    
   public void resetCounters() {
     fDocumentsInTotalCount = fFoldersInTotalCount = 0;
   }
@@ -324,6 +375,19 @@ public class ObjectGenerator {
       if (level==0)
         fTopLevelDocsCreated.add(id);
     }
+  }
+
+  private String createFolder(String parentId) {
+    PropertiesData props = createFolderProperties(0, 0);
+    String id = null;
+    try {
+      fTimeLoggerCreateFolder.start();
+      id = fObjSvc.createFolder(fRepositoryId, props, parentId, null, null, null, null);
+      fTopLevelFoldersCreated.add(id);
+    } finally {
+      fTimeLoggerCreateFolder.stop();
+    }
+    return id;
   }
 
   private String createDocument(String folderId, int no, int level) {
