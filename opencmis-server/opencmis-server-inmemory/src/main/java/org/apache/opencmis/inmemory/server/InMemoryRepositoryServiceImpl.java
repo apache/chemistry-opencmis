@@ -30,8 +30,6 @@ import org.apache.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.opencmis.commons.api.TypeDefinitionList;
 import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
-import org.apache.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.inmemory.storedobj.api.StoreManager;
@@ -150,70 +148,23 @@ public class InMemoryRepositoryServiceImpl extends AbstractServiceImpl implement
       List<TypeDefinitionContainer> result = null;
       if (typeId == null) {
         // spec says that depth must be ignored in this case
-        Collection<TypeDefinitionContainer> typeColl = fStoreManager
-            .getTypeDefinitionList(repositoryId);
-        result = new ArrayList<TypeDefinitionContainer>(typeColl);
-        if (!includePropertyDefinitions) {
-          // copy list and omit properties
-          for (TypeDefinitionContainer c : result) {
-            AbstractTypeDefinition td = ((AbstractTypeDefinition) c.getTypeDefinition()).clone();
-            TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
-            tdc.setChildren(c.getChildren());
-            td.setPropertyDefinitions(null);
-          }
-        }
+        Collection<TypeDefinitionContainer> tmp = fStoreManager.getTypeDefinitionList(repositoryId,
+            includePropertyDefinitions);
+        result = new ArrayList<TypeDefinitionContainer> (tmp);
       }
       else {
-        TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId);
-        if (tc != null) {
-          if (null == depth || depth.intValue() == -1) {
-            result = tc.getChildren();
-            if (!includePropertyDefinitions)
-              cloneTypeList(depth.intValue() - 1, false, result);
-          }
-          else if (depth.intValue() == 0 || depth.intValue() < -1)
-            throw new CmisInvalidArgumentException("illegal depth value: " + depth.intValue());
-          else {
-            result = tc.getChildren();
-            cloneTypeList(depth.intValue() - 1, includePropertyDefinitions, result);
-          }
-        }
-        else
+        TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId,
+            includePropertyDefinitions, depth==null ? -1 : depth.intValue());
+        if (tc == null) 
           throw new CmisInvalidArgumentException("unknown type id: " + typeId);
+        else
+          result = tc.getChildren();
       }
 
       return result;
     }
     finally {
       RuntimeContext.remove();
-    }
-  }
-
-  /**
-   * traverse tree and replace each need node with a clone. remove properties on clone if requested,
-   * cut children of clone if depth is exceeded.
-   * 
-   * @param depth
-   * @param types
-   */
-  private void cloneTypeList(int depth, boolean includePropertyDefinitions,
-      List<TypeDefinitionContainer> types) {
-
-    ListIterator<TypeDefinitionContainer> it = types.listIterator();
-    while (it.hasNext()) {
-      TypeDefinitionContainer tdc = it.next();
-      AbstractTypeDefinition td = ((AbstractTypeDefinition) tdc.getTypeDefinition()).clone();
-      if (!includePropertyDefinitions)
-        td.setPropertyDefinitions(null);
-      TypeDefinitionContainerImpl tdcClone = new TypeDefinitionContainerImpl(td);
-      if (depth > 0) {
-        ArrayList<TypeDefinitionContainer> children = new ArrayList<TypeDefinitionContainer>(tdc
-            .getChildren().size());
-        children.addAll(tdc.getChildren());
-        tdcClone.setChildren(children);
-        cloneTypeList(depth - 1, includePropertyDefinitions, children);
-      }
-      it.set(tdcClone);
     }
   }
 

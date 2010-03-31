@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,9 +34,12 @@ import org.apache.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.opencmis.commons.enums.CapabilityJoin;
 import org.apache.opencmis.commons.enums.CapabilityQuery;
 import org.apache.opencmis.commons.enums.CapabilityRendition;
+import org.apache.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.opencmis.commons.impl.dataobjects.ProviderObjectFactoryImpl;
 import org.apache.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
 import org.apache.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
+import org.apache.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.opencmis.inmemory.RepositoryInfoCreator;
@@ -113,14 +117,53 @@ public class StoreManagerImpl implements StoreManager {
     if (null == typeManager)
       throw new RuntimeException("Unknown repository " + repositoryId);
 
-    return typeManager.getTypeById(typeId);
+    return typeManager.getTypeById(typeId);    
   }
 
-  public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId) {
+  public TypeDefinitionContainer getTypeById(String repositoryId, String typeId,
+      boolean includePropertyDefinitions, int depth) {
     TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
     if (null == typeManager)
       throw new RuntimeException("Unknown repository " + repositoryId);
-    return typeManager.getTypeDefinitionList();
+
+    TypeDefinitionContainer tc = typeManager.getTypeById(typeId);
+    List<TypeDefinitionContainer> result = null;
+    
+    if (tc != null) {
+      if (depth == -1) {
+        result = tc.getChildren();
+        if (!includePropertyDefinitions)
+          cloneTypeList(depth - 1, false, result);
+      }
+      else if (depth == 0 || depth < -1)
+        throw new CmisInvalidArgumentException("illegal depth value: " + depth);
+      else {
+        result = tc.getChildren();
+        cloneTypeList(depth - 1, includePropertyDefinitions, result);
+      }
+    }    
+    return tc;
+  }
+  
+  public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId, boolean includePropertyDefinitions) {
+    Collection<TypeDefinitionContainer> result;
+    TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
+    if (null == typeManager)
+      throw new RuntimeException("Unknown repository " + repositoryId);
+    Collection<TypeDefinitionContainer> typeColl = typeManager.getTypeDefinitionList();
+    if (includePropertyDefinitions) {
+      result = typeColl;
+    } else {
+      result = new ArrayList<TypeDefinitionContainer>(typeColl);
+      // copy list and omit properties
+      for (TypeDefinitionContainer c : result) {
+        AbstractTypeDefinition td = ((AbstractTypeDefinition) c.getTypeDefinition()).clone();
+        TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
+        tdc.setChildren(c.getChildren());
+        td.setPropertyDefinitions(null);
+      }
+    }
+    return result;
   }
   
   public Map<String, TypeDefinitionContainer> getTypeDefinitionMap(String repositoryId) {
@@ -144,19 +187,6 @@ public class StoreManagerImpl implements StoreManager {
     RepositoryInfoData repoInfo = createDefaultRepositoryInfo(repositoryId);
 
     return repoInfo;
-  }
-
-  private void initTypeSystem(String repositoryId, String typeCreatorClassName) {
-
-    List<TypeDefinition> typeDefs = null;
-    TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
-    if (null == typeManager)
-      throw new RuntimeException("Unknown repository " + repositoryId);
-
-    if (null != typeCreatorClassName)
-      typeDefs = initTypeSystem(typeCreatorClassName);
-
-    typeManager.initTypeSystem(typeDefs);
   }
 
   public void clearTypeSystem(String repositoryId) {
@@ -206,6 +236,57 @@ public class StoreManagerImpl implements StoreManager {
     }
   }
   
+  public List<TypeDefinition> initTypeSystem(String typeCreatorClassName) {
+    
+    List<TypeDefinition> typesList = null;
+
+    if (typeCreatorClassName != null) {
+      Object obj = null;
+      TypeCreator typeCreator = null;
+
+      try {
+        obj = Class.forName(typeCreatorClassName).newInstance();
+      }
+      catch (InstantiationException e) {
+        throw new RuntimeException(
+            "Illegal class to create type system, must implement TypeCreator interface.", e);
+      }
+      catch (IllegalAccessException e) {
+        throw new RuntimeException(
+            "Illegal class to create type system, must implement TypeCreator interface.", e);
+      }
+      catch (ClassNotFoundException e) {
+        throw new RuntimeException(
+            "Illegal class to create type system, must implement TypeCreator interface.", e);
+      }
+
+      if (obj instanceof TypeCreator)
+        typeCreator = (TypeCreator) obj;
+      else
+        throw new RuntimeException(
+            "Illegal class to create type system, must implement TypeCreator interface.");
+
+      // retrieve the list of available types from the configured class.
+      // test
+      typesList = typeCreator.createTypesList();      
+    }
+    
+    return typesList;
+  }
+
+  private void initTypeSystem(String repositoryId, String typeCreatorClassName) {
+
+    List<TypeDefinition> typeDefs = null;
+    TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
+    if (null == typeManager)
+      throw new RuntimeException("Unknown repository " + repositoryId);
+
+    if (null != typeCreatorClassName)
+      typeDefs = initTypeSystem(typeCreatorClassName);
+
+    typeManager.initTypeSystem(typeDefs);
+  }
+
   private RepositoryInfoData createDefaultRepositoryInfo(String repositoryId) {
     ObjectStore objStore = getObjectStore(repositoryId);
     String rootFolderId = objStore.getRootFolder().getId();
@@ -256,42 +337,32 @@ public class StoreManagerImpl implements StoreManager {
     return repoInfo;
   }
 
-  public List<TypeDefinition> initTypeSystem(String typeCreatorClassName) {
-   
-    List<TypeDefinition> typesList = null;
+  /**
+   * traverse tree and replace each need node with a clone. remove properties on clone if requested,
+   * cut children of clone if depth is exceeded.
+   * 
+   * @param depth
+   * @param types
+   */
+  private void cloneTypeList(int depth, boolean includePropertyDefinitions,
+      List<TypeDefinitionContainer> types) {
 
-    if (typeCreatorClassName != null) {
-      Object obj = null;
-      TypeCreator typeCreator = null;
-
-      try {
-        obj = Class.forName(typeCreatorClassName).newInstance();
+    ListIterator<TypeDefinitionContainer> it = types.listIterator();
+    while (it.hasNext()) {
+      TypeDefinitionContainer tdc = it.next();
+      AbstractTypeDefinition td = ((AbstractTypeDefinition) tdc.getTypeDefinition()).clone();
+      if (!includePropertyDefinitions)
+        td.setPropertyDefinitions(null);
+      TypeDefinitionContainerImpl tdcClone = new TypeDefinitionContainerImpl(td);
+      if (depth > 0) {
+        ArrayList<TypeDefinitionContainer> children = new ArrayList<TypeDefinitionContainer>(tdc
+            .getChildren().size());
+        children.addAll(tdc.getChildren());
+        tdcClone.setChildren(children);
+        cloneTypeList(depth - 1, includePropertyDefinitions, children);
       }
-      catch (InstantiationException e) {
-        throw new RuntimeException(
-            "Illegal class to create type system, must implement TypeCreator interface.", e);
-      }
-      catch (IllegalAccessException e) {
-        throw new RuntimeException(
-            "Illegal class to create type system, must implement TypeCreator interface.", e);
-      }
-      catch (ClassNotFoundException e) {
-        throw new RuntimeException(
-            "Illegal class to create type system, must implement TypeCreator interface.", e);
-      }
-
-      if (obj instanceof TypeCreator)
-        typeCreator = (TypeCreator) obj;
-      else
-        throw new RuntimeException(
-            "Illegal class to create type system, must implement TypeCreator interface.");
-
-      // retrieve the list of available types from the configured class.
-      // test
-      typesList = typeCreator.createTypesList();      
+      it.set(tdcClone);
     }
-    
-    return typesList;
   }
-
+  
 }
