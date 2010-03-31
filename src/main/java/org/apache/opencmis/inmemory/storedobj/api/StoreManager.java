@@ -78,10 +78,13 @@ public interface StoreManager {
    * retrieve a list with all type definitions. 
    * @param repositoryId
    *    id of repository 
+   * @param includePropertyDefinitions
+   *    indicates whether to include property definitions in returned type
    * @return
    *    map with type definition
    */
-  Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId);
+  Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
+      boolean includePropertyDefinitions);
   
   /**
    * Retrieve a type definition for a give repository and type id
@@ -94,6 +97,24 @@ public interface StoreManager {
    *    type definition
    */
   TypeDefinitionContainer getTypeById(String repositoryId, String typeId);
+
+  /**
+   * Retrieve a type definition for a give repository and type id with or
+   * without property definitions and limited to depth in hierarchy
+   * 
+   * @param repositoryId
+   *    id of repository 
+   * @param typeId
+   *    id of type definition
+   * @param includePropertyDefinitions
+   *    indicates whether to include property definitions in returned type
+   * @param depth
+   *    limit depth of type hierarchy in return (-1 means unlimited)
+   * @return
+   *    type definition
+   */
+  TypeDefinitionContainer getTypeById(String repositoryId, String typeId,
+      boolean includePropertyDefinitions, int depth);
 
   /**
    * Retrieve a factory to create CMIS data structures used as containers
