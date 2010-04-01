@@ -168,31 +168,36 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    */
   public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream,
       String checkinComment, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+    String objectId;
+    ObjectType type;
     readLock();
     try {
-      String objectId = getObjectId();
-      Holder<String> objectIdHolder = new Holder<String>(objectId);
-
-      ObjectFactory of = getObjectFactory();
-
-      Set<Updatability> updatebility = new HashSet<Updatability>();
-      updatebility.add(Updatability.READWRITE);
-      updatebility.add(Updatability.WHENCHECKEDOUT);
-
-      getProvider().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
-          of.convertProperties(properties, getType(), updatebility),
-          of.convertContentStream(contentStream), checkinComment, of.convertPolicies(policies),
-          of.convertAces(addAces), of.convertAces(removeAces), null);
-
-      if (objectIdHolder.getValue() == null) {
-        return null;
-      }
-
-      return getSession().createObjectId(objectIdHolder.getValue());
+      objectId = getObjectId();
+      type = getType();
     }
     finally {
       readUnlock();
     }
+
+    Holder<String> objectIdHolder = new Holder<String>(objectId);
+
+    ObjectFactory of = getObjectFactory();
+
+    Set<Updatability> updatebility = new HashSet<Updatability>();
+    updatebility.add(Updatability.READWRITE);
+    updatebility.add(Updatability.WHENCHECKEDOUT);
+
+    getProvider().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
+        of.convertProperties(properties, type, updatebility),
+        of.convertContentStream(contentStream), checkinComment, of.convertPolicies(policies),
+        of.convertAces(addAces), of.convertAces(removeAces), null);
+
+    if (objectIdHolder.getValue() == null) {
+      return null;
+    }
+
+    return getSession().createObjectId(objectIdHolder.getValue());
+
   }
 
   /*
@@ -211,8 +216,17 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * OperationContext)
    */
   public List<Document> getAllVersions(OperationContext context) {
-    String objectId = getObjectId();
-    String versionSeriesId = getVersionSeriesId();
+    String objectId;
+    String versionSeriesId;
+
+    readLock();
+    try {
+      objectId = getObjectId();
+      versionSeriesId = getVersionSeriesId();
+    }
+    finally {
+      readUnlock();
+    }
 
     List<ObjectData> versions = getProvider().getVersioningService().getAllVersions(
         getRepositoryId(), objectId, versionSeriesId, context.getFilterString(),
@@ -234,6 +248,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     }
 
     return result;
+
   }
 
   /*
@@ -302,8 +317,8 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * org.apache.opencmis.client.api.ContentStream)
    */
   public ObjectId setContentStream(boolean overwrite, ContentStream contentStream) {
-    String objectId = null;
-    String changeToken = null;
+    String objectId;
+    String changeToken;
 
     readLock();
     try {
@@ -333,8 +348,8 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * @see org.apache.opencmis.client.api.Document#deleteContentStream()
    */
   public ObjectId deleteContentStream() {
-    String objectId = null;
-    String changeToken = null;
+    String objectId;
+    String changeToken;
 
     readLock();
     try {

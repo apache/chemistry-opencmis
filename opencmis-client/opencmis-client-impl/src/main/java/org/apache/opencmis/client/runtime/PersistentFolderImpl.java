@@ -515,25 +515,33 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * @see org.apache.opencmis.client.api.Folder#getPath()
    */
   public String getPath() {
-    // get the path property
-    String path = getPropertyValue(PropertyIds.CMIS_PATH);
+    String path;
 
-    // if the path property isn't set, get it
-    if (path == null) {
-      String objectId = getObjectId();
-      ObjectData objectData = getProvider().getObjectService().getObject(getRepositoryId(),
-          objectId, PropertyIds.CMIS_PATH, false, IncludeRelationships.NONE, "cmis:none", false,
-          false, null);
+    readLock();
+    try {
+      // get the path property
+      path = getPropertyValue(PropertyIds.CMIS_PATH);
 
-      if ((objectData.getProperties() != null)
-          && (objectData.getProperties().getProperties() != null)) {
-        PropertyData<?> pathProperty = objectData.getProperties().getProperties().get(
-            PropertyIds.CMIS_PATH);
+      // if the path property isn't set, get it
+      if (path == null) {
+        String objectId = getObjectId();
+        ObjectData objectData = getProvider().getObjectService().getObject(getRepositoryId(),
+            objectId, PropertyIds.CMIS_PATH, false, IncludeRelationships.NONE, "cmis:none", false,
+            false, null);
 
-        if (pathProperty instanceof PropertyStringData) {
-          path = ((PropertyStringData) pathProperty).getFirstValue();
+        if ((objectData.getProperties() != null)
+            && (objectData.getProperties().getProperties() != null)) {
+          PropertyData<?> pathProperty = objectData.getProperties().getProperties().get(
+              PropertyIds.CMIS_PATH);
+
+          if (pathProperty instanceof PropertyStringData) {
+            path = ((PropertyStringData) pathProperty).getFirstValue();
+          }
         }
       }
+    }
+    finally {
+      readUnlock();
     }
 
     // we still don't know the path ... it's not a CMIS compliant repository

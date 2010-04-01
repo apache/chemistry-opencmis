@@ -462,32 +462,6 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   public RepositoryInfo getRepositoryInfo() {
     fLock.readLock().lock();
     try {
-      if (this.repositoryInfo == null) {
-        fLock.readLock().unlock();
-        fLock.writeLock().lock();
-        try {
-          // try again
-          if (this.repositoryInfo != null) {
-            return this.repositoryInfo;
-          }
-
-          /* get initial repository id from session parameter */
-          String repositoryId = this.determineRepositoryId(this.parameters);
-          if (repositoryId == null) {
-            throw new IllegalStateException("Repository Id is not set!");
-          }
-
-          RepositoryInfoData data = getProvider().getRepositoryService().getRepositoryInfo(
-              repositoryId, null);
-
-          this.repositoryInfo = new RepositoryInfoImpl(data);
-        }
-        finally {
-          fLock.writeLock().unlock();
-          fLock.readLock().lock();
-        }
-      }
-
       return this.repositoryInfo;
     }
     finally {
@@ -681,6 +655,17 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     fLock.writeLock().lock();
     try {
       this.provider = CmisProviderHelper.createProvider(this.parameters);
+
+      /* get initial repository id from session parameter */
+      String repositoryId = this.determineRepositoryId(this.parameters);
+      if (repositoryId == null) {
+        throw new IllegalStateException("Repository Id is not set!");
+      }
+
+      RepositoryInfoData data = getProvider().getRepositoryService().getRepositoryInfo(
+          repositoryId, null);
+
+      this.repositoryInfo = new RepositoryInfoImpl(data);
     }
     finally {
       fLock.writeLock().unlock();
