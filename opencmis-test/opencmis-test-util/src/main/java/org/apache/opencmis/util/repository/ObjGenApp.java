@@ -255,6 +255,7 @@ public class ObjGenApp {
     System.out.println("Document Type: " + options.valueOf(fDocType));
     System.out.println("Folder id used as root: " + options.valueOf(fRootFolder));
     System.out.println("Delete all objects after creation: " + options.valueOf(fCleanup));
+    System.out.println("Number of actions to perform: " + options.valueOf(fCount));
     System.out.println("Number of threads to start: " + options.valueOf(fThreads));
   }
 
@@ -297,6 +298,10 @@ public class ObjGenApp {
   }
 
   private void createFolders(OptionSet options) {
+    System.out.println();
+    System.out.println("Creating folder with parameters:");
+    printParameters(options);
+    System.out.println("Folder Type: " + options.valueOf(fFolderType));
     int noThreads = options.valueOf(fThreads);
     if (noThreads <= 1)
       createFolders(options.valueOf(fRepoId), options.valueOf(fFolderType), options

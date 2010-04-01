@@ -156,7 +156,7 @@ public class TimeLogger {
     long sum = 0;
     
     for (TimeRecord tm : fTimeRecs) {
-      sum = tm.fStop - tm.fStart;
+      sum += tm.fStop - tm.fStart;
     }
     return sum; 
   }
