@@ -28,7 +28,7 @@
 	</welcome-file-list>
 
 	<listener>
-		<listener-class>org.apache.opencmis.server.impl.CmisRepositoryContextListener</listener-class>
+		<listener-class>org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener</listener-class>
 	</listener>
 	
 	<listener>
@@ -43,10 +43,10 @@
 
 	<servlet>
 		<servlet-name>cmisatom</servlet-name>
-		<servlet-class>org.apache.opencmis.server.impl.atompub.CmisAtomPubServlet</servlet-class>
+		<servlet-class>org.apache.chemistry.opencmis.server.impl.atompub.CmisAtomPubServlet</servlet-class>
 		<init-param>
 			<param-name>callContextHandler</param-name>
-			<param-value>org.apache.opencmis.server.impl.atompub.BasicAuthCallContextHandler</param-value>
+			<param-value>org.apache.chemistry.opencmis.server.impl.atompub.BasicAuthCallContextHandler</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>

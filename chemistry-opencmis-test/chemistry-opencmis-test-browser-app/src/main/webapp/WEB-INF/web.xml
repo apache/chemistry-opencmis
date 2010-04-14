@@ -29,7 +29,7 @@
 
 	<servlet>
 		<servlet-name>browse</servlet-name>
-		<servlet-class>org.apache.opencmis.browser.BrowseServlet</servlet-class>
+		<servlet-class>org.apache.chemistry.opencmis.browser.BrowseServlet</servlet-class>
 		<init-param>
 			<param-name>auxroot</param-name>
 			<param-value>{ctx}/browser/</param-value>

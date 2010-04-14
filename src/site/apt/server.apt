@@ -21,7 +21,7 @@ OpenCMIS Server Framework
 ** Framework Entry Point
 
   A repository connector has to extend the 
-  <<<{{{./opencmis-server-spi/apidocs/org/apache/opencmis/server/spi/AbstractServicesFactory.html}AbstractServicesFactory}}>>> 
+  <<<{{{./opencmis-server-spi/apidocs/org/apache/chemistry/opencmis/server/spi/AbstractServicesFactory.html}AbstractServicesFactory}}>>> 
   class. This class manages the objects that implement the interfaces of 
   the different CMIS services. There is only one active instance of this 
   class per servlet context. The class name has to be set in the 
@@ -50,13 +50,13 @@ class=org.repository.ServicesFactory
   There are also a few exceptions that are explained in the JavaDoc. 
   
   The first parameter of all methods is the 
-  <<<{{{./opencmis-server-spi/apidocs/org/apache/opencmis/server/spi/CallContext.html}CallContext}}>>>. 
+  <<<{{{./opencmis-server-spi/apidocs/org/apache/chemistry/opencmis/server/spi/CallContext.html}CallContext}}>>>. 
   It is used to
   transport authentication data to the connector. 
   (See section "Authentictaion Framework".)
 
   Some methods have an additional
-  <<<{{{./opencmis-server-spi/apidocs/org/apache/opencmis/server/spi/ObjectInfoHolder.html}ObjectInfoHolder}}>>> 
+  <<<{{{./opencmis-server-spi/apidocs/org/apache/chemistry/opencmis/server/spi/ObjectInfoHolder.html}ObjectInfoHolder}}>>> 
   parameter. This object
   is only set if the call is an AtomPub call. AtomPub entries and feeds require 
   additional data about the objects that should be returned AND the object that

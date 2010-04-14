@@ -28,11 +28,11 @@
   <moduleSets>
     <moduleSet>
       <includes>
-        <include>org.apache.opencmis:opencmis-client-api</include>
-        <include>org.apache.opencmis:opencmis-client-impl</include>
-        <include>org.apache.opencmis:opencmis-commons-api</include>
-        <include>org.apache.opencmis:opencmis-commons-impl</include>
-        <include>org.apache.opencmis:opencmis-provider-impl</include>
+        <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-api</include>
+        <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-impl</include>
+        <include>org.apache.chemistry.opencmis:chemistry-opencmis-commons-api</include>
+        <include>org.apache.chemistry.opencmis:chemistry-opencmis-commons-impl</include>
+        <include>org.apache.chemistry.opencmis:chemistry-opencmis-provider-impl</include>
       </includes>
       <binaries>
         <outputDirectory></outputDirectory>

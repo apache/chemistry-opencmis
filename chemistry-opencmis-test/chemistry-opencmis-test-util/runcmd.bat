@@ -28,4 +28,4 @@ java -Dopencmis.test.atompub.url=http://localhost:8080/opencmis/atom -cp ^
 %M2_REPO%/org/apache/opencmis/opencmis-commons-impl/0.1-SNAPSHOT/opencmis-commons-impl-0.1-SNAPSHOT.jar;^
 %M2_REPO%/org/apache/opencmis/opencmis-provider-impl/0.1-SNAPSHOT/opencmis-provider-impl-0.1-SNAPSHOT.jar;^
 %M2_REPO%/org/apache/opencmis/opencmis-test-util/0.1-SNAPSHOT/opencmis-test-util-0.1-SNAPSHOT.jar; ^
-org.apache.opencmis.util.repository.ObjGenApp %*
+org.apache.chemistry.opencmis.util.repository.ObjGenApp %*

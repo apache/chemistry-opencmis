@@ -69,12 +69,12 @@
 		<profile>
 			<!--
 				call mvn test
-				-Dorg.apache.opencmis.client.runtime.suite.config.path=myServer.properties
+				-Dorg.apache.chemistry.opencmis.client.runtime.suite.config.path=myServer.properties
 				to run test using profile parameters
 			-->
 			<activation>
 				<property>
-					<name>org.apache.opencmis.client.runtime.test.config.path</name>
+					<name>org.apache.chemistry.opencmis.client.runtime.test.config.path</name>
 				</property>
 			</activation>
 			<build>
@@ -84,7 +84,7 @@
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-surefire-plugin</artifactId>
 							<configuration>
-								<argLine>-Dorg.apache.opencmis.client.runtime.test.config.path=${org.apache.opencmis.client.runtime.test.config.path}</argLine>
+								<argLine>-Dorg.apache.chemistry.opencmis.client.runtime.test.config.path=${org.apache.chemistry.opencmis.client.runtime.test.config.path}</argLine>
 							</configuration>
 						</plugin>
 					</plugins>

@@ -17,9 +17,9 @@ OpenCMIS Provider Layer
   better choice for most applications.
 
   A connection to a CMIS repository is represented by a 
-  <<<{{{./opencmis-commons-api/apidocs/org/apache/opencmis/commons/provider/CmisProvider.html}CmisProvider}}>>>
+  <<<{{{./opencmis-commons-api/apidocs/org/apache/chemistry/opencmis/commons/provider/CmisProvider.html}CmisProvider}}>>>
   object. Such an object can be created by the 
-  <<<{{{./opencmis-provider-impl/apidocs/org/apache/opencmis/client/provider/factory/CmisProviderFactory.html}CmisProviderFactory}}>>>. 
+  <<<{{{./opencmis-provider-impl/apidocs/org/apache/chemistry/opencmis/client/provider/factory/CmisProviderFactory.html}CmisProviderFactory}}>>>. 
   The factory provides two main methods, one for each binding, that require
   binding specific connection information. The created <<<CmisProvider>>> 
   object exposes a binding agnostic interface.
