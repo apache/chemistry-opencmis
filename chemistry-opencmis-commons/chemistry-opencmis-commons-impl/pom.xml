@@ -47,7 +47,7 @@
                             </wsdlFiles>
                             <packageName>org.apache.chemistry.opencmis.commons.impl.jaxb</packageName>
                             <destdir></destdir>
-                            <sourceDestDir>${project.basedir}/src/main/java</sourceDestDir>
+                            <sourceDestDir>${project.basedir}/target/generated</sourceDestDir>
                             <extension>true</extension>
                             <target>2.1</target>
                         </configuration>
