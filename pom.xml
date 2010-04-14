@@ -28,8 +28,8 @@
 
 	<!-- Project Information -->
 
-	<groupId>org.apache.opencmis</groupId>
-	<artifactId>opencmis</artifactId>
+	<groupId>org.apache.chemistry.opencmis</groupId>
+	<artifactId>chemistry-opencmis</artifactId>
 	<name>OpenCMIS</name>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -58,9 +58,9 @@
 	</licenses>
 
 	<scm>
-		<connection>svn checkout http://svn.apache.org/repos/asf/incubator/chemistry/trunk/opencmis</connection>
-		<developerConnection>svn checkout https://svn.apache.org/repos/asf/incubator/chemistry/trunk/opencmis</developerConnection>
-		<url>http://svn.apache.org/viewvc/incubator/chemistry/trunk/opencmis/</url>
+		<connection>svn checkout http://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</connection>
+		<developerConnection>svn checkout https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</developerConnection>
+		<url>http://svn.apache.org/viewvc/incubator/chemistry/opencmis/trunk/</url>
 	</scm>
 
 	<issueManagement>
@@ -146,22 +146,22 @@
 
 	<!-- Project Environment -->
 	<modules>
-		<module>opencmis-commons/opencmis-commons-api</module>
-		<module>opencmis-commons/opencmis-commons-impl</module>
-		<module>opencmis-client/opencmis-client-api</module>
-		<module>opencmis-client/opencmis-client-impl</module>
-		<module>opencmis-client/opencmis-provider-impl</module>
-		<module>opencmis-server/opencmis-server-spi</module>
-		<module>opencmis-server/opencmis-server-impl</module>
-		<module>opencmis-server/opencmis-server-support</module>
-		<module>opencmis-server/opencmis-server-inmemory</module>
-		<module>opencmis-server/opencmis-server-fileshare</module>
-		<module>opencmis-test/opencmis-test-fit</module>
-		<module>opencmis-test/opencmis-test-tck</module>
-		<module>opencmis-test/opencmis-test-tools</module>
-		<module>opencmis-test/opencmis-test-util</module>
-		<module>opencmis-test/opencmis-test-browser</module>
-		<module>opencmis-test/opencmis-test-browser-app</module>
+		<module>chemistry-opencmis-commons/chemistry-opencmis-commons-api</module>
+		<module>chemistry-opencmis-commons/chemistry-opencmis-commons-impl</module>
+		<module>chemistry-opencmis-client/chemistry-opencmis-client-api</module>
+		<module>chemistry-opencmis-client/chemistry-opencmis-client-impl</module>
+		<module>chemistry-opencmis-client/chemistry-opencmis-client-bindings</module>
+		<module>chemistry-opencmis-server/chemistry-opencmis-server-spi</module>
+		<module>chemistry-opencmis-server/chemistry-opencmis-server-bindings</module>
+		<module>chemistry-opencmis-server/chemistry-opencmis-server-support</module>
+		<module>chemistry-opencmis-server/chemistry-opencmis-server-inmemory</module>
+		<module>chemistry-opencmis-server/chemistry-opencmis-server-fileshare</module>
+		<module>chemistry-opencmis-test/chemistry-opencmis-test-fit</module>
+		<module>chemistry-opencmis-test/chemistry-opencmis-test-tck</module>
+		<module>chemistry-opencmis-test/chemistry-opencmis-test-tools</module>
+		<module>chemistry-opencmis-test/chemistry-opencmis-test-util</module>
+		<module>chemistry-opencmis-test/chemistry-opencmis-test-browser</module>
+		<module>chemistry-opencmis-test/chemistry-opencmis-test-browser-app</module>
 	</modules>
 
 	<build>
