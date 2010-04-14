@@ -45,7 +45,7 @@
 							<wsdlFiles>
 								<wsdlFile>CMISWS-Service.wsdl</wsdlFile>
 							</wsdlFiles>
-							<packageName>org.apache.chemistry.opencmis.commons.impl.jaxb</packageName>
+							<packageName>org.apache.opencmis.commons.impl.jaxb</packageName>
 							<destdir></destdir>
 							<sourceDestDir>${project.basedir}/src/main/java</sourceDestDir>
 							<extension>true</extension>
