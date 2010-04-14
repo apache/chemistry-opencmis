@@ -20,13 +20,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.apache.opencmis</groupId>
-		<artifactId>opencmis</artifactId>
+		<groupId>org.apache.chemistry.opencmis</groupId>
+		<artifactId>chemistry-opencmis</artifactId>
 		<version>0.1-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>opencmis-server-inmemory</artifactId>
+	<artifactId>chemistry-opencmis-server-inmemory</artifactId>
 	<name>OpenCMIS InMemory Server Implementation</name>
 	<packaging>war</packaging>
 
@@ -55,7 +55,7 @@
 						</overlay>
 						<overlay>
 							<groupId>${project.groupId}</groupId>
-							<artifactId>opencmis-server-impl</artifactId>
+							<artifactId>chemistry-opencmis-server-bindings</artifactId>
 						</overlay>
 					</overlays>
 				</configuration>
@@ -66,38 +66,38 @@
 	<dependencies>
 		<dependency>
       <groupId>${project.groupId}</groupId>
-			<artifactId>opencmis-commons-api</artifactId>
+			<artifactId>chemistry-opencmis-commons-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.opencmis</groupId>
-			<artifactId>opencmis-commons-impl</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-      <groupId>${project.groupId}</groupId>
-			<artifactId>opencmis-provider-impl</artifactId>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-commons-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
       <groupId>${project.groupId}</groupId>
-			<artifactId>opencmis-server-spi</artifactId>
+			<artifactId>chemistry-opencmis-client-bindings</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
       <groupId>${project.groupId}</groupId>
-			<artifactId>opencmis-test-util</artifactId>
+			<artifactId>chemistry-opencmis-server-spi</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
       <groupId>${project.groupId}</groupId>
-			<artifactId>opencmis-server-impl</artifactId>
+			<artifactId>chemistry-opencmis-test-util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+      <groupId>${project.groupId}</groupId>
+			<artifactId>chemistry-opencmis-server-bindings</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
 		<dependency>
       <groupId>${project.groupId}</groupId>
-			<artifactId>opencmis-server-support</artifactId>
+			<artifactId>chemistry-opencmis-server-support</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
