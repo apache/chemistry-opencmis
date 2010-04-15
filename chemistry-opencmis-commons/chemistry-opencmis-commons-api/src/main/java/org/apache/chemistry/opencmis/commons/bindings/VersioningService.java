@@ -38,7 +38,7 @@ public interface VersioningService {
   public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension);
 
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
-      PropertiesData properties, ContentStreamData contentStream, String checkinComment,
+      PropertiesData properties, ContentStream contentStream, String checkinComment,
       List<String> policies, AccessControlList addAces, AccessControlList removeAces,
       ExtensionsData extension);
 

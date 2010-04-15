@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
@@ -306,7 +306,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
       assertNotNull(object.getObject().getBaseTypeId());
 
       if (object.getObject().getBaseTypeId() == BaseObjectTypeIds.CMIS_DOCUMENT) {
-        ContentStreamData contentStream = getContent(object.getObject().getId(), null);
+        ContentStream contentStream = getContent(object.getObject().getId(), null);
         readContent(contentStream);
 
         return;

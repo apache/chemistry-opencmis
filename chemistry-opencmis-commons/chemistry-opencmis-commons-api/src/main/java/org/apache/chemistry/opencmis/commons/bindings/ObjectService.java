@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 public interface ObjectService {
 
   String createDocument(String repositoryId, PropertiesData properties, String folderId,
-      ContentStreamData contentStream, VersioningState versioningState, List<String> policies,
+      ContentStream contentStream, VersioningState versioningState, List<String> policies,
       AccessControlList addAces, AccessControlList removeAces, ExtensionsData extension);
 
   String createDocumentFromSource(String repositoryId, String sourceId, PropertiesData properties,
@@ -72,7 +72,7 @@ public interface ObjectService {
       Boolean includeAllowableActions, IncludeRelationships includeRelationships,
       String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension);
 
-  ContentStreamData getContentStream(String repositoryId, String objectId, String streamId,
+  ContentStream getContentStream(String repositoryId, String objectId, String streamId,
       BigInteger offset, BigInteger length, ExtensionsData extension);
 
   void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
@@ -88,7 +88,7 @@ public interface ObjectService {
       UnfileObjects unfileObjects, Boolean continueOnFailure, ExtensionsData extension);
 
   void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
-      Holder<String> changeToken, ContentStreamData contentStream, ExtensionsData extension);
+      Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension);
 
   void deleteContentStream(String repositoryId, Holder<String> objectId,
       Holder<String> changeToken, ExtensionsData extension);

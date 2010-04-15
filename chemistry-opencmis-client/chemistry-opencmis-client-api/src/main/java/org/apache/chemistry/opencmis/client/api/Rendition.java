@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
+
 /**
  * {@see Document#getRenditions()}. Domain Model 2.4.2
  */

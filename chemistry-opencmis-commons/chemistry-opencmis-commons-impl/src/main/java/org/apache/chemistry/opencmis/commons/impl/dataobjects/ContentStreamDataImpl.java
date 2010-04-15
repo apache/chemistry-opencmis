@@ -21,15 +21,15 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.io.InputStream;
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 
 /**
  * Content stream data implementation.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
-public class ContentStreamDataImpl extends AbstractExtensionData implements ContentStreamData {
+public class ContentStreamDataImpl extends AbstractExtensionData implements ContentStream {
 
   private String fFilename;
   private BigInteger fLength;
@@ -49,29 +49,28 @@ public class ContentStreamDataImpl extends AbstractExtensionData implements Cont
       InputStream stream) {
     setLength(length);
     setMimeType(mimetype);
-    setFilename(filename);
+    setFileName(filename);
     setStream(stream);
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.ContentStreamData#getFilename()
    */
-  public String getFilename() {
+  public String getFileName() {
     return fFilename;
   }
 
-  public void setFilename(String filename) {
+  public void setFileName(String filename) {
     fFilename = filename;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ContentStreamData#getLength()
-   */
-  public BigInteger getLength() {
+  public long getLength() {
+    return fLength == null ? -1 : fLength.longValue();
+  }
+
+  public BigInteger getBigLength() {
     return fLength;
   }
 
@@ -81,7 +80,7 @@ public class ContentStreamDataImpl extends AbstractExtensionData implements Cont
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.ContentStreamData#getMimeType()
    */
   public String getMimeType() {
@@ -94,7 +93,7 @@ public class ContentStreamDataImpl extends AbstractExtensionData implements Cont
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.ContentStreamData#getStream()
    */
   public InputStream getStream() {

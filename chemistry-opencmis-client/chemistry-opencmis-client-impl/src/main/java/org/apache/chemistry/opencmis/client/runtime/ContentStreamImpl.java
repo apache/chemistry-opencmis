@@ -19,13 +19,16 @@
 package org.apache.chemistry.opencmis.client.runtime;
 
 import java.io.InputStream;
+import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.client.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractExtensionData;
 
 /**
  * Content stream implementation.
  */
-public class ContentStreamImpl implements ContentStream {
+public class ContentStreamImpl extends AbstractExtensionData implements
+        ContentStream {
 
   private String filename;
   private long length;
@@ -45,6 +48,10 @@ public class ContentStreamImpl implements ContentStream {
 
   public long getLength() {
     return length;
+  }
+
+  public BigInteger getBigLength() {
+    return BigInteger.valueOf(length);
   }
 
   public String getMimeType() {

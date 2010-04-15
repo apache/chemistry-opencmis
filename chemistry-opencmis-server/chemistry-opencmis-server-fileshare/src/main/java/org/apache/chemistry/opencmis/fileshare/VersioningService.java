@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
@@ -77,7 +77,7 @@ public class VersioningService implements CmisVersioningService {
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
   public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId,
-      Boolean major, PropertiesData properties, ContentStreamData contentStream,
+      Boolean major, PropertiesData properties, ContentStream contentStream,
       String checkinComment, List<String> policies, AccessControlList addAces,
       AccessControlList removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
     throw new CmisNotSupportedException("checkIn not supported!");

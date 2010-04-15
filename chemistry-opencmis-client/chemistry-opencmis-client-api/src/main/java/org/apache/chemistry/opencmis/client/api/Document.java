@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.api;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
@@ -87,7 +88,7 @@ public interface Document extends FileableCmisObject {
 
   /**
    * Shortcut for ObjectFactory.createDocumentFromSource(this, ...).
-   * 
+   *
    * @param properties
    * @param versioningState
    * @param policies

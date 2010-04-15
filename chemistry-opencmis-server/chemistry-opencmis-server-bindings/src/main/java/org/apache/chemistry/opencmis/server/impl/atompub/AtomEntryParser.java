@@ -35,7 +35,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
@@ -144,7 +144,7 @@ public class AtomEntryParser {
   /**
    * Returns the content stream.
    */
-  public ContentStreamData getContentStream() {
+  public ContentStream getContentStream() {
     return (fCmisContentStream == null ? fAtomContentStream : fCmisContentStream);
   }
 

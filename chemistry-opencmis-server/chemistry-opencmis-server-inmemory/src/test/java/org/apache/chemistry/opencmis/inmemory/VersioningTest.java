@@ -36,7 +36,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
@@ -149,7 +149,7 @@ public class VersioningTest extends AbstractServiceTst {
     assertTrue(isCheckedOut(pwcId));
 
     // Set a new content and modify property
-    ContentStreamData altContent = fCreator.createAlternateContent();
+    ContentStream altContent = fCreator.createAlternateContent();
     idHolder = new Holder<String>(pwcId);
     Holder<String> tokenHolder = new Holder<String>(changeToken);
     fObjSvc.setContentStream(fRepositoryId, idHolder, true, tokenHolder, altContent, null);
@@ -162,7 +162,7 @@ public class VersioningTest extends AbstractServiceTst {
     // Neither the version nor the version series should be checked out any longer:
     assertFalse(isCheckedOut(idHolder.getValue()));
     assertFalse(isCheckedOut(docId));
-    ContentStreamData retrievedContent = fObjSvc.getContentStream(fRepositoryId, idHolder
+    ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, idHolder
         .getValue(), null, BigInteger.valueOf(-1) /* offset */,
         BigInteger.valueOf(-1) /* length */, null);
     assertTrue(fCreator.verifyContent(fCreator.createAlternateContent(), retrievedContent));
@@ -187,7 +187,7 @@ public class VersioningTest extends AbstractServiceTst {
     fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
     String pwcId = idHolder.getValue();
     
-    ContentStreamData altContent = fCreator.createAlternateContent();
+    ContentStream altContent = fCreator.createAlternateContent();
     PropertiesData newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
     idHolder = new Holder<String>(pwcId);
     assertTrue(isCheckedOut(docId));
@@ -200,7 +200,7 @@ public class VersioningTest extends AbstractServiceTst {
     // Neither the version nor the version series should be checked out any longer:
     assertFalse(isCheckedOut(idHolder.getValue()));
     assertFalse(isCheckedOut(docId));
-    ContentStreamData retrievedContent = fObjSvc.getContentStream(fRepositoryId, idHolder
+    ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, idHolder
         .getValue(), null, BigInteger.valueOf(-1) /* offset */,
         BigInteger.valueOf(-1) /* length */, null);
 
@@ -246,7 +246,7 @@ public class VersioningTest extends AbstractServiceTst {
       assertTrue(e instanceof CmisUpdateConflictException);
     }
 
-    ContentStreamData altContent = fCreator.createAlternateContent();
+    ContentStream altContent = fCreator.createAlternateContent();
     Holder<String> pwcHolder = new Holder<String>(pwcId);
     try {      
       fObjSvc.setContentStream(fRepositoryId, pwcHolder, true, null, altContent, null);
@@ -260,7 +260,7 @@ public class VersioningTest extends AbstractServiceTst {
     fVerSvc.checkIn(fRepositoryId, pwcHolder, true, null, null, "testCheckOutAndOtherUser", null, null, null,null);
     
     // Because nothing was changed we should have a new version with identical content
-    ContentStreamData retrievedContent = fObjSvc.getContentStream(fRepositoryId, pwcHolder.getValue(),
+    ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, pwcHolder.getValue(),
         null, BigInteger.valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
     assertTrue(fCreator.verifyContent(retrievedContent, fCreator.createContent()));    
     assertTrue(fCreator.verifyProperty(idHolder.getValue(), VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE));  
@@ -282,7 +282,7 @@ public class VersioningTest extends AbstractServiceTst {
     // Set a new content and modify property
     PropertiesData props = fObjSvc.getProperties(fRepositoryId, pwcId, "*", null);
     String changeToken = (String) props.getProperties().get(PropertyIds.CMIS_CHANGE_TOKEN).getFirstValue();
-    ContentStreamData altContent = fCreator.createAlternateContent();
+    ContentStream altContent = fCreator.createAlternateContent();
     idHolder = new Holder<String>(pwcId);
     Holder<String> tokenHolder = new Holder<String>(changeToken);
     fObjSvc.setContentStream(fRepositoryId, idHolder, true, tokenHolder, altContent, null);
@@ -302,7 +302,7 @@ public class VersioningTest extends AbstractServiceTst {
     
     // verify that the old content and properties are still valid
     assertTrue(fCreator.verifyProperty(docId, VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE));      
-    ContentStreamData retrievedContent = fObjSvc.getContentStream(fRepositoryId, idOfLastVersion,
+    ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, idOfLastVersion,
         null, BigInteger.valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
     assertTrue(fCreator.verifyContent(retrievedContent, fCreator.createContent()));    
   }
@@ -322,7 +322,7 @@ public class VersioningTest extends AbstractServiceTst {
     fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
     String pwcId = idHolder.getValue();
     
-    ContentStreamData altContent = fCreator.createAlternateContent();
+    ContentStream altContent = fCreator.createAlternateContent();
     PropertiesData newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
     idHolder = new Holder<String>(pwcId);
     assertTrue(isCheckedOut(docId));
@@ -354,7 +354,7 @@ public class VersioningTest extends AbstractServiceTst {
     fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
     String pwcId = idHolder.getValue();
     
-    ContentStreamData altContent = fCreator.createAlternateContent();
+    ContentStream altContent = fCreator.createAlternateContent();
     PropertiesData newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
     idHolder = new Holder<String>(pwcId);
     assertTrue(isCheckedOut(docId));
@@ -370,7 +370,7 @@ public class VersioningTest extends AbstractServiceTst {
     boolean isMajor = true;
     ObjectData objData = fVerSvc.getObjectOfLatestVersion(fRepositoryId, docId, isMajor, "*", false, IncludeRelationships.NONE, null, false, false, null);
     checkVersionProperties(verId, versioningState, objData.getProperties().getProperties(), checkinComment);        
-    ContentStreamData retrievedContent = fObjSvc.getContentStream(fRepositoryId, objData.getId(),
+    ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, objData.getId(),
         null, BigInteger.valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
     assertTrue(fCreator.verifyContent(retrievedContent, fCreator.createAlternateContent()));    
 
@@ -598,7 +598,7 @@ public class VersioningTest extends AbstractServiceTst {
     Holder<Boolean>contentCopied = new Holder<Boolean>(false);    
     fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
 
-    ContentStreamData content2 = createContent('a');
+    ContentStream content2 = createContent('a');
     PropertiesData newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, "PropertyFromVersion2");    
     idHolder = new Holder<String>(verIdV1);    
     // Test check-in and pass content and properties
@@ -610,7 +610,7 @@ public class VersioningTest extends AbstractServiceTst {
     // create third version with different content
     contentCopied = new Holder<Boolean>(false);    
     fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
-    ContentStreamData content3 = super.createContent('a');
+    ContentStream content3 = super.createContent('a');
     newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, "PropertyFromVersion3");    
      // Test check-in and pass content and properties
     checkinComment = "Checkin from Unit Test-3.";
@@ -627,7 +627,7 @@ public class VersioningTest extends AbstractServiceTst {
       assertTrue(e instanceof CmisUpdateConflictException);
     }
     // try to set content on an older version
-    ContentStreamData content4 = super.createContent('x');
+    ContentStream content4 = super.createContent('x');
     idHolder = new Holder<String>(verIdV2);
     try {      
       fObjSvc.setContentStream(fRepositoryId, idHolder, true, null, content4, null);

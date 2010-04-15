@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
@@ -37,9 +37,9 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
 
 /**
  * Simple read-write test.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase {
 
@@ -97,16 +97,16 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     PropertiesData properties = getObjectFactory().createPropertiesData(propList);
 
-    ContentStreamData contentStream = createContentStreamData(CONTENT_TYPE, CONTENT);
+    ContentStream contentStream = createContentStreamData(CONTENT_TYPE, CONTENT);
 
     String docId = createDocument(properties, getTestRootFolder(), contentStream, vs, null, null,
         null);
 
     // read and assert content
-    ContentStreamData contentStream2 = getContent(docId, null);
+    ContentStream contentStream2 = getContent(docId, null);
     assertMimeType(CONTENT_TYPE, contentStream2.getMimeType());
-    if (contentStream2.getLength() != null) {
-      assertEquals(CONTENT.length, contentStream2.getLength().intValue());
+    if (contentStream2.getBigLength() != null) {
+      assertEquals(CONTENT.length, contentStream2.getBigLength().intValue());
     }
 
     byte[] content = readContent(contentStream2);
@@ -166,11 +166,11 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     getObject(docId2);
 
     // read and assert content
-    ContentStreamData contentStream2 = getContent(docId, null);
-    ContentStreamData contentStream3 = getContent(docId2, null);
+    ContentStream contentStream2 = getContent(docId, null);
+    ContentStream contentStream3 = getContent(docId2, null);
 
     assertEquals(contentStream2.getMimeType(), contentStream3.getMimeType());
-    assertEquals(contentStream2.getLength(), contentStream3.getLength());
+    assertEquals(contentStream2.getBigLength(), contentStream3.getBigLength());
 
     byte[] content2 = readContent(contentStream2);
     byte[] content3 = readContent(contentStream3);
@@ -221,7 +221,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     }
 
     // set content
-    ContentStreamData contentStream2 = createContentStreamData(CONTENT_TYPE, CONTENT2);
+    ContentStream contentStream2 = createContentStreamData(CONTENT_TYPE, CONTENT2);
 
     docIdHolder = new Holder<String>(docId);
     getBinding().getObjectService().setContentStream(getTestRepositoryId(), docIdHolder, true,
@@ -231,10 +231,10 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     if (docIdHolder.getValue() != null) {
       docId = docIdHolder.getValue();
     }
-    ContentStreamData contentStream3 = getContent(docId, null);
+    ContentStream contentStream3 = getContent(docId, null);
     assertMimeType(CONTENT_TYPE, contentStream3.getMimeType());
-    if (contentStream3.getLength() != null) {
-      assertEquals(CONTENT2.length, contentStream3.getLength().intValue());
+    if (contentStream3.getBigLength() != null) {
+      assertEquals(CONTENT2.length, contentStream3.getBigLength().intValue());
     }
 
     byte[] content = readContent(contentStream3);

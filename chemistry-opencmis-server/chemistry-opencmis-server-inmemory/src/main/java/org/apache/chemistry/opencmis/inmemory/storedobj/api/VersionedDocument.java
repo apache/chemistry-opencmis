@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
@@ -34,7 +34,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public interface VersionedDocument extends MultiFiling, StoredObject {
   
-  DocumentVersion addVersion(ContentStreamData content, VersioningState verState, String user);
+  DocumentVersion addVersion(ContentStream content, VersioningState verState, String user);
   
   /**
    * delete a version from this object, throw exception if document is checked out
@@ -51,7 +51,7 @@ public interface VersionedDocument extends MultiFiling, StoredObject {
   
   void cancelCheckOut(String user);
   
-  DocumentVersion checkOut(ContentStreamData content, String user);
+  DocumentVersion checkOut(ContentStream content, String user);
   
   void checkIn(boolean isMajor, String checkinComment, String user);
   

@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -76,7 +76,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
   public ObjectData create(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, ContentStreamData contentStream, VersioningState versioningState,
+      String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, ExtensionsData extension, ObjectInfoHolder objectInfos) {
     checkRepositoryId(repositoryId);
     checkProperties(properties);
@@ -104,7 +104,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public String createDocument(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, ContentStreamData contentStream, VersioningState versioningState,
+      String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, AccessControlList addAces, AccessControlList removeAces,
       ExtensionsData extension) {
     checkRepositoryId(repositoryId);
@@ -325,7 +325,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * .spi.CallContext, java.lang.String, java.lang.String, java.lang.String, java.math.BigInteger,
    * java.math.BigInteger, org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public ContentStreamData getContentStream(CallContext context, String repositoryId,
+  public ContentStream getContentStream(CallContext context, String repositoryId,
       String objectId, String streamId, BigInteger offset, BigInteger length,
       ExtensionsData extension) {
     checkRepositoryId(repositoryId);
@@ -488,7 +488,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public void setContentStream(CallContext context, String repositoryId, Holder<String> objectId,
-      Boolean overwriteFlag, Holder<String> changeToken, ContentStreamData contentStream,
+      Boolean overwriteFlag, Holder<String> changeToken, ContentStream contentStream,
       ExtensionsData extension) {
     checkRepositoryId(repositoryId);
     checkHolderId("Object Id", objectId);

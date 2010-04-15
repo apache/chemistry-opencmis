@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.Ace;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.ContentStream;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
@@ -36,7 +35,7 @@ import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -121,7 +120,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#deleteAllVersions()
    */
   public void deleteAllVersions() {
@@ -132,7 +131,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#checkOut()
    */
   public ObjectId checkOut() {
@@ -150,7 +149,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#cancelCheckOut()
    */
   public void cancelCheckOut() {
@@ -161,7 +160,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#checkIn(boolean, java.util.Map,
    * org.apache.opencmis.client.api.ContentStream, java.lang.String, java.util.List, java.util.List,
    * java.util.List)
@@ -202,7 +201,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#getAllVersions()
    */
   public List<Document> getAllVersions() {
@@ -211,7 +210,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @seeorg.apache.opencmis.client.api.Document#getAllVersions(org.apache.opencmis.client.api.
    * OperationContext)
    */
@@ -253,7 +252,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#getObjectOfLatestVersion(boolean)
    */
   public Document getObjectOfLatestVersion(boolean major) {
@@ -262,7 +261,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#getObjectOfLatestVersion(boolean,
    * org.apache.opencmis.client.api.OperationContext)
    */
@@ -292,27 +291,27 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#getContentStream()
    */
   public ContentStream getContentStream() {
     String objectId = getObjectId();
 
     // get the stream
-    ContentStreamData contentStream = getBinding().getObjectService().getContentStream(
+    ContentStream contentStream = getBinding().getObjectService().getContentStream(
         getRepositoryId(), objectId, null, null, null, null);
 
     // TODO: what should happen if the length is not set?
-    long length = (contentStream.getLength() == null ? -1 : contentStream.getLength().longValue());
+    long length = (contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue());
 
     // convert and return stream object
-    return getSession().getObjectFactory().createContentStream(contentStream.getFilename(), length,
+    return getSession().getObjectFactory().createContentStream(contentStream.getFileName(), length,
         contentStream.getMimeType(), contentStream.getStream());
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#setContentStream(boolean,
    * org.apache.opencmis.client.api.ContentStream)
    */
@@ -344,7 +343,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Document#deleteContentStream()
    */
   public ObjectId deleteContentStream() {

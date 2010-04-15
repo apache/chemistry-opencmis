@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -46,7 +46,7 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
   }
 
   public String createDocument(String repositoryId, PropertiesData properties, String folderId,
-      ContentStreamData contentStream, VersioningState versioningState, List<String> policies,
+      ContentStream contentStream, VersioningState versioningState, List<String> policies,
       AccessControlList addAces, AccessControlList removeAces, ExtensionsData extension) {
     
     return fObjSvc.createDocument(fDummyCallContext, repositoryId, properties, folderId, contentStream, versioningState, policies, addAces, removeAces, extension);
@@ -105,7 +105,7 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
     return fObjSvc.getAllowableActions(fDummyCallContext, repositoryId, objectId, extension);
   }
 
-  public ContentStreamData getContentStream(String repositoryId, String objectId, String streamId,
+  public ContentStream getContentStream(String repositoryId, String objectId, String streamId,
       BigInteger offset, BigInteger length, ExtensionsData extension) {
     
     return fObjSvc.getContentStream(fDummyCallContext, repositoryId, objectId, streamId, offset, length, extension);
@@ -144,7 +144,7 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
   }
 
   public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
-      Holder<String> changeToken, ContentStreamData contentStream, ExtensionsData extension) {
+      Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
     
     fObjSvc.setContentStream(fDummyCallContext, repositoryId, objectId, overwriteFlag, changeToken, contentStream, extension);
   }

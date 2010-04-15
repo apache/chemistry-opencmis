@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
@@ -391,7 +391,7 @@ public class ObjectGenerator {
   }
 
   private String createDocument(String folderId, int no, int level) {
-    ContentStreamData contentStream = null;
+    ContentStream contentStream = null;
     VersioningState versioningState = VersioningState.NONE;
     List<String> policies = null;
     AccessControlList addACEs = null;
@@ -444,9 +444,9 @@ public class ObjectGenerator {
     }    
   }
 
-  private ContentStreamData createContent() {
+  private ContentStream createContent() {
     ContentStreamDataImpl content = new ContentStreamDataImpl();
-    content.setFilename("data.txt");
+    content.setFileName("data.txt");
     content.setMimeType("text/plain");
     int len = fContentSizeInK * 1024; // size of document in K
     byte[] b = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,

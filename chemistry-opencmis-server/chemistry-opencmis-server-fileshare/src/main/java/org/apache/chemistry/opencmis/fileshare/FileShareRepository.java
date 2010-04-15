@@ -52,7 +52,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -352,7 +352,7 @@ public class FileShareRepository {
    * Create* dispatch for AtomPub.
    */
   public ObjectData create(CallContext context, PropertiesData properties, String folderId,
-      ContentStreamData contentStream, VersioningState versioningState, ObjectInfoHolder objectInfos) {
+      ContentStream contentStream, VersioningState versioningState, ObjectInfoHolder objectInfos) {
     debug("create");
     boolean userReadOnly = checkUser(context, true);
 
@@ -380,7 +380,7 @@ public class FileShareRepository {
    * CMIS createDocument.
    */
   public String createDocument(CallContext context, PropertiesData properties, String folderId,
-      ContentStreamData contentStream, VersioningState versioningState) {
+      ContentStream contentStream, VersioningState versioningState) {
     debug("createDocument");
     checkUser(context, true);
 
@@ -688,7 +688,7 @@ public class FileShareRepository {
    * CMIS setContentStream and deleteContentStream.
    */
   public void setContentStream(CallContext context, Holder<String> objectId, Boolean overwriteFlag,
-      ContentStreamData contentStream) {
+      ContentStream contentStream) {
     debug("setContentStream or deleteContentStream");
     checkUser(context, true);
 
@@ -930,7 +930,7 @@ public class FileShareRepository {
   /**
    * CMIS getContentStream.
    */
-  public ContentStreamData getContentStream(CallContext context, String objectId,
+  public ContentStream getContentStream(CallContext context, String objectId,
       BigInteger offset, BigInteger length) {
     debug("getContentStream");
     checkUser(context, false);
@@ -955,7 +955,7 @@ public class FileShareRepository {
 
     // compile data
     ContentStreamDataImpl result = new ContentStreamDataImpl();
-    result.setFilename(file.getName());
+    result.setFileName(file.getName());
     result.setLength(BigInteger.valueOf(file.length()));
     result.setMimeType(MIMETypes.getMIMEType(file));
     result.setStream(stream);

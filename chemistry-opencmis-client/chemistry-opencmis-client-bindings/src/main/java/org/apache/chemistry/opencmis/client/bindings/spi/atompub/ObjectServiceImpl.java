@@ -36,7 +36,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -87,7 +87,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createDocument(String repositoryId, PropertiesData properties, String folderId,
-      ContentStreamData contentStream, VersioningState versioningState, List<String> policies,
+      ContentStream contentStream, VersioningState versioningState, List<String> policies,
       AccessControlList addAces, AccessControlList removeAces, ExtensionsData extension) {
     checkCreateProperties(properties);
 
@@ -489,7 +489,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * java.lang.String, java.lang.String, java.math.BigInteger, java.math.BigInteger,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public ContentStreamData getContentStream(String repositoryId, String objectId, String streamId,
+  public ContentStream getContentStream(String repositoryId, String objectId, String streamId,
       BigInteger offset, BigInteger length, ExtensionsData extension) {
     ContentStreamDataImpl result = new ContentStreamDataImpl();
 
@@ -512,7 +512,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
           .getErrorContent(), null);
     }
 
-    result.setFilename(null);
+    result.setFileName(null);
     result.setLength(resp.getContentLength());
     result.setMimeType(resp.getContentTypeHeader());
     result.setStream(resp.getStream());
@@ -646,7 +646,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
-      Holder<String> changeToken, ContentStreamData contentStream, ExtensionsData extension) {
+      Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
     // we need an object id
     if ((objectId == null) || (objectId.getValue() == null)) {
       throw new CmisInvalidArgumentException("Object ID must be set!");

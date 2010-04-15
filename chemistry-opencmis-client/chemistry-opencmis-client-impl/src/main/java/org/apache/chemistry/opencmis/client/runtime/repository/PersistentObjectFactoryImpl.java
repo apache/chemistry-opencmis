@@ -34,7 +34,6 @@ import org.apache.chemistry.opencmis.client.api.Ace;
 import org.apache.chemistry.opencmis.client.api.Acl;
 import org.apache.chemistry.opencmis.client.api.AllowableActions;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.ContentStream;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
@@ -79,7 +78,7 @@ import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
@@ -127,7 +126,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#createAllowableAction(java.util.Map)
    */
@@ -137,7 +136,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#convertAllowableActions(org.apache.
    * opencmis.commons.provider.AllowableActionsData)
@@ -154,7 +153,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.repository.ObjectFactory#createAce(java.lang.String,
    * java.util.List, boolean)
    */
@@ -164,7 +163,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.repository.ObjectFactory#createAcl(java.util.List,
    * java.lang.Boolean)
    */
@@ -174,7 +173,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.repository.ObjectFactory#convertAces(java.util.List)
    */
   public AccessControlList convertAces(List<Ace> aces) {
@@ -194,7 +193,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#convertAcl(org.apache.opencmis.commons
    * .provider.AccessControlList)
@@ -222,7 +221,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.repository.ObjectFactory#convertPolicies(java.util.List)
    */
   public List<String> convertPolicies(List<Policy> policies) {
@@ -245,7 +244,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.repository.ObjectFactory#convertRendition(java.lang.String,
    * org.apache.opencmis.commons.provider.RenditionData)
    */
@@ -268,7 +267,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#createContentStream(java.lang.String,
    * long, java.lang.String, java.io.InputStream)
@@ -280,12 +279,12 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#convertContentStream(org.apache.opencmis
    * .client.api.ContentStream)
    */
-  public ContentStreamData convertContentStream(ContentStream contentStream) {
+  public ContentStream convertContentStream(ContentStream contentStream) {
     if (contentStream == null) {
       return null;
     }
@@ -301,7 +300,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#convertTypeDefinition(org.apache.opencmis
    * .commons.api.TypeDefinition)
@@ -326,7 +325,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#getTypeFromObjectData(org.apache.opencmis
    * .commons.provider.ObjectData)
@@ -350,7 +349,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#createProperty(org.apache.opencmis.
    * commons.api.PropertyDefinition, java.lang.Object)
@@ -361,7 +360,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#createPropertyMultivalue(org.apache
    * .opencmis.commons.api.PropertyDefinition, java.util.List)
@@ -372,7 +371,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#convertProperties(org.apache.opencmis
    * .client.api.objecttype.ObjectType, org.apache.opencmis.commons.provider.PropertiesData)
@@ -445,7 +444,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.repository.ObjectFactory#convertProperties(java.util.Map,
    * org.apache.opencmis.client.api.objecttype.ObjectType, java.util.Set)
    */
@@ -655,7 +654,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#convertQueryProperties(org.apache.opencmis
    * .commons.provider.PropertiesData)
@@ -681,7 +680,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#convertObject(org.apache.opencmis.commons
    * .provider.ObjectData, org.apache.opencmis.client.api.OperationContext)
@@ -710,7 +709,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.repository.ObjectFactory#convertQueryResult(org.apache.opencmis
    * .commons.provider.ObjectData)

@@ -21,12 +21,11 @@ package org.apache.chemistry.opencmis.client.runtime;
 import java.io.Serializable;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.ContentStream;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 
 /**
  * Implementation of <code>Rendition</code>.
@@ -65,7 +64,7 @@ public class RenditionImpl implements Rendition, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Rendition#getKind()
    */
   public String getKind() {
@@ -74,7 +73,7 @@ public class RenditionImpl implements Rendition, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Rendition#getLength()
    */
   public long getLength() {
@@ -83,7 +82,7 @@ public class RenditionImpl implements Rendition, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Rendition#getMimeType()
    */
   public String getMimeType() {
@@ -92,7 +91,7 @@ public class RenditionImpl implements Rendition, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Rendition#getTitle()
    */
   public String getTitle() {
@@ -101,7 +100,7 @@ public class RenditionImpl implements Rendition, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Rendition#getHeight()
    */
   public int getHeight() {
@@ -110,7 +109,7 @@ public class RenditionImpl implements Rendition, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Rendition#getWidth()
    */
   public int getWidth() {
@@ -119,7 +118,7 @@ public class RenditionImpl implements Rendition, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Rendition#getRenditionDocument()
    */
   public Document getRenditionDocument() {
@@ -128,7 +127,7 @@ public class RenditionImpl implements Rendition, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.Rendition#getRenditionDocument(org.apache.opencmis.client.api
    * .OperationContext)
@@ -149,7 +148,7 @@ public class RenditionImpl implements Rendition, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Rendition#getContentStream()
    */
   public ContentStream getContentStream() {
@@ -157,16 +156,16 @@ public class RenditionImpl implements Rendition, Serializable {
       return null;
     }
 
-    ContentStreamData contentStream = session.getBinding().getObjectService().getContentStream(
+    ContentStream contentStream = session.getBinding().getObjectService().getContentStream(
         session.getRepositoryInfo().getId(), objectId, streamId, null, null, null);
     if (contentStream == null) {
       return null;
     }
 
     // TODO: what should happen if the length is not set?
-    long length = (contentStream.getLength() == null ? -1 : contentStream.getLength().longValue());
+    long length = (contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue());
 
-    return session.getObjectFactory().createContentStream(contentStream.getFilename(), length,
+    return session.getObjectFactory().createContentStream(contentStream.getFileName(), length,
         contentStream.getMimeType(), contentStream.getStream());
   }
 

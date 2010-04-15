@@ -28,7 +28,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyBooleanData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
@@ -61,7 +61,7 @@ public class BindingsObjectFactoryImpl implements BindingsObjectFactory, Seriali
     return new AccessControlListImpl(aces);
   }
 
-  public ContentStreamData createContentStream(BigInteger length, String mimetype, String filename,
+  public ContentStream createContentStream(BigInteger length, String mimetype, String filename,
       InputStream stream) {
     return new ContentStreamDataImpl(length, mimetype, filename, stream);
   }

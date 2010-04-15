@@ -41,7 +41,7 @@ import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
@@ -446,7 +446,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
   /**
    * Creates a ContentStreamData object from a byte array.
    */
-  protected ContentStreamData createContentStreamData(String mimeType, byte[] content) {
+  protected ContentStream createContentStreamData(String mimeType, byte[] content) {
     assertNotNull(content);
 
     return getObjectFactory().createContentStream(BigInteger.valueOf(content.length), mimeType,
@@ -660,7 +660,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
    * Creates a document.
    */
   protected String createDocument(PropertiesData properties, String folderId,
-      ContentStreamData contentStream, VersioningState versioningState, List<String> policies,
+      ContentStream contentStream, VersioningState versioningState, List<String> policies,
       AccessControlList addACEs, AccessControlList removeACEs) {
     String objectId = getBinding().getObjectService().createDocument(getTestRepositoryId(),
         properties, folderId, contentStream, versioningState, policies, addACEs, removeACEs, null);
@@ -749,7 +749,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
 
     PropertiesData properties = getObjectFactory().createPropertiesData(propList);
 
-    ContentStreamData contentStream = createContentStreamData(contentType, content);
+    ContentStream contentStream = createContentStreamData(contentType, content);
 
     return createDocument(properties, folderId, contentStream, vs, null, null, null);
   }
@@ -818,8 +818,8 @@ public abstract class AbstractCmisTestCase extends TestCase {
   /**
    * Gets a content stream.
    */
-  protected ContentStreamData getContent(String objectId, String streamId) {
-    ContentStreamData contentStream = getBinding().getObjectService().getContentStream(
+  protected ContentStream getContent(String objectId, String streamId) {
+    ContentStream contentStream = getBinding().getObjectService().getContentStream(
         getTestRepositoryId(), objectId, streamId, null, null, null);
     assertNotNull(contentStream);
     assertNotNull(contentStream.getMimeType());
@@ -831,7 +831,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
   /**
    * Reads the content from a content stream into a byte array.
    */
-  protected byte[] readContent(ContentStreamData contentStream) throws Exception {
+  protected byte[] readContent(ContentStream contentStream) throws Exception {
     assertNotNull(contentStream);
     assertNotNull(contentStream.getStream());
 

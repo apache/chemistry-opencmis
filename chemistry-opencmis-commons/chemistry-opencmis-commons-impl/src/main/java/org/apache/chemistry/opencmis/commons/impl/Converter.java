@@ -59,7 +59,7 @@ import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -2364,14 +2364,14 @@ public final class Converter {
   /**
    * Converts a content stream object.
    */
-  public static ContentStreamData convert(CmisContentStreamType contentStream) {
+  public static ContentStream convert(CmisContentStreamType contentStream) {
     if (contentStream == null) {
       return null;
     }
 
     ContentStreamDataImpl result = new ContentStreamDataImpl();
 
-    result.setFilename(contentStream.getFilename());
+    result.setFileName(contentStream.getFilename());
     result.setLength(contentStream.getLength());
     result.setMimeType(contentStream.getMimeType());
     if (contentStream.getStream() != null) {
@@ -2397,15 +2397,15 @@ public final class Converter {
   /**
    * Converts a content stream object.
    */
-  public static CmisContentStreamType convert(final ContentStreamData contentStream) {
+  public static CmisContentStreamType convert(final ContentStream contentStream) {
     if (contentStream == null) {
       return null;
     }
 
     CmisContentStreamType result = new CmisContentStreamType();
 
-    result.setFilename(contentStream.getFilename());
-    result.setLength(contentStream.getLength());
+    result.setFilename(contentStream.getFileName());
+    result.setLength(contentStream.getBigLength());
     result.setMimeType(contentStream.getMimeType());
 
     result.setStream(new DataHandler(new DataSource() {
@@ -2415,7 +2415,7 @@ public final class Converter {
       }
 
       public String getName() {
-        return contentStream.getFilename();
+        return contentStream.getFileName();
       }
 
       public InputStream getInputStream() throws IOException {

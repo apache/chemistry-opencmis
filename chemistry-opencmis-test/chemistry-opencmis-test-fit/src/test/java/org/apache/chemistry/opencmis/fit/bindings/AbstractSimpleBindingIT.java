@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
@@ -71,7 +71,7 @@ public abstract class AbstractSimpleBindingIT extends AbstractBindingIT {
     // set up content
     byte[] content = "This is a test file!".getBytes();
 
-    ContentStreamData contentStream = getBinding().getObjectFactory()
+    ContentStream contentStream = getBinding().getObjectFactory()
         .createContentStream(BigInteger.valueOf(content.length), "text/plain", "test",
             new ByteArrayInputStream(content));
 

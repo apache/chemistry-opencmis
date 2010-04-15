@@ -70,6 +70,6 @@ public interface BindingsObjectFactory {
 
   PropertiesData createPropertiesData(List<PropertyData<?>> properties);
 
-  ContentStreamData createContentStream(BigInteger length, String mimetype, String filename,
+  ContentStream createContentStream(BigInteger length, String mimetype, String filename,
       InputStream stream);
 }

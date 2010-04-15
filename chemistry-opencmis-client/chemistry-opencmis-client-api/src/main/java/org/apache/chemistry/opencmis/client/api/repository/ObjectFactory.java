@@ -27,7 +27,6 @@ import org.apache.chemistry.opencmis.client.api.Ace;
 import org.apache.chemistry.opencmis.client.api.Acl;
 import org.apache.chemistry.opencmis.client.api.AllowableActions;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.ContentStream;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
@@ -39,7 +38,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
 import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
@@ -47,7 +46,7 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 
 /**
  * A factory to create CMIS objects.
- * 
+ *
  * @see org.apache.chemistry.opencmis.client.api.Session#getObjectFactory()
  */
 public interface ObjectFactory {
@@ -81,7 +80,7 @@ public interface ObjectFactory {
   ContentStream createContentStream(String filename, long length, String mimetype,
       InputStream stream);
 
-  ContentStreamData convertContentStream(ContentStream contentStream);
+  ContentStream convertContentStream(ContentStream contentStream);
 
   // types
 

@@ -26,7 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
 import org.apache.chemistry.opencmis.server.impl.atompub.AtomEntryParser;
 import org.apache.commons.codec.binary.Base64;
@@ -241,7 +241,7 @@ public class AtomEntryParserTest {
 
   private byte[] parse(byte[] entry) throws Exception {
     AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry));
-    ContentStreamData contentStream = aep.getContentStream();
+    ContentStream contentStream = aep.getContentStream();
 
     assertNotNull(contentStream);
     assertNotNull(contentStream.getStream());

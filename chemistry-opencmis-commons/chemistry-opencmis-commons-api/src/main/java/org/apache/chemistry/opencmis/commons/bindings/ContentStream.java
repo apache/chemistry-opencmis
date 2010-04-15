@@ -16,23 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.api;
+package org.apache.chemistry.opencmis.commons.bindings;
 
 import java.io.InputStream;
+import java.math.BigInteger;
 
-/**
- * {@see Document#getContentStream()}, {@see Document#setContentStream(boolean, ContentStream), and
- * {@see Session#createContentStream(BigInteger, String, String, InputStream)}. Domain Model 2.4.1
- * 
- */
-public interface ContentStream {
+import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+
+public interface ContentStream extends ExtensionsData {
 
   long getLength();
+
+  BigInteger getBigLength();
 
   String getMimeType();
 
   String getFileName();
 
   InputStream getStream();
-
 }

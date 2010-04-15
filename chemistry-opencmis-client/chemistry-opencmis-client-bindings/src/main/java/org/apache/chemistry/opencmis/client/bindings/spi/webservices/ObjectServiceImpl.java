@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -79,7 +79,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.AccessControlList, org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createDocument(String repositoryId, PropertiesData properties, String folderId,
-      ContentStreamData contentStream, VersioningState versioningState, List<String> policies,
+      ContentStream contentStream, VersioningState versioningState, List<String> policies,
       AccessControlList addACEs, AccessControlList removeACEs, ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 
@@ -341,7 +341,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * java.lang.String, java.lang.String, java.math.BigInteger, java.math.BigInteger,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public ContentStreamData getContentStream(String repositoryId, String objectId, String streamId,
+  public ContentStream getContentStream(String repositoryId, String objectId, String streamId,
       BigInteger offset, BigInteger length, ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 
@@ -502,7 +502,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.ContentStreamData, org.apache.opencmis.client.provider.ExtensionsData)
    */
   public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
-      Holder<String> changeToken, ContentStreamData contentStream, ExtensionsData extension) {
+      Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 
     try {

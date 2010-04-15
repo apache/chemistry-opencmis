@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 
 public interface Content {
   
@@ -33,7 +33,7 @@ public interface Content {
    * @return
    *    object containing mime-type, length and a stream with content
    */
-  ContentStreamData getContent(long offset, long length);
+  ContentStream getContent(long offset, long length);
 
   /**
    * Assign content do a document. Existing content gets overwritten.
@@ -43,6 +43,6 @@ public interface Content {
    * @param mustPersist
    *    persist document (set to false if content is set during creation of a document)
    */
-  void setContent(ContentStreamData content, boolean mustPersist);
+  void setContent(ContentStream content, boolean mustPersist);
   
 }

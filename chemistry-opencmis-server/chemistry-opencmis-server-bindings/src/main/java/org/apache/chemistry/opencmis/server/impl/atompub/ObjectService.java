@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -446,7 +446,7 @@ public final class ObjectService {
     }
 
     // execute
-    ContentStreamData content = service.getContentStream(context, repositoryId, objectId, streamId,
+    ContentStream content = service.getContentStream(context, repositoryId, objectId, streamId,
         offset, length, null);
 
     if ((content == null) || (content.getStream() == null)) {

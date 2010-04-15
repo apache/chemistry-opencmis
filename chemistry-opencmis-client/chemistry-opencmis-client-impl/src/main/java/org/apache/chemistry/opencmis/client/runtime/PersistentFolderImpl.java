@@ -28,7 +28,6 @@ import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.Ace;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.ContentStream;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -42,6 +41,7 @@ import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -76,7 +76,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#createDocument(java.util.Map,
    * org.apache.opencmis.client.api.ContentStream,
    * org.apache.opencmis.commons.enums.VersioningState, java.util.List, java.util.List,
@@ -110,7 +110,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.Folder#createDocumentFromSource(org.apache.opencmis.client.api
    * .ObjectId, java.util.Map, org.apache.opencmis.commons.enums.VersioningState, java.util.List,
@@ -165,7 +165,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#createFolder(java.util.Map, java.util.List,
    * java.util.List, java.util.List, org.apache.opencmis.client.api.OperationContext)
    */
@@ -195,7 +195,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#createPolicy(java.util.Map, java.util.List,
    * java.util.List, java.util.List, org.apache.opencmis.client.api.OperationContext)
    */
@@ -225,7 +225,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#deleteTree(boolean,
    * org.apache.opencmis.commons.enums.UnfileObjects, boolean)
    */
@@ -242,7 +242,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#getAllowedChildObjectTypes()
    */
   public List<ObjectType> getAllowedChildObjectTypes() {
@@ -268,7 +268,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#getCheckedOutDocs(int)
    */
   public PagingList<Document> getCheckedOutDocs(int itemsPerPage) {
@@ -277,7 +277,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @seeorg.apache.opencmis.client.api.Folder#getCheckedOutDocs(org.apache.opencmis.client.api.
    * OperationContext, int)
    */
@@ -329,7 +329,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#getChildren(int)
    */
   public PagingList<CmisObject> getChildren(int itemsPerPage) {
@@ -338,7 +338,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.Folder#getChildren(org.apache.opencmis.client.api.OperationContext
    * , int)
@@ -389,7 +389,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#getDescendants(int)
    */
   public List<Container<FileableCmisObject>> getDescendants(int depth) {
@@ -398,7 +398,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#getDescendants(int,
    * org.apache.opencmis.client.api.OperationContext)
    */
@@ -417,7 +417,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#getFolderTree(int)
    */
   public List<Container<FileableCmisObject>> getFolderTree(int depth) {
@@ -426,7 +426,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#getFolderTree(int,
    * org.apache.opencmis.client.api.OperationContext)
    */
@@ -481,7 +481,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#isRootFolder()
    */
   public boolean isRootFolder() {
@@ -493,7 +493,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#getFolderParent()
    */
   public Folder getFolderParent() {
@@ -511,7 +511,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Folder#getPath()
    */
   public String getPath() {
@@ -554,7 +554,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.runtime.AbstractPersistentFilableCmisObject#getPaths()
    */
   @Override

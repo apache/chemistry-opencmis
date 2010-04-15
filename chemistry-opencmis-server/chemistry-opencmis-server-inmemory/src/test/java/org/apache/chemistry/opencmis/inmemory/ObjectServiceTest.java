@@ -31,7 +31,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
@@ -199,7 +199,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     if (id != null)
       log.info("createDocument succeeded with created id: " + id);
     
-    ContentStreamData sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
+    ContentStream sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
         BigInteger.valueOf(-1) /* length */, null);
     verifyContentResult(sd);
     
@@ -211,7 +211,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     assertNull(sd);
     
     //create content again in a second call
-    ContentStreamData contentStream = createContent();
+    ContentStream contentStream = createContent();
     fObjSvc.setContentStream(fRepositoryId, idHolder, true, null, contentStream, null);
     sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
         BigInteger.valueOf(-1) /* length */, null);
@@ -250,7 +250,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     }
 
     // get content from second document and compare it with original one
-    ContentStreamData sd = fObjSvc.getContentStream(fRepositoryId, id2, null, BigInteger.valueOf(-1) /* offset */,
+    ContentStream sd = fObjSvc.getContentStream(fRepositoryId, id2, null, BigInteger.valueOf(-1) /* offset */,
         BigInteger.valueOf(-1) /* length */, null);
     verifyContentResult(sd);
     
@@ -811,7 +811,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
   }
  
   private String createDocumentWithCustomType(String folderId, boolean withContent) {
-    ContentStreamData contentStream = null;
+    ContentStream contentStream = null;
     VersioningState versioningState = VersioningState.NONE;
     List<String> policies = null;
     AccessControlList addACEs = null;
@@ -841,7 +841,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
   }
   
   private String createDocumentInheritedProperties(String folderId, boolean withContent) {
-    ContentStreamData contentStream = null;
+    ContentStream contentStream = null;
     VersioningState versioningState = VersioningState.NONE;
     List<String> policies = null;
     AccessControlList addACEs = null;

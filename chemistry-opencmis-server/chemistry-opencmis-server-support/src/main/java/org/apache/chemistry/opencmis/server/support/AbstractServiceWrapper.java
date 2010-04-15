@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.server.support;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
@@ -145,7 +145,7 @@ public abstract class AbstractServiceWrapper {
   /**
    * Throws an exception if the given content object is <code>null</code>.
    */
-  protected void checkContentStream(ContentStreamData content) {
+  protected void checkContentStream(ContentStream content) {
     if (content == null) {
       throw new CmisInvalidArgumentException("Content must be set!");
     }
