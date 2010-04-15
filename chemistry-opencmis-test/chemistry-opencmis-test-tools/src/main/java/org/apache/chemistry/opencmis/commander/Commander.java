@@ -26,10 +26,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.chemistry.opencmis.client.provider.factory.CmisProviderFactory;
+import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 
 /**
  * Commander tool main.
@@ -68,14 +68,14 @@ public class Commander {
       }
 
       // get provider object
-      CmisProvider provider = createProvider(args[0]);
+      CmisBinding binding = createBinding(args[0]);
 
       // prepare args
       String[] commandArgs = new String[args.length - 2];
       System.arraycopy(args, 2, commandArgs, 0, commandArgs.length);
 
       // execute
-      command.execute(provider, commandArgs, fPW);
+      command.execute(binding, commandArgs, fPW);
     }
     catch (Exception e) {
       fPW.println("Exception:");
@@ -109,7 +109,7 @@ public class Commander {
   /**
    * Creates the provider object
    */
-  private CmisProvider createProvider(String configFile) throws Exception {
+  private CmisBinding createBinding(String configFile) throws Exception {
     Properties properties = new Properties();
     properties.load(new FileInputStream(configFile));
 
@@ -121,14 +121,14 @@ public class Commander {
       sessionParameters.put(key, value);
     }
 
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
+    CmisBindingFactory factory = CmisBindingFactory.newInstance();
 
-    CmisProvider result = null;
+    CmisBinding result = null;
     if (sessionParameters.containsKey(SessionParameter.ATOMPUB_URL)) {
-      result = factory.createCmisAtomPubProvider(sessionParameters);
+      result = factory.createCmisAtomPubBinding(sessionParameters);
     }
     else if (sessionParameters.containsKey(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE)) {
-      result = factory.createCmisWebServicesProvider(sessionParameters);
+      result = factory.createCmisWebServicesBinding(sessionParameters);
     }
     else {
       throw new IllegalArgumentException("Cannot find CMIS binding information in config file!");

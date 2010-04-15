@@ -157,7 +157,7 @@ public class RenditionImpl implements Rendition, Serializable {
       return null;
     }
 
-    ContentStreamData contentStream = session.getProvider().getObjectService().getContentStream(
+    ContentStreamData contentStream = session.getBinding().getObjectService().getContentStream(
         session.getRepositoryInfo().getId(), objectId, streamId, null, null, null);
     if (contentStream == null) {
       return null;

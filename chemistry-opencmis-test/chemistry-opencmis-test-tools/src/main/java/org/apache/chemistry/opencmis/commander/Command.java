@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commander;
 
 import java.io.PrintWriter;
 
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 
 /**
  * Command interface.
@@ -43,5 +43,5 @@ public interface Command {
   /**
    * Executes the command.
    */
-  void execute(CmisProvider provider, String[] args, PrintWriter output);
+  void execute(CmisBinding binding, String[] args, PrintWriter output);
 }

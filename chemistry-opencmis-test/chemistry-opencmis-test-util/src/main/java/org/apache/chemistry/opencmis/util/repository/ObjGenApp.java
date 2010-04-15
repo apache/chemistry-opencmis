@@ -31,11 +31,11 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
-import org.apache.chemistry.opencmis.client.provider.factory.CmisProviderFactory;
+import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
 
@@ -65,7 +65,7 @@ public class ObjGenApp {
   private final static String BINDING_ATOM = "AtomPub";
   private final static String BINDING_WS = "WebService";
 
-  private CmisProvider fProvider;
+  private CmisBinding binding;
   private boolean fUsingAtom;
   private String fUrlStr;
 
@@ -211,7 +211,7 @@ public class ObjGenApp {
       boolean doCleanup) {
 
     MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
-        .prepareForCreateTree(getProvider(), repoId, docsPerFolder, foldersPerFolders, depth,
+        .prepareForCreateTree(getBinding(), repoId, docsPerFolder, foldersPerFolders, depth,
             documentType, folderType, contentSizeInKB, rootFolderId, doCleanup);
     ObjectGenerator gen = runner.getObjectGenerator();
     runner.doCreateTree();
@@ -231,13 +231,13 @@ public class ObjGenApp {
 
     // Step 1: create a root folder for each thread
     MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
-        .prepareForCreateFolder(getProvider(), repoId, folderType, rootFolderId, noThreads,
+        .prepareForCreateFolder(getBinding(), repoId, folderType, rootFolderId, noThreads,
             doCleanup);
     String[] folderIds = runner.doCreateFolder();
 
     // Step 2: fill each root folder with an object tree
     MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
-        .prepareForCreateTreeMT(getProvider(), repoId, docsPerFolder, foldersPerFolders, depth,
+        .prepareForCreateTreeMT(getBinding(), repoId, docsPerFolder, foldersPerFolders, depth,
             documentType, folderType, contentSizeInKB, folderIds, doCleanup);
 
     MultiThreadedObjectGenerator.runMultiThreaded(runners);
@@ -315,7 +315,7 @@ public class ObjGenApp {
       String rootFolderId, int docCount, boolean doCleanup) {
 
     MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
-        .prepareForCreateDocument(getProvider(), repoId, documentType, contentSizeInKB,
+        .prepareForCreateDocument(getBinding(), repoId, documentType, contentSizeInKB,
             rootFolderId, docCount, doCleanup);
     ObjectGenerator gen = runner.getObjectGenerator();
     String[] ids = runner.doCreateDocument();
@@ -337,8 +337,8 @@ public class ObjGenApp {
       int contentSizeInKB, String rootFolderId, int docCount, boolean doCleanup) {
 
     MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
-        .prepareForCreateDocumentMT(noThreads, getProvider(), repoId, documentType,
-            contentSizeInKB, rootFolderId, docCount, doCleanup);
+        .prepareForCreateDocumentMT(noThreads, getBinding(), repoId, documentType, contentSizeInKB,
+            rootFolderId, docCount, doCleanup);
 
     MultiThreadedObjectGenerator.runMultiThreaded(runners);
     System.out.println("Document creation succeeded. All threads terminated.");
@@ -348,7 +348,7 @@ public class ObjGenApp {
       boolean doCleanup) {
 
     MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
-        .prepareForCreateFolder(getProvider(), repoId, folderType, rootFolderId, noFolders,
+        .prepareForCreateFolder(getBinding(), repoId, folderType, rootFolderId, noFolders,
             doCleanup);
     ObjectGenerator gen = runner.getObjectGenerator();
     String[] ids = runner.doCreateFolder();
@@ -369,18 +369,18 @@ public class ObjGenApp {
       String rootFolderId, int noFolders, boolean doCleanup) {
 
     MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
-        .prepareForCreateFolderMT(noThreads, getProvider(), repoId, folderType, rootFolderId,
+        .prepareForCreateFolderMT(noThreads, getBinding(), repoId, folderType, rootFolderId,
             noFolders, doCleanup);
     MultiThreadedObjectGenerator.runMultiThreaded(runners);
     System.out.println("Folder creation succeeded.");
   }
 
   private void callRepoInfo(String repositoryId, int count) {
-    RepositoryService repSvc = getProvider().getRepositoryService();
+    RepositoryService repSvc = getBinding().getRepositoryService();
     TimeLogger timeLogger = new TimeLogger("RepoInfoTest");
     RepositoryInfoData repoInfo = null;
     for (int i = 0; i < count; i++) {
-      fProvider.clearRepositoryCache(repositoryId);
+      binding.clearRepositoryCache(repositoryId);
       timeLogger.start();
       repoInfo = repSvc.getRepositoryInfo(repositoryId, null);
       timeLogger.stop();
@@ -394,14 +394,14 @@ public class ObjGenApp {
     callRepoInfo(options.valueOf(fRepoId), options.valueOf(fCount));
   }
 
-  private CmisProvider getProvider() {
-    if (fProvider == null) {
+  private CmisBinding getBinding() {
+    if (binding == null) {
       if (fUsingAtom)
-        fProvider = createAtomProvider(getAtomPubUrl(), DEFAULT_USER, DEFAULT_PWD);
+        binding = createAtomBinding(getAtomPubUrl(), DEFAULT_USER, DEFAULT_PWD);
       else
-        fProvider = createWsProvider(getWsUrl(), DEFAULT_USER, DEFAULT_PWD);
+        binding = createWsBinding(getWsUrl(), DEFAULT_USER, DEFAULT_PWD);
     }
-    return fProvider;
+    return binding;
   }
 
   private static void filLoginParams(Map<String, String> parameters, String user, String password) {
@@ -411,20 +411,20 @@ public class ObjGenApp {
       parameters.put(SessionParameter.PASSWORD, password);
   }
 
-  private static CmisProvider createAtomProvider(String url, String user, String password) {
+  private static CmisBinding createAtomBinding(String url, String user, String password) {
 
     // gather parameters
     Map<String, String> parameters = new HashMap<String, String>();
     filLoginParams(parameters, user, password);
 
-    // get factory and create provider
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
+    // get factory and create binding
+    CmisBindingFactory factory = CmisBindingFactory.newInstance();
     parameters.put(SessionParameter.ATOMPUB_URL, url);
-    CmisProvider provider = factory.createCmisAtomPubProvider(parameters);
-    return provider;
+    CmisBinding binding = factory.createCmisAtomPubBinding(parameters);
+    return binding;
   }
 
-  private static CmisProvider createWsProvider(String url, String username, String password) {
+  private static CmisBinding createWsBinding(String url, String username, String password) {
     boolean isPrefix = true;
     String urlLower = url.toLowerCase();
 
@@ -438,10 +438,10 @@ public class ObjGenApp {
       isPrefix = false;
     }
 
-    return createProvider(url, isPrefix, username, password);
+    return createBinding(url, isPrefix, username, password);
   }
 
-  public static CmisProvider createProvider(String url, boolean isPrefix, String username,
+  public static CmisBinding createBinding(String url, boolean isPrefix, String username,
       String password) {
     // gather parameters
     Map<String, String> parameters = new HashMap<String, String>();
@@ -477,10 +477,10 @@ public class ObjGenApp {
     }
 
     // get factory and create provider
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
-    CmisProvider provider = factory.createCmisWebServicesProvider(parameters);
+    CmisBindingFactory factory = CmisBindingFactory.newInstance();
+    CmisBinding binding = factory.createCmisWebServicesBinding(parameters);
 
-    return provider;
+    return binding;
   }
 
   private String getAtomPubUrl() {

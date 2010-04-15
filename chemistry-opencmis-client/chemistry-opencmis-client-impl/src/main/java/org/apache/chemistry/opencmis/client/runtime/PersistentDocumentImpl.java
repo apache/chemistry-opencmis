@@ -139,7 +139,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     String objectId = getObjectId();
     Holder<String> objectIdHolder = new Holder<String>(objectId);
 
-    getProvider().getVersioningService().checkOut(getRepositoryId(), objectIdHolder, null, null);
+    getBinding().getVersioningService().checkOut(getRepositoryId(), objectIdHolder, null, null);
 
     if (objectIdHolder.getValue() == null) {
       return null;
@@ -156,7 +156,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
   public void cancelCheckOut() {
     String objectId = getObjectId();
 
-    getProvider().getVersioningService().cancelCheckOut(getRepositoryId(), objectId, null);
+    getBinding().getVersioningService().cancelCheckOut(getRepositoryId(), objectId, null);
   }
 
   /*
@@ -187,7 +187,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     updatebility.add(Updatability.READWRITE);
     updatebility.add(Updatability.WHENCHECKEDOUT);
 
-    getProvider().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
+    getBinding().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
         of.convertProperties(properties, type, updatebility),
         of.convertContentStream(contentStream), checkinComment, of.convertPolicies(policies),
         of.convertAces(addAces), of.convertAces(removeAces), null);
@@ -228,7 +228,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
       readUnlock();
     }
 
-    List<ObjectData> versions = getProvider().getVersioningService().getAllVersions(
+    List<ObjectData> versions = getBinding().getVersioningService().getAllVersions(
         getRepositoryId(), objectId, versionSeriesId, context.getFilterString(),
         context.isIncludeAllowableActions(), null);
 
@@ -272,7 +272,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
       throw new CmisRuntimeException("Version series id is unknown!");
     }
 
-    ObjectData objectData = getProvider().getVersioningService().getObjectOfLatestVersion(
+    ObjectData objectData = getBinding().getVersioningService().getObjectOfLatestVersion(
         getRepositoryId(), versionSeriesId, major, context.getFilterString(),
         context.isIncludeAllowableActions(), context.getIncludeRelationships(),
         context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(),
@@ -299,7 +299,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     String objectId = getObjectId();
 
     // get the stream
-    ContentStreamData contentStream = getProvider().getObjectService().getContentStream(
+    ContentStreamData contentStream = getBinding().getObjectService().getContentStream(
         getRepositoryId(), objectId, null, null, null, null);
 
     // TODO: what should happen if the length is not set?
@@ -332,7 +332,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     Holder<String> objectIdHolder = new Holder<String>(objectId);
     Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
-    getProvider().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, overwrite,
+    getBinding().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, overwrite,
         changeTokenHolder, getObjectFactory().convertContentStream(contentStream), null);
 
     if (objectIdHolder.getValue() == null) {
@@ -363,7 +363,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     Holder<String> objectIdHolder = new Holder<String>(objectId);
     Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
-    getProvider().getObjectService().deleteContentStream(getRepositoryId(), objectIdHolder,
+    getBinding().getObjectService().deleteContentStream(getRepositoryId(), objectIdHolder,
         changeTokenHolder, null);
 
     if (objectIdHolder.getValue() == null) {

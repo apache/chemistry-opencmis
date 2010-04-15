@@ -60,7 +60,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 import org.apache.chemistry.opencmis.commons.provider.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.provider.NavigationService;
 import org.apache.chemistry.opencmis.commons.provider.ObjectData;
@@ -101,7 +101,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   /*
    * CMIS provider (serializable)
    */
-  private CmisProvider provider = null;
+  private CmisBinding binding = null;
 
   /*
    * Session Locale, determined from session parameter (serializable)
@@ -212,7 +212,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
       /*
        * clear provider cache
        */
-      getProvider().clearAllCaches();
+      getBinding().clearAllCaches();
     }
     finally {
       fLock.writeLock().unlock();
@@ -248,7 +248,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
       throw new IllegalArgumentException("itemsPerPage must be > 0!");
     }
 
-    final NavigationService nagivationService = getProvider().getNavigationService();
+    final NavigationService nagivationService = getBinding().getNavigationService();
     final ObjectFactory objectFactory = getObjectFactory();
     final OperationContext ctxt = new OperationContextImpl(context);
 
@@ -390,7 +390,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     }
 
     // get the object
-    ObjectData objectData = this.provider.getObjectService().getObject(getRepositoryId(),
+    ObjectData objectData = this.binding.getObjectService().getObject(getRepositoryId(),
         objectId.getId(), context.getFilterString(), context.isIncludeAllowableActions(),
         context.getIncludeRelationships(), context.getRenditionFilterString(),
         context.isIncludePolicies(), context.isIncludeAcls(), null);
@@ -439,7 +439,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     }
 
     // get the object
-    ObjectData objectData = this.provider.getObjectService().getObjectByPath(getRepositoryId(),
+    ObjectData objectData = this.binding.getObjectService().getObjectByPath(getRepositoryId(),
         path, context.getFilterString(), context.isIncludeAllowableActions(),
         context.getIncludeRelationships(), context.getRenditionFilterString(),
         context.isIncludePolicies(), context.isIncludeAcls(), null);
@@ -507,7 +507,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     }
 
     final String repositoryId = getRepositoryId();
-    final RepositoryService repositoryService = getProvider().getRepositoryService();
+    final RepositoryService repositoryService = getBinding().getRepositoryService();
 
     // set up PagingList object
     return new AbstractPagingList<ObjectType>() {
@@ -543,7 +543,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * @see org.apache.opencmis.client.api.Session#getTypeDefinition(java.lang.String)
    */
   public ObjectType getTypeDefinition(String typeId) {
-    TypeDefinition typeDefinition = getProvider().getRepositoryService().getTypeDefinition(
+    TypeDefinition typeDefinition = getBinding().getRepositoryService().getTypeDefinition(
         getRepositoryId(), typeId, null);
     return objectFactory.convertTypeDefinition(typeDefinition);
   }
@@ -555,7 +555,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    */
   public List<Container<ObjectType>> getTypeDescendants(String typeId, int depth,
       boolean includePropertyDefinitions) {
-    List<TypeDefinitionContainer> descendants = getProvider().getRepositoryService()
+    List<TypeDefinitionContainer> descendants = getBinding().getRepositoryService()
         .getTypeDescendants(getRepositoryId(), typeId, BigInteger.valueOf(depth),
             includePropertyDefinitions, null);
 
@@ -598,7 +598,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   public PagingList<QueryResult> query(final String statement, final boolean searchAllVersions,
       OperationContext context, final int itemsPerPage) {
 
-    final DiscoveryService discoveryService = getProvider().getDiscoveryService();
+    final DiscoveryService discoveryService = getBinding().getDiscoveryService();
     final ObjectFactory of = getObjectFactory();
     final OperationContext ctxt = new OperationContextImpl(context);
 
@@ -654,7 +654,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   public void connect() {
     fLock.writeLock().lock();
     try {
-      this.provider = CmisProviderHelper.createProvider(this.parameters);
+      this.binding = CmisBindingHelper.createProvider(this.parameters);
 
       /* get initial repository id from session parameter */
       String repositoryId = this.determineRepositoryId(this.parameters);
@@ -662,7 +662,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
         throw new IllegalStateException("Repository Id is not set!");
       }
 
-      RepositoryInfoData data = getProvider().getRepositoryService().getRepositoryInfo(
+      RepositoryInfoData data = getBinding().getRepositoryService().getRepositoryInfo(
           repositoryId, null);
 
       this.repositoryInfo = new RepositoryInfoImpl(data);
@@ -675,12 +675,12 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.api.Session#getProvider()
+   * @see org.apache.opencmis.client.api.Session#getBinding()
    */
-  public CmisProvider getProvider() {
+  public CmisBinding getBinding() {
     fLock.readLock().lock();
     try {
-      return this.provider;
+      return this.binding;
     }
     finally {
       fLock.readLock().unlock();
@@ -721,7 +721,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
       throw new IllegalArgumentException("Folder Id must be set!");
     }
 
-    String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
+    String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
         objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
         (folderId == null ? null : folderId.getId()),
         objectFactory.convertContentStream(contentStream), versioningState,
@@ -765,7 +765,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
       throw new IllegalArgumentException("Source object must be a document!");
     }
 
-    String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
+    String newId = getBinding().getObjectService().createDocumentFromSource(getRepositoryId(),
         source.getId(), objectFactory.convertProperties(properties, type, CREATE_UPDATABILITY),
         (folderId == null ? null : folderId.getId()), versioningState,
         objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
@@ -790,7 +790,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
       throw new IllegalArgumentException("Folder Id must be set!");
     }
 
-    String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
+    String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
         objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
         (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
         objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
@@ -814,7 +814,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
       throw new IllegalArgumentException("Folder Id must be set!");
     }
 
-    String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
+    String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
         objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
         (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
         objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
@@ -834,7 +834,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    */
   public ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies,
       List<Ace> addAces, List<Ace> removeAces) {
-    String newId = getProvider().getObjectService().createRelationship(getRepositoryId(),
+    String newId = getBinding().getObjectService().createRelationship(getRepositoryId(),
         objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
         objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
         objectFactory.convertAces(removeAces), null);

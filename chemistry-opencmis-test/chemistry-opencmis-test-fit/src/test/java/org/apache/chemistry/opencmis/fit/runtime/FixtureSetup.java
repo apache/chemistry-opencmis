@@ -21,11 +21,11 @@ package org.apache.chemistry.opencmis.fit.runtime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.provider.factory.CmisProviderFactory;
+import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
@@ -34,13 +34,13 @@ import org.junit.Assert;
 
 public class FixtureSetup {
 
-	private CmisProvider provider = null;
+	private CmisBinding binding = null;
 	private String rootFolderId = null; // root
 	private String testRootFolderId = null; // test root
 	private String repositoryId = null;
 
 	public void teardown() {
-		this.provider.getObjectService().deleteTree(this.repositoryId,
+		this.binding.getObjectService().deleteTree(this.repositoryId,
 				this.testRootFolderId, true, UnfileObjects.DELETE, true, null);
 	}
 
@@ -49,9 +49,9 @@ public class FixtureSetup {
 				SessionParameter.REPOSITORY_ID);
 		Assert.assertNotNull(this.repositoryId);
 
-		this.provider = CmisProviderFactory.newInstance().createCmisProvider(
+		this.binding = CmisBindingFactory.newInstance().createCmisBinding(
 				Fixture.getParamter());
-		Assert.assertNotNull(this.provider);
+		Assert.assertNotNull(this.binding);
 
 		// root folder
 		if (Fixture.getParamter().containsKey(
@@ -61,7 +61,7 @@ public class FixtureSetup {
 					FixtureSessionParameter.TEST_ROOT_FOLDER_ID);
 			Assert.assertNotNull(this.rootFolderId);
 		} else {
-			RepositoryInfoData rid = this.provider.getRepositoryService()
+			RepositoryInfoData rid = this.binding.getRepositoryService()
 					.getRepositoryInfo(this.repositoryId, null);
 			Assert.assertNotNull(rid);
 			this.rootFolderId = rid.getRootFolderId();
@@ -76,21 +76,21 @@ public class FixtureSetup {
 
 		// create test root folder
 		List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
-		propList.add(this.provider.getObjectFactory().createPropertyStringData(
+		propList.add(this.binding.getObjectFactory().createPropertyStringData(
 				PropertyIds.CMIS_NAME, Fixture.TEST_ROOT_FOLDER_NAME));
-		propList.add(this.provider.getObjectFactory().createPropertyIdData(
+		propList.add(this.binding.getObjectFactory().createPropertyIdData(
 				PropertyIds.CMIS_OBJECT_TYPE_ID, folderTypeId));
 
-		PropertiesData properties = this.provider.getObjectFactory()
+		PropertiesData properties = this.binding.getObjectFactory()
 				.createPropertiesData(propList);
 
-		this.testRootFolderId = this.provider.getObjectService().createFolder(
+		this.testRootFolderId = this.binding.getObjectService().createFolder(
 				this.repositoryId, properties, this.rootFolderId, null, null,
 				null, null);
 		Assert.assertNotNull(this.testRootFolderId);
 
-		ObjectGenerator og = new ObjectGenerator(provider.getObjectFactory(),
-				provider.getNavigationService(), provider.getObjectService(),
+		ObjectGenerator og = new ObjectGenerator(binding.getObjectFactory(),
+				binding.getNavigationService(), binding.getObjectService(),
 				this.repositoryId);
 
 		og.setContentSizeInKB(10);

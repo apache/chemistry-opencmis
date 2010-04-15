@@ -89,7 +89,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     ObjectFactory of = getObjectFactory();
 
-    String newId = getProvider().getObjectService().createDocument(getRepositoryId(),
+    String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
         of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId,
         of.convertContentStream(contentStream), versioningState, of.convertPolicies(policies),
         of.convertAces(addAces), of.convertAces(removeAces), null);
@@ -144,7 +144,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     Set<Updatability> updatebility = new HashSet<Updatability>();
     updatebility.add(Updatability.READWRITE);
 
-    String newId = getProvider().getObjectService().createDocumentFromSource(getRepositoryId(),
+    String newId = getBinding().getObjectService().createDocumentFromSource(getRepositoryId(),
         source.getId(), of.convertProperties(properties, type, updatebility), objectId,
         versioningState, of.convertPolicies(policies), of.convertAces(addAces),
         of.convertAces(removeAces), null);
@@ -175,7 +175,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     ObjectFactory of = getObjectFactory();
 
-    String newId = getProvider().getObjectService().createFolder(getRepositoryId(),
+    String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
         of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId,
         of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
 
@@ -205,7 +205,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     ObjectFactory of = getObjectFactory();
 
-    String newId = getProvider().getObjectService().createPolicy(getRepositoryId(),
+    String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
         of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId,
         of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
 
@@ -234,7 +234,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     String repositoryId = getRepositoryId();
     String objectId = getObjectId();
 
-    FailedToDeleteData failed = getProvider().getObjectService().deleteTree(repositoryId, objectId,
+    FailedToDeleteData failed = getBinding().getObjectService().deleteTree(repositoryId, objectId,
         allVersions, unfile, continueOnFailure, null);
 
     return failed.getIds();
@@ -287,7 +287,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     }
 
     final String objectId = getObjectId();
-    final NavigationService nagivationService = getProvider().getNavigationService();
+    final NavigationService nagivationService = getBinding().getNavigationService();
     final ObjectFactory objectFactory = getSession().getObjectFactory();
     final OperationContext ctxt = new OperationContextImpl(context);
 
@@ -349,7 +349,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     }
 
     final String objectId = getObjectId();
-    final NavigationService navigationService = getProvider().getNavigationService();
+    final NavigationService navigationService = getBinding().getNavigationService();
     final ObjectFactory objectFactory = getSession().getObjectFactory();
     final OperationContext ctxt = new OperationContextImpl(context);
 
@@ -406,7 +406,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     String objectId = getObjectId();
 
     // get the descendants
-    List<ObjectInFolderContainer> providerContainerList = getProvider().getNavigationService()
+    List<ObjectInFolderContainer> providerContainerList = getBinding().getNavigationService()
         .getDescendants(getRepositoryId(), objectId, BigInteger.valueOf(depth),
             context.getFilterString(), context.isIncludeAllowableActions(),
             context.getIncludeRelationships(), context.getRenditionFilterString(),
@@ -434,7 +434,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     String objectId = getObjectId();
 
     // get the folder tree
-    List<ObjectInFolderContainer> providerContainerList = getProvider().getNavigationService()
+    List<ObjectInFolderContainer> providerContainerList = getBinding().getNavigationService()
         .getFolderTree(getRepositoryId(), objectId, BigInteger.valueOf(depth),
             context.getFilterString(), context.isIncludeAllowableActions(),
             context.getIncludeRelationships(), context.getRenditionFilterString(),
@@ -525,7 +525,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
       // if the path property isn't set, get it
       if (path == null) {
         String objectId = getObjectId();
-        ObjectData objectData = getProvider().getObjectService().getObject(getRepositoryId(),
+        ObjectData objectData = getBinding().getObjectService().getObject(getRepositoryId(),
             objectId, PropertyIds.CMIS_PATH, false, IncludeRelationships.NONE, "cmis:none", false,
             false, null);
 

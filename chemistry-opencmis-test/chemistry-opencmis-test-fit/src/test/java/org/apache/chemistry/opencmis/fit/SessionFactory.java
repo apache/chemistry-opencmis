@@ -22,11 +22,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.provider.factory.CmisProviderFactory;
+import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 
 /**
  * Session factory for integration tests.
@@ -111,7 +111,7 @@ public class SessionFactory {
   /**
    * Creates a new CmisProvider object that uses the AtomPub binding. For low-level tests only!
    */
-  public static CmisProvider createAtomPubProvider() {
+  public static CmisBinding createAtomPubBinding() {
     String url = "http://" + HOST + ":" + PORT + ATOMPUB_PATH;
 
     Map<String, String> parameters = new HashMap<String, String>();
@@ -121,13 +121,13 @@ public class SessionFactory {
 
     parameters.put(SessionParameter.ATOMPUB_URL, url);
 
-    return CmisProviderFactory.newInstance().createCmisAtomPubProvider(parameters);
+    return CmisBindingFactory.newInstance().createCmisAtomPubBinding(parameters);
   }
 
   /**
    * Creates a new CmisProvider object that uses the Web Services binding. For low-level tests only!
    */
-  public static CmisProvider createWebServicesProvider() {
+  public static CmisBinding createWebServicesBinding() {
     String url = "http://" + HOST + ":" + PORT + WEBSERVICES_PATH;
 
     Map<String, String> parameters = new HashMap<String, String>();
@@ -147,6 +147,6 @@ public class SessionFactory {
     parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url + "PolicyService?wsdl");
     parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url + "ACLService?wsdl");
 
-    return CmisProviderFactory.newInstance().createCmisWebServicesProvider(parameters);
+    return CmisBindingFactory.newInstance().createCmisWebServicesBinding(parameters);
   }
 }

@@ -81,12 +81,12 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.provider.AccessControlEntry;
 import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
 import org.apache.chemistry.opencmis.commons.provider.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
 import org.apache.chemistry.opencmis.commons.provider.ObjectData;
 import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.RenditionData;
 
 /**
@@ -117,10 +117,10 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
   }
 
   /**
-   * Returns the provider object factory.
+   * Returns the bindings object factory.
    */
-  protected ProviderObjectFactory getProviderObjectFactory() {
-    return session.getProvider().getObjectFactory();
+  protected BindingsObjectFactory getProviderObjectFactory() {
+    return session.getBinding().getObjectFactory();
   }
 
   // allowable actions
@@ -182,7 +182,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
       return null;
     }
 
-    ProviderObjectFactory pof = getProviderObjectFactory();
+    BindingsObjectFactory pof = getProviderObjectFactory();
 
     List<AccessControlEntry> providerAces = new ArrayList<AccessControlEntry>();
     for (Ace ace : aces) {
@@ -468,7 +468,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
     }
 
     // some preparation
-    ProviderObjectFactory pof = getProviderObjectFactory();
+    BindingsObjectFactory pof = getProviderObjectFactory();
     List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
 
     // the big loop

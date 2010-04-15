@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commander;
 
 import java.io.PrintWriter;
 
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 
 public class DeleteCommand implements Command {
 
@@ -42,13 +42,7 @@ public class DeleteCommand implements Command {
     return "DELETE <repository id> <object id> [all versions: true/false]";
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.commander.Command#execute(org.apache.opencmis.commons.provider.CmisProvider,
-   * java.lang.String[], java.io.PrintWriter)
-   */
-  public void execute(CmisProvider provider, String[] args, PrintWriter output) {
+  public void execute(CmisBinding binding, String[] args, PrintWriter output) {
     if (args.length < 2) {
       output.println(getUsage());
       return;
@@ -61,7 +55,7 @@ public class DeleteCommand implements Command {
     output.println("Deleting " + objectId + " ...");
     output.flush();
 
-    provider.getObjectService().deleteObject(repositoryId, objectId, allVersions, null);
+    binding.getObjectService().deleteObject(repositoryId, objectId, allVersions, null);
 
     output.println("done.");
   }

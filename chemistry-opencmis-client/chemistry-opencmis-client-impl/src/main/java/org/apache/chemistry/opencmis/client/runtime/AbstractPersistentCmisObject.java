@@ -50,7 +50,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 import org.apache.chemistry.opencmis.commons.provider.Holder;
 import org.apache.chemistry.opencmis.commons.provider.ObjectData;
 import org.apache.chemistry.opencmis.commons.provider.ObjectList;
@@ -207,10 +207,10 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
   }
 
   /**
-   * Returns the provider object.
+   * Returns the binding object.
    */
-  protected CmisProvider getProvider() {
-    return getSession().getProvider();
+  protected CmisBinding getBinding() {
+    return getSession().getBinding();
   }
 
   /**
@@ -241,7 +241,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    */
   public void delete(boolean allVersions) {
     String objectId = getObjectId();
-    getProvider().getObjectService().deleteObject(getRepositoryId(), objectId, allVersions, null);
+    getBinding().getObjectService().deleteObject(getRepositoryId(), objectId, allVersions, null);
   }
 
   /*
@@ -268,7 +268,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       }
 
       // it's time to update
-      getProvider().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
+      getBinding().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
           changeTokenHolder,
           getObjectFactory().convertProperties(this.properties, this.objectType, updatebility),
           null);
@@ -312,7 +312,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       }
 
       // it's time to update
-      getProvider().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
+      getBinding().getObjectService().updateProperties(getRepositoryId(), objectIdHolder,
           changeTokenHolder,
           getObjectFactory().convertProperties(properties, this.objectType, updatebility), null);
 
@@ -606,7 +606,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     ObjectFactory of = getObjectFactory();
 
-    return of.convertAcl(getProvider().getAclService().getAcl(getRepositoryId(), objectId,
+    return of.convertAcl(getBinding().getAclService().getAcl(getRepositoryId(), objectId,
         onlyBasicPermissions, null));
   }
 
@@ -621,7 +621,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     ObjectFactory of = getObjectFactory();
 
-    return of.convertAcl(getProvider().getAclService().applyAcl(getRepositoryId(), objectId,
+    return of.convertAcl(getBinding().getAclService().applyAcl(getRepositoryId(), objectId,
         of.convertAces(addAces), of.convertAces(removeAces), aclPropagation, null));
   }
 
@@ -674,8 +674,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     }
 
     String objectId = getObjectId();
-    getProvider().getPolicyService().applyPolicy(getRepositoryId(), policyId.getId(), objectId,
-        null);
+    getBinding().getPolicyService()
+        .applyPolicy(getRepositoryId(), policyId.getId(), objectId, null);
   }
 
   /*
@@ -690,7 +690,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     }
 
     String objectId = getObjectId();
-    getProvider().getPolicyService().removePolicy(getRepositoryId(), policyId.getId(), objectId,
+    getBinding().getPolicyService().removePolicy(getRepositoryId(), policyId.getId(), objectId,
         null);
   }
 
@@ -743,7 +743,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     final String objectId = getObjectId();
     final String typeId = (type == null ? null : type.getId());
-    final RelationshipService relationshipService = getProvider().getRelationshipService();
+    final RelationshipService relationshipService = getBinding().getRelationshipService();
     final OperationContext ctxt = (context != null ? context : new OperationContextImpl(
         getSession().getDefaultContext()));
 
@@ -838,7 +838,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       String objectId = getObjectId();
 
       // get the latest data from the repository
-      ObjectData objectData = getSession().getProvider().getObjectService().getObject(
+      ObjectData objectData = getSession().getBinding().getObjectService().getObject(
           getRepositoryId(), objectId, creationContext.getFilterString(),
           creationContext.isIncludeAllowableActions(), creationContext.getIncludeRelationships(),
           creationContext.getRenditionFilterString(), creationContext.isIncludePolicies(),

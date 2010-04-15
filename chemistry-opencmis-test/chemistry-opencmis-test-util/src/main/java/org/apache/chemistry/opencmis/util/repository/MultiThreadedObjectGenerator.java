@@ -18,10 +18,10 @@
  */
 package org.apache.chemistry.opencmis.util.repository;
 
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 import org.apache.chemistry.opencmis.commons.provider.NavigationService;
 import org.apache.chemistry.opencmis.commons.provider.ObjectService;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
 
@@ -72,13 +72,13 @@ public class MultiThreadedObjectGenerator {
     
   }  // ObjectCreatorRunner
   
-  static private ObjectGenerator createObjectGenerator(CmisProvider provider, String repoId,
+  static private ObjectGenerator createObjectGenerator(CmisBinding binding, String repoId,
       int docsPerFolder, int foldersPerFolders, int depth, String documentType, String folderType,
       int contentSizeInKB, String rootFolderId, boolean doCleanup) {
 
-    ProviderObjectFactory objectFactory = provider.getObjectFactory();
-    NavigationService navSvc = provider.getNavigationService();
-    ObjectService objSvc = provider.getObjectService();
+    BindingsObjectFactory objectFactory = binding.getObjectFactory();
+    NavigationService navSvc = binding.getNavigationService();
+    ObjectService objSvc = binding.getObjectService();
     
     ObjectGenerator gen = new ObjectGenerator(objectFactory, navSvc, objSvc, repoId);
     gen.setUseUuidsForNames(true);
@@ -94,8 +94,8 @@ public class MultiThreadedObjectGenerator {
     return gen;
   }
   
-  static private String getRootFolderId(CmisProvider provider, String repositoryId, String rootFolderId) {
-    RepositoryService repSvc = provider.getRepositoryService();
+  static private String getRootFolderId(CmisBinding binding, String repositoryId, String rootFolderId) {
+    RepositoryService repSvc = binding.getRepositoryService();
 
     RepositoryInfoData rep = repSvc.getRepositoryInfo(repositoryId, null);
     if (null == rootFolderId || rootFolderId.length() == 0)
@@ -104,22 +104,22 @@ public class MultiThreadedObjectGenerator {
     return rootFolderId;
   }
   
-  public static ObjectGeneratorRunner prepareForCreateTree(CmisProvider provider, String repoId,
+  public static ObjectGeneratorRunner prepareForCreateTree(CmisBinding binding, String repoId,
       int docsPerFolder, int foldersPerFolders, int depth, String documentType, String folderType,
       int contentSizeInKB, String rootFolderId, boolean doCleanup) {
     
-    ObjectGenerator objGen = createObjectGenerator(provider, repoId, docsPerFolder,
+    ObjectGenerator objGen = createObjectGenerator(binding, repoId, docsPerFolder,
         foldersPerFolders, depth, documentType, folderType, contentSizeInKB, rootFolderId,
         doCleanup);    
 
     ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateTree);
     gen.fFoldersPerFolders = foldersPerFolders;
     gen.fDepth = depth;
-    gen.fRootFolderId = getRootFolderId(provider, repoId, rootFolderId);
+    gen.fRootFolderId = getRootFolderId(binding, repoId, rootFolderId);
     return gen;
   }
   
-  public static ObjectGeneratorRunner[] prepareForCreateTreeMT(CmisProvider provider, String repoId,
+  public static ObjectGeneratorRunner[] prepareForCreateTreeMT(CmisBinding provider, String repoId,
       int docsPerFolder, int foldersPerFolders, int depth, String documentType, String folderType,
       int contentSizeInKB, String[] rootFolderIds, boolean doCleanup) {
     
@@ -138,7 +138,7 @@ public class MultiThreadedObjectGenerator {
     return runners;
   }
   
-  public static ObjectGeneratorRunner prepareForCreateDocument(CmisProvider provider, String repoId,
+  public static ObjectGeneratorRunner prepareForCreateDocument(CmisBinding provider, String repoId,
       String documentType, int contentSizeInKB, String rootFolderId, int noDocuments, boolean doCleanup) {
     
     ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, documentType, null,
@@ -151,23 +151,23 @@ public class MultiThreadedObjectGenerator {
   }
 
   public static ObjectGeneratorRunner[] prepareForCreateDocumentMT(int threadCount,
-      CmisProvider provider, String repoId, String documentType, int contentSizeInKB,
+      CmisBinding binding, String repoId, String documentType, int contentSizeInKB,
       String rootFolderId, int noDocuments, boolean doCleanup) {
     
     ObjectGeneratorRunner[] runners = new ObjectGeneratorRunner[threadCount];
     for (int i=0; i<threadCount; i++) {
-      ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, documentType, null,
+      ObjectGenerator objGen = createObjectGenerator(binding, repoId, 0, 0, 0, documentType, null,
           contentSizeInKB, rootFolderId, doCleanup);
       
       ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateDocument);
-      gen.fRootFolderId = getRootFolderId(provider, repoId, rootFolderId);
+      gen.fRootFolderId = getRootFolderId(binding, repoId, rootFolderId);
       gen.fCount = noDocuments;
       runners[i] = gen;
     }
     return runners;
   }
 
-  public static ObjectGeneratorRunner prepareForCreateFolder(CmisProvider provider, String repoId,
+  public static ObjectGeneratorRunner prepareForCreateFolder(CmisBinding provider, String repoId,
       String folderType, String rootFolderId, int noFolders, boolean doCleanup) {
     
     ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, null, folderType,
@@ -180,16 +180,16 @@ public class MultiThreadedObjectGenerator {
   }
 
   public static ObjectGeneratorRunner[] prepareForCreateFolderMT(int threadCount,
-      CmisProvider provider, String repoId, String folderType, String rootFolderId, int noFolders,
+      CmisBinding binding, String repoId, String folderType, String rootFolderId, int noFolders,
       boolean doCleanup) {
     
     ObjectGeneratorRunner[] runners = new ObjectGeneratorRunner[threadCount];
     for (int i=0; i<threadCount; i++) {
-      ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, null, folderType,
+      ObjectGenerator objGen = createObjectGenerator(binding, repoId, 0, 0, 0, null, folderType,
           0, rootFolderId, doCleanup);
       
       ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateFolders);
-      gen.fRootFolderId = getRootFolderId(provider, repoId, rootFolderId);
+      gen.fRootFolderId = getRootFolderId(binding, repoId, rootFolderId);
       gen.fCount = noFolders;
       runners[i] = gen;
     }

@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
 import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
 import org.apache.chemistry.opencmis.commons.provider.NavigationService;
 import org.apache.chemistry.opencmis.commons.provider.ObjectData;
@@ -45,7 +46,6 @@ import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.provider.ObjectService;
 import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,7 +59,7 @@ import org.apache.commons.logging.LogFactory;
 public class ObjectGenerator {
   
   private static Log log = LogFactory.getLog(ObjectGenerator.class);
-  private ProviderObjectFactory fFactory;
+  private BindingsObjectFactory fFactory;
   NavigationService fNavSvc;
   ObjectService fObjSvc;
   private String fRepositoryId;
@@ -125,7 +125,7 @@ public class ObjectGenerator {
    */
   private boolean fUseUuids ;
   
-  public ObjectGenerator(ProviderObjectFactory factory, NavigationService navSvc,
+  public ObjectGenerator(BindingsObjectFactory factory, NavigationService navSvc,
       ObjectService objSvc, String repositoryId) {
     super();
     fFactory = factory;

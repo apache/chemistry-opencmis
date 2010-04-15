@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.SessionType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 
 /**
@@ -100,9 +100,9 @@ public class SessionFactoryImpl implements SessionFactory {
    * @see org.apache.opencmis.client.api.SessionFactory#getRepositories(java.util.Map)
    */
   public List<Repository> getRepositories(Map<String, String> parameters) {
-    CmisProvider provider = CmisProviderHelper.createProvider(parameters);
+    CmisBinding binding = CmisBindingHelper.createProvider(parameters);
 
-    List<RepositoryInfoData> repositoryInfos = provider.getRepositoryService().getRepositoryInfos(
+    List<RepositoryInfoData> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(
         null);
 
     List<Repository> result = new ArrayList<Repository>();

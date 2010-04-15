@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.client.api.util.Container;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 
 /**
  * A session is associated with a specific connection to a CMIS repository. A session belongs to one
@@ -47,9 +47,9 @@ public interface Session {
   // session context
 
   /**
-   * Gets the underlying provider object.
+   * Gets the underlying binding object.
    */
-  CmisProvider getProvider();
+  CmisBinding getBinding();
 
   /**
    * Get the current default operation parameters for filtering and paging.

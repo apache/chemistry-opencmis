@@ -49,7 +49,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
     String objectId = getObjectId();
 
     // get object ids of the parent folders
-    List<ObjectParentData> providerParents = getProvider().getNavigationService().getObjectParents(
+    List<ObjectParentData> providerParents = getBinding().getNavigationService().getObjectParents(
         getRepositoryId(), objectId, PropertyIds.CMIS_OBJECT_ID, false, IncludeRelationships.NONE,
         null, false, null);
 
@@ -92,7 +92,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
     String objectId = getObjectId();
 
     // get object paths of the parent folders
-    List<ObjectParentData> providerParents = getProvider().getNavigationService().getObjectParents(
+    List<ObjectParentData> providerParents = getBinding().getNavigationService().getObjectParents(
         getRepositoryId(), objectId, PropertyIds.CMIS_PATH, false, IncludeRelationships.NONE, null,
         true, null);
 
@@ -143,7 +143,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
       throw new IllegalArgumentException("Target folder id must be set!");
     }
 
-    getProvider().getObjectService().moveObject(getRepositoryId(), objectIdHolder,
+    getBinding().getObjectService().moveObject(getRepositoryId(), objectIdHolder,
         targetFolderId.getId(), sourceFolderId.getId(), null);
 
     if (objectIdHolder.getValue() == null) {
@@ -173,7 +173,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
       throw new IllegalArgumentException("Folder Id must be set!");
     }
 
-    getProvider().getMultiFilingService().addObjectToFolder(getRepositoryId(), objectId,
+    getBinding().getMultiFilingService().addObjectToFolder(getRepositoryId(), objectId,
         folderId.getId(), allVersions, null);
   }
 
@@ -191,7 +191,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
       throw new IllegalArgumentException("Folder Id must be set!");
     }
 
-    getProvider().getMultiFilingService().removeObjectFromFolder(getRepositoryId(), objectId,
+    getBinding().getMultiFilingService().removeObjectFromFolder(getRepositoryId(), objectId,
         folderId.getId(), null);
   }
 }

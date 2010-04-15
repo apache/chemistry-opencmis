@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commander;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 
 public class InfosCommand implements Command {
@@ -44,14 +44,8 @@ public class InfosCommand implements Command {
     return "INFOS";
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.commander.Command#execute(org.apache.opencmis.commons.provider.CmisProvider,
-   * java.lang.String[], java.io.PrintWriter)
-   */
-  public void execute(CmisProvider provider, String[] args, PrintWriter output) {
-    List<RepositoryInfoData> repositoryInfos = provider.getRepositoryService().getRepositoryInfos(
+  public void execute(CmisBinding binding, String[] args, PrintWriter output) {
+    List<RepositoryInfoData> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(
         null);
 
     for (RepositoryInfoData repositoryInfo : repositoryInfos) {
