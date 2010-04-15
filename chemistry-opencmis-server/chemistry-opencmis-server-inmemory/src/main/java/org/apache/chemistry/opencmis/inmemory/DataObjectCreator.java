@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ChangeEventInfoData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -123,9 +123,9 @@ public class DataObjectCreator {
     return allowableActions;
   }
 
-  public static AccessControlList fillACL(StoredObject so) {
+  public static Acl fillACL(StoredObject so) {
     AccessControlListImpl acl = new AccessControlListImpl();
-    List<AccessControlEntry> aces = new ArrayList<AccessControlEntry>();
+    List<Ace> aces = new ArrayList<Ace>();
     // TODO to be completed if ACLs are implemented
     acl.setAces(aces);
     return acl;

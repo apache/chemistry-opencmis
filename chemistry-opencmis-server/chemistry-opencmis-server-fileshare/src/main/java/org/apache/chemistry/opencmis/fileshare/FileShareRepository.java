@@ -49,8 +49,8 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
@@ -97,7 +97,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListI
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderContainerImpl;
@@ -914,7 +914,7 @@ public class FileShareRepository {
   /**
    * CMIS getACL.
    */
-  public AccessControlList getAcl(CallContext context, String repositoryId, String objectId) {
+  public Acl getAcl(CallContext context, String repositoryId, String objectId) {
     debug("getAcl");
     checkUser(context, false);
 
@@ -954,7 +954,7 @@ public class FileShareRepository {
     }
 
     // compile data
-    ContentStreamDataImpl result = new ContentStreamDataImpl();
+    ContentStreamImpl result = new ContentStreamImpl();
     result.setFileName(file.getName());
     result.setLength(BigInteger.valueOf(file.length()));
     result.setMimeType(MIMETypes.getMIMEType(file));
@@ -1881,9 +1881,9 @@ public class FileShareRepository {
   /**
    * Compiles the ACL for a file or folder.
    */
-  private AccessControlList compileAcl(File file) {
+  private Acl compileAcl(File file) {
     AccessControlListImpl result = new AccessControlListImpl();
-    result.setAces(new ArrayList<AccessControlEntry>());
+    result.setAces(new ArrayList<Ace>());
 
     for (Map.Entry<String, Boolean> ue : fUserMap.entrySet()) {
       // create principal

@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisACLType;
@@ -55,7 +55,7 @@ public class AclService extends AbstractService implements ACLServicePort {
       CmisAclService service = factory.getAclService();
       CallContext context = createContext(fContext);
 
-      AccessControlList acl = service.applyAcl(context, repositoryId, objectId, convert(addAces,
+      Acl acl = service.applyAcl(context, repositoryId, objectId, convert(addAces,
           null), convert(removeAces, null), convert(AclPropagation.class, aclPropagation),
           convert(extension));
 
@@ -81,7 +81,7 @@ public class AclService extends AbstractService implements ACLServicePort {
       CmisAclService service = factory.getAclService();
       CallContext context = createContext(fContext);
 
-      AccessControlList acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions,
+      Acl acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions,
           convert(extension));
 
       if (acl == null) {

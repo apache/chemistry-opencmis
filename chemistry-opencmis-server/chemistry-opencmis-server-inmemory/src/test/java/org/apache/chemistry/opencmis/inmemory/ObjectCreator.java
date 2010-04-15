@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
@@ -39,7 +39,7 @@ import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
 public class ObjectCreator {
 
@@ -56,8 +56,8 @@ public class ObjectCreator {
   public String createDocument(String name, String typeId, String folderId, VersioningState versioningState, Map<String, String> propsToSet) {
     ContentStream contentStream = null;
     List<String> policies = null;
-    AccessControlList addACEs = null;
-    AccessControlList removeACEs = null;
+    Acl addACEs = null;
+    Acl removeACEs = null;
     ExtensionsData extension = null;
 
     PropertiesData props = createStringDocumentProperties(name, typeId, propsToSet);
@@ -86,7 +86,7 @@ public class ObjectCreator {
   }
 
   public ContentStream createContent() {
-    ContentStreamDataImpl content = new ContentStreamDataImpl();
+    ContentStreamImpl content = new ContentStreamImpl();
     content.setFileName("data.txt");
     content.setMimeType("text/plain");
     int len = 32 * 1024;
@@ -108,7 +108,7 @@ public class ObjectCreator {
   }
 
   public ContentStream createAlternateContent() {
-    ContentStreamDataImpl content = new ContentStreamDataImpl();
+    ContentStreamImpl content = new ContentStreamImpl();
     content.setFileName("data.txt");
     content.setMimeType("text/plain");
     int len = 32 * 1024;

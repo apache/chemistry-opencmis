@@ -29,8 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.chemistry.opencmis.client.api.Ace;
-import org.apache.chemistry.opencmis.client.api.Acl;
 import org.apache.chemistry.opencmis.client.api.AllowableActions;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
@@ -45,6 +43,8 @@ import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -122,7 +122,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
       // handle ACL
       if (objectData.getAcl() != null) {
-        acl = of.convertAcl(objectData.getAcl());
+        acl = objectData.getAcl();
       }
 
       // handle policies
@@ -236,7 +236,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#delete(boolean)
    */
   public void delete(boolean allVersions) {
@@ -246,7 +246,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#updateProperties()
    */
   public ObjectId updateProperties() {
@@ -286,7 +286,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#updateProperties(java.util.Map)
    */
   public ObjectId updateProperties(Map<String, ?> properties) {
@@ -331,7 +331,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getBaseType()
    */
   public ObjectType getBaseType() {
@@ -345,7 +345,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getBaseTypeId()
    */
   public BaseObjectTypeIds getBaseTypeId() {
@@ -359,7 +359,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getChangeToken()
    */
   public String getChangeToken() {
@@ -368,7 +368,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getCreatedBy()
    */
   public String getCreatedBy() {
@@ -377,7 +377,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getCreationDate()
    */
   public GregorianCalendar getCreationDate() {
@@ -386,7 +386,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getId()
    */
   public String getId() {
@@ -395,7 +395,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getLastModificationDate()
    */
   public GregorianCalendar getLastModificationDate() {
@@ -404,7 +404,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getLastModifiedBy()
    */
   public String getLastModifiedBy() {
@@ -413,7 +413,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getName()
    */
   public String getName() {
@@ -422,7 +422,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getProperties()
    */
   public List<Property<?>> getProperties() {
@@ -437,7 +437,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getProperty(java.lang.String)
    */
   @SuppressWarnings("unchecked")
@@ -453,7 +453,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getPropertyMultivalue(java.lang.String)
    */
   public <T> List<T> getPropertyMultivalue(String id) {
@@ -467,7 +467,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getPropertyValue(java.lang.String)
    */
   public <T> T getPropertyValue(String id) {
@@ -481,7 +481,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#setName(java.lang.String)
    */
   public void setName(String name) {
@@ -490,7 +490,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#setProperty(java.lang.String, java.lang.Object)
    */
   @SuppressWarnings("unchecked")
@@ -518,7 +518,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#setPropertyMultivalue(java.lang.String,
    * java.util.List)
    */
@@ -547,7 +547,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getType()
    */
   public ObjectType getType() {
@@ -564,7 +564,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getAllowableActions()
    */
   public AllowableActions getAllowableActions() {
@@ -581,7 +581,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getRenditions()
    */
   public List<Rendition> getRenditions() {
@@ -598,7 +598,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getAcl(boolean)
    */
   public Acl getAcl(boolean onlyBasicPermissions) {
@@ -606,13 +606,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     ObjectFactory of = getObjectFactory();
 
-    return of.convertAcl(getBinding().getAclService().getAcl(getRepositoryId(), objectId,
-        onlyBasicPermissions, null));
+    return getBinding().getAclService().getAcl(getRepositoryId(), objectId,
+        onlyBasicPermissions, null);
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#applyAcl(java.util.List, java.util.List,
    * org.apache.opencmis.commons.enums.AclPropagation)
    */
@@ -621,13 +621,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     ObjectFactory of = getObjectFactory();
 
-    return of.convertAcl(getBinding().getAclService().applyAcl(getRepositoryId(), objectId,
-        of.convertAces(addAces), of.convertAces(removeAces), aclPropagation, null));
+    return getBinding().getAclService().applyAcl(getRepositoryId(), objectId,
+        of.convertAces(addAces), of.convertAces(removeAces), aclPropagation, null);
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#addAcl(java.util.List,
    * org.apache.opencmis.commons.enums.AclPropagation)
    */
@@ -637,7 +637,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#removeAcl(java.util.List,
    * org.apache.opencmis.commons.enums.AclPropagation)
    */
@@ -647,7 +647,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getAcl()
    */
   public Acl getAcl() {
@@ -664,7 +664,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.CmisObject#applyPolicy(org.apache.opencmis.client.api.ObjectId)
    */
@@ -680,7 +680,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.CmisObject#removePolicy(org.apache.opencmis.client.api.ObjectId)
    */
@@ -696,7 +696,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getPolicies()
    */
   public List<Policy> getPolicies() {
@@ -713,7 +713,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getRelationships()
    */
   public List<Relationship> getRelationships() {
@@ -728,7 +728,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getRelationships(boolean,
    * org.apache.opencmis.commons.enums.RelationshipDirection,
    * org.apache.opencmis.client.api.objecttype.ObjectType,
@@ -784,7 +784,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#isChanged()
    */
   public boolean isChanged() {
@@ -812,7 +812,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#getRefreshTimestamp()
    */
   public long getRefreshTimestamp() {
@@ -827,7 +827,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.CmisObject#refresh(org.apache.opencmis.client.api.OperationContext
    * )
@@ -854,7 +854,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.CmisObject#refreshIfOld(long)
    */
   public void refreshIfOld(long durationInMillis) {

@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 
@@ -46,7 +46,7 @@ public class AclDocument {
   /**
    * Writes an object.
    */
-  public void writeAcl(AccessControlList acl, OutputStream out) throws XMLStreamException,
+  public void writeAcl(Acl acl, OutputStream out) throws XMLStreamException,
       JAXBException {
     CmisAccessControlListType aclJaxb = convert(acl);
     if (aclJaxb == null) {

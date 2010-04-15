@@ -18,14 +18,14 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlPrincipalData;
+import org.apache.chemistry.opencmis.commons.bindings.Principal;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public class AccessControlPrincipalDataImpl extends AbstractExtensionData implements
-    AccessControlPrincipalData {
+    Principal {
 
   private String fPrincipalId;
 
@@ -47,7 +47,7 @@ public class AccessControlPrincipalDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.AccessControlPrincipalData#getPrincipalId()
    */
-  public String getPrincipalId() {
+  public String getId() {
     return fPrincipalId;
   }
 

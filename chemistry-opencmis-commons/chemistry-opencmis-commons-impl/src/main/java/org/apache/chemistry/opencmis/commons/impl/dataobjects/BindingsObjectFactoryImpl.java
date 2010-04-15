@@ -25,8 +25,8 @@ import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
@@ -42,9 +42,9 @@ import org.apache.chemistry.opencmis.commons.bindings.PropertyUriData;
 
 /**
  * CMIS binding object factory implementation.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class BindingsObjectFactoryImpl implements BindingsObjectFactory, Serializable {
 
@@ -53,17 +53,17 @@ public class BindingsObjectFactoryImpl implements BindingsObjectFactory, Seriali
   public BindingsObjectFactoryImpl() {
   }
 
-  public AccessControlEntry createAccessControlEntry(String principal, List<String> permissions) {
+  public Ace createAccessControlEntry(String principal, List<String> permissions) {
     return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principal), permissions);
   }
 
-  public AccessControlList createAccessControlList(List<AccessControlEntry> aces) {
+  public Acl createAccessControlList(List<Ace> aces) {
     return new AccessControlListImpl(aces);
   }
 
-  public ContentStream createContentStream(BigInteger length, String mimetype, String filename,
+  public ContentStream createContentStream(String filename, BigInteger length, String mimetype,
       InputStream stream) {
-    return new ContentStreamDataImpl(length, mimetype, filename, stream);
+    return new ContentStreamImpl(filename, length, mimetype, stream);
   }
 
   public PropertiesData createPropertiesData(List<PropertyData<?>> properties) {

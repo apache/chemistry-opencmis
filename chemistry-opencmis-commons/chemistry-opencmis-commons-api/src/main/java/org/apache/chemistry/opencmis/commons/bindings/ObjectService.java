@@ -38,21 +38,21 @@ public interface ObjectService {
 
   String createDocument(String repositoryId, PropertiesData properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
-      AccessControlList addAces, AccessControlList removeAces, ExtensionsData extension);
+      Acl addAces, Acl removeAces, ExtensionsData extension);
 
   String createDocumentFromSource(String repositoryId, String sourceId, PropertiesData properties,
       String folderId, VersioningState versioningState, List<String> policies,
-      AccessControlList addAces, AccessControlList removeAces, ExtensionsData extension);
+      Acl addAces, Acl removeAces, ExtensionsData extension);
 
   String createFolder(String repositoryId, PropertiesData properties, String folderId,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
   String createRelationship(String repositoryId, PropertiesData properties, List<String> policies,
-      AccessControlList addAces, AccessControlList removeAces, ExtensionsData extension);
+      Acl addAces, Acl removeAces, ExtensionsData extension);
 
   String createPolicy(String repositoryId, PropertiesData properties, String folderId,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
   AllowableActionsData getAllowableActions(String repositoryId, String objectId,

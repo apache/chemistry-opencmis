@@ -79,7 +79,7 @@ public interface ObjectData extends ExtensionsData {
    * 
    * @return the access control list or <code>null</code> if the access control list is unknown
    */
-  AccessControlList getAcl();
+  Acl getAcl();
 
   /**
    * Returns if the access control list reflects the exact permission set in the repository.

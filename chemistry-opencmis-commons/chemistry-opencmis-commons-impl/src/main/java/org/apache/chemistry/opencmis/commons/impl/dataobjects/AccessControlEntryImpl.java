@@ -20,19 +20,19 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlPrincipalData;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Principal;
 
 /**
  * Access Control Entry data implementation.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
-public class AccessControlEntryImpl extends AbstractExtensionData implements AccessControlEntry {
+public class AccessControlEntryImpl extends AbstractExtensionData implements Ace {
 
   private List<String> fPermissions;
-  private AccessControlPrincipalData fPrincipal;
+  private Principal fPrincipal;
   private boolean fIsDirect = true;
 
   /**
@@ -44,27 +44,31 @@ public class AccessControlEntryImpl extends AbstractExtensionData implements Acc
   /**
    * Constructor.
    */
-  public AccessControlEntryImpl(AccessControlPrincipalData principal, List<String> permissions) {
+  public AccessControlEntryImpl(Principal principal, List<String> permissions) {
     setPrincipal(principal);
     setPermissions(permissions);
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.AccessControlEntry#getPrincipal()
    */
-  public AccessControlPrincipalData getPrincipal() {
+  public Principal getPrincipal() {
     return fPrincipal;
   }
 
-  public void setPrincipal(AccessControlPrincipalData principal) {
+  public String getPrincipalId() {
+    return fPrincipal == null ? null : fPrincipal.getId();
+  }
+
+  public void setPrincipal(Principal principal) {
     fPrincipal = principal;
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.AccessControlEntry#getPermissions()
    */
   public List<String> getPermissions() {
@@ -77,7 +81,7 @@ public class AccessControlEntryImpl extends AbstractExtensionData implements Acc
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.AccessControlEntry#isDirect()
    */
   public boolean isDirect() {
@@ -90,7 +94,7 @@ public class AccessControlEntryImpl extends AbstractExtensionData implements Acc
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Object#toString()
    */
   @Override

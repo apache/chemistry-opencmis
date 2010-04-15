@@ -16,32 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.runtime;
+package org.apache.chemistry.opencmis.commons.bindings;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.Ace;
-import org.apache.chemistry.opencmis.client.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 
 /**
- * ACL implementation
+ * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+ * 
  */
-public class AclImpl implements Acl {
+public interface Acl extends ExtensionsData {
 
-  private List<Ace> aces;
-  private Boolean isExact;
+  List<Ace> getAces();
 
-  public AclImpl(List<Ace> aces, Boolean isExact) {
-    this.aces = aces;
-    this.isExact = isExact;
-  }
-
-  public List<Ace> getAces() {
-    return this.aces;
-  }
-
-  public Boolean isExact() {
-    return this.isExact;
-  }
-
+  Boolean isExact();
 }

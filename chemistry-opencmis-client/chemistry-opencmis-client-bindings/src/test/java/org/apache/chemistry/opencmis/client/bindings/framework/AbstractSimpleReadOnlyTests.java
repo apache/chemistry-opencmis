@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -425,7 +425,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
 
     // check ACLS
     if (supportsDiscoverACLs()) {
-      AccessControlList acl = getBinding().getAclService().getAcl(getTestRepositoryId(), objectId,
+      Acl acl = getBinding().getAclService().getAcl(getTestRepositoryId(), objectId,
           Boolean.FALSE, null);
 
       assertEquals(object.getAcl(), acl);

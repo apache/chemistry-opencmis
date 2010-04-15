@@ -21,9 +21,9 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.Acl;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AclService;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -31,9 +31,9 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 
 /**
  * ACL Service AtomPub client.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class AclServiceImpl extends AbstractAtomPubService implements AclService {
 
@@ -46,20 +46,20 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.ACLService#applyACL(java.lang.String,
    * java.lang.String, org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.commons.enums.ACLPropagation,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public AccessControlList applyAcl(String repositoryId, String objectId,
-      AccessControlList addAces, AccessControlList removeAces, AclPropagation aclPropagation,
+  public Acl applyAcl(String repositoryId, String objectId,
+          Acl addAces, Acl removeAces, AclPropagation aclPropagation,
       ExtensionsData extension) {
-    AccessControlList result = null;
+      Acl result = null;
 
     // fetch the current ACL
-    AccessControlList originalAces = getAcl(repositoryId, objectId, false, null);
+    Acl originalAces = getAcl(repositoryId, objectId, false, null);
 
     // if no changes required, just return the ACL
     if (!isAclMergeRequired(addAces, removeAces)) {
@@ -67,10 +67,10 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
     }
 
     // merge ACLs
-    AccessControlList newACL = mergeAcls(originalAces, addAces, removeAces);
+    Acl newACL = mergeAcls(originalAces, addAces, removeAces);
 
     // update ACL
-    Acl acl = updateAcl(repositoryId, objectId, newACL, aclPropagation);
+    AtomAcl acl = updateAcl(repositoryId, objectId, newACL, aclPropagation);
     result = convert(acl.getACL(), null);
 
     return result;
@@ -78,11 +78,11 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.ACLService#getACL(java.lang.String, java.lang.String,
    * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public AccessControlList getAcl(String repositoryId, String objectId,
+  public org.apache.chemistry.opencmis.commons.bindings.Acl getAcl(String repositoryId, String objectId,
       Boolean onlyBasicPermissions, ExtensionsData extension) {
 
     // find the link
@@ -97,7 +97,7 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
 
     // read and parse
     HttpUtils.Response resp = read(url);
-    Acl acl = parse(resp.getStream(), Acl.class);
+    AtomAcl acl = parse(resp.getStream(), AtomAcl.class);
 
     return convert(acl.getACL(), null);
   }

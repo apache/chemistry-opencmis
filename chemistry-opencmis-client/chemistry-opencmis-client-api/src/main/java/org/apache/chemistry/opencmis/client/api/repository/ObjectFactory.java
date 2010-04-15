@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.chemistry.opencmis.client.api.Ace;
-import org.apache.chemistry.opencmis.client.api.Acl;
 import org.apache.chemistry.opencmis.client.api.AllowableActions;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
@@ -36,7 +34,8 @@ import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -59,13 +58,7 @@ public interface ObjectFactory {
 
   // ACL and ACE
 
-  Ace createAce(String principal, List<String> permissions, boolean isDirect);
-
-  Acl createAcl(List<Ace> aces, Boolean isExact);
-
-  AccessControlList convertAces(List<Ace> aces);
-
-  Acl convertAcl(AccessControlList acl);
+  Acl convertAces(List<Ace> aces);
 
   // policies
 

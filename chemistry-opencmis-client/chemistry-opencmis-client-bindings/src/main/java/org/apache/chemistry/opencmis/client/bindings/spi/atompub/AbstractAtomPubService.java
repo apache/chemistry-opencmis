@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.Acl;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomBase;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
@@ -42,8 +42,8 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
@@ -72,9 +72,9 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 
 /**
  * Base class for all AtomPub clients.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class AbstractAtomPubService {
 
@@ -538,7 +538,7 @@ public class AbstractAtomPubService {
   /**
    * Checks if at least one ACE list is not empty.
    */
-  protected boolean isAclMergeRequired(AccessControlList addAces, AccessControlList removeAces) {
+  protected boolean isAclMergeRequired(Acl addAces, Acl removeAces) {
     return (addAces != null && addAces.getAces() != null && !addAces.getAces().isEmpty())
         || (removeAces != null && removeAces.getAces() != null && !removeAces.getAces().isEmpty());
   }
@@ -546,12 +546,12 @@ public class AbstractAtomPubService {
   /**
    * Merges the new ACL from original, add and remove ACEs lists.
    */
-  protected AccessControlList mergeAcls(AccessControlList originalAces, AccessControlList addAces,
-      AccessControlList removeAces) {
+  protected Acl mergeAcls(Acl originalAces, Acl addAces,
+          Acl removeAces) {
     Map<String, Set<String>> originals = convertAclToMap(originalAces);
     Map<String, Set<String>> adds = convertAclToMap(addAces);
     Map<String, Set<String>> removes = convertAclToMap(removeAces);
-    List<AccessControlEntry> newACEs = new ArrayList<AccessControlEntry>();
+    List<Ace> newACEs = new ArrayList<Ace>();
 
     // iterate through the original ACEs
     for (Map.Entry<String, Set<String>> ace : originals.entrySet()) {
@@ -589,14 +589,14 @@ public class AbstractAtomPubService {
   /**
    * Converts a list of ACEs into Map for better handling.
    */
-  private Map<String, Set<String>> convertAclToMap(AccessControlList acl) {
+  private Map<String, Set<String>> convertAclToMap(Acl acl) {
     Map<String, Set<String>> result = new HashMap<String, Set<String>>();
 
     if ((acl == null) || (acl.getAces() == null)) {
       return result;
     }
 
-    for (AccessControlEntry ace : acl.getAces()) {
+    for (Ace ace : acl.getAces()) {
       // don't consider indirect ACEs - we can't change them
       if (!ace.isDirect()) {
         // ignore
@@ -604,7 +604,7 @@ public class AbstractAtomPubService {
       }
 
       // although a principal must not be null, check it
-      if ((ace.getPrincipal() == null) || (ace.getPrincipal().getPrincipalId() == null)) {
+      if ((ace.getPrincipal() == null) || (ace.getPrincipal().getId() == null)) {
         // ignore
         continue;
       }
@@ -614,7 +614,7 @@ public class AbstractAtomPubService {
         permissions.addAll(ace.getPermissions());
       }
 
-      result.put(ace.getPrincipal().getPrincipalId(), permissions);
+      result.put(ace.getPrincipal().getId(), permissions);
     }
 
     return result;
@@ -776,7 +776,7 @@ public class AbstractAtomPubService {
   /**
    * Updates the ACL of an object.
    */
-  protected Acl updateAcl(String repositoryId, String objectId, AccessControlList acl,
+  protected AtomAcl updateAcl(String repositoryId, String objectId, Acl acl,
       AclPropagation aclPropagation) {
 
     // find the link
@@ -800,7 +800,7 @@ public class AbstractAtomPubService {
     });
 
     // parse new entry
-    return parse(resp.getStream(), Acl.class);
+    return parse(resp.getStream(), AtomAcl.class);
   }
 
 }

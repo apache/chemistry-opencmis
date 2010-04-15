@@ -34,7 +34,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEnt
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
@@ -54,7 +54,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
@@ -88,7 +88,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    */
   public String createDocument(String repositoryId, PropertiesData properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
-      AccessControlList addAces, AccessControlList removeAces, ExtensionsData extension) {
+      Acl addAces, Acl removeAces, ExtensionsData extension) {
     checkCreateProperties(properties);
 
     // find the link
@@ -145,7 +145,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    */
   public String createDocumentFromSource(String repositoryId, String sourceId,
       PropertiesData properties, String folderId, VersioningState versioningState,
-      List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
+      List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     throw new CmisNotSupportedException(
         "createDocumentFromSource is not supported by the AtomPub binding!");
@@ -161,7 +161,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createFolder(String repositoryId, PropertiesData properties, String folderId,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     checkCreateProperties(properties);
 
@@ -207,7 +207,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createPolicy(String repositoryId, PropertiesData properties, String folderId,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     checkCreateProperties(properties);
 
@@ -253,7 +253,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createRelationship(String repositoryId, PropertiesData properties,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     checkCreateProperties(properties);
 
@@ -491,7 +491,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    */
   public ContentStream getContentStream(String repositoryId, String objectId, String streamId,
       BigInteger offset, BigInteger length, ExtensionsData extension) {
-    ContentStreamDataImpl result = new ContentStreamDataImpl();
+    ContentStreamImpl result = new ContentStreamImpl();
 
     // find the link
     String link = loadLink(repositoryId, objectId, AtomPubParser.LINK_REL_CONTENT, null);
@@ -757,12 +757,12 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * Handles ACL modifications of newly created objects.
    */
   private void handleAclModifications(String repositoryId, AtomEntry entry,
-      AccessControlList addAces, AccessControlList removeAces) {
+      Acl addAces, Acl removeAces) {
     if (!isAclMergeRequired(addAces, removeAces)) {
       return;
     }
 
-    AccessControlList originalAces = null;
+    Acl originalAces = null;
 
     // walk through the entry and find the current ACL
     for (AtomElement element : entry.getElements()) {
@@ -777,7 +777,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
     if (originalAces != null) {
       // merge and update ACL
-      AccessControlList newACL = mergeAcls(originalAces, addAces, removeAces);
+      Acl newACL = mergeAcls(originalAces, addAces, removeAces);
       if (newACL != null) {
         updateAcl(repositoryId, entry.getId(), newACL, null);
       }

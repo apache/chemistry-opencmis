@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
@@ -88,7 +88,7 @@ public class ObjectService implements CmisObjectService {
    */
   public String createDocument(CallContext context, String repositoryId, PropertiesData properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).createDocument(context,
         properties, folderId, contentStream, versioningState);
@@ -108,7 +108,7 @@ public class ObjectService implements CmisObjectService {
    */
   public String createDocumentFromSource(CallContext context, String repositoryId, String sourceId,
       PropertiesData properties, String folderId, VersioningState versioningState,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId)
         .createDocumentFromSource(context, sourceId, properties, folderId, versioningState);
@@ -125,8 +125,8 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public String createFolder(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension) {
+      String folderId, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).createFolder(context,
         properties, folderId);
   }
@@ -142,8 +142,8 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public String createPolicy(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension) {
+      String folderId, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension) {
     fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
     throw new CmisNotSupportedException("createPolicy not supported!");
   }
@@ -159,8 +159,8 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public String createRelationship(CallContext context, String repositoryId,
-      PropertiesData properties, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension) {
+      PropertiesData properties, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension) {
     fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
     throw new CmisNotSupportedException("createRelationship not supported!");
   }
@@ -351,7 +351,7 @@ public class ObjectService implements CmisObjectService {
    */
   public ObjectData updateProperties(CallContext context, String repositoryId,
       Holder<String> objectId, Holder<String> changeToken, PropertiesData properties,
-      AccessControlList acl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+      Acl acl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).updateProperties(
         context, objectId, properties, objectInfos);
   }

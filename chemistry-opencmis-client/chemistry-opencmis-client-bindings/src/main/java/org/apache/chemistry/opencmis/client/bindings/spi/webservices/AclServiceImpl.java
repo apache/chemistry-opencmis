@@ -22,7 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AclService;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -55,8 +55,8 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
    * org.apache.opencmis.client.provider.AccessControlList, org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.commons.enums.ACLPropagation, org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public AccessControlList applyAcl(String repositoryId, String objectId,
-      AccessControlList addACEs, AccessControlList removeACEs, AclPropagation aclPropagation,
+  public Acl applyAcl(String repositoryId, String objectId,
+      Acl addACEs, Acl removeACEs, AclPropagation aclPropagation,
       ExtensionsData extension) {
     ACLServicePort port = fPortProvider.getACLServicePort();
 
@@ -78,7 +78,7 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
    * @see org.apache.opencmis.client.provider.ACLService#getACL(java.lang.String, java.lang.String,
    * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public AccessControlList getAcl(String repositoryId, String objectId,
+  public Acl getAcl(String repositoryId, String objectId,
       Boolean onlyBasicPermissions, ExtensionsData extension) {
     ACLServicePort port = fPortProvider.getACLServicePort();
 

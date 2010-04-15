@@ -23,7 +23,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
@@ -47,35 +47,35 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
 
   public String createDocument(String repositoryId, PropertiesData properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
-      AccessControlList addAces, AccessControlList removeAces, ExtensionsData extension) {
+      Acl addAces, Acl removeAces, ExtensionsData extension) {
     
     return fObjSvc.createDocument(fDummyCallContext, repositoryId, properties, folderId, contentStream, versioningState, policies, addAces, removeAces, extension);
   }
 
   public String createDocumentFromSource(String repositoryId, String sourceId,
       PropertiesData properties, String folderId, VersioningState versioningState,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     
     return fObjSvc.createDocumentFromSource(fDummyCallContext, repositoryId, sourceId, properties, folderId, versioningState, policies, addAces, removeAces, extension);
   }
 
   public String createFolder(String repositoryId, PropertiesData properties, String folderId,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     
     return fObjSvc.createFolder(fDummyCallContext, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
   }
 
   public String createPolicy(String repositoryId, PropertiesData properties, String folderId,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     
     return fObjSvc.createPolicy(fDummyCallContext, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
   }
 
   public String createRelationship(String repositoryId, PropertiesData properties,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     
     return fObjSvc.createRelationship(fDummyCallContext, repositoryId, properties, policies, addAces, removeAces, extension);

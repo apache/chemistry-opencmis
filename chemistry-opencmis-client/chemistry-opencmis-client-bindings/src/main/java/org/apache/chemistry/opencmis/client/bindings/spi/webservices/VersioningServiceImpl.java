@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -128,7 +128,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
    */
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
       PropertiesData properties, ContentStream contentStream, String checkinComment,
-      List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
+      List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     VersioningServicePort port = fPortProvider.getVersioningServicePort();
 

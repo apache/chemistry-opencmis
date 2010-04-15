@@ -39,7 +39,7 @@ public interface VersioningService {
 
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
       PropertiesData properties, ContentStream contentStream, String checkinComment,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
   public ObjectData getObjectOfLatestVersion(String repositoryId, String versionSeriesId,

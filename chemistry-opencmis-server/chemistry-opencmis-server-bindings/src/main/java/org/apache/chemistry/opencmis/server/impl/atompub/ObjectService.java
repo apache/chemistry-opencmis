@@ -54,7 +54,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.server.impl.ObjectInfoHolderImpl;
 import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
@@ -219,7 +219,7 @@ public final class ObjectService {
     String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
     Boolean overwriteFlag = getBooleanParameter(request, Constants.PARAM_OVERWRITE_FLAG);
 
-    ContentStreamDataImpl contentStream = new ContentStreamDataImpl();
+    ContentStreamImpl contentStream = new ContentStreamImpl();
     contentStream.setStream(request.getInputStream());
     contentStream.setMimeType(request.getHeader("Content-Type"));
     String lengthStr = request.getHeader("Content-Length");

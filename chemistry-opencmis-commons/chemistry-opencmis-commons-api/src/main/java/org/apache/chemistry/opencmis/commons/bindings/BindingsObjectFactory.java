@@ -32,9 +32,9 @@ import java.util.List;
  */
 public interface BindingsObjectFactory {
 
-  AccessControlEntry createAccessControlEntry(String principal, List<String> permissions);
+  Ace createAccessControlEntry(String principal, List<String> permissions);
 
-  AccessControlList createAccessControlList(List<AccessControlEntry> aces);
+  Acl createAccessControlList(List<Ace> aces);
 
   PropertyBooleanData createPropertyBooleanData(String id, List<Boolean> values);
 
@@ -70,6 +70,6 @@ public interface BindingsObjectFactory {
 
   PropertiesData createPropertiesData(List<PropertyData<?>> properties);
 
-  ContentStream createContentStream(BigInteger length, String mimetype, String filename,
+  ContentStream createContentStream(String filename, BigInteger length, String mimetype,
       InputStream stream);
 }

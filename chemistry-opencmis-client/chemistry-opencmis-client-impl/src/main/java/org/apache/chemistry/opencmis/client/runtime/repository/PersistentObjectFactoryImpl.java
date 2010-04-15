@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.chemistry.opencmis.client.api.Ace;
-import org.apache.chemistry.opencmis.client.api.Acl;
 import org.apache.chemistry.opencmis.client.api.AllowableActions;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
@@ -42,10 +40,7 @@ import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
-import org.apache.chemistry.opencmis.client.runtime.AceImpl;
-import org.apache.chemistry.opencmis.client.runtime.AclImpl;
 import org.apache.chemistry.opencmis.client.runtime.AllowableActionsImpl;
-import org.apache.chemistry.opencmis.client.runtime.ContentStreamImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentDocumentImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentFolderImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentPolicyImpl;
@@ -74,8 +69,8 @@ import org.apache.chemistry.opencmis.commons.api.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
@@ -87,6 +82,7 @@ import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
 /**
  * Persistent model object factory.
@@ -154,67 +150,21 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
   /*
    * (non-Javadoc)
    *
-   * @see org.apache.opencmis.client.api.repository.ObjectFactory#createAce(java.lang.String,
-   * java.util.List, boolean)
-   */
-  public Ace createAce(String principalId, List<String> permissions, boolean isDirect) {
-    return new AceImpl(principalId, permissions, isDirect);
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.repository.ObjectFactory#createAcl(java.util.List,
-   * java.lang.Boolean)
-   */
-  public Acl createAcl(List<Ace> aces, Boolean isExact) {
-    return new AclImpl(aces, isExact);
-  }
-
-  /*
-   * (non-Javadoc)
-   *
    * @see org.apache.opencmis.client.api.repository.ObjectFactory#convertAces(java.util.List)
    */
-  public AccessControlList convertAces(List<Ace> aces) {
+  public Acl convertAces(List<Ace> aces) {
     if (aces == null) {
       return null;
     }
 
     BindingsObjectFactory pof = getProviderObjectFactory();
 
-    List<AccessControlEntry> providerAces = new ArrayList<AccessControlEntry>();
+    List<Ace> providerAces = new ArrayList<Ace>();
     for (Ace ace : aces) {
       providerAces.add(pof.createAccessControlEntry(ace.getPrincipalId(), ace.getPermissions()));
     }
 
     return pof.createAccessControlList(providerAces);
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * org.apache.opencmis.client.api.repository.ObjectFactory#convertAcl(org.apache.opencmis.commons
-   * .provider.AccessControlList)
-   */
-  public Acl convertAcl(AccessControlList acl) {
-    if (acl == null) {
-      throw new IllegalArgumentException("ACL must be set!");
-    }
-
-    List<Ace> aces = new ArrayList<Ace>();
-    if (acl.getAces() != null) {
-      for (AccessControlEntry ace : acl.getAces()) {
-        if (ace.getPrincipal() == null) {
-          continue;
-        }
-        aces.add(createAce(ace.getPrincipal().getPrincipalId(), ace.getPermissions(), ace
-            .isDirect()));
-      }
-    }
-
-    return createAcl(aces, acl.isExact());
   }
 
   // policies
@@ -274,7 +224,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
    */
   public ContentStream createContentStream(String filename, long length, String mimetype,
       InputStream stream) {
-    return new ContentStreamImpl(filename, length, mimetype, stream);
+    return new ContentStreamImpl(filename, BigInteger.valueOf(length), mimetype, stream);
   }
 
   /*
@@ -292,8 +242,8 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
     BigInteger length = (contentStream.getLength() < 0 ? null : BigInteger.valueOf(contentStream
         .getLength()));
 
-    return getProviderObjectFactory().createContentStream(length, contentStream.getMimeType(),
-        contentStream.getFileName(), contentStream.getStream());
+    return getProviderObjectFactory().createContentStream(contentStream.getFileName(), length,
+        contentStream.getMimeType(), contentStream.getStream());
   }
 
   // types

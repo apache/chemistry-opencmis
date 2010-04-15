@@ -55,8 +55,8 @@ import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
@@ -110,7 +110,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDat
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ExtensionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
@@ -1663,14 +1663,14 @@ public final class Converter {
   /**
    * Converts an ACL object with its ACEs.
    */
-  public static AccessControlList convert(CmisAccessControlListType acl, Boolean isExact) {
+  public static Acl convert(CmisAccessControlListType acl, Boolean isExact) {
     if (acl == null) {
       return null;
     }
 
     AccessControlListImpl result = new AccessControlListImpl();
 
-    List<AccessControlEntry> aces = new ArrayList<AccessControlEntry>();
+    List<Ace> aces = new ArrayList<Ace>();
     for (CmisAccessControlEntryType entry : acl.getPermission()) {
       if (entry == null) {
         continue;
@@ -1703,7 +1703,7 @@ public final class Converter {
   /**
    * Converts an ACL object with its ACEs.
    */
-  public static CmisAccessControlListType convert(AccessControlList acl) {
+  public static CmisAccessControlListType convert(Acl acl) {
     if (acl == null) {
       return null;
     }
@@ -1711,7 +1711,7 @@ public final class Converter {
     CmisAccessControlListType result = new CmisAccessControlListType();
 
     if (acl.getAces() != null) {
-      for (AccessControlEntry ace : acl.getAces()) {
+      for (Ace ace : acl.getAces()) {
         if (ace == null) {
           continue;
         }
@@ -1721,7 +1721,7 @@ public final class Converter {
         if (ace.getPrincipal() != null) {
           CmisAccessControlPrincipalType pincipal = new CmisAccessControlPrincipalType();
 
-          pincipal.setPrincipalId(ace.getPrincipal().getPrincipalId());
+          pincipal.setPrincipalId(ace.getPrincipal().getId());
           convertExtension(pincipal, ace.getPrincipal());
 
           entry.setPrincipal(pincipal);
@@ -2308,8 +2308,8 @@ public final class Converter {
   /**
    * Converts an access control list object.
    */
-  public static AccessControlList convert(CmisACLType acl) {
-    AccessControlList result = convert(acl.getACL(), acl.isExact());
+  public static Acl convert(CmisACLType acl) {
+    Acl result = convert(acl.getACL(), acl.isExact());
 
     // handle extensions
     convertExtension(acl, result);
@@ -2369,7 +2369,7 @@ public final class Converter {
       return null;
     }
 
-    ContentStreamDataImpl result = new ContentStreamDataImpl();
+    ContentStreamImpl result = new ContentStreamImpl();
 
     result.setFileName(contentStream.getFilename());
     result.setLength(contentStream.getLength());

@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ChangeEventInfoData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -43,7 +43,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
   private List<RenditionData> fRenditions;
   private PolicyIdListData fPolicyIds;
   private AllowableActionsData fAllowableActions;
-  private AccessControlList fAcl;
+  private Acl fAcl;
   private Boolean fIsExactAcl;
 
   /*
@@ -161,11 +161,11 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
    * 
    * @see org.apache.opencmis.client.provider.ObjectData#getACL()
    */
-  public AccessControlList getAcl() {
+  public Acl getAcl() {
     return fAcl;
   }
 
-  public void setAcl(AccessControlList acl) {
+  public void setAcl(Acl acl) {
     fAcl = acl;
   }
 

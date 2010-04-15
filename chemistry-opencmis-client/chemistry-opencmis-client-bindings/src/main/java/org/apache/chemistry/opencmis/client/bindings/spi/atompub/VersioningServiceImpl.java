@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEnt
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -153,7 +153,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
    */
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
       PropertiesData properties, ContentStream contentStream, String checkinComment,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     // we need an object id
     if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
@@ -211,7 +211,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
     // set object id
     objectId.setValue(entry.getId());
 
-    AccessControlList originalAces = null;
+    Acl originalAces = null;
 
     lockLinks();
     try {
@@ -237,7 +237,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
     // handle ACL modifications
     if ((originalAces != null) && (isAclMergeRequired(addAces, removeAces))) {
       // merge and update ACL
-      AccessControlList newACL = mergeAcls(originalAces, addAces, removeAces);
+      Acl newACL = mergeAcls(originalAces, addAces, removeAces);
       if (newACL != null) {
         updateAcl(repositoryId, entry.getId(), newACL, null);
       }

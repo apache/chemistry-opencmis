@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.server.support;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -92,8 +92,8 @@ public class VersioningServiceWrapper extends AbstractServiceWrapper implements
    */
   public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId,
       Boolean major, PropertiesData properties, ContentStream contentStream,
-      String checkinComment, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+      String checkinComment, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
     checkRepositoryId(repositoryId);
     checkHolderId("Object Id", objectId);
     major = getDefaultTrue(major);

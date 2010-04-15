@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -114,16 +114,16 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     // apply an ACL
     if (supportsManageACLs()) {
-      AccessControlEntry ace = getObjectFactory().createAccessControlEntry(getUsername(),
+      Ace ace = getObjectFactory().createAccessControlEntry(getUsername(),
           Collections.singletonList("cmis:read"));
-      AccessControlList acl = getObjectFactory().createAccessControlList(
+      Acl acl = getObjectFactory().createAccessControlList(
           Collections.singletonList(ace));
 
-      AccessControlList newAcl = getBinding().getAclService().applyAcl(getTestRepositoryId(),
+      Acl newAcl = getBinding().getAclService().applyAcl(getTestRepositoryId(),
           docId, acl, null, getAclPropagation(), null);
       assertNotNull(newAcl);
 
-      AccessControlList readAcl = getBinding().getAclService().getAcl(getTestRepositoryId(),
+      Acl readAcl = getBinding().getAclService().getAcl(getTestRepositoryId(),
           docId, Boolean.FALSE, null);
       assertNotNull(readAcl);
 

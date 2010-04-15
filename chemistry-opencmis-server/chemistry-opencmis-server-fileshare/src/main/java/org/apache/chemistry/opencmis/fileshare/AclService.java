@@ -19,7 +19,7 @@
 package org.apache.chemistry.opencmis.fileshare;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
@@ -50,8 +50,8 @@ public class AclService implements CmisAclService {
    * , java.lang.String, java.lang.String, org.apache.opencmis.commons.provider.AccessControlList,
    * org.apache.opencmis.commons.enums.AclPropagation)
    */
-  public AccessControlList applyAcl(CallContext context, String repositoryId, String objectId,
-      AccessControlList aces, AclPropagation aclPropagation) {
+  public Acl applyAcl(CallContext context, String repositoryId, String objectId,
+      Acl aces, AclPropagation aclPropagation) {
     fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
     throw new CmisNotSupportedException("applyAcl not supported!");
   }
@@ -66,8 +66,8 @@ public class AclService implements CmisAclService {
    * org.apache.opencmis.commons.enums.AclPropagation,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public AccessControlList applyAcl(CallContext context, String repositoryId, String objectId,
-      AccessControlList addAces, AccessControlList removeAces, AclPropagation aclPropagation,
+  public Acl applyAcl(CallContext context, String repositoryId, String objectId,
+      Acl addAces, Acl removeAces, AclPropagation aclPropagation,
       ExtensionsData extension) {
     fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
     throw new CmisNotSupportedException("applyAcl not supported!");
@@ -81,7 +81,7 @@ public class AclService implements CmisAclService {
    * , java.lang.String, java.lang.String, java.lang.Boolean,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public AccessControlList getAcl(CallContext context, String repositoryId, String objectId,
+  public Acl getAcl(CallContext context, String repositoryId, String objectId,
       Boolean onlyBasicPermissions, ExtensionsData extension) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getAcl(context,
         objectId, objectId);

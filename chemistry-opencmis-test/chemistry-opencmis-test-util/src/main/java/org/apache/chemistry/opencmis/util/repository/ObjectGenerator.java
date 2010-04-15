@@ -31,7 +31,7 @@ import java.util.UUID;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
@@ -45,7 +45,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -394,8 +394,8 @@ public class ObjectGenerator {
     ContentStream contentStream = null;
     VersioningState versioningState = VersioningState.NONE;
     List<String> policies = null;
-    AccessControlList addACEs = null;
-    AccessControlList removeACEs = null;
+    Acl addACEs = null;
+    Acl removeACEs = null;
     ExtensionsData extension = null;
 
     // log.info("create document in folder " + folderId);
@@ -445,7 +445,7 @@ public class ObjectGenerator {
   }
 
   private ContentStream createContent() {
-    ContentStreamDataImpl content = new ContentStreamDataImpl();
+    ContentStreamImpl content = new ContentStreamImpl();
     content.setFileName("data.txt");
     content.setMimeType("text/plain");
     int len = fContentSizeInK * 1024; // size of document in K

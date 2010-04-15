@@ -36,8 +36,8 @@ import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
@@ -449,8 +449,8 @@ public abstract class AbstractCmisTestCase extends TestCase {
   protected ContentStream createContentStreamData(String mimeType, byte[] content) {
     assertNotNull(content);
 
-    return getObjectFactory().createContentStream(BigInteger.valueOf(content.length), mimeType,
-        "test", new ByteArrayInputStream(content));
+    return getObjectFactory().createContentStream("test", BigInteger.valueOf(content.length),
+        mimeType, new ByteArrayInputStream(content));
   }
 
   /**
@@ -604,7 +604,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
    * Creates a folder.
    */
   protected String createFolder(PropertiesData properties, String folderId, List<String> policies,
-      AccessControlList addACEs, AccessControlList removeACEs) {
+      Acl addACEs, Acl removeACEs) {
     String objectId = getBinding().getObjectService().createFolder(getTestRepositoryId(),
         properties, folderId, policies, addACEs, removeACEs, null);
     assertNotNull(objectId);
@@ -661,7 +661,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
    */
   protected String createDocument(PropertiesData properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
-      AccessControlList addACEs, AccessControlList removeACEs) {
+      Acl addACEs, Acl removeACEs) {
     String objectId = getBinding().getObjectService().createDocument(getTestRepositoryId(),
         properties, folderId, contentStream, versioningState, policies, addACEs, removeACEs, null);
     assertNotNull(objectId);
@@ -759,7 +759,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
    */
   protected String createDocumentFromSource(String sourceId, PropertiesData properties,
       String folderId, VersioningState versioningState, List<String> policies,
-      AccessControlList addACEs, AccessControlList removeACEs) {
+      Acl addACEs, Acl removeACEs) {
     String objectId = getBinding().getObjectService().createDocumentFromSource(
         getTestRepositoryId(), sourceId, properties, folderId, versioningState, policies, addACEs,
         removeACEs, null);
@@ -1127,7 +1127,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
         .getAllowableActions().get(action));
   }
 
-  protected void assertEquals(AccessControlList expected, AccessControlList actual) {
+  protected void assertEquals(Acl expected, Acl actual) {
     if ((expected == null) && (actual == null)) {
       return;
     }
@@ -1160,7 +1160,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
   }
 
-  protected void assertEquals(AccessControlEntry expected, AccessControlEntry actual) {
+  protected void assertEquals(Ace expected, Ace actual) {
     if ((expected == null) && (actual == null)) {
       return;
     }
@@ -1174,11 +1174,11 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     assertNotNull(expected.getPrincipal());
-    assertNotNull(expected.getPrincipal().getPrincipalId());
+    assertNotNull(expected.getPrincipal().getId());
     assertNotNull(actual.getPrincipal());
-    assertNotNull(actual.getPrincipal().getPrincipalId());
-    assertEquals("ACE Principal:", expected.getPrincipal().getPrincipalId(), actual.getPrincipal()
-        .getPrincipalId());
+    assertNotNull(actual.getPrincipal().getId());
+    assertEquals("ACE Principal:", expected.getPrincipal().getId(), actual.getPrincipal()
+        .getId());
 
     assertEqualLists(expected.getPermissions(), actual.getPermissions());
   }

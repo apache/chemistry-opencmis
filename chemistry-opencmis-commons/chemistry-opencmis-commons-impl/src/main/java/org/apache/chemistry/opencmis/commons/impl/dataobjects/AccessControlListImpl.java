@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 
 /**
  * Access control list data implementation.
@@ -29,9 +29,9 @@ import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class AccessControlListImpl extends AbstractExtensionData implements AccessControlList {
+public class AccessControlListImpl extends AbstractExtensionData implements Acl {
 
-  private List<AccessControlEntry> fAces;
+  private List<Ace> fAces;
   private Boolean fIsExact;
 
   /**
@@ -43,7 +43,7 @@ public class AccessControlListImpl extends AbstractExtensionData implements Acce
   /**
    * Constructor.
    */
-  public AccessControlListImpl(List<AccessControlEntry> aces) {
+  public AccessControlListImpl(List<Ace> aces) {
     setAces(aces);
   }
 
@@ -52,11 +52,11 @@ public class AccessControlListImpl extends AbstractExtensionData implements Acce
    * 
    * @see org.apache.opencmis.client.provider.AccessControlList#getACEs()
    */
-  public List<AccessControlEntry> getAces() {
+  public List<Ace> getAces() {
     return fAces;
   }
 
-  public void setAces(List<AccessControlEntry> aces) {
+  public void setAces(List<Ace> aces) {
     fAces = aces;
   }
 

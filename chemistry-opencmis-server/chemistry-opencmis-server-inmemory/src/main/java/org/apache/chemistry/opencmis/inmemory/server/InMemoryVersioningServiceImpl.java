@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -81,8 +81,8 @@ public class InMemoryVersioningServiceImpl extends AbstractServiceImpl implement
 
   public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId,
       Boolean major, PropertiesData properties, ContentStream contentStream,
-      String checkinComment, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+      String checkinComment, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     try {
       // Attach the CallContext to a thread local context that can be accessed from everywhere

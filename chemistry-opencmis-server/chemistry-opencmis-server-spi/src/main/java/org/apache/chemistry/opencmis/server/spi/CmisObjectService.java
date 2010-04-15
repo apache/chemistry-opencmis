@@ -22,7 +22,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
@@ -52,7 +52,7 @@ public interface CmisObjectService {
    */
   String createDocument(CallContext context, String repositoryId, PropertiesData properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
   /**
@@ -64,7 +64,7 @@ public interface CmisObjectService {
    */
   String createDocumentFromSource(CallContext context, String repositoryId, String sourceId,
       PropertiesData properties, String folderId, VersioningState versioningState,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
   /**
@@ -75,8 +75,8 @@ public interface CmisObjectService {
    * </p>
    */
   String createFolder(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension);
+      String folderId, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension);
 
   /**
    * Create a new relationship.
@@ -86,7 +86,7 @@ public interface CmisObjectService {
    * </p>
    */
   String createRelationship(CallContext context, String repositoryId, PropertiesData properties,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
   /**
@@ -97,8 +97,8 @@ public interface CmisObjectService {
    * </p>
    */
   String createPolicy(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension);
+      String folderId, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension);
 
   /**
    * Creates a new document, folder or policy. The property "cmis:objectTypeId" defines the type and
@@ -184,7 +184,7 @@ public interface CmisObjectService {
    * </p>
    */
   ObjectData updateProperties(CallContext context, String repositoryId, Holder<String> objectId,
-      Holder<String> changeToken, PropertiesData properties, AccessControlList acl,
+      Holder<String> changeToken, PropertiesData properties, Acl acl,
       ExtensionsData extension, ObjectInfoHolder objectInfos);
 
   /**

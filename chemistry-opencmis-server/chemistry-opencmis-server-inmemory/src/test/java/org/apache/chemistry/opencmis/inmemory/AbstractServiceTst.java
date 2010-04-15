@@ -18,7 +18,7 @@ import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
@@ -142,8 +142,8 @@ public class AbstractServiceTst /* extends TestCase*/ {
   protected String createDocument(String name, String folderId, String typeId, VersioningState versioningState, boolean withContent) {
     ContentStream contentStream = null;
     List<String> policies = null;
-    AccessControlList addACEs = null;
-    AccessControlList removeACEs = null;
+    Acl addACEs = null;
+    Acl removeACEs = null;
     ExtensionsData extension = null;
 
     PropertiesData props = createDocumentProperties(name, typeId);

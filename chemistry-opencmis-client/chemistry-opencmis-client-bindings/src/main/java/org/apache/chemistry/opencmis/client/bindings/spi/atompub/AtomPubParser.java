@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.Acl;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AllowableActions;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomBase;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
@@ -308,9 +308,9 @@ public class AtomPubParser implements CmisAtomPubConstants {
   /**
    * Parses an ACL document.
    */
-  private Acl parseACL(XMLStreamReader parser) throws Exception {
+  private AtomAcl parseACL(XMLStreamReader parser) throws Exception {
     AtomElement elemenet = unmarshalElement(parser, CmisAccessControlListType.class);
-    return new Acl((CmisAccessControlListType) elemenet.getObject());
+    return new AtomAcl((CmisAccessControlListType) elemenet.getObject());
   }
 
   /**

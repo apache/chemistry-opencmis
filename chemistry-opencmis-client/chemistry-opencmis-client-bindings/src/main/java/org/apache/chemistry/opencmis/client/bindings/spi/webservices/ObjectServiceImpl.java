@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
@@ -80,7 +80,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    */
   public String createDocument(String repositoryId, PropertiesData properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
-      AccessControlList addACEs, AccessControlList removeACEs, ExtensionsData extension) {
+      Acl addACEs, Acl removeACEs, ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 
     try {
@@ -114,7 +114,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    */
   public String createDocumentFromSource(String repositoryId, String sourceId,
       PropertiesData properties, String folderId, VersioningState versioningState,
-      List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
+      List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 
@@ -147,7 +147,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createFolder(String repositoryId, PropertiesData properties, String folderId,
-      List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
+      List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 
@@ -179,7 +179,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createPolicy(String repositoryId, PropertiesData properties, String folderId,
-      List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
+      List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 
@@ -211,7 +211,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createRelationship(String repositoryId, PropertiesData properties,
-      List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
+      List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 

@@ -26,8 +26,8 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.AbstractAtomPubService;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
@@ -60,7 +60,7 @@ public class AclMergeTest extends TestCase {
     originalAceData.put("p2", new String[] { "perm:read" });
     originalAceData.put("p3", new String[] { "perm:all" });
 
-    AccessControlList originalACEs = createACL(originalAceData);
+    Acl originalACEs = createACL(originalAceData);
 
     // add
     Map<String, String[]> addAceData = new HashMap<String, String[]>();
@@ -68,7 +68,7 @@ public class AclMergeTest extends TestCase {
     addAceData.put("p2", new String[] { "perm:write" });
     addAceData.put("p4", new String[] { "perm:all" });
 
-    AccessControlList addACEs = createACL(addAceData);
+    Acl addACEs = createACL(addAceData);
 
     // remove
     Map<String, String[]> removeAceData = new HashMap<String, String[]>();
@@ -76,14 +76,14 @@ public class AclMergeTest extends TestCase {
     removeAceData.put("p1", new String[] { "perm:write" });
     removeAceData.put("p3", new String[] { "perm:all" });
 
-    AccessControlList removeACEs = createACL(removeAceData);
+    Acl removeACEs = createACL(removeAceData);
 
-    AccessControlList newACL = service.publicMergeACLs(originalACEs, addACEs, removeACEs);
+    Acl newACL = service.publicMergeACLs(originalACEs, addACEs, removeACEs);
 
     assertEquals(3, newACL.getAces().size());
 
-    for (AccessControlEntry ace : newACL.getAces()) {
-      String principal = ace.getPrincipal().getPrincipalId();
+    for (Ace ace : newACL.getAces()) {
+      String principal = ace.getPrincipal().getId();
       assertNotNull(principal);
 
       if (principal.equals("p1")) {
@@ -110,10 +110,10 @@ public class AclMergeTest extends TestCase {
   /**
    * Creates an ACL structure from a Map.
    */
-  private AccessControlList createACL(Map<String, String[]> aceData) {
+  private Acl createACL(Map<String, String[]> aceData) {
     AccessControlListImpl result = new AccessControlListImpl();
 
-    List<AccessControlEntry> aces = new ArrayList<AccessControlEntry>();
+    List<Ace> aces = new ArrayList<Ace>();
 
     for (Map.Entry<String, String[]> e : aceData.entrySet()) {
       ArrayList<String> permissions = new ArrayList<String>();
@@ -137,12 +137,12 @@ public class AclMergeTest extends TestCase {
    * A class to make a few protected methods publicly available.
    */
   private static class AtomPubService extends AbstractAtomPubService {
-    public AccessControlList publicMergeACLs(AccessControlList originalACEs,
-        AccessControlList addACEs, AccessControlList removeACEs) {
+    public Acl publicMergeACLs(Acl originalACEs,
+        Acl addACEs, Acl removeACEs) {
       return mergeAcls(originalACEs, addACEs, removeACEs);
     }
 
-    public boolean publicIsACLMergeRequired(AccessControlList addACEs, AccessControlList removeACEs) {
+    public boolean publicIsACLMergeRequired(Acl addACEs, Acl removeACEs) {
       return isAclMergeRequired(addACEs, removeACEs);
     }
   }

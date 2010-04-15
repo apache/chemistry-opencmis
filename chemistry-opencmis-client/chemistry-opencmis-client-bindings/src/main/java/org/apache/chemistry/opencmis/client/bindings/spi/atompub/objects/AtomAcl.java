@@ -16,16 +16,44 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.bindings;
+package org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects;
 
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public interface AccessControlPrincipalData extends ExtensionsData {
+public class AtomAcl extends AtomBase {
 
-  String getPrincipalId();
+  private static final long serialVersionUID = 1L;
 
+  private CmisAccessControlListType fACL;
+
+  public AtomAcl() {
+    super();
+  }
+
+  public AtomAcl(CmisAccessControlListType acl) {
+    this();
+    setACL(acl);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType()
+   */
+  @Override
+  public String getType() {
+    return "ACL";
+  }
+
+  public CmisAccessControlListType getACL() {
+    return fACL;
+  }
+
+  public void setACL(CmisAccessControlListType acl) {
+    fACL = acl;
+  }
 }

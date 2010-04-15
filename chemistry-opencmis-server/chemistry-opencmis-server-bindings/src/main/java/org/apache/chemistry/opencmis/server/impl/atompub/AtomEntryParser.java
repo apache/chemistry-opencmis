@@ -34,7 +34,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
@@ -46,7 +46,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
@@ -71,8 +71,8 @@ public class AtomEntryParser {
   private final static String ATTR_TYPE = "type";
 
   private ObjectData fObject;
-  private ContentStreamDataImpl fAtomContentStream;
-  private ContentStreamDataImpl fCmisContentStream;
+  private ContentStreamImpl fAtomContentStream;
+  private ContentStreamImpl fCmisContentStream;
 
   /**
    * Constructor.
@@ -126,7 +126,7 @@ public class AtomEntryParser {
   /**
    * Returns the ACL of the object.
    */
-  public AccessControlList getAcl() {
+  public Acl getAcl() {
     return (fObject == null ? null : fObject.getAcl());
   }
 
@@ -259,7 +259,7 @@ public class AtomEntryParser {
    * Extract the content stream.
    */
   private void parseAtomContent(XMLStreamReader parser) throws Exception {
-    fAtomContentStream = new ContentStreamDataImpl();
+    fAtomContentStream = new ContentStreamImpl();
 
     // read attributes
     String type = "text";
@@ -297,7 +297,7 @@ public class AtomEntryParser {
    * Extract the content stream.
    */
   private void parseCmisContent(XMLStreamReader parser) throws Exception {
-    fCmisContentStream = new ContentStreamDataImpl();
+    fCmisContentStream = new ContentStreamImpl();
 
     next(parser);
 

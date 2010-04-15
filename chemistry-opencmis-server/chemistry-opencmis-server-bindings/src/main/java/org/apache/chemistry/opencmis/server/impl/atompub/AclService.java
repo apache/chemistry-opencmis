@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -61,7 +61,7 @@ public class AclService {
         Constants.PARAM_ONLY_BASIC_PERMISSIONS);
 
     // execute
-    AccessControlList acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions,
+    Acl acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions,
         null);
 
     if (acl == null) {
@@ -107,11 +107,11 @@ public class AclService {
       throw new CmisInvalidArgumentException("Not an ACL document!");
     }
 
-    AccessControlList aces = convert((CmisAccessControlListType) ((JAXBElement<?>) aclRequest)
+    Acl aces = convert((CmisAccessControlListType) ((JAXBElement<?>) aclRequest)
         .getValue(), null);
 
     // execute
-    AccessControlList acl = service.applyAcl(context, repositoryId, objectId, aces, aclPropagation);
+    Acl acl = service.applyAcl(context, repositoryId, objectId, aces, aclPropagation);
 
     // set headers
     response.setStatus(HttpServletResponse.SC_CREATED);

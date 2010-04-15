@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  *
  */
-public class ContentStreamDataImpl extends AbstractExtensionData implements ContentStream {
+public class ContentStreamImpl extends AbstractExtensionData implements ContentStream {
 
   private String fFilename;
   private BigInteger fLength;
@@ -39,14 +39,14 @@ public class ContentStreamDataImpl extends AbstractExtensionData implements Cont
   /**
    * Constructor.
    */
-  public ContentStreamDataImpl() {
+  public ContentStreamImpl() {
   }
 
   /**
    * Constructor.
    */
-  public ContentStreamDataImpl(BigInteger length, String mimetype, String filename,
-      InputStream stream) {
+  public ContentStreamImpl(String filename, BigInteger length,
+          String mimetype, InputStream stream) {
     setLength(length);
     setMimeType(mimetype);
     setFileName(filename);

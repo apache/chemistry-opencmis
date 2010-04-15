@@ -72,7 +72,7 @@ public abstract class AbstractSimpleBindingIT extends AbstractBindingIT {
     byte[] content = "This is a test file!".getBytes();
 
     ContentStream contentStream = getBinding().getObjectFactory()
-        .createContentStream(BigInteger.valueOf(content.length), "text/plain", "test",
+        .createContentStream("test", BigInteger.valueOf(content.length), "text/plain",
             new ByteArrayInputStream(content));
 
     // create document

@@ -18,19 +18,14 @@
  */
 package org.apache.chemistry.opencmis.commons.bindings;
 
-import java.util.List;
-
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public interface AccessControlEntry extends ExtensionsData {
+public interface Principal extends ExtensionsData {
 
-  AccessControlPrincipalData getPrincipal();
+  String getId();
 
-  List<String> getPermissions();
-
-  boolean isDirect();
 }

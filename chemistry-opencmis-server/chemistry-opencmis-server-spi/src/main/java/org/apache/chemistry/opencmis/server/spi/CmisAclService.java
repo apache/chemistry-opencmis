@@ -19,7 +19,7 @@
 package org.apache.chemistry.opencmis.server.spi;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 
 /**
@@ -38,7 +38,7 @@ public interface CmisAclService {
    * Bindings: AtomPub, Web Services
    * </p>
    */
-  AccessControlList getAcl(CallContext context, String repositoryId, String objectId,
+  Acl getAcl(CallContext context, String repositoryId, String objectId,
       Boolean onlyBasicPermissions, ExtensionsData extension);
 
   /**
@@ -48,8 +48,8 @@ public interface CmisAclService {
    * Bindings: Web Services
    * </p>
    */
-  AccessControlList applyAcl(CallContext context, String repositoryId, String objectId,
-      AccessControlList addAces, AccessControlList removeAces, AclPropagation aclPropagation,
+  Acl applyAcl(CallContext context, String repositoryId, String objectId,
+      Acl addAces, Acl removeAces, AclPropagation aclPropagation,
       ExtensionsData extension);
 
   /**
@@ -61,6 +61,6 @@ public interface CmisAclService {
    * Bindings: AtomPub
    * </p>
    */
-  AccessControlList applyAcl(CallContext context, String repositoryId, String objectId,
-      AccessControlList aces, AclPropagation aclPropagation);
+  Acl applyAcl(CallContext context, String repositoryId, String objectId,
+      Acl aces, AclPropagation aclPropagation);
 }
