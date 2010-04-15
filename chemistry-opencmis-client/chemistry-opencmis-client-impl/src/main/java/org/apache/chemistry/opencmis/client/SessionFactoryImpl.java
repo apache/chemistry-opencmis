@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.runtime;
+package org.apache.chemistry.opencmis.client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +25,8 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.repository.Repository;
+import org.apache.chemistry.opencmis.client.runtime.CmisBindingHelper;
+import org.apache.chemistry.opencmis.client.runtime.PersistentSessionImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.RepositoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
