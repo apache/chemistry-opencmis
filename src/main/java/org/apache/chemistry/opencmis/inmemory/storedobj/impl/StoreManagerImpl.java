@@ -28,20 +28,20 @@ import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityRendition;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
-import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeManager;
@@ -57,7 +57,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 public class StoreManagerImpl implements StoreManager {
 
   protected BindingsObjectFactory fObjectFactory;
-  protected RepositoryInfoData fRepositoryInfo;
+  protected RepositoryInfo fRepositoryInfo;
   
   /**
    * map from repository id to a type manager 
@@ -179,12 +179,12 @@ public class StoreManagerImpl implements StoreManager {
     return rootTypes;
   }
 
-  public RepositoryInfoData getRepositoryInfo(String repositoryId) {
+  public RepositoryInfo getRepositoryInfo(String repositoryId) {
     ObjectStore sm = fMapRepositoryToObjectStore.get(repositoryId);
     if (null == sm)
       return null;
     
-    RepositoryInfoData repoInfo = createDefaultRepositoryInfo(repositoryId);
+    RepositoryInfo repoInfo = createDefaultRepositoryInfo(repositoryId);
 
     return repoInfo;
   }
@@ -287,12 +287,12 @@ public class StoreManagerImpl implements StoreManager {
     typeManager.initTypeSystem(typeDefs);
   }
 
-  private RepositoryInfoData createDefaultRepositoryInfo(String repositoryId) {
+  private RepositoryInfo createDefaultRepositoryInfo(String repositoryId) {
     ObjectStore objStore = getObjectStore(repositoryId);
     String rootFolderId = objStore.getRootFolder().getId();
     // repository info
-    RepositoryInfoDataImpl repoInfo;
-    repoInfo = new RepositoryInfoDataImpl();
+    RepositoryInfoImpl repoInfo;
+    repoInfo = new RepositoryInfoImpl();
     repoInfo.setRepositoryId(repositoryId==null ? "inMem" : repositoryId);
     repoInfo.setRepositoryName("InMemory Repository");
     repoInfo.setRepositoryDescription("InMemory Test Repository");
@@ -317,7 +317,7 @@ public class StoreManagerImpl implements StoreManager {
     caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.PWCONLY);
     caps.setCapabilityJoin(CapabilityJoin.NONE);
     caps.setCapabilityQuery(CapabilityQuery.METADATAONLY); // just for testing
-    caps.setCapabilityRendition(CapabilityRendition.NONE);
+    caps.setCapabilityRendition(CapabilityRenditions.NONE);
     caps.setIsPwcSearchable(false);
     caps.setIsPwcUpdatable(true);
     caps.setSupportsGetDescendants(true);

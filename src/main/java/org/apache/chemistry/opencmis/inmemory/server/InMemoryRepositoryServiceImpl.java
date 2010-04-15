@@ -28,10 +28,10 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
@@ -43,24 +43,24 @@ public class InMemoryRepositoryServiceImpl extends AbstractServiceImpl implement
     super(storeManager);
   }
 
-  public RepositoryInfoData getRepositoryInfo(CallContext context, String repositoryId,
+  public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId,
       ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
     RuntimeContext.attachCfg(context);
 
-    RepositoryInfoData repoInfo = getRepositoryInfoFromStoreManager(repositoryId);
+    RepositoryInfo repoInfo = getRepositoryInfoFromStoreManager(repositoryId);
 
     return repoInfo;
   }
 
-  public List<RepositoryInfoData> getRepositoryInfos(CallContext context, ExtensionsData extension) {
+  public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
 
     try {
       // Attach the CallContext to a thread local context that can be accessed from everywhere
       RuntimeContext.attachCfg(context);
 
-      List<RepositoryInfoData> res = new ArrayList<RepositoryInfoData>();
+      List<RepositoryInfo> res = new ArrayList<RepositoryInfo>();
       List<String> repIds = fStoreManager.getAllRepositoryIds();
       for (String repId : repIds) {
         res.add(fStoreManager.getRepositoryInfo(repId));
@@ -168,9 +168,9 @@ public class InMemoryRepositoryServiceImpl extends AbstractServiceImpl implement
     }
   }
 
-  private RepositoryInfoData getRepositoryInfoFromStoreManager(String repositoryId) {
-    RepositoryInfoData repoInfo = fStoreManager.getRepositoryInfo(repositoryId);
-    if (null == repoInfo || !repoInfo.getRepositoryId().equals(repositoryId)) {
+  private RepositoryInfo getRepositoryInfoFromStoreManager(String repositoryId) {
+    RepositoryInfo repoInfo = fStoreManager.getRepositoryInfo(repositoryId);
+    if (null == repoInfo || !repoInfo.getId().equals(repositoryId)) {
       throw new CmisInvalidArgumentException("Unknown repository: " + repositoryId);
     }
     return repoInfo;
