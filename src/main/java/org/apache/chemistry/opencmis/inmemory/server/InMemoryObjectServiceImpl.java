@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
@@ -86,7 +86,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
 
   public String createDocument(CallContext context, String repositoryId, PropertiesData properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
 
     try {
@@ -106,7 +106,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
 
   public String createDocumentFromSource(CallContext context, String repositoryId, String sourceId,
       PropertiesData properties, String folderId, VersioningState versioningState,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
 
     try {
@@ -150,8 +150,8 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   public String createFolder(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension) {
+      String folderId, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension) {
     try {
       LOG.debug("start createFolder()");
       RuntimeContext.attachCfg(context);
@@ -167,8 +167,8 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   public String createPolicy(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension) {
+      String folderId, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension) {
 
     try {
       // Attach the CallContext to a thread local context that can be accessed from everywhere
@@ -188,8 +188,8 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   public String createRelationship(CallContext context, String repositoryId,
-      PropertiesData properties, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension) {
+      PropertiesData properties, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension) {
 
     try {
       // Attach the CallContext to a thread local context that can be accessed from everywhere
@@ -649,7 +649,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
 
   public ObjectData updateProperties(CallContext context, String repositoryId,
       Holder<String> objectId, Holder<String> changeToken, PropertiesData properties,
-      AccessControlList acl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+      Acl acl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     try {
       // Attach the CallContext to a thread local context that can be accessed from everywhere
@@ -778,7 +778,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
 
   private StoredObject createDocumentIntern(String repositoryId, PropertiesData properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
-      List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
+      List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     checkRepositoryId(repositoryId);
 
@@ -863,8 +863,8 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   private Folder createFolderIntern(String repositoryId, PropertiesData properties,
-      String folderId, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension) {
+      String folderId, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension) {
 
     // Attach the CallContext to a thread local context that can be accessed from everywhere
     checkStandardParameters(repositoryId, folderId);
@@ -928,13 +928,13 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   private StoredObject createPolicyIntern(String repositoryId, PropertiesData properties,
-      String folderId, List<String> policies, AccessControlList addAces,
-      AccessControlList removeAces, ExtensionsData extension) {
+      String folderId, List<String> policies, Acl addAces,
+      Acl removeAces, ExtensionsData extension) {
     return null;
   }
 
   private StoredObject createRelationshipIntern(String repositoryId, PropertiesData properties,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     return null;
   }

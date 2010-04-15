@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.inmemory.clientprovider;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -45,7 +45,7 @@ public class VersioningServiceImpl extends AbstractService implements Versioning
 
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
       PropertiesData properties, ContentStream contentStream, String checkinComment,
-      List<String> policies, AccessControlList addAces, AccessControlList removeAces,
+      List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
 
     fVersioningSvc.checkIn(fDummyCallContext, repositoryId, objectId, major, properties,

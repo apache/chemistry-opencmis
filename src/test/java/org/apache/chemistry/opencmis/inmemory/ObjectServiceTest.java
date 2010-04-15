@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
@@ -814,8 +814,8 @@ public class ObjectServiceTest extends AbstractServiceTst {
     ContentStream contentStream = null;
     VersioningState versioningState = VersioningState.NONE;
     List<String> policies = null;
-    AccessControlList addACEs = null;
-    AccessControlList removeACEs = null;
+    Acl addACEs = null;
+    Acl removeACEs = null;
     ExtensionsData extension = null;
 
     // create the properties:
@@ -844,8 +844,8 @@ public class ObjectServiceTest extends AbstractServiceTst {
     ContentStream contentStream = null;
     VersioningState versioningState = VersioningState.NONE;
     List<String> policies = null;
-    AccessControlList addACEs = null;
-    AccessControlList removeACEs = null;
+    Acl addACEs = null;
+    Acl removeACEs = null;
     ExtensionsData extension = null;
 
     // create the properties:
