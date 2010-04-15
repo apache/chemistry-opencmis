@@ -26,10 +26,10 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 
@@ -41,10 +41,10 @@ import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
  */
 public class DummyRepositoryService implements CmisRepositoryService {
 
-  private RepositoryInfoDataImpl fRepInfo;
+  private RepositoryInfoImpl fRepInfo;
 
   public DummyRepositoryService(String id, String name) {
-    fRepInfo = new RepositoryInfoDataImpl();
+    fRepInfo = new RepositoryInfoImpl();
 
     fRepInfo.setRepositoryId(id);
     fRepInfo.setRepositoryName(name);
@@ -57,10 +57,10 @@ public class DummyRepositoryService implements CmisRepositoryService {
     fRepInfo.setProductVersion("1.0");
   }
 
-  public RepositoryInfoData getRepositoryInfo(CallContext context, String repositoryId,
+  public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId,
       ExtensionsData extension) {
 
-    if (!fRepInfo.getRepositoryId().equals(repositoryId)) {
+    if (!fRepInfo.getId().equals(repositoryId)) {
       throw new CmisObjectNotFoundException("A repository with repository id '" + repositoryId
           + "' does not exist!");
     }
@@ -68,8 +68,8 @@ public class DummyRepositoryService implements CmisRepositoryService {
     return fRepInfo;
   }
 
-  public List<RepositoryInfoData> getRepositoryInfos(CallContext context, ExtensionsData extension) {
-    return Collections.singletonList((RepositoryInfoData) fRepInfo);
+  public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
+    return Collections.singletonList((RepositoryInfo) fRepInfo);
   }
 
   public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId,

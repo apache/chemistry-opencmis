@@ -25,20 +25,20 @@ import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.provider.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyBooleanData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyDateTimeData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyDecimalData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyHtmlData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyIntegerData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyStringData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyUriData;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyBooleanData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyDateTimeData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyDecimalData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyHtmlData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyIntegerData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyUriData;
 
 /**
  * CMIS binding object factory implementation.

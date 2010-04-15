@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.server.spi;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 
 /**
  * CMIS Policy Service interface. Please refer to the CMIS specification and the OpenCMIS

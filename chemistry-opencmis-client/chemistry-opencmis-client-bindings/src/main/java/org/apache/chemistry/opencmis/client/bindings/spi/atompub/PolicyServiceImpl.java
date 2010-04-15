@@ -31,14 +31,14 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFee
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.PolicyService;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyId;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.PolicyService;
 
 /**
  * Policy Service AtomPub client.

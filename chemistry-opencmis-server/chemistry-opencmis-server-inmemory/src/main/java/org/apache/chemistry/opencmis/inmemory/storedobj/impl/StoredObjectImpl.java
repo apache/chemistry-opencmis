@@ -27,8 +27,8 @@ import java.util.TimeZone;
 import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 

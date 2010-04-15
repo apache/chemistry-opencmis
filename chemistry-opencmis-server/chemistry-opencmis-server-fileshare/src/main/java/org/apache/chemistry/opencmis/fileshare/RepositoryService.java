@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 
@@ -54,7 +54,7 @@ public class RepositoryService implements CmisRepositoryService {
    * org.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfo(org.apache.opencmis.
    * server.spi.CallContext , java.lang.String, org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public RepositoryInfoData getRepositoryInfo(CallContext context, String repositoryId,
+  public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId,
       ExtensionsData extension) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getRepositoryInfo(
         context);
@@ -67,8 +67,8 @@ public class RepositoryService implements CmisRepositoryService {
    * @seeorg.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfos(org.apache.opencmis.
    * server.spi. CallContext, org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public List<RepositoryInfoData> getRepositoryInfos(CallContext context, ExtensionsData extension) {
-    List<RepositoryInfoData> result = new ArrayList<RepositoryInfoData>();
+  public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
+    List<RepositoryInfo> result = new ArrayList<RepositoryInfo>();
 
     for (FileShareRepository fsr : fRepositoryMap.getRepositories()) {
       result.add(fsr.getRepositoryInfo(context));

@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.AllowableActions;
-import org.apache.chemistry.opencmis.commons.provider.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 
 /**
  * Allowable actions implementation.

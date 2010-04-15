@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 
 /**
  * Abstract property data implementation.

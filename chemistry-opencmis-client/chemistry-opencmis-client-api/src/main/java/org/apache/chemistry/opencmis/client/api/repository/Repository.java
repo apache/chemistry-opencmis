@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.api.repository;
 
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 
 /**
  * Represents a repository.

@@ -27,11 +27,11 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.repository.Repository;
 import org.apache.chemistry.opencmis.client.runtime.repository.RepositoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.SessionType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 
 /**
  * Default implementation of a session factory. Used by unit tests or applications that depend
@@ -102,11 +102,11 @@ public class SessionFactoryImpl implements SessionFactory {
   public List<Repository> getRepositories(Map<String, String> parameters) {
     CmisBinding binding = CmisBindingHelper.createProvider(parameters);
 
-    List<RepositoryInfoData> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(
+    List<RepositoryInfo> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(
         null);
 
     List<Repository> result = new ArrayList<Repository>();
-    for (RepositoryInfoData data : repositoryInfos) {
+    for (RepositoryInfo data : repositoryInfos) {
       result.add(new RepositoryImpl(data, parameters, this));
     }
 

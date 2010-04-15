@@ -32,6 +32,12 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEnt
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.Holder;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.VersioningService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -42,12 +48,6 @@ import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
-import org.apache.chemistry.opencmis.commons.provider.Holder;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.VersioningService;
 
 /**
  * Versioning Service AtomPub client.

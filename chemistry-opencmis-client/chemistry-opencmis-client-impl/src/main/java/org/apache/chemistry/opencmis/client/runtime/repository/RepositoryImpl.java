@@ -25,7 +25,8 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.repository.Repository;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 
 public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
 
@@ -37,7 +38,7 @@ public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
   /**
    * Constructor.
    */
-  public RepositoryImpl(RepositoryInfoData data, Map<String, String> parameters,
+  public RepositoryImpl(RepositoryInfo data, Map<String, String> parameters,
       SessionFactory sessionFactory) {
     super(data);
 
@@ -49,7 +50,7 @@ public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.repository.Repository#createSession()
    */
   @SuppressWarnings("unchecked")

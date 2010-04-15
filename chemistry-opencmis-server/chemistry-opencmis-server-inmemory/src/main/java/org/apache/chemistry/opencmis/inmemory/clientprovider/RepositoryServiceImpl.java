@@ -25,8 +25,8 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryRepositoryServiceImpl;
 
 /**
@@ -51,7 +51,7 @@ public class RepositoryServiceImpl  extends AbstractService implements Repositor
    * @see org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo(java.lang.String,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public RepositoryInfoData getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+  public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
 
     return fRepSvc.getRepositoryInfo(fDummyCallContext, repositoryId, extension);
   }
@@ -62,7 +62,7 @@ public class RepositoryServiceImpl  extends AbstractService implements Repositor
    * @see org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos(boolean,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public List<RepositoryInfoData> getRepositoryInfos(ExtensionsData extension) {
+  public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
     return fRepSvc.getRepositoryInfos(fDummyCallContext, extension);
   }
   

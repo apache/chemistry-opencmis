@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.provider.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 
 /**
  * Access control list data implementation.

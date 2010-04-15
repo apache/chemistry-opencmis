@@ -20,11 +20,10 @@ package org.apache.chemistry.opencmis.fit.runtime;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.AclPermission;
-import org.apache.chemistry.opencmis.client.api.repository.AclPermissionMapping;
-import org.apache.chemistry.opencmis.client.api.repository.RepositoryAclCapabilities;
-import org.apache.chemistry.opencmis.client.api.repository.RepositoryCapabilities;
-import org.apache.chemistry.opencmis.client.api.repository.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.bindings.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryCapabilities;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.junit.Assert;
@@ -34,14 +33,14 @@ import org.junit.Test;
 
 public class ReadOnlyAclCapabilityIT extends AbstractSessionTest {
 
-  private RepositoryAclCapabilities aclCapabilities = null;
+  private AclCapabilities aclCapabilities = null;
 
   @Before
   public void setup() throws Exception {
     RepositoryInfo r = this.session.getRepositoryInfo();
     // capabilities
     RepositoryCapabilities repcap = r.getCapabilities();
-    CapabilityAcl capacl = repcap.getAclSupport();
+    CapabilityAcl capacl = repcap.getAclCapability();
 
     if (capacl != CapabilityAcl.NONE) {
       // acl capabilities
@@ -68,8 +67,8 @@ public class ReadOnlyAclCapabilityIT extends AbstractSessionTest {
 
   @Test
   public void repositoryCapabilitiesAclPermissionMapping() {
-    AclPermissionMapping apm = this.aclCapabilities.getAddPolicyObjectPermissions();
-    List<AclPermission> aclps = apm.getPermissions();
+    PermissionMapping apm = this.aclCapabilities.getPermissionMapping().get(PermissionMapping.CAN_ADD_POLICY_OBJECT);
+    List<String> aclps = apm.getPermissions();
     Assert.assertNotNull(aclps);
   }
 }

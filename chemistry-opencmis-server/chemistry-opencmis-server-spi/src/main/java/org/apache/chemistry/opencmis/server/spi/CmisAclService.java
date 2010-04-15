@@ -19,8 +19,8 @@
 package org.apache.chemistry.opencmis.server.spi;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
 
 /**
  * CMIS ACL Service interface. Please refer to the CMIS specification and the OpenCMIS documentation

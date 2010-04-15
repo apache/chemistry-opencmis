@@ -21,12 +21,12 @@ package org.apache.chemistry.opencmis.inmemory.server;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;

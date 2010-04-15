@@ -18,8 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>

@@ -27,13 +27,13 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.PolicyService;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyServicePort;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.PolicyService;
 
 /**
  * Policy Service Web Services client.

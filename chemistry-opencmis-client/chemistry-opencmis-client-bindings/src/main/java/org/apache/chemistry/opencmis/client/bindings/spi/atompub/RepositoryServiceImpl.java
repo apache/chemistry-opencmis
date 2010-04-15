@@ -33,14 +33,14 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
 
 /**
  * Repository Service AtomPub client.
@@ -64,7 +64,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
    * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos(org.apache.opencmis
    * .client.provider .ExtensionsData)
    */
-  public List<RepositoryInfoData> getRepositoryInfos(ExtensionsData extension) {
+  public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
     return getRepositoriesInternal(null);
   }
 
@@ -74,16 +74,16 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
    * @see org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo(java.lang.String,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public RepositoryInfoData getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-    List<RepositoryInfoData> repositoryInfos = getRepositoriesInternal(repositoryId);
+  public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+    List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
     // find the repository
-    for (RepositoryInfoData info : repositoryInfos) {
-      if (info.getRepositoryId() == null) {
+    for (RepositoryInfo info : repositoryInfos) {
+      if (info.getId() == null) {
         continue;
       }
 
-      if (info.getRepositoryId().equals(repositoryId)) {
+      if (info.getId().equals(repositoryId)) {
         return info;
       }
     }

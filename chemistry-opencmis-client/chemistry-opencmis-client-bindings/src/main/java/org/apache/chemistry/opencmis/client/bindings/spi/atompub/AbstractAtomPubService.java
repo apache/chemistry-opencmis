@@ -42,6 +42,10 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -65,10 +69,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyId;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 
 /**
  * Base class for all AtomPub clients.
@@ -625,8 +625,8 @@ public class AbstractAtomPubService {
    * collections, links, URI templates, etc.
    */
   @SuppressWarnings("unchecked")
-  protected List<RepositoryInfoData> getRepositoriesInternal(String repositoryId) {
-    List<RepositoryInfoData> repInfos = new ArrayList<RepositoryInfoData>();
+  protected List<RepositoryInfo> getRepositoriesInternal(String repositoryId) {
+    List<RepositoryInfo> repInfos = new ArrayList<RepositoryInfo>();
 
     // retrieve service doc
     UrlBuilder url = new UrlBuilder(getServiceDocURL());

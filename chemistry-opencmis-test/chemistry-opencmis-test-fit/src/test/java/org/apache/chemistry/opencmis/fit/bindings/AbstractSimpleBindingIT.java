@@ -27,13 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.junit.Test;
 
 /**
@@ -47,14 +47,14 @@ public abstract class AbstractSimpleBindingIT extends AbstractBindingIT {
 
   @Test
   public void testRepositoryInfo() {
-    RepositoryInfoData ri = getBinding().getRepositoryService().getRepositoryInfo(
+    RepositoryInfo ri = getBinding().getRepositoryService().getRepositoryInfo(
         getRepositoryId(), null);
     assertNotNull(ri);
 
-    assertEquals(getRepositoryId(), ri.getRepositoryId());
+    assertEquals(getRepositoryId(), ri.getId());
     assertNotNull(ri.getProductName());
     assertNotNull(ri.getRootFolderId());
-    assertNotNull(ri.getRepositoryCapabilities());
+    assertNotNull(ri.getCapabilities());
   }
 
   @Test

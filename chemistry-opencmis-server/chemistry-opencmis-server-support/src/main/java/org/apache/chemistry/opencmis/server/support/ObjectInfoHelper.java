@@ -29,19 +29,19 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryCapabilities;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.RenditionData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryCapabilitiesData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisNavigationService;
 import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
@@ -69,7 +69,7 @@ public class ObjectInfoHelper
     private CmisRepositoryService _repSvc;
     private CmisNavigationService _navSvc;
     
-    private Map<String, RepositoryCapabilitiesData > _repos = new HashMap<String, RepositoryCapabilitiesData >();
+    private Map<String, RepositoryCapabilities > _repos = new HashMap<String, RepositoryCapabilities >();
     private Map<String, Boolean > _mapPolicies = new HashMap<String, Boolean >();
     private Map<String, Boolean > _mapRelationships = new HashMap<String, Boolean >();
     
@@ -170,10 +170,10 @@ public class ObjectInfoHelper
         // Get required information about the repository and cache it for later use:
         
         Map<String, PropertyData<?>> properties = objData.getProperties().getProperties();
-        RepositoryCapabilitiesData repoCaps = _repos.get(repositoryId);
+        RepositoryCapabilities repoCaps = _repos.get(repositoryId);
         if (null == repoCaps) {
-            RepositoryInfoData repoInfo = _repSvc.getRepositoryInfo(null, repositoryId, null);
-            repoCaps = repoInfo.getRepositoryCapabilities();
+            RepositoryInfo repoInfo = _repSvc.getRepositoryInfo(null, repositoryId, null);
+            repoCaps = repoInfo.getCapabilities();
             _repos.put(repositoryId, repoCaps);          
         }
         
@@ -236,7 +236,7 @@ public class ObjectInfoHelper
         if (objInfo.getBaseType() == BaseObjectTypeIds.CMIS_FOLDER)
             objInfo.setHasParent(getStringProperty(properties, PropertyIds.CMIS_PARENT_ID) != null);
         else if (objInfo.getBaseType() == BaseObjectTypeIds.CMIS_DOCUMENT) {
-            if (repoCaps.supportsUnfiling())
+            if (repoCaps.isUnfilingSupported())
                 objInfo.setHasParent(documentHasParent(context, repositoryId, objData.getId()));
             else
                 objInfo.setHasParent(true);
@@ -257,13 +257,13 @@ public class ObjectInfoHelper
         
         objInfo.setSupportsPolicies(supportsPolicies);
         
-        objInfo.setHasAcl(repoCaps.getCapabilityAcl() != CapabilityAcl.NONE);
+        objInfo.setHasAcl(repoCaps.getAclCapability() != CapabilityAcl.NONE);
         
         String baseTypeId = getStringProperty(properties, PropertyIds.CMIS_BASE_TYPE_ID);
         boolean isFolder = baseTypeId != null && baseTypeId.equals(BaseObjectTypeIds.CMIS_FOLDER.value());
         
-        objInfo.setSupportsDescendants(isFolder && repoCaps.supportsGetDescendants());;
-        objInfo.setSupportsFolderTree(isFolder && repoCaps.supportsGetFolderTree());
+        objInfo.setSupportsDescendants(isFolder && repoCaps.isGetDescendantsSupported());;
+        objInfo.setSupportsFolderTree(isFolder && repoCaps.isGetFolderTreeSupported());
         
         objectInfos.addObjectInfo(objInfo);
     }

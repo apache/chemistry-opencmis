@@ -31,11 +31,11 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyServicePort;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
 import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisPolicyService;

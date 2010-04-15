@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +49,25 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.bindings.Holder;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.bindings.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.bindings.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyDateTimeData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
@@ -55,7 +75,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityRendition;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -96,28 +116,9 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDat
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
-import org.apache.chemistry.opencmis.commons.provider.FailedToDeleteData;
-import org.apache.chemistry.opencmis.commons.provider.Holder;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.provider.PermissionDefinitionData;
-import org.apache.chemistry.opencmis.commons.provider.PermissionMappingData;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyDateTimeData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyStringData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoImpl;
@@ -127,9 +128,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * File system back-end for CMIS server.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class FileShareRepository {
 
@@ -156,11 +157,11 @@ public class FileShareRepository {
   /** User table */
   private Map<String, Boolean> fUserMap;
   /** Repository info */
-  private RepositoryInfoDataImpl fRepositoryInfo;
+  private RepositoryInfoImpl fRepositoryInfo;
 
   /**
    * Constructor.
-   * 
+   *
    * @param repId
    *          CMIS repository id
    * @param root
@@ -193,7 +194,7 @@ public class FileShareRepository {
     fUserMap = new HashMap<String, Boolean>();
 
     // compile repository info
-    fRepositoryInfo = new RepositoryInfoDataImpl();
+    fRepositoryInfo = new RepositoryInfoImpl();
 
     fRepositoryInfo.setRepositoryId(fRepositoryId);
     fRepositoryInfo.setRepositoryName(fRepositoryId);
@@ -223,7 +224,7 @@ public class FileShareRepository {
     capabilities.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
     capabilities.setSupportsGetDescendants(true);
     capabilities.setSupportsGetFolderTree(true);
-    capabilities.setCapabilityRendition(CapabilityRendition.NONE);
+    capabilities.setCapabilityRendition(CapabilityRenditions.NONE);
 
     fRepositoryInfo.setRepositoryCapabilities(capabilities);
 
@@ -232,39 +233,43 @@ public class FileShareRepository {
     aclCapability.setAclPropagation(AclPropagation.OBJECTONLY);
 
     // permissions
-    List<PermissionDefinitionData> permissions = new ArrayList<PermissionDefinitionData>();
+    List<PermissionDefinition> permissions = new ArrayList<PermissionDefinition>();
     permissions.add(createPermission(CMIS_READ, "Read"));
     permissions.add(createPermission(CMIS_WRITE, "Write"));
     permissions.add(createPermission(CMIS_ALL, "All"));
     aclCapability.setPermissionDefinitionData(permissions);
 
     // mapping
-    List<PermissionMappingData> mappings = new ArrayList<PermissionMappingData>();
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_CREATE_DOCUMENT_FOLDER, CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_CREATE_FOLDER_FOLDER, CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_DELETE_CONTENT_DOCUMENT, CMIS_WRITE));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_DELETE_OBJECT, CMIS_ALL));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_DELETE_TREE_FOLDER, CMIS_ALL));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_GET_ACL_OBJECT, CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_GET_ALL_VERSIONS_VERSION_SERIES,
+    List<PermissionMapping> list = new ArrayList<PermissionMapping>();
+    list.add(createMapping(PermissionMapping.CAN_CREATE_DOCUMENT_FOLDER, CMIS_READ));
+    list.add(createMapping(PermissionMapping.CAN_CREATE_FOLDER_FOLDER, CMIS_READ));
+    list.add(createMapping(PermissionMapping.CAN_DELETE_CONTENT_DOCUMENT, CMIS_WRITE));
+    list.add(createMapping(PermissionMapping.CAN_DELETE_OBJECT, CMIS_ALL));
+    list.add(createMapping(PermissionMapping.CAN_DELETE_TREE_FOLDER, CMIS_ALL));
+    list.add(createMapping(PermissionMapping.CAN_GET_ACL_OBJECT, CMIS_READ));
+    list.add(createMapping(PermissionMapping.CAN_GET_ALL_VERSIONS_VERSION_SERIES,
         CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_GET_CHILDREN_FOLDER, CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_GET_DESCENDENTS_FOLDER, CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_GET_FOLDER_PARENT_OBJECT, CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_GET_PARENTS_FOLDER, CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_GET_PROPERTIES_OBJECT, CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_MOVE_OBJECT, CMIS_WRITE));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_MOVE_SOURCE, CMIS_READ));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_MOVE_TARGET, CMIS_WRITE));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_SET_CONTENT_DOCUMENT, CMIS_WRITE));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_UPDATE_PROPERTIES_OBJECT, CMIS_WRITE));
-    mappings.add(createMapping(PermissionMappingData.KEY_CAN_VIEW_CONTENT_OBJECT, CMIS_READ));
-    aclCapability.setPermissionMappingData(mappings);
+    list.add(createMapping(PermissionMapping.CAN_GET_CHILDREN_FOLDER, CMIS_READ));
+    list.add(createMapping(PermissionMapping.CAN_GET_DESCENDENTS_FOLDER, CMIS_READ));
+    list.add(createMapping(PermissionMapping.CAN_GET_FOLDER_PARENT_OBJECT, CMIS_READ));
+    list.add(createMapping(PermissionMapping.CAN_GET_PARENTS_FOLDER, CMIS_READ));
+    list.add(createMapping(PermissionMapping.CAN_GET_PROPERTIES_OBJECT, CMIS_READ));
+    list.add(createMapping(PermissionMapping.CAN_MOVE_OBJECT, CMIS_WRITE));
+    list.add(createMapping(PermissionMapping.CAN_MOVE_SOURCE, CMIS_READ));
+    list.add(createMapping(PermissionMapping.CAN_MOVE_TARGET, CMIS_WRITE));
+    list.add(createMapping(PermissionMapping.CAN_SET_CONTENT_DOCUMENT, CMIS_WRITE));
+    list.add(createMapping(PermissionMapping.CAN_UPDATE_PROPERTIES_OBJECT, CMIS_WRITE));
+    list.add(createMapping(PermissionMapping.CAN_VIEW_CONTENT_OBJECT, CMIS_READ));
+    Map<String, PermissionMapping> map = new LinkedHashMap<String, PermissionMapping>();
+    for (PermissionMapping pm : list)  {
+        map.put(pm.getKey(), pm);
+    }
+    aclCapability.setPermissionMappingData(map);
 
     fRepositoryInfo.setAclCapabilities(aclCapability);
   }
 
-  private PermissionDefinitionData createPermission(String permission, String description) {
+  private PermissionDefinition createPermission(String permission, String description) {
     PermissionDefinitionDataImpl pd = new PermissionDefinitionDataImpl();
     pd.setPermission(permission);
     pd.setDescription(description);
@@ -272,7 +277,7 @@ public class FileShareRepository {
     return pd;
   }
 
-  private PermissionMappingData createMapping(String key, String permission) {
+  private PermissionMapping createMapping(String key, String permission) {
     PermissionMappingDataImpl pm = new PermissionMappingDataImpl();
     pm.setKey(key);
     pm.setPermissions(Collections.singletonList(permission));
@@ -303,7 +308,7 @@ public class FileShareRepository {
   /**
    * CMIS getRepositoryInfo.
    */
-  public RepositoryInfoData getRepositoryInfo(CallContext context) {
+  public RepositoryInfo getRepositoryInfo(CallContext context) {
     debug("getRepositoryInfo");
     checkUser(context, false);
 
@@ -1220,7 +1225,7 @@ public class FileShareRepository {
 
   /**
    * Removes a folder and its content.
-   * 
+   *
    * @throws
    */
   private boolean deleteFolder(File folder, boolean continueOnFailure, FailedToDeleteDataImpl ftd) {
@@ -1256,10 +1261,10 @@ public class FileShareRepository {
 
   /**
    * Checks if the given name is valid for a file system.
-   * 
+   *
    * @param name
    *          the name to check
-   * 
+   *
    * @return <code>true</code> if the name is valid, <code>false</code> otherwise
    */
   private boolean isValidName(String name) {
@@ -1274,10 +1279,10 @@ public class FileShareRepository {
   /**
    * Checks if a folder is empty. A folder is considered as empty if no files or only the shadow
    * file reside in the folder.
-   * 
+   *
    * @param folder
    *          the folder
-   * 
+   *
    * @return <code>true</code> if the folder is empty.
    */
   private boolean isFolderEmpty(File folder) {

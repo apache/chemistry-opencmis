@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.io.InputStream;
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
 
 /**
  * Content stream data implementation.

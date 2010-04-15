@@ -36,32 +36,32 @@ import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyDateTimeData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityRendition;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyDateTimeData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyStringData;
-import org.apache.chemistry.opencmis.commons.provider.RenditionData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -253,26 +253,26 @@ public abstract class AbstractCmisTestCase extends TestCase {
    * Returns the id of the first repository.
    */
   protected String getFirstRepositoryId() {
-    List<RepositoryInfoData> repositories = getBinding().getRepositoryService().getRepositoryInfos(
+    List<RepositoryInfo> repositories = getBinding().getRepositoryService().getRepositoryInfos(
         null);
 
     assertNotNull(repositories);
     assertFalse(repositories.isEmpty());
-    assertNotNull(repositories.get(0).getRepositoryId());
+    assertNotNull(repositories.get(0).getId());
 
-    return repositories.get(0).getRepositoryId();
+    return repositories.get(0).getId();
   }
 
   /**
    * Returns the info object of the test repository.
    */
-  protected RepositoryInfoData getRepositoryInfo() {
-    RepositoryInfoData repositoryInfo = getBinding().getRepositoryService().getRepositoryInfo(
+  protected RepositoryInfo getRepositoryInfo() {
+    RepositoryInfo repositoryInfo = getBinding().getRepositoryService().getRepositoryInfo(
         getTestRepositoryId(), null);
 
     assertNotNull(repositoryInfo);
-    assertNotNull(repositoryInfo.getRepositoryId());
-    assertEquals(getTestRepositoryId(), repositoryInfo.getRepositoryId());
+    assertNotNull(repositoryInfo.getId());
+    assertEquals(getTestRepositoryId(), repositoryInfo.getId());
 
     return repositoryInfo;
   }
@@ -281,7 +281,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
    * Returns the root folder of the test repository.
    */
   protected String getRootFolderId() {
-    RepositoryInfoData repository = getRepositoryInfo();
+    RepositoryInfo repository = getRepositoryInfo();
 
     assertNotNull(repository.getRootFolderId());
 
@@ -292,97 +292,97 @@ public abstract class AbstractCmisTestCase extends TestCase {
    * Returns if the test repository supports reading ACLs.
    */
   protected boolean supportsDiscoverACLs() {
-    RepositoryInfoData repository = getRepositoryInfo();
+    RepositoryInfo repository = getRepositoryInfo();
 
-    assertNotNull(repository.getRepositoryCapabilities());
+    assertNotNull(repository.getCapabilities());
 
-    return (repository.getRepositoryCapabilities().getCapabilityAcl() != CapabilityAcl.NONE);
+    return (repository.getCapabilities().getAclCapability() != CapabilityAcl.NONE);
   }
 
   /**
    * Returns if the test repository supports setting ACLs.
    */
   protected boolean supportsManageACLs() {
-    RepositoryInfoData repository = getRepositoryInfo();
+    RepositoryInfo repository = getRepositoryInfo();
 
-    assertNotNull(repository.getRepositoryCapabilities());
+    assertNotNull(repository.getCapabilities());
 
-    return (repository.getRepositoryCapabilities().getCapabilityAcl() == CapabilityAcl.MANAGE);
+    return (repository.getCapabilities().getAclCapability() == CapabilityAcl.MANAGE);
   }
 
   /**
    * Returns if the test repository supports renditions.
    */
   protected boolean supportsRenditions() {
-    RepositoryInfoData repository = getRepositoryInfo();
+    RepositoryInfo repository = getRepositoryInfo();
 
-    assertNotNull(repository.getRepositoryCapabilities());
+    assertNotNull(repository.getCapabilities());
 
-    if (repository.getRepositoryCapabilities().getCapabilityRenditions() == null) {
+    if (repository.getCapabilities().getRenditionsCapability() == null) {
       return false;
     }
 
-    return (repository.getRepositoryCapabilities().getCapabilityRenditions() != CapabilityRendition.NONE);
+    return (repository.getCapabilities().getRenditionsCapability() != CapabilityRenditions.NONE);
   }
 
   /**
    * Returns if the test repository supports descendants.
    */
   protected boolean supportsDescendants() {
-    RepositoryInfoData repository = getRepositoryInfo();
+    RepositoryInfo repository = getRepositoryInfo();
 
-    assertNotNull(repository.getRepositoryCapabilities());
+    assertNotNull(repository.getCapabilities());
 
-    if (repository.getRepositoryCapabilities().supportsGetDescendants() == null) {
+    if (repository.getCapabilities().isGetDescendantsSupported() == null) {
       return false;
     }
 
-    return repository.getRepositoryCapabilities().supportsGetDescendants().booleanValue();
+    return repository.getCapabilities().isGetDescendantsSupported().booleanValue();
   }
 
   /**
    * Returns if the test repository supports descendants.
    */
   protected boolean supportsFolderTree() {
-    RepositoryInfoData repository = getRepositoryInfo();
+    RepositoryInfo repository = getRepositoryInfo();
 
-    assertNotNull(repository.getRepositoryCapabilities());
+    assertNotNull(repository.getCapabilities());
 
-    if (repository.getRepositoryCapabilities().supportsGetFolderTree() == null) {
+    if (repository.getCapabilities().isGetFolderTreeSupported() == null) {
       return false;
     }
 
-    return repository.getRepositoryCapabilities().supportsGetFolderTree().booleanValue();
+    return repository.getCapabilities().isGetFolderTreeSupported().booleanValue();
   }
 
   /**
    * Returns if the test repository supports content changes.
    */
   protected boolean supportsContentChanges() {
-    RepositoryInfoData repository = getRepositoryInfo();
+    RepositoryInfo repository = getRepositoryInfo();
 
-    assertNotNull(repository.getRepositoryCapabilities());
+    assertNotNull(repository.getCapabilities());
 
-    if (repository.getRepositoryCapabilities().getCapabilityChanges() == null) {
+    if (repository.getCapabilities().getChangesCapability() == null) {
       return false;
     }
 
-    return (repository.getRepositoryCapabilities().getCapabilityChanges() != CapabilityChanges.NONE);
+    return (repository.getCapabilities().getChangesCapability() != CapabilityChanges.NONE);
   }
 
   /**
    * Returns if the test repository supports query.
    */
   protected boolean supportsQuery() {
-    RepositoryInfoData repository = getRepositoryInfo();
+    RepositoryInfo repository = getRepositoryInfo();
 
-    assertNotNull(repository.getRepositoryCapabilities());
+    assertNotNull(repository.getCapabilities());
 
-    if (repository.getRepositoryCapabilities().getCapabilityQuery() == null) {
+    if (repository.getCapabilities().getQueryCapability() == null) {
       return false;
     }
 
-    return (repository.getRepositoryCapabilities().getCapabilityQuery() != CapabilityQuery.NONE);
+    return (repository.getCapabilities().getQueryCapability() != CapabilityQuery.NONE);
   }
 
   /**
@@ -423,9 +423,9 @@ public abstract class AbstractCmisTestCase extends TestCase {
    * Returns the AclPropagation from the ACL capabilities.
    */
   protected AclPropagation getAclPropagation() {
-    RepositoryInfoData repository = getRepositoryInfo();
+    RepositoryInfo repository = getRepositoryInfo();
 
-    assertNotNull(repository.getRepositoryCapabilities());
+    assertNotNull(repository.getCapabilities());
 
     if (repository.getAclCapabilities().getAclPropagation() == null) {
       return AclPropagation.REPOSITORYDETERMINED;

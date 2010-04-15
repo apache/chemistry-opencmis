@@ -51,12 +51,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryCapabilities;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryCapabilitiesData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
@@ -86,7 +86,7 @@ public final class RepositoryService {
     String repositoryId = getStringParameter(request, Constants.PARAM_REPOSITORY_ID);
 
     // execute
-    List<RepositoryInfoData> infoDataList = null;
+    List<RepositoryInfo> infoDataList = null;
 
     if (repositoryId == null) {
       infoDataList = service.getRepositoryInfos(context, null);
@@ -107,12 +107,12 @@ public final class RepositoryService {
     serviceDoc.startServiceDocument();
 
     if (infoDataList != null) {
-      for (RepositoryInfoData infoData : infoDataList) {
+      for (RepositoryInfo infoData : infoDataList) {
         if (infoData == null) {
           continue;
         }
 
-        String repId = infoData.getRepositoryId();
+        String repId = infoData.getId();
         UrlBuilder baseUrl = compileBaseUrl(request, repId);
 
         boolean supportsQuery = false;
@@ -122,35 +122,35 @@ public final class RepositoryService {
         boolean supportsRootDescendants = false;
         boolean supportsChanges = false;
 
-        if (infoData.getRepositoryCapabilities() != null) {
-          RepositoryCapabilitiesData cap = infoData.getRepositoryCapabilities();
+        if (infoData.getCapabilities() != null) {
+          RepositoryCapabilities cap = infoData.getCapabilities();
 
-          if (cap.getCapabilityQuery() != null) {
-            supportsQuery = (cap.getCapabilityQuery() != CapabilityQuery.NONE);
+          if (cap.getQueryCapability() != null) {
+            supportsQuery = (cap.getQueryCapability() != CapabilityQuery.NONE);
           }
 
-          if (cap.supportsUnfiling() != null) {
-            supportsUnFiling = cap.supportsUnfiling();
+          if (cap.isUnfilingSupported() != null) {
+            supportsUnFiling = cap.isUnfilingSupported();
           }
 
-          if (cap.supportsMultifiling() != null) {
-            supportsMultifiling = cap.supportsMultifiling();
+          if (cap.isMultifilingSupported() != null) {
+            supportsMultifiling = cap.isMultifilingSupported();
           }
 
-          if (cap.supportsGetFolderTree() != null) {
-            supportsFolderTree = cap.supportsGetFolderTree();
+          if (cap.isGetFolderTreeSupported() != null) {
+            supportsFolderTree = cap.isGetFolderTreeSupported();
           }
 
-          if (cap.supportsGetDescendants() != null) {
-            supportsRootDescendants = cap.supportsGetDescendants();
+          if (cap.isGetDescendantsSupported() != null) {
+            supportsRootDescendants = cap.isGetDescendantsSupported();
           }
 
-          if (cap.getCapabilityChanges() != null) {
-            supportsChanges = (cap.getCapabilityChanges() != CapabilityChanges.NONE);
+          if (cap.getChangesCapability() != null) {
+            supportsChanges = (cap.getChangesCapability() != CapabilityChanges.NONE);
           }
         }
 
-        serviceDoc.startWorkspace(infoData.getRepositoryId());
+        serviceDoc.startWorkspace(infoData.getId());
 
         // add collections
 

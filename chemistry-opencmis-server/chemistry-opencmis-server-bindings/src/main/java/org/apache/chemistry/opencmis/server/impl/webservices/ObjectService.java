@@ -34,6 +34,7 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -50,7 +51,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUnfileObject;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumVersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteTreeResponse.FailedToDelete;
-import org.apache.chemistry.opencmis.commons.provider.RenditionData;
 import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
@@ -205,8 +205,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
       CmisObjectService service = factory.getObjectService();
       CallContext context = createContext(fContext);
 
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> objectIdHolder = convertHolder(objectId);
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> changeTokenHolder = convertHolder(changeToken);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> objectIdHolder = convertHolder(objectId);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> changeTokenHolder = convertHolder(changeToken);
       ExtensionsData extData = convertExtensionHolder(extension);
 
       service
@@ -370,7 +370,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
       CmisObjectService service = factory.getObjectService();
       CallContext context = createContext(fContext);
 
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> objectIdHolder = convertHolder(objectId);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> objectIdHolder = convertHolder(objectId);
       ExtensionsData extData = convertExtensionHolder(extension);
 
       service.moveObject(context, repositoryId, objectIdHolder, targetFolderId, sourceFolderId,
@@ -392,8 +392,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
       CmisObjectService service = factory.getObjectService();
       CallContext context = createContext(fContext);
 
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> objectIdHolder = convertHolder(objectId);
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> changeTokenHolder = convertHolder(changeToken);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> objectIdHolder = convertHolder(objectId);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> changeTokenHolder = convertHolder(changeToken);
       ExtensionsData extData = convertExtensionHolder(extension);
 
       service.setContentStream(context, repositoryId, objectIdHolder, overwriteFlag,
@@ -416,8 +416,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
       CmisObjectService service = factory.getObjectService();
       CallContext context = createContext(fContext);
 
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> objectIdHolder = convertHolder(objectId);
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> changeTokenHolder = convertHolder(changeToken);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> objectIdHolder = convertHolder(objectId);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> changeTokenHolder = convertHolder(changeToken);
       ExtensionsData extData = convertExtensionHolder(extension);
 
       service.updateProperties(context, repositoryId, objectIdHolder, changeTokenHolder,

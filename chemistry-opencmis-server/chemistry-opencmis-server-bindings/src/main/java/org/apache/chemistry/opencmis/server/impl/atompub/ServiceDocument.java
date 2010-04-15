@@ -24,10 +24,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 
 /**
  * Service document class.
@@ -62,7 +62,7 @@ public class ServiceDocument extends AtomDocumentBase {
     getWriter().writeEndElement();
   }
 
-  public void writeRepositoryInfo(RepositoryInfoData repInfo) throws XMLStreamException,
+  public void writeRepositoryInfo(RepositoryInfo repInfo) throws XMLStreamException,
       JAXBException {
     CmisRepositoryInfoType repInfoJaxb = convert(repInfo);
     if (repInfoJaxb == null) {

@@ -24,11 +24,11 @@ import java.util.List;
 import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.junit.Assert;
 
@@ -61,7 +61,7 @@ public class FixtureSetup {
 					FixtureSessionParameter.TEST_ROOT_FOLDER_ID);
 			Assert.assertNotNull(this.rootFolderId);
 		} else {
-			RepositoryInfoData rid = this.binding.getRepositoryService()
+			RepositoryInfo rid = this.binding.getRepositoryService()
 					.getRepositoryInfo(this.repositoryId, null);
 			Assert.assertNotNull(rid);
 			this.rootFolderId = rid.getRootFolderId();

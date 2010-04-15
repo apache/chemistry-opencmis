@@ -18,20 +18,20 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityRendition;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryCapabilitiesData;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implements
-    RepositoryCapabilitiesData {
+    RepositoryCapabilities {
 
   private static final long serialVersionUID = 1L;
 
@@ -41,7 +41,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
   private CapabilityContentStreamUpdates fCapabilityContentStreamUpdates;
   private CapabilityJoin fCapabilityJoin;
   private CapabilityQuery fCapabilityQuery;
-  private CapabilityRendition fCapabilityRendition;
+  private CapabilityRenditions fCapabilityRendition;
   private Boolean fIsPwcSearchable;
   private Boolean fIsPwcUpdatable;
   private Boolean fSupportsGetDescendants;
@@ -61,7 +61,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#allVersionsSearchable()
    */
-  public Boolean allVersionsSearchable() {
+  public Boolean isAllVersionsSearchableSupported() {
     return fAllVersionsSearchable;
   }
 
@@ -74,7 +74,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#getCapabilityACL()
    */
-  public CapabilityAcl getCapabilityAcl() {
+  public CapabilityAcl getAclCapability() {
     return fCapabilityAcl;
   }
 
@@ -87,7 +87,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#getCapabilityChanges()
    */
-  public CapabilityChanges getCapabilityChanges() {
+  public CapabilityChanges getChangesCapability() {
     return fCapabilityChanges;
   }
 
@@ -102,7 +102,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * org.apache.opencmis.client.provider.RepositoryCapabilitiesData#getCapabilityContentStreamUpdatability
    * ()
    */
-  public CapabilityContentStreamUpdates getCapabilityContentStreamUpdatability() {
+  public CapabilityContentStreamUpdates getContentStreamUpdatesCapability() {
     return fCapabilityContentStreamUpdates;
   }
 
@@ -116,7 +116,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#getCapabilityJoin()
    */
-  public CapabilityJoin getCapabilityJoin() {
+  public CapabilityJoin getJoinCapability() {
     return fCapabilityJoin;
   }
 
@@ -129,7 +129,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#getCapabilityQuery()
    */
-  public CapabilityQuery getCapabilityQuery() {
+  public CapabilityQuery getQueryCapability() {
     return fCapabilityQuery;
   }
 
@@ -142,11 +142,11 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#getCapabilityRenditions()
    */
-  public CapabilityRendition getCapabilityRenditions() {
+  public CapabilityRenditions getRenditionsCapability() {
     return fCapabilityRendition;
   }
 
-  public void setCapabilityRendition(CapabilityRendition capabilityRendition) {
+  public void setCapabilityRendition(CapabilityRenditions capabilityRendition) {
     fCapabilityRendition = capabilityRendition;
   }
 
@@ -155,7 +155,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#isPwcSearchable()
    */
-  public Boolean isPwcSearchable() {
+  public Boolean isPwcSearchableSupported() {
     return fIsPwcSearchable;
   }
 
@@ -168,7 +168,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#isPwcUpdatable()
    */
-  public Boolean isPwcUpdatable() {
+  public Boolean isPwcUpdatableSupported() {
     return fIsPwcUpdatable;
   }
 
@@ -181,7 +181,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#supportsGetDescendants()
    */
-  public Boolean supportsGetDescendants() {
+  public Boolean isGetDescendantsSupported() {
     return fSupportsGetDescendants;
   }
 
@@ -194,7 +194,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#supportsGetFolderTree()
    */
-  public Boolean supportsGetFolderTree() {
+  public Boolean isGetFolderTreeSupported() {
     return fSupportsGetFolderTree;
   }
 
@@ -207,7 +207,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#supportsMultifiling()
    */
-  public Boolean supportsMultifiling() {
+  public Boolean isMultifilingSupported() {
     return fSupportsMultifiling;
   }
 
@@ -220,7 +220,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#supportsUnfiling()
    */
-  public Boolean supportsUnfiling() {
+  public Boolean isUnfilingSupported() {
     return fSupportsUnfiling;
   }
 
@@ -233,7 +233,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
    * 
    * @see org.apache.opencmis.client.provider.RepositoryCapabilitiesData#supportsVersionSpecificFiling()
    */
-  public Boolean supportsVersionSpecificFiling() {
+  public Boolean isVersionSpecificFilingSupported() {
     return fSupportsVersionSpecificFiling;
   }
 

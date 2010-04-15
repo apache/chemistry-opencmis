@@ -20,16 +20,16 @@ package org.apache.chemistry.opencmis.inmemory.clientprovider;
 
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.provider.AclService;
-import org.apache.chemistry.opencmis.commons.provider.DiscoveryService;
-import org.apache.chemistry.opencmis.commons.provider.MultiFilingService;
-import org.apache.chemistry.opencmis.commons.provider.NavigationService;
-import org.apache.chemistry.opencmis.commons.provider.ObjectService;
-import org.apache.chemistry.opencmis.commons.provider.PolicyService;
-import org.apache.chemistry.opencmis.commons.provider.RelationshipService;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
-import org.apache.chemistry.opencmis.commons.provider.VersioningService;
+import org.apache.chemistry.opencmis.commons.bindings.AclService;
+import org.apache.chemistry.opencmis.commons.bindings.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.bindings.MultiFilingService;
+import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
+import org.apache.chemistry.opencmis.commons.bindings.PolicyService;
+import org.apache.chemistry.opencmis.commons.bindings.RelationshipService;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
+import org.apache.chemistry.opencmis.commons.bindings.VersioningService;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryDiscoveryServiceImpl;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryMultiFilingServiceImpl;
@@ -57,7 +57,7 @@ public class CmisInMemoryProvider {
   protected ObjectService fObjectService;
   protected VersioningService fVersioningService;
   protected MultiFilingService fMultiService;
-  protected RepositoryInfoData fRepositoryInfo;
+  protected RepositoryInfo fRepositoryInfo;
   protected DiscoveryService fDiscoveryService;
 
   public CmisInMemoryProvider(Map<String, String> cfgParams) {

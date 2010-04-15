@@ -25,9 +25,9 @@ import java.io.OutputStream;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
 
 /**
  * ACL document.

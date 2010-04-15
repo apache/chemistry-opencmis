@@ -23,16 +23,16 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.commons.provider.AclService;
-import org.apache.chemistry.opencmis.commons.provider.DiscoveryService;
-import org.apache.chemistry.opencmis.commons.provider.MultiFilingService;
-import org.apache.chemistry.opencmis.commons.provider.NavigationService;
-import org.apache.chemistry.opencmis.commons.provider.ObjectService;
-import org.apache.chemistry.opencmis.commons.provider.PolicyService;
-import org.apache.chemistry.opencmis.commons.provider.RelationshipService;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
-import org.apache.chemistry.opencmis.commons.provider.VersioningService;
+import org.apache.chemistry.opencmis.commons.bindings.AclService;
+import org.apache.chemistry.opencmis.commons.bindings.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.bindings.MultiFilingService;
+import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
+import org.apache.chemistry.opencmis.commons.bindings.PolicyService;
+import org.apache.chemistry.opencmis.commons.bindings.RelationshipService;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
+import org.apache.chemistry.opencmis.commons.bindings.VersioningService;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
@@ -171,7 +171,7 @@ public class CmisInMemorySpi extends CmisInMemoryProvider implements CmisSpi {
   /**
    * Returns the repository info.
    */
-  public RepositoryInfoData getRepositoryInfo() {
+  public RepositoryInfo getRepositoryInfo() {
     return fRepositoryInfo;
   }
 

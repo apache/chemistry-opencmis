@@ -30,20 +30,20 @@ import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectList;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.RenditionData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 
 /**
  * Simple read-only tests.
@@ -69,14 +69,14 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
       return;
     }
 
-    RepositoryInfoData repInfo = getRepositoryInfo();
+    RepositoryInfo repInfo = getRepositoryInfo();
 
     Tools.print(repInfo);
 
-    assertNotNull(repInfo.getRepositoryId());
+    assertNotNull(repInfo.getId());
     assertNotNull(repInfo.getCmisVersionSupported());
     assertNotNull(repInfo.getRootFolderId());
-    assertNotNull(repInfo.getRepositoryCapabilities());
+    assertNotNull(repInfo.getCapabilities());
   }
 
   /**

@@ -29,8 +29,8 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
 
 /**
  * Repository Service implementation.
@@ -53,8 +53,8 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
     fSession = session;
   }
 
-  public RepositoryInfoData getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-    RepositoryInfoData result = null;
+  public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+    RepositoryInfo result = null;
     boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
 
     RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(fSession);
@@ -79,8 +79,8 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
     return result;
   }
 
-  public List<RepositoryInfoData> getRepositoryInfos(ExtensionsData extension) {
-    List<RepositoryInfoData> result = null;
+  public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
+    List<RepositoryInfo> result = null;
     boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
 
     // get the SPI and fetch the repository infos
@@ -90,7 +90,7 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
     // put it into the cache
     if (!hasExtension && (result != null)) {
       RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(fSession);
-      for (RepositoryInfoData rid : result) {
+      for (RepositoryInfo rid : result) {
         cache.put(rid);
       }
     }

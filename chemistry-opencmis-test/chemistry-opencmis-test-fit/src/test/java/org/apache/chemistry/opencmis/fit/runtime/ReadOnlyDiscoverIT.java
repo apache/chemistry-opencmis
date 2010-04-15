@@ -36,7 +36,7 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
 
   @Test
   public void query() {
-    CapabilityQuery query = this.session.getRepositoryInfo().getCapabilities().getQuerySupport();
+    CapabilityQuery query = this.session.getRepositoryInfo().getCapabilities().getQueryCapability();
 
     switch (query) {
     case NONE:
@@ -60,7 +60,7 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
   @Test
   public void changes() {
     CapabilityChanges changes = this.session.getRepositoryInfo().getCapabilities()
-        .getChangesSupport();
+        .getChangesCapability();
 
     switch (changes) {
     case NONE:

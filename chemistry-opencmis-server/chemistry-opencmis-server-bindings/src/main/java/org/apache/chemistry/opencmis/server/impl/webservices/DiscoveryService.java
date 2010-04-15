@@ -29,13 +29,13 @@ import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
+import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DiscoveryServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
-import org.apache.chemistry.opencmis.commons.provider.ObjectList;
 import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
@@ -60,7 +60,7 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
       CmisDiscoveryService service = factory.getDiscoveryService();
       CallContext context = createContext(fContext);
 
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
 
       ObjectList changesList = service.getContentChanges(context, repositoryId,
           changeLogTokenHolder, includeProperties, filter, includePolicyIds, includeAcl, maxItems,

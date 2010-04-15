@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
 
 public interface Content {
   

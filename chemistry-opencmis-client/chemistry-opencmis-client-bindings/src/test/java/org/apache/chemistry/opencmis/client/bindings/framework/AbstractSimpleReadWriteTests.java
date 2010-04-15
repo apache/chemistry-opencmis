@@ -23,17 +23,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.Holder;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
-import org.apache.chemistry.opencmis.commons.provider.Holder;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
 
 /**
  * Simple read-write test.
@@ -189,8 +189,8 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
       return;
     }
 
-    boolean requiresCheckOut = getRepositoryInfo().getRepositoryCapabilities()
-        .getCapabilityContentStreamUpdatability() == CapabilityContentStreamUpdates.PWCONLY;
+    boolean requiresCheckOut = getRepositoryInfo().getCapabilities()
+        .getContentStreamUpdatesCapability() == CapabilityContentStreamUpdates.PWCONLY;
 
     boolean isVersionable = isVersionable(getDefaultDocumentType());
 

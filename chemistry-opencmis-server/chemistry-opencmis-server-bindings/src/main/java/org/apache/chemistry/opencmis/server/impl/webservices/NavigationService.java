@@ -28,6 +28,8 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
@@ -38,8 +40,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectParentsType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.NavigationServicePort;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.provider.ObjectParentData;
 import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisNavigationService;

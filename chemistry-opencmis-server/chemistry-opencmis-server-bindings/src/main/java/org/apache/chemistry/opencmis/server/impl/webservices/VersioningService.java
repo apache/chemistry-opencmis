@@ -33,6 +33,7 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisContentStreamType;
@@ -42,7 +43,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningServicePort;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
 import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisVersioningService;
@@ -86,7 +86,7 @@ public class VersioningService extends AbstractService implements VersioningServ
       CmisVersioningService service = factory.getVersioningService();
       CallContext context = createContext(fContext);
 
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> objectIdHolder = convertHolder(objectId);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> objectIdHolder = convertHolder(objectId);
       ExtensionsData extData = convertExtensionHolder(extension);
 
       service.checkIn(context, repositoryId, objectIdHolder, major, convert(properties),
@@ -108,8 +108,8 @@ public class VersioningService extends AbstractService implements VersioningServ
       CmisVersioningService service = factory.getVersioningService();
       CallContext context = createContext(fContext);
 
-      org.apache.chemistry.opencmis.commons.provider.Holder<String> objectIdHolder = convertHolder(objectId);
-      org.apache.chemistry.opencmis.commons.provider.Holder<Boolean> contentCopiedHolder = new org.apache.chemistry.opencmis.commons.provider.Holder<Boolean>();
+      org.apache.chemistry.opencmis.commons.bindings.Holder<String> objectIdHolder = convertHolder(objectId);
+      org.apache.chemistry.opencmis.commons.bindings.Holder<Boolean> contentCopiedHolder = new org.apache.chemistry.opencmis.commons.bindings.Holder<Boolean>();
       ExtensionsData extData = convertExtensionHolder(extension);
 
       service.checkOut(context, repositoryId, objectIdHolder, extData, contentCopiedHolder, null);

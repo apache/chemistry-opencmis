@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.provider.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
 
 /**
  * Id property data implementation.

@@ -26,11 +26,11 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.AbstractAtomPubService;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
 
 /**
  * Test for the ACL merging that is necessary in the AtomPub binding implementation.

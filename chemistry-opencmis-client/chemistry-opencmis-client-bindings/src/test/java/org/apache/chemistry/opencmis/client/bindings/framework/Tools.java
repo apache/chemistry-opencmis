@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
@@ -32,19 +32,19 @@ import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
  */
 public class Tools {
 
-  public static void print(RepositoryInfoData repositoryInfo) {
+  public static void print(RepositoryInfo repositoryInfo) {
     if (repositoryInfo == null) {
       return;
     }
 
     System.out.println("-------------");
-    System.out.println("Id:               " + repositoryInfo.getRepositoryId());
-    System.out.println("Name:             " + repositoryInfo.getRepositoryName());
+    System.out.println("Id:               " + repositoryInfo.getId());
+    System.out.println("Name:             " + repositoryInfo.getName());
     System.out.println("CMIS Version:     " + repositoryInfo.getCmisVersionSupported());
     System.out.println("Product:          " + repositoryInfo.getVendorName() + " / "
         + repositoryInfo.getProductName() + " " + repositoryInfo.getProductVersion());
     System.out.println("Root Folder:      " + repositoryInfo.getRootFolderId());
-    System.out.println("Capabilities:     " + repositoryInfo.getRepositoryCapabilities());
+    System.out.println("Capabilities:     " + repositoryInfo.getCapabilities());
     System.out.println("ACL Capabilities: " + repositoryInfo.getAclCapabilities());
     System.out.println("-------------");
   }

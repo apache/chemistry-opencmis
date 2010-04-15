@@ -25,9 +25,9 @@ import java.io.OutputStream;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
-import org.apache.chemistry.opencmis.commons.provider.AllowableActionsData;
 
 /**
  * Allowable Actions document.

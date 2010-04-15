@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.server.support;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisPolicyService;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;

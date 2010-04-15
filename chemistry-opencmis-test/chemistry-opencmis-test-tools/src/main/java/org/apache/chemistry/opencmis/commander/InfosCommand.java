@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.commander;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 
 public class InfosCommand implements Command {
 
@@ -45,23 +45,23 @@ public class InfosCommand implements Command {
   }
 
   public void execute(CmisBinding binding, String[] args, PrintWriter output) {
-    List<RepositoryInfoData> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(
+    List<RepositoryInfo> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(
         null);
 
-    for (RepositoryInfoData repositoryInfo : repositoryInfos) {
+    for (RepositoryInfo repositoryInfo : repositoryInfos) {
       printRepositoryInfo(repositoryInfo, output);
     }
   }
 
-  private void printRepositoryInfo(RepositoryInfoData repositoryInfo, PrintWriter output) {
-    output.println("Id:           " + repositoryInfo.getRepositoryId());
+  private void printRepositoryInfo(RepositoryInfo repositoryInfo, PrintWriter output) {
+    output.println("Id:           " + repositoryInfo.getId());
     output.println("Name:         " + repositoryInfo.getProductName());
-    output.println("Description:  " + repositoryInfo.getRepositoryDescription());
+    output.println("Description:  " + repositoryInfo.getDescription());
     output.println("Vendor:       " + repositoryInfo.getVendorName());
     output.println("Product:      " + repositoryInfo.getProductName() + " "
         + repositoryInfo.getProductVersion());
     output.println("Root Folder:  " + repositoryInfo.getRootFolderId());
-    output.println("Capabilities: " + repositoryInfo.getRepositoryCapabilities());
+    output.println("Capabilities: " + repositoryInfo.getCapabilities());
     output.println("------------------------------------------------------");
   }
 }

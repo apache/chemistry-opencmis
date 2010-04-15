@@ -21,9 +21,9 @@ package org.apache.chemistry.opencmis.server.spi;
 import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.Holder;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.provider.Holder;
-import org.apache.chemistry.opencmis.commons.provider.ObjectList;
 
 /**
  * CMIS Discovery Service interface. Please refer to the CMIS specification and the OpenCMIS

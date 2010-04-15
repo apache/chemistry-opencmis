@@ -22,8 +22,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 
 /**
  * Stored Object interface is common part that all objects handled by CMIS (Documents, Folders,

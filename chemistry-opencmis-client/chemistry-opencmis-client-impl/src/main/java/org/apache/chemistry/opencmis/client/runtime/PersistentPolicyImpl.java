@@ -22,7 +22,7 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 
 public class PersistentPolicyImpl extends AbstractPersistentFilableCmisObject implements Policy {
 

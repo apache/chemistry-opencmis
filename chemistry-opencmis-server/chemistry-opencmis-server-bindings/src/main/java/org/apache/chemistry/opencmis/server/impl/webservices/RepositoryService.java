@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryEntryType;
@@ -37,7 +38,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeContainer;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
@@ -60,7 +60,7 @@ public class RepositoryService extends AbstractService implements RepositoryServ
       CmisRepositoryService service = factory.getRepositoryService();
       CallContext context = createContext(fContext);
 
-      List<RepositoryInfoData> infoDataList = service.getRepositoryInfos(context,
+      List<RepositoryInfo> infoDataList = service.getRepositoryInfos(context,
           convert(extension));
 
       if (infoDataList == null) {
@@ -68,10 +68,10 @@ public class RepositoryService extends AbstractService implements RepositoryServ
       }
 
       List<CmisRepositoryEntryType> result = new ArrayList<CmisRepositoryEntryType>();
-      for (RepositoryInfoData infoData : infoDataList) {
+      for (RepositoryInfo infoData : infoDataList) {
         CmisRepositoryEntryType entry = new CmisRepositoryEntryType();
-        entry.setRepositoryId(infoData.getRepositoryId());
-        entry.setRepositoryName(infoData.getRepositoryName());
+        entry.setRepositoryId(infoData.getId());
+        entry.setRepositoryName(infoData.getName());
 
         result.add(entry);
       }

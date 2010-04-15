@@ -20,14 +20,14 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.provider.PermissionMappingData;
+import org.apache.chemistry.opencmis.commons.bindings.PermissionMapping;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public class PermissionMappingDataImpl extends AbstractExtensionData implements
-    PermissionMappingData {
+    PermissionMapping {
 
   private static final long serialVersionUID = 1L;
 

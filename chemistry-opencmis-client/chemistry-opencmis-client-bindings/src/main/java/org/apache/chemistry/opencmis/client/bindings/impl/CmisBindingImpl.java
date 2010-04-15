@@ -24,18 +24,18 @@ import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationP
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.bindings.AclService;
+import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.bindings.MultiFilingService;
+import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
+import org.apache.chemistry.opencmis.commons.bindings.PolicyService;
+import org.apache.chemistry.opencmis.commons.bindings.RelationshipService;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
+import org.apache.chemistry.opencmis.commons.bindings.VersioningService;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
-import org.apache.chemistry.opencmis.commons.provider.AclService;
-import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
-import org.apache.chemistry.opencmis.commons.provider.DiscoveryService;
-import org.apache.chemistry.opencmis.commons.provider.MultiFilingService;
-import org.apache.chemistry.opencmis.commons.provider.NavigationService;
-import org.apache.chemistry.opencmis.commons.provider.ObjectService;
-import org.apache.chemistry.opencmis.commons.provider.PolicyService;
-import org.apache.chemistry.opencmis.commons.provider.RelationshipService;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
-import org.apache.chemistry.opencmis.commons.provider.VersioningService;
 
 /**
  * CMIS binding implementation.

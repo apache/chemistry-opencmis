@@ -33,11 +33,11 @@ import joptsimple.OptionSpec;
 
 import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
 
 public class ObjGenApp {
   public static final String DEFAULT_USER = "";
@@ -378,7 +378,7 @@ public class ObjGenApp {
   private void callRepoInfo(String repositoryId, int count) {
     RepositoryService repSvc = getBinding().getRepositoryService();
     TimeLogger timeLogger = new TimeLogger("RepoInfoTest");
-    RepositoryInfoData repoInfo = null;
+    RepositoryInfo repoInfo = null;
     for (int i = 0; i < count; i++) {
       binding.clearRepositoryCache(repositoryId);
       timeLogger.start();

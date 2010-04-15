@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.client.bindings.cache.impl.CacheImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 
 /**
  * A cache for repository info objects.
@@ -65,12 +65,12 @@ public class RepositoryInfoCache implements Serializable {
    * @param repositoryInfo
    *          the repository info object
    */
-  public void put(RepositoryInfoData repositoryInfo) {
-    if ((repositoryInfo == null) || (repositoryInfo.getRepositoryId() == null)) {
+  public void put(RepositoryInfo repositoryInfo) {
+    if ((repositoryInfo == null) || (repositoryInfo.getId() == null)) {
       return;
     }
 
-    fCache.put(repositoryInfo, repositoryInfo.getRepositoryId());
+    fCache.put(repositoryInfo, repositoryInfo.getId());
   }
 
   /**
@@ -80,8 +80,8 @@ public class RepositoryInfoCache implements Serializable {
    *          the repository id
    * @return the repository info object or <code>null</code> if the object is not in the cache
    */
-  public RepositoryInfoData get(String repositoryId) {
-    return (RepositoryInfoData) fCache.get(repositoryId);
+  public RepositoryInfo get(String repositoryId) {
+    return (RepositoryInfo) fCache.get(repositoryId);
   }
 
   /**

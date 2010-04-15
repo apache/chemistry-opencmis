@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.provider.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>

@@ -25,12 +25,12 @@ import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
-import org.apache.chemistry.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.chemistry.opencmis.client.api.util.Container;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 
 /**
  * A session is associated with a specific connection to a CMIS repository. A session belongs to one
@@ -58,7 +58,7 @@ public interface Session {
 
   /**
    * Set the current session parameters for filtering and paging.
-   * 
+   *
    * @param context
    *          the <code>OperationContext</code> to be used for the session; if <code>null</code>, a
    *          default context is used
@@ -128,7 +128,7 @@ public interface Session {
 
   /**
    * Returns all checked out documents.
-   * 
+   *
    * @see Folder#getCheckedOutDocs(int)
    */
   PagingList<Document> getCheckedOutDocs(int itemsPerPage);

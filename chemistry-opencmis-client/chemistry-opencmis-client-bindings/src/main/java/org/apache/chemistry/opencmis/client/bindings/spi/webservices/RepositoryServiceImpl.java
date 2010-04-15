@@ -30,13 +30,13 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryEntryType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
 
 /**
  * Repository Service Web Services client.
@@ -63,16 +63,16 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
    * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos(org.apache.opencmis.client.provider
    * .ExtensionsData)
    */
-  public List<RepositoryInfoData> getRepositoryInfos(ExtensionsData extension) {
+  public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
     RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
 
-    List<RepositoryInfoData> infos = null;
+    List<RepositoryInfo> infos = null;
     try {
       // get the list of repositories
       List<CmisRepositoryEntryType> entries = port.getRepositories(convert(extension));
 
       if (entries != null) {
-        infos = new ArrayList<RepositoryInfoData>();
+        infos = new ArrayList<RepositoryInfo>();
 
         // iterate through the list and fetch repository infos
         for (CmisRepositoryEntryType entry : entries) {
@@ -97,7 +97,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
    * @see org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo(java.lang.String,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public RepositoryInfoData getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+  public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
     RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
 
     try {

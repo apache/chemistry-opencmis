@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 
 /**
  * CMIS Repository Service interface. Please refer to the CMIS specification and the OpenCMIS
@@ -43,7 +43,7 @@ public interface CmisRepositoryService {
    * Bindings: AtomPub, Web Services
    * </p>
    */
-  List<RepositoryInfoData> getRepositoryInfos(CallContext context, ExtensionsData extension);
+  List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension);
 
   /**
    * Gets the repository info of the specified repository.
@@ -52,7 +52,7 @@ public interface CmisRepositoryService {
    * Bindings: AtomPub, Web Services
    * </p>
    */
-  RepositoryInfoData getRepositoryInfo(CallContext context, String repositoryId,
+  RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId,
       ExtensionsData extension);
 
   /**

@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -102,7 +102,7 @@ public abstract class AbstractBindingIT {
     System.out.println("Creating test folder...");
 
     // get root folder id
-    RepositoryInfoData ri = getBinding().getRepositoryService().getRepositoryInfo(fRepositoryId,
+    RepositoryInfo ri = getBinding().getRepositoryService().getRepositoryInfo(fRepositoryId,
         null);
     assertNotNull(ri);
     assertNotNull(ri.getRootFolderId());

@@ -28,9 +28,9 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.chemistry.opencmis.client.api.util.Container;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.fit.SessionFactory;
 import org.junit.Before;
@@ -39,9 +39,9 @@ import org.junit.Test;
 
 /**
  * Sample test case that demonstrates how to build integration tests.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public abstract class AbstractSampleIT {
 

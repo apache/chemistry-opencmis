@@ -42,31 +42,29 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
-import org.apache.chemistry.opencmis.client.api.repository.RepositoryInfo;
 import org.apache.chemistry.opencmis.client.api.util.Container;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
-import org.apache.chemistry.opencmis.client.runtime.repository.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
-import org.apache.chemistry.opencmis.commons.provider.DiscoveryService;
-import org.apache.chemistry.opencmis.commons.provider.NavigationService;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectList;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -117,7 +115,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
    * Lazy loaded repository info. Will be invalid after clear(). Access by getter always.
    * (serializable)
    */
-  private RepositoryInfoImpl repositoryInfo;
+  private RepositoryInfo repositoryInfo;
 
   /*
    * helper factory (non serializable)
@@ -194,7 +192,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#clear()
    */
   public void clear() {
@@ -221,7 +219,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getObjectFactory()
    */
   public ObjectFactory getObjectFactory() {
@@ -230,7 +228,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getCheckedOutDocs(int)
    */
   public PagingList<Document> getCheckedOutDocs(int itemsPerPage) {
@@ -239,7 +237,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @seeorg.apache.opencmis.client.api.Session#getCheckedOutDocs(org.apache.opencmis.client.api.
    * OperationContext, int)
    */
@@ -290,7 +288,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getContentChanges(java.lang.String, int)
    */
   public PagingList<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage) {
@@ -299,7 +297,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getDefaultContext()
    */
   public OperationContext getDefaultContext() {
@@ -314,7 +312,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @seeorg.apache.opencmis.client.api.Session#setDefaultContext(org.apache.opencmis.client.api.
    * OperationContext)
    */
@@ -330,7 +328,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#createOperationContext(java.util.Set, boolean,
    * boolean, boolean, org.apache.opencmis.commons.enums.IncludeRelationships, java.util.Set,
    * boolean, java.lang.String, boolean)
@@ -345,7 +343,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#createObjectId(java.lang.String)
    */
   public ObjectId createObjectId(String id) {
@@ -358,7 +356,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getObject(java.lang.String)
    */
   public CmisObject getObject(ObjectId objectId) {
@@ -367,7 +365,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getObject(java.lang.String,
    * org.apache.opencmis.client.api.OperationContext)
    */
@@ -407,7 +405,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getObjectByPath(java.lang.String)
    */
   public CmisObject getObjectByPath(String path) {
@@ -416,7 +414,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getObjectByPath(java.lang.String,
    * org.apache.opencmis.client.api.OperationContext)
    */
@@ -456,7 +454,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getRepositoryInfo()
    */
   public RepositoryInfo getRepositoryInfo() {
@@ -471,7 +469,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getRootFolder()
    */
   public Folder getRootFolder() {
@@ -480,7 +478,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @seeorg.apache.opencmis.client.api.Session#getRootFolder(org.apache.opencmis.client.api.
    * OperationContext)
    */
@@ -497,7 +495,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getTypeChildren(java.lang.String, boolean, int)
    */
   public PagingList<ObjectType> getTypeChildren(final String typeId,
@@ -539,7 +537,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getTypeDefinition(java.lang.String)
    */
   public ObjectType getTypeDefinition(String typeId) {
@@ -550,7 +548,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getTypeDescendants(java.lang.String, int, boolean)
    */
   public List<Container<ObjectType>> getTypeDescendants(String typeId, int depth,
@@ -581,7 +579,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#query(java.lang.String, boolean, int)
    */
   public PagingList<QueryResult> query(final String statement, final boolean searchAllVersions,
@@ -591,7 +589,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#query(java.lang.String, boolean,
    * org.apache.opencmis.client.api.OperationContext, int)
    */
@@ -662,10 +660,8 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
         throw new IllegalStateException("Repository Id is not set!");
       }
 
-      RepositoryInfoData data = getBinding().getRepositoryService().getRepositoryInfo(
+      repositoryInfo = getBinding().getRepositoryService().getRepositoryInfo(
           repositoryId, null);
-
-      this.repositoryInfo = new RepositoryInfoImpl(data);
     }
     finally {
       fLock.writeLock().unlock();
@@ -674,7 +670,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#getBinding()
    */
   public CmisBinding getBinding() {
@@ -708,7 +704,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#createDocument(java.util.Map,
    * org.apache.opencmis.client.api.ObjectId, org.apache.opencmis.client.api.ContentStream,
    * org.apache.opencmis.commons.enums.VersioningState, java.util.List, java.util.List,
@@ -737,7 +733,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.Session#createDocumentFromSource(org.apache.opencmis.client.
    * api.ObjectId, java.util.Map, org.apache.opencmis.client.api.ObjectId,
@@ -780,7 +776,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#createFolder(java.util.Map,
    * org.apache.opencmis.client.api.ObjectId, java.util.List, java.util.List, java.util.List)
    */
@@ -804,7 +800,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#createPolicy(java.util.Map,
    * org.apache.opencmis.client.api.ObjectId, java.util.List, java.util.List, java.util.List)
    */
@@ -828,7 +824,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.Session#createRelationship(java.util.Map, java.util.List,
    * java.util.List, java.util.List)
    */

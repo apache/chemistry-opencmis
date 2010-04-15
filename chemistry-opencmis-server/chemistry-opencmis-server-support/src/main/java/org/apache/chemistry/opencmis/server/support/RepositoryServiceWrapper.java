@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 
@@ -68,7 +68,7 @@ public class RepositoryServiceWrapper extends AbstractServiceWrapper implements
    * org.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfo(org.apache.opencmis.
    * server.spi.CallContext, java.lang.String, org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public RepositoryInfoData getRepositoryInfo(CallContext context, String repositoryId,
+  public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId,
       ExtensionsData extension) {
     checkRepositoryId(repositoryId);
 
@@ -87,7 +87,7 @@ public class RepositoryServiceWrapper extends AbstractServiceWrapper implements
    * org.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfos(org.apache.opencmis
    * .server.spi.CallContext, org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public List<RepositoryInfoData> getRepositoryInfos(CallContext context, ExtensionsData extension) {
+  public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
     try {
       return fService.getRepositoryInfos(context, extension);
     }

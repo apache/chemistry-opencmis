@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
-import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.provider.NavigationService;
-import org.apache.chemistry.opencmis.commons.provider.ObjectService;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.clientprovider.NavigationServiceImpl;
 import org.apache.chemistry.opencmis.inmemory.clientprovider.ObjectServiceImpl;
@@ -257,7 +257,7 @@ public class ServiceFactory extends AbstractServicesFactory {
    RuntimeContext.attachCfg(new DummyCallContext());
 
     // Build the tree
-    RepositoryInfoData rep = repSvc.getRepositoryInfo(repositoryId, null);
+    RepositoryInfo rep = repSvc.getRepositoryInfo(repositoryId, null);
     String rootFolderId = rep.getRootFolderId();
 
     try {

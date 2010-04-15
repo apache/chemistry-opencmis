@@ -19,7 +19,7 @@
 package org.apache.chemistry.opencmis.inmemory.clientprovider;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.provider.MultiFilingService;
+import org.apache.chemistry.opencmis.commons.bindings.MultiFilingService;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryMultiFilingServiceImpl;
 
 public class MultiFilingServiceImpl  extends AbstractService implements MultiFilingService {

@@ -24,16 +24,16 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.Holder;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.TypeOfChanges;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
-import org.apache.chemistry.opencmis.commons.provider.Holder;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.provider.ObjectList;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
@@ -64,7 +64,7 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
       // Attach the CallContext to a thread local context that can be accessed from everywhere
       RuntimeContext.attachCfg(context);
 
-      RepositoryInfoData rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
+      RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
       String rootFolderId = rep.getRootFolderId();
 
       ObjectListImpl objList = new ObjectListImpl();
@@ -116,7 +116,7 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
       RuntimeContext.attachCfg(context);
 
       // use descendants of root folder as result
-      RepositoryInfoData rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
+      RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
       String rootFolderId = rep.getRootFolderId();
       ObjectListImpl objList = new ObjectListImpl();
       List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context,

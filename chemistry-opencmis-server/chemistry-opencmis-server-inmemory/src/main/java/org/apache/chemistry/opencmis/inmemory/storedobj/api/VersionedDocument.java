@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
 
 /**
  * A version series is a concrete object (meaning it can be stored) and has 

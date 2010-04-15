@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.server.spi;
 import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
-import org.apache.chemistry.opencmis.commons.provider.ObjectList;
 
 /**
  * CMIS Relationship Service interface. Please refer to the CMIS specification and the OpenCMIS

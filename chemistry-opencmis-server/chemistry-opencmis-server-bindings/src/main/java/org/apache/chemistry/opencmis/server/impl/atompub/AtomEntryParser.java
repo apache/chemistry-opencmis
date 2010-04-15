@@ -34,6 +34,13 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -43,13 +50,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataI
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyStringData;
 import org.apache.commons.codec.binary.Base64;
 
 /**

@@ -18,12 +18,12 @@
  */
 package org.apache.chemistry.opencmis.util.repository;
 
-import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
-import org.apache.chemistry.opencmis.commons.provider.NavigationService;
-import org.apache.chemistry.opencmis.commons.provider.ObjectService;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
+import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
 
 public class MultiThreadedObjectGenerator {
   
@@ -97,7 +97,7 @@ public class MultiThreadedObjectGenerator {
   static private String getRootFolderId(CmisBinding binding, String repositoryId, String rootFolderId) {
     RepositoryService repSvc = binding.getRepositoryService();
 
-    RepositoryInfoData rep = repSvc.getRepositoryInfo(repositoryId, null);
+    RepositoryInfo rep = repSvc.getRepositoryInfo(repositoryId, null);
     if (null == rootFolderId || rootFolderId.length() == 0)
       rootFolderId = rep.getRootFolderId();
     

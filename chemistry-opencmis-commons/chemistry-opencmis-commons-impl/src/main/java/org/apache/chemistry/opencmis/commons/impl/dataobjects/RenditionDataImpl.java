@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.provider.RenditionData;
+import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>

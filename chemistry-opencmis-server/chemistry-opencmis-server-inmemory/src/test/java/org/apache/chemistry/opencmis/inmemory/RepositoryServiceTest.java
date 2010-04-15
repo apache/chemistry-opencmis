@@ -32,13 +32,14 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityRendition;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
@@ -50,8 +51,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDef
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
@@ -77,7 +77,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
 
   static public class UnitTestRepositoryInfo implements RepositoryInfoCreator {
 
-    public RepositoryInfoData createRepositoryInfo() {
+    public RepositoryInfo createRepositoryInfo() {
       RepositoryCapabilitiesDataImpl caps = new RepositoryCapabilitiesDataImpl();
       caps.setAllVersionsSearchable(false);
       caps.setCapabilityAcl(CapabilityAcl.NONE);
@@ -85,7 +85,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
       caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
       caps.setCapabilityJoin(CapabilityJoin.NONE);
       caps.setCapabilityQuery(CapabilityQuery.NONE);
-      caps.setCapabilityRendition(CapabilityRendition.NONE);
+      caps.setCapabilityRendition(CapabilityRenditions.NONE);
       caps.setIsPwcSearchable(false);
       caps.setIsPwcUpdatable(true);
       caps.setSupportsGetDescendants(true);
@@ -94,7 +94,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
       caps.setSupportsUnfiling(true);
       caps.setSupportsVersionSpecificFiling(false);
       
-      RepositoryInfoDataImpl repositoryInfo = new RepositoryInfoDataImpl();     
+      RepositoryInfoImpl repositoryInfo = new RepositoryInfoImpl();     
       repositoryInfo.setRepositoryId(REPOSITORY_ID);
       repositoryInfo.setRepositoryName("InMemory Repository");
       repositoryInfo.setRepositoryDescription("InMemory Test Repository");
@@ -129,19 +129,19 @@ public class RepositoryServiceTest extends AbstractServiceTst {
   @Test
   public void testRepositoryInfo() throws Exception {
     log.info("starting testRepositoryInfo() ...");
-    List<RepositoryInfoData> repositories = fRepSvc.getRepositoryInfos(
+    List<RepositoryInfo> repositories = fRepSvc.getRepositoryInfos(
         null);
     assertNotNull(repositories);
     assertFalse(repositories.isEmpty());
 
     log.info("geRepositoryInfo(), found " + repositories.size() + " repository/repositories).");
 
-    for (RepositoryInfoData repository : repositories) {
-      RepositoryInfoData repository2 = fRepSvc.getRepositoryInfo(
-          repository.getRepositoryId(), null);
+    for (RepositoryInfo repository : repositories) {
+      RepositoryInfo repository2 = fRepSvc.getRepositoryInfo(
+          repository.getId(), null);
       assertNotNull(repository2);
-      assertEquals(repository.getRepositoryId(), repository2.getRepositoryId());
-      log.info("found repository" + repository2.getRepositoryId());
+      assertEquals(repository.getId(), repository2.getId());
+      log.info("found repository" + repository2.getId());
     }
 
     log.info("... testRepositoryInfo() finished.");
@@ -361,7 +361,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     String wrongTypeId = "UnknownType";
 
     try {
-      RepositoryInfoData repInf = fRepSvc.getRepositoryInfo(
+      RepositoryInfo repInf = fRepSvc.getRepositoryInfo(
           wrongRepositoryId, null);
       log.debug("getRepositoryInfo(): " + repInf);
       fail("getRepositoryInfo() with illegal repository id should throw InvalidArgumentException.");
@@ -484,11 +484,11 @@ public class RepositoryServiceTest extends AbstractServiceTst {
   }
 
   private String getRepositoryId() {
-    List<RepositoryInfoData> repositories = fRepSvc.getRepositoryInfos(
+    List<RepositoryInfo> repositories = fRepSvc.getRepositoryInfos(
         null);
-    RepositoryInfoData repository = repositories.get(0);
+    RepositoryInfo repository = repositories.get(0);
     assertNotNull(repository);
-    return repository.getRepositoryId();
+    return repository.getId();
   }
 
   private boolean containsTypeById(String typeId, List<TypeDefinitionContainer> types) {

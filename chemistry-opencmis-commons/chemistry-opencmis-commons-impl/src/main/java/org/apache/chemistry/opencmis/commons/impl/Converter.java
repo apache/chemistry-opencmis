@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +55,35 @@ import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlEntry;
+import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
+import org.apache.chemistry.opencmis.commons.bindings.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.bindings.Holder;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
+import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.bindings.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.bindings.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.bindings.PolicyIdListData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyBooleanData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyDateTimeData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyDecimalData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyHtmlData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyIntegerData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.bindings.PropertyUriData;
+import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryCapabilities;
+import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
@@ -61,7 +91,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityRendition;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
@@ -115,7 +145,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinit
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisACLCapabilityType;
@@ -190,43 +220,14 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumPropertyType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumSupportedPermissions;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumTypeOfChanges;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUpdatability;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlEntry;
-import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.AclCapabilitiesData;
-import org.apache.chemistry.opencmis.commons.provider.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
-import org.apache.chemistry.opencmis.commons.provider.FailedToDeleteData;
-import org.apache.chemistry.opencmis.commons.provider.Holder;
-import org.apache.chemistry.opencmis.commons.provider.ObjectData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.provider.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectList;
-import org.apache.chemistry.opencmis.commons.provider.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.provider.PermissionDefinitionData;
-import org.apache.chemistry.opencmis.commons.provider.PermissionMappingData;
-import org.apache.chemistry.opencmis.commons.provider.PolicyIdListData;
-import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyBooleanData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyDateTimeData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyDecimalData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyHtmlData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyIntegerData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyStringData;
-import org.apache.chemistry.opencmis.commons.provider.PropertyUriData;
-import org.apache.chemistry.opencmis.commons.provider.RenditionData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryCapabilitiesData;
-import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 
 import com.sun.xml.ws.developer.StreamingDataHandler;
 
 /**
  * Contains converter methods.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public final class Converter {
 
@@ -243,12 +244,12 @@ public final class Converter {
   /**
    * Converts a repository info object.
    */
-  public static RepositoryInfoData convert(CmisRepositoryInfoType repositoryInfo) {
+  public static RepositoryInfo convert(CmisRepositoryInfoType repositoryInfo) {
     if (repositoryInfo == null) {
       return null;
     }
 
-    RepositoryInfoDataImpl result = new RepositoryInfoDataImpl();
+    RepositoryInfoImpl result = new RepositoryInfoImpl();
 
     result.setAclCapabilities(convert(repositoryInfo.getAclCapability()));
     result.setChangesIncomplete(repositoryInfo.isChangesIncomplete());
@@ -280,7 +281,7 @@ public final class Converter {
   /**
    * Converts a repository capability object.
    */
-  public static RepositoryCapabilitiesData convert(CmisRepositoryCapabilitiesType capabilities) {
+  public static RepositoryCapabilities convert(CmisRepositoryCapabilitiesType capabilities) {
     if (capabilities == null) {
       return null;
     }
@@ -295,7 +296,7 @@ public final class Converter {
         capabilities.getCapabilityContentStreamUpdatability()));
     result.setCapabilityJoin(convert(CapabilityJoin.class, capabilities.getCapabilityJoin()));
     result.setCapabilityQuery(convert(CapabilityQuery.class, capabilities.getCapabilityQuery()));
-    result.setCapabilityRendition(convert(CapabilityRendition.class, capabilities
+    result.setCapabilityRendition(convert(CapabilityRenditions.class, capabilities
         .getCapabilityRenditions()));
     result.setIsPwcSearchable(capabilities.isCapabilityPWCSearchable());
     result.setIsPwcUpdatable(capabilities.isCapabilityPWCUpdatable());
@@ -314,7 +315,7 @@ public final class Converter {
   /**
    * Converts a ACL capability object.
    */
-  public static AclCapabilitiesData convert(CmisACLCapabilityType aclCapabilities) {
+  public static AclCapabilities convert(CmisACLCapabilityType aclCapabilities) {
     if (aclCapabilities == null) {
       return null;
     }
@@ -326,7 +327,7 @@ public final class Converter {
 
     result.setAclPropagation(convert(AclPropagation.class, aclCapabilities.getPropagation()));
 
-    List<PermissionDefinitionData> permissionDefinitionList = new ArrayList<PermissionDefinitionData>();
+    List<PermissionDefinition> permissionDefinitionList = new ArrayList<PermissionDefinition>();
     for (CmisPermissionDefinition permDef : aclCapabilities.getPermissions()) {
       PermissionDefinitionDataImpl permDefData = new PermissionDefinitionDataImpl();
       permDefData.setPermission(permDef.getPermission());
@@ -337,15 +338,15 @@ public final class Converter {
     }
     result.setPermissionDefinitionData(permissionDefinitionList);
 
-    List<PermissionMappingData> permissionMapping = new ArrayList<PermissionMappingData>();
+    Map<String, PermissionMapping> permissionMapping = new LinkedHashMap<String, PermissionMapping>();
     for (CmisPermissionMapping permMapping : aclCapabilities.getMapping()) {
       if (permMapping.getKey() != null) {
         PermissionMappingDataImpl permMappingData = new PermissionMappingDataImpl();
-        permMappingData.setKey(permMapping.getKey().value());
+        String key = permMapping.getKey().value();
+        permMappingData.setKey(key);
         permMappingData.setPermissions(permMapping.getPermission());
         convertExtension(permMapping, permMappingData);
-
-        permissionMapping.add(permMappingData);
+        permissionMapping.put(key, permMappingData);
       }
     }
     result.setPermissionMappingData(permissionMapping);
@@ -359,7 +360,7 @@ public final class Converter {
   /**
    * Converts a repository info object.
    */
-  public static CmisRepositoryInfoType convert(RepositoryInfoData repositoryInfo) {
+  public static CmisRepositoryInfoType convert(RepositoryInfo repositoryInfo) {
     if (repositoryInfo == null) {
       return null;
     }
@@ -367,17 +368,17 @@ public final class Converter {
     CmisRepositoryInfoType result = new CmisRepositoryInfoType();
 
     result.setAclCapability(convert(repositoryInfo.getAclCapabilities()));
-    result.setCapabilities(convert(repositoryInfo.getRepositoryCapabilities()));
-    result.setChangesIncomplete(repositoryInfo.changesIncomplete());
+    result.setCapabilities(convert(repositoryInfo.getCapabilities()));
+    result.setChangesIncomplete(repositoryInfo.getChangesIncomplete());
     result.setCmisVersionSupported(repositoryInfo.getCmisVersionSupported());
     result.setLatestChangeLogToken(repositoryInfo.getLatestChangeLogToken());
-    result.setPrincipalAnonymous(repositoryInfo.getPrincipalAnonymous());
-    result.setPrincipalAnyone(repositoryInfo.getPrincipalAnyone());
+    result.setPrincipalAnonymous(repositoryInfo.getPrincipalIdAnonymous());
+    result.setPrincipalAnyone(repositoryInfo.getPrincipalIdAnyone());
     result.setProductName(repositoryInfo.getProductName());
     result.setProductVersion(repositoryInfo.getProductVersion());
-    result.setRepositoryDescription(repositoryInfo.getRepositoryDescription());
-    result.setRepositoryId(repositoryInfo.getRepositoryId());
-    result.setRepositoryName(repositoryInfo.getRepositoryName());
+    result.setRepositoryDescription(repositoryInfo.getDescription());
+    result.setRepositoryId(repositoryInfo.getId());
+    result.setRepositoryName(repositoryInfo.getName());
     result.setRootFolderId(repositoryInfo.getRootFolderId());
     result.setThinClientURI(repositoryInfo.getThinClientUri());
     result.setVendorName(repositoryInfo.getVendorName());
@@ -397,31 +398,31 @@ public final class Converter {
   /**
    * Converts a repository capability object.
    */
-  public static CmisRepositoryCapabilitiesType convert(RepositoryCapabilitiesData capabilities) {
+  public static CmisRepositoryCapabilitiesType convert(RepositoryCapabilities capabilities) {
     if (capabilities == null) {
       return null;
     }
 
     CmisRepositoryCapabilitiesType result = new CmisRepositoryCapabilitiesType();
 
-    result.setCapabilityACL(convert(EnumCapabilityACL.class, capabilities.getCapabilityAcl()));
-    result.setCapabilityAllVersionsSearchable(capabilities.allVersionsSearchable());
+    result.setCapabilityACL(convert(EnumCapabilityACL.class, capabilities.getAclCapability()));
+    result.setCapabilityAllVersionsSearchable(capabilities.isAllVersionsSearchableSupported());
     result.setCapabilityChanges(convert(EnumCapabilityChanges.class, capabilities
-        .getCapabilityChanges()));
+        .getChangesCapability()));
     result.setCapabilityContentStreamUpdatability(convert(EnumCapabilityContentStreamUpdates.class,
-        capabilities.getCapabilityContentStreamUpdatability()));
-    result.setCapabilityGetDescendants(capabilities.supportsGetDescendants());
-    result.setCapabilityGetFolderTree(capabilities.supportsGetFolderTree());
-    result.setCapabilityJoin(convert(EnumCapabilityJoin.class, capabilities.getCapabilityJoin()));
-    result.setCapabilityMultifiling(capabilities.supportsMultifiling());
-    result.setCapabilityPWCSearchable(capabilities.isPwcSearchable());
-    result.setCapabilityPWCUpdatable(capabilities.isPwcUpdatable());
+        capabilities.getContentStreamUpdatesCapability()));
+    result.setCapabilityGetDescendants(capabilities.isGetDescendantsSupported());
+    result.setCapabilityGetFolderTree(capabilities.isGetFolderTreeSupported());
+    result.setCapabilityJoin(convert(EnumCapabilityJoin.class, capabilities.getJoinCapability()));
+    result.setCapabilityMultifiling(capabilities.isMultifilingSupported());
+    result.setCapabilityPWCSearchable(capabilities.isPwcSearchableSupported());
+    result.setCapabilityPWCUpdatable(capabilities.isPwcUpdatableSupported());
     result
-        .setCapabilityQuery(convert(EnumCapabilityQuery.class, capabilities.getCapabilityQuery()));
+        .setCapabilityQuery(convert(EnumCapabilityQuery.class, capabilities.getQueryCapability()));
     result.setCapabilityRenditions(convert(EnumCapabilityRendition.class, capabilities
-        .getCapabilityRenditions()));
-    result.setCapabilityUnfiling(capabilities.supportsUnfiling());
-    result.setCapabilityVersionSpecificFiling(capabilities.supportsVersionSpecificFiling());
+        .getRenditionsCapability()));
+    result.setCapabilityUnfiling(capabilities.isUnfilingSupported());
+    result.setCapabilityVersionSpecificFiling(capabilities.isVersionSpecificFilingSupported());
 
     // handle extensions
     convertExtension(capabilities, result);
@@ -432,7 +433,7 @@ public final class Converter {
   /**
    * Converts a ACL capability object.
    */
-  public static CmisACLCapabilityType convert(AclCapabilitiesData aclCapabilities) {
+  public static CmisACLCapabilityType convert(AclCapabilities aclCapabilities) {
     if (aclCapabilities == null) {
       return null;
     }
@@ -444,19 +445,19 @@ public final class Converter {
 
     result.setPropagation(convert(EnumACLPropagation.class, aclCapabilities.getAclPropagation()));
 
-    if (aclCapabilities.getPermissionDefinitionData() != null) {
-      for (PermissionDefinitionData pdd : aclCapabilities.getPermissionDefinitionData()) {
+    if (aclCapabilities.getPermissions() != null) {
+      for (PermissionDefinition pdd : aclCapabilities.getPermissions()) {
         CmisPermissionDefinition permDef = new CmisPermissionDefinition();
         permDef.setDescription(pdd.getDescription());
-        permDef.setPermission(pdd.getPermission());
+        permDef.setPermission(pdd.getId());
         convertExtension(pdd, permDef);
 
         result.getPermissions().add(permDef);
       }
     }
 
-    if (aclCapabilities.getPermissionMappingData() != null) {
-      for (PermissionMappingData pmd : aclCapabilities.getPermissionMappingData()) {
+    if (aclCapabilities.getPermissionMapping() != null) {
+      for (PermissionMapping pmd : aclCapabilities.getPermissionMapping().values()) {
         CmisPermissionMapping permMap = new CmisPermissionMapping();
         permMap.setKey(EnumAllowableActionsKey.fromValue(pmd.getKey()));
 

@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.GregorianCalendar;
 
+import org.apache.chemistry.opencmis.commons.bindings.ChangeEventInfoData;
 import org.apache.chemistry.opencmis.commons.enums.TypeOfChanges;
-import org.apache.chemistry.opencmis.commons.provider.ChangeEventInfoData;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>

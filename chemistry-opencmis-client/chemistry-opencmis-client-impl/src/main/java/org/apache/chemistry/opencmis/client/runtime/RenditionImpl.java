@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
 
 /**
  * Implementation of <code>Rendition</code>.
