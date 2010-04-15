@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ProviderObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.NavigationService;
 import org.apache.chemistry.opencmis.commons.provider.ObjectService;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
@@ -192,7 +192,7 @@ public class ServiceFactory extends AbstractServicesFactory {
     if (!doFillRepository)
       return;
 
-    ProviderObjectFactory objectFactory = new ProviderObjectFactoryImpl();
+    BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
     NavigationService navSvc = new NavigationServiceImpl(fNavSvc);
     ObjectService objSvc = new ObjectServiceImpl(fObjSvc);
     RepositoryService repSvc = new RepositoryServiceImpl(fRepSvc);

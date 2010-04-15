@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 
 /**
@@ -122,7 +122,7 @@ public interface StoreManager {
    * @return
    *    factory object
    */
-  ProviderObjectFactory getObjectFactory();
+  BindingsObjectFactory getObjectFactory();
 
   /**
    * Retrieve a list of root types in the repositories. Root types are available by

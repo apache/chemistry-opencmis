@@ -14,15 +14,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.provider.factory.CmisProviderFactory;
+import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ProviderObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
-import org.apache.chemistry.opencmis.commons.provider.CmisProvider;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.provider.CmisBinding;
 import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
 import org.apache.chemistry.opencmis.commons.provider.MultiFilingService;
 import org.apache.chemistry.opencmis.commons.provider.NavigationService;
@@ -31,11 +32,9 @@ import org.apache.chemistry.opencmis.commons.provider.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.provider.ObjectService;
 import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryService;
 import org.apache.chemistry.opencmis.commons.provider.VersioningService;
-import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo;
 import org.apache.chemistry.opencmis.inmemory.clientprovider.CmisInMemoryProvider;
 import org.apache.chemistry.opencmis.inmemory.clientprovider.DummyCallContext;
@@ -47,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
 public class AbstractServiceTst /* extends TestCase*/ {
   private static Log LOG = LogFactory.getLog(AbstractServiceTst.class);
   protected static final String REPOSITORY_ID = "UnitTestRepository";
-  protected ProviderObjectFactory fFactory = new ProviderObjectFactoryImpl();
+  protected BindingsObjectFactory fFactory = new BindingsObjectFactoryImpl();
   protected String fRootFolderId;
   protected String fRepositoryId;
   protected ObjectService fObjSvc;
@@ -79,7 +78,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
     //super.setUp();
     LOG.debug("Initializing InMemory Test with type creator class: " + fTypeCreatorClassName);
     Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put(SessionParameter.BINDING_SPI_CLASS, CmisProviderFactory.BINDING_SPI_INMEMORY);
+    parameters.put(SessionParameter.BINDING_SPI_CLASS, CmisBindingFactory.BINDING_SPI_INMEMORY);
     // attach TypeSystem to the session
 
     // attach repository info to the session:
@@ -341,11 +340,11 @@ public class AbstractServiceTst /* extends TestCase*/ {
    *    configuration parameters for client provider interface and in-memory provider
    */
   private void initializeUsingClientProvider(Map<String, String> parameters) {
-    CmisProvider provider;
+	  CmisBinding provider;
 
     // get factory and create provider
-    CmisProviderFactory factory = CmisProviderFactory.newInstance();
-    provider = factory.createCmisProvider(parameters);
+    CmisBindingFactory factory = CmisBindingFactory.newInstance();
+    provider = factory.createCmisBinding(parameters);
     assertNotNull(provider);
     fFactory = provider.getObjectFactory();
     fRepSvc = provider.getRepositoryService();

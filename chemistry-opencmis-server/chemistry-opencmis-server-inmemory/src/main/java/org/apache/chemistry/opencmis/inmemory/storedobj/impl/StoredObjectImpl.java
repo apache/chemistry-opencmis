@@ -27,8 +27,8 @@ import java.util.TimeZone;
 import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
@@ -212,7 +212,7 @@ public class StoredObjectImpl implements StoredObject {
    * @see org.opencmis.client.provider.spi.inmemory.IStoredObject#fillProperties(java.util.List, org.opencmis.client.provider.ProviderObjectFactory, java.util.List)
    */
   public void fillProperties(Map<String, PropertyData<?>> properties,
-      ProviderObjectFactory objFactory, List<String> requestedIds) {
+      BindingsObjectFactory objFactory, List<String> requestedIds) {
     
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_NAME, requestedIds)) {
       properties.put(PropertyIds.CMIS_NAME, objFactory.createPropertyStringData(PropertyIds.CMIS_NAME, getName()));

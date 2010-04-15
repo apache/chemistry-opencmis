@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
@@ -154,7 +154,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
     return false;
   }
 
-  public void fillProperties(Map<String, PropertyData<?>> properties, ProviderObjectFactory objFactory,
+  public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
       List<String> requestedIds) {
 
     super.fillProperties(properties, objFactory, requestedIds);

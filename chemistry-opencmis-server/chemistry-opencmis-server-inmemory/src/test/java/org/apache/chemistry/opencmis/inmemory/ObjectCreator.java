@@ -33,21 +33,21 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamDataImpl;
 import org.apache.chemistry.opencmis.commons.provider.AccessControlList;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
 import org.apache.chemistry.opencmis.commons.provider.Holder;
 import org.apache.chemistry.opencmis.commons.provider.ObjectService;
 import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyStringData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 
 public class ObjectCreator {
   
-  private ProviderObjectFactory fFactory;
+  private BindingsObjectFactory fFactory;
   private ObjectService fObjSvc;
   private String fRepositoryId;
 
-  public ObjectCreator(ProviderObjectFactory factory, ObjectService objSvc, String repositoryId) {
+  public ObjectCreator(BindingsObjectFactory factory, ObjectService objSvc, String repositoryId) {
     fObjSvc = objSvc;
     fFactory = factory;
     fRepositoryId = repositoryId;

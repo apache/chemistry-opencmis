@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.commons.logging.Log;
@@ -86,7 +86,7 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     }
   }
 
-  public void fillProperties(Map<String, PropertyData<?>> properties, ProviderObjectFactory objFactory,
+  public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
       List<String> requestedIds) {
 
     super.fillProperties(properties, objFactory, requestedIds);

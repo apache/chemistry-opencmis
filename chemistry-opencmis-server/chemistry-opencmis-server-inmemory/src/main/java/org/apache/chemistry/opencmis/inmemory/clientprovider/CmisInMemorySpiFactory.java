@@ -22,9 +22,9 @@ package org.apache.chemistry.opencmis.inmemory.clientprovider;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.provider.spi.CmisSpi;
-import org.apache.chemistry.opencmis.client.provider.spi.CmisSpiFactory;
-import org.apache.chemistry.opencmis.client.provider.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
+import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpiFactory;
+import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 
 /**
  * Factory class for an in-memory SMIS SPI. For the in-memory implementation the 

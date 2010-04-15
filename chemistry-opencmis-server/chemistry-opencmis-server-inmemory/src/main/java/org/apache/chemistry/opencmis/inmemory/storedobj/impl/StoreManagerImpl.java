@@ -36,11 +36,11 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRendition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ProviderObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.RepositoryInfoData;
 import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
@@ -56,7 +56,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
  */
 public class StoreManagerImpl implements StoreManager {
 
-  protected ProviderObjectFactory fObjectFactory;
+  protected BindingsObjectFactory fObjectFactory;
   protected RepositoryInfoData fRepositoryInfo;
   
   /**
@@ -76,7 +76,7 @@ public class StoreManagerImpl implements StoreManager {
   }  
   
   public StoreManagerImpl() {
-    fObjectFactory = new ProviderObjectFactoryImpl();
+    fObjectFactory = new BindingsObjectFactoryImpl();
   }
 
   public List<String> getAllRepositoryIds() {
@@ -108,7 +108,7 @@ public class StoreManagerImpl implements StoreManager {
     return fMapRepositoryToObjectStore.get(repositoryId);
   }
 
-  public ProviderObjectFactory getObjectFactory() {
+  public BindingsObjectFactory getObjectFactory() {
     return fObjectFactory;
   }
 
