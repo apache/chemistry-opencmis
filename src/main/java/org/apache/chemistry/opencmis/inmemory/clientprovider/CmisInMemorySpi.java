@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.inmemory.clientprovider;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.provider.spi.CmisSpi;
-import org.apache.chemistry.opencmis.client.provider.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
+import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.provider.AclService;
 import org.apache.chemistry.opencmis.commons.provider.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.provider.MultiFilingService;

@@ -19,17 +19,15 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.ContentStreamData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
@@ -154,7 +152,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
 //      fId = UUID.randomUUID().toString();
 //  }
   
-  public void fillProperties(Map<String, PropertyData<?>> properties, ProviderObjectFactory objFactory,
+  public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
       List<String> requestedIds) {
     
     DocumentVersion pwc = fContainer.getPwc();

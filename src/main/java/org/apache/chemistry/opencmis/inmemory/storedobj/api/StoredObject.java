@@ -22,8 +22,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 
 /**
  * Stored Object interface is common part that all objects handled by CMIS (Documents, Folders,
@@ -203,7 +203,7 @@ public interface StoredObject {
    */
   void updateSystemBasePropertiesWhenModified(Map<String, PropertyData<?>> properties, String user);
 
-  void fillProperties(Map<String, PropertyData<?>> properties, ProviderObjectFactory objFactory,
+  void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
       List<String> requestedIds);
 
   /**

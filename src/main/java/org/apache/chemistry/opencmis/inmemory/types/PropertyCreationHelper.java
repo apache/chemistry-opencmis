@@ -47,10 +47,10 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDef
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.provider.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.provider.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.provider.ObjectData;
 import org.apache.chemistry.opencmis.commons.provider.PropertiesData;
 import org.apache.chemistry.opencmis.commons.provider.PropertyData;
-import org.apache.chemistry.opencmis.commons.provider.ProviderObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
@@ -209,7 +209,7 @@ public class PropertyCreationHelper {
       StoreManager storeManager, List<String> requestedIds) {
     // build properties collection 
     
-    ProviderObjectFactory objectFactory = storeManager.getObjectFactory();
+	  BindingsObjectFactory objectFactory = storeManager.getObjectFactory();
     Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
     so.fillProperties(properties, objectFactory, requestedIds);
 
@@ -225,7 +225,7 @@ public class PropertyCreationHelper {
         String baseTypeId = typeDef.getBaseId().value();
         properties.put(PropertyIds.CMIS_BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.CMIS_BASE_TYPE_ID, baseTypeId));
       }
-    }    
+    }   
     List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>> (properties.values());
     PropertiesData props = objectFactory.createPropertiesData(propertiesList);
     return props;    
