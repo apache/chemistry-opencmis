@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
@@ -80,7 +80,7 @@ public class InMemoryVersioningServiceImpl extends AbstractServiceImpl implement
   }
 
   public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId,
-      Boolean major, PropertiesData properties, ContentStreamData contentStream,
+      Boolean major, PropertiesData properties, ContentStream contentStream,
       String checkinComment, List<String> policies, AccessControlList addAces,
       AccessControlList removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
@@ -133,7 +133,7 @@ public class InMemoryVersioningServiceImpl extends AbstractServiceImpl implement
 
       VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
 
-      ContentStreamData content = null;
+      ContentStream content = null;
 
       if (so instanceof DocumentVersion) {
         // get document the version is contained in to c

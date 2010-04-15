@@ -31,7 +31,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -85,7 +85,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   public String createDocument(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, ContentStreamData contentStream, VersioningState versioningState,
+      String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, AccessControlList addAces, AccessControlList removeAces,
       ExtensionsData extension) {
 
@@ -117,7 +117,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
 
       StoredObject so = checkStandardParameters(repositoryId, sourceId);
 
-      ContentStreamData content = getContentStream(context, repositoryId, sourceId, null,
+      ContentStream content = getContentStream(context, repositoryId, sourceId, null,
           BigInteger.valueOf(-1), BigInteger.valueOf(-1), null);
 
       if (so == null)
@@ -222,7 +222,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
    */
   @SuppressWarnings("unchecked")
   public ObjectData create(CallContext context, String repositoryId, PropertiesData properties,
-      String folderId, ContentStreamData contentStream, VersioningState versioningState,
+      String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     try {
@@ -395,7 +395,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     }
   }
 
-  public ContentStreamData getContentStream(CallContext context, String repositoryId,
+  public ContentStream getContentStream(CallContext context, String repositoryId,
       String objectId, String streamId, BigInteger offset, BigInteger length,
       ExtensionsData extension) {
 
@@ -413,7 +413,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
         throw new CmisObjectNotFoundException("Id" + objectId
             + " does not refer to a document or version, but only those can have content");
 
-      ContentStreamData csd = getContentStream(so, streamId, offset, length);
+      ContentStream csd = getContentStream(so, streamId, offset, length);
       LOG.debug("stop getContentStream()");
       return csd;
     }
@@ -605,7 +605,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   public void setContentStream(CallContext context, String repositoryId, Holder<String> objectId,
-      Boolean overwriteFlag, Holder<String> changeToken, ContentStreamData contentStream,
+      Boolean overwriteFlag, Holder<String> changeToken, ContentStream contentStream,
       ExtensionsData extension) {
 
     try {
@@ -777,7 +777,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   // private helper methods
 
   private StoredObject createDocumentIntern(String repositoryId, PropertiesData properties,
-      String folderId, ContentStreamData contentStream, VersioningState versioningState,
+      String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, AccessControlList addACEs, AccessControlList removeACEs,
       ExtensionsData extension) {
     checkRepositoryId(repositoryId);
@@ -994,12 +994,12 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     return true;
   }
 
-  private ContentStreamData getContentStream(StoredObject so, String streamId, BigInteger offset,
+  private ContentStream getContentStream(StoredObject so, String streamId, BigInteger offset,
       BigInteger length) {
 
     long lOffset = offset == null ? 0 : offset.longValue();
     long lLength = length == null ? -1 : length.longValue();
-    ContentStreamData csd = ((Content) so).getContent(lOffset, lLength);
+    ContentStream csd = ((Content) so).getContent(lOffset, lLength);
     return csd;
   }
 

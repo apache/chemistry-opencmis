@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
@@ -35,19 +35,19 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
  * A class representing a single version of a document
- * 
+ *
  * @author Jens
  *
  */
 public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion {
-  
-  private ContentStreamDataImpl fContent;  
+
+  private ContentStreamDataImpl fContent;
   private VersionedDocument fContainer; // the document this version belongs to
   private String fComment; // checkin comment
   boolean fIsMajor;
   boolean fIsPwc; // true if this is the PWC
-  
-  public DocumentVersionImpl(String repositoryId, VersionedDocument container, ContentStreamData content,
+
+  public DocumentVersionImpl(String repositoryId, VersionedDocument container, ContentStream content,
       VersioningState verState, ObjectStoreImpl objStore) {
     super(objStore);
     setRepositoryId(repositoryId);
@@ -57,13 +57,13 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     fIsPwc = verState == VersioningState.CHECKEDOUT;
     fProperties = new HashMap<String, PropertyData<?>>(); // ensure that we have a map
   }
-  
-  public void setContent(ContentStreamData content, boolean mustPersist) {
+
+  public void setContent(ContentStream content, boolean mustPersist) {
     if (null == content) {
       fContent = null;
-    } else {     
+    } else {
       fContent = new ContentStreamDataImpl();
-      fContent.setFileName(content.getFilename());
+      fContent.setFileName(content.getFileName());
       fContent.setMimeType(content.getMimeType());
       try {
         fContent.setContent(content.getStream());
@@ -72,9 +72,9 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         e.printStackTrace();
         throw new RuntimeException("Failed to get content from InputStream" , e);
       }
-    }  
+    }
   }
-  
+
   public void setCheckinComment(String comment) {
     fComment = comment;
   }
@@ -110,14 +110,14 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     fIsPwc = false; // unset working copy flag
     fIsMajor = isMajor;
   }
-  
-  public ContentStreamData getContent(long offset, long length) {
+
+  public ContentStream getContent(long offset, long length) {
     if (offset<=0 && length<0)
       return fContent;
     else
       return fContent.getCloneWithLimits(offset, length);
   }
-  
+
   public VersionedDocument getParentDocument() {
     return fContainer;
   }
@@ -135,36 +135,36 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
   private boolean isLatestMajorVersion() {
     if (!fIsMajor)
       return false;
-    
+
     List<DocumentVersion> allVersions = fContainer.getAllVersions();
     DocumentVersion latestMajor=null;
-    
+
     for (DocumentVersion ver : allVersions)
-      if (ver.isMajor() && !ver.isPwc()) 
+      if (ver.isMajor() && !ver.isPwc())
         latestMajor = ver;
 
     boolean isLatestMajorVersion = latestMajor == this;
     return isLatestMajorVersion;
   }
-  
+
 //  public void persist() {
 //    if (null==fId)
 //      fId = UUID.randomUUID().toString();
 //  }
-  
+
   public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
       List<String> requestedIds) {
-    
+
     DocumentVersion pwc = fContainer.getPwc();
 
     // First get the properties of the container (like custom type properties, etc)
     fContainer.fillProperties(properties, objFactory, requestedIds);
-    
+
     // overwrite the version specific properties (like modification date, user, etc.)
     // and set some properties specific to the version
     super.fillProperties(properties, objFactory, requestedIds);
-    
-    // fill the version related properties 
+
+    // fill the version related properties
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_LATEST_VERSION, requestedIds)) {
       properties.put(PropertyIds.CMIS_IS_LATEST_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_VERSION, isLatestVersion()));
     }
@@ -174,7 +174,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, requestedIds)) {
       properties.put(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, isLatestMajorVersion()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_ID, requestedIds)) { 
+    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_ID, requestedIds)) {
       properties.put(PropertyIds.CMIS_VERSION_SERIES_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_ID, fContainer.getId()));
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
@@ -188,7 +188,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CHECKIN_COMMENT, requestedIds)) {
       properties.put(PropertyIds.CMIS_CHECKIN_COMMENT, objFactory.createPropertyStringData(PropertyIds.CMIS_CHECKIN_COMMENT, fComment));
-    }    
+    }
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_LABEL, requestedIds)) {
       properties.put(PropertyIds.CMIS_VERSION_LABEL, objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_LABEL, getVersionLabel()));
     }
@@ -200,17 +200,17 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
             .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, fContent
                 .getFileName()));
       }
-      
+
       // omit: PropertyIds.CMIS_CONTENT_STREAM_ID
 
       if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, requestedIds)) {
         properties.put(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, objFactory
-            .createPropertyIntegerData(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, fContent.getLength()));
+            .createPropertyIntegerData(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, fContent.getBigLength()));
       }
       if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, requestedIds)) {
         properties.put(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, objFactory
             .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
-      }      
+      }
     }
   }
 
@@ -227,7 +227,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
   }
 
   public void addParent(Folder parent) {
-    fContainer.addParent(parent);    
+    fContainer.addParent(parent);
   }
 
   public void removeParent(Folder parent) {

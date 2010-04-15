@@ -7,9 +7,9 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 
-public class ContentStreamDataImpl implements ContentStreamData {
+public class ContentStreamDataImpl implements ContentStream {
 
   private int fLength;
 
@@ -18,9 +18,9 @@ public class ContentStreamDataImpl implements ContentStreamData {
   private String fFileName;
 
   private byte[] fContent;
-  
+
   private long fStreamLimitOffset;
-  
+
   private long fStreamLimitLength;
 
   public void setContent (InputStream in) throws IOException {
@@ -29,20 +29,24 @@ public class ContentStreamDataImpl implements ContentStreamData {
       fContent = null; // delete content
       fLength = 0;
     } else {
-      byte[] buffer = new byte[ 0xFFFF ]; 
+      byte[] buffer = new byte[ 0xFFFF ];
       ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
       for ( int len=0; (len = in.read(buffer)) != -1; )  {
-        contentStream.write( buffer, 0, len ); 
+        contentStream.write( buffer, 0, len );
         fLength += len;
       }
       fContent = contentStream.toByteArray();
       fLength = contentStream.size();
       contentStream.close();
-      in.close();    
+      in.close();
     }
   }
 
-  public BigInteger getLength() {
+  public long getLength() {
+    return fLength;
+  }
+
+  public BigInteger getBigLength() {
     return BigInteger.valueOf(fLength);
   }
 
@@ -71,12 +75,12 @@ public class ContentStreamDataImpl implements ContentStreamData {
       return null;
     else if (fStreamLimitOffset <= 0 && fStreamLimitLength < 0)
       return new ByteArrayInputStream(fContent);
-    else 
+    else
       return new ByteArrayInputStream(fContent, (int)(fStreamLimitOffset<0 ? 0 : fStreamLimitOffset),
-          (int)(fStreamLimitLength<0 ? fLength : fStreamLimitLength));      
+          (int)(fStreamLimitLength<0 ? fLength : fStreamLimitLength));
   }
 
-  public ContentStreamData getCloneWithLimits(long offset, long length) {
+  public ContentStream getCloneWithLimits(long offset, long length) {
     ContentStreamDataImpl clone = new ContentStreamDataImpl();
     clone.fFileName = fFileName;
     clone.fLength = fLength;
@@ -86,8 +90,8 @@ public class ContentStreamDataImpl implements ContentStreamData {
     clone.fStreamLimitLength = length;
     return clone;
   }
-  
-  
+
+
   public List<Object> getExtensions() {
     return null;
   }

@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
@@ -33,9 +33,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * InMemory Stored Document A document is a stored object that has a path and (optional) content
- * 
+ *
  * @author Jens
- * 
+ *
  */
 
 public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
@@ -49,10 +49,10 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.opencmis.client.provider.spi.inmemory.IDocument#getContent()
    */
-  public ContentStreamData getContent(long offset, long length) {
+  public ContentStream getContent(long offset, long length) {
     if (null == fContent)
       return null;
     else if (offset<=0 && length<0)
@@ -63,18 +63,18 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.opencmis.client.provider.spi.inmemory.IDocument#setContent(org.opencmis.client.provider
    * .ContentStreamData)
    */
-  public void setContent(ContentStreamData content, boolean mustPersist) {
-    
+  public void setContent(ContentStream content, boolean mustPersist) {
+
     if (null == content) {
       fContent = null;
-    } else {     
+    } else {
       fContent = new ContentStreamDataImpl();
-      fContent.setFileName(content.getFilename());
+      fContent.setFileName(content.getFileName());
       fContent.setMimeType(content.getMimeType());
       try {
         fContent.setContent(content.getStream());
@@ -93,11 +93,11 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
 
     // fill the version related properties (versions should override this but the spec requires some
     // properties always to be set
-    
+
     if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_IMMUTABLE, requestedIds)) {
       properties.put(PropertyIds.CMIS_IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_IMMUTABLE, false));
     }
-        
+
     // Set the content related properties
     if (null != fContent) {
       if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, requestedIds)) {
@@ -108,12 +108,12 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
       // omit: PropertyIds.CMIS_CONTENT_STREAM_ID
       if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, requestedIds)) {
         properties.put(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, objFactory
-            .createPropertyIntegerData(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, fContent.getLength()));
+            .createPropertyIntegerData(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, fContent.getBigLength()));
       }
       if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, requestedIds)) {
         properties.put(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, objFactory
             .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
-      }      
+      }
     }
   }
 

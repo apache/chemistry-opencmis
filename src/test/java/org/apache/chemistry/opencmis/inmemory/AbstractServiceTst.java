@@ -21,7 +21,7 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.AccessControlList;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.MultiFilingService;
 import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -57,7 +57,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
   protected DummyCallContext fTestCallContext;
   private String fTypeCreatorClassName;
   private boolean fUseClientProviderInterface;
-  
+
   public AbstractServiceTst() {
     // The in-memory server unit tests can either be run directly against the
     // service implementation or against a client provider interface. The client
@@ -68,12 +68,12 @@ public class AbstractServiceTst /* extends TestCase*/ {
       // Init with default types, can be overridden by subclasses:
     fTypeCreatorClassName = UnitTestTypeSystemCreator.class.getName();
   }
-  
+
   // Subclasses may want to use their own types
   protected void setTypeCreatorClass(String typeCreatorClassName) {
     fTypeCreatorClassName = typeCreatorClassName;
   }
-  
+
   protected void setUp() throws Exception {
     //super.setUp();
     LOG.debug("Initializing InMemory Test with type creator class: " + fTypeCreatorClassName);
@@ -88,10 +88,10 @@ public class AbstractServiceTst /* extends TestCase*/ {
     // attach repository info to the session:
     parameters
         .put(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS, UnitTestRepositoryInfo.class.getName());
-    
+
     // give subclasses a chance to provide additional parameters for special tests
     addParameters(parameters);
-    
+
     fTestCallContext = new DummyCallContext();
     // Attach a standatrd CallContext to a thread before the services are initialized.
     RuntimeContext.attachCfg(fTestCallContext);
@@ -100,28 +100,28 @@ public class AbstractServiceTst /* extends TestCase*/ {
       initializeUsingClientProvider(parameters);
     else
       initializeDirect(parameters);
-    
+
     assertNotNull(fRepSvc);
     assertNotNull(fObjSvc);
     assertNotNull(fNavSvc);
-    
+
     RepositoryInfo rep = fRepSvc.getRepositoryInfo(REPOSITORY_ID, null);
     fRootFolderId = rep.getRootFolderId();
     fRepositoryId = rep.getId();
-    
+
     assertNotNull(fRepositoryId);
-    assertNotNull(fRootFolderId);    
+    assertNotNull(fRootFolderId);
   }
-  
+
   // Override this method in subclasses if you want to provide additional configuration
   // parameters. Default implementation is empty
-  protected void addParameters(Map<String, String> parameters) {    
+  protected void addParameters(Map<String, String> parameters) {
   }
 
   protected void tearDown() throws Exception {
     // super.tearDown();
   }
-  
+
   public void testDummy() {
     // dummy test to make tools happy that complain if there are no tests available in a test class
   }
@@ -138,9 +138,9 @@ public class AbstractServiceTst /* extends TestCase*/ {
     }
     return id;
   }
- 
+
   protected String createDocument(String name, String folderId, String typeId, VersioningState versioningState, boolean withContent) {
-    ContentStreamData contentStream = null;
+    ContentStream contentStream = null;
     List<String> policies = null;
     AccessControlList addACEs = null;
     AccessControlList removeACEs = null;
@@ -161,13 +161,13 @@ public class AbstractServiceTst /* extends TestCase*/ {
       fail("createDocument() failed with exception: " + e);
     }
     return id;
-    
+
   }
   protected String createDocument(String name, String folderId, String typeId, boolean withContent) {
     VersioningState versioningState = VersioningState.NONE;
     return createDocument(name, folderId, typeId, versioningState, withContent);
   }
-  
+
   protected PropertiesData createDocumentProperties(String name, String typeId) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, name));
@@ -175,7 +175,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
     PropertiesData props = fFactory.createPropertiesData(properties);
     return props;
   }
-  
+
   protected PropertiesData createFolderProperties(String folderName, String typeId) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, folderName));
@@ -184,13 +184,13 @@ public class AbstractServiceTst /* extends TestCase*/ {
     return props;
   }
 
-  protected ContentStreamData createContent() {
+  protected ContentStream createContent() {
     ContentStreamDataImpl content = new ContentStreamDataImpl();
     content.setFileName("data.txt");
     content.setMimeType("text/plain");
     int len = 32 * 1024;
     byte[] b = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
-                0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a,     
+                0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a,
                 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
                 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a
                 }; // 32 Bytes
@@ -204,8 +204,8 @@ public class AbstractServiceTst /* extends TestCase*/ {
     }
     return content;
   }
-  
-  protected ContentStreamData createContent(char ch) {
+
+  protected ContentStream createContent(char ch) {
     ContentStreamDataImpl content = new ContentStreamDataImpl();
     content.setFileName("data.txt");
     content.setMimeType("text/plain");
@@ -223,16 +223,16 @@ public class AbstractServiceTst /* extends TestCase*/ {
     }
     return content;
   }
-  protected void verifyContentResult(ContentStreamData sd) {
+  protected void verifyContentResult(ContentStream sd) {
     assertEquals("text/plain", sd.getMimeType());
-    assertEquals("data.txt", sd.getFilename());
-    assertEquals(32 * 1024, sd.getLength().longValue());
+    assertEquals("data.txt", sd.getFileName());
+    assertEquals(32 * 1024, sd.getBigLength().longValue());
     byte[] ba = new byte[32];
     InputStream is = sd.getStream();
     int counter = 0;
     try {
       while (is.read(ba) == ba.length) {
-        ++counter;      
+        ++counter;
         assertEquals(0x61, ba[0]);
         assertEquals(0x6e, ba[29]);
         assertEquals(0x0c, ba[30]);
@@ -254,12 +254,12 @@ public class AbstractServiceTst /* extends TestCase*/ {
       assertEquals(id, res.getId());
     } catch (Exception e) {
       fail("getObject() failed with exception: " + e);
-    }    
+    }
     return res.getId();
   }
-  
+
   @SuppressWarnings("unchecked")
-  protected String getPathOfFolder(String id) {    
+  protected String getPathOfFolder(String id) {
     String path=null;
     try {
       String filter = PropertyIds.CMIS_PATH;
@@ -271,14 +271,14 @@ public class AbstractServiceTst /* extends TestCase*/ {
       assertNotNull(path);
     } catch (Exception e) {
       fail("getProperties() failed with exception: " + e);
-    }    
+    }
     return path;
   }
 
   @SuppressWarnings("unchecked")
-  protected String getPathOfDocument(String id) {    
+  protected String getPathOfDocument(String id) {
     String path=null;
-    String filter = "*"; 
+    String filter = "*";
     List<ObjectParentData> parentData = fNavSvc.getObjectParents(fRepositoryId, id, filter, false, IncludeRelationships.NONE, null, true, null);
     String name = parentData.get(0).getRelativePathSegment();
     PropertyData<String> pd = (PropertyData<String>) parentData.get(0).getObject().getProperties().getProperties().get(PropertyIds.CMIS_PATH);
@@ -296,10 +296,10 @@ public class AbstractServiceTst /* extends TestCase*/ {
       assertNotNull(res);
       returnedId = res.getId();
       testReturnedProperties(returnedId, res.getProperties().getProperties());
-      assertEquals(id, returnedId);    
+      assertEquals(id, returnedId);
     } catch (Exception e) {
       fail("getObject() failed with exception: " + e);
-    }    
+    }
     return res;
   }
 
@@ -313,7 +313,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
     for (PropertyData<?> pd : props.values()) {
       LOG.debug("return property id: " + pd.getId() + ", value: " + pd.getValues());
     }
-    
+
     PropertyData<?> pd = props.get(PropertyIds.CMIS_OBJECT_ID);
     assertNotNull(pd);
     assertEquals(objectId, pd.getFirstValue());
@@ -321,7 +321,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
 
 
   /**
-   * Instantiates the services by using directly the service implementations. 
+   * Instantiates the services by using directly the service implementations.
    * @param parameters
    *    configuration parameters for client provider interface and in-memory provider
    */
@@ -329,18 +329,18 @@ public class AbstractServiceTst /* extends TestCase*/ {
     CmisInMemoryProvider inMemSpi = new CmisInMemoryProvider(parameters);
     fRepSvc = inMemSpi.getRepositoryService();
     fObjSvc = inMemSpi.getObjectService();
-    fNavSvc = inMemSpi.getNavigationService();    
+    fNavSvc = inMemSpi.getNavigationService();
     fVerSvc = inMemSpi.getVersioningService();
     fMultiSvc = inMemSpi.getMultiFilingService();
   }
-  
+
   /**
    * Instantiates the services by using the client provider interface.
    * @param parameters
    *    configuration parameters for client provider interface and in-memory provider
    */
   private void initializeUsingClientProvider(Map<String, String> parameters) {
-	  CmisBinding provider;
+      CmisBinding provider;
 
     // get factory and create provider
     CmisBindingFactory factory = CmisBindingFactory.newInstance();

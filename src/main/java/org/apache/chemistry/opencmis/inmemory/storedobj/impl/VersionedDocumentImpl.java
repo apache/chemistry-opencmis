@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStreamData;
+import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -45,7 +45,7 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
     fIsCheckedOut = false;
   }
   
-  public DocumentVersion addVersion(ContentStreamData content,
+  public DocumentVersion addVersion(ContentStream content,
       VersioningState verState, String user) {
     
     if (isCheckedOut())
@@ -100,7 +100,7 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
     pwc.commit(isMajor);
   }
 
-  public DocumentVersion checkOut(ContentStreamData content, String user) {
+  public DocumentVersion checkOut(ContentStream content, String user) {
     if (fIsCheckedOut) {
       throw new CmisConstraintException("Error: Can't checkout, Document " + getId() + " is already checked out.");
     }
