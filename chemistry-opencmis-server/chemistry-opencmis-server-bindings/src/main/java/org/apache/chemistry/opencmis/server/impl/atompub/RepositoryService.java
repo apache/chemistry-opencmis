@@ -274,7 +274,7 @@ public final class RepositoryService {
       TypeDefinition typeDefinition = service
           .getTypeDefinition(context, repositoryId, typeId, null);
 
-      parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentId());
+      parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentTypeId());
       typeName = (typeDefinition == null ? typeId : typeDefinition.getDisplayName());
     }
 
@@ -359,7 +359,7 @@ public final class RepositoryService {
       TypeDefinition typeDefinition = service
           .getTypeDefinition(context, repositoryId, typeId, null);
 
-      parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentId());
+      parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentTypeId());
       typeName = (typeDefinition == null ? typeId : typeDefinition.getDisplayName());
     }
 

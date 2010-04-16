@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -221,7 +221,7 @@ public class ObjectStoreImpl implements ObjectStore {
     FolderImpl rootFolder = new FolderImpl(this);
     rootFolder.setName("RootFolder");
     rootFolder.setParent(null);
-    rootFolder.setTypeId(BaseObjectTypeIds.CMIS_FOLDER.value());
+    rootFolder.setTypeId(BaseTypeId.CMIS_FOLDER.value());
     rootFolder.setCreatedBy("Admin");
     rootFolder.setModifiedBy("Admin");
     rootFolder.setModifiedAtNow();

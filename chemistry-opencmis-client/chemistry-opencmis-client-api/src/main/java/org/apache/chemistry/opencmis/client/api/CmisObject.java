@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.AllowableActions;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 
 /**
@@ -90,7 +90,7 @@ public interface CmisObject extends ObjectId {
    *
    * @return
    */
-  BaseObjectTypeIds getBaseTypeId();
+  BaseTypeId getBaseTypeId();
 
   /**
    * Get the change token for this object (maintained by the repository). {@code Property<String>

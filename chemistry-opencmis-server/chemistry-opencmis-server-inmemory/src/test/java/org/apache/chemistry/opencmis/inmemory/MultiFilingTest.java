@@ -35,7 +35,7 @@ import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.api.PropertiesData;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -202,7 +202,7 @@ public class MultiFilingTest extends AbstractServiceTst {
     assertEquals(3, res.size());
     for (ObjectParentData opd : res) {
       assertTrue(folderIds.contains(opd.getObject().getId()));
-      assertEquals(BaseObjectTypeIds.CMIS_FOLDER, opd.getObject().getBaseTypeId());
+      assertEquals(BaseTypeId.CMIS_FOLDER, opd.getObject().getBaseTypeId());
       assertEquals(UNFILED_DOC_NAME, opd.getRelativePathSegment());      
     }
     

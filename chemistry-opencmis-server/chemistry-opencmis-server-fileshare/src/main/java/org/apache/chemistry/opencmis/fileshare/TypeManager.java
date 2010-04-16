@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
@@ -89,7 +89,7 @@ public class TypeManager {
 
     // folder type
     FolderTypeDefinitionImpl folderType = new FolderTypeDefinitionImpl();
-    folderType.setBaseId(BaseObjectTypeIds.CMIS_FOLDER);
+    folderType.setBaseTypeId(BaseTypeId.CMIS_FOLDER);
     folderType.setIsControllableAcl(false);
     folderType.setIsControllablePolicy(false);
     folderType.setIsCreatable(true);
@@ -111,7 +111,7 @@ public class TypeManager {
 
     // document type
     DocumentTypeDefinitionImpl documentType = new DocumentTypeDefinitionImpl();
-    documentType.setBaseId(BaseObjectTypeIds.CMIS_DOCUMENT);
+    documentType.setBaseTypeId(BaseTypeId.CMIS_DOCUMENT);
     documentType.setIsControllableAcl(false);
     documentType.setIsControllablePolicy(false);
     documentType.setIsCreatable(true);
@@ -136,7 +136,7 @@ public class TypeManager {
 
     // relationship types
     RelationshipTypeDefinitionImpl relationshipType = new RelationshipTypeDefinitionImpl();
-    relationshipType.setBaseId(BaseObjectTypeIds.CMIS_RELATIONSHIP);
+    relationshipType.setBaseTypeId(BaseTypeId.CMIS_RELATIONSHIP);
     relationshipType.setIsControllableAcl(false);
     relationshipType.setIsControllablePolicy(false);
     relationshipType.setIsCreatable(false);
@@ -157,7 +157,7 @@ public class TypeManager {
 
     // policy type
     PolicyTypeDefinitionImpl policyType = new PolicyTypeDefinitionImpl();
-    policyType.setBaseId(BaseObjectTypeIds.CMIS_POLICY);
+    policyType.setBaseTypeId(BaseTypeId.CMIS_POLICY);
     policyType.setIsControllableAcl(false);
     policyType.setIsControllablePolicy(false);
     policyType.setIsCreatable(false);
@@ -335,22 +335,22 @@ public class TypeManager {
       return false;
     }
 
-    if (type.getBaseId() == null) {
+    if (type.getBaseTypeId() == null) {
       return false;
     }
 
     // find base type
     TypeDefinition baseType = null;
-    if (type.getBaseId() == BaseObjectTypeIds.CMIS_DOCUMENT) {
+    if (type.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
       baseType = copyTypeDefintion(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition());
     }
-    else if (type.getBaseId() == BaseObjectTypeIds.CMIS_FOLDER) {
+    else if (type.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
       baseType = copyTypeDefintion(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition());
     }
-    else if (type.getBaseId() == BaseObjectTypeIds.CMIS_RELATIONSHIP) {
+    else if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
       baseType = copyTypeDefintion(fTypes.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
     }
-    else if (type.getBaseId() == BaseObjectTypeIds.CMIS_POLICY) {
+    else if (type.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
       baseType = copyTypeDefintion(fTypes.get(POLICY_TYPE_ID).getTypeDefinition());
     }
     else {
@@ -390,8 +390,8 @@ public class TypeManager {
     tc.setTypeDefinition(type);
 
     // add to parent
-    if (type.getParentId() != null) {
-      TypeDefinitionContainerImpl tdc = fTypes.get(type.getParentId());
+    if (type.getParentTypeId() != null) {
+      TypeDefinitionContainerImpl tdc = fTypes.get(type.getParentTypeId());
       if (tdc != null) {
         if (tdc.getChildren() == null) {
           tdc.setChildren(new ArrayList<TypeDefinitionContainer>());

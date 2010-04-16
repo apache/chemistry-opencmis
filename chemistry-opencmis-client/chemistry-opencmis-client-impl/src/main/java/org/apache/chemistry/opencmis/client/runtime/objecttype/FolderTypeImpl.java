@@ -18,19 +18,50 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
+import java.util.List;
+
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.objecttype.FolderType;
-import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
+import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
+import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.util.PagingList;
+import org.apache.chemistry.opencmis.commons.api.FolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 
 /**
  * Folder type.
  */
-public class FolderTypeImpl extends AbstractObjectType implements FolderType {
+public class FolderTypeImpl extends FolderTypeDefinitionImpl implements
+        FolderType {
 
-  /**
-   * Constructor.
-   */
-  public FolderTypeImpl(Session session, TypeDefinition typeDefinition) {
-    initialize(session, typeDefinition);
-  }
+    private static final long serialVersionUID = 1L;
+
+    private ObjectTypeHelper helper;
+
+    public FolderTypeImpl(Session session,
+            FolderTypeDefinition typeDefinition) {
+        initialize(typeDefinition);
+        helper = new ObjectTypeHelper(session, this);
+    }
+
+    public ObjectType getBaseType() {
+        return helper.getBaseType();
+    }
+
+    public PagingList<ObjectType> getChildren(int itemsPerPage) {
+        return helper.getChildren(itemsPerPage);
+    }
+
+    public List<Container<ObjectType>> getDescendants(int depth) {
+        return helper.getDescendants(depth);
+    }
+
+    public ObjectType getParentType() {
+        return helper.getParentType();
+    }
+
+    public boolean isBaseType() {
+        return helper.isBaseType();
+    }
+
 }

@@ -222,7 +222,7 @@ public class PropertyCreationHelper {
             + " is unknown");
       } else {
         TypeDefinition typeDef = typeDefC.getTypeDefinition();
-        String baseTypeId = typeDef.getBaseId().value();
+        String baseTypeId = typeDef.getBaseTypeId().value();
         properties.put(PropertyIds.BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID, baseTypeId));
       }
     }   

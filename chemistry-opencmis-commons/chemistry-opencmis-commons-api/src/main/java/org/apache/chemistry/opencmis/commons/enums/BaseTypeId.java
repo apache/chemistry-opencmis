@@ -20,17 +20,20 @@ package org.apache.chemistry.opencmis.commons.enums;
 
 /**
  * Base Object Type Ids Enum.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
-public enum BaseObjectTypeIds {
+public enum BaseTypeId {
 
-  CMIS_DOCUMENT("cmis:document"), CMIS_FOLDER("cmis:folder"), CMIS_RELATIONSHIP("cmis:relationship"), CMIS_POLICY(
-      "cmis:policy");
+  CMIS_DOCUMENT("cmis:document"), //
+  CMIS_FOLDER("cmis:folder"), //
+  CMIS_RELATIONSHIP("cmis:relationship"), //
+  CMIS_POLICY("cmis:policy");
+
   private final String value;
 
-  BaseObjectTypeIds(String v) {
+  BaseTypeId(String v) {
     value = v;
   }
 
@@ -38,8 +41,8 @@ public enum BaseObjectTypeIds {
     return value;
   }
 
-  public static BaseObjectTypeIds fromValue(String v) {
-    for (BaseObjectTypeIds c : BaseObjectTypeIds.values()) {
+  public static BaseTypeId fromValue(String v) {
+    for (BaseTypeId c : BaseTypeId.values()) {
       if (c.value.equals(v)) {
         return c;
       }

@@ -60,7 +60,7 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryService;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -757,7 +757,7 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
       type = sourceObj.getType();
     }
 
-    if (type.getBaseTypeId() != BaseObjectTypeIds.CMIS_DOCUMENT) {
+    if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
       throw new IllegalArgumentException("Source object must be a document!");
     }
 

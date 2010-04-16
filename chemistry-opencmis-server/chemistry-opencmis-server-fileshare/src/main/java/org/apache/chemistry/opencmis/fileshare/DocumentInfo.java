@@ -18,13 +18,13 @@
  */
 package org.apache.chemistry.opencmis.fileshare;
 
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoImpl;
 
 public class DocumentInfo extends ObjectInfoImpl {
 
   public DocumentInfo() {
-    setBaseType(BaseObjectTypeIds.CMIS_DOCUMENT);
+    setBaseType(BaseTypeId.CMIS_DOCUMENT);
     setHasAcl(true);
     setHasContent(true);
     setHasParent(true);

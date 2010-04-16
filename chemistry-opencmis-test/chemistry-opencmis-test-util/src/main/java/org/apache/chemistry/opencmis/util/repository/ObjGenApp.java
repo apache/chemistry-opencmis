@@ -36,7 +36,7 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.RepositoryService;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 
 public class ObjGenApp {
@@ -106,9 +106,9 @@ public class ObjGenApp {
     fCmd = parser.accepts(CMD).withRequiredArg().describedAs("Command to perform (see below)");
     fRepoId = parser.accepts(REPOSITORY_ID).withOptionalArg().describedAs("Repository used");
     fDocType = parser.accepts(FILLER_DOCUMENT_TYPE_ID).withOptionalArg().defaultsTo(
-        BaseObjectTypeIds.CMIS_DOCUMENT.value()).describedAs("Document type created");
+        BaseTypeId.CMIS_DOCUMENT.value()).describedAs("Document type created");
     fFolderType = parser.accepts(FILLER_FOLDER_TYPE_ID).withOptionalArg().defaultsTo(
-        BaseObjectTypeIds.CMIS_FOLDER.value()).describedAs("Folder type created");
+        BaseTypeId.CMIS_FOLDER.value()).describedAs("Folder type created");
     fDocsPerFolder = parser.accepts(FILLER_DOCS_PER_FOLDER).withOptionalArg().ofType(Integer.class)
         .describedAs("Documents on each level").defaultsTo(1);
     fFolderPerFolder = parser.accepts(FILLER_FOLDERS_PER_FOLDER).withOptionalArg().ofType(

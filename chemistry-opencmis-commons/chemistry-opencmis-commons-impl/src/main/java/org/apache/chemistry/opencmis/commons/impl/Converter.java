@@ -88,7 +88,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
@@ -256,9 +256,9 @@ public final class Converter {
 
     result.setAclCapabilities(convert(repositoryInfo.getAclCapability()));
     result.setChangesIncomplete(repositoryInfo.isChangesIncomplete());
-    List<BaseObjectTypeIds> baseObjectTypeIds = new ArrayList<BaseObjectTypeIds>();
+    List<BaseTypeId> baseObjectTypeIds = new ArrayList<BaseTypeId>();
     for (EnumBaseObjectTypeIds bot : repositoryInfo.getChangesOnType()) {
-      baseObjectTypeIds.add(convert(BaseObjectTypeIds.class, bot));
+      baseObjectTypeIds.add(convert(BaseTypeId.class, bot));
     }
     result.setChangesOnType(baseObjectTypeIds);
     result.setCmisVersionSupported(repositoryInfo.getCmisVersionSupported());
@@ -387,7 +387,7 @@ public final class Converter {
     result.setVendorName(repositoryInfo.getVendorName());
 
     if (repositoryInfo.getChangesOnType() != null) {
-      for (BaseObjectTypeIds boti : repositoryInfo.getChangesOnType()) {
+      for (BaseTypeId boti : repositoryInfo.getChangesOnType()) {
         result.getChangesOnType().add(convert(EnumBaseObjectTypeIds.class, boti));
       }
     }
@@ -526,7 +526,7 @@ public final class Converter {
           + "' does not match a base type!");
     }
 
-    result.setBaseId(convert(BaseObjectTypeIds.class, typeDefinition.getBaseId()));
+    result.setBaseTypeId(convert(BaseTypeId.class, typeDefinition.getBaseId()));
     result.setDescription(typeDefinition.getDescription());
     result.setDisplayName(typeDefinition.getDisplayName());
     result.setId(typeDefinition.getId());
@@ -539,7 +539,7 @@ public final class Converter {
     result.setIsQueryable(typeDefinition.isQueryable());
     result.setLocalName(typeDefinition.getLocalName());
     result.setLocalNamespace(typeDefinition.getLocalNamespace());
-    result.setParentId(typeDefinition.getParentId());
+    result.setParentTypeId(typeDefinition.getParentId());
     result.setQueryName(typeDefinition.getQueryName());
 
     for (CmisPropertyDefinitionType propertyDefinition : typeDefinition.getPropertyDefinition()) {
@@ -739,14 +739,14 @@ public final class Converter {
 
       RelationshipTypeDefinition relationshipTypeDefinition = (RelationshipTypeDefinition) typeDefinition;
 
-      if (relationshipTypeDefinition.getAllowedSourceTypes() != null) {
-        for (String type : relationshipTypeDefinition.getAllowedSourceTypes()) {
+      if (relationshipTypeDefinition.getAllowedSourceTypeIds() != null) {
+        for (String type : relationshipTypeDefinition.getAllowedSourceTypeIds()) {
           ((CmisTypeRelationshipDefinitionType) result).getAllowedSourceTypes().add(type);
         }
       }
 
-      if (relationshipTypeDefinition.getAllowedTargetTypes() != null) {
-        for (String type : relationshipTypeDefinition.getAllowedTargetTypes()) {
+      if (relationshipTypeDefinition.getAllowedTargetTypeIds() != null) {
+        for (String type : relationshipTypeDefinition.getAllowedTargetTypeIds()) {
           ((CmisTypeRelationshipDefinitionType) result).getAllowedTargetTypes().add(type);
         }
       }
@@ -758,7 +758,7 @@ public final class Converter {
       return null;
     }
 
-    result.setBaseId(convert(EnumBaseObjectTypeIds.class, typeDefinition.getBaseId()));
+    result.setBaseId(convert(EnumBaseObjectTypeIds.class, typeDefinition.getBaseTypeId()));
     result.setControllableACL(convertBoolean(typeDefinition.isControllableAcl(), false));
     result.setControllablePolicy(convertBoolean(typeDefinition.isControllablePolicy(), false));
     result.setCreatable(convertBoolean(typeDefinition.isCreatable(), false));
@@ -771,7 +771,7 @@ public final class Converter {
         false));
     result.setLocalName(typeDefinition.getLocalName());
     result.setLocalNamespace(typeDefinition.getLocalNamespace());
-    result.setParentId(typeDefinition.getParentId());
+    result.setParentId(typeDefinition.getParentTypeId());
     result.setQueryable(convertBoolean(typeDefinition.isQueryable(), false));
     result.setQueryName(typeDefinition.getQueryName());
 

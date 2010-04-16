@@ -31,7 +31,7 @@ import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.util.Container;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.fit.SessionFactory;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -96,11 +96,11 @@ public abstract class AbstractSampleIT {
 
     // check document type definition
     ObjectType documentType = getSession().getTypeDefinition(documentBaseId);
-    checkBaseType(documentBaseId, BaseObjectTypeIds.CMIS_DOCUMENT, documentType);
+    checkBaseType(documentBaseId, BaseTypeId.CMIS_DOCUMENT, documentType);
 
     // check folder type definition
     ObjectType folderType = getSession().getTypeDefinition(folderBaseId);
-    checkBaseType(folderBaseId, BaseObjectTypeIds.CMIS_FOLDER, folderType);
+    checkBaseType(folderBaseId, BaseTypeId.CMIS_FOLDER, folderType);
 
     // get base types via getTypesChildren
     PagingList<ObjectType> baseTypes = getSession().getTypeChildren(null, true, 10);
@@ -157,7 +157,7 @@ public abstract class AbstractSampleIT {
   /**
    * Checks a base type.
    */
-  private void checkBaseType(String id, BaseObjectTypeIds baseType, ObjectType objectType) {
+  private void checkBaseType(String id, BaseTypeId baseType, ObjectType objectType) {
     assertNotNull(objectType);
     if (id != null) {
       assertEquals(id, objectType.getId());
@@ -167,8 +167,8 @@ public abstract class AbstractSampleIT {
     }
     assertTrue(objectType.isBaseType());
     assertNull(objectType.getBaseType());
-    assertNull(objectType.getParent());
-    assertNotNull(objectType.getPropertyDefintions());
-    assertFalse(objectType.getPropertyDefintions().isEmpty());
+    assertNull(objectType.getParentType());
+    assertNotNull(objectType.getPropertyDefinitions());
+    assertFalse(objectType.getPropertyDefinitions().isEmpty());
   }
 }

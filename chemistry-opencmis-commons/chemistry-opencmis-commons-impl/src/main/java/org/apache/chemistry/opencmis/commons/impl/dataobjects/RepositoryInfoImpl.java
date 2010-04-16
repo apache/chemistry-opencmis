@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.api.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.api.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Repository info data implementation.
@@ -46,7 +46,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
   private String fPrincipalAnyone;
   private String fThinClientUri;
   private Boolean fChangesIncomplete;
-  private List<BaseObjectTypeIds> fChangesOnType;
+  private List<BaseTypeId> fChangesOnType;
   private String fLatestChangeLogToken;
   private String fVendorName;
   private String fProductName;
@@ -165,11 +165,11 @@ public String getId() {
     fChangesIncomplete = changesIncomplete;
   }
 
-  public List<BaseObjectTypeIds> getChangesOnType() {
+  public List<BaseTypeId> getChangesOnType() {
     return fChangesOnType;
   }
 
-  public void setChangesOnType(List<BaseObjectTypeIds> changesOnType) {
+  public void setChangesOnType(List<BaseTypeId> changesOnType) {
     fChangesOnType = changesOnType;
   }
 

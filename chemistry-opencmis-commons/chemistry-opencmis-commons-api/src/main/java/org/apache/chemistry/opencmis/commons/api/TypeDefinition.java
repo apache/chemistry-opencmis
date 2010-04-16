@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.api;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Base type definition interface.
@@ -78,14 +78,14 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
    * 
    * @return the base object type id
    */
-  BaseObjectTypeIds getBaseId();
+  BaseTypeId getBaseTypeId();
 
   /**
    * Returns the parent type id.
    * 
    * @return the parent type id or <code>null</code> if the type is a base type
    */
-  String getParentId();
+  String getParentTypeId();
 
   /**
    * Returns if an object of this type can be created.

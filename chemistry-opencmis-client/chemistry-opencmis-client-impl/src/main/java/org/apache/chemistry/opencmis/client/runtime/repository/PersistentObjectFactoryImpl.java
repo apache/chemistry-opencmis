@@ -227,16 +227,16 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
    */
   public ObjectType convertTypeDefinition(TypeDefinition typeDefinition) {
     if (typeDefinition instanceof DocumentTypeDefinition) {
-      return new DocumentTypeImpl(this.session, typeDefinition);
+      return new DocumentTypeImpl(this.session, (DocumentTypeDefinition) typeDefinition);
     }
     else if (typeDefinition instanceof FolderTypeDefinition) {
-      return new FolderTypeImpl(this.session, typeDefinition);
+      return new FolderTypeImpl(this.session, (FolderTypeDefinition) typeDefinition);
     }
     else if (typeDefinition instanceof RelationshipTypeDefinition) {
-      return new RelationshipTypeImpl(this.session, typeDefinition);
+      return new RelationshipTypeImpl(this.session, (RelationshipTypeDefinition) typeDefinition);
     }
     else if (typeDefinition instanceof PolicyTypeDefinition) {
-      return new PolicyTypeImpl(this.session, typeDefinition);
+      return new PolicyTypeImpl(this.session, (PolicyTypeDefinition) typeDefinition);
     }
     else {
       throw new CmisRuntimeException("Unknown base type!");
@@ -303,7 +303,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
       throw new IllegalArgumentException("Object type must set!");
     }
 
-    if (objectType.getPropertyDefintions() == null) {
+    if (objectType.getPropertyDefinitions() == null) {
       throw new IllegalArgumentException("Object type has no property defintions!");
     }
 
@@ -315,7 +315,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
     Map<String, Property<?>> result = new LinkedHashMap<String, Property<?>>();
     for (Map.Entry<String, PropertyData<?>> property : properties.getProperties().entrySet()) {
       // find property definition
-      PropertyDefinition<?> definition = objectType.getPropertyDefintions().get(property.getKey());
+      PropertyDefinition<?> definition = objectType.getPropertyDefinitions().get(property.getKey());
       if (definition == null) {
         // property without definition
         throw new CmisRuntimeException("Property '" + property.getKey() + "' doesn't exist!");
@@ -410,7 +410,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
       }
 
       // get the property definition
-      PropertyDefinition<?> definition = type.getPropertyDefintions().get(id);
+      PropertyDefinition<?> definition = type.getPropertyDefinitions().get(id);
       if (definition == null) {
         throw new IllegalArgumentException("Property +'" + id + "' is not valid for this type!");
       }

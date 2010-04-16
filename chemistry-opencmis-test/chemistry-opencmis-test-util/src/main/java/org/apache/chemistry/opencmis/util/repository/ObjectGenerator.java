@@ -41,7 +41,7 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
 import org.apache.chemistry.opencmis.commons.api.PropertiesData;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -78,12 +78,12 @@ public class ObjectGenerator {
   /**
    * The type id of the document id that is created. 
    */
-  private String fDocTypeId = BaseObjectTypeIds.CMIS_DOCUMENT.value();
+  private String fDocTypeId = BaseTypeId.CMIS_DOCUMENT.value();
   
   /**
    * The type id of the folder that is created.
    */
-  private String fFolderTypeId = BaseObjectTypeIds.CMIS_FOLDER.value();
+  private String fFolderTypeId = BaseTypeId.CMIS_FOLDER.value();
   
   /**
    * A list of property ids. For each element in this list a String property value
@@ -246,7 +246,7 @@ public class ObjectGenerator {
     for (int i=0; i<children.size(); i++) {
       ObjectData child = children.get(i).getObject();
       docId = (String) child.getProperties().getProperties().get(PropertyIds.OBJECT_ID).getFirstValue();        
-      if (child.getBaseTypeId().equals(BaseObjectTypeIds.CMIS_DOCUMENT)) {
+      if (child.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT)) {
         if (numDocsFound == index)
           return docId;
         else
@@ -551,10 +551,10 @@ public class ObjectGenerator {
             + folder.getPathSegment());
         dumpObjectProperties(folder.getObject(), depth, propertyFilter, !allRequiredPropertiesArePresent);        
         String objectTypeBaseId = folder.getObject().getBaseTypeId().value();
-        if (objectTypeBaseId.equals(BaseObjectTypeIds.CMIS_FOLDER.value())) {
+        if (objectTypeBaseId.equals(BaseTypeId.CMIS_FOLDER.value())) {
           dumpFolder(folder.getObject().getId(), propertyFilter, depth+1);
         }
-        else if (objectTypeBaseId.equals(BaseObjectTypeIds.CMIS_DOCUMENT.value())) {
+        else if (objectTypeBaseId.equals(BaseTypeId.CMIS_DOCUMENT.value())) {
           dumpObjectProperties(folder.getObject(), depth+1, propertyFilter, !allRequiredPropertiesArePresent);        
         }
       }

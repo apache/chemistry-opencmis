@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.api.PolicyIdListData;
 import org.apache.chemistry.opencmis.commons.api.PropertiesData;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
@@ -65,11 +65,11 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
    * 
    * @see org.apache.opencmis.client.provider.ObjectData#getBaseTypeId()
    */
-  public BaseObjectTypeIds getBaseTypeId() {
+  public BaseTypeId getBaseTypeId() {
     Object value = getFirstValue(PropertyIds.BASE_TYPE_ID);
     if (value instanceof String) {
       try {
-        return BaseObjectTypeIds.fromValue((String) value);
+        return BaseTypeId.fromValue((String) value);
       }
       catch (Exception e) {
       }

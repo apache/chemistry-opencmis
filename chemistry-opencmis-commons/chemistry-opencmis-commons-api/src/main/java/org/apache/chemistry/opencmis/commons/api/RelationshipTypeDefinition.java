@@ -22,7 +22,7 @@ import java.util.List;
 
 public interface RelationshipTypeDefinition extends TypeDefinition {
 
-  List<String> getAllowedSourceTypes();
+  List<String> getAllowedSourceTypeIds();
 
-  List<String> getAllowedTargetTypes();
+  List<String> getAllowedTargetTypeIds();
 }

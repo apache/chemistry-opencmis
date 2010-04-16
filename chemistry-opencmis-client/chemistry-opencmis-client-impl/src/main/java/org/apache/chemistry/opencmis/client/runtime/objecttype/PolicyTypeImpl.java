@@ -18,19 +18,50 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
+import java.util.List;
+
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.objecttype.PolicyType;
-import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
+import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
+import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.util.PagingList;
+import org.apache.chemistry.opencmis.commons.api.PolicyTypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
 
 /**
  * Policy type.
  */
-public class PolicyTypeImpl extends AbstractObjectType implements PolicyType {
+public class PolicyTypeImpl extends PolicyTypeDefinitionImpl implements
+        PolicyType {
 
-  /**
-   * Constructor.
-   */
-  public PolicyTypeImpl(Session session, TypeDefinition typeDefinition) {
-    initialize(session, typeDefinition);
-  }
+    private static final long serialVersionUID = 1L;
+
+    private ObjectTypeHelper helper;
+
+    public PolicyTypeImpl(Session session,
+            PolicyTypeDefinition typeDefinition) {
+        initialize(typeDefinition);
+        helper = new ObjectTypeHelper(session, this);
+    }
+
+    public ObjectType getBaseType() {
+        return helper.getBaseType();
+    }
+
+    public PagingList<ObjectType> getChildren(int itemsPerPage) {
+        return helper.getChildren(itemsPerPage);
+    }
+
+    public List<Container<ObjectType>> getDescendants(int depth) {
+        return helper.getDescendants(depth);
+    }
+
+    public ObjectType getParentType() {
+        return helper.getParentType();
+    }
+
+    public boolean isBaseType() {
+        return helper.isBaseType();
+    }
+
 }

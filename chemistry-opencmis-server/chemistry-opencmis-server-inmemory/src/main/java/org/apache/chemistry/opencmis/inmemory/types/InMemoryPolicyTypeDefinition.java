@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
@@ -39,8 +39,8 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
 
   /* This constructor is just for creating the root document */
   public InMemoryPolicyTypeDefinition() {
-    init(BaseObjectTypeIds.CMIS_POLICY.value(), "CMIS Policy");
-    setParentId(null);
+    init(BaseTypeId.CMIS_POLICY.value(), "CMIS Policy");
+    setParentTypeId(null);
 
     Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
     DocumentTypeCreationHelper.setBasicPolicyPropertyDefinitions(props);
@@ -48,18 +48,18 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
 
   public InMemoryPolicyTypeDefinition(String id, String displayName) {
     init(id, displayName);
-    setParentId(POLICY_TYPE.getId());
+    setParentTypeId(POLICY_TYPE.getId());
   }
 
   public InMemoryPolicyTypeDefinition(String id, String displayName, InMemoryPolicyTypeDefinition parentType) {
     // get root type
     init(id, displayName);
     if (parentType != null)
-      setBaseId(parentType.getBaseId());
+      setBaseTypeId(parentType.getBaseTypeId());
     else
       throw new IllegalArgumentException(
           "Must provide a parent type when creating a policy definition");
-    setParentId(parentType.getId());
+    setParentTypeId(parentType.getId());
   }
 
   /* 
@@ -76,7 +76,7 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
     if (!NameValidator.isValidId(id))
       throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
-    setBaseId(BaseObjectTypeIds.CMIS_POLICY);
+    setBaseTypeId(BaseTypeId.CMIS_POLICY);
     setId(id);
     if (displayName == null)
       displayName = '#' + id + '#';

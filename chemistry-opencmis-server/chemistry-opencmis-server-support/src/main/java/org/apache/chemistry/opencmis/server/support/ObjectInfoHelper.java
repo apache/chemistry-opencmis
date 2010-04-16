@@ -39,7 +39,7 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
@@ -184,9 +184,9 @@ public class ObjectInfoHelper
             TypeDefinitionList children = _repSvc.getTypeChildren(context, repositoryId, null, false,
                 BigInteger.valueOf(100), BigInteger.ZERO, null);
             for (TypeDefinition typeDefinition : children.getList()) {
-                if (typeDefinition.getId().equals(BaseObjectTypeIds.CMIS_RELATIONSHIP))
+                if (typeDefinition.getId().equals(BaseTypeId.CMIS_RELATIONSHIP))
                     supportsRelationships = true;
-                if (typeDefinition.getId().equals(BaseObjectTypeIds.CMIS_POLICY))
+                if (typeDefinition.getId().equals(BaseTypeId.CMIS_POLICY))
                     supportsPolicies = true;
             }
             _mapRelationships.put(repositoryId, supportsRelationships);
@@ -202,7 +202,7 @@ public class ObjectInfoHelper
         objInfo.setLastModificationDate(getDateProperty(properties, PropertyIds.LAST_MODIFICATION_DATE));
         objInfo.setTypeId(getStringProperty(properties, PropertyIds.OBJECT_TYPE_ID));
         String baseId = getStringProperty(properties, PropertyIds.BASE_TYPE_ID);
-        objInfo.setBaseType(BaseObjectTypeIds.fromValue(baseId));
+        objInfo.setBaseType(BaseTypeId.fromValue(baseId));
         
         boolean isVersioned = getStringProperty(properties, PropertyIds.VERSION_SERIES_ID) != null;
         // versioning information: 
@@ -233,9 +233,9 @@ public class ObjectInfoHelper
           objInfo.setFileName(null);
         }
         
-        if (objInfo.getBaseType() == BaseObjectTypeIds.CMIS_FOLDER)
+        if (objInfo.getBaseType() == BaseTypeId.CMIS_FOLDER)
             objInfo.setHasParent(getStringProperty(properties, PropertyIds.PARENT_ID) != null);
-        else if (objInfo.getBaseType() == BaseObjectTypeIds.CMIS_DOCUMENT) {
+        else if (objInfo.getBaseType() == BaseTypeId.CMIS_DOCUMENT) {
             if (repoCaps.isUnfilingSupported())
                 objInfo.setHasParent(documentHasParent(context, repositoryId, objData.getId()));
             else
@@ -260,7 +260,7 @@ public class ObjectInfoHelper
         objInfo.setHasAcl(repoCaps.getAclCapability() != CapabilityAcl.NONE);
         
         String baseTypeId = getStringProperty(properties, PropertyIds.BASE_TYPE_ID);
-        boolean isFolder = baseTypeId != null && baseTypeId.equals(BaseObjectTypeIds.CMIS_FOLDER.value());
+        boolean isFolder = baseTypeId != null && baseTypeId.equals(BaseTypeId.CMIS_FOLDER.value());
         
         objInfo.setSupportsDescendants(isFolder && repoCaps.isGetDescendantsSupported());;
         objInfo.setSupportsFolderTree(isFolder && repoCaps.isGetFolderTreeSupported());

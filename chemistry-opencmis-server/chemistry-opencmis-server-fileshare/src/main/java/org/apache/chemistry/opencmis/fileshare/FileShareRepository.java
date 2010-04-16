@@ -70,7 +70,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
@@ -364,10 +364,10 @@ public class FileShareRepository {
     }
 
     String objectId = null;
-    if (type.getBaseId() == BaseObjectTypeIds.CMIS_DOCUMENT) {
+    if (type.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
       objectId = createDocument(context, properties, folderId, contentStream, versioningState);
     }
-    else if (type.getBaseId() == BaseObjectTypeIds.CMIS_FOLDER) {
+    else if (type.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
       objectId = createFolder(context, properties, folderId);
     }
     else {
@@ -1389,7 +1389,7 @@ public class FileShareRepository {
       if (file.isDirectory()) {
         // base type and type name
         addPropertyId(result, typeId, filter, PropertyIds.BASE_TYPE_ID,
-            BaseObjectTypeIds.CMIS_FOLDER.value());
+            BaseTypeId.CMIS_FOLDER.value());
         addPropertyId(result, typeId, filter, PropertyIds.OBJECT_TYPE_ID,
             TypeManager.FOLDER_TYPE_ID);
         String path = getRepositoryPath(file);
@@ -1409,7 +1409,7 @@ public class FileShareRepository {
       else {
         // base type and type name
         addPropertyId(result, typeId, filter, PropertyIds.BASE_TYPE_ID,
-            BaseObjectTypeIds.CMIS_DOCUMENT.value());
+            BaseTypeId.CMIS_DOCUMENT.value());
         addPropertyId(result, typeId, filter, PropertyIds.OBJECT_TYPE_ID,
             TypeManager.DOCUMENT_TYPE_ID);
 

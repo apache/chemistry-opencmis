@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.server.spi;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * This class contains information about an object. This data is used to generate the appropriate
@@ -65,7 +65,7 @@ public interface ObjectInfo {
   /**
    * Returns the base type.
    */
-  BaseObjectTypeIds getBaseType();
+  BaseTypeId getBaseType();
 
   /**
    * Returns <code>true</code> if the object is a document and if it is the current version or it is

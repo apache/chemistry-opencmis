@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.api;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 public interface RepositoryInfo extends Serializable, ExtensionsData {
 
@@ -51,7 +51,7 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
 
   Boolean getChangesIncomplete();
 
-  List<BaseObjectTypeIds> getChangesOnType();
+  List<BaseTypeId> getChangesOnType();
 
   String getPrincipalIdAnonymous();
 

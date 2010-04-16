@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.commons.api.NavigationService;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.RepositoryService;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.clientprovider.NavigationServiceImpl;
@@ -214,11 +214,11 @@ public class ServiceFactory extends AbstractServicesFactory {
 
     String documentTypeId = parameters.get(ConfigConstants.FILLER_DOCUMENT_TYPE_ID);
     if (null == documentTypeId)
-      documentTypeId = BaseObjectTypeIds.CMIS_DOCUMENT.value();
+      documentTypeId = BaseTypeId.CMIS_DOCUMENT.value();
 
     String folderTypeId = parameters.get(ConfigConstants.FILLER_FOLDER_TYPE_ID);
     if (null == folderTypeId)
-      folderTypeId = BaseObjectTypeIds.CMIS_FOLDER.value();
+      folderTypeId = BaseTypeId.CMIS_FOLDER.value();
 
     int contentSizeKB = 0;
     String contentSizeKBStr = parameters.get(ConfigConstants.FILLER_CONTENT_SIZE);

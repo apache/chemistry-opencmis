@@ -898,8 +898,8 @@ public abstract class AbstractCmisTestCase extends TestCase {
     assertEquals("TypeDefinition display name:", expected.getDisplayName(), actual.getDisplayName());
     assertEquals("TypeDefinition description:", expected.getDescription(), actual.getDescription());
     assertEquals("TypeDefinition query name:", expected.getQueryName(), actual.getQueryName());
-    assertEquals("TypeDefinition parent id:", expected.getParentId(), actual.getParentId());
-    assertEquals("TypeDefinition base id:", expected.getBaseId(), actual.getBaseId());
+    assertEquals("TypeDefinition parent id:", expected.getParentTypeId(), actual.getParentTypeId());
+    assertEquals("TypeDefinition base id:", expected.getBaseTypeId(), actual.getBaseTypeId());
 
     if (!checkPropertyDefintions) {
       return;

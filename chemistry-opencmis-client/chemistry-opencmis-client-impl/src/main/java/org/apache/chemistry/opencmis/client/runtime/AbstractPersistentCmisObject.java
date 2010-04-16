@@ -39,7 +39,6 @@ import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Ace;
@@ -53,7 +52,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.RelationshipService;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -90,7 +89,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       throw new IllegalArgumentException("Object type must be set!");
     }
 
-    if (objectType.getPropertyDefintions().size() < 9) {
+    if (objectType.getPropertyDefinitions().size() < 9) {
       // there must be at least the 9 standard properties that all objects have
       throw new IllegalArgumentException("Object type must have property defintions!");
     }
@@ -336,7 +335,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getBaseType()
    */
   public ObjectType getBaseType() {
-    BaseObjectTypeIds baseTypeId = getBaseTypeId();
+    BaseTypeId baseTypeId = getBaseTypeId();
     if (baseTypeId == null) {
       return null;
     }
@@ -349,13 +348,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    *
    * @see org.apache.opencmis.client.api.CmisObject#getBaseTypeId()
    */
-  public BaseObjectTypeIds getBaseTypeId() {
+  public BaseTypeId getBaseTypeId() {
     String baseType = getPropertyValue(PropertyIds.BASE_TYPE_ID);
     if (baseType == null) {
       return null;
     }
 
-    return BaseObjectTypeIds.fromValue(baseType);
+    return BaseTypeId.fromValue(baseType);
   }
 
   /*
@@ -876,7 +875,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * Checks if a value matches a property definition.
    */
   private PropertyDefinition<?> checkProperty(String id, Object value) {
-    PropertyDefinition<?> propertyDefinition = getObjectType().getPropertyDefintions().get(id);
+    PropertyDefinition<?> propertyDefinition = getObjectType().getPropertyDefinitions().get(id);
     if (propertyDefinition == null) {
       throw new IllegalArgumentException("Unknown property '" + id + "'!");
     }

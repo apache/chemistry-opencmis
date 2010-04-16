@@ -22,68 +22,79 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.objecttype.RelationshipType;
+import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
+import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
-import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 
 /**
  * Relationship type.
  */
-public class RelationshipTypeImpl extends AbstractObjectType implements RelationshipType {
+public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl
+        implements RelationshipType {
 
-  private List<ObjectType> allowedSourceTypes;
-  private List<ObjectType> allowedTargetTypes;
+    private static final long serialVersionUID = 1L;
 
-  /**
-   * Constructor.
-   */
-  public RelationshipTypeImpl(Session session, TypeDefinition typeDefinition) {
-    initialize(session, typeDefinition);
-  }
+    private ObjectTypeHelper helper;
+    private List<ObjectType> allowedSourceTypes;
+    private List<ObjectType> allowedTargetTypes;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.objecttype.RelationshipType#getAllowedSourceTypes()
-   */
-  public List<ObjectType> getAllowedSourceTypes() {
-    if (allowedSourceTypes == null) {
-      List<ObjectType> types = new ArrayList<ObjectType>();
-
-      List<String> ids = ((RelationshipTypeDefinition) getTypeDefinition()).getAllowedSourceTypes();
-      if (ids != null) {
-        for (String id : ids) {
-          types.add(getSession().getTypeDefinition(id));
-        }
-      }
-
-      allowedSourceTypes = types;
+    public RelationshipTypeImpl(Session session,
+            RelationshipTypeDefinition typeDefinition) {
+        initialize(typeDefinition);
+        helper = new ObjectTypeHelper(session, this);
     }
 
-    return allowedSourceTypes;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.objecttype.RelationshipType#getAllowedTargetTypes()
-   */
-  public List<ObjectType> getAllowedTargetTypes() {
-    if (allowedTargetTypes == null) {
-      List<ObjectType> types = new ArrayList<ObjectType>();
-
-      List<String> ids = ((RelationshipTypeDefinition) getTypeDefinition()).getAllowedTargetTypes();
-      if (ids != null) {
-        for (String id : ids) {
-          types.add(getSession().getTypeDefinition(id));
-        }
-      }
-
-      allowedTargetTypes = types;
+    public ObjectType getBaseType() {
+        return helper.getBaseType();
     }
 
-    return allowedTargetTypes;
-  }
+    public PagingList<ObjectType> getChildren(int itemsPerPage) {
+        return helper.getChildren(itemsPerPage);
+    }
+
+    public List<Container<ObjectType>> getDescendants(int depth) {
+        return helper.getDescendants(depth);
+    }
+
+    public ObjectType getParentType() {
+        return helper.getParentType();
+    }
+
+    public boolean isBaseType() {
+        return helper.isBaseType();
+    }
+
+    public List<ObjectType> getAllowedSourceTypes() {
+        if (allowedSourceTypes == null) {
+            List<String> ids = getAllowedSourceTypeIds();
+            List<ObjectType> types = new ArrayList<ObjectType>(ids == null ? 0
+                    : ids.size());
+            if (ids != null) {
+                for (String id : ids) {
+                    types.add(helper.getSession().getTypeDefinition(id));
+                }
+            }
+            allowedSourceTypes = types;
+        }
+        return allowedSourceTypes;
+    }
+
+    public List<ObjectType> getAllowedTargetTypes() {
+        if (allowedTargetTypes == null) {
+            List<String> ids = getAllowedTargetTypeIds();
+            List<ObjectType> types = new ArrayList<ObjectType>(ids == null ? 0
+                    : ids.size());
+            if (ids != null) {
+                for (String id : ids) {
+                    types.add(helper.getSession().getTypeDefinition(id));
+                }
+            }
+            allowedTargetTypes = types;
+        }
+        return allowedTargetTypes;
+    }
 
 }

@@ -23,9 +23,9 @@ import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 
 /**
  * Document type definition.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class DocumentTypeDefinitionImpl extends AbstractTypeDefinition implements
     DocumentTypeDefinition {
@@ -37,7 +37,7 @@ public class DocumentTypeDefinitionImpl extends AbstractTypeDefinition implement
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.DocumentTypeDefinitionData#getContentStreamAllowed()
    */
   public ContentStreamAllowed getContentStreamAllowed() {
@@ -50,7 +50,7 @@ public class DocumentTypeDefinitionImpl extends AbstractTypeDefinition implement
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.DocumentTypeDefinitionData#isVersionable()
    */
   public Boolean isVersionable() {

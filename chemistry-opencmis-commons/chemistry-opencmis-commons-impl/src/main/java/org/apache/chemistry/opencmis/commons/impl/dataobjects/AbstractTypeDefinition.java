@@ -23,13 +23,13 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Abstract type definition data implementation.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public abstract class AbstractTypeDefinition extends AbstractExtensionData implements
     TypeDefinition, Cloneable {
@@ -42,7 +42,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
   private String fQueryName;
   private String fDisplayName;
   private String fDescription;
-  private BaseObjectTypeIds fBaseId;
+  private BaseTypeId fBaseId;
   private String fParentId;
   private Boolean fIsCreatable;
   private Boolean fIsFileable;
@@ -53,9 +53,28 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
   private Boolean fIsControllablePolicy;
   private Map<String, PropertyDefinition<?>> fPropertyDefinitions;
 
+  public void initialize(TypeDefinition typeDefinition) {
+    setId(typeDefinition.getId());
+    setLocalName(typeDefinition.getLocalName());
+    setLocalNamespace(typeDefinition.getLocalNamespace());
+    setQueryName(typeDefinition.getQueryName());
+    setDisplayName(typeDefinition.getDisplayName());
+    setDescription(typeDefinition.getDescription());
+    setBaseTypeId(typeDefinition.getBaseTypeId());
+    setParentTypeId(typeDefinition.getParentTypeId());
+    setIsCreatable(typeDefinition.isCreatable());
+    setIsFileable(typeDefinition.isFileable());
+    setIsQueryable(typeDefinition.isQueryable());
+    setIsIncludedInSupertypeQuery(typeDefinition.isIncludedInSupertypeQuery());
+    setIsFulltextIndexed(typeDefinition.isFulltextIndexed());
+    setIsControllableAcl(typeDefinition.isControllableAcl());
+    setIsControllablePolicy(typeDefinition.isControllablePolicy());
+    setPropertyDefinitions(typeDefinition.getPropertyDefinitions());
+  }
+
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#getId()
    */
   public String getId() {
@@ -68,7 +87,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#getLocalName()
    */
   public String getLocalName() {
@@ -81,7 +100,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#getLocalNamespace()
    */
   public String getLocalNamespace() {
@@ -94,7 +113,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#getQueryName()
    */
   public String getQueryName() {
@@ -107,7 +126,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#getDisplayName()
    */
   public String getDisplayName() {
@@ -120,7 +139,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#getDescription()
    */
   public String getDescription() {
@@ -133,33 +152,33 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#getBaseId()
    */
-  public BaseObjectTypeIds getBaseId() {
+  public BaseTypeId getBaseTypeId() {
     return fBaseId;
   }
 
-  public void setBaseId(BaseObjectTypeIds baseId) {
+  public void setBaseTypeId(BaseTypeId baseId) {
     fBaseId = baseId;
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#getParentId()
    */
-  public String getParentId() {
+  public String getParentTypeId() {
     return fParentId;
   }
 
-  public void setParentId(String parentId) {
+  public void setParentTypeId(String parentId) {
     fParentId = parentId;
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#isCreatable()
    */
   public Boolean isCreatable() {
@@ -172,7 +191,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#isFileable()
    */
   public Boolean isFileable() {
@@ -185,7 +204,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#isQueryable()
    */
   public Boolean isQueryable() {
@@ -198,7 +217,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#isIncludedInSupertypeQuery()
    */
   public Boolean isIncludedInSupertypeQuery() {
@@ -211,7 +230,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#isFulltextIndexed()
    */
   public Boolean isFulltextIndexed() {
@@ -224,7 +243,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#isControllableACL()
    */
   public Boolean isControllableAcl() {
@@ -237,7 +256,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#isControllablePolicy()
    */
   public Boolean isControllablePolicy() {
@@ -250,8 +269,8 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
-   * 
+   *
+   *
    * @see org.apache.opencmis.client.provider.TypeDefinitionData#getPropertyDefintions()
    */
   public Map<String, PropertyDefinition<?>> getPropertyDefinitions() {
@@ -264,7 +283,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /**
    * Adds a property definition.
-   * 
+   *
    * @param propertyDefinition
    *          the property definition
    */
@@ -292,7 +311,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Object#toString()
    */
   @Override

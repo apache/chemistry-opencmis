@@ -51,7 +51,7 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -135,7 +135,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
       type = sourceObj.getType();
     }
 
-    if (type.getBaseTypeId() != BaseObjectTypeIds.CMIS_DOCUMENT) {
+    if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
       throw new IllegalArgumentException("Source object must be a document!");
     }
 

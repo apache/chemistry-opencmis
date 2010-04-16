@@ -18,13 +18,13 @@
  */
 package org.apache.chemistry.opencmis.fileshare;
 
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoImpl;
 
 public class FolderInfo extends ObjectInfoImpl {
 
   public FolderInfo() {
-    setBaseType(BaseObjectTypeIds.CMIS_FOLDER);
+    setBaseType(BaseTypeId.CMIS_FOLDER);
     setContentType(null);
     setFileName(null);
     setHasAcl(true);

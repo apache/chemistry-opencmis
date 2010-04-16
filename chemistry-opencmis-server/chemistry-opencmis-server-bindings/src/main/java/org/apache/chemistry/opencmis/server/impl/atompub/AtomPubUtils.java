@@ -34,7 +34,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertiesData;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -307,7 +307,7 @@ public final class AtomPubUtils {
           Constants.MEDIATYPE_FEED);
     }
 
-    if (info.getBaseType() == BaseObjectTypeIds.CMIS_FOLDER) {
+    if (info.getBaseType() == BaseTypeId.CMIS_FOLDER) {
       entry.writeDownLink(compileUrl(baseUrl, RESOURCE_CHILDREN, info.getId()),
           Constants.MEDIATYPE_FEED);
 
@@ -447,14 +447,14 @@ public final class AtomPubUtils {
 
     entry.writeSelfLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getId()), type.getId());
     entry.writeEnclosureLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getId()));
-    if (type.getParentId() != null) {
-      entry.writeUpLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getParentId()),
+    if (type.getParentTypeId() != null) {
+      entry.writeUpLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getParentTypeId()),
           Constants.MEDIATYPE_ENTRY);
     }
     UrlBuilder downLink = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
     downLink.addParameter(Constants.PARAM_TYPE_ID, type.getId());
     entry.writeDownLink(downLink.toString(), Constants.MEDIATYPE_CHILDREN);
-    entry.writeDescribedByLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getBaseId().value()));
+    entry.writeDescribedByLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getBaseTypeId().value()));
 
     // write children
     if ((children != null) && (children.size() > 0)) {
@@ -493,8 +493,8 @@ public final class AtomPubUtils {
     downLink.addParameter(Constants.PARAM_TYPE_ID, type.getId());
     feed.writeDownLink(downLink.toString(), Constants.MEDIATYPE_FEED);
 
-    if (type.getParentId() != null) {
-      feed.writeUpLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getParentId()),
+    if (type.getParentTypeId() != null) {
+      feed.writeUpLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getParentTypeId()),
           Constants.MEDIATYPE_ENTRY);
     }
 

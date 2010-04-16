@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Base object for CMIS documents, folders, relationships and policies.
@@ -42,7 +42,7 @@ public interface ObjectData extends ExtensionsData {
    * 
    * @return the base object type or <code>null</code> if the base object type is unknown
    */
-  BaseObjectTypeIds getBaseTypeId();
+  BaseTypeId getBaseTypeId();
 
   /**
    * Returns the object properties. The properties can be incomplete if a property filter was used.

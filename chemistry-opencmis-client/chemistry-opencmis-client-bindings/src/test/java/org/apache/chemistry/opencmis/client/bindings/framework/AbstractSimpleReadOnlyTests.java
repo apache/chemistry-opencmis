@@ -42,7 +42,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 
@@ -94,18 +94,18 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     TypeDefinition docType = getTypeDefinition("cmis:document");
     assertTrue(docType instanceof DocumentTypeDefinition);
     assertEquals("cmis:document", docType.getId());
-    assertEquals(BaseObjectTypeIds.CMIS_DOCUMENT, docType.getBaseId());
+    assertEquals(BaseTypeId.CMIS_DOCUMENT, docType.getBaseTypeId());
 
     TypeDefinition folderType = getTypeDefinition("cmis:folder");
     assertTrue(folderType instanceof FolderTypeDefinition);
     assertEquals("cmis:folder", folderType.getId());
-    assertEquals(BaseObjectTypeIds.CMIS_FOLDER, folderType.getBaseId());
+    assertEquals(BaseTypeId.CMIS_FOLDER, folderType.getBaseTypeId());
 
     try {
       TypeDefinition relationshipType = getTypeDefinition("cmis:relationship");
       assertTrue(relationshipType instanceof RelationshipTypeDefinition);
       assertEquals("cmis:relationship", relationshipType.getId());
-      assertEquals(BaseObjectTypeIds.CMIS_RELATIONSHIP, relationshipType.getBaseId());
+      assertEquals(BaseTypeId.CMIS_RELATIONSHIP, relationshipType.getBaseTypeId());
     }
     catch (Exception e) {
       warning("Relationships type: " + e);
@@ -115,7 +115,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
       TypeDefinition policyType = getTypeDefinition("cmis:policy");
       assertTrue(policyType instanceof PolicyTypeDefinition);
       assertEquals("cmis:policy", policyType.getId());
-      assertEquals(BaseObjectTypeIds.CMIS_POLICY, policyType.getBaseId());
+      assertEquals(BaseTypeId.CMIS_POLICY, policyType.getBaseTypeId());
     }
     catch (Exception e) {
       warning("Policy type: " + e);
@@ -247,13 +247,13 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
 
       checkObject(object.getObject().getId());
 
-      if (object.getObject().getBaseTypeId() == BaseObjectTypeIds.CMIS_FOLDER) {
+      if (object.getObject().getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
         ObjectInFolderList children2 = getBinding().getNavigationService().getChildren(repId,
             object.getObject().getId(), null, null, Boolean.TRUE, IncludeRelationships.BOTH, null,
             Boolean.TRUE, null, null, null);
         assertNotNull(children2);
       }
-      else if (object.getObject().getBaseTypeId() == BaseObjectTypeIds.CMIS_DOCUMENT) {
+      else if (object.getObject().getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
         checkObjectVersions(object.getObject().getId());
       }
     }
@@ -306,7 +306,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
       assertNotNull(object.getObject().getId());
       assertNotNull(object.getObject().getBaseTypeId());
 
-      if (object.getObject().getBaseTypeId() == BaseObjectTypeIds.CMIS_DOCUMENT) {
+      if (object.getObject().getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
         ContentStream contentStream = getContent(object.getObject().getId(), null);
         readContent(contentStream);
 
@@ -367,7 +367,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
       for (ObjectData object : co.getObjects()) {
         assertNotNull(object);
         assertNotNull(object.getId());
-        assertEquals(BaseObjectTypeIds.CMIS_DOCUMENT, object.getBaseTypeId());
+        assertEquals(BaseTypeId.CMIS_DOCUMENT, object.getBaseTypeId());
       }
     }
   }

@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.server.spi;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Implementation of the {@link ObjectInfo} interface.
@@ -37,7 +37,7 @@ public class ObjectInfoImpl implements ObjectInfo {
   private GregorianCalendar fCreationDate;
   private GregorianCalendar fLastModificationDate;
   private String fTypeId;
-  private BaseObjectTypeIds fBaseObjectTypeId;
+  private BaseTypeId fBaseObjectTypeId;
   private boolean fIsCurrentVersion = true;
   private String fVersionSeriesId = null;
   private String fWorkingCopyId = null;
@@ -58,7 +58,7 @@ public class ObjectInfoImpl implements ObjectInfo {
   public ObjectInfoImpl() {
   }
 
-  public ObjectInfoImpl(String id, BaseObjectTypeIds baseObjectTypeId) {
+  public ObjectInfoImpl(String id, BaseTypeId baseObjectTypeId) {
     fId = id;
     fBaseObjectTypeId = baseObjectTypeId;
   }
@@ -111,11 +111,11 @@ public class ObjectInfoImpl implements ObjectInfo {
     fTypeId = typeId;
   }
 
-  public BaseObjectTypeIds getBaseType() {
+  public BaseTypeId getBaseType() {
     return fBaseObjectTypeId;
   }
 
-  public void setBaseType(BaseObjectTypeIds baseObjectTypeId) {
+  public void setBaseType(BaseTypeId baseObjectTypeId) {
     fBaseObjectTypeId = baseObjectTypeId;
   }
 

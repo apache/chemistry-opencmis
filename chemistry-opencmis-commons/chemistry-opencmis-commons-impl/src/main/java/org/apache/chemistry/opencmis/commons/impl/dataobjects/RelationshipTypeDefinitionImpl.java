@@ -41,7 +41,7 @@ public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition imple
    * 
    * @see org.apache.opencmis.client.provider.RelationshipTypeDefinitionData#getAllowedSourceTypes()
    */
-  public List<String> getAllowedSourceTypes() {
+  public List<String> getAllowedSourceTypeIds() {
     return fAllowedSourceTypes;
   }
 
@@ -54,7 +54,7 @@ public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition imple
    * 
    * @see org.apache.opencmis.client.provider.RelationshipTypeDefinitionData#getAllowedTargetTypes()
    */
-  public List<String> getAllowedTargetTypes() {
+  public List<String> getAllowedTargetTypeIds() {
     return fAllowedTargetTypes;
   }
 

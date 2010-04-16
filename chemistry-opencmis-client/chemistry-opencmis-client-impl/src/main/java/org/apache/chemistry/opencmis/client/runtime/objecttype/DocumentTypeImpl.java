@@ -18,39 +18,50 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
+import java.util.List;
+
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.objecttype.DocumentType;
+import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
+import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
-import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 
 /**
  * Document type.
  */
-public class DocumentTypeImpl extends AbstractObjectType implements DocumentType {
+public class DocumentTypeImpl extends DocumentTypeDefinitionImpl implements
+        DocumentType {
 
-  /**
-   * Constructor.
-   */
-  public DocumentTypeImpl(Session session, TypeDefinition typeDefinition) {
-    initialize(session, typeDefinition);
-  }
+    private static final long serialVersionUID = 1L;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.objecttype.DocumentType#getContentStreamAllowed()
-   */
-  public ContentStreamAllowed getContentStreamAllowed() {
-    return ((DocumentTypeDefinition) getTypeDefinition()).getContentStreamAllowed();
-  }
+    private ObjectTypeHelper helper;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.objecttype.DocumentType#isVersionable()
-   */
-  public Boolean isVersionable() {
-    return ((DocumentTypeDefinition) getTypeDefinition()).isVersionable();
-  }
+    public DocumentTypeImpl(Session session,
+            DocumentTypeDefinition typeDefinition) {
+        initialize(typeDefinition);
+        helper = new ObjectTypeHelper(session, this);
+    }
+
+    public ObjectType getBaseType() {
+        return helper.getBaseType();
+    }
+
+    public PagingList<ObjectType> getChildren(int itemsPerPage) {
+        return helper.getChildren(itemsPerPage);
+    }
+
+    public List<Container<ObjectType>> getDescendants(int depth) {
+        return helper.getDescendants(depth);
+    }
+
+    public ObjectType getParentType() {
+        return helper.getParentType();
+    }
+
+    public boolean isBaseType() {
+        return helper.isBaseType();
+    }
+
 }

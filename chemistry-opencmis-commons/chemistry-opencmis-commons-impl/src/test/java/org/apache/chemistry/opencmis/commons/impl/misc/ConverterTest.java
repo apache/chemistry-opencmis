@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.commons.api.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
@@ -72,7 +72,7 @@ public class ConverterTest extends TestCase {
     // values
     obj1 = new RepositoryInfoImpl();
     obj1.setChangesIncomplete(Boolean.TRUE);
-    obj1.setChangesOnType(Collections.singletonList(BaseObjectTypeIds.CMIS_DOCUMENT));
+    obj1.setChangesOnType(Collections.singletonList(BaseTypeId.CMIS_DOCUMENT));
     obj1.setCmisVersionSupported("1.0");
     obj1.setLatestChangeLogToken("changeLogToken");
     obj1.setPrincipalAnonymous("principalAnonymous");
@@ -141,7 +141,7 @@ public class ConverterTest extends TestCase {
 
     // simple values
     obj1 = new DocumentTypeDefinitionImpl();
-    obj1.setBaseId(BaseObjectTypeIds.CMIS_DOCUMENT);
+    obj1.setBaseTypeId(BaseTypeId.CMIS_DOCUMENT);
     obj1.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
     obj1.setDescription("description");
     obj1.setDisplayName("displayName");
@@ -155,7 +155,7 @@ public class ConverterTest extends TestCase {
     obj1.setIsVersionable(Boolean.TRUE);
     obj1.setLocalName("localName");
     obj1.setLocalNamespace("localNamespace");
-    obj1.setParentId("parentId");
+    obj1.setParentTypeId("parentId");
     obj1.setQueryName("queryName");
 
     obj2 = Converter.convert(Converter.convert(obj1));
