@@ -21,17 +21,18 @@ package org.apache.chemistry.opencmis.client.api;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 
 /**
  * Query result.
  */
 public interface QueryResult {
 
-  List<QueryProperty<?>> getProperties();
+  List<PropertyData<?>> getProperties();
 
-  <T> QueryProperty<T> getPropertyById(String id);
+  <T> PropertyData<T> getPropertyById(String id);
 
-  <T> QueryProperty<T> getPropertyByQueryName(String queryName);
+  <T> PropertyData<T> getPropertyByQueryName(String queryName);
 
   <T> T getPropertyValueById(String id);
 

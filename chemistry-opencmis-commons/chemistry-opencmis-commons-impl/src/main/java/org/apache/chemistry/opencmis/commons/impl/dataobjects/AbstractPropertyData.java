@@ -26,9 +26,9 @@ import org.apache.chemistry.opencmis.commons.api.PropertyData;
 
 /**
  * Abstract property data implementation.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public abstract class AbstractPropertyData<T> extends AbstractExtensionData implements
     PropertyData<T> {
@@ -42,7 +42,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.PropertyData#getId()
    */
   public String getId() {
@@ -55,7 +55,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.PropertyData#getDisplayName()
    */
   public String getDisplayName() {
@@ -68,7 +68,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.PropertyData#getLocalName()
    */
   public String getLocalName() {
@@ -81,7 +81,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.PropertyData#getQueryName()
    */
   public String getQueryName() {
@@ -94,7 +94,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.PropertyData#getValues()
    */
   public List<T> getValues() {
@@ -122,7 +122,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.PropertyData#getFirstValue()
    */
   public T getFirstValue() {

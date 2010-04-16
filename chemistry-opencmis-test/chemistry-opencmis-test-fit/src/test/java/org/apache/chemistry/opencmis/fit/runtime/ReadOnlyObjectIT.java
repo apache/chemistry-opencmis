@@ -127,7 +127,7 @@ public class ReadOnlyObjectIT extends AbstractSessionTest {
         Iterator<Property<?>> i = l.iterator();
         while (i.hasNext()) {
             Property<?> p = i.next();
-            Object value = p.getValue();
+            Object value = p.getFirstValue();
             PropertyType t = p.getType();
 
             Assert.assertNotNull(p);
@@ -194,7 +194,7 @@ public class ReadOnlyObjectIT extends AbstractSessionTest {
         Iterator<Property<?>> i = l.iterator();
         while (i.hasNext()) {
             Property<?> p = i.next();
-            Object value = p.getValue();
+            Object value = p.getFirstValue();
             PropertyType t = p.getType();
 
             Assert.assertNotNull(p);
@@ -256,7 +256,7 @@ public class ReadOnlyObjectIT extends AbstractSessionTest {
 
         Property<String> p = document.getProperty(PropertyIds.OBJECT_ID);
         Assert.assertNotNull(p);
-        String v1 = p.getValue();
+        String v1 = p.getFirstValue();
         Assert.assertNotNull(v1);
 
         String v2 = document.getPropertyValue(PropertyIds.OBJECT_ID);

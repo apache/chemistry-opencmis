@@ -25,15 +25,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.QueryProperty;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
 import org.apache.chemistry.opencmis.commons.api.AllowableActions;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 
 /**
@@ -43,8 +42,8 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private Map<String, QueryProperty<?>> propertiesById;
-  private Map<String, QueryProperty<?>> propertiesByQueryName;
+  private Map<String, PropertyData<?>> propertiesById;
+  private Map<String, PropertyData<?>> propertiesByQueryName;
   private AllowableActions allowableActions;
   private List<Relationship> relationships;
   private List<Rendition> renditions;
@@ -59,13 +58,13 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
       // handle properties
       if (objectData.getProperties() != null) {
-        propertiesById = new LinkedHashMap<String, QueryProperty<?>>();
-        propertiesByQueryName = new LinkedHashMap<String, QueryProperty<?>>();
+        propertiesById = new LinkedHashMap<String, PropertyData<?>>();
+        propertiesByQueryName = new LinkedHashMap<String, PropertyData<?>>();
 
-        List<QueryProperty<?>> queryProperties = of.convertQueryProperties(objectData
+        List<PropertyData<?>> queryProperties = of.convertQueryProperties(objectData
             .getProperties());
 
-        for (QueryProperty<?> property : queryProperties) {
+        for (PropertyData<?> property : queryProperties) {
           propertiesById.put(property.getId(), property);
           propertiesByQueryName.put(property.getQueryName(), property);
         }
@@ -102,8 +101,8 @@ public class QueryResultImpl implements QueryResult, Serializable {
    *
    * @see org.apache.opencmis.client.api.QueryResult#getProperties()
    */
-  public List<QueryProperty<?>> getProperties() {
-    return new ArrayList<QueryProperty<?>>(propertiesById.values());
+  public List<PropertyData<?>> getProperties() {
+    return new ArrayList<PropertyData<?>>(propertiesById.values());
   }
 
   /*
@@ -112,8 +111,8 @@ public class QueryResultImpl implements QueryResult, Serializable {
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyById(java.lang.String)
    */
   @SuppressWarnings("unchecked")
-  public <T> QueryProperty<T> getPropertyById(String id) {
-    return (QueryProperty<T>) propertiesById.get(id);
+  public <T> PropertyData<T> getPropertyById(String id) {
+    return (PropertyData<T>) propertiesById.get(id);
   }
 
   /*
@@ -122,8 +121,8 @@ public class QueryResultImpl implements QueryResult, Serializable {
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyByQueryName(java.lang.String)
    */
   @SuppressWarnings("unchecked")
-  public <T> QueryProperty<T> getPropertyByQueryName(String queryName) {
-    return (QueryProperty<T>) propertiesByQueryName.get(queryName);
+  public <T> PropertyData<T> getPropertyByQueryName(String queryName) {
+    return (PropertyData<T>) propertiesByQueryName.get(queryName);
   }
 
   /*
@@ -132,12 +131,12 @@ public class QueryResultImpl implements QueryResult, Serializable {
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyValueById(java.lang.String)
    */
   public <T> T getPropertyValueById(String id) {
-    QueryProperty<T> property = getPropertyById(id);
+    PropertyData<T> property = getPropertyById(id);
     if (property == null) {
       return null;
     }
 
-    return property.getValue();
+    return property.getFirstValue();
   }
 
   /*
@@ -146,12 +145,12 @@ public class QueryResultImpl implements QueryResult, Serializable {
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyValueByQueryName(java.lang.String)
    */
   public <T> T getPropertyValueByQueryName(String queryName) {
-    QueryProperty<T> property = getPropertyByQueryName(queryName);
+    PropertyData<T> property = getPropertyByQueryName(queryName);
     if (property == null) {
       return null;
     }
 
-    return property.getValue();
+    return property.getFirstValue();
   }
 
   /*
@@ -160,7 +159,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueById(java.lang.String)
    */
   public <T> List<T> getPropertyMultivalueById(String id) {
-    QueryProperty<T> property = getPropertyById(id);
+    PropertyData<T> property = getPropertyById(id);
     if (property == null) {
       return null;
     }
@@ -175,7 +174,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
    * org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueByQueryName(java.lang.String)
    */
   public <T> List<T> getPropertyMultivalueByQueryName(String queryName) {
-    QueryProperty<T> property = getPropertyByQueryName(queryName);
+    PropertyData<T> property = getPropertyByQueryName(queryName);
     if (property == null) {
       return null;
     }

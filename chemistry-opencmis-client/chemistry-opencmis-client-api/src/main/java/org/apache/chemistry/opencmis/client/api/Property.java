@@ -18,8 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-import java.util.List;
-
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 
@@ -27,12 +26,10 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
  * {@see org.apache.opencmis.client.api.CMISObject#getProperties()}, {@see
  * org.apache.opencmis.client.api.Session#createProperty(String, Object)} and {@see
  * org.apache.opencmis.client.api.Session#createPropertyMultivalue(String, List)}. Domain Model 2.2.1
- * 
+ *
  * @param <T>
  */
-public interface Property<T> {
-
-  // property
+public interface Property<T> extends PropertyData<T> {
 
   boolean isMultiValued();
 
@@ -40,18 +37,6 @@ public interface Property<T> {
 
   PropertyDefinition<T> getDefinition();
 
-  String getId();
-
-  String getLocalName();
-
-  String getDisplayName();
-
-  String getQueryName();
-
   String getValueAsString();
-
-  T getValue();
-
-  List<T> getValues();
 
 }

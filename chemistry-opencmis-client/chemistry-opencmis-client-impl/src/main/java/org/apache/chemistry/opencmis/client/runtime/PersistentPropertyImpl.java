@@ -19,105 +19,78 @@
 package org.apache.chemistry.opencmis.client.runtime;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
 
 /**
  * Property Implementation.
  */
-public class PersistentPropertyImpl<T> implements Property<T>, Serializable {
+public class PersistentPropertyImpl<T> extends AbstractPropertyData<T> implements Property<T>, Serializable {
 
-  /**
-   * serialization
-   */
-  private static final long serialVersionUID = -6586532350183649719L;
-  private PropertyDefinition<T> type;
-  private List<T> values;
+  private static final long serialVersionUID = 1L;
+  private PropertyDefinition<T> propertyDefinition;
+
+  protected void initialize(PropertyDefinition<?> pd) {
+      setId(pd.getId());
+      setDisplayName(pd.getDisplayName());
+      setLocalName(pd.getLocalName());
+      setQueryName(pd.getQueryName());
+  }
 
   /**
    * Constructs a single-value property.
    */
   @SuppressWarnings("unchecked")
-  public PersistentPropertyImpl(PropertyDefinition<?> type, T value) {
-    if (type == null) {
+  public PersistentPropertyImpl(PropertyDefinition<?> pd, T value) {
+    if (pd == null) {
       throw new IllegalArgumentException("Type must be set!");
     }
-
     if (value == null) {
       throw new IllegalArgumentException("Value must be set!");
     }
-
-    this.type = (PropertyDefinition<T>) type;
-    this.values = Collections.singletonList(value);
+    propertyDefinition = (PropertyDefinition<T>) pd;
+    initialize(pd);
+    setValue(value);
   }
 
   /**
    * Constructs a multi-value property.
    */
   @SuppressWarnings("unchecked")
-  public PersistentPropertyImpl(PropertyDefinition<?> type, List<T> values) {
-    if (type == null) {
+  public PersistentPropertyImpl(PropertyDefinition<?> pd, List<T> values) {
+    if (pd == null) {
       throw new IllegalArgumentException("Type must be set!");
     }
-
-    this.type = (PropertyDefinition<T>) type;
-    this.values = values;
+    propertyDefinition = (PropertyDefinition<T>) pd;
+    initialize(pd);
+    setValues(values);
   }
 
   public PropertyDefinition<T> getDefinition() {
-    return this.type;
-  }
-
-  public String getDisplayName() {
-    return this.type.getDisplayName();
-  }
-
-  public String getId() {
-    return this.type.getId();
-  }
-
-  public String getLocalName() {
-    return this.type.getLocalName();
-  }
-
-  public String getQueryName() {
-    return this.type.getQueryName();
+    return propertyDefinition;
   }
 
   public PropertyType getType() {
-    return this.type.getPropertyType();
-  }
-
-  public T getValue() {
-    if (this.values.size() == 0) {
-      return null;
-    }
-    return this.values.get(0);
+    return propertyDefinition.getPropertyType();
   }
 
   public String getValueAsString() {
-    if (this.values.size() == 0) {
+    List<T> values = getValues();
+    if (values.size() == 0) {
       return null;
     }
-    switch (this.type.getPropertyType()) {
+    switch (propertyDefinition.getPropertyType()) {
     default:
-      return this.values.get(0).toString();
+      return values.get(0).toString();
     }
-  }
-
-  public List<T> getValues() {
-    if (this.values.size() == 0) {
-      return null;
-    }
-    return this.values;
   }
 
   public boolean isMultiValued() {
-    return this.type.getCardinality() == Cardinality.MULTI;
+    return propertyDefinition.getCardinality() == Cardinality.MULTI;
   }
 }

@@ -34,7 +34,6 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
-import org.apache.chemistry.opencmis.client.api.QueryProperty;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
@@ -45,7 +44,6 @@ import org.apache.chemistry.opencmis.client.runtime.PersistentPolicyImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentPropertyImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentRelationshipImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentSessionImpl;
-import org.apache.chemistry.opencmis.client.runtime.QueryPropertyImpl;
 import org.apache.chemistry.opencmis.client.runtime.QueryResultImpl;
 import org.apache.chemistry.opencmis.client.runtime.RenditionImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.DocumentTypeImpl;
@@ -405,7 +403,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
           throw new IllegalArgumentException("Property id mismatch: '" + id + "' != '" + p.getId()
               + "'!");
         }
-        value = (p.getDefinition().getCardinality() == Cardinality.SINGLE ? p.getValue() : p
+        value = (p.getDefinition().getCardinality() == Cardinality.SINGLE ? p.getFirstValue() : p
             .getValues());
       }
 
@@ -580,20 +578,13 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
    * .commons.provider.PropertiesData)
    */
   @SuppressWarnings("unchecked")
-  public List<QueryProperty<?>> convertQueryProperties(PropertiesData properties) {
+  public List<PropertyData<?>> convertQueryProperties(PropertiesData properties) {
     // check input
     if ((properties == null) || (properties.getProperties() == null)) {
       throw new IllegalArgumentException("Properties must be set!");
     }
-
-    // iterate through properties and convert them
-    List<QueryProperty<?>> result = new ArrayList<QueryProperty<?>>();
-    for (PropertyData<?> property : properties.getProperties().values()) {
-      result.add(new QueryPropertyImpl(property.getId(), property.getQueryName(), property
-          .getValues()));
-    }
-
-    return result;
+    return new ArrayList<PropertyData<?>>(properties.getProperties()
+            .values());
   }
 
   // objects

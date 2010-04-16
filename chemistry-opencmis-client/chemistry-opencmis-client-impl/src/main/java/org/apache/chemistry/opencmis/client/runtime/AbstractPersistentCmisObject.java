@@ -476,7 +476,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       return null;
     }
 
-    return property.getValue();
+    return property.getFirstValue();
   }
 
   /*
