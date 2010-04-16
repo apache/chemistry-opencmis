@@ -31,37 +31,35 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefini
 /**
  * Document type.
  */
-public class DocumentTypeImpl extends DocumentTypeDefinitionImpl implements
-        DocumentType {
+public class DocumentTypeImpl extends DocumentTypeDefinitionImpl implements DocumentType {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private ObjectTypeHelper helper;
+	private ObjectTypeHelper helper;
 
-    public DocumentTypeImpl(Session session,
-            DocumentTypeDefinition typeDefinition) {
-        initialize(typeDefinition);
-        helper = new ObjectTypeHelper(session, this);
-    }
+	public DocumentTypeImpl(Session session, DocumentTypeDefinition typeDefinition) {
+		initialize(typeDefinition);
+		helper = new ObjectTypeHelper(session, this);
+	}
 
-    public ObjectType getBaseType() {
-        return helper.getBaseType();
-    }
+	public ObjectType getBaseType() {
+		return helper.getBaseType();
+	}
 
-    public PagingList<ObjectType> getChildren(int itemsPerPage) {
-        return helper.getChildren(itemsPerPage);
-    }
+	public PagingList<ObjectType> getChildren(int itemsPerPage) {
+		return helper.getChildren(itemsPerPage);
+	}
 
-    public List<Tree<ObjectType>> getDescendants(int depth) {
-        return helper.getDescendants(depth);
-    }
+	public List<Tree<ObjectType>> getDescendants(int depth) {
+		return helper.getDescendants(depth);
+	}
 
-    public ObjectType getParentType() {
-        return helper.getParentType();
-    }
+	public ObjectType getParentType() {
+		return helper.getParentType();
+	}
 
-    public boolean isBaseType() {
-        return helper.isBaseType();
-    }
+	public boolean isBaseType() {
+		return helper.isBaseType();
+	}
 
 }

@@ -26,16 +26,16 @@ import org.apache.chemistry.opencmis.commons.api.ObjectData;
 
 public class PersistentPolicyImpl extends AbstractPersistentFilableCmisObject implements Policy {
 
-  /**
-   * Constructor.
-   */
-  public PersistentPolicyImpl(PersistentSessionImpl session, ObjectType objectType,
-      ObjectData objectData, OperationContext context) {
-    initialize(session, objectType, objectData, context);
-  }
+	/**
+	 * Constructor.
+	 */
+	public PersistentPolicyImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
+			OperationContext context) {
+		initialize(session, objectType, objectData, context);
+	}
 
-  public String getPolicyText() {
-    return getPropertyValue(PropertyIds.POLICY_TEXT);
-  }
+	public String getPolicyText() {
+		return getPropertyValue(PropertyIds.POLICY_TEXT);
+	}
 
 }

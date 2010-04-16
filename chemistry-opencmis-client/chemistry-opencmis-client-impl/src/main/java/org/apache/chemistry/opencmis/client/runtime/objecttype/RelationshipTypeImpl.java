@@ -32,69 +32,65 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDe
 /**
  * Relationship type.
  */
-public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl
-        implements RelationshipType {
+public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl implements RelationshipType {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private ObjectTypeHelper helper;
-    private List<ObjectType> allowedSourceTypes;
-    private List<ObjectType> allowedTargetTypes;
+	private ObjectTypeHelper helper;
+	private List<ObjectType> allowedSourceTypes;
+	private List<ObjectType> allowedTargetTypes;
 
-    public RelationshipTypeImpl(Session session,
-            RelationshipTypeDefinition typeDefinition) {
-        initialize(typeDefinition);
-        helper = new ObjectTypeHelper(session, this);
-    }
+	public RelationshipTypeImpl(Session session, RelationshipTypeDefinition typeDefinition) {
+		initialize(typeDefinition);
+		helper = new ObjectTypeHelper(session, this);
+	}
 
-    public ObjectType getBaseType() {
-        return helper.getBaseType();
-    }
+	public ObjectType getBaseType() {
+		return helper.getBaseType();
+	}
 
-    public PagingList<ObjectType> getChildren(int itemsPerPage) {
-        return helper.getChildren(itemsPerPage);
-    }
+	public PagingList<ObjectType> getChildren(int itemsPerPage) {
+		return helper.getChildren(itemsPerPage);
+	}
 
-    public List<Tree<ObjectType>> getDescendants(int depth) {
-        return helper.getDescendants(depth);
-    }
+	public List<Tree<ObjectType>> getDescendants(int depth) {
+		return helper.getDescendants(depth);
+	}
 
-    public ObjectType getParentType() {
-        return helper.getParentType();
-    }
+	public ObjectType getParentType() {
+		return helper.getParentType();
+	}
 
-    public boolean isBaseType() {
-        return helper.isBaseType();
-    }
+	public boolean isBaseType() {
+		return helper.isBaseType();
+	}
 
-    public List<ObjectType> getAllowedSourceTypes() {
-        if (allowedSourceTypes == null) {
-            List<String> ids = getAllowedSourceTypeIds();
-            List<ObjectType> types = new ArrayList<ObjectType>(ids == null ? 0
-                    : ids.size());
-            if (ids != null) {
-                for (String id : ids) {
-                    types.add(helper.getSession().getTypeDefinition(id));
-                }
-            }
-            allowedSourceTypes = types;
-        }
-        return allowedSourceTypes;
-    }
+	public List<ObjectType> getAllowedSourceTypes() {
+		if (allowedSourceTypes == null) {
+			List<String> ids = getAllowedSourceTypeIds();
+			List<ObjectType> types = new ArrayList<ObjectType>(ids == null ? 0 : ids.size());
+			if (ids != null) {
+				for (String id : ids) {
+					types.add(helper.getSession().getTypeDefinition(id));
+				}
+			}
+			allowedSourceTypes = types;
+		}
+		return allowedSourceTypes;
+	}
 
-    public List<ObjectType> getAllowedTargetTypes() {
-        if (allowedTargetTypes == null) {
-            List<String> ids = getAllowedTargetTypeIds();
-            List<ObjectType> types = new ArrayList<ObjectType>(ids == null ? 0
-                    : ids.size());
-            if (ids != null) {
-                for (String id : ids) {
-                    types.add(helper.getSession().getTypeDefinition(id));
-                }
-            }
-            allowedTargetTypes = types;
-        }
-        return allowedTargetTypes;
-    }
+	public List<ObjectType> getAllowedTargetTypes() {
+		if (allowedTargetTypes == null) {
+			List<String> ids = getAllowedTargetTypeIds();
+			List<ObjectType> types = new ArrayList<ObjectType>(ids == null ? 0 : ids.size());
+			if (ids != null) {
+				for (String id : ids) {
+					types.add(helper.getSession().getTypeDefinition(id));
+				}
+			}
+			allowedTargetTypes = types;
+		}
+		return allowedTargetTypes;
+	}
 
 }

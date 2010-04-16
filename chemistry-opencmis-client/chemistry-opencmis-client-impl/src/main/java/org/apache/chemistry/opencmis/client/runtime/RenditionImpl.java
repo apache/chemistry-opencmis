@@ -33,68 +33,63 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
  */
 public class RenditionImpl extends RenditionDataImpl implements Rendition {
 
-  private Session session;
-  private String objectId;
+	private Session session;
+	private String objectId;
 
-  /**
-   * Constructor.
-   */
-  public RenditionImpl(Session session, String objectId, String streamId,
-      String renditionDocumentId, String kind, long length, String mimeType, String title,
-      int height, int width) {
-        super(streamId, mimeType, BigInteger.valueOf(length), kind, title,
-                BigInteger.valueOf(width), BigInteger.valueOf(height),
-                renditionDocumentId);
-    this.session = session;
-    this.objectId = objectId;
-  }
+	/**
+	 * Constructor.
+	 */
+	public RenditionImpl(Session session, String objectId, String streamId, String renditionDocumentId, String kind,
+			long length, String mimeType, String title, int height, int width) {
+		super(streamId, mimeType, BigInteger.valueOf(length), kind, title, BigInteger.valueOf(width), BigInteger
+				.valueOf(height), renditionDocumentId);
+		this.session = session;
+		this.objectId = objectId;
+	}
 
+	public long getLength() {
+		return fLength == null ? -1 : fLength.longValue();
+	}
 
-  public long getLength() {
-    return fLength == null ? -1 : fLength.longValue();
-  }
+	public long getHeight() {
+		return fHeight == null ? -1 : fHeight.longValue();
+	}
 
+	public long getWidth() {
+		return fWidth == null ? -1 : fWidth.longValue();
+	}
 
-  public long getHeight() {
-    return fHeight == null ? -1 : fHeight.longValue();
-  }
+	public Document getRenditionDocument() {
+		return getRenditionDocument(session.getDefaultContext());
+	}
 
-  public long getWidth() {
-    return fWidth == null ? -1 : fWidth.longValue();
-  }
+	public Document getRenditionDocument(OperationContext context) {
+		if (fRenditionDocumentId == null) {
+			return null;
+		}
+		CmisObject rendDoc = session.getObject(session.createObjectId(fRenditionDocumentId), context);
+		if (!(rendDoc instanceof Document)) {
+			return null;
+		}
 
-  public Document getRenditionDocument() {
-    return getRenditionDocument(session.getDefaultContext());
-  }
+		return (Document) rendDoc;
+	}
 
-  public Document getRenditionDocument(OperationContext context) {
-    if (fRenditionDocumentId == null) {
-      return null;
-    }
-    CmisObject rendDoc = session.getObject(session.createObjectId(fRenditionDocumentId),
-        context);
-    if (!(rendDoc instanceof Document)) {
-      return null;
-    }
+	public ContentStream getContentStream() {
+		if ((objectId == null) || (fStreamId == null)) {
+			return null;
+		}
 
-    return (Document) rendDoc;
-  }
+		ContentStream contentStream = session.getBinding().getObjectService().getContentStream(
+				session.getRepositoryInfo().getId(), objectId, fStreamId, null, null, null);
+		if (contentStream == null) {
+			return null;
+		}
 
-  public ContentStream getContentStream() {
-    if ((objectId == null) || (fStreamId == null)) {
-      return null;
-    }
+		long length = contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue();
 
-    ContentStream contentStream = session.getBinding().getObjectService().getContentStream(
-        session.getRepositoryInfo().getId(), objectId, fStreamId, null, null, null);
-    if (contentStream == null) {
-      return null;
-    }
-
-    long length = contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue();
-
-    return session.getObjectFactory().createContentStream(contentStream.getFileName(), length,
-        contentStream.getMimeType(), contentStream.getStream());
-  }
+		return session.getObjectFactory().createContentStream(contentStream.getFileName(), length,
+				contentStream.getMimeType(), contentStream.getStream());
+	}
 
 }

@@ -40,172 +40,182 @@ import org.apache.chemistry.opencmis.commons.api.RenditionData;
  */
 public class QueryResultImpl implements QueryResult, Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private Map<String, PropertyData<?>> propertiesById;
-  private Map<String, PropertyData<?>> propertiesByQueryName;
-  private AllowableActions allowableActions;
-  private List<Relationship> relationships;
-  private List<Rendition> renditions;
+	private Map<String, PropertyData<?>> propertiesById;
+	private Map<String, PropertyData<?>> propertiesByQueryName;
+	private AllowableActions allowableActions;
+	private List<Relationship> relationships;
+	private List<Rendition> renditions;
 
-  /**
-   * Constructor.
-   */
-  public QueryResultImpl(Session session, ObjectData objectData) {
-    if (objectData != null) {
+	/**
+	 * Constructor.
+	 */
+	public QueryResultImpl(Session session, ObjectData objectData) {
+		if (objectData != null) {
 
-      ObjectFactory of = session.getObjectFactory();
+			ObjectFactory of = session.getObjectFactory();
 
-      // handle properties
-      if (objectData.getProperties() != null) {
-        propertiesById = new LinkedHashMap<String, PropertyData<?>>();
-        propertiesByQueryName = new LinkedHashMap<String, PropertyData<?>>();
+			// handle properties
+			if (objectData.getProperties() != null) {
+				propertiesById = new LinkedHashMap<String, PropertyData<?>>();
+				propertiesByQueryName = new LinkedHashMap<String, PropertyData<?>>();
 
-        List<PropertyData<?>> queryProperties = of.convertQueryProperties(objectData
-            .getProperties());
+				List<PropertyData<?>> queryProperties = of.convertQueryProperties(objectData.getProperties());
 
-        for (PropertyData<?> property : queryProperties) {
-          propertiesById.put(property.getId(), property);
-          propertiesByQueryName.put(property.getQueryName(), property);
-        }
-      }
+				for (PropertyData<?> property : queryProperties) {
+					propertiesById.put(property.getId(), property);
+					propertiesByQueryName.put(property.getQueryName(), property);
+				}
+			}
 
-      // handle allowable actions
-      if (objectData.getAllowableActions() != null) {
-        this.allowableActions = objectData.getAllowableActions();
-      }
+			// handle allowable actions
+			if (objectData.getAllowableActions() != null) {
+				this.allowableActions = objectData.getAllowableActions();
+			}
 
-      // handle relationships
-      if (objectData.getRelationships() != null) {
-        relationships = new ArrayList<Relationship>();
-        for (ObjectData rod : objectData.getRelationships()) {
-          CmisObject relationship = of.convertObject(rod, session.getDefaultContext());
-          if (relationship instanceof Relationship) {
-            relationships.add((Relationship) relationship);
-          }
-        }
-      }
+			// handle relationships
+			if (objectData.getRelationships() != null) {
+				relationships = new ArrayList<Relationship>();
+				for (ObjectData rod : objectData.getRelationships()) {
+					CmisObject relationship = of.convertObject(rod, session.getDefaultContext());
+					if (relationship instanceof Relationship) {
+						relationships.add((Relationship) relationship);
+					}
+				}
+			}
 
-      // handle renditions
-      if (objectData.getRenditions() != null) {
-        this.renditions = new ArrayList<Rendition>();
-        for (RenditionData rd : objectData.getRenditions()) {
-          this.renditions.add(of.convertRendition(null, rd));
-        }
-      }
-    }
-  }
+			// handle renditions
+			if (objectData.getRenditions() != null) {
+				this.renditions = new ArrayList<Rendition>();
+				for (RenditionData rd : objectData.getRenditions()) {
+					this.renditions.add(of.convertRendition(null, rd));
+				}
+			}
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.QueryResult#getProperties()
-   */
-  public List<PropertyData<?>> getProperties() {
-    return new ArrayList<PropertyData<?>>(propertiesById.values());
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.api.QueryResult#getProperties()
+	 */
+	public List<PropertyData<?>> getProperties() {
+		return new ArrayList<PropertyData<?>>(propertiesById.values());
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.QueryResult#getPropertyById(java.lang.String)
-   */
-  @SuppressWarnings("unchecked")
-  public <T> PropertyData<T> getPropertyById(String id) {
-    return (PropertyData<T>) propertiesById.get(id);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.api.QueryResult#getPropertyById(java.lang.
+	 * String)
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> PropertyData<T> getPropertyById(String id) {
+		return (PropertyData<T>) propertiesById.get(id);
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.QueryResult#getPropertyByQueryName(java.lang.String)
-   */
-  @SuppressWarnings("unchecked")
-  public <T> PropertyData<T> getPropertyByQueryName(String queryName) {
-    return (PropertyData<T>) propertiesByQueryName.get(queryName);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.api.QueryResult#getPropertyByQueryName(java
+	 * .lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> PropertyData<T> getPropertyByQueryName(String queryName) {
+		return (PropertyData<T>) propertiesByQueryName.get(queryName);
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.QueryResult#getPropertyValueById(java.lang.String)
-   */
-  public <T> T getPropertyValueById(String id) {
-    PropertyData<T> property = getPropertyById(id);
-    if (property == null) {
-      return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.api.QueryResult#getPropertyValueById(java.
+	 * lang.String)
+	 */
+	public <T> T getPropertyValueById(String id) {
+		PropertyData<T> property = getPropertyById(id);
+		if (property == null) {
+			return null;
+		}
 
-    return property.getFirstValue();
-  }
+		return property.getFirstValue();
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.QueryResult#getPropertyValueByQueryName(java.lang.String)
-   */
-  public <T> T getPropertyValueByQueryName(String queryName) {
-    PropertyData<T> property = getPropertyByQueryName(queryName);
-    if (property == null) {
-      return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.api.QueryResult#getPropertyValueByQueryName
+	 * (java.lang.String)
+	 */
+	public <T> T getPropertyValueByQueryName(String queryName) {
+		PropertyData<T> property = getPropertyByQueryName(queryName);
+		if (property == null) {
+			return null;
+		}
 
-    return property.getFirstValue();
-  }
+		return property.getFirstValue();
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueById(java.lang.String)
-   */
-  public <T> List<T> getPropertyMultivalueById(String id) {
-    PropertyData<T> property = getPropertyById(id);
-    if (property == null) {
-      return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueById(
+	 * java.lang.String)
+	 */
+	public <T> List<T> getPropertyMultivalueById(String id) {
+		PropertyData<T> property = getPropertyById(id);
+		if (property == null) {
+			return null;
+		}
 
-    return property.getValues();
-  }
+		return property.getValues();
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueByQueryName(java.lang.String)
-   */
-  public <T> List<T> getPropertyMultivalueByQueryName(String queryName) {
-    PropertyData<T> property = getPropertyByQueryName(queryName);
-    if (property == null) {
-      return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueByQueryName
+	 * (java.lang.String)
+	 */
+	public <T> List<T> getPropertyMultivalueByQueryName(String queryName) {
+		PropertyData<T> property = getPropertyByQueryName(queryName);
+		if (property == null) {
+			return null;
+		}
 
-    return property.getValues();
-  }
+		return property.getValues();
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.QueryResult#getAllowableActions()
-   */
-  public AllowableActions getAllowableActions() {
-    return allowableActions;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.api.QueryResult#getAllowableActions()
+	 */
+	public AllowableActions getAllowableActions() {
+		return allowableActions;
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.QueryResult#getRelationships()
-   */
-  public List<Relationship> getRelationships() {
-    return relationships;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.api.QueryResult#getRelationships()
+	 */
+	public List<Relationship> getRelationships() {
+		return relationships;
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.QueryResult#getRenditions()
-   */
-  public List<Rendition> getRenditions() {
-    return renditions;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.api.QueryResult#getRenditions()
+	 */
+	public List<Rendition> getRenditions() {
+		return renditions;
+	}
 }

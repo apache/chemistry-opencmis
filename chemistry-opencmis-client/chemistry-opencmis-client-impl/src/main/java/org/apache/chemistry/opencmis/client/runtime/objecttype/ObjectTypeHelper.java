@@ -32,55 +32,54 @@ import org.apache.chemistry.opencmis.client.api.Tree;
  */
 public class ObjectTypeHelper {
 
-    private Session session;
-    private ObjectType objectType;
-    private ObjectType baseType;
-    private ObjectType parentType;
+	private Session session;
+	private ObjectType objectType;
+	private ObjectType baseType;
+	private ObjectType parentType;
 
-    public ObjectTypeHelper(Session session, ObjectType objectType) {
-        this.session = session;
-        this.objectType = objectType;
-    }
+	public ObjectTypeHelper(Session session, ObjectType objectType) {
+		this.session = session;
+		this.objectType = objectType;
+	}
 
-    public Session getSession() {
-        return session;
-    }
+	public Session getSession() {
+		return session;
+	}
 
-    public boolean isBaseType() {
-        return objectType.getParentTypeId() == null;
-    }
+	public boolean isBaseType() {
+		return objectType.getParentTypeId() == null;
+	}
 
-    public ObjectType getBaseType() {
-        if (isBaseType()) {
-            return null;
-        }
-        if (baseType != null) {
-            return baseType;
-        }
-        if (objectType.getBaseTypeId() == null) {
-            return null;
-        }
-        baseType = session
-                .getTypeDefinition(objectType.getBaseTypeId().value());
-        return baseType;
-    }
+	public ObjectType getBaseType() {
+		if (isBaseType()) {
+			return null;
+		}
+		if (baseType != null) {
+			return baseType;
+		}
+		if (objectType.getBaseTypeId() == null) {
+			return null;
+		}
+		baseType = session.getTypeDefinition(objectType.getBaseTypeId().value());
+		return baseType;
+	}
 
-    public ObjectType getParentType() {
-        if (parentType != null) {
-            return parentType;
-        }
-        if (objectType.getParentTypeId() == null) {
-            return null;
-        }
-        parentType = session.getTypeDefinition(objectType.getParentTypeId());
-        return parentType;
-    }
+	public ObjectType getParentType() {
+		if (parentType != null) {
+			return parentType;
+		}
+		if (objectType.getParentTypeId() == null) {
+			return null;
+		}
+		parentType = session.getTypeDefinition(objectType.getParentTypeId());
+		return parentType;
+	}
 
-    public PagingList<ObjectType> getChildren(int itemsPerPage) {
-        return session.getTypeChildren(objectType.getId(), true, itemsPerPage);
-    }
+	public PagingList<ObjectType> getChildren(int itemsPerPage) {
+		return session.getTypeChildren(objectType.getId(), true, itemsPerPage);
+	}
 
-    public List<Tree<ObjectType>> getDescendants(int depth) {
-        return session.getTypeDescendants(objectType.getId(), depth, true);
-    }
+	public List<Tree<ObjectType>> getDescendants(int depth) {
+		return session.getTypeDescendants(objectType.getId(), depth, true);
+	}
 }

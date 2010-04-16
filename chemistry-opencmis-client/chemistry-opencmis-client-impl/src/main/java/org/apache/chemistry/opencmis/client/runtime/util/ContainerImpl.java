@@ -24,33 +24,33 @@ import org.apache.chemistry.opencmis.client.api.Tree;
 
 public class ContainerImpl<T> implements Tree<T> {
 
-  private T item;
-  private List<Tree<T>> children;
+	private T item;
+	private List<Tree<T>> children;
 
-  public ContainerImpl(T item, List<Tree<T>> children) {
-    if (item == null) {
-      throw new IllegalArgumentException("Item must be set!");
-    }
+	public ContainerImpl(T item, List<Tree<T>> children) {
+		if (item == null) {
+			throw new IllegalArgumentException("Item must be set!");
+		}
 
-    this.item = item;
-    this.children = children;
-  }
+		this.item = item;
+		this.children = children;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.util.Container#getItem()
-   */
-  public T getItem() {
-    return item;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.api.util.Container#getItem()
+	 */
+	public T getItem() {
+		return item;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.util.Container#getChildren()
-   */
-  public List<Tree<T>> getChildren() {
-    return this.children;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.api.util.Container#getChildren()
+	 */
+	public List<Tree<T>> getChildren() {
+		return this.children;
+	}
 }

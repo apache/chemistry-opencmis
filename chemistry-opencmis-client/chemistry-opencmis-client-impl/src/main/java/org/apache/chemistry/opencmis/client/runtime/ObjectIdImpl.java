@@ -25,32 +25,32 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
  */
 public class ObjectIdImpl implements ObjectId {
 
-  private String id;
+	private String id;
 
-  /**
-   * Constructor.
-   */
-  public ObjectIdImpl(String id) {
-    setId(id);
-  }
+	/**
+	 * Constructor.
+	 */
+	public ObjectIdImpl(String id) {
+		setId(id);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.api.ObjectId#getId()
-   */
-  public String getId() {
-    return id;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.api.ObjectId#getId()
+	 */
+	public String getId() {
+		return id;
+	}
 
-  /**
-   * Sets the id.
-   */
-  public void setId(String id) {
-    if ((id == null) || (id.length() == 0)) {
-      throw new IllegalArgumentException("Id must be set!");
-    }
+	/**
+	 * Sets the id.
+	 */
+	public void setId(String id) {
+		if ((id == null) || (id.length() == 0)) {
+			throw new IllegalArgumentException("Id must be set!");
+		}
 
-    this.id = id;
-  }
+		this.id = id;
+	}
 }
