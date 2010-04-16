@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -264,7 +264,7 @@ public class MultiFilingTest extends AbstractServiceTst {
     Holder<String> idHolder = new Holder<String>(docId);    
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, RENAMED_DOC_NAME));      
-    PropertiesData newProps = fFactory.createPropertiesData(properties);
+    Properties newProps = fFactory.createPropertiesData(properties);
     Holder<String> changeTokenHolder = new Holder<String>();
     fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, newProps, null);
     docId = idHolder.getValue(); 

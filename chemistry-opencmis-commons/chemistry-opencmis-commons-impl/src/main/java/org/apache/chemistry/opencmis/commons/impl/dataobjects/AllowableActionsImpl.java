@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.api.AllowableActions;
-import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
@@ -30,18 +30,18 @@ import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
  */
 public class AllowableActionsImpl extends AbstractExtensionData implements AllowableActions {
 
-  private Set<AllowableActionsEnum> allowableActions = new HashSet<AllowableActionsEnum>();
+  private Set<Action> allowableActions = new HashSet<Action>();
 
   /*
    * (non-Javadoc)
    *
    * @see org.apache.opencmis.client.provider.AllowableActionsData#getAllowableActions()
    */
-  public Set<AllowableActionsEnum> getAllowableActions() {
+  public Set<Action> getAllowableActions() {
     return allowableActions;
   }
 
-  public void setAllowableActions(Set<AllowableActionsEnum> allowableActions) {
+  public void setAllowableActions(Set<Action> allowableActions) {
     this.allowableActions = allowableActions;
   }
 

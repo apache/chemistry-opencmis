@@ -24,7 +24,7 @@ import java.net.URLEncoder;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
@@ -173,8 +173,8 @@ public class UrlBuilder {
     else if (value instanceof VersioningState) {
       return ((VersioningState) value).value();
     }
-    else if (value instanceof UnfileObjects) {
-      return ((UnfileObjects) value).value();
+    else if (value instanceof UnfileObject) {
+      return ((UnfileObject) value).value();
     }
     else if (value instanceof RelationshipDirection) {
       return ((RelationshipDirection) value).value();

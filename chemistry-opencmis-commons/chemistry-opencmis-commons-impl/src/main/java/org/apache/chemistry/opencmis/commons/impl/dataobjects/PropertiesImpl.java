@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 
 /**
@@ -32,14 +32,14 @@ import org.apache.chemistry.opencmis.commons.api.PropertyData;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertiesDataImpl extends AbstractExtensionData implements PropertiesData {
+public class PropertiesImpl extends AbstractExtensionData implements Properties {
 
   Map<String, PropertyData<?>> fProperties = new LinkedHashMap<String, PropertyData<?>>();
 
   /**
    * Constructor.
    */
-  public PropertiesDataImpl() {
+  public PropertiesImpl() {
   }
 
   /**
@@ -48,7 +48,7 @@ public class PropertiesDataImpl extends AbstractExtensionData implements Propert
    * @param properties
    *          initial list of properties
    */
-  public PropertiesDataImpl(List<PropertyData<?>> properties) {
+  public PropertiesImpl(List<PropertyData<?>> properties) {
     if (properties != null) {
       for (PropertyData<?> prop : properties) {
         addProperty(prop);

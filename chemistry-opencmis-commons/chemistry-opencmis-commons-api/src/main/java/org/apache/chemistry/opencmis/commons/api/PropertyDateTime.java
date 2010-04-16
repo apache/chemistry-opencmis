@@ -16,32 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.api;
 
-import java.math.BigInteger;
-import java.util.List;
+import java.util.GregorianCalendar;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyIntegerData;
+public interface PropertyDateTime extends PropertyData<GregorianCalendar> {
 
-/**
- * Integer property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- */
-public class PropertyIntegerDataImpl extends AbstractPropertyData<BigInteger> implements
-    PropertyIntegerData {
-
-  public PropertyIntegerDataImpl() {
-  }
-
-  public PropertyIntegerDataImpl(String id, List<BigInteger> values) {
-    setId(id);
-    setValues(values);
-  }
-
-  public PropertyIntegerDataImpl(String id, BigInteger value) {
-    setId(id);
-    setValue(value);
-  }
 }

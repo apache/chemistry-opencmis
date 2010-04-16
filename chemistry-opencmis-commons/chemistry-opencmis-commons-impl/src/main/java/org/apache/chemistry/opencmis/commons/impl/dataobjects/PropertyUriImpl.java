@@ -20,25 +20,25 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.PropertyUri;
 
 /**
- * Id property data implementation.
+ * Uri property data implementation.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyIdDataImpl extends AbstractPropertyData<String> implements PropertyIdData {
+public class PropertyUriImpl extends AbstractPropertyData<String> implements PropertyUri {
 
-  public PropertyIdDataImpl() {
+  public PropertyUriImpl() {
   }
 
-  public PropertyIdDataImpl(String id, List<String> values) {
+  public PropertyUriImpl(String id, List<String> values) {
     setId(id);
     setValues(values);
   }
 
-  public PropertyIdDataImpl(String id, String value) {
+  public PropertyUriImpl(String id, String value) {
     setId(id);
     setValue(value);
   }

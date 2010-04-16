@@ -34,14 +34,14 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.PolicyTypeDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -191,7 +191,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     String rootPath = getPath(rootFolderObject);
     assertEquals("Root path is not \"/\"!", "/", rootPath);
     assertAllowableAction(rootFolderObject.getAllowableActions(),
-        AllowableActionsEnum.CAN_GET_OBJECT_PARENTS, false);
+        Action.CAN_GET_OBJECT_PARENTS, false);
 
     ObjectData folderObject = getObject(testRootFolder);
     String path = getPath(folderObject);
@@ -413,7 +413,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     ObjectData object = getObject(objectId);
 
     // check properties
-    PropertiesData properties = getBinding().getObjectService().getProperties(
+    Properties properties = getBinding().getObjectService().getProperties(
         getTestRepositoryId(), objectId, "*", null);
 
     assertEquals(object.getProperties(), properties);
@@ -518,7 +518,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
         IncludeRelationships.BOTH, null, Boolean.TRUE, Boolean.TRUE, null);
     assertNotNull(latestVersionObject);
 
-    PropertiesData latestVersionProperties = getBinding().getVersioningService()
+    Properties latestVersionProperties = getBinding().getVersioningService()
         .getPropertiesOfLatestVersion(getTestRepositoryId(), versionSeriesId, Boolean.FALSE, "*",
             null);
     assertNotNull(latestVersionProperties);

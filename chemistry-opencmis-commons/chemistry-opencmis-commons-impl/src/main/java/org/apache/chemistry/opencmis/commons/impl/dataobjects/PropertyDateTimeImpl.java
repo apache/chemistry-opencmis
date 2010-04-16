@@ -18,29 +18,29 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import java.math.BigDecimal;
+import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyDecimalData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDateTime;
 
 /**
- * Decimal property data implementation.
+ * DateTime property data implementation.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyDecimalDataImpl extends AbstractPropertyData<BigDecimal> implements
-    PropertyDecimalData {
+public class PropertyDateTimeImpl extends AbstractPropertyData<GregorianCalendar> implements
+    PropertyDateTime {
 
-  public PropertyDecimalDataImpl() {
+  public PropertyDateTimeImpl() {
   }
 
-  public PropertyDecimalDataImpl(String id, List<BigDecimal> values) {
+  public PropertyDateTimeImpl(String id, List<GregorianCalendar> values) {
     setId(id);
     setValues(values);
   }
 
-  public PropertyDecimalDataImpl(String id, BigDecimal value) {
+  public PropertyDateTimeImpl(String id, GregorianCalendar value) {
     setId(id);
     setValue(value);
   }

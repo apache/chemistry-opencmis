@@ -22,11 +22,11 @@ import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.Holder;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -136,7 +136,7 @@ public abstract class AbstractServiceWrapper {
   /**
    * Throws an exception if the given properties set is <code>null</code>.
    */
-  protected void checkProperties(PropertiesData properties) {
+  protected void checkProperties(Properties properties) {
     if (properties == null) {
       throw new CmisInvalidArgumentException("Properties must be set!");
     }
@@ -211,9 +211,9 @@ public abstract class AbstractServiceWrapper {
   /**
    * Returns the <code>UnfileObjects.DELETE<code> if <code>value</code> is <code>null</code>.
    */
-  protected UnfileObjects getDefault(UnfileObjects value) {
+  protected UnfileObject getDefault(UnfileObject value) {
     if (value == null) {
-      return UnfileObjects.DELETE;
+      return UnfileObject.DELETE;
     }
 
     return value;

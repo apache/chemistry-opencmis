@@ -16,9 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.api;
+package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.List;
 
-public interface PropertyUriData extends PropertyData<String> {
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
 
+/**
+ * Id property data implementation.
+ * 
+ * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+ * 
+ */
+public class PropertyIdImpl extends AbstractPropertyData<String> implements PropertyId {
+
+  public PropertyIdImpl() {
+  }
+
+  public PropertyIdImpl(String id, List<String> values) {
+    setId(id);
+    setValues(values);
+  }
+
+  public PropertyIdImpl(String id, String value) {
+    setId(id);
+    setValue(value);
+  }
 }

@@ -29,7 +29,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -66,7 +66,7 @@ public abstract class AbstractSimpleBindingIT extends AbstractBindingIT {
     propertyList.add(getBinding().getObjectFactory().createPropertyIdData(
         PropertyIds.OBJECT_TYPE_ID, DOCUMENT_TYPE));
 
-    PropertiesData properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
+    Properties properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
 
     // set up content
     byte[] content = "This is a test file!".getBytes();

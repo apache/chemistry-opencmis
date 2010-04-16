@@ -58,18 +58,18 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.api.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.api.PermissionMapping;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDateTime;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
@@ -107,16 +107,16 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderList
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectParentDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
@@ -211,7 +211,7 @@ public class FileShareRepository {
 
     fRepositoryInfo.setThinClientUri("");
 
-    RepositoryCapabilitiesDataImpl capabilities = new RepositoryCapabilitiesDataImpl();
+    RepositoryCapabilitiesImpl capabilities = new RepositoryCapabilitiesImpl();
     capabilities.setCapabilityAcl(CapabilityAcl.DISCOVER);
     capabilities.setAllVersionsSearchable(false);
     capabilities.setCapabilityJoin(CapabilityJoin.NONE);
@@ -352,7 +352,7 @@ public class FileShareRepository {
   /**
    * Create* dispatch for AtomPub.
    */
-  public ObjectData create(CallContext context, PropertiesData properties, String folderId,
+  public ObjectData create(CallContext context, Properties properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, ObjectInfoHolder objectInfos) {
     debug("create");
     boolean userReadOnly = checkUser(context, true);
@@ -380,7 +380,7 @@ public class FileShareRepository {
   /**
    * CMIS createDocument.
    */
-  public String createDocument(CallContext context, PropertiesData properties, String folderId,
+  public String createDocument(CallContext context, Properties properties, String folderId,
       ContentStream contentStream, VersioningState versioningState) {
     debug("createDocument");
     checkUser(context, true);
@@ -403,7 +403,7 @@ public class FileShareRepository {
     }
 
     // compile the properties
-    PropertiesData props = compileProperties(typeId, context.getUsername(), millisToCalendar(System
+    Properties props = compileProperties(typeId, context.getUsername(), millisToCalendar(System
         .currentTimeMillis()), context.getUsername(), properties);
 
     // check the name
@@ -463,7 +463,7 @@ public class FileShareRepository {
    * CMIS createDocumentFromSource.
    */
   public String createDocumentFromSource(CallContext context, String sourceId,
-      PropertiesData properties, String folderId, VersioningState versioningState) {
+      Properties properties, String folderId, VersioningState versioningState) {
 
     // check versioning state
     if (VersioningState.NONE != versioningState) {
@@ -486,7 +486,7 @@ public class FileShareRepository {
     String name = source.getName();
 
     // get properties
-    PropertiesDataImpl sourceProperties = new PropertiesDataImpl();
+    PropertiesImpl sourceProperties = new PropertiesImpl();
     readCustomProperties(source, sourceProperties, null, new ObjectInfoImpl());
 
     // get the type id
@@ -496,7 +496,7 @@ public class FileShareRepository {
     }
 
     // copy properties
-    PropertiesDataImpl newProperties = new PropertiesDataImpl();
+    PropertiesImpl newProperties = new PropertiesImpl();
     for (PropertyData<?> prop : sourceProperties.getProperties().values()) {
       if ((prop.getId().equals(PropertyIds.OBJECT_TYPE_ID))
           || (prop.getId().equals(PropertyIds.CREATED_BY))
@@ -598,7 +598,7 @@ public class FileShareRepository {
   /**
    * CMIS createFolder.
    */
-  public String createFolder(CallContext context, PropertiesData properties, String folderId) {
+  public String createFolder(CallContext context, Properties properties, String folderId) {
     debug("createFolder");
     checkUser(context, true);
 
@@ -615,7 +615,7 @@ public class FileShareRepository {
     }
 
     // compile the properties
-    PropertiesData props = compileProperties(typeId, context.getUsername(), millisToCalendar(System
+    Properties props = compileProperties(typeId, context.getUsername(), millisToCalendar(System
         .currentTimeMillis()), context.getUsername(), properties);
 
     // check the name
@@ -795,7 +795,7 @@ public class FileShareRepository {
    * CMIS updateProperties.
    */
   public ObjectData updateProperties(CallContext context, Holder<String> objectId,
-      PropertiesData properties, ObjectInfoHolder objectInfos) {
+      Properties properties, ObjectInfoHolder objectInfos) {
     debug("updateProperties");
     boolean userReadOnly = checkUser(context, true);
 
@@ -814,7 +814,7 @@ public class FileShareRepository {
     }
 
     // get old properties
-    PropertiesDataImpl oldProperties = new PropertiesDataImpl();
+    PropertiesImpl oldProperties = new PropertiesImpl();
     readCustomProperties(file, oldProperties, null, new ObjectInfoImpl());
 
     // get the type id
@@ -837,7 +837,7 @@ public class FileShareRepository {
     }
 
     // compile the properties
-    PropertiesData props = updateProperties(typeId, creator, creationDate, context.getUsername(),
+    Properties props = updateProperties(typeId, creator, creationDate, context.getUsername(),
         oldProperties, properties);
 
     // write properties
@@ -1329,7 +1329,7 @@ public class FileShareRepository {
   /**
    * Gathers all base properties of a file or folder.
    */
-  private PropertiesData compileProperties(File file, Set<String> orgfilter,
+  private Properties compileProperties(File file, Set<String> orgfilter,
       ObjectInfoHolder objectInfos) {
     if (file == null) {
       throw new IllegalArgumentException("File must not be null!");
@@ -1360,7 +1360,7 @@ public class FileShareRepository {
 
     // let's do it
     try {
-      PropertiesDataImpl result = new PropertiesDataImpl();
+      PropertiesImpl result = new PropertiesImpl();
 
       // id
       String id = fileToId(file);
@@ -1459,7 +1459,7 @@ public class FileShareRepository {
    * Reads and adds properties.
    */
   @SuppressWarnings("unchecked")
-  private void readCustomProperties(File file, PropertiesDataImpl properties, Set<String> filter,
+  private void readCustomProperties(File file, PropertiesImpl properties, Set<String> filter,
       ObjectInfoImpl objectInfo) {
     File propFile = getPropertiesFile(file);
 
@@ -1487,8 +1487,8 @@ public class FileShareRepository {
       PropertyData<?> prop = Converter.convert(cmisProp);
 
       // overwrite object info
-      if (prop instanceof PropertyStringData) {
-        String firstValueStr = ((PropertyStringData) prop).getFirstValue();
+      if (prop instanceof PropertyString) {
+        String firstValueStr = ((PropertyString) prop).getFirstValue();
         if (PropertyIds.NAME.equals(prop.getId())) {
           objectInfo.setName(firstValueStr);
         }
@@ -1506,8 +1506,8 @@ public class FileShareRepository {
         }
       }
 
-      if (prop instanceof PropertyDateTimeData) {
-        GregorianCalendar firstValueCal = ((PropertyDateTimeData) prop).getFirstValue();
+      if (prop instanceof PropertyDateTime) {
+        GregorianCalendar firstValueCal = ((PropertyDateTime) prop).getFirstValue();
         if (PropertyIds.CREATION_DATE.equals(prop.getId())) {
           objectInfo.setCreationDate(firstValueCal);
         }
@@ -1544,9 +1544,9 @@ public class FileShareRepository {
   /**
    * Checks and compiles a property set that can be written to disc.
    */
-  private PropertiesData compileProperties(String typeId, String creator,
-      GregorianCalendar creationDate, String modifier, PropertiesData properties) {
-    PropertiesDataImpl result = new PropertiesDataImpl();
+  private Properties compileProperties(String typeId, String creator,
+      GregorianCalendar creationDate, String modifier, Properties properties) {
+    PropertiesImpl result = new PropertiesImpl();
     Set<String> addedProps = new HashSet<String>();
 
     if ((properties == null) || (properties.getProperties() == null)) {
@@ -1609,10 +1609,10 @@ public class FileShareRepository {
   /**
    * Checks and updates a property set that can be written to disc.
    */
-  private PropertiesData updateProperties(String typeId, String creator,
-      GregorianCalendar creationDate, String modifier, PropertiesData oldProperties,
-      PropertiesData properties) {
-    PropertiesDataImpl result = new PropertiesDataImpl();
+  private Properties updateProperties(String typeId, String creator,
+      GregorianCalendar creationDate, String modifier, Properties oldProperties,
+      Properties properties) {
+    PropertiesImpl result = new PropertiesImpl();
 
     if (properties == null) {
       throw new CmisConstraintException("No properties!");
@@ -1685,7 +1685,7 @@ public class FileShareRepository {
     return prop.getValues().isEmpty();
   }
 
-  private void addPropertyId(PropertiesDataImpl props, String typeId, Set<String> filter,
+  private void addPropertyId(PropertiesImpl props, String typeId, Set<String> filter,
       String id, String value) {
     if (!checkAddProperty(props, typeId, filter, id)) {
       return;
@@ -1695,46 +1695,46 @@ public class FileShareRepository {
       throw new IllegalArgumentException("Value must not be null!");
     }
 
-    props.addProperty(new PropertyIdDataImpl(id, value));
+    props.addProperty(new PropertyIdImpl(id, value));
   }
 
-  private void addPropertyString(PropertiesDataImpl props, String typeId, Set<String> filter,
+  private void addPropertyString(PropertiesImpl props, String typeId, Set<String> filter,
       String id, String value) {
     if (!checkAddProperty(props, typeId, filter, id)) {
       return;
     }
 
-    props.addProperty(new PropertyStringDataImpl(id, value));
+    props.addProperty(new PropertyStringImpl(id, value));
   }
 
-  private void addPropertyInteger(PropertiesDataImpl props, String typeId, Set<String> filter,
+  private void addPropertyInteger(PropertiesImpl props, String typeId, Set<String> filter,
       String id, long value) {
     if (!checkAddProperty(props, typeId, filter, id)) {
       return;
     }
 
-    props.addProperty(new PropertyIntegerDataImpl(id, BigInteger.valueOf(value)));
+    props.addProperty(new PropertyIntegerImpl(id, BigInteger.valueOf(value)));
   }
 
-  private void addPropertyBoolean(PropertiesDataImpl props, String typeId, Set<String> filter,
+  private void addPropertyBoolean(PropertiesImpl props, String typeId, Set<String> filter,
       String id, boolean value) {
     if (!checkAddProperty(props, typeId, filter, id)) {
       return;
     }
 
-    props.addProperty(new PropertyBooleanDataImpl(id, value));
+    props.addProperty(new PropertyBooleanImpl(id, value));
   }
 
-  private void addPropertyDateTime(PropertiesDataImpl props, String typeId, Set<String> filter,
+  private void addPropertyDateTime(PropertiesImpl props, String typeId, Set<String> filter,
       String id, GregorianCalendar value) {
     if (!checkAddProperty(props, typeId, filter, id)) {
       return;
     }
 
-    props.addProperty(new PropertyDateTimeDataImpl(id, value));
+    props.addProperty(new PropertyDateTimeImpl(id, value));
   }
 
-  private boolean checkAddProperty(PropertiesData properties, String typeId, Set<String> filter,
+  private boolean checkAddProperty(Properties properties, String typeId, Set<String> filter,
       String id) {
     if ((properties == null) || (properties.getProperties() == null)) {
       throw new IllegalArgumentException("Properties must not be null!");
@@ -1770,7 +1770,7 @@ public class FileShareRepository {
    * Adds the default value of property if defined.
    */
   @SuppressWarnings("unchecked")
-  private boolean addPropertyDefault(PropertiesDataImpl props, PropertyDefinition<?> propDef) {
+  private boolean addPropertyDefault(PropertiesImpl props, PropertyDefinition<?> propDef) {
     if ((props == null) || (props.getProperties() == null)) {
       throw new IllegalArgumentException("Props must not be null!");
     }
@@ -1784,31 +1784,31 @@ public class FileShareRepository {
       switch (propDef.getPropertyType()) {
       case BOOLEAN:
         props
-            .addProperty(new PropertyBooleanDataImpl(propDef.getId(), (List<Boolean>) defaultValue));
+            .addProperty(new PropertyBooleanImpl(propDef.getId(), (List<Boolean>) defaultValue));
         break;
       case DATETIME:
-        props.addProperty(new PropertyDateTimeDataImpl(propDef.getId(),
+        props.addProperty(new PropertyDateTimeImpl(propDef.getId(),
             (List<GregorianCalendar>) defaultValue));
         break;
       case DECIMAL:
-        props.addProperty(new PropertyDecimalDataImpl(propDef.getId(),
+        props.addProperty(new PropertyDecimalImpl(propDef.getId(),
             (List<BigDecimal>) defaultValue));
         break;
       case HTML:
-        props.addProperty(new PropertyHtmlDataImpl(propDef.getId(), (List<String>) defaultValue));
+        props.addProperty(new PropertyHtmlImpl(propDef.getId(), (List<String>) defaultValue));
         break;
       case ID:
-        props.addProperty(new PropertyIdDataImpl(propDef.getId(), (List<String>) defaultValue));
+        props.addProperty(new PropertyIdImpl(propDef.getId(), (List<String>) defaultValue));
         break;
       case INTEGER:
-        props.addProperty(new PropertyIntegerDataImpl(propDef.getId(),
+        props.addProperty(new PropertyIntegerImpl(propDef.getId(),
             (List<BigInteger>) defaultValue));
         break;
       case STRING:
-        props.addProperty(new PropertyStringDataImpl(propDef.getId(), (List<String>) defaultValue));
+        props.addProperty(new PropertyStringImpl(propDef.getId(), (List<String>) defaultValue));
         break;
       case URI:
-        props.addProperty(new PropertyUriDataImpl(propDef.getId(), (List<String>) defaultValue));
+        props.addProperty(new PropertyUriImpl(propDef.getId(), (List<String>) defaultValue));
         break;
       default:
         throw new RuntimeException("Unknown datatype! Spec change?");
@@ -1837,7 +1837,7 @@ public class FileShareRepository {
     boolean isFolder = file.isDirectory();
     boolean isRoot = fRoot.equals(file);
 
-    Set<AllowableActionsEnum> aam = new HashSet<AllowableActionsEnum>();
+    Set<Action> aam = new HashSet<Action>();
 
     // TODO XXX use enum
 //    aam.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, !isRoot);
@@ -1914,7 +1914,7 @@ public class FileShareRepository {
   /**
    * Writes the properties for a document or folder.
    */
-  private void writePropertiesFile(File file, PropertiesData properties) {
+  private void writePropertiesFile(File file, Properties properties) {
     File propFile = getPropertiesFile(file);
 
     // if no properties set delete the properties file
@@ -1993,13 +1993,13 @@ public class FileShareRepository {
   /**
    * Gets the type id from a set of properties.
    */
-  private String getTypeId(PropertiesData properties) {
+  private String getTypeId(Properties properties) {
     PropertyData<?> typeProperty = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
-    if (!(typeProperty instanceof PropertyIdData)) {
+    if (!(typeProperty instanceof PropertyId)) {
       throw new CmisInvalidArgumentException("Type id must be set!");
     }
 
-    String typeId = ((PropertyIdData) typeProperty).getFirstValue();
+    String typeId = ((PropertyId) typeProperty).getFirstValue();
     if (typeId == null) {
       throw new CmisInvalidArgumentException("Type id must be set!");
     }
@@ -2010,37 +2010,37 @@ public class FileShareRepository {
   /**
    * Returns the first value of an id property.
    */
-  private String getIdProperty(PropertiesData properties, String name) {
+  private String getIdProperty(Properties properties, String name) {
     PropertyData<?> property = properties.getProperties().get(name);
-    if (!(property instanceof PropertyIdData)) {
+    if (!(property instanceof PropertyId)) {
       return null;
     }
 
-    return ((PropertyIdData) property).getFirstValue();
+    return ((PropertyId) property).getFirstValue();
   }
 
   /**
    * Returns the first value of an string property.
    */
-  private String getStringProperty(PropertiesData properties, String name) {
+  private String getStringProperty(Properties properties, String name) {
     PropertyData<?> property = properties.getProperties().get(name);
-    if (!(property instanceof PropertyStringData)) {
+    if (!(property instanceof PropertyString)) {
       return null;
     }
 
-    return ((PropertyStringData) property).getFirstValue();
+    return ((PropertyString) property).getFirstValue();
   }
 
   /**
    * Returns the first value of an datetime property.
    */
-  private GregorianCalendar getDateTimeProperty(PropertiesData properties, String name) {
+  private GregorianCalendar getDateTimeProperty(Properties properties, String name) {
     PropertyData<?> property = properties.getProperties().get(name);
-    if (!(property instanceof PropertyDateTimeData)) {
+    if (!(property instanceof PropertyDateTime)) {
       return null;
     }
 
-    return ((PropertyDateTimeData) property).getFirstValue();
+    return ((PropertyDateTime) property).getFirstValue();
   }
 
   /**

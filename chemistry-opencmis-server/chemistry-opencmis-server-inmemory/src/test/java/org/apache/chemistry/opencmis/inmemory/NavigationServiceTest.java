@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -215,7 +215,7 @@ public class NavigationServiceTest extends AbstractServiceTst {
       properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "Folder " + i));
       properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
           InMemoryFolderTypeDefinition.getRootFolderType().getId()));
-      PropertiesData props = fFactory.createPropertiesData(properties);      
+      Properties props = fFactory.createPropertiesData(properties);      
       String id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
       if (i==3) // store one
         fLevel1FolderId = id;

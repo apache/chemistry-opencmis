@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
@@ -49,7 +49,7 @@ public interface Folder extends FileableCmisObject {
   /**
    * @return list of object ids which failed to be deleted
    */
-  List<String> deleteTree(boolean allversions, UnfileObjects unfile, boolean continueOnFailure);
+  List<String> deleteTree(boolean allversions, UnfileObject unfile, boolean continueOnFailure);
 
   // navigation service
 

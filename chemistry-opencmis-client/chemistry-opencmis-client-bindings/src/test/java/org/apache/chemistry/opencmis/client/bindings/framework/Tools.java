@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 
@@ -93,7 +93,7 @@ public class Tools {
         System.out.print("  ");
       }
 
-      PropertiesData properties = container.getObject().getObject().getProperties();
+      Properties properties = container.getObject().getObject().getProperties();
       System.out.println(properties.getProperties().get(PropertyIds.NAME).getFirstValue()
           + " (" + properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue()
           + ")");

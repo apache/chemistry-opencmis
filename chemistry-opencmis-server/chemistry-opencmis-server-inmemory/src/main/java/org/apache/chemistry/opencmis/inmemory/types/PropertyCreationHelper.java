@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.api.Choice;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
@@ -205,7 +205,7 @@ public class PropertyCreationHelper {
     prop.setUpdatability(Updatability.READWRITE);
   }
   
-  public static PropertiesData getPropertiesFromObject(String repositoryId, StoredObject so,
+  public static Properties getPropertiesFromObject(String repositoryId, StoredObject so,
       StoreManager storeManager, List<String> requestedIds) {
     // build properties collection 
     
@@ -227,7 +227,7 @@ public class PropertyCreationHelper {
       }
     }   
     List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>> (properties.values());
-    PropertiesData props = objectFactory.createPropertiesData(propertiesList);
+    Properties props = objectFactory.createPropertiesData(propertiesList);
     return props;    
   }
   
@@ -242,7 +242,7 @@ public class PropertyCreationHelper {
 
     // build properties collection
     List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-    PropertiesData props = getPropertiesFromObject(so.getRepositoryId(), so,
+    Properties props = getPropertiesFromObject(so.getRepositoryId(), so,
         sm, requestedIds);
 
     // fill output object

@@ -37,39 +37,39 @@ public interface BindingsObjectFactory {
 
   Acl createAccessControlList(List<Ace> aces);
 
-  PropertyBooleanData createPropertyBooleanData(String id, List<Boolean> values);
+  PropertyBoolean createPropertyBooleanData(String id, List<Boolean> values);
 
-  PropertyBooleanData createPropertyBooleanData(String id, Boolean value);
+  PropertyBoolean createPropertyBooleanData(String id, Boolean value);
 
-  PropertyIdData createPropertyIdData(String id, List<String> values);
+  PropertyId createPropertyIdData(String id, List<String> values);
 
-  PropertyIdData createPropertyIdData(String id, String value);
+  PropertyId createPropertyIdData(String id, String value);
 
-  PropertyIntegerData createPropertyIntegerData(String id, List<BigInteger> values);
+  PropertyInteger createPropertyIntegerData(String id, List<BigInteger> values);
 
-  PropertyIntegerData createPropertyIntegerData(String id, BigInteger value);
+  PropertyInteger createPropertyIntegerData(String id, BigInteger value);
 
-  PropertyDateTimeData createPropertyDateTimeData(String id, List<GregorianCalendar> values);
+  PropertyDateTime createPropertyDateTimeData(String id, List<GregorianCalendar> values);
 
-  PropertyDateTimeData createPropertyDateTimeData(String id, GregorianCalendar value);
+  PropertyDateTime createPropertyDateTimeData(String id, GregorianCalendar value);
 
-  PropertyDecimalData createPropertyDecimalData(String id, List<BigDecimal> values);
+  PropertyDecimal createPropertyDecimalData(String id, List<BigDecimal> values);
 
-  PropertyDecimalData createPropertyDecimalData(String id, BigDecimal value);
+  PropertyDecimal createPropertyDecimalData(String id, BigDecimal value);
 
-  PropertyHtmlData createPropertyHtmlData(String id, List<String> values);
+  PropertyHtml createPropertyHtmlData(String id, List<String> values);
 
-  PropertyHtmlData createPropertyHtmlData(String id, String value);
+  PropertyHtml createPropertyHtmlData(String id, String value);
 
-  PropertyStringData createPropertyStringData(String id, List<String> values);
+  PropertyString createPropertyStringData(String id, List<String> values);
 
-  PropertyStringData createPropertyStringData(String id, String value);
+  PropertyString createPropertyStringData(String id, String value);
 
-  PropertyUriData createPropertyUriData(String id, List<String> values);
+  PropertyUri createPropertyUriData(String id, List<String> values);
 
-  PropertyUriData createPropertyUriData(String id, String value);
+  PropertyUri createPropertyUriData(String id, String value);
 
-  PropertiesData createPropertiesData(List<PropertyData<?>> properties);
+  Properties createPropertiesData(List<PropertyData<?>> properties);
 
   ContentStream createContentStream(String filename, BigInteger length, String mimetype,
       InputStream stream);

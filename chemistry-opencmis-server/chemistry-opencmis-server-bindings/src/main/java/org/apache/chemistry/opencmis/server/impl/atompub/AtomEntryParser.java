@@ -37,18 +37,18 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.commons.codec.binary.Base64;
 
@@ -97,7 +97,7 @@ public class AtomEntryParser {
   /**
    * Returns the properties of the object.
    */
-  public PropertiesData getProperties() {
+  public Properties getProperties() {
     return (fObject == null ? null : fObject.getProperties());
   }
 
@@ -105,7 +105,7 @@ public class AtomEntryParser {
    * Returns the Id of the object.
    */
   public String getId() {
-    PropertiesData properties = getProperties();
+    Properties properties = getProperties();
     if (properties == null) {
       return null;
     }
@@ -116,8 +116,8 @@ public class AtomEntryParser {
     }
 
     PropertyData<?> property = propertiesMap.get(PropertyIds.OBJECT_ID);
-    if (property instanceof PropertyIdData) {
-      return ((PropertyIdData) property).getFirstValue();
+    if (property instanceof PropertyId) {
+      return ((PropertyId) property).getFirstValue();
     }
 
     return null;
@@ -238,8 +238,8 @@ public class AtomEntryParser {
 
     // overwrite cmis:name with Atom title
     if ((fObject != null) && (fObject.getProperties() != null) && (atomTitle != null)) {
-      PropertyStringData nameProperty = new PropertyStringDataImpl(PropertyIds.NAME, atomTitle);
-      ((PropertiesDataImpl) fObject.getProperties()).addProperty(nameProperty);
+      PropertyString nameProperty = new PropertyStringImpl(PropertyIds.NAME, atomTitle);
+      ((PropertiesImpl) fObject.getProperties()).addProperty(nameProperty);
     }
   }
 

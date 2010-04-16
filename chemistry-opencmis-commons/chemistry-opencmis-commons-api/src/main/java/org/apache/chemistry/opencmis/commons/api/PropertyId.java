@@ -18,6 +18,6 @@
  */
 package org.apache.chemistry.opencmis.commons.api;
 
-public interface PropertyHtmlData extends PropertyData<String> {
+public interface PropertyId extends PropertyData<String> {
 
 }

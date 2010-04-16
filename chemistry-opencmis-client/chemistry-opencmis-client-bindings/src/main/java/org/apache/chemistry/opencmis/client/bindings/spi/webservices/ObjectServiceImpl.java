@@ -37,10 +37,10 @@ import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
@@ -78,7 +78,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * java.util.List, org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.client.provider.AccessControlList, org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public String createDocument(String repositoryId, PropertiesData properties, String folderId,
+  public String createDocument(String repositoryId, Properties properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
       Acl addACEs, Acl removeACEs, ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
@@ -113,7 +113,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createDocumentFromSource(String repositoryId, String sourceId,
-      PropertiesData properties, String folderId, VersioningState versioningState,
+      Properties properties, String folderId, VersioningState versioningState,
       List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
@@ -146,7 +146,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.AccessControlList, org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public String createFolder(String repositoryId, PropertiesData properties, String folderId,
+  public String createFolder(String repositoryId, Properties properties, String folderId,
       List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
@@ -178,7 +178,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.AccessControlList, org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public String createPolicy(String repositoryId, PropertiesData properties, String folderId,
+  public String createPolicy(String repositoryId, Properties properties, String folderId,
       List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
@@ -210,7 +210,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.AccessControlList, org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public String createRelationship(String repositoryId, PropertiesData properties,
+  public String createRelationship(String repositoryId, Properties properties,
       List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
@@ -242,7 +242,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.PropertiesData, org.apache.opencmis.client.provider.ExtensionsData)
    */
   public void updateProperties(String repositoryId, Holder<String> objectId,
-      Holder<String> changeToken, PropertiesData properties, ExtensionsData extension) {
+      Holder<String> changeToken, Properties properties, ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 
     try {
@@ -298,7 +298,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
-      UnfileObjects unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
+      UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 
     try {
@@ -415,7 +415,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * @see org.apache.opencmis.client.provider.ObjectService#getProperties(java.lang.String,
    * java.lang.String, java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public PropertiesData getProperties(String repositoryId, String objectId, String filter,
+  public Properties getProperties(String repositoryId, String objectId, String filter,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 

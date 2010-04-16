@@ -28,10 +28,10 @@ import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 
@@ -70,7 +70,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     propList.add(getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
         getDefaultFolderType()));
 
-    PropertiesData properties = getObjectFactory().createPropertiesData(propList);
+    Properties properties = getObjectFactory().createPropertiesData(propList);
 
     String folderId = createFolder(properties, getTestRootFolder(), null, null, null);
 
@@ -95,7 +95,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     propList.add(getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
         getDefaultDocumentType()));
 
-    PropertiesData properties = getObjectFactory().createPropertiesData(propList);
+    Properties properties = getObjectFactory().createPropertiesData(propList);
 
     ContentStream contentStream = createContentStreamData(CONTENT_TYPE, CONTENT);
 
@@ -156,7 +156,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     propList2.add(getObjectFactory().createPropertyStringData(PropertyIds.NAME,
         "testdoc.copy.txt"));
 
-    PropertiesData properties2 = getObjectFactory().createPropertiesData(propList2);
+    Properties properties2 = getObjectFactory().createPropertiesData(propList2);
 
     String docId2 = createDocumentFromSource(docId, properties2, getTestRootFolder(), vs, null,
         null, null);
@@ -267,7 +267,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     List<PropertyData<?>> updatePropList = new ArrayList<PropertyData<?>>();
     updatePropList.add(getObjectFactory().createPropertyStringData(PropertyIds.NAME, name2));
 
-    PropertiesData updateProperties = getObjectFactory().createPropertiesData(updatePropList);
+    Properties updateProperties = getObjectFactory().createPropertiesData(updatePropList);
 
     Holder<String> docIdHolder = new Holder<String>(docId);
     getBinding().getObjectService().updateProperties(getTestRepositoryId(), docIdHolder, null,
@@ -307,7 +307,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     // delete the tree
     getBinding().getObjectService().deleteTree(getTestRepositoryId(), folder1, Boolean.TRUE,
-        UnfileObjects.DELETE, Boolean.TRUE, null);
+        UnfileObject.DELETE, Boolean.TRUE, null);
 
     assertFalse(existsObject(folder1));
     assertFalse(existsObject(folder11));

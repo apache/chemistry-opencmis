@@ -19,6 +19,6 @@
 package org.apache.chemistry.opencmis.commons.api;
 
 
-public interface PropertyBooleanData extends PropertyData<Boolean> {
+public interface PropertyUri extends PropertyData<String> {
 
 }

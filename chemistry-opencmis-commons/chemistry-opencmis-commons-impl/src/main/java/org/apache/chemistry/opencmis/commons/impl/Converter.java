@@ -58,26 +58,26 @@ import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.api.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.api.PermissionMapping;
-import org.apache.chemistry.opencmis.commons.api.PolicyIdListData;
+import org.apache.chemistry.opencmis.commons.api.PolicyIdList;
 import org.apache.chemistry.opencmis.commons.api.PolicyTypeDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
-import org.apache.chemistry.opencmis.commons.api.PropertyBooleanData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
+import org.apache.chemistry.opencmis.commons.api.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.api.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDateTime;
 import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyDecimalData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDecimal;
 import org.apache.chemistry.opencmis.commons.api.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyHtmlData;
+import org.apache.chemistry.opencmis.commons.api.PropertyHtml;
 import org.apache.chemistry.opencmis.commons.api.PropertyHtmlDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
 import org.apache.chemistry.opencmis.commons.api.PropertyIdDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyIntegerData;
+import org.apache.chemistry.opencmis.commons.api.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.api.PropertyIntegerDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.api.PropertyStringDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyUriData;
+import org.apache.chemistry.opencmis.commons.api.PropertyUri;
 import org.apache.chemistry.opencmis.commons.api.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
@@ -87,7 +87,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
@@ -100,7 +100,7 @@ import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
-import org.apache.chemistry.opencmis.commons.enums.TypeOfChanges;
+import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
@@ -126,28 +126,28 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectParentDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
@@ -289,7 +289,7 @@ public final class Converter {
       return null;
     }
 
-    RepositoryCapabilitiesDataImpl result = new RepositoryCapabilitiesDataImpl();
+    RepositoryCapabilitiesImpl result = new RepositoryCapabilitiesImpl();
 
     result.setAllVersionsSearchable(capabilities.isCapabilityAllVersionsSearchable());
     result.setCapabilityAcl(convert(CapabilityAcl.class, capabilities.getCapabilityACL()));
@@ -1384,7 +1384,7 @@ public final class Converter {
         changeEventInfo.setChangeTime(object.getChangeEventInfo().getChangeTime()
             .toGregorianCalendar());
       }
-      changeEventInfo.setTypeOfChanges(convert(TypeOfChanges.class, object.getChangeEventInfo()
+      changeEventInfo.setChangeType(convert(ChangeType.class, object.getChangeEventInfo()
           .getChangeType()));
       convertExtension(object.getChangeEventInfo(), changeEventInfo);
 
@@ -1413,12 +1413,12 @@ public final class Converter {
   /**
    * Converts a properties object.
    */
-  public static PropertiesData convert(CmisPropertiesType properties) {
+  public static Properties convert(CmisPropertiesType properties) {
     if (properties == null) {
       return null;
     }
 
-    PropertiesDataImpl result = new PropertiesDataImpl();
+    PropertiesImpl result = new PropertiesImpl();
 
     for (CmisProperty property : properties.getProperty()) {
       result.addProperty(convert(property));
@@ -1441,35 +1441,35 @@ public final class Converter {
     PropertyData<?> result = null;
 
     if (property instanceof CmisPropertyString) {
-      result = new PropertyStringDataImpl(property.getPropertyDefinitionId(),
+      result = new PropertyStringImpl(property.getPropertyDefinitionId(),
           ((CmisPropertyString) property).getValue());
     }
     else if (property instanceof CmisPropertyId) {
-      result = new PropertyIdDataImpl(property.getPropertyDefinitionId(),
+      result = new PropertyIdImpl(property.getPropertyDefinitionId(),
           ((CmisPropertyId) property).getValue());
     }
     else if (property instanceof CmisPropertyInteger) {
-      result = new PropertyIntegerDataImpl(property.getPropertyDefinitionId(),
+      result = new PropertyIntegerImpl(property.getPropertyDefinitionId(),
           ((CmisPropertyInteger) property).getValue());
     }
     else if (property instanceof CmisPropertyDecimal) {
-      result = new PropertyDecimalDataImpl(property.getPropertyDefinitionId(),
+      result = new PropertyDecimalImpl(property.getPropertyDefinitionId(),
           ((CmisPropertyDecimal) property).getValue());
     }
     else if (property instanceof CmisPropertyBoolean) {
-      result = new PropertyBooleanDataImpl(property.getPropertyDefinitionId(),
+      result = new PropertyBooleanImpl(property.getPropertyDefinitionId(),
           ((CmisPropertyBoolean) property).getValue());
     }
     else if (property instanceof CmisPropertyDateTime) {
-      result = new PropertyDateTimeDataImpl(property.getPropertyDefinitionId(),
+      result = new PropertyDateTimeImpl(property.getPropertyDefinitionId(),
           convertXMLCalendar(((CmisPropertyDateTime) property).getValue()));
     }
     else if (property instanceof CmisPropertyHtml) {
-      result = new PropertyHtmlDataImpl(property.getPropertyDefinitionId(),
+      result = new PropertyHtmlImpl(property.getPropertyDefinitionId(),
           ((CmisPropertyHtml) property).getValue());
     }
     else if (property instanceof CmisPropertyUri) {
-      result = new PropertyUriDataImpl(property.getPropertyDefinitionId(),
+      result = new PropertyUriImpl(property.getPropertyDefinitionId(),
           ((CmisPropertyUri) property).getValue());
     }
     else {
@@ -1489,7 +1489,7 @@ public final class Converter {
   /**
    * Converts a properties object.
    */
-  public static CmisPropertiesType convert(PropertiesData properties) {
+  public static CmisPropertiesType convert(Properties properties) {
     if (properties == null) {
       return null;
     }
@@ -1518,41 +1518,41 @@ public final class Converter {
 
     CmisProperty result = null;
 
-    if (property instanceof PropertyStringData) {
+    if (property instanceof PropertyString) {
       result = new CmisPropertyString();
-      ((CmisPropertyString) result).getValue().addAll(((PropertyStringData) property).getValues());
+      ((CmisPropertyString) result).getValue().addAll(((PropertyString) property).getValues());
     }
-    else if (property instanceof PropertyIdData) {
+    else if (property instanceof PropertyId) {
       result = new CmisPropertyId();
-      ((CmisPropertyId) result).getValue().addAll(((PropertyIdData) property).getValues());
+      ((CmisPropertyId) result).getValue().addAll(((PropertyId) property).getValues());
     }
-    else if (property instanceof PropertyIntegerData) {
+    else if (property instanceof PropertyInteger) {
       result = new CmisPropertyInteger();
       ((CmisPropertyInteger) result).getValue()
-          .addAll(((PropertyIntegerData) property).getValues());
+          .addAll(((PropertyInteger) property).getValues());
     }
-    else if (property instanceof PropertyDecimalData) {
+    else if (property instanceof PropertyDecimal) {
       result = new CmisPropertyDecimal();
       ((CmisPropertyDecimal) result).getValue()
-          .addAll(((PropertyDecimalData) property).getValues());
+          .addAll(((PropertyDecimal) property).getValues());
     }
-    else if (property instanceof PropertyBooleanData) {
+    else if (property instanceof PropertyBoolean) {
       result = new CmisPropertyBoolean();
       ((CmisPropertyBoolean) result).getValue()
-          .addAll(((PropertyBooleanData) property).getValues());
+          .addAll(((PropertyBoolean) property).getValues());
     }
-    else if (property instanceof PropertyDateTimeData) {
+    else if (property instanceof PropertyDateTime) {
       result = new CmisPropertyDateTime();
       ((CmisPropertyDateTime) result).getValue().addAll(
-          convertCalendar(((PropertyDateTimeData) property).getValues()));
+          convertCalendar(((PropertyDateTime) property).getValues()));
     }
-    else if (property instanceof PropertyHtmlData) {
+    else if (property instanceof PropertyHtml) {
       result = new CmisPropertyHtml();
-      ((CmisPropertyHtml) result).getValue().addAll(((PropertyHtmlData) property).getValues());
+      ((CmisPropertyHtml) result).getValue().addAll(((PropertyHtml) property).getValues());
     }
-    else if (property instanceof PropertyUriData) {
+    else if (property instanceof PropertyUri) {
       result = new CmisPropertyUri();
-      ((CmisPropertyUri) result).getValue().addAll(((PropertyUriData) property).getValues());
+      ((CmisPropertyUri) result).getValue().addAll(((PropertyUri) property).getValues());
     }
     else {
       return null;
@@ -1755,37 +1755,37 @@ public final class Converter {
 
     AllowableActionsImpl result = new AllowableActionsImpl();
 
-    Set<AllowableActionsEnum> set = EnumSet.noneOf(AllowableActionsEnum.class);
+    Set<Action> set = EnumSet.noneOf(Action.class);
 
-    if(Boolean.TRUE.equals(allowableActions.isCanAddObjectToFolder())) { set.add(AllowableActionsEnum.CAN_ADD_OBJECT_TO_FOLDER); }
-    if(Boolean.TRUE.equals(allowableActions.isCanApplyACL())) { set.add(AllowableActionsEnum.CAN_APPLY_ACL); }
-    if(Boolean.TRUE.equals(allowableActions.isCanApplyPolicy())) { set.add(AllowableActionsEnum.CAN_APPLY_POLICY); }
-    if(Boolean.TRUE.equals(allowableActions.isCanCancelCheckOut())) { set.add(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT); }
-    if(Boolean.TRUE.equals(allowableActions.isCanCheckIn())) { set.add(AllowableActionsEnum.CAN_CHECK_IN); }
-    if(Boolean.TRUE.equals(allowableActions.isCanCheckOut())) { set.add(AllowableActionsEnum.CAN_CHECK_OUT); }
-    if(Boolean.TRUE.equals(allowableActions.isCanCreateDocument())) { set.add(AllowableActionsEnum.CAN_CREATE_DOCUMENT); }
-    if(Boolean.TRUE.equals(allowableActions.isCanCreateFolder())) { set.add(AllowableActionsEnum.CAN_CREATE_FOLDER); }
-    if(Boolean.TRUE.equals(allowableActions.isCanCreateRelationship())) { set.add(AllowableActionsEnum.CAN_CREATE_RELATIONSHIP); }
-    if(Boolean.TRUE.equals(allowableActions.isCanDeleteContentStream())) { set.add(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM); }
-    if(Boolean.TRUE.equals(allowableActions.isCanDeleteObject())) { set.add(AllowableActionsEnum.CAN_DELETE_OBJECT); }
-    if(Boolean.TRUE.equals(allowableActions.isCanDeleteTree())) { set.add(AllowableActionsEnum.CAN_DELETE_TREE); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetACL())) { set.add(AllowableActionsEnum.CAN_GET_ACL); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetAllVersions())) { set.add(AllowableActionsEnum.CAN_GET_ALL_VERSIONS); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetAppliedPolicies())) { set.add(AllowableActionsEnum.CAN_GET_APPLIED_POLICIES); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetChildren())) { set.add(AllowableActionsEnum.CAN_GET_CHILDREN); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetContentStream())) { set.add(AllowableActionsEnum.CAN_GET_CONTENT_STREAM); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetDescendants())) { set.add(AllowableActionsEnum.CAN_GET_DESCENDANTS); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetFolderParent())) { set.add(AllowableActionsEnum.CAN_GET_FOLDER_PARENT); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetFolderTree())) { set.add(AllowableActionsEnum.CAN_GET_FOLDER_TREE); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetObjectParents())) { set.add(AllowableActionsEnum.CAN_GET_OBJECT_PARENTS); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetObjectRelationships())) { set.add(AllowableActionsEnum.CAN_GET_OBJECT_RELATIONSHIPS); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetProperties())) { set.add(AllowableActionsEnum.CAN_GET_PROPERTIES); }
-    if(Boolean.TRUE.equals(allowableActions.isCanGetRenditions())) { set.add(AllowableActionsEnum.CAN_GET_RENDITIONS); }
-    if(Boolean.TRUE.equals(allowableActions.isCanMoveObject())) { set.add(AllowableActionsEnum.CAN_MOVE_OBJECT); }
-    if(Boolean.TRUE.equals(allowableActions.isCanRemoveObjectFromFolder())) { set.add(AllowableActionsEnum.CAN_REMOVE_OBJECT_FROM_FOLDER); }
-    if(Boolean.TRUE.equals(allowableActions.isCanRemovePolicy())) { set.add(AllowableActionsEnum.CAN_REMOVE_POLICY); }
-    if(Boolean.TRUE.equals(allowableActions.isCanSetContentStream())) { set.add(AllowableActionsEnum.CAN_SET_CONTENT_STREAM); }
-    if(Boolean.TRUE.equals(allowableActions.isCanUpdateProperties())) { set.add(AllowableActionsEnum.CAN_UPDATE_PROPERTIES); }
+    if(Boolean.TRUE.equals(allowableActions.isCanAddObjectToFolder())) { set.add(Action.CAN_ADD_OBJECT_TO_FOLDER); }
+    if(Boolean.TRUE.equals(allowableActions.isCanApplyACL())) { set.add(Action.CAN_APPLY_ACL); }
+    if(Boolean.TRUE.equals(allowableActions.isCanApplyPolicy())) { set.add(Action.CAN_APPLY_POLICY); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCancelCheckOut())) { set.add(Action.CAN_CANCEL_CHECK_OUT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCheckIn())) { set.add(Action.CAN_CHECK_IN); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCheckOut())) { set.add(Action.CAN_CHECK_OUT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCreateDocument())) { set.add(Action.CAN_CREATE_DOCUMENT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCreateFolder())) { set.add(Action.CAN_CREATE_FOLDER); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCreateRelationship())) { set.add(Action.CAN_CREATE_RELATIONSHIP); }
+    if(Boolean.TRUE.equals(allowableActions.isCanDeleteContentStream())) { set.add(Action.CAN_DELETE_CONTENT_STREAM); }
+    if(Boolean.TRUE.equals(allowableActions.isCanDeleteObject())) { set.add(Action.CAN_DELETE_OBJECT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanDeleteTree())) { set.add(Action.CAN_DELETE_TREE); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetACL())) { set.add(Action.CAN_GET_ACL); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetAllVersions())) { set.add(Action.CAN_GET_ALL_VERSIONS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetAppliedPolicies())) { set.add(Action.CAN_GET_APPLIED_POLICIES); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetChildren())) { set.add(Action.CAN_GET_CHILDREN); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetContentStream())) { set.add(Action.CAN_GET_CONTENT_STREAM); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetDescendants())) { set.add(Action.CAN_GET_DESCENDANTS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetFolderParent())) { set.add(Action.CAN_GET_FOLDER_PARENT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetFolderTree())) { set.add(Action.CAN_GET_FOLDER_TREE); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetObjectParents())) { set.add(Action.CAN_GET_OBJECT_PARENTS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetObjectRelationships())) { set.add(Action.CAN_GET_OBJECT_RELATIONSHIPS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetProperties())) { set.add(Action.CAN_GET_PROPERTIES); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetRenditions())) { set.add(Action.CAN_GET_RENDITIONS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanMoveObject())) { set.add(Action.CAN_MOVE_OBJECT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanRemoveObjectFromFolder())) { set.add(Action.CAN_REMOVE_OBJECT_FROM_FOLDER); }
+    if(Boolean.TRUE.equals(allowableActions.isCanRemovePolicy())) { set.add(Action.CAN_REMOVE_POLICY); }
+    if(Boolean.TRUE.equals(allowableActions.isCanSetContentStream())) { set.add(Action.CAN_SET_CONTENT_STREAM); }
+    if(Boolean.TRUE.equals(allowableActions.isCanUpdateProperties())) { set.add(Action.CAN_UPDATE_PROPERTIES); }
 
     result.setAllowableActions(set);
 
@@ -1806,37 +1806,37 @@ public final class Converter {
     CmisAllowableActionsType result = new CmisAllowableActionsType();
 
     if (allowableActions.getAllowableActions() != null) {
-      Set<AllowableActionsEnum> set = allowableActions.getAllowableActions();
+      Set<Action> set = allowableActions.getAllowableActions();
 
-      result.setCanAddObjectToFolder(set.contains(AllowableActionsEnum.CAN_ADD_OBJECT_TO_FOLDER));
-      result.setCanApplyACL(set.contains(AllowableActionsEnum.CAN_APPLY_ACL));
-      result.setCanApplyPolicy(set.contains(AllowableActionsEnum.CAN_APPLY_POLICY));
-      result.setCanCancelCheckOut(set.contains(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT));
-      result.setCanCheckIn(set.contains(AllowableActionsEnum.CAN_CHECK_IN));
-      result.setCanCheckOut(set.contains(AllowableActionsEnum.CAN_CHECK_OUT));
-      result.setCanCreateDocument(set.contains(AllowableActionsEnum.CAN_CREATE_DOCUMENT));
-      result.setCanCreateFolder(set.contains(AllowableActionsEnum.CAN_CREATE_FOLDER));
-      result.setCanCreateRelationship(set.contains(AllowableActionsEnum.CAN_CREATE_RELATIONSHIP));
-      result.setCanDeleteContentStream(set.contains(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM));
-      result.setCanDeleteObject(set.contains(AllowableActionsEnum.CAN_DELETE_OBJECT));
-      result.setCanDeleteTree(set.contains(AllowableActionsEnum.CAN_DELETE_TREE));
-      result.setCanGetACL(set.contains(AllowableActionsEnum.CAN_GET_ACL));
-      result.setCanGetAllVersions(set.contains(AllowableActionsEnum.CAN_GET_ALL_VERSIONS));
-      result.setCanGetAppliedPolicies(set.contains(AllowableActionsEnum.CAN_GET_APPLIED_POLICIES));
-      result.setCanGetChildren(set.contains(AllowableActionsEnum.CAN_GET_CHILDREN));
-      result.setCanGetContentStream(set.contains(AllowableActionsEnum.CAN_GET_CONTENT_STREAM));
-      result.setCanGetDescendants(set.contains(AllowableActionsEnum.CAN_GET_DESCENDANTS));
-      result.setCanGetFolderParent(set.contains(AllowableActionsEnum.CAN_GET_FOLDER_PARENT));
-      result.setCanGetFolderTree(set.contains(AllowableActionsEnum.CAN_GET_FOLDER_TREE));
-      result.setCanGetObjectParents(set.contains(AllowableActionsEnum.CAN_GET_OBJECT_PARENTS));
-      result.setCanGetObjectRelationships(set.contains(AllowableActionsEnum.CAN_GET_OBJECT_RELATIONSHIPS));
-      result.setCanGetProperties(set.contains(AllowableActionsEnum.CAN_GET_PROPERTIES));
-      result.setCanGetRenditions(set.contains(AllowableActionsEnum.CAN_GET_RENDITIONS));
-      result.setCanMoveObject(set.contains(AllowableActionsEnum.CAN_MOVE_OBJECT));
-      result.setCanRemoveObjectFromFolder(set.contains(AllowableActionsEnum.CAN_REMOVE_OBJECT_FROM_FOLDER));
-      result.setCanRemovePolicy(set.contains(AllowableActionsEnum.CAN_REMOVE_POLICY));
-      result.setCanSetContentStream(set.contains(AllowableActionsEnum.CAN_SET_CONTENT_STREAM));
-      result.setCanUpdateProperties(set.contains(AllowableActionsEnum.CAN_UPDATE_PROPERTIES));
+      result.setCanAddObjectToFolder(set.contains(Action.CAN_ADD_OBJECT_TO_FOLDER));
+      result.setCanApplyACL(set.contains(Action.CAN_APPLY_ACL));
+      result.setCanApplyPolicy(set.contains(Action.CAN_APPLY_POLICY));
+      result.setCanCancelCheckOut(set.contains(Action.CAN_CANCEL_CHECK_OUT));
+      result.setCanCheckIn(set.contains(Action.CAN_CHECK_IN));
+      result.setCanCheckOut(set.contains(Action.CAN_CHECK_OUT));
+      result.setCanCreateDocument(set.contains(Action.CAN_CREATE_DOCUMENT));
+      result.setCanCreateFolder(set.contains(Action.CAN_CREATE_FOLDER));
+      result.setCanCreateRelationship(set.contains(Action.CAN_CREATE_RELATIONSHIP));
+      result.setCanDeleteContentStream(set.contains(Action.CAN_DELETE_CONTENT_STREAM));
+      result.setCanDeleteObject(set.contains(Action.CAN_DELETE_OBJECT));
+      result.setCanDeleteTree(set.contains(Action.CAN_DELETE_TREE));
+      result.setCanGetACL(set.contains(Action.CAN_GET_ACL));
+      result.setCanGetAllVersions(set.contains(Action.CAN_GET_ALL_VERSIONS));
+      result.setCanGetAppliedPolicies(set.contains(Action.CAN_GET_APPLIED_POLICIES));
+      result.setCanGetChildren(set.contains(Action.CAN_GET_CHILDREN));
+      result.setCanGetContentStream(set.contains(Action.CAN_GET_CONTENT_STREAM));
+      result.setCanGetDescendants(set.contains(Action.CAN_GET_DESCENDANTS));
+      result.setCanGetFolderParent(set.contains(Action.CAN_GET_FOLDER_PARENT));
+      result.setCanGetFolderTree(set.contains(Action.CAN_GET_FOLDER_TREE));
+      result.setCanGetObjectParents(set.contains(Action.CAN_GET_OBJECT_PARENTS));
+      result.setCanGetObjectRelationships(set.contains(Action.CAN_GET_OBJECT_RELATIONSHIPS));
+      result.setCanGetProperties(set.contains(Action.CAN_GET_PROPERTIES));
+      result.setCanGetRenditions(set.contains(Action.CAN_GET_RENDITIONS));
+      result.setCanMoveObject(set.contains(Action.CAN_MOVE_OBJECT));
+      result.setCanRemoveObjectFromFolder(set.contains(Action.CAN_REMOVE_OBJECT_FROM_FOLDER));
+      result.setCanRemovePolicy(set.contains(Action.CAN_REMOVE_POLICY));
+      result.setCanSetContentStream(set.contains(Action.CAN_SET_CONTENT_STREAM));
+      result.setCanUpdateProperties(set.contains(Action.CAN_UPDATE_PROPERTIES));
 
     }
 
@@ -1849,12 +1849,12 @@ public final class Converter {
   /**
    * Converts a list of policy ids.
    */
-  public static PolicyIdListData convert(CmisListOfIdsType policyIds) {
+  public static PolicyIdList convert(CmisListOfIdsType policyIds) {
     if (policyIds == null) {
       return null;
     }
 
-    PolicyIdListDataImpl result = new PolicyIdListDataImpl();
+    PolicyIdListImpl result = new PolicyIdListImpl();
     result.setPolicyIds(policyIds.getId());
 
     // handle extensions
@@ -1866,7 +1866,7 @@ public final class Converter {
   /**
    * Converts a list of policy ids.
    */
-  public static CmisListOfIdsType convert(PolicyIdListData policyIds) {
+  public static CmisListOfIdsType convert(PolicyIdList policyIds) {
     if (policyIds == null) {
       return null;
     }

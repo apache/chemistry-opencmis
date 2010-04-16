@@ -16,28 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.enums;
+package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-public enum TypeOfChanges {
+import java.util.List;
 
-  CREATED("created"), UPDATED("updated"), DELETED("deleted"), SECURITY("security");
-  private final String value;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 
-  TypeOfChanges(String v) {
-    value = v;
+/**
+ * String property data implementation.
+ * 
+ * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+ * 
+ */
+public class PropertyStringImpl extends AbstractPropertyData<String> implements
+    PropertyString {
+
+  public PropertyStringImpl() {
   }
 
-  public String value() {
-    return value;
+  public PropertyStringImpl(String id, List<String> values) {
+    setId(id);
+    setValues(values);
   }
 
-  public static TypeOfChanges fromValue(String v) {
-    for (TypeOfChanges c : TypeOfChanges.values()) {
-      if (c.value.equals(v)) {
-        return c;
-      }
-    }
-    throw new IllegalArgumentException(v);
+  public PropertyStringImpl(String id, String value) {
+    setId(id);
+    setValue(value);
   }
-
 }

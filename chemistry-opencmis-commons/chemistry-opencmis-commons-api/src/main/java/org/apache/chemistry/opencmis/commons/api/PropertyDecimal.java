@@ -18,10 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.api;
 
-import java.util.Map;
+import java.math.BigDecimal;
 
+public interface PropertyDecimal extends PropertyData<BigDecimal> {
 
-public interface PropertiesData extends ExtensionsData {
-
-  Map<String, PropertyData<?>> getProperties();
 }

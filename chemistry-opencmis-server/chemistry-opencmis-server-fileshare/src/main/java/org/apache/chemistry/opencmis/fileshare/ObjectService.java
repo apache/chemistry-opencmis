@@ -29,10 +29,10 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
@@ -67,7 +67,7 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.api.ExtensionsData,
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
-  public ObjectData create(CallContext context, String repositoryId, PropertiesData properties,
+  public ObjectData create(CallContext context, String repositoryId, Properties properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, ExtensionsData extension, ObjectInfoHolder objectInfos) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).create(context,
@@ -86,7 +86,7 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.provider.AccessControlList,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public String createDocument(CallContext context, String repositoryId, PropertiesData properties,
+  public String createDocument(CallContext context, String repositoryId, Properties properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
@@ -107,7 +107,7 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public String createDocumentFromSource(CallContext context, String repositoryId, String sourceId,
-      PropertiesData properties, String folderId, VersioningState versioningState,
+      Properties properties, String folderId, VersioningState versioningState,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId)
@@ -124,7 +124,7 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.provider.AccessControlList,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public String createFolder(CallContext context, String repositoryId, PropertiesData properties,
+  public String createFolder(CallContext context, String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).createFolder(context,
@@ -141,7 +141,7 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.provider.AccessControlList,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public String createPolicy(CallContext context, String repositoryId, PropertiesData properties,
+  public String createPolicy(CallContext context, String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
     fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
@@ -159,7 +159,7 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public String createRelationship(CallContext context, String repositoryId,
-      PropertiesData properties, List<String> policies, Acl addAces,
+      Properties properties, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
     fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
     throw new CmisNotSupportedException("createRelationship not supported!");
@@ -203,7 +203,7 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public FailedToDeleteData deleteTree(CallContext context, String repositoryId, String folderId,
-      Boolean allVersions, UnfileObjects unfileObjects, Boolean continueOnFailure,
+      Boolean allVersions, UnfileObject unfileObjects, Boolean continueOnFailure,
       ExtensionsData extension) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).deleteTree(context,
         folderId, continueOnFailure);
@@ -282,7 +282,7 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.commons.api.ExtensionsData,
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
-  public PropertiesData getProperties(CallContext context, String repositoryId, String objectId,
+  public Properties getProperties(CallContext context, String repositoryId, String objectId,
       String filter, ExtensionsData extension) {
     ObjectData object = fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getObject(
         context, objectId, filter, false, false, null);
@@ -350,7 +350,7 @@ public class ObjectService implements CmisObjectService {
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
   public ObjectData updateProperties(CallContext context, String repositoryId,
-      Holder<String> objectId, Holder<String> changeToken, PropertiesData properties,
+      Holder<String> objectId, Holder<String> changeToken, Properties properties,
       Acl acl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
     return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).updateProperties(
         context, objectId, properties, objectInfos);

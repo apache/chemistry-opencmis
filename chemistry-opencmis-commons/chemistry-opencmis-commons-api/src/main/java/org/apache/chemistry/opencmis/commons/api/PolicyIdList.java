@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.api;
 import java.util.List;
 
 
-public interface PolicyIdListData extends ExtensionsData {
+public interface PolicyIdList extends ExtensionsData {
 
   List<String> getPolicyIds();
 }

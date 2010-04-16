@@ -16,8 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.api;
+package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-public interface PropertyStringData extends PropertyData<String> {
+import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.api.PropertyBoolean;
+
+/**
+ * Boolean property data implementation.
+ * 
+ * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+ * 
+ */
+public class PropertyBooleanImpl extends AbstractPropertyData<Boolean> implements
+    PropertyBoolean {
+
+  public PropertyBooleanImpl() {
+  }
+
+  public PropertyBooleanImpl(String id, List<Boolean> values) {
+    setId(id);
+    setValues(values);
+  }
+
+  public PropertyBooleanImpl(String id, Boolean value) {
+    setId(id);
+    setValue(value);
+  }
 }

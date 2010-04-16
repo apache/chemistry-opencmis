@@ -35,9 +35,9 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
@@ -60,7 +60,7 @@ public class ObjectCreator {
     Acl removeACEs = null;
     ExtensionsData extension = null;
 
-    PropertiesData props = createStringDocumentProperties(name, typeId, propsToSet);
+    Properties props = createStringDocumentProperties(name, typeId, propsToSet);
 
     contentStream = createContent();
 
@@ -73,7 +73,7 @@ public class ObjectCreator {
     return id;
   }
 
-  public PropertiesData createStringDocumentProperties(String name, String typeId, Map<String, String> propsToSet) {
+  public Properties createStringDocumentProperties(String name, String typeId, Map<String, String> propsToSet) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
     properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
@@ -81,7 +81,7 @@ public class ObjectCreator {
       for (Entry<String, String> propToSet : propsToSet.entrySet()) {
         properties.add(fFactory.createPropertyStringData(propToSet.getKey(), propToSet.getValue()));
       }
-    PropertiesData props = fFactory.createPropertiesData(properties);
+    Properties props = fFactory.createPropertiesData(properties);
     return props;
   }
 
@@ -161,24 +161,24 @@ public class ObjectCreator {
   }
 
   public void updateProperty(String id, String propertyId, String propertyValue) {
-    PropertiesData properties = getUpdatePropertyList(propertyId, propertyValue);
+    Properties properties = getUpdatePropertyList(propertyId, propertyValue);
 
     Holder<String> idHolder = new Holder<String>(id);
     Holder<String> changeTokenHolder = new Holder<String>();
     fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, properties, null);
   }
 
-  public PropertiesData getUpdatePropertyList(String propertyId, String propertyValue) {
+  public Properties getUpdatePropertyList(String propertyId, String propertyValue) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyStringData(propertyId, propertyValue));
-    PropertiesData newProps = fFactory.createPropertiesData(properties);
+    Properties newProps = fFactory.createPropertiesData(properties);
     return newProps;
   }
 
   public boolean verifyProperty(String id, String propertyId, String propertyValue) {
-      PropertiesData props = fObjSvc.getProperties(fRepositoryId, id, "*", null);
+      Properties props = fObjSvc.getProperties(fRepositoryId, id, "*", null);
       Map<String, PropertyData<?>> propsMap = props.getProperties();
-      PropertyStringData pd = (PropertyStringData) propsMap.get(propertyId);
+      PropertyString pd = (PropertyString) propsMap.get(propertyId);
       return propertyValue.equals(pd.getFirstValue());
   }
 

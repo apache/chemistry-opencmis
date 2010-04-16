@@ -16,15 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.api;
+package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import java.util.GregorianCalendar;
+import java.math.BigDecimal;
+import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.enums.TypeOfChanges;
+import org.apache.chemistry.opencmis.commons.api.PropertyDecimal;
 
-public interface ChangeEventInfoData extends ExtensionsData {
+/**
+ * Decimal property data implementation.
+ * 
+ * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+ * 
+ */
+public class PropertyDecimalImpl extends AbstractPropertyData<BigDecimal> implements
+    PropertyDecimal {
 
-  TypeOfChanges getChangeType();
+  public PropertyDecimalImpl() {
+  }
 
-  GregorianCalendar getChangeTime();
+  public PropertyDecimalImpl(String id, List<BigDecimal> values) {
+    setId(id);
+    setValues(values);
+  }
+
+  public PropertyDecimalImpl(String id, BigDecimal value) {
+    setId(id);
+    setValue(value);
+  }
 }

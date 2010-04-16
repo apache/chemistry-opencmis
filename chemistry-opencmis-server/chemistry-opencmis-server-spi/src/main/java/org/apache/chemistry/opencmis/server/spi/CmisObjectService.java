@@ -28,10 +28,10 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
@@ -50,7 +50,7 @@ public interface CmisObjectService {
    * Bindings: Web Services
    * </p>
    */
-  String createDocument(CallContext context, String repositoryId, PropertiesData properties,
+  String createDocument(CallContext context, String repositoryId, Properties properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
@@ -63,7 +63,7 @@ public interface CmisObjectService {
    * </p>
    */
   String createDocumentFromSource(CallContext context, String repositoryId, String sourceId,
-      PropertiesData properties, String folderId, VersioningState versioningState,
+      Properties properties, String folderId, VersioningState versioningState,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
@@ -74,7 +74,7 @@ public interface CmisObjectService {
    * Bindings: Web Services
    * </p>
    */
-  String createFolder(CallContext context, String repositoryId, PropertiesData properties,
+  String createFolder(CallContext context, String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension);
 
@@ -85,7 +85,7 @@ public interface CmisObjectService {
    * Bindings: AtomPub, Web Services
    * </p>
    */
-  String createRelationship(CallContext context, String repositoryId, PropertiesData properties,
+  String createRelationship(CallContext context, String repositoryId, Properties properties,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
@@ -96,7 +96,7 @@ public interface CmisObjectService {
    * Bindings: Web Services
    * </p>
    */
-  String createPolicy(CallContext context, String repositoryId, PropertiesData properties,
+  String createPolicy(CallContext context, String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension);
 
@@ -108,7 +108,7 @@ public interface CmisObjectService {
    * Bindings: AtomPub
    * </p>
    */
-  ObjectData create(CallContext context, String repositoryId, PropertiesData properties,
+  ObjectData create(CallContext context, String repositoryId, Properties properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
@@ -141,7 +141,7 @@ public interface CmisObjectService {
    * Bindings: Web Services
    * </p>
    */
-  PropertiesData getProperties(CallContext context, String repositoryId, String objectId,
+  Properties getProperties(CallContext context, String repositoryId, String objectId,
       String filter, ExtensionsData extension);
 
   /**
@@ -184,7 +184,7 @@ public interface CmisObjectService {
    * </p>
    */
   ObjectData updateProperties(CallContext context, String repositoryId, Holder<String> objectId,
-      Holder<String> changeToken, PropertiesData properties, Acl acl,
+      Holder<String> changeToken, Properties properties, Acl acl,
       ExtensionsData extension, ObjectInfoHolder objectInfos);
 
   /**
@@ -219,7 +219,7 @@ public interface CmisObjectService {
    * </p>
    */
   FailedToDeleteData deleteTree(CallContext context, String repositoryId, String folderId,
-      Boolean allVersions, UnfileObjects unfileObjects, Boolean continueOnFailure,
+      Boolean allVersions, UnfileObject unfileObjects, Boolean continueOnFailure,
       ExtensionsData extension);
 
   /**

@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implements
+public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
     RepositoryCapabilities {
 
   private static final long serialVersionUID = 1L;
@@ -53,7 +53,7 @@ public class RepositoryCapabilitiesDataImpl extends AbstractExtensionData implem
   /**
    * Constructor.
    */
-  public RepositoryCapabilitiesDataImpl() {
+  public RepositoryCapabilitiesImpl() {
   }
 
   /*

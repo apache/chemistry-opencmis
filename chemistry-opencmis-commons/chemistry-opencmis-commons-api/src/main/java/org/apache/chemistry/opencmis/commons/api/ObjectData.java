@@ -49,7 +49,7 @@ public interface ObjectData extends ExtensionsData {
    * 
    * @return the properties or <code>null</code> if no properties are known
    */
-  PropertiesData getProperties();
+  Properties getProperties();
 
   /**
    * Returns the allowable actions.
@@ -71,7 +71,7 @@ public interface ObjectData extends ExtensionsData {
    * 
    * @return the change event infos or <code>null</code> if the infos are unknown
    */
-  ChangeEventInfoData getChangeEventInfo();
+  ChangeEventInfo getChangeEventInfo();
 
   /**
    * Returns the access control list.
@@ -93,7 +93,7 @@ public interface ObjectData extends ExtensionsData {
    * 
    * @return the policy ids or <code>null</code> if no policies are applied or the ids are unknown
    */
-  PolicyIdListData getPolicyIds();
+  PolicyIdList getPolicyIds();
 
   /**
    * Returns the renditions of this object.

@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
 /**
@@ -61,7 +61,7 @@ public interface CmisVersioningService {
       ExtensionsData extension);
 
   public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId,
-      Boolean major, PropertiesData properties, ContentStream contentStream,
+      Boolean major, Properties properties, ContentStream contentStream,
       String checkinComment, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
@@ -84,7 +84,7 @@ public interface CmisVersioningService {
    * Bindings: Web Services
    * </p>
    */
-  public PropertiesData getPropertiesOfLatestVersion(CallContext context, String repositoryId,
+  public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId,
       String versionSeriesId, Boolean major, String filter, ExtensionsData extension);
 
   /**

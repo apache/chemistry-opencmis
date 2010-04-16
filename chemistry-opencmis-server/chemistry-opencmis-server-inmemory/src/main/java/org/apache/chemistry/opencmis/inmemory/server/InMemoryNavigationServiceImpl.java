@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -329,7 +329,7 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
         objectData.setRelationships(null /* f.getRenditions(renditionFilter) */);
       }
 
-      PropertiesData props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, spo,
+      Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, spo,
           fStoreManager, requestedIds);
       objectData.setProperties(props);
 
@@ -440,7 +440,7 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
   void copyFilteredProperties(String repositoryId, StoredObject so, String filter,
       ObjectDataImpl objData) {
     List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-    PropertiesData props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, so,
+    Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, so,
         fStoreManager, requestedIds);
     objData.setProperties(props);
   }

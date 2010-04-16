@@ -35,13 +35,13 @@ import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -111,7 +111,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
 
     // test create a document with a folder type, should fail:
     try {
-      PropertiesData props = createDocumentProperties("DocumentWithAFolderType", FOLDER_TYPE_ID);
+      Properties props = createDocumentProperties("DocumentWithAFolderType", FOLDER_TYPE_ID);
       id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE,
           null, null, null, null);
       fail("Creating  document with a folder type should fail.");
@@ -120,7 +120,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     }
     // test create a document with an illegal name, should fail:
     try {
-      PropertiesData props = createDocumentProperties("abc ()", DOCUMENT_TYPE_ID);
+      Properties props = createDocumentProperties("abc ()", DOCUMENT_TYPE_ID);
       id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE,
           null, null, null, null);
       fail("Creating  document with an illegal name should fail.");
@@ -242,7 +242,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     String id2 = null;
     try {
       VersioningState versioningState = VersioningState.NONE;
-      PropertiesData props = createDocumentPropertiesForDocumentFromSource("Document From Source");
+      Properties props = createDocumentPropertiesForDocumentFromSource("Document From Source");
       id2 = fObjSvc.createDocumentFromSource(fRepositoryId, id1, props, fRootFolderId, versioningState,
           null, null, null, null);
       if (null == id2)
@@ -461,7 +461,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     gen.setNumberOfDocumentsToCreatePerFolder(2); // create two documents in each folder
     gen.createFolderHierachy(1, 1, rootFolderId);
     try {
-          fObjSvc.deleteTree(fRepositoryId, rootFolderId, null /*true*/, UnfileObjects.DELETE, true, null);
+          fObjSvc.deleteTree(fRepositoryId, rootFolderId, null /*true*/, UnfileObject.DELETE, true, null);
     } catch (Exception e) {
       fail("deleteTree failed unexpected. " + e);
     }
@@ -539,7 +539,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       // Generate some property values for custom attributes
       properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, newStringPropVal));
       properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, newIntPropVal));
-      PropertiesData newProps = fFactory.createPropertiesData(properties);
+      Properties newProps = fFactory.createPropertiesData(properties);
 
       Holder<String> idHolder = new Holder<String>(id);
       Holder<String> changeTokenHolder = new Holder<String>();
@@ -667,7 +667,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", true, IncludeRelationships.NONE,
         null, false, false, null);
     assertNotNull(res.getAllowableActions());
-    Set<AllowableActionsEnum> actions = res.getAllowableActions().getAllowableActions();
+    Set<Action> actions = res.getAllowableActions().getAllowableActions();
     assertNotNull(actions);
     verifyAllowableActionsDocument(actions, false, withContent);
 
@@ -683,52 +683,52 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("... testAllowableActions() finished.");
   }
 
-  private void verifyAllowableActionsDocument(Set<AllowableActionsEnum> actions, boolean isVersioned, boolean hasContent) {
-        assertTrue(actions.contains(AllowableActionsEnum.CAN_DELETE_OBJECT));
-        assertTrue(actions.contains(AllowableActionsEnum.CAN_UPDATE_PROPERTIES));
-        assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_PROPERTIES));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_OBJECT_RELATIONSHIPS));
-        assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_OBJECT_PARENTS));
+  private void verifyAllowableActionsDocument(Set<Action> actions, boolean isVersioned, boolean hasContent) {
+        assertTrue(actions.contains(Action.CAN_DELETE_OBJECT));
+        assertTrue(actions.contains(Action.CAN_UPDATE_PROPERTIES));
+        assertTrue(actions.contains(Action.CAN_GET_PROPERTIES));
+        assertFalse(actions.contains(Action.CAN_GET_OBJECT_RELATIONSHIPS));
+        assertTrue(actions.contains(Action.CAN_GET_OBJECT_PARENTS));
 
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_FOLDER_PARENT));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_FOLDER_TREE));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_DESCENDANTS));
-        assertTrue(actions.contains(AllowableActionsEnum.CAN_MOVE_OBJECT));
+        assertFalse(actions.contains(Action.CAN_GET_FOLDER_PARENT));
+        assertFalse(actions.contains(Action.CAN_GET_FOLDER_TREE));
+        assertFalse(actions.contains(Action.CAN_GET_DESCENDANTS));
+        assertTrue(actions.contains(Action.CAN_MOVE_OBJECT));
         if (hasContent) {
-          assertTrue(actions.contains(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM));
-          assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_CONTENT_STREAM));
-          assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_RENDITIONS));
+          assertTrue(actions.contains(Action.CAN_DELETE_CONTENT_STREAM));
+          assertTrue(actions.contains(Action.CAN_GET_CONTENT_STREAM));
+          assertTrue(actions.contains(Action.CAN_GET_RENDITIONS));
         } else {
-          assertFalse(actions.contains(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM));
-          assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_CONTENT_STREAM));
-          assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_RENDITIONS));
+          assertFalse(actions.contains(Action.CAN_DELETE_CONTENT_STREAM));
+          assertFalse(actions.contains(Action.CAN_GET_CONTENT_STREAM));
+          assertFalse(actions.contains(Action.CAN_GET_RENDITIONS));
         }
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_ADD_OBJECT_TO_FOLDER));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_REMOVE_OBJECT_FROM_FOLDER));
+        assertFalse(actions.contains(Action.CAN_ADD_OBJECT_TO_FOLDER));
+        assertFalse(actions.contains(Action.CAN_REMOVE_OBJECT_FROM_FOLDER));
 
         if (isVersioned) {
-          assertTrue(actions.contains(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT));
-          assertTrue(actions.contains(AllowableActionsEnum.CAN_CHECK_IN));
-          assertTrue(actions.contains(AllowableActionsEnum.CAN_CHECK_OUT));
-          assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_ALL_VERSIONS));
+          assertTrue(actions.contains(Action.CAN_CANCEL_CHECK_OUT));
+          assertTrue(actions.contains(Action.CAN_CHECK_IN));
+          assertTrue(actions.contains(Action.CAN_CHECK_OUT));
+          assertTrue(actions.contains(Action.CAN_GET_ALL_VERSIONS));
 
         } else {
-          assertFalse(actions.contains(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT));
-          assertFalse(actions.contains(AllowableActionsEnum.CAN_CHECK_IN));
-          assertFalse(actions.contains(AllowableActionsEnum.CAN_CHECK_OUT));
-          assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_ALL_VERSIONS));
+          assertFalse(actions.contains(Action.CAN_CANCEL_CHECK_OUT));
+          assertFalse(actions.contains(Action.CAN_CHECK_IN));
+          assertFalse(actions.contains(Action.CAN_CHECK_OUT));
+          assertFalse(actions.contains(Action.CAN_GET_ALL_VERSIONS));
         }
-        assertTrue(actions.contains(AllowableActionsEnum.CAN_SET_CONTENT_STREAM));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_APPLY_POLICY));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_APPLIED_POLICIES));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_REMOVE_POLICY));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_CHILDREN));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_CREATE_DOCUMENT));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_CREATE_FOLDER));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_CREATE_RELATIONSHIP));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_DELETE_TREE));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_ACL));
-        assertFalse(actions.contains(AllowableActionsEnum.CAN_APPLY_ACL));
+        assertTrue(actions.contains(Action.CAN_SET_CONTENT_STREAM));
+        assertFalse(actions.contains(Action.CAN_APPLY_POLICY));
+        assertFalse(actions.contains(Action.CAN_GET_APPLIED_POLICIES));
+        assertFalse(actions.contains(Action.CAN_REMOVE_POLICY));
+        assertFalse(actions.contains(Action.CAN_GET_CHILDREN));
+        assertFalse(actions.contains(Action.CAN_CREATE_DOCUMENT));
+        assertFalse(actions.contains(Action.CAN_CREATE_FOLDER));
+        assertFalse(actions.contains(Action.CAN_CREATE_RELATIONSHIP));
+        assertFalse(actions.contains(Action.CAN_DELETE_TREE));
+        assertFalse(actions.contains(Action.CAN_GET_ACL));
+        assertFalse(actions.contains(Action.CAN_APPLY_ACL));
   }
 
   private String retrieveDocument(String id) {
@@ -792,12 +792,12 @@ public class ObjectServiceTest extends AbstractServiceTst {
     return createDocument(name, folderId, DOCUMENT_TYPE_ID, withContent);
   }
 
-  private PropertiesData createDocumentPropertiesForDocumentFromSource(String name) {
+  private Properties createDocumentPropertiesForDocumentFromSource(String name) {
     // We only provide a name but not a type id, as spec says to copy missing attributes
     // from the existing one
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
-    PropertiesData props = fFactory.createPropertiesData(properties);
+    Properties props = fFactory.createPropertiesData(properties);
     return props;
   }
 
@@ -828,7 +828,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "My pretty string"));
     properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, BigInteger.valueOf(4711)));
 
-    PropertiesData props = fFactory.createPropertiesData(properties);
+    Properties props = fFactory.createPropertiesData(properties);
 
     if (withContent)
       contentStream = createContent();
@@ -860,7 +860,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_SUB_STRING_PROP_ID, "another cool string"));
     properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_SUB_INT_PROP_ID, BigInteger.valueOf(4712)));
 
-    PropertiesData props = fFactory.createPropertiesData(properties);
+    Properties props = fFactory.createPropertiesData(properties);
 
     if (withContent)
       contentStream = createContent();

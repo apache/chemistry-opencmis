@@ -39,11 +39,11 @@ import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.commons.logging.Log;
@@ -355,7 +355,7 @@ public class ObjectGenerator {
          + ", max levels " + levels);
     
     for (int i = 0; i < childrenPerLevel; i++) {
-      PropertiesData props = createFolderProperties(i, level);
+      Properties props = createFolderProperties(i, level);
       try {
         fTimeLoggerCreateFolder.start();
         id = fObjSvc.createFolder(fRepositoryId, props, parentId, null, null, null, null);
@@ -378,7 +378,7 @@ public class ObjectGenerator {
   }
 
   private String createFolder(String parentId) {
-    PropertiesData props = createFolderProperties(0, 0);
+    Properties props = createFolderProperties(0, 0);
     String id = null;
     try {
       fTimeLoggerCreateFolder.start();
@@ -399,7 +399,7 @@ public class ObjectGenerator {
     ExtensionsData extension = null;
 
     // log.info("create document in folder " + folderId);
-    PropertiesData props = createDocumentProperties(no, level);
+    Properties props = createDocumentProperties(no, level);
     String id = null;
     if (fContentSizeInK > 0)
       contentStream = createContent();
@@ -428,7 +428,7 @@ public class ObjectGenerator {
     for (String id : fTopLevelFoldersCreated) {
       try {
         fTimeLoggerDelete.start();
-        fObjSvc.deleteTree(fRepositoryId, id, true, UnfileObjects.DELETE, true, null);
+        fObjSvc.deleteTree(fRepositoryId, id, true, UnfileObject.DELETE, true, null);
       } finally {
         fTimeLoggerDelete.stop();
       }    
@@ -468,7 +468,7 @@ public class ObjectGenerator {
     return content;
   }
 
-  private PropertiesData createFolderProperties(int no, int level) {
+  private Properties createFolderProperties(int no, int level) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, generateFolderNameValue(no, level)));
     properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, fFolderTypeId));
@@ -476,11 +476,11 @@ public class ObjectGenerator {
     for (String stringPropId : fStringPropertyIdsToSetForFolder) {
       properties.add(fFactory.createPropertyStringData(stringPropId, generateStringPropValueFolder()));      
     }
-    PropertiesData props = fFactory.createPropertiesData(properties);
+    Properties props = fFactory.createPropertiesData(properties);
     return props;
   }
 
-  private PropertiesData createDocumentProperties(int no, int level) {
+  private Properties createDocumentProperties(int no, int level) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, generateDocNameValue(no, level)));
     properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, fDocTypeId));
@@ -488,7 +488,7 @@ public class ObjectGenerator {
     for (String stringPropId : fStringPropertyIdsToSetForDocument) {
       properties.add(fFactory.createPropertyStringData(stringPropId, generateStringPropValueDoc()));      
     }
-    PropertiesData props = fFactory.createPropertiesData(properties);
+    Properties props = fFactory.createPropertiesData(properties);
     return props;
   }
   
@@ -572,7 +572,7 @@ public class ObjectGenerator {
     Map<String, PropertyData<?>> propMap;
     if (mustFetchProperties) {
       String objId = (String) object.getProperties().getProperties().get(PropertyIds.OBJECT_ID).getFirstValue();
-      PropertiesData props = fObjSvc.getProperties(fRepositoryId, objId, propertyFilter, null);
+      Properties props = fObjSvc.getProperties(fRepositoryId, objId, propertyFilter, null);
       propMap = props.getProperties();
     } else {
       propMap = object.getProperties().getProperties();

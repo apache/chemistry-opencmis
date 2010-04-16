@@ -16,30 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
-
-import java.util.List;
-
-import org.apache.chemistry.opencmis.commons.api.PropertyUriData;
+package org.apache.chemistry.opencmis.commons.enums;
 
 /**
- * Uri property data implementation.
- * 
+ * Unfile Object Enum.
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
-public class PropertyUriDataImpl extends AbstractPropertyData<String> implements PropertyUriData {
+public enum UnfileObject {
 
-  public PropertyUriDataImpl() {
+  UNFILE("unfile"), //
+  DELETESINGLEFILED("deletesinglefiled"), //
+  DELETE("delete");
+  private final String value;
+
+  UnfileObject(String v) {
+    value = v;
   }
 
-  public PropertyUriDataImpl(String id, List<String> values) {
-    setId(id);
-    setValues(values);
+  public String value() {
+    return value;
   }
 
-  public PropertyUriDataImpl(String id, String value) {
-    setId(id);
-    setValue(value);
+  public static UnfileObject fromValue(String v) {
+    for (UnfileObject c : UnfileObject.values()) {
+      if (c.value.equals(v)) {
+        return c;
+      }
+    }
+    throw new IllegalArgumentException(v);
   }
+
 }

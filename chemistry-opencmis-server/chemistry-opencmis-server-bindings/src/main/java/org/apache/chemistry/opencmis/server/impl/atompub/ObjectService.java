@@ -44,11 +44,11 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -257,8 +257,8 @@ public final class ObjectService {
     // get parameters
     String folderId = getStringParameter(request, Constants.PARAM_ID);
     Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
-    UnfileObjects unfileObjects = getEnumParameter(request, Constants.PARAM_UNFILE_OBJECTS,
-        UnfileObjects.class);
+    UnfileObject unfileObjects = getEnumParameter(request, Constants.PARAM_UNFILE_OBJECTS,
+        UnfileObject.class);
     Boolean continueOnFailure = getBooleanParameter(request, Constants.PARAM_CONTINUE_ON_FAILURE);
 
     // execute
@@ -542,7 +542,7 @@ public final class ObjectService {
   /**
    * Gets the change token from a property set.
    */
-  private static String extractChangeToken(PropertiesData properties) {
+  private static String extractChangeToken(Properties properties) {
     if (properties == null) {
       return null;
     }
@@ -553,10 +553,10 @@ public final class ObjectService {
     }
 
     PropertyData<?> changeLogProperty = propertiesMap.get(PropertyIds.CHANGE_TOKEN);
-    if (!(changeLogProperty instanceof PropertyStringData)) {
+    if (!(changeLogProperty instanceof PropertyString)) {
       return null;
     }
 
-    return ((PropertyStringData) changeLogProperty).getFirstValue();
+    return ((PropertyString) changeLogProperty).getFirstValue();
   }
 }

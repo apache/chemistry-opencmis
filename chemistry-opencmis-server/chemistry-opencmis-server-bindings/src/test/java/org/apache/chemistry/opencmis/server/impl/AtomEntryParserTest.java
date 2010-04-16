@@ -27,7 +27,7 @@ import java.io.ByteArrayOutputStream;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.server.impl.atompub.AtomEntryParser;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
@@ -231,9 +231,9 @@ public class AtomEntryParserTest {
     assertNotNull(aep.getObject());
     assertNotNull(aep.getObject().getProperties());
     assertNotNull(aep.getObject().getProperties().getProperties());
-    assertNotNull(aep.getObject().getProperties().getProperties().get(PropertyIds.NAME) instanceof PropertyStringData);
+    assertNotNull(aep.getObject().getProperties().getProperties().get(PropertyIds.NAME) instanceof PropertyString);
 
-    PropertyStringData nameProperty = (PropertyStringData) aep.getObject().getProperties()
+    PropertyString nameProperty = (PropertyString) aep.getObject().getProperties()
         .getProperties().get(PropertyIds.NAME);
 
     assertEquals("atom.title", nameProperty.getFirstValue());

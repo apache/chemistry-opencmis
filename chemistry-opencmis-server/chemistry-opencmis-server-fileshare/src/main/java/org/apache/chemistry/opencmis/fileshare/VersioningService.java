@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
@@ -77,7 +77,7 @@ public class VersioningService implements CmisVersioningService {
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
   public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId,
-      Boolean major, PropertiesData properties, ContentStream contentStream,
+      Boolean major, Properties properties, ContentStream contentStream,
       String checkinComment, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
     throw new CmisNotSupportedException("checkIn not supported!");
@@ -143,7 +143,7 @@ public class VersioningService implements CmisVersioningService {
    * java.lang.String, org.apache.opencmis.commons.api.ExtensionsData,
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
-  public PropertiesData getPropertiesOfLatestVersion(CallContext context, String repositoryId,
+  public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId,
       String versionSeriesId, Boolean major, String filter, ExtensionsData extension) {
     ObjectData object = fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getObject(
         context, versionSeriesId, filter, false, false, null);

@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.ChangeEventInfoData;
+import org.apache.chemistry.opencmis.commons.api.ChangeEventInfo;
 
 /**
  * Change Event from the change log.
@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.api.ChangeEventInfoData;
  *
  *      See CMIS Domain Model - section 2.1.11.
  */
-public interface ChangeEvent extends ChangeEventInfoData {
+public interface ChangeEvent extends ChangeEventInfo {
 
   /**
    * Gets the id of the object.

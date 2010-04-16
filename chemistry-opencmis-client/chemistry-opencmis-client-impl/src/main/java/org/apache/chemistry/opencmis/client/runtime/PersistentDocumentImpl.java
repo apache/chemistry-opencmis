@@ -315,7 +315,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
    * @see org.apache.opencmis.client.api.Document#setContentStream(boolean,
    * org.apache.opencmis.client.api.ContentStream)
    */
-  public ObjectId setContentStream(boolean overwrite, ContentStream contentStream) {
+  public ObjectId setContentStream(ContentStream contentStream, boolean overwrite) {
     String objectId;
     String changeToken;
 

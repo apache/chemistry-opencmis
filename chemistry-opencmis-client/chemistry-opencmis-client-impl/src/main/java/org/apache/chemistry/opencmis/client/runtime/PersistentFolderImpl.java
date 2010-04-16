@@ -50,10 +50,10 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -229,7 +229,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * @see org.apache.opencmis.client.api.Folder#deleteTree(boolean,
    * org.apache.opencmis.commons.enums.UnfileObjects, boolean)
    */
-  public List<String> deleteTree(boolean allVersions, UnfileObjects unfile,
+  public List<String> deleteTree(boolean allVersions, UnfileObject unfile,
       boolean continueOnFailure) {
     String repositoryId = getRepositoryId();
     String objectId = getObjectId();
@@ -534,8 +534,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
           PropertyData<?> pathProperty = objectData.getProperties().getProperties().get(
               PropertyIds.PATH);
 
-          if (pathProperty instanceof PropertyStringData) {
-            path = ((PropertyStringData) pathProperty).getFirstValue();
+          if (pathProperty instanceof PropertyString) {
+            path = ((PropertyString) pathProperty).getFirstValue();
           }
         }
       }

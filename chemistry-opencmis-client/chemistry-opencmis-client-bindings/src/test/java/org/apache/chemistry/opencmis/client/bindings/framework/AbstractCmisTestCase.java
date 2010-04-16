@@ -26,7 +26,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -44,23 +43,23 @@ import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDateTime;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.commons.logging.Log;
@@ -108,7 +107,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     if (configFileName != null) {
 
       try {
-        Properties properties = new Properties();
+        java.util.Properties properties = new java.util.Properties();
         properties.load(new FileInputStream(configFileName));
 
         for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
@@ -461,9 +460,9 @@ public abstract class AbstractCmisTestCase extends TestCase {
     assertNotNull(folderObject);
     assertNotNull(folderObject.getProperties());
     assertNotNull(folderObject.getProperties().getProperties());
-    assertTrue(folderObject.getProperties().getProperties().get(PropertyIds.PATH) instanceof PropertyStringData);
+    assertTrue(folderObject.getProperties().getProperties().get(PropertyIds.PATH) instanceof PropertyString);
 
-    PropertyStringData pathProperty = (PropertyStringData) folderObject.getProperties()
+    PropertyString pathProperty = (PropertyString) folderObject.getProperties()
         .getProperties().get(PropertyIds.PATH);
 
     assertNotNull(pathProperty.getValues());
@@ -589,9 +588,9 @@ public abstract class AbstractCmisTestCase extends TestCase {
     PropertyData<?> versionSeriesId = object.getProperties().getProperties().get(
         PropertyIds.VERSION_SERIES_ID);
     assertNotNull(versionSeriesId);
-    assertTrue(versionSeriesId instanceof PropertyIdData);
+    assertTrue(versionSeriesId instanceof PropertyId);
 
-    return ((PropertyIdData) versionSeriesId).getFirstValue();
+    return ((PropertyId) versionSeriesId).getFirstValue();
   }
 
   /**
@@ -604,7 +603,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
   /**
    * Creates a folder.
    */
-  protected String createFolder(PropertiesData properties, String folderId, List<String> policies,
+  protected String createFolder(Properties properties, String folderId, List<String> policies,
       Acl addACEs, Acl removeACEs) {
     String objectId = getBinding().getObjectService().createFolder(getTestRepositoryId(),
         properties, folderId, policies, addACEs, removeACEs, null);
@@ -615,20 +614,20 @@ public abstract class AbstractCmisTestCase extends TestCase {
 
     // check canGetProperties
     assertAllowableAction(folderChild.getObject().getAllowableActions(),
-        AllowableActionsEnum.CAN_GET_PROPERTIES, true);
+        Action.CAN_GET_PROPERTIES, true);
 
     // check name
     PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.NAME);
     if (nameProp != null) {
       assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.NAME,
-          PropertyStringData.class, nameProp.getFirstValue());
+          PropertyString.class, nameProp.getFirstValue());
     }
 
     // check object type
     PropertyData<?> typeProp = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
     assertNotNull(typeProp);
     assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.OBJECT_TYPE_ID,
-        PropertyIdData.class, typeProp.getFirstValue());
+        PropertyId.class, typeProp.getFirstValue());
 
     // check parent
     ObjectData parent = getBinding().getNavigationService().getFolderParent(getTestRepositoryId(),
@@ -652,7 +651,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     propList.add(getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
         getDefaultFolderType()));
 
-    PropertiesData properties = getObjectFactory().createPropertiesData(propList);
+    Properties properties = getObjectFactory().createPropertiesData(propList);
 
     return createFolder(properties, folderId, null, null, null);
   }
@@ -660,7 +659,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
   /**
    * Creates a document.
    */
-  protected String createDocument(PropertiesData properties, String folderId,
+  protected String createDocument(Properties properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
       Acl addACEs, Acl removeACEs) {
     String objectId = getBinding().getObjectService().createDocument(getTestRepositoryId(),
@@ -673,26 +672,26 @@ public abstract class AbstractCmisTestCase extends TestCase {
 
       // check canGetProperties
       assertAllowableAction(folderChild.getObject().getAllowableActions(),
-          AllowableActionsEnum.CAN_GET_PROPERTIES, true);
+          Action.CAN_GET_PROPERTIES, true);
 
       // check canGetContentStream
       if (contentStream != null) {
         assertAllowableAction(folderChild.getObject().getAllowableActions(),
-            AllowableActionsEnum.CAN_GET_CONTENT_STREAM, true);
+            Action.CAN_GET_CONTENT_STREAM, true);
       }
 
       // check name
       PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.NAME);
       if (nameProp != null) {
         assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.NAME,
-            PropertyStringData.class, nameProp.getFirstValue());
+            PropertyString.class, nameProp.getFirstValue());
       }
 
       // check object type
       PropertyData<?> typeProp = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
       assertNotNull(typeProp);
       assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.OBJECT_TYPE_ID,
-          PropertyIdData.class, typeProp.getFirstValue());
+          PropertyId.class, typeProp.getFirstValue());
 
       // check parent
       List<ObjectParentData> parents = getBinding().getNavigationService().getObjectParents(
@@ -748,7 +747,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     propList.add(getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
         getDefaultDocumentType()));
 
-    PropertiesData properties = getObjectFactory().createPropertiesData(propList);
+    Properties properties = getObjectFactory().createPropertiesData(propList);
 
     ContentStream contentStream = createContentStreamData(contentType, content);
 
@@ -758,7 +757,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
   /**
    * Creates a document from source.
    */
-  protected String createDocumentFromSource(String sourceId, PropertiesData properties,
+  protected String createDocumentFromSource(String sourceId, Properties properties,
       String folderId, VersioningState versioningState, List<String> policies,
       Acl addACEs, Acl removeACEs) {
     String objectId = getBinding().getObjectService().createDocumentFromSource(
@@ -774,7 +773,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
       PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.NAME);
       if (nameProp != null) {
         assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.NAME,
-            PropertyStringData.class, nameProp.getValues().get(0));
+            PropertyString.class, nameProp.getValues().get(0));
       }
 
       // check parent
@@ -812,7 +811,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
    */
   protected void deleteTree(String folderId) {
     getBinding().getObjectService().deleteTree(getTestRepositoryId(), folderId, Boolean.TRUE,
-        UnfileObjects.DELETE, Boolean.TRUE, null);
+        UnfileObject.DELETE, Boolean.TRUE, null);
     assertFalse(existsObject(folderId));
   }
 
@@ -964,7 +963,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
         .getUpdatability());
   }
 
-  protected void assertEquals(PropertiesData expected, PropertiesData actual) {
+  protected void assertEquals(Properties expected, Properties actual) {
     if ((expected == null) && (actual == null)) {
       return;
     }
@@ -1036,26 +1035,26 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
   }
 
-  protected void assertBasicProperties(PropertiesData properties) {
+  protected void assertBasicProperties(Properties properties) {
     assertNotNull(properties);
     assertNotNull(properties.getProperties());
 
     assertProperty(properties.getProperties().get(PropertyIds.OBJECT_ID),
-        PropertyIds.OBJECT_ID, PropertyIdData.class);
+        PropertyIds.OBJECT_ID, PropertyId.class);
     assertProperty(properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID),
-        PropertyIds.OBJECT_TYPE_ID, PropertyIdData.class);
+        PropertyIds.OBJECT_TYPE_ID, PropertyId.class);
     assertProperty(properties.getProperties().get(PropertyIds.BASE_TYPE_ID),
-        PropertyIds.BASE_TYPE_ID, PropertyIdData.class);
+        PropertyIds.BASE_TYPE_ID, PropertyId.class);
     assertProperty(properties.getProperties().get(PropertyIds.NAME), PropertyIds.NAME,
-        PropertyStringData.class);
+        PropertyString.class);
     assertProperty(properties.getProperties().get(PropertyIds.CREATED_BY),
-        PropertyIds.CREATED_BY, PropertyStringData.class);
+        PropertyIds.CREATED_BY, PropertyString.class);
     assertProperty(properties.getProperties().get(PropertyIds.CREATION_DATE),
-        PropertyIds.CREATION_DATE, PropertyDateTimeData.class);
+        PropertyIds.CREATION_DATE, PropertyDateTime.class);
     assertProperty(properties.getProperties().get(PropertyIds.LAST_MODIFIED_BY),
-        PropertyIds.LAST_MODIFIED_BY, PropertyStringData.class);
+        PropertyIds.LAST_MODIFIED_BY, PropertyString.class);
     assertProperty(properties.getProperties().get(PropertyIds.LAST_MODIFICATION_DATE),
-        PropertyIds.LAST_MODIFICATION_DATE, PropertyDateTimeData.class);
+        PropertyIds.LAST_MODIFICATION_DATE, PropertyDateTime.class);
   }
 
   protected void assertProperty(PropertyData<?> property, String id, Class<?> clazz) {
@@ -1080,7 +1079,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
   }
 
-  protected void assertPropertyValue(PropertiesData properties, String id, Class<?> clazz,
+  protected void assertPropertyValue(Properties properties, String id, Class<?> clazz,
       Object... values) {
     assertNotNull(properties);
     assertNotNull(properties.getProperties());
@@ -1110,7 +1109,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     assertEquals("Allowable action size:", expected.getAllowableActions().size(), actual
         .getAllowableActions().size());
 
-    for (AllowableActionsEnum action : expected.getAllowableActions()) {
+    for (Action action : expected.getAllowableActions()) {
       boolean expectedBoolean = expected.getAllowableActions().contains(action);
       boolean actualBoolean = actual.getAllowableActions().contains(action);
 
@@ -1119,7 +1118,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
   }
 
   protected void assertAllowableAction(AllowableActions allowableActions,
-          AllowableActionsEnum action, boolean expected) {
+          Action action, boolean expected) {
     assertNotNull(allowableActions);
     assertNotNull(allowableActions.getAllowableActions());
     assertNotNull(action);

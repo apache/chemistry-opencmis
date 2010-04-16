@@ -36,7 +36,7 @@ import javax.xml.ws.WebServiceContext;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
@@ -248,7 +248,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
       CallContext context = createContext(fContext);
 
       return convert(service.deleteTree(context, repositoryId, folderId, allVersions, convert(
-          UnfileObjects.class, unfileObjects), continueOnFailure, convert(extension)));
+          UnfileObject.class, unfileObjects), continueOnFailure, convert(extension)));
     }
     catch (Exception e) {
       throw convertException(e);

@@ -16,31 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.api;
 
-import java.util.List;
+public interface PropertyHtml extends PropertyData<String> {
 
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
-
-/**
- * String property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- */
-public class PropertyStringDataImpl extends AbstractPropertyData<String> implements
-    PropertyStringData {
-
-  public PropertyStringDataImpl() {
-  }
-
-  public PropertyStringDataImpl(String id, List<String> values) {
-    setId(id);
-    setValues(values);
-  }
-
-  public PropertyStringDataImpl(String id, String value) {
-    setId(id);
-    setValue(value);
-  }
 }

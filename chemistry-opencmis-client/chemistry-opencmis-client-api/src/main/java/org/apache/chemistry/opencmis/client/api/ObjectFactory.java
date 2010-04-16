@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
@@ -72,12 +72,12 @@ public interface ObjectFactory {
 
   <T> Property<T> createPropertyMultivalue(PropertyDefinition<?> type, List<T> values);
 
-  Map<String, Property<?>> convertProperties(ObjectType objectType, PropertiesData properties);
+  Map<String, Property<?>> convertProperties(ObjectType objectType, Properties properties);
 
-  PropertiesData convertProperties(Map<String, ?> properties, ObjectType type,
+  Properties convertProperties(Map<String, ?> properties, ObjectType type,
       Set<Updatability> updatabilityFilter);
 
-  List<PropertyData<?>> convertQueryProperties(PropertiesData properties);
+  List<PropertyData<?>> convertQueryProperties(Properties properties);
 
   // objects
 

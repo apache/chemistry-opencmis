@@ -22,7 +22,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
@@ -35,22 +35,22 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public interface ObjectService {
 
-  String createDocument(String repositoryId, PropertiesData properties, String folderId,
+  String createDocument(String repositoryId, Properties properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
       Acl addAces, Acl removeAces, ExtensionsData extension);
 
-  String createDocumentFromSource(String repositoryId, String sourceId, PropertiesData properties,
+  String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
       String folderId, VersioningState versioningState, List<String> policies,
       Acl addAces, Acl removeAces, ExtensionsData extension);
 
-  String createFolder(String repositoryId, PropertiesData properties, String folderId,
+  String createFolder(String repositoryId, Properties properties, String folderId,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
-  String createRelationship(String repositoryId, PropertiesData properties, List<String> policies,
+  String createRelationship(String repositoryId, Properties properties, List<String> policies,
       Acl addAces, Acl removeAces, ExtensionsData extension);
 
-  String createPolicy(String repositoryId, PropertiesData properties, String folderId,
+  String createPolicy(String repositoryId, Properties properties, String folderId,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
@@ -61,7 +61,7 @@ public interface ObjectService {
       Boolean includeAllowableActions, IncludeRelationships includeRelationships,
       String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension);
 
-  PropertiesData getProperties(String repositoryId, String objectId, String filter,
+  Properties getProperties(String repositoryId, String objectId, String filter,
       ExtensionsData extension);
 
   List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
@@ -75,7 +75,7 @@ public interface ObjectService {
       BigInteger offset, BigInteger length, ExtensionsData extension);
 
   void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-      PropertiesData properties, ExtensionsData extension);
+      Properties properties, ExtensionsData extension);
 
   void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId,
       String sourceFolderId, ExtensionsData extension);
@@ -84,7 +84,7 @@ public interface ObjectService {
       ExtensionsData extension);
 
   FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
-      UnfileObjects unfileObjects, Boolean continueOnFailure, ExtensionsData extension);
+      UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension);
 
   void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
       Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension);

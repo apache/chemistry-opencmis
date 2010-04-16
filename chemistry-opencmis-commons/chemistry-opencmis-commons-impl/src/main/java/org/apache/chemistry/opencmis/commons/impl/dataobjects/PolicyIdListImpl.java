@@ -16,10 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.api;
+package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import java.math.BigInteger;
+import java.util.List;
 
-public interface PropertyIntegerData extends PropertyData<BigInteger> {
+import org.apache.chemistry.opencmis.commons.api.PolicyIdList;
+
+/**
+ * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+ * 
+ */
+public class PolicyIdListImpl extends AbstractExtensionData implements PolicyIdList {
+
+  private List<String> fPolicyIds;
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.apache.opencmis.client.provider.PolicyIdListData#getPolicyIds()
+   */
+  public List<String> getPolicyIds() {
+    return fPolicyIds;
+  }
+
+  public void setPolicyIds(List<String> policyIds) {
+    fPolicyIds = policyIds;
+  }
 
 }

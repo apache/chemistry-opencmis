@@ -16,34 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.enums;
+package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+
+import java.math.BigInteger;
+import java.util.List;
+
+import org.apache.chemistry.opencmis.commons.api.PropertyInteger;
 
 /**
- * Unfile Object Enum.
+ * Integer property data implementation.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public enum UnfileObjects {
+public class PropertyIntegerImpl extends AbstractPropertyData<BigInteger> implements
+    PropertyInteger {
 
-  UNFILE("unfile"), DELETESINGLEFILED("deletesinglefiled"), DELETE("delete");
-  private final String value;
-
-  UnfileObjects(String v) {
-    value = v;
+  public PropertyIntegerImpl() {
   }
 
-  public String value() {
-    return value;
+  public PropertyIntegerImpl(String id, List<BigInteger> values) {
+    setId(id);
+    setValues(values);
   }
 
-  public static UnfileObjects fromValue(String v) {
-    for (UnfileObjects c : UnfileObjects.values()) {
-      if (c.value.equals(v)) {
-        return c;
-      }
-    }
-    throw new IllegalArgumentException(v);
+  public PropertyIntegerImpl(String id, BigInteger value) {
+    setId(id);
+    setValue(value);
   }
-
 }

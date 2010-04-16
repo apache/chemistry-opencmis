@@ -50,7 +50,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefiniti
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
@@ -78,7 +78,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
   static public class UnitTestRepositoryInfo implements RepositoryInfoCreator {
 
     public RepositoryInfo createRepositoryInfo() {
-      RepositoryCapabilitiesDataImpl caps = new RepositoryCapabilitiesDataImpl();
+      RepositoryCapabilitiesImpl caps = new RepositoryCapabilitiesImpl();
       caps.setAllVersionsSearchable(false);
       caps.setCapabilityAcl(CapabilityAcl.NONE);
       caps.setCapabilityChanges(CapabilityChanges.NONE);

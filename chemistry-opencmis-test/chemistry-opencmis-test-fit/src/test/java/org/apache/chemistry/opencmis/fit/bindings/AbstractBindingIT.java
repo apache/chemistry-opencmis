@@ -25,10 +25,10 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -116,7 +116,7 @@ public abstract class AbstractBindingIT {
     propertyList.add(getBinding().getObjectFactory().createPropertyIdData(
         PropertyIds.OBJECT_TYPE_ID, FOLDER_TYPE));
 
-    PropertiesData properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
+    Properties properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
 
     // create the folder
     fTestFolderId = getBinding().getObjectService().createFolder(fRepositoryId, properties,
@@ -135,6 +135,6 @@ public abstract class AbstractBindingIT {
 
     // delete the whole tree
     getBinding().getObjectService().deleteTree(fRepositoryId, fTestFolderId, true,
-        UnfileObjects.DELETE, true, null);
+        UnfileObject.DELETE, true, null);
   }
 }

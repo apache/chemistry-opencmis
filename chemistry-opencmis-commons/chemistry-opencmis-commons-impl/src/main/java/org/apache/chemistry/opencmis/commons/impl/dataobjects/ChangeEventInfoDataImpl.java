@@ -20,21 +20,21 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.GregorianCalendar;
 
-import org.apache.chemistry.opencmis.commons.api.ChangeEventInfoData;
-import org.apache.chemistry.opencmis.commons.enums.TypeOfChanges;
+import org.apache.chemistry.opencmis.commons.api.ChangeEventInfo;
+import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
-public class ChangeEventInfoDataImpl extends AbstractExtensionData implements ChangeEventInfoData {
+public class ChangeEventInfoDataImpl extends AbstractExtensionData implements ChangeEventInfo {
 
   private GregorianCalendar fChangeTime;
-  private TypeOfChanges fTypeOfChanges;
+  private ChangeType fTypeOfChanges;
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.ChangeEventInfoData#getChangeTime()
    */
   public GregorianCalendar getChangeTime() {
@@ -47,14 +47,14 @@ public class ChangeEventInfoDataImpl extends AbstractExtensionData implements Ch
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.ChangeEventInfoData#getChangeType()
    */
-  public TypeOfChanges getChangeType() {
+  public ChangeType getChangeType() {
     return fTypeOfChanges;
   }
 
-  public void setTypeOfChanges(TypeOfChanges typeOfChanges) {
-    fTypeOfChanges = typeOfChanges;
+  public void setChangeType(ChangeType changeType) {
+    fTypeOfChanges = changeType;
   }
 }

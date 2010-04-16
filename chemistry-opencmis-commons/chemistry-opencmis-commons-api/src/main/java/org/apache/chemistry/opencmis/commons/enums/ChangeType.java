@@ -16,32 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.enums;
 
-import java.util.GregorianCalendar;
-import java.util.List;
+public enum ChangeType {
 
-import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeData;
+  CREATED("created"), UPDATED("updated"), DELETED("deleted"), SECURITY("security");
+  private final String value;
 
-/**
- * DateTime property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- */
-public class PropertyDateTimeDataImpl extends AbstractPropertyData<GregorianCalendar> implements
-    PropertyDateTimeData {
-
-  public PropertyDateTimeDataImpl() {
+  ChangeType(String v) {
+    value = v;
   }
 
-  public PropertyDateTimeDataImpl(String id, List<GregorianCalendar> values) {
-    setId(id);
-    setValues(values);
+  public String value() {
+    return value;
   }
 
-  public PropertyDateTimeDataImpl(String id, GregorianCalendar value) {
-    setId(id);
-    setValue(value);
+  public static ChangeType fromValue(String v) {
+    for (ChangeType c : ChangeType.values()) {
+      if (c.value.equals(v)) {
+        return c;
+      }
+    }
+    throw new IllegalArgumentException(v);
   }
+
 }

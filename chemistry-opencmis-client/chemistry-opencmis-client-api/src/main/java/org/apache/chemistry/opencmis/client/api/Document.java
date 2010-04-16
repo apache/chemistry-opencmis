@@ -36,7 +36,7 @@ public interface Document extends FileableCmisObject {
 
   ContentStream getContentStream();
 
-  ObjectId setContentStream(boolean overwrite, ContentStream contentStream);
+  ObjectId setContentStream(ContentStream contentStream, boolean overwrite);
 
   ObjectId deleteContentStream();
 

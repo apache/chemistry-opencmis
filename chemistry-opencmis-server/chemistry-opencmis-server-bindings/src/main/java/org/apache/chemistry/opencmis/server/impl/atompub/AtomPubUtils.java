@@ -30,7 +30,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
@@ -232,7 +232,7 @@ public final class AtomPubUtils {
       return null;
     }
 
-    PropertiesData propData = object.getProperties();
+    Properties propData = object.getProperties();
     if (propData == null) {
       return null;
     }

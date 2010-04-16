@@ -51,7 +51,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefini
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 
 /**
@@ -86,7 +86,7 @@ public class ConverterTest extends TestCase {
     obj1.setThinClientUri("thinClientUri");
     obj1.setVendorName("vendorName");
 
-    RepositoryCapabilitiesDataImpl cap1 = new RepositoryCapabilitiesDataImpl();
+    RepositoryCapabilitiesImpl cap1 = new RepositoryCapabilitiesImpl();
     cap1.setAllVersionsSearchable(Boolean.TRUE);
     cap1.setCapabilityAcl(CapabilityAcl.DISCOVER);
     cap1.setCapabilityChanges(CapabilityChanges.ALL);

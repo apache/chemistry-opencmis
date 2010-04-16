@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.commons.api;
 
-import java.util.GregorianCalendar;
-
-public interface PropertyDateTimeData extends PropertyData<GregorianCalendar> {
+public interface PropertyString extends PropertyData<String> {
 
 }

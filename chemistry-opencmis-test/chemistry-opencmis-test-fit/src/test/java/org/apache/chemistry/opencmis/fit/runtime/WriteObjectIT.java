@@ -241,7 +241,7 @@ public class WriteObjectIT extends AbstractSessionTest {
                 filename, buf1.length, mimetype, in1);
         assertNotNull(contentStream);
 
-        document.setContentStream(true, contentStream);
+        document.setContentStream(contentStream, true);
 
         // check default content
         ContentStream contentStream2 = document.getContentStream();

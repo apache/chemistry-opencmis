@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
@@ -40,7 +40,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -49,7 +49,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
@@ -84,7 +84,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
   }
 
-  public String createDocument(CallContext context, String repositoryId, PropertiesData properties,
+  public String createDocument(CallContext context, String repositoryId, Properties properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
@@ -105,7 +105,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   public String createDocumentFromSource(CallContext context, String repositoryId, String sourceId,
-      PropertiesData properties, String folderId, VersioningState versioningState,
+      Properties properties, String folderId, VersioningState versioningState,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
 
@@ -126,10 +126,10 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
       // build properties collection
       List<String> requestedIds = FilterParser.getRequestedIdsFromFilter("*");
 
-      PropertiesData existingProps = PropertyCreationHelper.getPropertiesFromObject(repositoryId,
+      Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(repositoryId,
           so, fStoreManager, requestedIds);
 
-      PropertiesDataImpl newPD = new PropertiesDataImpl();
+      PropertiesImpl newPD = new PropertiesImpl();
       // copy all existing properties
       for (PropertyData<?> prop : existingProps.getProperties().values()) {
         newPD.addProperty(prop);
@@ -149,7 +149,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     }
   }
 
-  public String createFolder(CallContext context, String repositoryId, PropertiesData properties,
+  public String createFolder(CallContext context, String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
     try {
@@ -166,7 +166,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     }
   }
 
-  public String createPolicy(CallContext context, String repositoryId, PropertiesData properties,
+  public String createPolicy(CallContext context, String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
 
@@ -188,7 +188,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   public String createRelationship(CallContext context, String repositoryId,
-      PropertiesData properties, List<String> policies, Acl addAces,
+      Properties properties, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
 
     try {
@@ -221,7 +221,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
    * to be created. Also the ObjectInfoHolder needs to be filled.
    */
   @SuppressWarnings("unchecked")
-  public ObjectData create(CallContext context, String repositoryId, PropertiesData properties,
+  public ObjectData create(CallContext context, String repositoryId, Properties properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
@@ -323,7 +323,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   public FailedToDeleteData deleteTree(CallContext context, String repositoryId, String folderId,
-      Boolean allVersions, UnfileObjects unfileObjects, Boolean continueOnFailure,
+      Boolean allVersions, UnfileObject unfileObjects, Boolean continueOnFailure,
       ExtensionsData extension) {
 
     try {
@@ -338,7 +338,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
       if (null == allVersions)
         allVersions = true;
       if (null == unfileObjects)
-        unfileObjects = UnfileObjects.DELETE;
+        unfileObjects = UnfileObject.DELETE;
       if (null == continueOnFailure)
         continueOnFailure = false;
 
@@ -352,7 +352,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
         throw new RuntimeException("deleteTree can only be invoked on a folder, but id " + folderId
             + " does not refer to a folder");
 
-      if (unfileObjects == UnfileObjects.UNFILE)
+      if (unfileObjects == UnfileObject.UNFILE)
         throw new CmisNotSupportedException("This repository does not support unfile operations.");
 
       // check if it is the root folder
@@ -486,7 +486,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     }
   }
 
-  public PropertiesData getProperties(CallContext context, String repositoryId, String objectId,
+  public Properties getProperties(CallContext context, String repositoryId, String objectId,
       String filter, ExtensionsData extension) {
 
     try {
@@ -501,7 +501,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
 
       // build properties collection
       List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-      PropertiesData props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, so,
+      Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, so,
           fStoreManager, requestedIds);
       LOG.debug("stop getProperties()");
       return props;
@@ -648,7 +648,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   }
 
   public ObjectData updateProperties(CallContext context, String repositoryId,
-      Holder<String> objectId, Holder<String> changeToken, PropertiesData properties,
+      Holder<String> objectId, Holder<String> changeToken, Properties properties,
       Acl acl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
     try {
@@ -776,7 +776,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
   // ///////////////////////////////////////////////////////
   // private helper methods
 
-  private StoredObject createDocumentIntern(String repositoryId, PropertiesData properties,
+  private StoredObject createDocumentIntern(String repositoryId, Properties properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
@@ -862,7 +862,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     return so;
   }
 
-  private Folder createFolderIntern(String repositoryId, PropertiesData properties,
+  private Folder createFolderIntern(String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
 
@@ -927,13 +927,13 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     }
   }
 
-  private StoredObject createPolicyIntern(String repositoryId, PropertiesData properties,
+  private StoredObject createPolicyIntern(String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
     return null;
   }
 
-  private StoredObject createRelationshipIntern(String repositoryId, PropertiesData properties,
+  private StoredObject createRelationshipIntern(String repositoryId, Properties properties,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     return null;

@@ -25,10 +25,10 @@ import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.junit.Assert;
 
@@ -41,7 +41,7 @@ public class FixtureSetup {
 
 	public void teardown() {
 		this.binding.getObjectService().deleteTree(this.repositoryId,
-				this.testRootFolderId, true, UnfileObjects.DELETE, true, null);
+				this.testRootFolderId, true, UnfileObject.DELETE, true, null);
 	}
 
 	public void setup() {
@@ -81,7 +81,7 @@ public class FixtureSetup {
 		propList.add(this.binding.getObjectFactory().createPropertyIdData(
 				PropertyIds.OBJECT_TYPE_ID, folderTypeId));
 
-		PropertiesData properties = this.binding.getObjectFactory()
+		Properties properties = this.binding.getObjectFactory()
 				.createPropertiesData(propList);
 
 		this.testRootFolderId = this.binding.getObjectService().createFolder(

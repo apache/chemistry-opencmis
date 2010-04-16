@@ -59,14 +59,14 @@ import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.FolderTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.PolicyTypeDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyHtmlDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
 import org.apache.chemistry.opencmis.commons.api.PropertyIdDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyIntegerDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyStringDefinition;
@@ -256,7 +256,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     PropertyData<?> typeProperty = objectData.getProperties().getProperties().get(
         PropertyIds.OBJECT_TYPE_ID);
-    if (!(typeProperty instanceof PropertyIdData)) {
+    if (!(typeProperty instanceof PropertyId)) {
       return null;
     }
 
@@ -295,7 +295,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
    * .client.api.objecttype.ObjectType, org.apache.opencmis.commons.provider.PropertiesData)
    */
   @SuppressWarnings("unchecked")
-  public Map<String, Property<?>> convertProperties(ObjectType objectType, PropertiesData properties) {
+  public Map<String, Property<?>> convertProperties(ObjectType objectType, Properties properties) {
     // check input
     if (objectType == null) {
       throw new IllegalArgumentException("Object type must set!");
@@ -367,7 +367,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
    * org.apache.opencmis.client.api.objecttype.ObjectType, java.util.Set)
    */
   @SuppressWarnings("unchecked")
-  public PropertiesData convertProperties(Map<String, ?> properties, ObjectType type,
+  public Properties convertProperties(Map<String, ?> properties, ObjectType type,
       Set<Updatability> updatabilityFilter) {
     // check input
     if (properties == null) {
@@ -578,7 +578,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
    * .commons.provider.PropertiesData)
    */
   @SuppressWarnings("unchecked")
-  public List<PropertyData<?>> convertQueryProperties(PropertiesData properties) {
+  public List<PropertyData<?>> convertQueryProperties(Properties properties) {
     // check input
     if ((properties == null) || (properties.getProperties() == null)) {
       throw new IllegalArgumentException("Properties must be set!");

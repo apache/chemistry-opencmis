@@ -36,7 +36,7 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.VersioningService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
@@ -152,7 +152,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
-      PropertiesData properties, ContentStream contentStream, String checkinComment,
+      Properties properties, ContentStream contentStream, String checkinComment,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     // we need an object id
@@ -352,7 +352,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
    * .String, java.lang.String, java.lang.Boolean, java.lang.String,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public PropertiesData getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId,
+  public Properties getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId,
       Boolean major, String filter, ExtensionsData extension) {
 
     ReturnVersion returnVersion = ReturnVersion.LATEST;

@@ -30,10 +30,10 @@ import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryObjectServiceImpl;
 
@@ -45,7 +45,7 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
     fObjSvc = objSvc;
   }
 
-  public String createDocument(String repositoryId, PropertiesData properties, String folderId,
+  public String createDocument(String repositoryId, Properties properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
       Acl addAces, Acl removeAces, ExtensionsData extension) {
     
@@ -53,28 +53,28 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
   }
 
   public String createDocumentFromSource(String repositoryId, String sourceId,
-      PropertiesData properties, String folderId, VersioningState versioningState,
+      Properties properties, String folderId, VersioningState versioningState,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     
     return fObjSvc.createDocumentFromSource(fDummyCallContext, repositoryId, sourceId, properties, folderId, versioningState, policies, addAces, removeAces, extension);
   }
 
-  public String createFolder(String repositoryId, PropertiesData properties, String folderId,
+  public String createFolder(String repositoryId, Properties properties, String folderId,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     
     return fObjSvc.createFolder(fDummyCallContext, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
   }
 
-  public String createPolicy(String repositoryId, PropertiesData properties, String folderId,
+  public String createPolicy(String repositoryId, Properties properties, String folderId,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     
     return fObjSvc.createPolicy(fDummyCallContext, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
   }
 
-  public String createRelationship(String repositoryId, PropertiesData properties,
+  public String createRelationship(String repositoryId, Properties properties,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     
@@ -94,7 +94,7 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
   }
 
   public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
-      UnfileObjects unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
+      UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
     
     return fObjSvc.deleteTree(fDummyCallContext, repositoryId, folderId, allVersions, unfileObjects, continueOnFailure, extension);
   }
@@ -125,7 +125,7 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
     return fObjSvc.getObjectByPath(fDummyCallContext, repositoryId, path, filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, null);
   }
 
-  public PropertiesData getProperties(String repositoryId, String objectId, String filter,
+  public Properties getProperties(String repositoryId, String objectId, String filter,
       ExtensionsData extension) {
     
     return fObjSvc.getProperties(fDummyCallContext, repositoryId, objectId, filter, extension);
@@ -150,7 +150,7 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
   }
 
   public void updateProperties(String repositoryId, Holder<String> objectId,
-      Holder<String> changeToken, PropertiesData properties, ExtensionsData extension) {
+      Holder<String> changeToken, Properties properties, ExtensionsData extension) {
     
     fObjSvc.updateProperties(fDummyCallContext, repositoryId, objectId, changeToken, properties, null, extension, null);    
   }

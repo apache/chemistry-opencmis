@@ -37,7 +37,7 @@ public interface VersioningService {
   public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension);
 
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
-      PropertiesData properties, ContentStream contentStream, String checkinComment,
+      Properties properties, ContentStream contentStream, String checkinComment,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
@@ -46,7 +46,7 @@ public interface VersioningService {
       IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
       Boolean includeAcl, ExtensionsData extension);
 
-  public PropertiesData getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId,
+  public Properties getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId,
       Boolean major, String filter, ExtensionsData extension);
 
   public List<ObjectData> getAllVersions(String repositoryId, String objectId,

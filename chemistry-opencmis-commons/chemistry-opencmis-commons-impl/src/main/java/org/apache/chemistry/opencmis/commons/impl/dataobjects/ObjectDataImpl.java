@@ -23,10 +23,10 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.AllowableActions;
-import org.apache.chemistry.opencmis.commons.api.ChangeEventInfoData;
+import org.apache.chemistry.opencmis.commons.api.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PolicyIdListData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PolicyIdList;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -37,11 +37,11 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
  */
 public class ObjectDataImpl extends AbstractExtensionData implements ObjectData {
 
-  private PropertiesData fProperties;
-  private ChangeEventInfoData fChangeEventInfo;
+  private Properties fProperties;
+  private ChangeEventInfo fChangeEventInfo;
   private List<ObjectData> fRelationships;
   private List<RenditionData> fRenditions;
-  private PolicyIdListData fPolicyIds;
+  private PolicyIdList fPolicyIds;
   private AllowableActions fAllowableActions;
   private Acl fAcl;
   private Boolean fIsExactAcl;
@@ -83,11 +83,11 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
    * 
    * @see org.apache.opencmis.client.provider.ObjectData#getProperties()
    */
-  public PropertiesData getProperties() {
+  public Properties getProperties() {
     return fProperties;
   }
 
-  public void setProperties(PropertiesData properties) {
+  public void setProperties(Properties properties) {
     fProperties = properties;
   }
 
@@ -96,11 +96,11 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
    * 
    * @see org.apache.opencmis.client.provider.ObjectData#getChangeEventInfo()
    */
-  public ChangeEventInfoData getChangeEventInfo() {
+  public ChangeEventInfo getChangeEventInfo() {
     return fChangeEventInfo;
   }
 
-  public void setChangeEventInfo(ChangeEventInfoData changeEventInfo) {
+  public void setChangeEventInfo(ChangeEventInfo changeEventInfo) {
     fChangeEventInfo = changeEventInfo;
   }
 
@@ -135,11 +135,11 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
    * 
    * @see org.apache.opencmis.client.provider.ObjectData#getPolicyIds()
    */
-  public PolicyIdListData getPolicyIds() {
+  public PolicyIdList getPolicyIds() {
     return fPolicyIds;
   }
 
-  public void setPolicyIds(PolicyIdListData policyIds) {
+  public void setPolicyIds(PolicyIdList policyIds) {
     fPolicyIds = policyIds;
   }
 

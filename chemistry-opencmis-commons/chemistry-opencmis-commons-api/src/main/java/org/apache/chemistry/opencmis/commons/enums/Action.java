@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.enums;
 
-public enum AllowableActionsEnum {
+public enum Action {
 
   CAN_DELETE_OBJECT("canDeleteObject"), //
   CAN_UPDATE_PROPERTIES("canUpdateProperties"), //
@@ -52,7 +52,7 @@ public enum AllowableActionsEnum {
 
   private final String value;
 
-  AllowableActionsEnum(String v) {
+  Action(String v) {
     value = v;
   }
 
@@ -60,8 +60,8 @@ public enum AllowableActionsEnum {
     return value;
   }
 
-  public static AllowableActionsEnum fromValue(String v) {
-    for (AllowableActionsEnum c : AllowableActionsEnum.values()) {
+  public static Action fromValue(String v) {
+    for (Action c : Action.values()) {
       if (c.value.equals(v)) {
         return c;
       }

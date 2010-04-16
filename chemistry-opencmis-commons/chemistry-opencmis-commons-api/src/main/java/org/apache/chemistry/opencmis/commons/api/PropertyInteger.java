@@ -18,8 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.api;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 
-public interface PropertyDecimalData extends PropertyData<BigDecimal> {
+public interface PropertyInteger extends PropertyData<BigInteger> {
 
 }

@@ -41,12 +41,12 @@ import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -86,7 +86,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public String createDocument(String repositoryId, PropertiesData properties, String folderId,
+  public String createDocument(String repositoryId, Properties properties, String folderId,
       ContentStream contentStream, VersioningState versioningState, List<String> policies,
       Acl addAces, Acl removeAces, ExtensionsData extension) {
     checkCreateProperties(properties);
@@ -144,7 +144,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public String createDocumentFromSource(String repositoryId, String sourceId,
-      PropertiesData properties, String folderId, VersioningState versioningState,
+      Properties properties, String folderId, VersioningState versioningState,
       List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     throw new CmisNotSupportedException(
@@ -160,7 +160,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public String createFolder(String repositoryId, PropertiesData properties, String folderId,
+  public String createFolder(String repositoryId, Properties properties, String folderId,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     checkCreateProperties(properties);
@@ -206,7 +206,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public String createPolicy(String repositoryId, PropertiesData properties, String folderId,
+  public String createPolicy(String repositoryId, Properties properties, String folderId,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     checkCreateProperties(properties);
@@ -252,18 +252,18 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.AccessControlList,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public String createRelationship(String repositoryId, PropertiesData properties,
+  public String createRelationship(String repositoryId, Properties properties,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     checkCreateProperties(properties);
 
     // find source id
     PropertyData<?> sourceIdProperty = properties.getProperties().get(PropertyIds.SOURCE_ID);
-    if (!(sourceIdProperty instanceof PropertyIdData)) {
+    if (!(sourceIdProperty instanceof PropertyId)) {
       throw new CmisInvalidArgumentException("Source Id is not set!");
     }
 
-    String sourceId = ((PropertyIdData) sourceIdProperty).getFirstValue();
+    String sourceId = ((PropertyId) sourceIdProperty).getFirstValue();
     if (sourceId == null) {
       throw new CmisInvalidArgumentException("Source Id is not set!");
     }
@@ -311,7 +311,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public void updateProperties(String repositoryId, Holder<String> objectId,
-      Holder<String> changeToken, PropertiesData properties, ExtensionsData extension) {
+      Holder<String> changeToken, Properties properties, ExtensionsData extension) {
     // we need an object id
     if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
       throw new CmisInvalidArgumentException("Object id must be set!");
@@ -427,7 +427,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
    */
   public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
-      UnfileObjects unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
+      UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
 
     // find the link
     String link = loadLink(repositoryId, folderId, Constants.REL_DOWN,
@@ -560,7 +560,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
    * @see org.apache.opencmis.client.provider.ObjectService#getProperties(java.lang.String,
    * java.lang.String, java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public PropertiesData getProperties(String repositoryId, String objectId, String filter,
+  public Properties getProperties(String repositoryId, String objectId, String filter,
       ExtensionsData extension) {
     ObjectData object = getObjectInternal(repositoryId, IdentifierType.ID, objectId,
         ReturnVersion.THIS, filter, Boolean.FALSE, IncludeRelationships.NONE, "cmis:none",
@@ -737,7 +737,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
   // ---- internal ----
 
-  private void checkCreateProperties(PropertiesData properties) {
+  private void checkCreateProperties(Properties properties) {
     if ((properties == null) || (properties.getProperties() == null)) {
       throw new CmisInvalidArgumentException("Properties must be set!");
     }

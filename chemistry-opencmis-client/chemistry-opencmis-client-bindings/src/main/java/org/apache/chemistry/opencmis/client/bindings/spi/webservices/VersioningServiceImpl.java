@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.VersioningService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -127,7 +127,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
-      PropertiesData properties, ContentStream contentStream, String checkinComment,
+      Properties properties, ContentStream contentStream, String checkinComment,
       List<String> policies, Acl addACEs, Acl removeACEs,
       ExtensionsData extension) {
     VersioningServicePort port = fPortProvider.getVersioningServicePort();
@@ -235,7 +235,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
    * .String, java.lang.String, java.lang.Boolean, java.lang.String,
    * org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public PropertiesData getPropertiesOfLatestVersion(String repositoryId, String VersionSeriesId,
+  public Properties getPropertiesOfLatestVersion(String repositoryId, String VersionSeriesId,
       Boolean major, String filter, ExtensionsData extension) {
     VersioningServicePort port = fPortProvider.getVersioningServicePort();
 

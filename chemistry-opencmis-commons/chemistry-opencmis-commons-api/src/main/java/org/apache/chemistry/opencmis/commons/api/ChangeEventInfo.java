@@ -16,30 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.api;
 
-import java.util.List;
+import java.util.GregorianCalendar;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyHtmlData;
+import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 
-/**
- * Html property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- */
-public class PropertyHtmlDataImpl extends AbstractPropertyData<String> implements PropertyHtmlData {
+public interface ChangeEventInfo extends ExtensionsData {
 
-  public PropertyHtmlDataImpl() {
-  }
+  ChangeType getChangeType();
 
-  public PropertyHtmlDataImpl(String id, List<String> values) {
-    setId(id);
-    setValues(values);
-  }
-
-  public PropertyHtmlDataImpl(String id, String value) {
-    setId(id);
-    setValue(value);
-  }
+  GregorianCalendar getChangeTime();
 }

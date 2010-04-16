@@ -20,10 +20,10 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.util.Set;
 
-import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 
 public interface AllowableActions extends ExtensionsData {
 
-  Set<AllowableActionsEnum> getAllowableActions();
+  Set<Action> getAllowableActions();
 
 }

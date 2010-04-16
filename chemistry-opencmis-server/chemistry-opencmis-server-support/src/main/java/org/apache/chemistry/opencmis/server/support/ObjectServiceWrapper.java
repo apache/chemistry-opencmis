@@ -28,10 +28,10 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
@@ -75,7 +75,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.commons.api.ExtensionsData,
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
-  public ObjectData create(CallContext context, String repositoryId, PropertiesData properties,
+  public ObjectData create(CallContext context, String repositoryId, Properties properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, ExtensionsData extension, ObjectInfoHolder objectInfos) {
     checkRepositoryId(repositoryId);
@@ -103,7 +103,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.commons.provider.AccessControlList,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public String createDocument(CallContext context, String repositoryId, PropertiesData properties,
+  public String createDocument(CallContext context, String repositoryId, Properties properties,
       String folderId, ContentStream contentStream, VersioningState versioningState,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
@@ -133,7 +133,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public String createDocumentFromSource(CallContext context, String repositoryId, String sourceId,
-      PropertiesData properties, String folderId, VersioningState versioningState,
+      Properties properties, String folderId, VersioningState versioningState,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
     checkRepositoryId(repositoryId);
@@ -159,7 +159,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.commons.provider.AccessControlList,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public String createFolder(CallContext context, String repositoryId, PropertiesData properties,
+  public String createFolder(CallContext context, String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
     checkRepositoryId(repositoryId);
@@ -185,7 +185,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.commons.provider.AccessControlList,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public String createPolicy(CallContext context, String repositoryId, PropertiesData properties,
+  public String createPolicy(CallContext context, String repositoryId, Properties properties,
       String folderId, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
     checkRepositoryId(repositoryId);
@@ -211,7 +211,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public String createRelationship(CallContext context, String repositoryId,
-      PropertiesData properties, List<String> policies, Acl addAces,
+      Properties properties, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension) {
     checkRepositoryId(repositoryId);
     checkProperties(properties);
@@ -279,7 +279,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
   public FailedToDeleteData deleteTree(CallContext context, String repositoryId, String folderId,
-      Boolean allVersions, UnfileObjects unfileObjects, Boolean continueOnFailure,
+      Boolean allVersions, UnfileObject unfileObjects, Boolean continueOnFailure,
       ExtensionsData extension) {
     checkRepositoryId(repositoryId);
     checkId("Folder Id", folderId);
@@ -413,7 +413,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * .CallContext, java.lang.String, java.lang.String, java.lang.String,
    * org.apache.opencmis.commons.api.ExtensionsData)
    */
-  public PropertiesData getProperties(CallContext context, String repositoryId, String objectId,
+  public Properties getProperties(CallContext context, String repositoryId, String objectId,
       String filter, ExtensionsData extension) {
     checkRepositoryId(repositoryId);
     checkId("Object Id", objectId);
@@ -517,7 +517,7 @@ public class ObjectServiceWrapper extends AbstractServiceWrapper implements Cmis
    * org.apache.opencmis.server.spi.ObjectInfoHolder)
    */
   public ObjectData updateProperties(CallContext context, String repositoryId,
-      Holder<String> objectId, Holder<String> changeToken, PropertiesData properties,
+      Holder<String> objectId, Holder<String> changeToken, Properties properties,
       Acl acl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
     checkRepositoryId(repositoryId);
     checkHolderId("Object Id", objectId);

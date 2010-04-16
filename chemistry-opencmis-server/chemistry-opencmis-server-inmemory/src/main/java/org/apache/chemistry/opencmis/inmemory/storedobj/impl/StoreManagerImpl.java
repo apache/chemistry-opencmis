@@ -39,7 +39,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
@@ -310,7 +310,7 @@ public class StoreManagerImpl implements StoreManager {
     repoInfo.setProductVersion("0.1");
     
     // set capabilities
-    RepositoryCapabilitiesDataImpl caps = new RepositoryCapabilitiesDataImpl();
+    RepositoryCapabilitiesImpl caps = new RepositoryCapabilitiesImpl();
     caps.setAllVersionsSearchable(false);
     caps.setCapabilityAcl(CapabilityAcl.NONE);
     caps.setCapabilityChanges(CapabilityChanges.PROPERTIES); // just for testing

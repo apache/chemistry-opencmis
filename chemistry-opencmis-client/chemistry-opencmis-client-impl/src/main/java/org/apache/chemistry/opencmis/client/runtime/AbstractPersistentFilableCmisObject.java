@@ -29,8 +29,8 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
@@ -64,7 +64,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
       // get id property
       PropertyData<?> idProperty = p.getObject().getProperties().getProperties().get(
           PropertyIds.OBJECT_ID);
-      if (!(idProperty instanceof PropertyIdData)) {
+      if (!(idProperty instanceof PropertyId)) {
         // the repository sent an object without a valid object id...
         throw new CmisRuntimeException("Repository sent invalid data! No object id!");
       }
@@ -107,7 +107,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
       // get path property
       PropertyData<?> pathProperty = p.getObject().getProperties().getProperties().get(
           PropertyIds.PATH);
-      if (!(pathProperty instanceof PropertyStringData)) {
+      if (!(pathProperty instanceof PropertyString)) {
         // the repository sent a folder without a valid path...
         throw new CmisRuntimeException("Repository sent invalid data! No path property!");
       }
