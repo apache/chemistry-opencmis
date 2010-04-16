@@ -211,6 +211,7 @@
 				<configuration>
 					<descriptors>
 						<descriptor>client-assembly.xml</descriptor>
+						<descriptor>server-assembly.xml</descriptor>
 					</descriptors>
 				</configuration>
 			</plugin>
