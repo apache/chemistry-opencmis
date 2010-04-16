@@ -58,354 +58,340 @@ import org.w3c.dom.Document;
  */
 public class BrowseServlet extends HttpServlet {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private static Log log = LogFactory.getLog(BrowseServlet.class);
+	private static Log log = LogFactory.getLog(BrowseServlet.class);
 
-  private static final String CONTEXT_PREFIX = "{ctx}";
-  private static final String PARAM_URL = "url";
-  private static final String INIT_PARAM_AUXROOT = "auxroot";
-  private static final String INIT_PARAM_ALLOW = "allow";
-  private static final String INIT_PARAM_STYLESHEET = "stylesheet:";
+	private static final String CONTEXT_PREFIX = "{ctx}";
+	private static final String PARAM_URL = "url";
+	private static final String INIT_PARAM_AUXROOT = "auxroot";
+	private static final String INIT_PARAM_ALLOW = "allow";
+	private static final String INIT_PARAM_STYLESHEET = "stylesheet:";
 
-  private static final int BUFFER_SIZE = 64 * 1024;
+	private static final int BUFFER_SIZE = 64 * 1024;
 
-  private String fAuxRoot = "";
-  private String fAllow = ".*";
-  private Map<String, Source> fStyleSheets;
+	private String fAuxRoot = "";
+	private String fAllow = ".*";
+	private Map<String, Source> fStyleSheets;
 
-  /**
-   * Initializes the browser servlet.
-   */
-  @SuppressWarnings("unchecked")
-  @Override
-  public void init(ServletConfig config) throws ServletException {
-    fStyleSheets = new HashMap<String, Source>();
+	/**
+	 * Initializes the browser servlet.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		fStyleSheets = new HashMap<String, Source>();
 
-    DocumentBuilder builder = null;
-    try {
-      DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-      builderFactory.setNamespaceAware(true);
-      builder = builderFactory.newDocumentBuilder();
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      return;
-    }
+		DocumentBuilder builder = null;
+		try {
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			builderFactory.setNamespaceAware(true);
+			builder = builderFactory.newDocumentBuilder();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 
-    Enumeration<String> initParams = config.getInitParameterNames();
-    while (initParams.hasMoreElements()) {
-      String param = initParams.nextElement();
-      if (param.startsWith(INIT_PARAM_STYLESHEET)) {
-        String contentType = param.substring(INIT_PARAM_STYLESHEET.length());
-        String stylesheetFileName = config.getInitParameter(param);
+		Enumeration<String> initParams = config.getInitParameterNames();
+		while (initParams.hasMoreElements()) {
+			String param = initParams.nextElement();
+			if (param.startsWith(INIT_PARAM_STYLESHEET)) {
+				String contentType = param.substring(INIT_PARAM_STYLESHEET.length());
+				String stylesheetFileName = config.getInitParameter(param);
 
-        InputStream stream = config.getServletContext().getResourceAsStream(stylesheetFileName);
-        if (stream != null) {
-          try {
-            Document xslDoc = builder.parse(stream);
-            addStylesheet(contentType, new DOMSource(xslDoc));
+				InputStream stream = config.getServletContext().getResourceAsStream(stylesheetFileName);
+				if (stream != null) {
+					try {
+						Document xslDoc = builder.parse(stream);
+						addStylesheet(contentType, new DOMSource(xslDoc));
 
-            log.info("Stylesheet: '" + contentType + "' -> '" + stylesheetFileName + "'");
-          }
-          catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
+						log.info("Stylesheet: '" + contentType + "' -> '" + stylesheetFileName + "'");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 
-    String initAuxRoot = config.getInitParameter(INIT_PARAM_AUXROOT);
-    if (initAuxRoot != null) {
-      fAuxRoot = initAuxRoot;
-      log.info("Auxiliary root: " + fAuxRoot);
-    }
+		String initAuxRoot = config.getInitParameter(INIT_PARAM_AUXROOT);
+		if (initAuxRoot != null) {
+			fAuxRoot = initAuxRoot;
+			log.info("Auxiliary root: " + fAuxRoot);
+		}
 
-    String initAllow = config.getInitParameter(INIT_PARAM_ALLOW);
-    if (initAllow != null) {
-      fAllow = initAllow;
-      log.info("Allow pattern: " + fAllow);
-    }
-  }
+		String initAllow = config.getInitParameter(INIT_PARAM_ALLOW);
+		if (initAllow != null) {
+			fAllow = initAllow;
+			log.info("Allow pattern: " + fAllow);
+		}
+	}
 
-  /**
-   * Handles GET requests.
-   */
-  @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-      IOException {
-    if (req.getParameter(PARAM_URL) == null) {
-      printInput(req, resp);
-      return;
-    }
+	/**
+	 * Handles GET requests.
+	 */
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		if (req.getParameter(PARAM_URL) == null) {
+			printInput(req, resp);
+			return;
+		}
 
-    doBrowse(req, resp);
-  }
+		doBrowse(req, resp);
+	}
 
-  /**
-   * Main method of the browser.
-   */
-  protected void doBrowse(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
-    String browseUrl = req.getParameter(PARAM_URL);
+	/**
+	 * Main method of the browser.
+	 */
+	protected void doBrowse(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String browseUrl = req.getParameter(PARAM_URL);
 
-    // check URL
-    if (!browseUrl.matches(fAllow)) {
-      printError(req, resp, "Prohibited URL!", null);
-      return;
-    }
+		// check URL
+		if (!browseUrl.matches(fAllow)) {
+			printError(req, resp, "Prohibited URL!", null);
+			return;
+		}
 
-    // re-encode parameters
-    int qm = browseUrl.indexOf('?');
-    if ((qm > -1) && (browseUrl.length() > qm + 1)) {
-      StringBuilder urlSb = new StringBuilder(browseUrl.substring(0, qm + 1));
-      StringBuilder paramSb = new StringBuilder();
+		// re-encode parameters
+		int qm = browseUrl.indexOf('?');
+		if ((qm > -1) && (browseUrl.length() > qm + 1)) {
+			StringBuilder urlSb = new StringBuilder(browseUrl.substring(0, qm + 1));
+			StringBuilder paramSb = new StringBuilder();
 
-      for (int i = qm + 1; i < browseUrl.length(); i++) {
-        char c = browseUrl.charAt(i);
-        if ((c == '=') || (c == '&')) {
-          urlSb.append(URLEncoder.encode(paramSb.toString(), "UTF-8"));
-          urlSb.append(c);
-          paramSb = new StringBuilder();
-        }
-        else {
-          paramSb.append(c);
-        }
-      }
+			for (int i = qm + 1; i < browseUrl.length(); i++) {
+				char c = browseUrl.charAt(i);
+				if ((c == '=') || (c == '&')) {
+					urlSb.append(URLEncoder.encode(paramSb.toString(), "UTF-8"));
+					urlSb.append(c);
+					paramSb = new StringBuilder();
+				} else {
+					paramSb.append(c);
+				}
+			}
 
-      if (paramSb.length() > 0) {
-        urlSb.append(URLEncoder.encode(paramSb.toString(), "UTF-8"));
-      }
+			if (paramSb.length() > 0) {
+				urlSb.append(URLEncoder.encode(paramSb.toString(), "UTF-8"));
+			}
 
-      browseUrl = urlSb.toString();
-    }
+			browseUrl = urlSb.toString();
+		}
 
-    try {
-      // get content
-      URL url = new URL(browseUrl);
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setDoInput(true);
-      conn.setDoOutput(false);
-      conn.setRequestMethod("GET");
-      String authHeader = req.getHeader("Authorization");
-      if (authHeader != null) {
-        conn.setRequestProperty("Authorization", authHeader);
-      }
-      conn.connect();
+		try {
+			// get content
+			URL url = new URL(browseUrl);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setDoInput(true);
+			conn.setDoOutput(false);
+			conn.setRequestMethod("GET");
+			String authHeader = req.getHeader("Authorization");
+			if (authHeader != null) {
+				conn.setRequestProperty("Authorization", authHeader);
+			}
+			conn.connect();
 
-      // ask for login
-      if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-        resp.setHeader("WWW-Authenticate", conn.getHeaderField("WWW-Authenticate"));
-        resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
-        return;
-      }
+			// ask for login
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+				resp.setHeader("WWW-Authenticate", conn.getHeaderField("WWW-Authenticate"));
+				resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
+				return;
+			}
 
-      // debug messages
-      if (log.isDebugEnabled()) {
-        log.debug("'" + browseUrl + "' -> '" + conn.getContentType() + "'");
-      }
+			// debug messages
+			if (log.isDebugEnabled()) {
+				log.debug("'" + browseUrl + "' -> '" + conn.getContentType() + "'");
+			}
 
-      // find stylesheet
-      Source stylesheet = getStylesheet(conn.getContentType());
+			// find stylesheet
+			Source stylesheet = getStylesheet(conn.getContentType());
 
-      OutputStream out = null;
-      InputStream in = new BufferedInputStream(conn.getInputStream(), BUFFER_SIZE);
+			OutputStream out = null;
+			InputStream in = new BufferedInputStream(conn.getInputStream(), BUFFER_SIZE);
 
-      if (stylesheet == null) {
-        // no stylesheet found -> conduct content
-        resp.setContentType(conn.getContentType());
-        out = new BufferedOutputStream(resp.getOutputStream(), BUFFER_SIZE);
+			if (stylesheet == null) {
+				// no stylesheet found -> conduct content
+				resp.setContentType(conn.getContentType());
+				out = new BufferedOutputStream(resp.getOutputStream(), BUFFER_SIZE);
 
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int b;
-        while ((b = in.read(buffer)) > -1) {
-          out.write(buffer, 0, b);
-        }
-      }
-      else {
-        // apply stylesheet
-        TransformerFactory f = TransformerFactory.newInstance();
-        Transformer t = f.newTransformer(stylesheet);
-        t.setParameter("browseUrl", getServletUrl(req) + "?url=");
-        t.setParameter("auxRoot", getAuxRoot(req, fAuxRoot));
+				byte[] buffer = new byte[BUFFER_SIZE];
+				int b;
+				while ((b = in.read(buffer)) > -1) {
+					out.write(buffer, 0, b);
+				}
+			} else {
+				// apply stylesheet
+				TransformerFactory f = TransformerFactory.newInstance();
+				Transformer t = f.newTransformer(stylesheet);
+				t.setParameter("browseUrl", getServletUrl(req) + "?url=");
+				t.setParameter("auxRoot", getAuxRoot(req, fAuxRoot));
 
-        resp.setContentType("text/html");
-        out = new BufferedOutputStream(resp.getOutputStream(), BUFFER_SIZE);
+				resp.setContentType("text/html");
+				out = new BufferedOutputStream(resp.getOutputStream(), BUFFER_SIZE);
 
-        Source s = new StreamSource(in);
-        Result r = new StreamResult(out);
-        t.transform(s, r);
-      }
+				Source s = new StreamSource(in);
+				Result r = new StreamResult(out);
+				t.transform(s, r);
+			}
 
-      try {
-        out.flush();
-        out.close();
-      }
-      catch (Exception e) {
-      }
+			try {
+				out.flush();
+				out.close();
+			} catch (Exception e) {
+			}
 
-      try {
-        in.close();
-      }
-      catch (Exception e) {
-      }
-    }
-    catch (Exception e) {
-      printError(req, resp, e.getMessage(), e);
-      return;
-    }
-  }
+			try {
+				in.close();
+			} catch (Exception e) {
+			}
+		} catch (Exception e) {
+			printError(req, resp, e.getMessage(), e);
+			return;
+		}
+	}
 
-  // ---- utilities ----
+	// ---- utilities ----
 
-  /**
-   * Assigns a stylesheet to a content type.
-   */
-  private void addStylesheet(String contentType, Source source) {
-    if ((contentType == null) || (source == null)) {
-      return;
-    }
+	/**
+	 * Assigns a stylesheet to a content type.
+	 */
+	private void addStylesheet(String contentType, Source source) {
+		if ((contentType == null) || (source == null)) {
+			return;
+		}
 
-    fStyleSheets.put(contentType.trim().toLowerCase(), source);
-  }
+		fStyleSheets.put(contentType.trim().toLowerCase(), source);
+	}
 
-  /**
-   * Returns the stylesheet for the given content type or <code>null</code> if no stylesheet is
-   * assigned to content type.
-   */
-  private Source getStylesheet(String contentType) {
-    if (contentType == null) {
-      return null;
-    }
+	/**
+	 * Returns the stylesheet for the given content type or <code>null</code> if
+	 * no stylesheet is assigned to content type.
+	 */
+	private Source getStylesheet(String contentType) {
+		if (contentType == null) {
+			return null;
+		}
 
-    String[] ctp = contentType.trim().toLowerCase().split(";");
-    Source source = null;
+		String[] ctp = contentType.trim().toLowerCase().split(";");
+		Source source = null;
 
-    StringBuilder match = new StringBuilder();
-    int i = 0;
-    while (source == null && i < ctp.length) {
-      if (i > 0) {
-        match.append(";");
-      }
-      match.append(ctp[i]);
-      source = fStyleSheets.get(match.toString());
-      i++;
-    }
+		StringBuilder match = new StringBuilder();
+		int i = 0;
+		while (source == null && i < ctp.length) {
+			if (i > 0) {
+				match.append(";");
+			}
+			match.append(ctp[i]);
+			source = fStyleSheets.get(match.toString());
+			i++;
+		}
 
-    return source;
-  }
+		return source;
+	}
 
-  /**
-   * Returns the context URL of this servlet.
-   */
-  private String getContextUrl(HttpServletRequest request) {
-    String scheme = request.getScheme();
-    int port = request.getServerPort();
+	/**
+	 * Returns the context URL of this servlet.
+	 */
+	private String getContextUrl(HttpServletRequest request) {
+		String scheme = request.getScheme();
+		int port = request.getServerPort();
 
-    if ("http".equals(scheme) && (port == 80)) {
-      port = -1;
-    }
-    if ("https".equals(scheme) && (port == 443)) {
-      port = -1;
-    }
+		if ("http".equals(scheme) && (port == 80)) {
+			port = -1;
+		}
+		if ("https".equals(scheme) && (port == 443)) {
+			port = -1;
+		}
 
-    return scheme + "://" + request.getServerName() + (port > 0 ? ":" + port : "")
-        + request.getContextPath();
-  }
+		return scheme + "://" + request.getServerName() + (port > 0 ? ":" + port : "") + request.getContextPath();
+	}
 
-  /**
-   * Returns the URL of this servlet.
-   */
-  private String getServletUrl(HttpServletRequest request) {
-    return getContextUrl(request) + request.getServletPath();
-  }
+	/**
+	 * Returns the URL of this servlet.
+	 */
+	private String getServletUrl(HttpServletRequest request) {
+		return getContextUrl(request) + request.getServletPath();
+	}
 
-  /**
-   * Returns the root URL of auxiliary files.
-   */
-  private String getAuxRoot(HttpServletRequest request, String auxRoot) {
-    if (auxRoot == null) {
-      return getContextUrl(request);
-    }
-    else if (auxRoot.startsWith(CONTEXT_PREFIX)) {
-      return getContextUrl(request) + auxRoot.substring(CONTEXT_PREFIX.length());
-    }
-    else {
-      return auxRoot;
-    }
-  }
+	/**
+	 * Returns the root URL of auxiliary files.
+	 */
+	private String getAuxRoot(HttpServletRequest request, String auxRoot) {
+		if (auxRoot == null) {
+			return getContextUrl(request);
+		} else if (auxRoot.startsWith(CONTEXT_PREFIX)) {
+			return getContextUrl(request) + auxRoot.substring(CONTEXT_PREFIX.length());
+		} else {
+			return auxRoot;
+		}
+	}
 
-  // --- HTML methods ----
+	// --- HTML methods ----
 
-  /**
-   * Prints a HTML header with styles.
-   */
-  private void printHeader(PrintWriter pw, String title) {
-    pw.print("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
-    pw.println("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-    pw.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-    pw.println("<head>");
-    pw.println("<title>" + title + "</title>");
-    pw.println("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />");
-    pw.println("<style type=\"text/css\">");
-    pw.println("body { font-family: arial,sans-serif; font-size: 10pt; }");
-    pw.println("div.box { background-color: #f6f1de; margin-top: 10px;"
-        + " margin-bottom: 10px; margin-left: 0px; margin-right: 0px;"
-        + " padding: 5px; border-style: solid; border-width: 1px; border-color: #888a85; }");
-    pw.println("</style>");
-    pw.println("</head>");
-    pw.println("<body>");
-  }
+	/**
+	 * Prints a HTML header with styles.
+	 */
+	private void printHeader(PrintWriter pw, String title) {
+		pw.print("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
+		pw.println("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+		pw.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+		pw.println("<head>");
+		pw.println("<title>" + title + "</title>");
+		pw.println("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />");
+		pw.println("<style type=\"text/css\">");
+		pw.println("body { font-family: arial,sans-serif; font-size: 10pt; }");
+		pw.println("div.box { background-color: #f6f1de; margin-top: 10px;"
+				+ " margin-bottom: 10px; margin-left: 0px; margin-right: 0px;"
+				+ " padding: 5px; border-style: solid; border-width: 1px; border-color: #888a85; }");
+		pw.println("</style>");
+		pw.println("</head>");
+		pw.println("<body>");
+	}
 
-  /**
-   * Prints a HTML footer.
-   */
-  private void printFooter(PrintWriter pw) {
-    pw.println("</body>");
-    pw.println("</html>");
-  }
+	/**
+	 * Prints a HTML footer.
+	 */
+	private void printFooter(PrintWriter pw) {
+		pw.println("</body>");
+		pw.println("</html>");
+	}
 
-  /**
-   * Prints a HTML error message.
-   */
-  private void printError(HttpServletRequest req, HttpServletResponse resp, String message,
-      Exception e) throws ServletException, IOException {
-    resp.setContentType("text/html;charset=utf-8");
-    PrintWriter pw = resp.getWriter();
+	/**
+	 * Prints a HTML error message.
+	 */
+	private void printError(HttpServletRequest req, HttpServletResponse resp, String message, Exception e)
+			throws ServletException, IOException {
+		resp.setContentType("text/html;charset=utf-8");
+		PrintWriter pw = resp.getWriter();
 
-    printHeader(pw, "Error");
-    pw.println("<div class=\"box\">");
-    pw.println("<h3>" + message + "</h3>");
+		printHeader(pw, "Error");
+		pw.println("<div class=\"box\">");
+		pw.println("<h3>" + message + "</h3>");
 
-    if (e != null) {
-      pw.print("<pre>");
-      e.printStackTrace(pw);
-      pw.println("</pre>");
-    }
+		if (e != null) {
+			pw.print("<pre>");
+			e.printStackTrace(pw);
+			pw.println("</pre>");
+		}
 
-    pw.println("</div>");
-    printFooter(pw);
-  }
+		pw.println("</div>");
+		printFooter(pw);
+	}
 
-  /**
-   * Prints an HTML input box.
-   */
-  private void printInput(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
-    resp.setContentType("text/html;charset=utf-8");
-    PrintWriter pw = resp.getWriter();
+	/**
+	 * Prints an HTML input box.
+	 */
+	private void printInput(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setContentType("text/html;charset=utf-8");
+		PrintWriter pw = resp.getWriter();
 
-    printHeader(pw, "OpenCMIS Browser");
-    pw.println("<img src=\"" + getAuxRoot(req, fAuxRoot) + "cmis.png\" "
-        + "style=\"float: right;\" />");
-    pw.println("<h1 style=\"font-family: Georgia;\">OpenCMIS Browser</h1>");
-    pw.println("<div class=\"box\">");
-    pw.println("<form action=\"\" method=\"GET\">");
-    pw.println("CMIS AtomPub URL: ");
-    pw.println("<input name=\"url\" type=\"text\" size=\"100\" value=\"\"/>");
-    pw.println("<input type=\"submit\" value=\" GO \"/>");
-    pw.println("</form>");
-    pw.println("</div>");
-    printFooter(pw);
-  }
+		printHeader(pw, "OpenCMIS Browser");
+		pw.println("<img src=\"" + getAuxRoot(req, fAuxRoot) + "cmis.png\" " + "style=\"float: right;\" />");
+		pw.println("<h1 style=\"font-family: Georgia;\">OpenCMIS Browser</h1>");
+		pw.println("<div class=\"box\">");
+		pw.println("<form action=\"\" method=\"GET\">");
+		pw.println("CMIS AtomPub URL: ");
+		pw.println("<input name=\"url\" type=\"text\" size=\"100\" value=\"\"/>");
+		pw.println("<input type=\"submit\" value=\" GO \"/>");
+		pw.println("</form>");
+		pw.println("</div>");
+		printFooter(pw);
+	}
 }
