@@ -28,18 +28,18 @@ import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
  */
 public class FailedToDeleteDataImpl extends AbstractExtensionData implements FailedToDeleteData {
 
-  private List<String> fIds;
+	private List<String> fIds;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.FailedToDeleteData#getIds()
-   */
-  public List<String> getIds() {
-    return fIds;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.FailedToDeleteData#getIds()
+	 */
+	public List<String> getIds() {
+		return fIds;
+	}
 
-  public void setIds(List<String> ids) {
-    fIds = ids;
-  }
+	public void setIds(List<String> ids) {
+		fIds = ids;
+	}
 }

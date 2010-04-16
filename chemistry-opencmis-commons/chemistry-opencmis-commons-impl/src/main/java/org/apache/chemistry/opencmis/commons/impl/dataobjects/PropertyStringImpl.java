@@ -28,19 +28,18 @@ import org.apache.chemistry.opencmis.commons.api.PropertyString;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyStringImpl extends AbstractPropertyData<String> implements
-    PropertyString {
+public class PropertyStringImpl extends AbstractPropertyData<String> implements PropertyString {
 
-  public PropertyStringImpl() {
-  }
+	public PropertyStringImpl() {
+	}
 
-  public PropertyStringImpl(String id, List<String> values) {
-    setId(id);
-    setValues(values);
-  }
+	public PropertyStringImpl(String id, List<String> values) {
+		setId(id);
+		setValues(values);
+	}
 
-  public PropertyStringImpl(String id, String value) {
-    setId(id);
-    setValue(value);
-  }
+	public PropertyStringImpl(String id, String value) {
+		setId(id);
+		setValue(value);
+	}
 }

@@ -30,16 +30,16 @@ import org.apache.chemistry.opencmis.commons.api.PropertyHtml;
  */
 public class PropertyHtmlImpl extends AbstractPropertyData<String> implements PropertyHtml {
 
-  public PropertyHtmlImpl() {
-  }
+	public PropertyHtmlImpl() {
+	}
 
-  public PropertyHtmlImpl(String id, List<String> values) {
-    setId(id);
-    setValues(values);
-  }
+	public PropertyHtmlImpl(String id, List<String> values) {
+		setId(id);
+		setValues(values);
+	}
 
-  public PropertyHtmlImpl(String id, String value) {
-    setId(id);
-    setValue(value);
-  }
+	public PropertyHtmlImpl(String id, String value) {
+		setId(id);
+		setValue(value);
+	}
 }

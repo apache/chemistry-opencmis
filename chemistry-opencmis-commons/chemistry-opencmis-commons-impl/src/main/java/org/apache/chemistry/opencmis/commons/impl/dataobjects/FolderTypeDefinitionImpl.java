@@ -26,9 +26,8 @@ import org.apache.chemistry.opencmis.commons.api.FolderTypeDefinition;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class FolderTypeDefinitionImpl extends AbstractTypeDefinition implements
-    FolderTypeDefinition {
+public class FolderTypeDefinitionImpl extends AbstractTypeDefinition implements FolderTypeDefinition {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 }

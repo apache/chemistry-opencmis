@@ -25,88 +25,87 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 
 /**
  * Content stream data implementation.
- *
+ * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
+ * 
  */
 public class ContentStreamImpl extends AbstractExtensionData implements ContentStream {
 
-  private String fFilename;
-  private BigInteger fLength;
-  private String fMimeType;
-  private InputStream fStream;
+	private String fFilename;
+	private BigInteger fLength;
+	private String fMimeType;
+	private InputStream fStream;
 
-  /**
-   * Constructor.
-   */
-  public ContentStreamImpl() {
-  }
+	/**
+	 * Constructor.
+	 */
+	public ContentStreamImpl() {
+	}
 
-  /**
-   * Constructor.
-   */
-  public ContentStreamImpl(String filename, BigInteger length,
-          String mimetype, InputStream stream) {
-    setLength(length);
-    setMimeType(mimetype);
-    setFileName(filename);
-    setStream(stream);
-  }
+	/**
+	 * Constructor.
+	 */
+	public ContentStreamImpl(String filename, BigInteger length, String mimetype, InputStream stream) {
+		setLength(length);
+		setMimeType(mimetype);
+		setFileName(filename);
+		setStream(stream);
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.provider.ContentStreamData#getFilename()
-   */
-  public String getFileName() {
-    return fFilename;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ContentStreamData#getFilename()
+	 */
+	public String getFileName() {
+		return fFilename;
+	}
 
-  public void setFileName(String filename) {
-    fFilename = filename;
-  }
+	public void setFileName(String filename) {
+		fFilename = filename;
+	}
 
-  public long getLength() {
-    return fLength == null ? -1 : fLength.longValue();
-  }
+	public long getLength() {
+		return fLength == null ? -1 : fLength.longValue();
+	}
 
-  public BigInteger getBigLength() {
-    return fLength;
-  }
+	public BigInteger getBigLength() {
+		return fLength;
+	}
 
-  public void setLength(BigInteger length) {
-    fLength = length;
-  }
+	public void setLength(BigInteger length) {
+		fLength = length;
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.provider.ContentStreamData#getMimeType()
-   */
-  public String getMimeType() {
-    return fMimeType;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ContentStreamData#getMimeType()
+	 */
+	public String getMimeType() {
+		return fMimeType;
+	}
 
-  public void setMimeType(String mimetype) {
-    fMimeType = mimetype;
-  }
+	public void setMimeType(String mimetype) {
+		fMimeType = mimetype;
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.provider.ContentStreamData#getStream()
-   */
-  public InputStream getStream() {
-    return fStream;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ContentStreamData#getStream()
+	 */
+	public InputStream getStream() {
+		return fStream;
+	}
 
-  public void setStream(InputStream stream) {
-    fStream = stream;
-  }
+	public void setStream(InputStream stream) {
+		fStream = stream;
+	}
 
-  @Override
-  public String toString() {
-    return "ContentStream [filename=" + fFilename + ", length=" + fLength + ", MIME type="
-        + fMimeType + ", has stream=" + (fStream != null) + "]" + super.toString();
-  }
+	@Override
+	public String toString() {
+		return "ContentStream [filename=" + fFilename + ", length=" + fLength + ", MIME type=" + fMimeType
+				+ ", has stream=" + (fStream != null) + "]" + super.toString();
+	}
 }

@@ -26,8 +26,8 @@ import org.apache.chemistry.opencmis.commons.api.PropertyBooleanDefinition;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyBooleanDefinitionImpl extends AbstractPropertyDefinition<Boolean>
-    implements PropertyBooleanDefinition {
+public class PropertyBooleanDefinitionImpl extends AbstractPropertyDefinition<Boolean> implements
+		PropertyBooleanDefinition {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 }

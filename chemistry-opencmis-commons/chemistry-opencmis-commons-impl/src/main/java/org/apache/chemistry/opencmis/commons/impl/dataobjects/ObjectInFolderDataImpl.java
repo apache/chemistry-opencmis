@@ -27,56 +27,56 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
  */
 public class ObjectInFolderDataImpl extends AbstractExtensionData implements ObjectInFolderData {
 
-  private ObjectData fObject;
-  private String fPathSegment;
+	private ObjectData fObject;
+	private String fPathSegment;
 
-  /**
-   * Constructor.
-   */
-  public ObjectInFolderDataImpl() {
-  }
+	/**
+	 * Constructor.
+	 */
+	public ObjectInFolderDataImpl() {
+	}
 
-  /**
-   * Constructor.
-   */
-  public ObjectInFolderDataImpl(ObjectData object) {
-    setObject(object);
-  }
+	/**
+	 * Constructor.
+	 */
+	public ObjectInFolderDataImpl(ObjectData object) {
+		setObject(object);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectInFolderData#getObject()
-   */
-  public ObjectData getObject() {
-    return fObject;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectInFolderData#getObject()
+	 */
+	public ObjectData getObject() {
+		return fObject;
+	}
 
-  public void setObject(ObjectData object) {
-    fObject = object;
-  }
+	public void setObject(ObjectData object) {
+		fObject = object;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectInFolderData#getPathSegment()
-   */
-  public String getPathSegment() {
-    return fPathSegment;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.ObjectInFolderData#getPathSegment()
+	 */
+	public String getPathSegment() {
+		return fPathSegment;
+	}
 
-  public void setPathSegment(String pathSegment) {
-    fPathSegment = pathSegment;
-  }
+	public void setPathSegment(String pathSegment) {
+		fPathSegment = pathSegment;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return "ObjectInFolder [object=" + fObject + ", path segment=" + fPathSegment + "]"
-        + super.toString();
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "ObjectInFolder [object=" + fObject + ", path segment=" + fPathSegment + "]" + super.toString();
+	}
 }

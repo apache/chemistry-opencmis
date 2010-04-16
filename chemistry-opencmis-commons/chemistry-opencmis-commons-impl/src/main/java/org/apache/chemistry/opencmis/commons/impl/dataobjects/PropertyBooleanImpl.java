@@ -28,19 +28,18 @@ import org.apache.chemistry.opencmis.commons.api.PropertyBoolean;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyBooleanImpl extends AbstractPropertyData<Boolean> implements
-    PropertyBoolean {
+public class PropertyBooleanImpl extends AbstractPropertyData<Boolean> implements PropertyBoolean {
 
-  public PropertyBooleanImpl() {
-  }
+	public PropertyBooleanImpl() {
+	}
 
-  public PropertyBooleanImpl(String id, List<Boolean> values) {
-    setId(id);
-    setValues(values);
-  }
+	public PropertyBooleanImpl(String id, List<Boolean> values) {
+		setId(id);
+		setValues(values);
+	}
 
-  public PropertyBooleanImpl(String id, Boolean value) {
-    setId(id);
-    setValue(value);
-  }
+	public PropertyBooleanImpl(String id, Boolean value) {
+		setId(id);
+		setValue(value);
+	}
 }

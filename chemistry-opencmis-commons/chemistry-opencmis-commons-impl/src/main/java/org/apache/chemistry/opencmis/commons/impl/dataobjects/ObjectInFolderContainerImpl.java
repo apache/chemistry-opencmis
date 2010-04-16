@@ -27,60 +27,61 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class ObjectInFolderContainerImpl extends AbstractExtensionData implements
-    ObjectInFolderContainer {
+public class ObjectInFolderContainerImpl extends AbstractExtensionData implements ObjectInFolderContainer {
 
-  private ObjectInFolderData fObject;
-  private List<ObjectInFolderContainer> fChildren;
+	private ObjectInFolderData fObject;
+	private List<ObjectInFolderContainer> fChildren;
 
-  /**
-   * Constructor.
-   */
-  public ObjectInFolderContainerImpl() {
+	/**
+	 * Constructor.
+	 */
+	public ObjectInFolderContainerImpl() {
 
-  }
+	}
 
-  /**
-   * Constructor.
-   */
-  public ObjectInFolderContainerImpl(ObjectInFolderData object) {
-    setObject(object);
+	/**
+	 * Constructor.
+	 */
+	public ObjectInFolderContainerImpl(ObjectInFolderData object) {
+		setObject(object);
 
-  }
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectInFolderContainer#getObject()
-   */
-  public ObjectInFolderData getObject() {
-    return fObject;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.ObjectInFolderContainer#getObject()
+	 */
+	public ObjectInFolderData getObject() {
+		return fObject;
+	}
 
-  public void setObject(ObjectInFolderData object) {
-    fObject = object;
-  }
+	public void setObject(ObjectInFolderData object) {
+		fObject = object;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectInFolderContainer#getChildren()
-   */
-  public List<ObjectInFolderContainer> getChildren() {
-    return fChildren;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.ObjectInFolderContainer#getChildren()
+	 */
+	public List<ObjectInFolderContainer> getChildren() {
+		return fChildren;
+	}
 
-  public void setChildren(List<ObjectInFolderContainer> children) {
-    fChildren = children;
-  }
+	public void setChildren(List<ObjectInFolderContainer> children) {
+		fChildren = children;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return "ObjectInFolder Container [object=" + fObject + ", children=" + fChildren + "]";
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "ObjectInFolder Container [object=" + fObject + ", children=" + fChildren + "]";
+	}
 }

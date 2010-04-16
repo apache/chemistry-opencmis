@@ -29,51 +29,56 @@ import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyDecimalDefinitionImpl extends AbstractPropertyDefinition<BigDecimal>
-    implements PropertyDecimalDefinition {
+public class PropertyDecimalDefinitionImpl extends AbstractPropertyDefinition<BigDecimal> implements
+		PropertyDecimalDefinition {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private BigDecimal fMinValue;
-  private BigDecimal fMaxValue;
-  private DecimalPrecision fPrecision;
+	private BigDecimal fMinValue;
+	private BigDecimal fMaxValue;
+	private DecimalPrecision fPrecision;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.PropertyDecimalDefinitionData#getMinValue()
-   */
-  public BigDecimal getMinValue() {
-    return fMinValue;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.PropertyDecimalDefinitionData#getMinValue
+	 * ()
+	 */
+	public BigDecimal getMinValue() {
+		return fMinValue;
+	}
 
-  public void setMinValue(BigDecimal minValue) {
-    fMinValue = minValue;
-  }
+	public void setMinValue(BigDecimal minValue) {
+		fMinValue = minValue;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.PropertyDecimalDefinitionData#getMaxValue()
-   */
-  public BigDecimal getMaxValue() {
-    return fMaxValue;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.PropertyDecimalDefinitionData#getMaxValue
+	 * ()
+	 */
+	public BigDecimal getMaxValue() {
+		return fMaxValue;
+	}
 
-  public void setMaxValue(BigDecimal maxValue) {
-    fMaxValue = maxValue;
-  }
+	public void setMaxValue(BigDecimal maxValue) {
+		fMaxValue = maxValue;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.PropertyDecimalDefinitionData#getPrecision()
-   */
-  public DecimalPrecision getPrecision() {
-    return fPrecision;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.apache.opencmis.client.provider.PropertyDecimalDefinitionData#
+	 * getPrecision()
+	 */
+	public DecimalPrecision getPrecision() {
+		return fPrecision;
+	}
 
-  public void setPrecision(DecimalPrecision precision) {
-    fPrecision = precision;
-  }
+	public void setPrecision(DecimalPrecision precision) {
+		fPrecision = precision;
+	}
 }

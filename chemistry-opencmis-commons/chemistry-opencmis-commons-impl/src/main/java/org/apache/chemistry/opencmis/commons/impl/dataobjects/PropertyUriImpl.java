@@ -30,16 +30,16 @@ import org.apache.chemistry.opencmis.commons.api.PropertyUri;
  */
 public class PropertyUriImpl extends AbstractPropertyData<String> implements PropertyUri {
 
-  public PropertyUriImpl() {
-  }
+	public PropertyUriImpl() {
+	}
 
-  public PropertyUriImpl(String id, List<String> values) {
-    setId(id);
-    setValues(values);
-  }
+	public PropertyUriImpl(String id, List<String> values) {
+		setId(id);
+		setValues(values);
+	}
 
-  public PropertyUriImpl(String id, String value) {
-    setId(id);
-    setValue(value);
-  }
+	public PropertyUriImpl(String id, String value) {
+		setId(id);
+		setValue(value);
+	}
 }

@@ -26,9 +26,8 @@ import org.apache.chemistry.opencmis.commons.api.PolicyTypeDefinition;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PolicyTypeDefinitionImpl extends AbstractTypeDefinition implements
-    PolicyTypeDefinition {
+public class PolicyTypeDefinitionImpl extends AbstractTypeDefinition implements PolicyTypeDefinition {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 }

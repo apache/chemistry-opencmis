@@ -29,19 +29,18 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDecimal;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyDecimalImpl extends AbstractPropertyData<BigDecimal> implements
-    PropertyDecimal {
+public class PropertyDecimalImpl extends AbstractPropertyData<BigDecimal> implements PropertyDecimal {
 
-  public PropertyDecimalImpl() {
-  }
+	public PropertyDecimalImpl() {
+	}
 
-  public PropertyDecimalImpl(String id, List<BigDecimal> values) {
-    setId(id);
-    setValues(values);
-  }
+	public PropertyDecimalImpl(String id, List<BigDecimal> values) {
+		setId(id);
+		setValues(values);
+	}
 
-  public PropertyDecimalImpl(String id, BigDecimal value) {
-    setId(id);
-    setValue(value);
-  }
+	public PropertyDecimalImpl(String id, BigDecimal value) {
+		setId(id);
+		setValue(value);
+	}
 }

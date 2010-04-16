@@ -28,46 +28,46 @@ import org.apache.chemistry.opencmis.commons.api.Choice;
  */
 public class ChoiceImpl<T> extends AbstractExtensionData implements Choice<T> {
 
-  private String fDisplayName;
-  private List<T> fValue;
-  private List<Choice<T>> fChoice;
+	private String fDisplayName;
+	private List<T> fValue;
+	private List<Choice<T>> fChoice;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.Choice#getDisplayName()
-   */
-  public String getDisplayName() {
-    return fDisplayName;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.Choice#getDisplayName()
+	 */
+	public String getDisplayName() {
+		return fDisplayName;
+	}
 
-  public void setDisplayName(String displayName) {
-    fDisplayName = displayName;
-  }
+	public void setDisplayName(String displayName) {
+		fDisplayName = displayName;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.Choice#getValue()
-   */
-  public List<T> getValue() {
-    return fValue;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.Choice#getValue()
+	 */
+	public List<T> getValue() {
+		return fValue;
+	}
 
-  public void setValue(List<T> value) {
-    fValue = value;
-  }
+	public void setValue(List<T> value) {
+		fValue = value;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.Choice#getChoice()
-   */
-  public List<Choice<T>> getChoice() {
-    return fChoice;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.Choice#getChoice()
+	 */
+	public List<Choice<T>> getChoice() {
+		return fChoice;
+	}
 
-  public void setChoice(List<Choice<T>> choice) {
-    fChoice = choice;
-  }
+	public void setChoice(List<Choice<T>> choice) {
+		fChoice = choice;
+	}
 }

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
- package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.GregorianCalendar;
 
@@ -29,23 +29,24 @@ import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyDateTimeDefinitionImpl extends
-    AbstractPropertyDefinition<GregorianCalendar> implements PropertyDateTimeDefinition {
+public class PropertyDateTimeDefinitionImpl extends AbstractPropertyDefinition<GregorianCalendar> implements
+		PropertyDateTimeDefinition {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private DateTimeResolution fDateTimeResolution;
+	private DateTimeResolution fDateTimeResolution;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.PropertyDateTimeDefinitionData#getDateTimeResolution()
-   */
-  public DateTimeResolution getDateTimeResolution() {
-    return fDateTimeResolution;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.apache.opencmis.client.provider.PropertyDateTimeDefinitionData#
+	 * getDateTimeResolution()
+	 */
+	public DateTimeResolution getDateTimeResolution() {
+		return fDateTimeResolution;
+	}
 
-  public void setDateTimeResolution(DateTimeResolution dateTimeResolution) {
-    fDateTimeResolution = dateTimeResolution;
-  }
+	public void setDateTimeResolution(DateTimeResolution dateTimeResolution) {
+		fDateTimeResolution = dateTimeResolution;
+	}
 }

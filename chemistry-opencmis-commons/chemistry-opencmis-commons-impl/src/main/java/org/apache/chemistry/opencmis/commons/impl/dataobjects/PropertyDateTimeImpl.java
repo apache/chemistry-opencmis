@@ -29,19 +29,18 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDateTime;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyDateTimeImpl extends AbstractPropertyData<GregorianCalendar> implements
-    PropertyDateTime {
+public class PropertyDateTimeImpl extends AbstractPropertyData<GregorianCalendar> implements PropertyDateTime {
 
-  public PropertyDateTimeImpl() {
-  }
+	public PropertyDateTimeImpl() {
+	}
 
-  public PropertyDateTimeImpl(String id, List<GregorianCalendar> values) {
-    setId(id);
-    setValues(values);
-  }
+	public PropertyDateTimeImpl(String id, List<GregorianCalendar> values) {
+		setId(id);
+		setValues(values);
+	}
 
-  public PropertyDateTimeImpl(String id, GregorianCalendar value) {
-    setId(id);
-    setValue(value);
-  }
+	public PropertyDateTimeImpl(String id, GregorianCalendar value) {
+		setId(id);
+		setValue(value);
+	}
 }

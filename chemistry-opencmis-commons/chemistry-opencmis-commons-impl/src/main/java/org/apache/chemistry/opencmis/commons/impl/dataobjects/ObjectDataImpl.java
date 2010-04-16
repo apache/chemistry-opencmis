@@ -37,179 +37,179 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
  */
 public class ObjectDataImpl extends AbstractExtensionData implements ObjectData {
 
-  private Properties fProperties;
-  private ChangeEventInfo fChangeEventInfo;
-  private List<ObjectData> fRelationships;
-  private List<RenditionData> fRenditions;
-  private PolicyIdList fPolicyIds;
-  private AllowableActions fAllowableActions;
-  private Acl fAcl;
-  private Boolean fIsExactAcl;
+	private Properties fProperties;
+	private ChangeEventInfo fChangeEventInfo;
+	private List<ObjectData> fRelationships;
+	private List<RenditionData> fRenditions;
+	private PolicyIdList fPolicyIds;
+	private AllowableActions fAllowableActions;
+	private Acl fAcl;
+	private Boolean fIsExactAcl;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#getId()
-   */
-  public String getId() {
-    Object value = getFirstValue(PropertyIds.OBJECT_ID);
-    if (value instanceof String) {
-      return (String) value;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#getId()
+	 */
+	public String getId() {
+		Object value = getFirstValue(PropertyIds.OBJECT_ID);
+		if (value instanceof String) {
+			return (String) value;
+		}
 
-    return null;
-  }
+		return null;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#getBaseTypeId()
-   */
-  public BaseTypeId getBaseTypeId() {
-    Object value = getFirstValue(PropertyIds.BASE_TYPE_ID);
-    if (value instanceof String) {
-      try {
-        return BaseTypeId.fromValue((String) value);
-      }
-      catch (Exception e) {
-      }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#getBaseTypeId()
+	 */
+	public BaseTypeId getBaseTypeId() {
+		Object value = getFirstValue(PropertyIds.BASE_TYPE_ID);
+		if (value instanceof String) {
+			try {
+				return BaseTypeId.fromValue((String) value);
+			} catch (Exception e) {
+			}
+		}
 
-    return null;
-  }
+		return null;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#getProperties()
-   */
-  public Properties getProperties() {
-    return fProperties;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#getProperties()
+	 */
+	public Properties getProperties() {
+		return fProperties;
+	}
 
-  public void setProperties(Properties properties) {
-    fProperties = properties;
-  }
+	public void setProperties(Properties properties) {
+		fProperties = properties;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#getChangeEventInfo()
-   */
-  public ChangeEventInfo getChangeEventInfo() {
-    return fChangeEventInfo;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#getChangeEventInfo()
+	 */
+	public ChangeEventInfo getChangeEventInfo() {
+		return fChangeEventInfo;
+	}
 
-  public void setChangeEventInfo(ChangeEventInfo changeEventInfo) {
-    fChangeEventInfo = changeEventInfo;
-  }
+	public void setChangeEventInfo(ChangeEventInfo changeEventInfo) {
+		fChangeEventInfo = changeEventInfo;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#getRelationships()
-   */
-  public List<ObjectData> getRelationships() {
-    return fRelationships;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#getRelationships()
+	 */
+	public List<ObjectData> getRelationships() {
+		return fRelationships;
+	}
 
-  public void setRelationships(List<ObjectData> relationships) {
-    fRelationships = relationships;
-  }
+	public void setRelationships(List<ObjectData> relationships) {
+		fRelationships = relationships;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#getRenditions()
-   */
-  public List<RenditionData> getRenditions() {
-    return fRenditions;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#getRenditions()
+	 */
+	public List<RenditionData> getRenditions() {
+		return fRenditions;
+	}
 
-  public void setRenditions(List<RenditionData> renditions) {
-    fRenditions = renditions;
-  }
+	public void setRenditions(List<RenditionData> renditions) {
+		fRenditions = renditions;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#getPolicyIds()
-   */
-  public PolicyIdList getPolicyIds() {
-    return fPolicyIds;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#getPolicyIds()
+	 */
+	public PolicyIdList getPolicyIds() {
+		return fPolicyIds;
+	}
 
-  public void setPolicyIds(PolicyIdList policyIds) {
-    fPolicyIds = policyIds;
-  }
+	public void setPolicyIds(PolicyIdList policyIds) {
+		fPolicyIds = policyIds;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#getAllowableActions()
-   */
-  public AllowableActions getAllowableActions() {
-    return fAllowableActions;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#getAllowableActions()
+	 */
+	public AllowableActions getAllowableActions() {
+		return fAllowableActions;
+	}
 
-  public void setAllowableActions(AllowableActions allowableActions) {
-    fAllowableActions = allowableActions;
-  }
+	public void setAllowableActions(AllowableActions allowableActions) {
+		fAllowableActions = allowableActions;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#getACL()
-   */
-  public Acl getAcl() {
-    return fAcl;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#getACL()
+	 */
+	public Acl getAcl() {
+		return fAcl;
+	}
 
-  public void setAcl(Acl acl) {
-    fAcl = acl;
-  }
+	public void setAcl(Acl acl) {
+		fAcl = acl;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectData#isExactACL()
-   */
-  public Boolean isExactAcl() {
-    return fIsExactAcl;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectData#isExactACL()
+	 */
+	public Boolean isExactAcl() {
+		return fIsExactAcl;
+	}
 
-  public void setIsExactAcl(Boolean isExactACL) {
-    fIsExactAcl = isExactACL;
-  }
+	public void setIsExactAcl(Boolean isExactACL) {
+		fIsExactAcl = isExactACL;
+	}
 
-  // ---- internal ----
+	// ---- internal ----
 
-  /**
-   * Returns the first value of a property or <code>null</code> if the property is not set.
-   */
-  private Object getFirstValue(String id) {
-    if ((fProperties == null) || (fProperties.getProperties() == null)) {
-      return null;
-    }
+	/**
+	 * Returns the first value of a property or <code>null</code> if the
+	 * property is not set.
+	 */
+	private Object getFirstValue(String id) {
+		if ((fProperties == null) || (fProperties.getProperties() == null)) {
+			return null;
+		}
 
-    PropertyData<?> property = fProperties.getProperties().get(id);
-    if (property == null) {
-      return null;
-    }
+		PropertyData<?> property = fProperties.getProperties().get(id);
+		if (property == null) {
+			return null;
+		}
 
-    return property.getFirstValue();
-  }
+		return property.getFirstValue();
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return "Object Data [properties=" + fProperties + ", allowable actions=" + fAllowableActions
-        + ", change event info=" + fChangeEventInfo + ", ACL=" + fAcl + ", is exact ACL="
-        + fIsExactAcl + ", policy ids=" + fPolicyIds + ", relationships=" + fRelationships
-        + ", renditions=" + fRenditions + "]" + super.toString();
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Object Data [properties=" + fProperties + ", allowable actions=" + fAllowableActions
+				+ ", change event info=" + fChangeEventInfo + ", ACL=" + fAcl + ", is exact ACL=" + fIsExactAcl
+				+ ", policy ids=" + fPolicyIds + ", relationships=" + fRelationships + ", renditions=" + fRenditions
+				+ "]" + super.toString();
+	}
 }

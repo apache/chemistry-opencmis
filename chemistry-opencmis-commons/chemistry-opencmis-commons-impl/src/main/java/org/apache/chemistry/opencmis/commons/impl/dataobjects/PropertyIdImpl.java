@@ -30,16 +30,16 @@ import org.apache.chemistry.opencmis.commons.api.PropertyId;
  */
 public class PropertyIdImpl extends AbstractPropertyData<String> implements PropertyId {
 
-  public PropertyIdImpl() {
-  }
+	public PropertyIdImpl() {
+	}
 
-  public PropertyIdImpl(String id, List<String> values) {
-    setId(id);
-    setValues(values);
-  }
+	public PropertyIdImpl(String id, List<String> values) {
+		setId(id);
+		setValues(values);
+	}
 
-  public PropertyIdImpl(String id, String value) {
-    setId(id);
-    setValue(value);
-  }
+	public PropertyIdImpl(String id, String value) {
+		setId(id);
+		setValue(value);
+	}
 }

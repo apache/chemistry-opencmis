@@ -29,19 +29,18 @@ import org.apache.chemistry.opencmis.commons.api.PropertyInteger;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyIntegerImpl extends AbstractPropertyData<BigInteger> implements
-    PropertyInteger {
+public class PropertyIntegerImpl extends AbstractPropertyData<BigInteger> implements PropertyInteger {
 
-  public PropertyIntegerImpl() {
-  }
+	public PropertyIntegerImpl() {
+	}
 
-  public PropertyIntegerImpl(String id, List<BigInteger> values) {
-    setId(id);
-    setValues(values);
-  }
+	public PropertyIntegerImpl(String id, List<BigInteger> values) {
+		setId(id);
+		setValues(values);
+	}
 
-  public PropertyIntegerImpl(String id, BigInteger value) {
-    setId(id);
-    setValue(value);
-  }
+	public PropertyIntegerImpl(String id, BigInteger value) {
+		setId(id);
+		setValue(value);
+	}
 }

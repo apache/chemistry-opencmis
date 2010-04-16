@@ -28,37 +28,41 @@ import org.apache.chemistry.opencmis.commons.api.PropertyIntegerDefinition;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class PropertyIntegerDefinitionImpl extends AbstractPropertyDefinition<BigInteger>
-    implements PropertyIntegerDefinition {
+public class PropertyIntegerDefinitionImpl extends AbstractPropertyDefinition<BigInteger> implements
+		PropertyIntegerDefinition {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private BigInteger fMinValue;
-  private BigInteger fMaxValue;
+	private BigInteger fMinValue;
+	private BigInteger fMaxValue;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.PropertyIntegerDefinitionData#getMinValue()
-   */
-  public BigInteger getMinValue() {
-    return fMinValue;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.PropertyIntegerDefinitionData#getMinValue
+	 * ()
+	 */
+	public BigInteger getMinValue() {
+		return fMinValue;
+	}
 
-  public void setMinValue(BigInteger minValue) {
-    fMinValue = minValue;
-  }
+	public void setMinValue(BigInteger minValue) {
+		fMinValue = minValue;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.PropertyIntegerDefinitionData#getMaxValue()
-   */
-  public BigInteger getMaxValue() {
-    return fMaxValue;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.PropertyIntegerDefinitionData#getMaxValue
+	 * ()
+	 */
+	public BigInteger getMaxValue() {
+		return fMaxValue;
+	}
 
-  public void setMaxValue(BigInteger maxValue) {
-    fMaxValue = maxValue;
-  }
+	public void setMaxValue(BigInteger maxValue) {
+		fMaxValue = maxValue;
+	}
 }

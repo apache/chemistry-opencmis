@@ -34,54 +34,54 @@ import org.apache.chemistry.opencmis.commons.api.PropertyData;
  */
 public class PropertiesImpl extends AbstractExtensionData implements Properties {
 
-  Map<String, PropertyData<?>> fProperties = new LinkedHashMap<String, PropertyData<?>>();
+	Map<String, PropertyData<?>> fProperties = new LinkedHashMap<String, PropertyData<?>>();
 
-  /**
-   * Constructor.
-   */
-  public PropertiesImpl() {
-  }
+	/**
+	 * Constructor.
+	 */
+	public PropertiesImpl() {
+	}
 
-  /**
-   * Constructor.
-   * 
-   * @param properties
-   *          initial list of properties
-   */
-  public PropertiesImpl(List<PropertyData<?>> properties) {
-    if (properties != null) {
-      for (PropertyData<?> prop : properties) {
-        addProperty(prop);
-      }
-    }
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param properties
+	 *            initial list of properties
+	 */
+	public PropertiesImpl(List<PropertyData<?>> properties) {
+		if (properties != null) {
+			for (PropertyData<?> prop : properties) {
+				addProperty(prop);
+			}
+		}
+	}
 
-  public Map<String, PropertyData<?>> getProperties() {
-    return Collections.unmodifiableMap(fProperties);
-  }
+	public Map<String, PropertyData<?>> getProperties() {
+		return Collections.unmodifiableMap(fProperties);
+	}
 
-  /**
-   * Adds a property.
-   * 
-   * @param property
-   *          the property
-   */
-  public void addProperty(PropertyData<?> property) {
-    if (property == null) {
-      return;
-    }
+	/**
+	 * Adds a property.
+	 * 
+	 * @param property
+	 *            the property
+	 */
+	public void addProperty(PropertyData<?> property) {
+		if (property == null) {
+			return;
+		}
 
-    fProperties.put(property.getId(), property);
-  }
+		fProperties.put(property.getId(), property);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return "Properties Data [properties=" + fProperties + "]" + super.toString();
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Properties Data [properties=" + fProperties + "]" + super.toString();
+	}
 
 }

@@ -30,57 +30,57 @@ import org.apache.chemistry.opencmis.commons.api.ObjectList;
  */
 public class ObjectListImpl extends AbstractExtensionData implements ObjectList {
 
-  private List<ObjectData> fObjects;
-  private Boolean fHasMoreItems = Boolean.FALSE;
-  private BigInteger fNumItems;
+	private List<ObjectData> fObjects;
+	private Boolean fHasMoreItems = Boolean.FALSE;
+	private BigInteger fNumItems;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectList#getObjects()
-   */
-  public List<ObjectData> getObjects() {
-    return fObjects;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectList#getObjects()
+	 */
+	public List<ObjectData> getObjects() {
+		return fObjects;
+	}
 
-  public void setObjects(List<ObjectData> objects) {
-    fObjects = objects;
-  }
+	public void setObjects(List<ObjectData> objects) {
+		fObjects = objects;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectList#hasMoreItems()
-   */
-  public Boolean hasMoreItems() {
-    return fHasMoreItems;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectList#hasMoreItems()
+	 */
+	public Boolean hasMoreItems() {
+		return fHasMoreItems;
+	}
 
-  public void setHasMoreItems(Boolean hasMoreItems) {
-    fHasMoreItems = hasMoreItems;
-  }
+	public void setHasMoreItems(Boolean hasMoreItems) {
+		fHasMoreItems = hasMoreItems;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.ObjectList#getNumItems()
-   */
-  public BigInteger getNumItems() {
-    return fNumItems;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.ObjectList#getNumItems()
+	 */
+	public BigInteger getNumItems() {
+		return fNumItems;
+	}
 
-  public void setNumItems(BigInteger numItems) {
-    fNumItems = numItems;
-  }
+	public void setNumItems(BigInteger numItems) {
+		fNumItems = numItems;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return "Object List [objects=" + fObjects + ", has more items=" + fHasMoreItems
-        + ", num items=" + fNumItems + "]";
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Object List [objects=" + fObjects + ", has more items=" + fHasMoreItems + ", num items=" + fNumItems
+				+ "]";
+	}
 }
