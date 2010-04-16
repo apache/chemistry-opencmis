@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.client.api;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ChangeEventInfoData;
-import org.apache.chemistry.opencmis.commons.enums.TypeOfChanges;
 
 /**
  * Change Event from the change log.
