@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.chemistry.opencmis.client.api.AllowableActions;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
@@ -40,11 +39,13 @@ import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.bindings.Ace;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -109,7 +110,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
       // handle allowable actions
       if (objectData.getAllowableActions() != null) {
-        this.allowableActions = of.convertAllowableActions(objectData.getAllowableActions());
+        this.allowableActions = objectData.getAllowableActions();
       }
 
       // handle renditions

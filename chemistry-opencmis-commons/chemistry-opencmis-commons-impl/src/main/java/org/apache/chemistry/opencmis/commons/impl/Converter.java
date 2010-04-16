@@ -25,11 +25,13 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -58,7 +60,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.bindings.Ace;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.AclCapabilities;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
@@ -85,6 +87,7 @@ import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
 import org.apache.chemistry.opencmis.commons.bindings.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
@@ -107,7 +110,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntry
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
@@ -1745,68 +1748,46 @@ public final class Converter {
   /**
    * Converts an AllowableActions object.
    */
-  public static AllowableActionsData convert(CmisAllowableActionsType allowableActions) {
+  public static AllowableActions convert(CmisAllowableActionsType allowableActions) {
     if (allowableActions == null) {
       return null;
     }
 
-    AllowableActionsDataImpl result = new AllowableActionsDataImpl();
+    AllowableActionsImpl result = new AllowableActionsImpl();
 
-    Map<String, Boolean> actionsMap = new HashMap<String, Boolean>();
-    actionsMap.put(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER, allowableActions
-        .isCanAddObjectToFolder());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_APPLY_ACL, allowableActions.isCanApplyACL());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_APPLY_POLICY, allowableActions
-        .isCanApplyPolicy());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT, allowableActions
-        .isCanCancelCheckOut());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_CHECK_IN, allowableActions.isCanCheckIn());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_CHECK_OUT, allowableActions.isCanCheckOut());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, allowableActions
-        .isCanCreateDocument());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, allowableActions
-        .isCanCreateFolder());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, allowableActions
-        .isCanCreateRelationship());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM, allowableActions
-        .isCanDeleteContentStream());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_DELETE_OBJECT, allowableActions
-        .isCanDeleteObject());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, allowableActions.isCanDeleteTree());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_ACL, allowableActions.isCanGetACL());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS, allowableActions
-        .isCanGetAllVersions());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_APPLIED_POLICIES, allowableActions
-        .isCanGetAppliedPolicies());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_CHILDREN, allowableActions
-        .isCanGetChildren());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM, allowableActions
-        .isCanGetContentStream());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS, allowableActions
-        .isCanGetDescendants());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT, allowableActions
-        .isCanGetFolderParent());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, allowableActions
-        .isCanGetFolderTree());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, allowableActions
-        .isCanGetObjectParents());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS, allowableActions
-        .isCanGetObjectRelationships());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_PROPERTIES, allowableActions
-        .isCanGetProperties());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_GET_RENDITIONS, allowableActions
-        .isCanGetRenditions());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_MOVE_OBJECT, allowableActions.isCanMoveObject());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER, allowableActions
-        .isCanRemoveObjectFromFolder());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_REMOVE_POLICY, allowableActions
-        .isCanRemovePolicy());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM, allowableActions
-        .isCanSetContentStream());
-    actionsMap.put(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES, allowableActions
-        .isCanUpdateProperties());
+    Set<AllowableActionsEnum> set = EnumSet.noneOf(AllowableActionsEnum.class);
 
-    result.setAllowableActions(actionsMap);
+    if(Boolean.TRUE.equals(allowableActions.isCanAddObjectToFolder())) { set.add(AllowableActionsEnum.CAN_ADD_OBJECT_TO_FOLDER); }
+    if(Boolean.TRUE.equals(allowableActions.isCanApplyACL())) { set.add(AllowableActionsEnum.CAN_APPLY_ACL); }
+    if(Boolean.TRUE.equals(allowableActions.isCanApplyPolicy())) { set.add(AllowableActionsEnum.CAN_APPLY_POLICY); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCancelCheckOut())) { set.add(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCheckIn())) { set.add(AllowableActionsEnum.CAN_CHECK_IN); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCheckOut())) { set.add(AllowableActionsEnum.CAN_CHECK_OUT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCreateDocument())) { set.add(AllowableActionsEnum.CAN_CREATE_DOCUMENT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCreateFolder())) { set.add(AllowableActionsEnum.CAN_CREATE_FOLDER); }
+    if(Boolean.TRUE.equals(allowableActions.isCanCreateRelationship())) { set.add(AllowableActionsEnum.CAN_CREATE_RELATIONSHIP); }
+    if(Boolean.TRUE.equals(allowableActions.isCanDeleteContentStream())) { set.add(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM); }
+    if(Boolean.TRUE.equals(allowableActions.isCanDeleteObject())) { set.add(AllowableActionsEnum.CAN_DELETE_OBJECT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanDeleteTree())) { set.add(AllowableActionsEnum.CAN_DELETE_TREE); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetACL())) { set.add(AllowableActionsEnum.CAN_GET_ACL); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetAllVersions())) { set.add(AllowableActionsEnum.CAN_GET_ALL_VERSIONS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetAppliedPolicies())) { set.add(AllowableActionsEnum.CAN_GET_APPLIED_POLICIES); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetChildren())) { set.add(AllowableActionsEnum.CAN_GET_CHILDREN); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetContentStream())) { set.add(AllowableActionsEnum.CAN_GET_CONTENT_STREAM); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetDescendants())) { set.add(AllowableActionsEnum.CAN_GET_DESCENDANTS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetFolderParent())) { set.add(AllowableActionsEnum.CAN_GET_FOLDER_PARENT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetFolderTree())) { set.add(AllowableActionsEnum.CAN_GET_FOLDER_TREE); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetObjectParents())) { set.add(AllowableActionsEnum.CAN_GET_OBJECT_PARENTS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetObjectRelationships())) { set.add(AllowableActionsEnum.CAN_GET_OBJECT_RELATIONSHIPS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetProperties())) { set.add(AllowableActionsEnum.CAN_GET_PROPERTIES); }
+    if(Boolean.TRUE.equals(allowableActions.isCanGetRenditions())) { set.add(AllowableActionsEnum.CAN_GET_RENDITIONS); }
+    if(Boolean.TRUE.equals(allowableActions.isCanMoveObject())) { set.add(AllowableActionsEnum.CAN_MOVE_OBJECT); }
+    if(Boolean.TRUE.equals(allowableActions.isCanRemoveObjectFromFolder())) { set.add(AllowableActionsEnum.CAN_REMOVE_OBJECT_FROM_FOLDER); }
+    if(Boolean.TRUE.equals(allowableActions.isCanRemovePolicy())) { set.add(AllowableActionsEnum.CAN_REMOVE_POLICY); }
+    if(Boolean.TRUE.equals(allowableActions.isCanSetContentStream())) { set.add(AllowableActionsEnum.CAN_SET_CONTENT_STREAM); }
+    if(Boolean.TRUE.equals(allowableActions.isCanUpdateProperties())) { set.add(AllowableActionsEnum.CAN_UPDATE_PROPERTIES); }
+
+    result.setAllowableActions(set);
 
     // handle extensions
     convertExtension(allowableActions, result);
@@ -1817,7 +1798,7 @@ public final class Converter {
   /**
    * Converts an AllowableActions object.
    */
-  public static CmisAllowableActionsType convert(AllowableActionsData allowableActions) {
+  public static CmisAllowableActionsType convert(AllowableActions allowableActions) {
     if (allowableActions == null) {
       return null;
     }
@@ -1825,48 +1806,38 @@ public final class Converter {
     CmisAllowableActionsType result = new CmisAllowableActionsType();
 
     if (allowableActions.getAllowableActions() != null) {
-      Map<String, Boolean> actionsMap = allowableActions.getAllowableActions();
+      Set<AllowableActionsEnum> set = allowableActions.getAllowableActions();
 
-      result.setCanAddObjectToFolder(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER));
-      result.setCanApplyACL(actionsMap.get(AllowableActionsData.ACTION_CAN_APPLY_ACL));
-      result.setCanApplyPolicy(actionsMap.get(AllowableActionsData.ACTION_CAN_APPLY_POLICY));
-      result.setCanCancelCheckOut(actionsMap.get(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT));
-      result.setCanCheckIn(actionsMap.get(AllowableActionsData.ACTION_CAN_CHECK_IN));
-      result.setCanCheckOut(actionsMap.get(AllowableActionsData.ACTION_CAN_CHECK_OUT));
-      result.setCanCreateDocument(actionsMap.get(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT));
-      result.setCanCreateFolder(actionsMap.get(AllowableActionsData.ACTION_CAN_CREATE_FOLDER));
-      result.setCanCreateRelationship(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP));
-      result.setCanDeleteContentStream(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM));
-      result.setCanDeleteObject(actionsMap.get(AllowableActionsData.ACTION_CAN_DELETE_OBJECT));
-      result.setCanDeleteTree(actionsMap.get(AllowableActionsData.ACTION_CAN_DELETE_TREE));
-      result.setCanGetACL(actionsMap.get(AllowableActionsData.ACTION_CAN_GET_ACL));
-      result.setCanGetAllVersions(actionsMap.get(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS));
-      result.setCanGetAppliedPolicies(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_GET_APPLIED_POLICIES));
-      result.setCanGetChildren(actionsMap.get(AllowableActionsData.ACTION_CAN_GET_CHILDREN));
-      result.setCanGetContentStream(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM));
-      result.setCanGetDescendants(actionsMap.get(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS));
-      result.setCanGetFolderParent(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT));
-      result.setCanGetFolderTree(actionsMap.get(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE));
-      result.setCanGetObjectParents(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS));
-      result.setCanGetObjectRelationships(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS));
-      result.setCanGetProperties(actionsMap.get(AllowableActionsData.ACTION_CAN_GET_PROPERTIES));
-      result.setCanGetRenditions(actionsMap.get(AllowableActionsData.ACTION_CAN_GET_RENDITIONS));
-      result.setCanMoveObject(actionsMap.get(AllowableActionsData.ACTION_CAN_MOVE_OBJECT));
-      result.setCanRemoveObjectFromFolder(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER));
-      result.setCanRemovePolicy(actionsMap.get(AllowableActionsData.ACTION_CAN_REMOVE_POLICY));
-      result.setCanSetContentStream(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM));
-      result.setCanUpdateProperties(actionsMap
-          .get(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES));
+      result.setCanAddObjectToFolder(set.contains(AllowableActionsEnum.CAN_ADD_OBJECT_TO_FOLDER));
+      result.setCanApplyACL(set.contains(AllowableActionsEnum.CAN_APPLY_ACL));
+      result.setCanApplyPolicy(set.contains(AllowableActionsEnum.CAN_APPLY_POLICY));
+      result.setCanCancelCheckOut(set.contains(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT));
+      result.setCanCheckIn(set.contains(AllowableActionsEnum.CAN_CHECK_IN));
+      result.setCanCheckOut(set.contains(AllowableActionsEnum.CAN_CHECK_OUT));
+      result.setCanCreateDocument(set.contains(AllowableActionsEnum.CAN_CREATE_DOCUMENT));
+      result.setCanCreateFolder(set.contains(AllowableActionsEnum.CAN_CREATE_FOLDER));
+      result.setCanCreateRelationship(set.contains(AllowableActionsEnum.CAN_CREATE_RELATIONSHIP));
+      result.setCanDeleteContentStream(set.contains(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM));
+      result.setCanDeleteObject(set.contains(AllowableActionsEnum.CAN_DELETE_OBJECT));
+      result.setCanDeleteTree(set.contains(AllowableActionsEnum.CAN_DELETE_TREE));
+      result.setCanGetACL(set.contains(AllowableActionsEnum.CAN_GET_ACL));
+      result.setCanGetAllVersions(set.contains(AllowableActionsEnum.CAN_GET_ALL_VERSIONS));
+      result.setCanGetAppliedPolicies(set.contains(AllowableActionsEnum.CAN_GET_APPLIED_POLICIES));
+      result.setCanGetChildren(set.contains(AllowableActionsEnum.CAN_GET_CHILDREN));
+      result.setCanGetContentStream(set.contains(AllowableActionsEnum.CAN_GET_CONTENT_STREAM));
+      result.setCanGetDescendants(set.contains(AllowableActionsEnum.CAN_GET_DESCENDANTS));
+      result.setCanGetFolderParent(set.contains(AllowableActionsEnum.CAN_GET_FOLDER_PARENT));
+      result.setCanGetFolderTree(set.contains(AllowableActionsEnum.CAN_GET_FOLDER_TREE));
+      result.setCanGetObjectParents(set.contains(AllowableActionsEnum.CAN_GET_OBJECT_PARENTS));
+      result.setCanGetObjectRelationships(set.contains(AllowableActionsEnum.CAN_GET_OBJECT_RELATIONSHIPS));
+      result.setCanGetProperties(set.contains(AllowableActionsEnum.CAN_GET_PROPERTIES));
+      result.setCanGetRenditions(set.contains(AllowableActionsEnum.CAN_GET_RENDITIONS));
+      result.setCanMoveObject(set.contains(AllowableActionsEnum.CAN_MOVE_OBJECT));
+      result.setCanRemoveObjectFromFolder(set.contains(AllowableActionsEnum.CAN_REMOVE_OBJECT_FROM_FOLDER));
+      result.setCanRemovePolicy(set.contains(AllowableActionsEnum.CAN_REMOVE_POLICY));
+      result.setCanSetContentStream(set.contains(AllowableActionsEnum.CAN_SET_CONTENT_STREAM));
+      result.setCanUpdateProperties(set.contains(AllowableActionsEnum.CAN_UPDATE_PROPERTIES));
+
     }
 
     // handle extensions

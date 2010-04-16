@@ -55,7 +55,7 @@ public interface ObjectService {
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension);
 
-  AllowableActionsData getAllowableActions(String repositoryId, String objectId,
+  AllowableActions getAllowableActions(String repositoryId, String objectId,
       ExtensionsData extension);
 
   ObjectData getObject(String repositoryId, String objectId, String filter,

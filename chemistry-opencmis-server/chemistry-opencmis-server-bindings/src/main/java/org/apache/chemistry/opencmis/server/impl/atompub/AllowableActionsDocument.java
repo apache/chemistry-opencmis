@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
 
@@ -46,7 +46,7 @@ public class AllowableActionsDocument {
   /**
    * Writes an object.
    */
-  public void writeAllowableActions(AllowableActionsData allowableActions, OutputStream out)
+  public void writeAllowableActions(AllowableActions allowableActions, OutputStream out)
       throws XMLStreamException, JAXBException {
     CmisAllowableActionsType allowableActionsJaxb = convert(allowableActions);
     if (allowableActionsJaxb == null) {

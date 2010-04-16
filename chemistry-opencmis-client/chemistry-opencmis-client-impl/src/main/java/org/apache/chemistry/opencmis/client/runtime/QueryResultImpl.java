@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.api.AllowableActions;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.QueryProperty;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
@@ -32,6 +31,8 @@ import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
 
@@ -72,7 +73,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
       // handle allowable actions
       if (objectData.getAllowableActions() != null) {
-        this.allowableActions = of.convertAllowableActions(objectData.getAllowableActions());
+        this.allowableActions = objectData.getAllowableActions();
       }
 
       // handle relationships
@@ -98,7 +99,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.QueryResult#getProperties()
    */
   public List<QueryProperty<?>> getProperties() {
@@ -107,7 +108,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyById(java.lang.String)
    */
   @SuppressWarnings("unchecked")
@@ -117,7 +118,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyByQueryName(java.lang.String)
    */
   @SuppressWarnings("unchecked")
@@ -127,7 +128,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyValueById(java.lang.String)
    */
   public <T> T getPropertyValueById(String id) {
@@ -141,7 +142,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyValueByQueryName(java.lang.String)
    */
   public <T> T getPropertyValueByQueryName(String queryName) {
@@ -155,7 +156,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueById(java.lang.String)
    */
   public <T> List<T> getPropertyMultivalueById(String id) {
@@ -169,7 +170,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueByQueryName(java.lang.String)
    */
@@ -184,7 +185,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.QueryResult#getAllowableActions()
    */
   public AllowableActions getAllowableActions() {
@@ -193,7 +194,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.QueryResult#getRelationships()
    */
   public List<Relationship> getRelationships() {
@@ -202,7 +203,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.api.QueryResult#getRenditions()
    */
   public List<Rendition> getRenditions() {

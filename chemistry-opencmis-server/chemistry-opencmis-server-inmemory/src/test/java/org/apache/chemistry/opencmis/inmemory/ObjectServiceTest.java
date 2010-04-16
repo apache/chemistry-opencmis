@@ -24,13 +24,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -38,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -84,9 +86,9 @@ public class ObjectServiceTest extends AbstractServiceTst {
   private static final String FOLDER_TYPE_ID =  InMemoryFolderTypeDefinition.getRootFolderType().getId();
   private static final String FOLDER_ID =  "Folder_1";
   private static final String MY_CUSTOM_NAME = "My Custom Document";
-  
+
   ObjectCreator fCreator;
-  
+
   @Before
   public void setUp() throws Exception {
     super.setTypeCreatorClass(ObjectTestTypeSystemCreator.class.getName());
@@ -106,7 +108,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     if (id != null)
       log.info("createDocument succeeded with created id: " + id);
     log.info("... testCreateObject() finished.");
-    
+
     // test create a document with a folder type, should fail:
     try {
       PropertiesData props = createDocumentProperties("DocumentWithAFolderType", FOLDER_TYPE_ID);
@@ -138,15 +140,15 @@ public class ObjectServiceTest extends AbstractServiceTst {
       log.info("  createDocument succeeded with created id: " + id);
 
     log.info("  getting object");
-    retrieveDocument(id);    
+    retrieveDocument(id);
     log.info("... testGetObject() finished.");
   }
-  
+
   @Test
   public void testGetObjectByPath() {
     log.info("starting testGetObjectByPath() ...");
     log.info("  creating object");
-    
+
     // create a tree for testing paths
     String f1 = createFolder("folder1", fRootFolderId, FOLDER_TYPE_ID);
     String f2 = createFolder("folder2", fRootFolderId, FOLDER_TYPE_ID);
@@ -167,7 +169,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     String doc33 = createDocument("Document3.3.Doc", f33, false);
     String doc331 = createDocument("Document3.3.1.Doc", f331, false);
     String doc333 = createDocument("Document3.3.3.Doc", f333, false);
-    
+
     log.info("  getting object by path");
     getByPath(f1, "/folder1");
     getByPath(f2, "/folder2");
@@ -190,7 +192,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     getByPath(doc333, "/folder3/folder3.3/folder3.3.3/Document3.3.3.Doc");
 
     log.info("... testGetObjectByPath() finished.");
-  }   
+  }
 
   @Test
   public void testCreateDocumentWithContent() {
@@ -198,25 +200,25 @@ public class ObjectServiceTest extends AbstractServiceTst {
     String id = createDocument(fRootFolderId, true);
     if (id != null)
       log.info("createDocument succeeded with created id: " + id);
-    
+
     ContentStream sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
         BigInteger.valueOf(-1) /* length */, null);
     verifyContentResult(sd);
-    
+
     // delete content again
     Holder<String> idHolder = new Holder<String>(id);
     fObjSvc.deleteContentStream(fRepositoryId, idHolder, null, null);
     sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
         BigInteger.valueOf(-1) /* length */, null);
     assertNull(sd);
-    
+
     //create content again in a second call
     ContentStream contentStream = createContent();
     fObjSvc.setContentStream(fRepositoryId, idHolder, true, null, contentStream, null);
     sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
         BigInteger.valueOf(-1) /* length */, null);
     verifyContentResult(sd);
-    
+
     // update content and do not set overwrite flag, expect failure
     try {
       fObjSvc.setContentStream(fRepositoryId, idHolder, false, null, contentStream, null);
@@ -227,7 +229,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
 
     // cleanup
     fObjSvc.deleteObject(fRepositoryId, id, true, null);
-    
+
     log.info("... testCreateDocumentWithContent() finished.");
   }
 
@@ -253,11 +255,11 @@ public class ObjectServiceTest extends AbstractServiceTst {
     ContentStream sd = fObjSvc.getContentStream(fRepositoryId, id2, null, BigInteger.valueOf(-1) /* offset */,
         BigInteger.valueOf(-1) /* length */, null);
     verifyContentResult(sd);
-    
+
     // cleanup
     fObjSvc.deleteObject(fRepositoryId, id1, true, null);
     fObjSvc.deleteObject(fRepositoryId, id2, true, null);
-    
+
     log.info("... testCreateDocumentFromSource() finished.");
   }
 
@@ -265,7 +267,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
   public void testCreatedDocumentInherited() {
     log.info("starting testCreatedDocumentInherited() ...");
     log.info("  creating object");
-  
+
     String id = createDocumentInheritedProperties(fRootFolderId, false);
     if (id != null)
       log.info("  createDocument succeeded with created id: " + id);
@@ -277,7 +279,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       assertNotNull(res);
 
       String returnedId = res.getId();
-      assertEquals(id, returnedId); 
+      assertEquals(id, returnedId);
       Map<String, PropertyData<?>> props = res.getProperties().getProperties();
       for (PropertyData<?> pd : props.values()) {
         log.info("return property id: " + pd.getId() + ", value: " + pd.getValues());
@@ -286,27 +288,27 @@ public class ObjectServiceTest extends AbstractServiceTst {
       PropertyData<?> pd = props.get(PropertyIds.CMIS_NAME);
       assertNotNull(pd);
       assertEquals(MY_CUSTOM_NAME, pd.getFirstValue());
-      
+
       pd = props.get(PropertyIds.CMIS_OBJECT_TYPE_ID);
       assertEquals(TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID, pd.getFirstValue());
-      
+
       pd = props.get(TEST_DOCUMENT_MY_STRING_PROP_ID);
       assertEquals("My pretty string", pd.getFirstValue());
-      
+
       pd = props.get(TEST_DOCUMENT_MY_INT_PROP_ID);
       assertEquals(BigInteger.valueOf(4711), pd.getFirstValue());
-      
+
       pd = props.get(TEST_DOCUMENT_MY_SUB_STRING_PROP_ID);
       assertEquals("another cool string", pd.getFirstValue());
-      
+
       pd = props.get(TEST_DOCUMENT_MY_SUB_INT_PROP_ID);
       assertEquals(BigInteger.valueOf(4712), pd.getFirstValue());
     } catch (Exception e) {
       fail("getObject() failed with exception: " + e);
-    }    
+    }
     log.info("... testCreatedDocumentInherited() finished.");
   }
-  
+
   @Test
   public void testBuildFolderAndDocuments() {
     // Create a hierarchy of folders and fill it with some documents
@@ -319,22 +321,22 @@ public class ObjectServiceTest extends AbstractServiceTst {
 
     // Set the type id for all created documents:
     gen.setDocumentTypeId(TEST_DOCUMENT_TYPE_ID);
-    
+
     // Set the type id for all created folders:
     gen.setFolderTypeId(TEST_FOLDER_TYPE_ID);
-    
+
     // set the properties the generator should fill with values for documents:
     // Note: must be valid properties in type TEST_DOCUMENT_TYPE_ID
     List<String> propsToSet = new ArrayList<String>();
     propsToSet.add(TEST_DOCUMENT_STRING_PROP_ID);
     gen.setDocumentPropertiesToGenerate(propsToSet);
-    
+
     // set the properties the generator should fill with values for folders:
     // Note: must be valid properties in type TEST_FOLDER_TYPE_ID
     propsToSet = new ArrayList<String>();
     propsToSet.add(TEST_FOLDER_STRING_PROP_ID);
     gen.setFolderPropertiesToGenerate(propsToSet);
-    
+
     // Build the tree
     try {
       gen.createFolderHierachy(levels, childrenPerLevel, fRootFolderId);
@@ -344,8 +346,8 @@ public class ObjectServiceTest extends AbstractServiceTst {
       fail("Could not create folder hierarchy with documents. " + e);
     }
   }
-  
-  
+
+
   @Test
   public void testDeleteObject() {
     log.info("starting testDeleteObject() ...");
@@ -356,15 +358,15 @@ public class ObjectServiceTest extends AbstractServiceTst {
       log.info("  createDocument succeeded with created id: " + id);
 
     log.info("  getting object");
-    retrieveDocument(id);    
+    retrieveDocument(id);
     log.info("  deleting object");
     try {
       fObjSvc.deleteObject(fRepositoryId, id, true, null);
     }
     catch (Exception e) {
       fail("deleteObject() for document failed with exception: " + e);
-    }    
-    
+    }
+
     // check that it does not exist anymore
     try {
       fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE,
@@ -373,11 +375,11 @@ public class ObjectServiceTest extends AbstractServiceTst {
     }
     catch (CmisObjectNotFoundException e) {
       assertTrue(e instanceof CmisObjectNotFoundException);
-    }    
+    }
     catch (Exception e) {
       fail("getting deleted object should raise CMISObjectNotFoundException, but got " + e);
-    }    
-      
+    }
+
     log.info("Testing to delete an empty folder");
     // create and delete an empty folder
     id = createFolder();
@@ -386,7 +388,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     }
     catch (Exception e) {
       fail("deleteObject() for folder failed with exception: " + e);
-    }    
+    }
     // check that it does not exist anymore
     try {
       fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE,
@@ -395,10 +397,10 @@ public class ObjectServiceTest extends AbstractServiceTst {
     }
     catch (CmisObjectNotFoundException e) {
       assertTrue(e instanceof CmisObjectNotFoundException);
-    }    
+    }
     catch (Exception e) {
       fail("getting deleted object should raise CMISObjectNotFoundException, but got " + e);
-    }    
+    }
 
     // create a folder with a document and delete should fail
     // create and delete an empty folder
@@ -406,14 +408,14 @@ public class ObjectServiceTest extends AbstractServiceTst {
     String folderId;
     folderId = createFolder();
     id = createDocument(folderId, false);
-    
+
     try {
       fObjSvc.deleteObject(fRepositoryId, folderId, true, null);
       fail("deleteObject() for folder with a document should fail.");
     }
     catch (Exception e) {
       assertTrue(e instanceof CmisConstraintException);
-    }    
+    }
     // should succeed if we first delete document then folder
     try {
       fObjSvc.deleteObject(fRepositoryId, id, true, null);
@@ -421,7 +423,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     }
     catch (Exception e) {
       fail("deleteObject() for document and folder failed with exception: " + e);
-    }    
+    }
     // check that it does not exist anymore
     try {
       fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE,
@@ -430,10 +432,10 @@ public class ObjectServiceTest extends AbstractServiceTst {
     }
     catch (CmisObjectNotFoundException e) {
       assertTrue(e instanceof CmisObjectNotFoundException);
-    }    
+    }
     catch (Exception e) {
       fail("getting deleted object should raise CMISObjectNotFoundException, but got " + e);
-    }    
+    }
     try {
       fObjSvc.getObject(fRepositoryId, folderId, "*", false, IncludeRelationships.NONE,
           null, false, false, null);
@@ -443,29 +445,29 @@ public class ObjectServiceTest extends AbstractServiceTst {
       assertTrue(e instanceof CmisObjectNotFoundException);
     } catch (Exception e) {
       fail("getting deleted object should raise CMISObjectNotFoundException, but got " + e);
-    }    
-    log.info("... testDeleteObject() finished.");    
+    }
+    log.info("... testDeleteObject() finished.");
   }
-  
+
   @Test
   public void testDeleteTree() {
     log.info("starting testDeleteTree() ...");
     ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
     String rootFolderId = createFolder();
     // Set the type id for all created documents:
-    gen.setDocumentTypeId(InMemoryDocumentTypeDefinition.getRootDocumentType().getId());    
+    gen.setDocumentTypeId(InMemoryDocumentTypeDefinition.getRootDocumentType().getId());
     // Set the type id for all created folders:
     gen.setFolderTypeId(InMemoryFolderTypeDefinition.getRootFolderType().getId());
-    gen.setNumberOfDocumentsToCreatePerFolder(2); // create two documents in each folder    
+    gen.setNumberOfDocumentsToCreatePerFolder(2); // create two documents in each folder
     gen.createFolderHierachy(1, 1, rootFolderId);
     try {
           fObjSvc.deleteTree(fRepositoryId, rootFolderId, null /*true*/, UnfileObjects.DELETE, true, null);
     } catch (Exception e) {
       fail("deleteTree failed unexpected. " + e);
-    }    
+    }
     log.info("Dumping folder, should only contain one empty folder under root");
     gen.dumpFolder(fRootFolderId, "*");
-    
+
     // After that we should be not be able to get the root folder, because it should be deleted
     try {
       fObjSvc.getObject(fRepositoryId, rootFolderId, "*", false, IncludeRelationships.NONE,
@@ -474,10 +476,10 @@ public class ObjectServiceTest extends AbstractServiceTst {
     }
     catch (CmisObjectNotFoundException e) {
       assertTrue(e instanceof CmisObjectNotFoundException);
-    }    
+    }
     catch (Exception e) {
       fail("getting deleted object should raise CMISObjectNotFoundException, but got " + e);
-    }    
+    }
     log.info("... testDeleteTree() finished.");
   }
 
@@ -485,14 +487,14 @@ public class ObjectServiceTest extends AbstractServiceTst {
   public void testMoveFolder() {
     log.info("starting testMoveFolder() ...");
     moveObjectTest(true);
-    log.info("... testMoveFolder() finished.");    
+    log.info("... testMoveFolder() finished.");
   }
-  
+
   @Test
   public void testMoveDocument() {
     log.info("starting testMoveDocument() ...");
     moveObjectTest(false);
-    log.info("... testMoveDocument() finished.");    
+    log.info("... testMoveDocument() finished.");
   }
 
   @Test
@@ -502,21 +504,21 @@ public class ObjectServiceTest extends AbstractServiceTst {
     String id = createDocumentWithCustomType(fRootFolderId, false);
     if (id != null)
       log.info("createDocument succeeded with created id: " + id);
-    
+
     log.info("  getting object");
     try {
       ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE,
           null, false, false, null);
       assertNotNull(res);
       Map<String, PropertyData<?>> props = res.getProperties().getProperties();
-      
+
       // check returned properties
       for (PropertyData<?> pd : props.values()) {
         log.info("  return property id: " + pd.getId() + ", value: " + pd.getValues());
       }
-      
+
       String returnedId = res.getId();
-      assertEquals(id, returnedId);    
+      assertEquals(id, returnedId);
       PropertyData<?> pd = props.get(PropertyIds.CMIS_NAME);
       assertNotNull(pd);
       assertEquals(MY_CUSTOM_NAME, pd.getFirstValue());
@@ -526,17 +528,17 @@ public class ObjectServiceTest extends AbstractServiceTst {
       assertEquals("My pretty string", pd.getFirstValue());
       pd = props.get(TEST_DOCUMENT_MY_INT_PROP_ID);
       assertEquals(BigInteger.valueOf(4711), pd.getFirstValue());
-      
+
       // update properties:
       log.info("updating property");
       final String newStringPropVal = "My ugly string";
-      final BigInteger newIntPropVal = BigInteger.valueOf(815);        
+      final BigInteger newIntPropVal = BigInteger.valueOf(815);
       List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
 //      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, MY_CUSTOM_NAME));
 //      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, TEST_CUSTOM_DOCUMENT_TYPE_ID));
       // Generate some property values for custom attributes
-      properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, newStringPropVal));      
-      properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, newIntPropVal));     
+      properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, newStringPropVal));
+      properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, newIntPropVal));
       PropertiesData newProps = fFactory.createPropertiesData(properties);
 
       Holder<String> idHolder = new Holder<String>(id);
@@ -550,9 +552,9 @@ public class ObjectServiceTest extends AbstractServiceTst {
       props = res.getProperties().getProperties();
       for (PropertyData<?> pd2 : props.values()) {
         log.info("  return property id: " + pd2.getId() + ", value: " + pd2.getValues());
-      }     
+      }
       returnedId = res.getId();
-      assertEquals(id, returnedId);    
+      assertEquals(id, returnedId);
       pd = props.get(PropertyIds.CMIS_NAME);
       assertNotNull(pd);
       assertEquals(MY_CUSTOM_NAME, pd.getFirstValue());
@@ -562,11 +564,11 @@ public class ObjectServiceTest extends AbstractServiceTst {
       assertEquals(newStringPropVal, pd.getFirstValue());
       pd = props.get(TEST_DOCUMENT_MY_INT_PROP_ID);
       assertEquals(newIntPropVal, pd.getFirstValue());
-      
+
       // Test delete properties
       log.info("deleting property");
       properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, (String)null));      
+      properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, (String)null));
       newProps = fFactory.createPropertiesData(properties);
       Thread.sleep(100); // ensure new change token, timer resolution is not good enough
       fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, newProps, null);
@@ -576,12 +578,12 @@ public class ObjectServiceTest extends AbstractServiceTst {
       props = res.getProperties().getProperties();
       for (PropertyData<?> pd2 : props.values()) {
         log.info("  return property id: " + pd2.getId() + ", value: " + pd2.getValues());
-      }     
+      }
       pd = props.get(TEST_DOCUMENT_MY_STRING_PROP_ID);
       assertNull(pd);
       // delete a required property and expect exception:
       properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, (BigInteger)null));      
+      properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, (BigInteger)null));
       newProps = fFactory.createPropertiesData(properties);
       idHolder = new Holder<String>(id);
       try {
@@ -590,11 +592,11 @@ public class ObjectServiceTest extends AbstractServiceTst {
       } catch (Exception e) {
         assertTrue(e instanceof CmisConstraintException);
       }
-      
+
       // Test violation of property definition constraints
       log.info("Test violation of property definition constraints");
       properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "A very long String ABCDEFHIJKLMNOPQRSTUVWXYZ"));      
+      properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "A very long String ABCDEFHIJKLMNOPQRSTUVWXYZ"));
       newProps = fFactory.createPropertiesData(properties);
       idHolder = new Holder<String>(id);
       try {
@@ -606,7 +608,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       // Test stale token
       log.info("Test stale token");
       properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "ABC"));      
+      properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "ABC"));
       newProps = fFactory.createPropertiesData(properties);
       // set outdated token
       newChangeToken = changeTokenHolder.getValue();
@@ -623,7 +625,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       log.info("Test renaming");
       final String newName = "My Renamed Document"; // MY_CUSTOM_NAME
       properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, newName));      
+      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, newName));
       newProps = fFactory.createPropertiesData(properties);
       changeTokenHolder.setValue(newChangeToken);
       fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, newProps, null);
@@ -635,11 +637,11 @@ public class ObjectServiceTest extends AbstractServiceTst {
       pd = props.get(PropertyIds.CMIS_NAME);
       assertNotNull(pd);
       assertEquals(newName, pd.getFirstValue());
-      
+
       // test rename with a conflicting name
       createDocumentWithCustomType(fRootFolderId, false);
       properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, MY_CUSTOM_NAME));      
+      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, MY_CUSTOM_NAME));
       newProps = fFactory.createPropertiesData(properties);
       // now rename to old name
       try {
@@ -648,10 +650,10 @@ public class ObjectServiceTest extends AbstractServiceTst {
       } catch (Exception e) {
         assertTrue(e instanceof CmisConstraintException);
       }
-      
+
     } catch (Exception e) {
       fail("getObject() failed with exception: " + e);
-    }    
+    }
     log.info("... testUpdateProperties() finished.");
   }
 
@@ -660,17 +662,17 @@ public class ObjectServiceTest extends AbstractServiceTst {
     log.info("starting testAllowableActions() ...");
     final boolean withContent = false;
     String id = createDocument(fRootFolderId, withContent);
-    
+
     // get allowable actions via getObject
     ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", true, IncludeRelationships.NONE,
         null, false, false, null);
     assertNotNull(res.getAllowableActions());
-    Map<String, Boolean> actions = res.getAllowableActions().getAllowableActions();
+    Set<AllowableActionsEnum> actions = res.getAllowableActions().getAllowableActions();
     assertNotNull(actions);
     verifyAllowableActionsDocument(actions, false, withContent);
-    
+
     // get allowable actions via getAllowableActions
-    AllowableActionsData allowableActions = fObjSvc.getAllowableActions(fRepositoryId, id, null);
+    AllowableActions allowableActions = fObjSvc.getAllowableActions(fRepositoryId, id, null);
     assertNotNull(allowableActions);
     actions = allowableActions.getAllowableActions();
     assertNotNull(actions);
@@ -678,72 +680,72 @@ public class ObjectServiceTest extends AbstractServiceTst {
 
     // cleanup
     fObjSvc.deleteObject(fRepositoryId, id, true, null);
-    log.info("... testAllowableActions() finished.");    
+    log.info("... testAllowableActions() finished.");
   }
-  
-  private void verifyAllowableActionsDocument(Map<String, Boolean> actions, boolean isVersioned, boolean hasContent) {
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_OBJECT));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_PROPERTIES));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS));
-    
-    assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT));
-    assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE));
-    assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_MOVE_OBJECT));
-    if (hasContent) {
-      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM));
-      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM));
-      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_RENDITIONS));
-    } else {
-      assertNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM));
-      assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM));
-      assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_RENDITIONS));
-    }
-    assertNull(actions.get(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER));
-    assertNull(actions.get(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER));
-    
-    if (isVersioned) {
-      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT));
-      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_IN));      
-      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_OUT));
-      assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS));
 
-    } else {
-      assertNull(actions.get(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT));
-      assertNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_IN));      
-      assertNull(actions.get(AllowableActionsData.ACTION_CAN_CHECK_OUT));
-      assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS));
-    }
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_APPLY_POLICY));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_APPLIED_POLICIES));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_REMOVE_POLICY));
-    assertNull(actions.get(AllowableActionsData.ACTION_CAN_GET_CHILDREN));
-    assertNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT));
-    assertNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_FOLDER));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP));
-    assertNull(actions.get(AllowableActionsData.ACTION_CAN_DELETE_TREE));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_GET_ACL));
-    assertNotNull(actions.get(AllowableActionsData.ACTION_CAN_APPLY_ACL));
+  private void verifyAllowableActionsDocument(Set<AllowableActionsEnum> actions, boolean isVersioned, boolean hasContent) {
+        assertTrue(actions.contains(AllowableActionsEnum.CAN_DELETE_OBJECT));
+        assertTrue(actions.contains(AllowableActionsEnum.CAN_UPDATE_PROPERTIES));
+        assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_PROPERTIES));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_OBJECT_RELATIONSHIPS));
+        assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_OBJECT_PARENTS));
+
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_FOLDER_PARENT));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_FOLDER_TREE));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_DESCENDANTS));
+        assertTrue(actions.contains(AllowableActionsEnum.CAN_MOVE_OBJECT));
+        if (hasContent) {
+          assertTrue(actions.contains(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM));
+          assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_CONTENT_STREAM));
+          assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_RENDITIONS));
+        } else {
+          assertFalse(actions.contains(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM));
+          assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_CONTENT_STREAM));
+          assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_RENDITIONS));
+        }
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_ADD_OBJECT_TO_FOLDER));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_REMOVE_OBJECT_FROM_FOLDER));
+
+        if (isVersioned) {
+          assertTrue(actions.contains(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT));
+          assertTrue(actions.contains(AllowableActionsEnum.CAN_CHECK_IN));
+          assertTrue(actions.contains(AllowableActionsEnum.CAN_CHECK_OUT));
+          assertTrue(actions.contains(AllowableActionsEnum.CAN_GET_ALL_VERSIONS));
+
+        } else {
+          assertFalse(actions.contains(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT));
+          assertFalse(actions.contains(AllowableActionsEnum.CAN_CHECK_IN));
+          assertFalse(actions.contains(AllowableActionsEnum.CAN_CHECK_OUT));
+          assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_ALL_VERSIONS));
+        }
+        assertTrue(actions.contains(AllowableActionsEnum.CAN_SET_CONTENT_STREAM));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_APPLY_POLICY));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_APPLIED_POLICIES));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_REMOVE_POLICY));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_CHILDREN));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_CREATE_DOCUMENT));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_CREATE_FOLDER));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_CREATE_RELATIONSHIP));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_DELETE_TREE));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_GET_ACL));
+        assertFalse(actions.contains(AllowableActionsEnum.CAN_APPLY_ACL));
   }
-  
+
   private String retrieveDocument(String id) {
     ObjectData res = getDocumentObjectData(id);
     String returnedId = res.getId();
     testReturnedProperties(returnedId, DOCUMENT_ID, DOCUMENT_TYPE_ID, res.getProperties().getProperties());
     return returnedId;
   }
-  
+
   private void moveObjectTest(boolean isFolder) {
     final String propertyFilter=PropertyIds.CMIS_OBJECT_ID+","+PropertyIds.CMIS_NAME; //+","+PropertyIds.CMIS_OBJECT_TYPE_ID+","+PropertyIds.CMIS_BASE_TYPE_ID;
     String rootFolderId = createFolder();
     ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
     // Set the type id for all created documents:
-    gen.setDocumentTypeId(InMemoryDocumentTypeDefinition.getRootDocumentType().getId());    
+    gen.setDocumentTypeId(InMemoryDocumentTypeDefinition.getRootDocumentType().getId());
     // Set the type id for all created folders:
-    gen.setNumberOfDocumentsToCreatePerFolder(1); // create one document in each folder    
+    gen.setNumberOfDocumentsToCreatePerFolder(1); // create one document in each folder
     gen.createFolderHierachy(3, 2, rootFolderId);
     gen.setFolderTypeId(InMemoryFolderTypeDefinition.getRootFolderType().getId());
     gen.dumpFolder(fRootFolderId, propertyFilter);
@@ -762,13 +764,13 @@ public class ObjectServiceTest extends AbstractServiceTst {
     // check that new parent is set correctly
     String newParentId =result.get(0).getObject().getId();
     assertEquals(rootFolderId, newParentId);
-    
+
     if (isFolder) {
       log.info("testing moveFolder to a subfolder");
       ObjectInFolderList ch = fNavSvc.getChildren(fRepositoryId, holder.getValue(), propertyFilter, null,
           false, IncludeRelationships.NONE, null, false, null, null, null);
       String subFolderId = ch.getObjects().get(0).getObject().getId();
-      
+
       try {
         fObjSvc.moveObject(fRepositoryId, holder, subFolderId, sourceFolderId, null);
         fail("moveObject to a folder that is a descendant of the source must fail.");
@@ -777,7 +779,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       }
     }
   }
-  
+
   private String createFolder() {
     return createFolder(FOLDER_ID, fRootFolderId, FOLDER_TYPE_ID);
   }
@@ -785,13 +787,13 @@ public class ObjectServiceTest extends AbstractServiceTst {
   private String createDocument(String folderId, boolean withContent) {
     return createDocument(DOCUMENT_ID, folderId, withContent);
   }
-  
+
   private String createDocument(String name, String folderId, boolean withContent) {
     return createDocument(name, folderId, DOCUMENT_TYPE_ID, withContent);
   }
 
   private PropertiesData createDocumentPropertiesForDocumentFromSource(String name) {
-    // We only provide a name but not a type id, as spec says to copy missing attributes 
+    // We only provide a name but not a type id, as spec says to copy missing attributes
     // from the existing one
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, name));
@@ -799,17 +801,17 @@ public class ObjectServiceTest extends AbstractServiceTst {
     return props;
   }
 
-  
+
   private void testReturnedProperties(String objectId, String objectName, String typeId, Map<String, PropertyData<?>> props) {
     super.testReturnedProperties(objectId, props);
-    
+
     PropertyData<?> pd = props.get(PropertyIds.CMIS_NAME);
     assertNotNull(pd);
     assertEquals(objectName, pd.getFirstValue());
     pd = props.get(PropertyIds.CMIS_OBJECT_TYPE_ID);
     assertEquals(typeId, pd.getFirstValue());
   }
- 
+
   private String createDocumentWithCustomType(String folderId, boolean withContent) {
     ContentStream contentStream = null;
     VersioningState versioningState = VersioningState.NONE;
@@ -823,15 +825,15 @@ public class ObjectServiceTest extends AbstractServiceTst {
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, MY_CUSTOM_NAME));
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, TEST_CUSTOM_DOCUMENT_TYPE_ID));
     // Generate some property values for custom attributes
-    properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "My pretty string"));      
-    properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, BigInteger.valueOf(4711)));      
+    properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "My pretty string"));
+    properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, BigInteger.valueOf(4711)));
 
     PropertiesData props = fFactory.createPropertiesData(properties);
-    
+
     if (withContent)
       contentStream = createContent();
-    
-    // create the document 
+
+    // create the document
     String id = null;
     id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState,
         policies, addACEs, removeACEs, extension);
@@ -839,7 +841,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       throw new RuntimeException("createDocument failed.");
     return id;
   }
-  
+
   private String createDocumentInheritedProperties(String folderId, boolean withContent) {
     ContentStream contentStream = null;
     VersioningState versioningState = VersioningState.NONE;
@@ -853,17 +855,17 @@ public class ObjectServiceTest extends AbstractServiceTst {
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, MY_CUSTOM_NAME));
     properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID));
     // Generate some property values for custom attributes
-    properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "My pretty string"));      
-    properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, BigInteger.valueOf(4711)));      
+    properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "My pretty string"));
+    properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, BigInteger.valueOf(4711)));
     properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_SUB_STRING_PROP_ID, "another cool string"));
     properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_SUB_INT_PROP_ID, BigInteger.valueOf(4712)));
-        
+
     PropertiesData props = fFactory.createPropertiesData(properties);
-    
+
     if (withContent)
       contentStream = createContent();
-    
-    // create the document 
+
+    // create the document
     String id = null;
     id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState,
         policies, addACEs, removeACEs, extension);
@@ -871,21 +873,21 @@ public class ObjectServiceTest extends AbstractServiceTst {
       throw new RuntimeException("createDocument failed.");
     return id;
   }
-  
+
   private String getSourceFolder(String objectId) {
     // return the first parent found in the result list of all parents
     List<ObjectParentData> parents = fNavSvc.getObjectParents(fRepositoryId, objectId, "*", false,
         IncludeRelationships.NONE, null, true, null);
     return parents.get(0).getObject().getId();
   }
-  
+
   // Helper class to create some type for testing the ObjectService
-  
+
   public static class ObjectTestTypeSystemCreator implements TypeCreator {
 
     /**
      * create root types and a sample type for folder and document
-     * 
+     *
      * @return typesMap map filled with created types
      */
     public List<TypeDefinition> createTypesList() {
@@ -916,7 +918,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       typesList.add(createCustomInheritedType(customDocType));
       return typesList;
     }
-    
+
     private static InMemoryDocumentTypeDefinition createCustomTypeWithStringIntProperty() {
       InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(TEST_CUSTOM_DOCUMENT_TYPE_ID,
           "My Custom Document Type", InMemoryDocumentTypeDefinition.getRootDocumentType());
@@ -936,7 +938,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
       return cmisDocumentType;
     }
-    
+
     private static InMemoryDocumentTypeDefinition createCustomInheritedType(InMemoryDocumentTypeDefinition baseType) {
       InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID,
           "My Custom Document Type", baseType);
@@ -953,7 +955,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
       return cmisDocumentType;
     }
-    
+
   }
 
 }

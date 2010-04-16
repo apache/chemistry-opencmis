@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.bindings.Ace;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;

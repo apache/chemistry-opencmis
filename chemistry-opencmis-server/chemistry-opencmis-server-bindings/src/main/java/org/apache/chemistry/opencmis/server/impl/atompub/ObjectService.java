@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
@@ -405,7 +405,7 @@ public final class ObjectService {
     String objectId = getStringParameter(request, Constants.PARAM_ID);
 
     // execute
-    AllowableActionsData allowableActions = service.getAllowableActions(context, repositoryId,
+    AllowableActions allowableActions = service.getAllowableActions(context, repositoryId,
         objectId, null);
 
     if (allowableActions == null) {

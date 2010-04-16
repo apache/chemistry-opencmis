@@ -16,40 +16,44 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects;
 
-import java.util.Map;
-
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class AllowableActionsDataImpl extends AbstractExtensionData implements AllowableActionsData {
+public class AtomAllowableActions extends AtomBase {
 
-  private Map<String, Boolean> fAllowableActions;
+  private static final long serialVersionUID = 1L;
+
+  private CmisAllowableActionsType fAllowableActions;
+
+  public AtomAllowableActions() {
+    super();
+  }
+
+  public AtomAllowableActions(CmisAllowableActionsType allowableActions) {
+    this();
+    setAllowableActions(allowableActions);
+  }
 
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.opencmis.client.provider.AllowableActionsData#getAllowableActions()
+   * @see org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType()
    */
-  public Map<String, Boolean> getAllowableActions() {
+  @Override
+  public String getType() {
+    return "Allowable Actions";
+  }
+
+  public CmisAllowableActionsType getAllowableActions() {
     return fAllowableActions;
   }
 
-  public void setAllowableActions(Map<String, Boolean> allowableActions) {
+  public void setAllowableActions(CmisAllowableActionsType allowableActions) {
     fAllowableActions = allowableActions;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return "Allowable Actions [allowable actions=" + fAllowableActions + "]" + super.toString();
   }
 }

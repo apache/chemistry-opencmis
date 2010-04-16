@@ -30,7 +30,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AllowableActions;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomBase;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
@@ -300,9 +300,9 @@ public class AtomPubParser implements CmisAtomPubConstants {
   /**
    * Parses an Allowable Actions document.
    */
-  private AllowableActions parseAllowableActions(XMLStreamReader parser) throws Exception {
+  private AtomAllowableActions parseAllowableActions(XMLStreamReader parser) throws Exception {
     AtomElement elemenet = unmarshalElement(parser, CmisAllowableActionsType.class);
-    return new AllowableActions((CmisAllowableActionsType) elemenet.getObject());
+    return new AtomAllowableActions((CmisAllowableActionsType) elemenet.getObject());
   }
 
   /**

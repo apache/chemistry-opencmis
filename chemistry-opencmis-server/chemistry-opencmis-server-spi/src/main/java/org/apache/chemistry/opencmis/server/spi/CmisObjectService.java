@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
@@ -119,7 +119,7 @@ public interface CmisObjectService {
    * Bindings: AtomPub, Web Services
    * </p>
    */
-  AllowableActionsData getAllowableActions(CallContext context, String repositoryId,
+  AllowableActions getAllowableActions(CallContext context, String repositoryId,
       String objectId, ExtensionsData extension);
 
   /**

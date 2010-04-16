@@ -57,7 +57,7 @@ public interface ObjectData extends ExtensionsData {
    * 
    * @return the allowable actions or <code>null</code> if the allowable actions are unknown
    */
-  AllowableActionsData getAllowableActions();
+  AllowableActions getAllowableActions();
 
   /**
    * Returns the relationships from and to this object.

@@ -31,7 +31,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
@@ -319,7 +319,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
    * @see org.apache.opencmis.client.provider.ObjectService#getAllowableActions(java.lang.String,
    * java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
    */
-  public AllowableActionsData getAllowableActions(String repositoryId, String objectId,
+  public AllowableActions getAllowableActions(String repositoryId, String objectId,
       ExtensionsData extension) {
     ObjectServicePort port = fPortProvider.getObjectServicePort();
 

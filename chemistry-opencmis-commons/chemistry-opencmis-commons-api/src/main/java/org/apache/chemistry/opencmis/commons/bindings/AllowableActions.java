@@ -16,34 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.api;
+package org.apache.chemistry.opencmis.commons.bindings;
 
-import java.util.List;
+import java.util.Set;
 
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
 
-/**
- * Query result.
- */
-public interface QueryResult {
+public interface AllowableActions extends ExtensionsData {
 
-  List<QueryProperty<?>> getProperties();
+  Set<AllowableActionsEnum> getAllowableActions();
 
-  <T> QueryProperty<T> getPropertyById(String id);
-
-  <T> QueryProperty<T> getPropertyByQueryName(String queryName);
-
-  <T> T getPropertyValueById(String id);
-
-  <T> T getPropertyValueByQueryName(String queryName);
-
-  <T> List<T> getPropertyMultivalueById(String id);
-
-  <T> List<T> getPropertyMultivalueByQueryName(String queryName);
-
-  AllowableActions getAllowableActions();
-
-  List<Relationship> getRelationships();
-
-  List<Rendition> getRenditions();
 }

@@ -38,7 +38,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.bindings.Ace;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
 import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
 import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
@@ -67,9 +68,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Base test case for CMIS tests.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public abstract class AbstractCmisTestCase extends TestCase {
 
@@ -614,7 +615,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
 
     // check canGetProperties
     assertAllowableAction(folderChild.getObject().getAllowableActions(),
-        AllowableActionsData.ACTION_CAN_GET_PROPERTIES, true);
+        AllowableActionsEnum.CAN_GET_PROPERTIES, true);
 
     // check name
     PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.CMIS_NAME);
@@ -672,12 +673,12 @@ public abstract class AbstractCmisTestCase extends TestCase {
 
       // check canGetProperties
       assertAllowableAction(folderChild.getObject().getAllowableActions(),
-          AllowableActionsData.ACTION_CAN_GET_PROPERTIES, true);
+          AllowableActionsEnum.CAN_GET_PROPERTIES, true);
 
       // check canGetContentStream
       if (contentStream != null) {
         assertAllowableAction(folderChild.getObject().getAllowableActions(),
-            AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM, true);
+            AllowableActionsEnum.CAN_GET_CONTENT_STREAM, true);
       }
 
       // check name
@@ -1090,7 +1091,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     assertPropertyValue(property, id, clazz, values);
   }
 
-  protected void assertEquals(AllowableActionsData expected, AllowableActionsData actual) {
+  protected void assertEquals(AllowableActions expected, AllowableActions actual) {
     if ((expected == null) && (actual == null)) {
       return;
     }
@@ -1109,22 +1110,22 @@ public abstract class AbstractCmisTestCase extends TestCase {
     assertEquals("Allowable action size:", expected.getAllowableActions().size(), actual
         .getAllowableActions().size());
 
-    for (String action : expected.getAllowableActions().keySet()) {
-      Boolean expectedBoolean = expected.getAllowableActions().get(action);
-      Boolean actualBoolean = actual.getAllowableActions().get(action);
+    for (AllowableActionsEnum action : expected.getAllowableActions()) {
+      boolean expectedBoolean = expected.getAllowableActions().contains(action);
+      boolean actualBoolean = actual.getAllowableActions().contains(action);
 
       assertEquals("AllowableAction " + action + ":", expectedBoolean, actualBoolean);
     }
   }
 
-  protected void assertAllowableAction(AllowableActionsData allowableActions, String action,
-      Boolean expected) {
+  protected void assertAllowableAction(AllowableActions allowableActions,
+          AllowableActionsEnum action, boolean expected) {
     assertNotNull(allowableActions);
     assertNotNull(allowableActions.getAllowableActions());
     assertNotNull(action);
 
     assertEquals("Allowable action \"" + action + "\":", expected, allowableActions
-        .getAllowableActions().get(action));
+        .getAllowableActions().contains(action));
   }
 
   protected void assertEquals(Acl expected, Acl actual) {

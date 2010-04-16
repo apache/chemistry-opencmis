@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ChangeEventInfoData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PolicyIdListData;
@@ -42,7 +42,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
   private List<ObjectData> fRelationships;
   private List<RenditionData> fRenditions;
   private PolicyIdListData fPolicyIds;
-  private AllowableActionsData fAllowableActions;
+  private AllowableActions fAllowableActions;
   private Acl fAcl;
   private Boolean fIsExactAcl;
 
@@ -148,11 +148,11 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
    * 
    * @see org.apache.opencmis.client.provider.ObjectData#getAllowableActions()
    */
-  public AllowableActionsData getAllowableActions() {
+  public AllowableActions getAllowableActions() {
     return fAllowableActions;
   }
 
-  public void setAllowableActions(AllowableActionsData allowableActions) {
+  public void setAllowableActions(AllowableActions allowableActions) {
     fAllowableActions = allowableActions;
   }
 

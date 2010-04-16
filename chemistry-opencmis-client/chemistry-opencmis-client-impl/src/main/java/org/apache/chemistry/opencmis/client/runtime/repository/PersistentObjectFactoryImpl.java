@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.chemistry.opencmis.client.api.AllowableActions;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
@@ -40,7 +39,6 @@ import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
-import org.apache.chemistry.opencmis.client.runtime.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentDocumentImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentFolderImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentPolicyImpl;
@@ -71,7 +69,6 @@ import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.bindings.Ace;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
@@ -116,33 +113,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
    */
   protected BindingsObjectFactory getProviderObjectFactory() {
     return session.getBinding().getObjectFactory();
-  }
-
-  // allowable actions
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * org.apache.opencmis.client.api.repository.ObjectFactory#createAllowableAction(java.util.Map)
-   */
-  public AllowableActions createAllowableAction(Map<String, Boolean> actions) {
-    return new AllowableActionsImpl(actions);
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * org.apache.opencmis.client.api.repository.ObjectFactory#convertAllowableActions(org.apache.
-   * opencmis.commons.provider.AllowableActionsData)
-   */
-  public AllowableActions convertAllowableActions(AllowableActionsData allowableActions) {
-    if ((allowableActions == null) || (allowableActions.getAllowableActions() == null)) {
-      throw new IllegalArgumentException("Allowable actions must be set!");
-    }
-
-    return createAllowableAction(allowableActions.getAllowableActions());
   }
 
   // ACL and ACE

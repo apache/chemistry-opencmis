@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.chemistry.opencmis.client.api.AllowableActions;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
@@ -34,9 +33,8 @@ import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.Acl;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
@@ -49,12 +47,6 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
  * @see org.apache.chemistry.opencmis.client.api.Session#getObjectFactory()
  */
 public interface ObjectFactory {
-
-  // allowable actions
-
-  AllowableActions createAllowableAction(Map<String, Boolean> actions);
-
-  AllowableActions convertAllowableActions(AllowableActionsData allowableActions);
 
   // ACL and ACE
 

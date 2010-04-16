@@ -51,7 +51,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.bindings.Ace;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
@@ -69,6 +69,7 @@ import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
 import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
@@ -96,7 +97,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntry
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
@@ -899,7 +900,7 @@ public class FileShareRepository {
   /**
    * CMIS getAllowableActions.
    */
-  public AllowableActionsData getAllowableActions(CallContext context, String objectId) {
+  public AllowableActions getAllowableActions(CallContext context, String objectId) {
     debug("getAllowableActions");
     boolean userReadOnly = checkUser(context, false);
 
@@ -1822,7 +1823,7 @@ public class FileShareRepository {
   /**
    * Compiles the allowable actions for a file or folder.
    */
-  private AllowableActionsData compileAllowableActions(File file, boolean userReadOnly) {
+  private AllowableActions compileAllowableActions(File file, boolean userReadOnly) {
     if (file == null) {
       throw new IllegalArgumentException("File must not be null!");
     }
@@ -1836,43 +1837,44 @@ public class FileShareRepository {
     boolean isFolder = file.isDirectory();
     boolean isRoot = fRoot.equals(file);
 
-    Map<String, Boolean> aam = new HashMap<String, Boolean>();
+    Set<AllowableActionsEnum> aam = new HashSet<AllowableActionsEnum>();
 
-    aam.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, !isRoot);
-    aam.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, false);
-    aam.put(AllowableActionsData.ACTION_CAN_GET_PROPERTIES, true);
-    aam.put(AllowableActionsData.ACTION_CAN_GET_RENDITIONS, false);
-    aam.put(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES, !userReadOnly && !isReadOnly);
-    aam.put(AllowableActionsData.ACTION_CAN_MOVE_OBJECT, !userReadOnly);
-    aam.put(AllowableActionsData.ACTION_CAN_DELETE_OBJECT, !userReadOnly && !isReadOnly);
-    aam.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS, false);
-    aam.put(AllowableActionsData.ACTION_CAN_APPLY_POLICY, false);
-    aam.put(AllowableActionsData.ACTION_CAN_REMOVE_POLICY, false);
-    aam.put(AllowableActionsData.ACTION_CAN_GET_ACL, true);
-    aam.put(AllowableActionsData.ACTION_CAN_APPLY_ACL, false);
+    // TODO XXX use enum
+//    aam.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, !isRoot);
+//    aam.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, false);
+//    aam.put(AllowableActionsData.ACTION_CAN_GET_PROPERTIES, true);
+//    aam.put(AllowableActionsData.ACTION_CAN_GET_RENDITIONS, false);
+//    aam.put(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES, !userReadOnly && !isReadOnly);
+//    aam.put(AllowableActionsData.ACTION_CAN_MOVE_OBJECT, !userReadOnly);
+//    aam.put(AllowableActionsData.ACTION_CAN_DELETE_OBJECT, !userReadOnly && !isReadOnly);
+//    aam.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS, false);
+//    aam.put(AllowableActionsData.ACTION_CAN_APPLY_POLICY, false);
+//    aam.put(AllowableActionsData.ACTION_CAN_REMOVE_POLICY, false);
+//    aam.put(AllowableActionsData.ACTION_CAN_GET_ACL, true);
+//    aam.put(AllowableActionsData.ACTION_CAN_APPLY_ACL, false);
 
     if (isFolder) {
-      aam.put(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS, true);
-      aam.put(AllowableActionsData.ACTION_CAN_GET_CHILDREN, true);
-      aam.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT, !isRoot);
-      aam.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, true);
-      aam.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, !userReadOnly);
-      aam.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, !userReadOnly);
-      aam.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, !userReadOnly && !isReadOnly);
+//        aam.put(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS, true);
+//        aam.put(AllowableActionsData.ACTION_CAN_GET_CHILDREN, true);
+//        aam.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT, !isRoot);
+//        aam.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, true);
+//        aam.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, !userReadOnly);
+//        aam.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, !userReadOnly);
+//        aam.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, !userReadOnly && !isReadOnly);
     }
     else {
-      aam.put(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM, true);
-      aam.put(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM, !userReadOnly && !isReadOnly);
-      aam.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM, !userReadOnly && !isReadOnly);
-      aam.put(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER, false);
-      aam.put(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER, false);
-      aam.put(AllowableActionsData.ACTION_CAN_CHECK_OUT, false);
-      aam.put(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT, false);
-      aam.put(AllowableActionsData.ACTION_CAN_CHECK_IN, false);
-      aam.put(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS, true);
+//        aam.put(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM, true);
+//        aam.put(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM, !userReadOnly && !isReadOnly);
+//        aam.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM, !userReadOnly && !isReadOnly);
+//        aam.put(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER, false);
+//        aam.put(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER, false);
+//        aam.put(AllowableActionsData.ACTION_CAN_CHECK_OUT, false);
+//        aam.put(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT, false);
+//        aam.put(AllowableActionsData.ACTION_CAN_CHECK_IN, false);
+//        aam.put(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS, true);
     }
 
-    AllowableActionsDataImpl result = new AllowableActionsDataImpl();
+    AllowableActionsImpl result = new AllowableActionsImpl();
     result.setAllowableActions(aam);
 
     return result;

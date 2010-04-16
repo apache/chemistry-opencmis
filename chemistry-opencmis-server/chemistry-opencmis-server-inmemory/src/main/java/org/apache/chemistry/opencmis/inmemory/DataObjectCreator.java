@@ -22,17 +22,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.bindings.Ace;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ChangeEventInfoData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PolicyIdListData;
 import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
+import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListDataImpl;
 import org.apache.chemistry.opencmis.inmemory.server.RuntimeContext;
@@ -50,16 +52,16 @@ import org.apache.chemistry.opencmis.server.spi.CallContext;
  */
 public class DataObjectCreator {
 
-  public static AllowableActionsData fillAllowableActions(ObjectStore objStore, StoredObject so) {
+  public static AllowableActions fillAllowableActions(ObjectStore objStore, StoredObject so) {
 
     boolean isFolder = so instanceof Folder;
     boolean isDocument = so instanceof Content;
-    boolean isCheckedOut = false; 
+    boolean isCheckedOut = false;
     boolean canCheckOut = false;
     boolean canCheckIn = false;
     boolean isVersioned = so instanceof Version || so instanceof VersionedDocument;
     boolean hasContent = so instanceof Content && ((Content) so).hasContent();
-      
+
     String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
     if (so instanceof Version) {
       isCheckedOut = ((Version)so).isPwc();
@@ -69,57 +71,61 @@ public class DataObjectCreator {
       canCheckOut = !((VersionedDocument)so).isCheckedOut();
       canCheckIn = isCheckedOut && ((VersionedDocument)so).getCheckedOutBy().equals(user);
     }
-          
-    AllowableActionsDataImpl allowableActions = new AllowableActionsDataImpl();
-    Map<String, Boolean> actions = new HashMap<String, Boolean>();
-    actions.put(AllowableActionsData.ACTION_CAN_DELETE_OBJECT, Boolean.TRUE);
-    actions.put(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES, Boolean.TRUE);
-    
-    actions.put(AllowableActionsData.ACTION_CAN_APPLY_POLICY, Boolean.FALSE);
-    actions.put(AllowableActionsData.ACTION_CAN_GET_APPLIED_POLICIES, Boolean.FALSE);
-    actions.put(AllowableActionsData.ACTION_CAN_REMOVE_POLICY, Boolean.FALSE);
 
-    actions.put(AllowableActionsData.ACTION_CAN_GET_ACL, Boolean.FALSE);
-    actions.put(AllowableActionsData.ACTION_CAN_APPLY_ACL, Boolean.FALSE);
+    AllowableActionsImpl allowableActions = new AllowableActionsImpl();
+    Set<AllowableActionsEnum> set = allowableActions.getAllowableActions();
+
+    set.add(AllowableActionsEnum.CAN_DELETE_OBJECT);
+    set.add(AllowableActionsEnum.CAN_UPDATE_PROPERTIES);
 
     if (isFolder || isDocument) {
-      actions.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, Boolean.FALSE);
-      actions.put(AllowableActionsData.ACTION_CAN_GET_PROPERTIES, Boolean.TRUE);
-      actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS, Boolean.FALSE);
-      actions.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, !so.equals(objStore.getRootFolder()));
-      actions.put(AllowableActionsData.ACTION_CAN_MOVE_OBJECT, Boolean.TRUE);      
+      set.add(AllowableActionsEnum.CAN_GET_PROPERTIES);
+      if (!so.equals(objStore.getRootFolder())) {
+          set.add(AllowableActionsEnum.CAN_GET_OBJECT_PARENTS);
+      }
+      set.add(AllowableActionsEnum.CAN_MOVE_OBJECT);
     }
 
     if (isFolder) {
-      actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT, !so.equals(objStore.getRootFolder()));
-      actions.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, true);
-      actions.put(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS, true);
-      actions.put(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER, true);
-      actions.put(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER, true);
-      actions.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT, true);
-      actions.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER, true);
-      actions.put(AllowableActionsData.ACTION_CAN_GET_CHILDREN, true);
-      actions.put(AllowableActionsData.ACTION_CAN_DELETE_TREE, isFolder);
-    }
-    
-    if (hasContent) { 
-      actions.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM, isDocument);
-      actions.put(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM, isDocument);
-      actions.put(AllowableActionsData.ACTION_CAN_GET_RENDITIONS, Boolean.FALSE);
-    }        
+        if (!so.equals(objStore.getRootFolder())) {
+            set.add(AllowableActionsEnum.CAN_GET_FOLDER_PARENT);
+        }
+        set.add(AllowableActionsEnum.CAN_GET_FOLDER_TREE);
+        set.add(AllowableActionsEnum.CAN_GET_DESCENDANTS);
 
-   if (isVersioned) { 
-      actions.put(AllowableActionsData.ACTION_CAN_CHECK_OUT, canCheckOut);
-      actions.put(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT, isCheckedOut);
-      actions.put(AllowableActionsData.ACTION_CAN_CHECK_IN, canCheckIn);
-      actions.put(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS, so instanceof VersionedDocument);
+        set.add(AllowableActionsEnum.CAN_ADD_OBJECT_TO_FOLDER);
+        set.add(AllowableActionsEnum.CAN_REMOVE_OBJECT_FROM_FOLDER);
+        set.add(AllowableActionsEnum.CAN_CREATE_DOCUMENT);
+        set.add(AllowableActionsEnum.CAN_CREATE_FOLDER);
+        set.add(AllowableActionsEnum.CAN_GET_CHILDREN);
+        set.add(AllowableActionsEnum.CAN_DELETE_TREE);
     }
-    
+
+    if (hasContent) {
+        set.add(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM);
+        set.add(AllowableActionsEnum.CAN_GET_CONTENT_STREAM);
+    }
+
+   if (isVersioned) {
+       if (canCheckOut) {
+           set.add(AllowableActionsEnum.CAN_CHECK_OUT);
+       }
+       if (isCheckedOut) {
+           set.add(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT);
+       }
+       if (canCheckIn) {
+           set.add(AllowableActionsEnum.CAN_CHECK_IN);
+       }
+       set.add(AllowableActionsEnum.CAN_GET_ALL_VERSIONS);
+    }
+
     if (isDocument) {
-      actions.put(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM, isVersioned ? canCheckIn: isDocument);      
+        if (!isVersioned || canCheckIn) {
+            set.add(AllowableActionsEnum.CAN_SET_CONTENT_STREAM);
+        }
     }
-    
-    allowableActions.setAllowableActions(actions);
+
+    allowableActions.setAllowableActions(set);
     return allowableActions;
   }
 

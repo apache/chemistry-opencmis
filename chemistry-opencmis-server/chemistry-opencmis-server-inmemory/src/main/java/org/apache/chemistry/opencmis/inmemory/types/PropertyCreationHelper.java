@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.api.Choice;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
@@ -248,7 +248,7 @@ public class PropertyCreationHelper {
     // fill output object
     if (null != includeAllowableActions && includeAllowableActions) {
       ObjectStore objectStore = sm.getObjectStore(so.getRepositoryId());
-      AllowableActionsData allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so);
+      AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so);
       od.setAllowableActions(allowableActions);
     }
     if (null != includeACL && includeACL)
