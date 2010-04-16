@@ -172,9 +172,9 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
     }
 
     // TODO: what should happen if the length is not set?
-    long length = (rendition.getLength() == null ? -1 : rendition.getLength().longValue());
-    int height = (rendition.getHeight() == null ? -1 : rendition.getHeight().intValue());
-    int width = (rendition.getWidth() == null ? -1 : rendition.getWidth().intValue());
+    long length = (rendition.getBigLength() == null ? -1 : rendition.getBigLength().longValue());
+    int height = (rendition.getBigHeight() == null ? -1 : rendition.getBigHeight().intValue());
+    int width = (rendition.getBigWidth() == null ? -1 : rendition.getBigWidth().intValue());
 
     return new RenditionImpl(this.session, objectId, rendition.getStreamId(), rendition
         .getRenditionDocumentId(), rendition.getKind(), length, rendition.getMimeType(), rendition

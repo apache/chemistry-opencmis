@@ -1199,11 +1199,11 @@ public abstract class AbstractCmisTestCase extends TestCase {
 
     assertEquals("Rendition kind:", expected.getKind(), actual.getKind());
     assertEquals("Rendition MIME type:", expected.getMimeType(), actual.getMimeType());
-    assertEquals("Rendition length:", expected.getLength(), actual.getLength());
+    assertEquals("Rendition length:", expected.getBigLength(), actual.getBigLength());
     assertEquals("Rendition stream id:", expected.getStreamId(), actual.getStreamId());
     assertEquals("Rendition title:", expected.getTitle(), actual.getTitle());
-    assertEquals("Rendition height:", expected.getHeight(), actual.getHeight());
-    assertEquals("Rendition width:", expected.getWidth(), actual.getWidth());
+    assertEquals("Rendition height:", expected.getBigHeight(), actual.getBigHeight());
+    assertEquals("Rendition width:", expected.getBigWidth(), actual.getBigWidth());
     assertEquals("Rendition document id:", expected.getRenditionDocumentId(), actual
         .getRenditionDocumentId());
   }

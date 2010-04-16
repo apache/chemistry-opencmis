@@ -19,23 +19,18 @@
 package org.apache.chemistry.opencmis.client.api;
 
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.RenditionData;
 
 /**
  * {@see Document#getRenditions()}. Domain Model 2.4.2
  */
-public interface Rendition {
-
-  String getMimeType();
+public interface Rendition extends RenditionData {
 
   long getLength();
 
-  String getKind();
+  long getHeight();
 
-  String getTitle();
-
-  int getHeight();
-
-  int getWidth();
+  long getWidth();
 
   Document getRenditionDocument();
 

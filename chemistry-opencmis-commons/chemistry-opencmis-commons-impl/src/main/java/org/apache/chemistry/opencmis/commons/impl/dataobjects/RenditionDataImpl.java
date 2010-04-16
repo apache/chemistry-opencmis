@@ -24,22 +24,38 @@ import org.apache.chemistry.opencmis.commons.api.RenditionData;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class RenditionDataImpl extends AbstractExtensionData implements RenditionData {
 
-  private String fStreamId;
+  protected String fStreamId;
   private String fMimeType;
-  private BigInteger fLength;
+  protected BigInteger fLength;
   private String fKind;
   private String fTitle;
-  private BigInteger fHeight;
-  private BigInteger fWidth;
-  private String fRenditionDocumentId;
+  protected BigInteger fWidth;
+  protected BigInteger fHeight;
+  protected String fRenditionDocumentId;
+
+  public RenditionDataImpl() {
+  }
+
+  public RenditionDataImpl(String streamId, String mimeType, BigInteger length,
+          String kind, String title, BigInteger width, BigInteger height,
+          String renditionDocumentId) {
+      setStreamId(streamId);
+      setMimeType(mimeType);
+      setBigLength(length);
+      setKind(kind);
+      setTitle(title);
+      setBigWidth(width);
+      setBigHeight(height);
+      setRenditionDocumentId(renditionDocumentId);
+  }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.RenditionData#getStreamId()
    */
   public String getStreamId() {
@@ -52,7 +68,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.RenditionData#getMimeType()
    */
   public String getMimeType() {
@@ -65,20 +81,20 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.RenditionData#getLength()
    */
-  public BigInteger getLength() {
+  public BigInteger getBigLength() {
     return fLength;
   }
 
-  public void setLength(BigInteger length) {
+  public void setBigLength(BigInteger length) {
     fLength = length;
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.RenditionData#getKind()
    */
   public String getKind() {
@@ -91,7 +107,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.RenditionData#getTitle()
    */
   public String getTitle() {
@@ -104,33 +120,33 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.RenditionData#getHeight()
    */
-  public BigInteger getHeight() {
+  public BigInteger getBigHeight() {
     return fHeight;
   }
 
-  public void setHeight(BigInteger height) {
+  public void setBigHeight(BigInteger height) {
     fHeight = height;
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.RenditionData#getWidth()
    */
-  public BigInteger getWidth() {
+  public BigInteger getBigWidth() {
     return fWidth;
   }
 
-  public void setWidth(BigInteger width) {
+  public void setBigWidth(BigInteger width) {
     fWidth = width;
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.opencmis.client.provider.RenditionData#getRenditionDocumentId()
    */
   public String getRenditionDocumentId() {
@@ -143,7 +159,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Object#toString()
    */
   @Override

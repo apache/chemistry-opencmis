@@ -53,14 +53,14 @@ import org.apache.chemistry.opencmis.server.spi.RenditionInfosImpl;
 
 
 /**
- * A helper class used from various methods to fill the ObjectInfoHolder structure with 
- * the required information to generate all the links in the AtomPub binding. Use this 
+ * A helper class used from various methods to fill the ObjectInfoHolder structure with
+ * the required information to generate all the links in the AtomPub binding. Use this
  * class as a convenience class for starting the implementation. For productive use it
  * is highly recommended that a server implementation replaces this implementation by
  * a more efficient one. This default implementation can only rely on the services and
- * therefore requires a round-trip for each object to the server once again. This can 
+ * therefore requires a round-trip for each object to the server once again. This can
  * be avoided in a repository specific implementation.
- * 
+ *
  */
 
 public class ObjectInfoHelper
@@ -68,25 +68,25 @@ public class ObjectInfoHelper
     private CmisObjectService _objSvc;
     private CmisRepositoryService _repSvc;
     private CmisNavigationService _navSvc;
-    
+
     private Map<String, RepositoryCapabilities > _repos = new HashMap<String, RepositoryCapabilities >();
     private Map<String, Boolean > _mapPolicies = new HashMap<String, Boolean >();
     private Map<String, Boolean > _mapRelationships = new HashMap<String, Boolean >();
-    
+
     public ObjectInfoHelper(CmisRepositoryService repSvc, CmisObjectService objSvc, CmisNavigationService navSvc) {
         _objSvc = objSvc;
         _repSvc = repSvc;
         _navSvc = navSvc;
     }
-    
+
     /**
-     * fill an ObjectInfoHolder object with required information needed for Atom binding 
+     * fill an ObjectInfoHolder object with required information needed for Atom binding
      * to be able to generate the necessary links in AtomPub
-     * 
+     *
      * @param context
      *          call context of the current request
      * @param repositoryId
-     *          id of repository 
+     *          id of repository
      * @param objectId
      *          object to retrieve information for
      * @param objectInfos
@@ -94,17 +94,17 @@ public class ObjectInfoHelper
      */
     public ObjectData fillObjectInfoHolder(CallContext context, String repositoryId, String objectId,
         ObjectInfoHolder objectInfos) {
-        
+
       if (null == objectInfos || null == objectId)
         return null;
-      
+
       // call getObject to get the required information to fill ObjectInfoHolder
       ObjectData objData = getObject(context, repositoryId, objectId);
       fillObjectInfoHolder(context, repositoryId, objData, objectInfos);
-      
+
       return objData; // might be useful as return value in some service methods
     }
-    
+
     /**
      * Fill object in
      * @param context
@@ -119,9 +119,9 @@ public class ObjectInfoHelper
         if (filterContainsRequiredProperties(filter))
             fillObjectInfoHolder(context, repositoryId, objData, objectInfos);
         else // get object again as we need almost all system properties
-            fillObjectInfoHolder(context, repositoryId, objData.getId(), objectInfos);        
+            fillObjectInfoHolder(context, repositoryId, objData.getId(), objectInfos);
     }
-    
+
     public boolean filterContainsRequiredProperties(String filter) {
         if (filter==null)
             return false;
@@ -146,16 +146,16 @@ public class ObjectInfoHelper
         if (!filter.contains(PropertyIds.CONTENT_STREAM_ID))
             return false;
         return true;
-        
+
     }
     /**
-     * fill an ObjectInfoHolder object with required information needed for Atom binding 
+     * fill an ObjectInfoHolder object with required information needed for Atom binding
      * to be able to generate the necessary links in AtomPub
-     * 
+     *
      * @param context
      *          call context of the current request
      * @param repositoryId
-     *          id of repository 
+     *          id of repository
      * @param objData
      *          object data to grab information from
      * @param objectInfos
@@ -163,20 +163,20 @@ public class ObjectInfoHelper
      */
     public void fillObjectInfoHolder(CallContext context, String repositoryId, ObjectData objData,
         ObjectInfoHolder objectInfos) {
-        
+
         if (null==objData || null==objectInfos)
             return;
-                
+
         // Get required information about the repository and cache it for later use:
-        
+
         Map<String, PropertyData<?>> properties = objData.getProperties().getProperties();
         RepositoryCapabilities repoCaps = _repos.get(repositoryId);
         if (null == repoCaps) {
             RepositoryInfo repoInfo = _repSvc.getRepositoryInfo(null, repositoryId, null);
             repoCaps = repoInfo.getCapabilities();
-            _repos.put(repositoryId, repoCaps);          
+            _repos.put(repositoryId, repoCaps);
         }
-        
+
         Boolean supportsRelationships = _mapRelationships.get(repositoryId);
         Boolean supportsPolicies = _mapPolicies.get(repositoryId);
         if (null == supportsRelationships || null == supportsPolicies) {
@@ -192,32 +192,32 @@ public class ObjectInfoHelper
             _mapRelationships.put(repositoryId, supportsRelationships);
             _mapPolicies.put(repositoryId, supportsPolicies);
         }
-        
+
         ObjectInfoImpl objInfo = new ObjectInfoImpl();
        // Fill all setters:
         objInfo.setId(objData.getId());
         objInfo.setName(getStringProperty(properties, PropertyIds.NAME));
-        objInfo.setCreatedBy(getStringProperty(properties, PropertyIds.CREATED_BY)); 
-        objInfo.setCreationDate(getDateProperty(properties, PropertyIds.CREATION_DATE)); 
+        objInfo.setCreatedBy(getStringProperty(properties, PropertyIds.CREATED_BY));
+        objInfo.setCreationDate(getDateProperty(properties, PropertyIds.CREATION_DATE));
         objInfo.setLastModificationDate(getDateProperty(properties, PropertyIds.LAST_MODIFICATION_DATE));
         objInfo.setTypeId(getStringProperty(properties, PropertyIds.OBJECT_TYPE_ID));
         String baseId = getStringProperty(properties, PropertyIds.BASE_TYPE_ID);
         objInfo.setBaseType(BaseTypeId.fromValue(baseId));
-        
+
         boolean isVersioned = getStringProperty(properties, PropertyIds.VERSION_SERIES_ID) != null;
-        // versioning information: 
-        if (isVersioned) {          
-          objInfo.setIsCurrentVersion(getBooleanProperty(properties, PropertyIds.IS_LATEST_VERSION)); 
+        // versioning information:
+        if (isVersioned) {
+          objInfo.setIsCurrentVersion(getBooleanProperty(properties, PropertyIds.IS_LATEST_VERSION));
           objInfo.setVersionSeriesId(getStringProperty(properties, PropertyIds.VERSION_SERIES_ID));
           objInfo.setWorkingCopyId(getStringProperty(properties, PropertyIds.VERSION_SERIES_CHECKED_OUT_ID));
           objInfo.setWorkingCopyOriginalId(null);
         } else { // unversioned document
-          objInfo.setIsCurrentVersion (true); 
+          objInfo.setIsCurrentVersion (true);
           objInfo.setVersionSeriesId(null);
           objInfo.setWorkingCopyId(null);
           objInfo.setWorkingCopyOriginalId(null);
         }
-        
+
         String fileName = getStringProperty(properties, PropertyIds.CONTENT_STREAM_FILE_NAME);
         String mimeType = getStringProperty(properties, PropertyIds.CONTENT_STREAM_MIME_TYPE);
         String streamId = getStringProperty(properties, PropertyIds.CONTENT_STREAM_ID);
@@ -232,7 +232,7 @@ public class ObjectInfoHelper
           objInfo.setContentType(null);
           objInfo.setFileName(null);
         }
-        
+
         if (objInfo.getBaseType() == BaseTypeId.CMIS_FOLDER)
             objInfo.setHasParent(getStringProperty(properties, PropertyIds.PARENT_ID) != null);
         else if (objInfo.getBaseType() == BaseTypeId.CMIS_DOCUMENT) {
@@ -241,44 +241,44 @@ public class ObjectInfoHelper
             else
                 objInfo.setHasParent(true);
         } else
-            objInfo.setHasParent(false);            
-        
+            objInfo.setHasParent(false);
+
         // Renditions, currently not supported by in-memory provider
         objInfo.setRenditionInfos(convertRenditions(objData.getRenditions()));
-        
+
         List<String> sourceIds = new ArrayList<String>();
         List<String> targetIds = new ArrayList<String>();
         getRelationshipIds(objData, sourceIds, targetIds);
-        
+
         // Relationships, currently not supported
         objInfo.setSupportsRelationships(supportsRelationships);
         objInfo.setRelationshipSourceIds(sourceIds);
         objInfo.setRelationshipTargetIds(targetIds);
-        
+
         objInfo.setSupportsPolicies(supportsPolicies);
-        
+
         objInfo.setHasAcl(repoCaps.getAclCapability() != CapabilityAcl.NONE);
-        
+
         String baseTypeId = getStringProperty(properties, PropertyIds.BASE_TYPE_ID);
         boolean isFolder = baseTypeId != null && baseTypeId.equals(BaseTypeId.CMIS_FOLDER.value());
-        
+
         objInfo.setSupportsDescendants(isFolder && repoCaps.isGetDescendantsSupported());;
         objInfo.setSupportsFolderTree(isFolder && repoCaps.isGetFolderTreeSupported());
-        
+
         objectInfos.addObjectInfo(objInfo);
     }
 
-        
-        
+
+
 
     /**
-     * fill an ObjectInfoHolder object with required information needed for Atom binding 
+     * fill an ObjectInfoHolder object with required information needed for Atom binding
      * to be able to generate the necessary links in AtomPub
-     * 
+     *
      * @param context
      *          call context of the current request
      * @param repositoryId
-     *          id of repository 
+     *          id of repository
      * @param objList
      *          object list, fill information for each element
      * @param objectInfos
@@ -290,25 +290,25 @@ public class ObjectInfoHelper
         ObjectList objList,
         ObjectInfoHolder objectInfos)
     {
-          
+
         if (null != objectInfos && null != objList && null != objList.getObjects()) {
             // Fill object information for all children in result list
             List<ObjectData> listObjects = objList.getObjects();
             if (null != listObjects)
                 for (ObjectData object : listObjects) {
                     fillObjectInfoHolder(context, repositoryId, object.getId(), objectInfos);
-                }    
+                }
         }
     }
 
     /**
-     * fill an ObjectInfoHolder object with required information needed for Atom binding 
+     * fill an ObjectInfoHolder object with required information needed for Atom binding
      * to be able to generate the necessary links in AtomPub
-     * 
+     *
      * @param context
      *          call context of the current request
      * @param repositoryId
-     *          id of repository 
+     *          id of repository
      * @param objList
      *          object list, fill information for each element
      * @param objectInfos
@@ -330,13 +330,13 @@ public class ObjectInfoHelper
     }
 
     /**
-     * fill an ObjectInfoHolder object with required information needed for Atom binding 
+     * fill an ObjectInfoHolder object with required information needed for Atom binding
      * to be able to generate the necessary links in AtomPub
-     * 
+     *
      * @param context
      *          call context of the current request
      * @param repositoryId
-     *          id of repository 
+     *          id of repository
      * @param objList
      *          object list, fill information for each element
      * @param objectInfos
@@ -358,13 +358,13 @@ public class ObjectInfoHelper
     }
 
     /**
-     * fill an ObjectInfoHolder object with required information needed for Atom binding 
+     * fill an ObjectInfoHolder object with required information needed for Atom binding
      * to be able to generate the necessary links in AtomPub
-     * 
+     *
      * @param context
      *          call context of the current request
      * @param repositoryId
-     *          id of repository 
+     *          id of repository
      * @param objList
      *          object list, fill information for each element
      * @param objectInfos
@@ -381,17 +381,17 @@ public class ObjectInfoHelper
 
         for (ObjectParentData object : objParents) {
             fillObjectInfoHolder(context, repositoryId, object.getObject().getId(), objectInfos);
-        }        
+        }
     }
-        
+
     /**
-     * fill an ObjectInfoHolder object with required information needed for Atom binding 
+     * fill an ObjectInfoHolder object with required information needed for Atom binding
      * to be able to generate the necessary links in AtomPub
-     * 
+     *
      * @param context
      *          call context of the current request
      * @param repositoryId
-     *          id of repository 
+     *          id of repository
      * @param objList
      *          object list, fill information for each element recursively
      * @param objectInfos
@@ -405,12 +405,12 @@ public class ObjectInfoHelper
     {
         if (null == objectInfos || null == oifcList)
             return;
-          
+
         for (ObjectInFolderContainer object : oifcList) {
             fillObjectInfoHolderFolderContainer(context, repositoryId, object, objectInfos);
-        }    
+        }
     }
-    
+
     private void fillObjectInfoHolderFolderContainer(
         CallContext context,
         String repositoryId,
@@ -427,7 +427,7 @@ public class ObjectInfoHelper
         for (ObjectInFolderContainer object : oifc.getChildren()) {
           // call recursively
           fillObjectInfoHolderFolderContainer(context, repositoryId, object, objectInfos);
-        }    
+        }
     }
 
     private Boolean getBooleanProperty(Map<String, PropertyData<?>> props, String key) {
@@ -441,7 +441,7 @@ public class ObjectInfoHelper
         String val = null==pdVal ? null : (String) pdVal.getFirstValue();
         return val;
     }
-    
+
     private GregorianCalendar getDateProperty(Map<String, PropertyData<?>> props, String key) {
         PropertyData<?> pdVal = props.get(key);
         GregorianCalendar val = null==pdVal ? null : (GregorianCalendar) pdVal.getFirstValue();
@@ -455,34 +455,34 @@ public class ObjectInfoHelper
     }
 
     private ObjectData getObject(CallContext context, String repositoryId, String objectId) {
-        
-        ObjectData od = _objSvc.getObject(context, repositoryId, objectId, null, false, 
+
+        ObjectData od = _objSvc.getObject(context, repositoryId, objectId, null, false,
             IncludeRelationships.BOTH, "*", true, true, null, null);
         return od;
     }
 
     private List<RenditionInfo> convertRenditions(List<RenditionData> renditions) {
-        
+
         if (null==renditions)
             return null;
-        
+
         List<RenditionInfo> rendInfos = new ArrayList<RenditionInfo>(renditions.size());
         RenditionInfosImpl ri = new RenditionInfosImpl();
         for (RenditionData rd : renditions) {
             ri.setContentType(rd.getMimeType());
             ri.setId(rd.getStreamId());
             ri.setKind(rd.getKind());
-            ri.setLength(rd.getLength());
+            ri.setLength(rd.getBigLength());
             ri.setTitle(rd.getTitle());
-            rendInfos.add(ri);            
+            rendInfos.add(ri);
         }
         return rendInfos;
     }
-    
+
     private void getRelationshipIds(ObjectData objData, List<String> sourceIds, List<String> targetIds) {
         if (null==objData || null == objData.getRelationships())
             return;
-        
+
         String objectId = objData.getId();
         for (ObjectData rel : objData.getRelationships()) {
             String relId = getStringProperty(rel.getProperties().getProperties(), PropertyIds.OBJECT_ID);
@@ -497,7 +497,7 @@ public class ObjectInfoHelper
 
     private boolean documentHasParent(CallContext context, String repositoryId, String objectId)
     {
-        List<ObjectParentData> opd = _navSvc.getObjectParents(context, repositoryId, objectId, null, false, IncludeRelationships.NONE, 
+        List<ObjectParentData> opd = _navSvc.getObjectParents(context, repositoryId, objectId, null, false, IncludeRelationships.NONE,
             null, false, null, null);
 
         return opd!= null && opd.size()>0;

@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-import java.io.Serializable;
+import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -26,118 +26,52 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 
 /**
  * Implementation of <code>Rendition</code>.
  */
-public class RenditionImpl implements Rendition, Serializable {
-
-  private static final long serialVersionUID = 1L;
+public class RenditionImpl extends RenditionDataImpl implements Rendition {
 
   private Session session;
   private String objectId;
-  private String streamId;
-  private String renditionDocumentId;
-  private String kind;
-  private long length;
-  private String mimetype;
-  private String title;
-  private int height;
-  private int width;
 
   /**
    * Constructor.
    */
   public RenditionImpl(Session session, String objectId, String streamId,
-      String renditionDocumentId, String kind, long length, String mimetype, String title,
+      String renditionDocumentId, String kind, long length, String mimeType, String title,
       int height, int width) {
+        super(streamId, mimeType, BigInteger.valueOf(length), kind, title,
+                BigInteger.valueOf(width), BigInteger.valueOf(height),
+                renditionDocumentId);
     this.session = session;
     this.objectId = objectId;
-    this.streamId = streamId;
-    this.renditionDocumentId = renditionDocumentId;
-    this.kind = kind;
-    this.mimetype = mimetype;
-    this.title = title;
-    this.height = height;
-    this.width = width;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.Rendition#getKind()
-   */
-  public String getKind() {
-    return this.kind;
-  }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.Rendition#getLength()
-   */
   public long getLength() {
-    return this.length;
+    return fLength == null ? -1 : fLength.longValue();
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.Rendition#getMimeType()
-   */
-  public String getMimeType() {
-    return this.mimetype;
+
+  public long getHeight() {
+    return fHeight == null ? -1 : fHeight.longValue();
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.Rendition#getTitle()
-   */
-  public String getTitle() {
-    return this.title;
+  public long getWidth() {
+    return fWidth == null ? -1 : fWidth.longValue();
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.Rendition#getHeight()
-   */
-  public int getHeight() {
-    return this.height;
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.Rendition#getWidth()
-   */
-  public int getWidth() {
-    return this.width;
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.Rendition#getRenditionDocument()
-   */
   public Document getRenditionDocument() {
     return getRenditionDocument(session.getDefaultContext());
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * org.apache.opencmis.client.api.Rendition#getRenditionDocument(org.apache.opencmis.client.api
-   * .OperationContext)
-   */
   public Document getRenditionDocument(OperationContext context) {
-    if (this.renditionDocumentId == null) {
+    if (fRenditionDocumentId == null) {
       return null;
     }
-
-    CmisObject rendDoc = session.getObject(session.createObjectId(this.renditionDocumentId),
+    CmisObject rendDoc = session.getObject(session.createObjectId(fRenditionDocumentId),
         context);
     if (!(rendDoc instanceof Document)) {
       return null;
@@ -146,24 +80,18 @@ public class RenditionImpl implements Rendition, Serializable {
     return (Document) rendDoc;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.opencmis.client.api.Rendition#getContentStream()
-   */
   public ContentStream getContentStream() {
-    if ((objectId == null) || (streamId == null)) {
+    if ((objectId == null) || (fStreamId == null)) {
       return null;
     }
 
     ContentStream contentStream = session.getBinding().getObjectService().getContentStream(
-        session.getRepositoryInfo().getId(), objectId, streamId, null, null, null);
+        session.getRepositoryInfo().getId(), objectId, fStreamId, null, null, null);
     if (contentStream == null) {
       return null;
     }
 
-    // TODO: what should happen if the length is not set?
-    long length = (contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue());
+    long length = contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue();
 
     return session.getObjectFactory().createContentStream(contentStream.getFileName(), length,
         contentStream.getMimeType(), contentStream.getStream());

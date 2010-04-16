@@ -1576,14 +1576,14 @@ public final class Converter {
 
     RenditionDataImpl result = new RenditionDataImpl();
 
-    result.setHeight(rendition.getHeight());
+    result.setBigHeight(rendition.getHeight());
     result.setKind(rendition.getKind());
-    result.setLength(rendition.getLength());
+    result.setBigLength(rendition.getLength());
     result.setMimeType(rendition.getMimetype());
     result.setRenditionDocumentId(rendition.getRenditionDocumentId());
     result.setStreamId(rendition.getStreamId());
     result.setTitle(rendition.getTitle());
-    result.setWidth(rendition.getWidth());
+    result.setBigWidth(rendition.getWidth());
 
     // handle extensions
     convertExtension(rendition, result);
@@ -1601,14 +1601,14 @@ public final class Converter {
 
     CmisRenditionType result = new CmisRenditionType();
 
-    result.setHeight(rendition.getHeight());
+    result.setHeight(rendition.getBigHeight());
     result.setKind(rendition.getKind());
-    result.setLength(rendition.getLength());
+    result.setLength(rendition.getBigLength());
     result.setMimetype(rendition.getMimeType());
     result.setRenditionDocumentId(rendition.getRenditionDocumentId());
     result.setStreamId(rendition.getStreamId());
     result.setTitle(rendition.getTitle());
-    result.setWidth(rendition.getWidth());
+    result.setWidth(rendition.getBigWidth());
 
     // handle extensions
     convertExtension(rendition, result);

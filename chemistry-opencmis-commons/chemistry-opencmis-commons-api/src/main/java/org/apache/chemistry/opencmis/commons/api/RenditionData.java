@@ -27,15 +27,15 @@ public interface RenditionData extends ExtensionsData {
 
   String getMimeType();
 
-  BigInteger getLength();
+  BigInteger getBigLength();
 
   String getKind();
 
   String getTitle();
 
-  BigInteger getHeight();
+  BigInteger getBigHeight();
 
-  BigInteger getWidth();
+  BigInteger getBigWidth();
 
   String getRenditionDocumentId();
 }
