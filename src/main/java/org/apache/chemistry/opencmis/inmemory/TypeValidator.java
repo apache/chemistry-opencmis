@@ -28,15 +28,15 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Choice;
 import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDecimalData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.api.PropertyIntegerData;
 import org.apache.chemistry.opencmis.commons.api.PropertyIntegerDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyDecimalData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyIntegerData;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -51,14 +51,14 @@ public class TypeValidator {
     if (properties == null || properties.getProperties() == null)
       throw new RuntimeException("Cannot create object, no properties are given");
 
-    if (!properties.getProperties().containsKey(PropertyIds.CMIS_OBJECT_TYPE_ID))
+    if (!properties.getProperties().containsKey(PropertyIds.OBJECT_TYPE_ID))
       throw new RuntimeException("Cannot create object, type id is missing");
 
   }
   
   private static boolean isMandatorySystemProperty(String propertyId) {
     // TODO Auto-generated method stub
-    return propertyId.equals(PropertyIds.CMIS_OBJECT_TYPE_ID);
+    return propertyId.equals(PropertyIds.OBJECT_TYPE_ID);
   }
 
   @SuppressWarnings("unchecked")
@@ -333,78 +333,78 @@ public class TypeValidator {
 
   private static boolean isSystemProperty(BaseObjectTypeIds baseTypeId, String propertyId) {
 
-    if (propertyId.equals(PropertyIds.CMIS_NAME)) {
+    if (propertyId.equals(PropertyIds.NAME)) {
       return true;
     }
-    else if (propertyId.equals(PropertyIds.CMIS_OBJECT_ID)) {
+    else if (propertyId.equals(PropertyIds.OBJECT_ID)) {
       return true;
     }
-    else if (propertyId.equals(PropertyIds.CMIS_OBJECT_TYPE_ID)) {
+    else if (propertyId.equals(PropertyIds.OBJECT_TYPE_ID)) {
       return true;
     }
-    else if (propertyId.equals(PropertyIds.CMIS_BASE_TYPE_ID)) {
+    else if (propertyId.equals(PropertyIds.BASE_TYPE_ID)) {
       return true;
     }
-    else if (propertyId.equals(PropertyIds.CMIS_CREATED_BY)) {
+    else if (propertyId.equals(PropertyIds.CREATED_BY)) {
       return true;
     }
-    else if (propertyId.equals(PropertyIds.CMIS_CREATION_DATE)) {
+    else if (propertyId.equals(PropertyIds.CREATION_DATE)) {
       return true;
     }
-    else if (propertyId.equals(PropertyIds.CMIS_LAST_MODIFIED_BY)) {
+    else if (propertyId.equals(PropertyIds.LAST_MODIFIED_BY)) {
       return true;
     }
-    else if (propertyId.equals(PropertyIds.CMIS_LAST_MODIFICATION_DATE)) {
+    else if (propertyId.equals(PropertyIds.LAST_MODIFICATION_DATE)) {
       return true;
     }
-    else if (propertyId.equals(PropertyIds.CMIS_CHANGE_TOKEN)) {
+    else if (propertyId.equals(PropertyIds.CHANGE_TOKEN)) {
       return true;
     }
 
     if (baseTypeId.equals(BaseObjectTypeIds.CMIS_DOCUMENT)) {
-      if (propertyId.equals(PropertyIds.CMIS_IS_IMMUTABLE)) {
+      if (propertyId.equals(PropertyIds.IS_IMMUTABLE)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_IS_LATEST_VERSION)) {
+      else if (propertyId.equals(PropertyIds.IS_LATEST_VERSION)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_IS_MAJOR_VERSION)) {
+      else if (propertyId.equals(PropertyIds.IS_MAJOR_VERSION)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_VERSION_SERIES_ID)) {
+      else if (propertyId.equals(PropertyIds.VERSION_SERIES_ID)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION)) {
+      else if (propertyId.equals(PropertyIds.IS_LATEST_MAJOR_VERSION)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_VERSION_LABEL)) {
+      else if (propertyId.equals(PropertyIds.VERSION_LABEL)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_VERSION_SERIES_ID)) {
+      else if (propertyId.equals(PropertyIds.VERSION_SERIES_ID)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT)) {
+      else if (propertyId.equals(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY)) {
+      else if (propertyId.equals(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID)) {
+      else if (propertyId.equals(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_CHECKIN_COMMENT)) {
+      else if (propertyId.equals(PropertyIds.CHECKIN_COMMENT)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_CONTENT_STREAM_LENGTH)) {
+      else if (propertyId.equals(PropertyIds.CONTENT_STREAM_LENGTH)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE)) {
+      else if (propertyId.equals(PropertyIds.CONTENT_STREAM_MIME_TYPE)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME)) {
+      else if (propertyId.equals(PropertyIds.CONTENT_STREAM_FILE_NAME)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_CONTENT_STREAM_ID)) {
+      else if (propertyId.equals(PropertyIds.CONTENT_STREAM_ID)) {
         return true;
       }
       else {
@@ -412,13 +412,13 @@ public class TypeValidator {
       }
     }
     else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_FOLDER)) {
-      if (propertyId.equals(PropertyIds.CMIS_PARENT_ID)) {
+      if (propertyId.equals(PropertyIds.PARENT_ID)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS)) {
+      else if (propertyId.equals(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_PATH)) {
+      else if (propertyId.equals(PropertyIds.PATH)) {
         return true;
       }
       else {
@@ -426,10 +426,10 @@ public class TypeValidator {
       }
     }
     else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_POLICY)) {
-      if (propertyId.equals(PropertyIds.CMIS_SOURCE_ID)) {
+      if (propertyId.equals(PropertyIds.SOURCE_ID)) {
         return true;
       }
-      else if (propertyId.equals(PropertyIds.CMIS_TARGET_ID)) {
+      else if (propertyId.equals(PropertyIds.TARGET_ID)) {
         return true;
       }
       else {
@@ -437,7 +437,7 @@ public class TypeValidator {
       }
     }
     else { // relationship
-      if (propertyId.equals(PropertyIds.CMIS_POLICY_TEXT)) {
+      if (propertyId.equals(PropertyIds.POLICY_TEXT)) {
         return true;
       }
       else {

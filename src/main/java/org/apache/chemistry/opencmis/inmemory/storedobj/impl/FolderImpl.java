@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
@@ -161,22 +161,22 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
 
     // add folder specific properties
 
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_PARENT_ID, requestedIds)) {
+    if (FilterParser.isContainedInFilter(PropertyIds.PARENT_ID, requestedIds)) {
       String parentId = getParent() == null ? null : getParent().getId();
       if ( parentId != null )
-        properties.put(PropertyIds.CMIS_PARENT_ID, objFactory.createPropertyStringData(PropertyIds.CMIS_PARENT_ID, parentId));
+        properties.put(PropertyIds.PARENT_ID, objFactory.createPropertyStringData(PropertyIds.PARENT_ID, parentId));
     }
 
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS,
+    if (FilterParser.isContainedInFilter(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
         requestedIds)) {
       String allowedChildObjects = "*"; // TODO: not yet supported
-      properties.put(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS, objFactory.createPropertyStringData(
-          PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS, allowedChildObjects));
+      properties.put(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, objFactory.createPropertyStringData(
+          PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, allowedChildObjects));
     }
 
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_PATH, requestedIds)) {
+    if (FilterParser.isContainedInFilter(PropertyIds.PATH, requestedIds)) {
       String path = getPath();
-      properties.put(PropertyIds.CMIS_PATH, objFactory.createPropertyStringData(PropertyIds.CMIS_PATH, path));
+      properties.put(PropertyIds.PATH, objFactory.createPropertyStringData(PropertyIds.PATH, path));
     }
   }
 

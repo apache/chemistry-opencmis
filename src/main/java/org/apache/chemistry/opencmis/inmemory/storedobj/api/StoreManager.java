@@ -21,9 +21,9 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 
 /**
  * interface to a repository implementation. This interface is the entry point to a 

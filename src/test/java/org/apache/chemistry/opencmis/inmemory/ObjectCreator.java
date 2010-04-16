@@ -29,15 +29,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectService;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
@@ -75,8 +75,8 @@ public class ObjectCreator {
 
   public PropertiesData createStringDocumentProperties(String name, String typeId, Map<String, String> propsToSet) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, name));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, typeId));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
     if (null != propsToSet)
       for (Entry<String, String> propToSet : propsToSet.entrySet()) {
         properties.add(fFactory.createPropertyStringData(propToSet.getKey(), propToSet.getValue()));

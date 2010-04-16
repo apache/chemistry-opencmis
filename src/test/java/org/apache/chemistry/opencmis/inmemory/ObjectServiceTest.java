@@ -27,18 +27,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
@@ -285,11 +285,11 @@ public class ObjectServiceTest extends AbstractServiceTst {
         log.info("return property id: " + pd.getId() + ", value: " + pd.getValues());
       }
 
-      PropertyData<?> pd = props.get(PropertyIds.CMIS_NAME);
+      PropertyData<?> pd = props.get(PropertyIds.NAME);
       assertNotNull(pd);
       assertEquals(MY_CUSTOM_NAME, pd.getFirstValue());
 
-      pd = props.get(PropertyIds.CMIS_OBJECT_TYPE_ID);
+      pd = props.get(PropertyIds.OBJECT_TYPE_ID);
       assertEquals(TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID, pd.getFirstValue());
 
       pd = props.get(TEST_DOCUMENT_MY_STRING_PROP_ID);
@@ -519,10 +519,10 @@ public class ObjectServiceTest extends AbstractServiceTst {
 
       String returnedId = res.getId();
       assertEquals(id, returnedId);
-      PropertyData<?> pd = props.get(PropertyIds.CMIS_NAME);
+      PropertyData<?> pd = props.get(PropertyIds.NAME);
       assertNotNull(pd);
       assertEquals(MY_CUSTOM_NAME, pd.getFirstValue());
-      pd = props.get(PropertyIds.CMIS_OBJECT_TYPE_ID);
+      pd = props.get(PropertyIds.OBJECT_TYPE_ID);
       assertEquals(TEST_CUSTOM_DOCUMENT_TYPE_ID, pd.getFirstValue());
       pd = props.get(TEST_DOCUMENT_MY_STRING_PROP_ID);
       assertEquals("My pretty string", pd.getFirstValue());
@@ -555,10 +555,10 @@ public class ObjectServiceTest extends AbstractServiceTst {
       }
       returnedId = res.getId();
       assertEquals(id, returnedId);
-      pd = props.get(PropertyIds.CMIS_NAME);
+      pd = props.get(PropertyIds.NAME);
       assertNotNull(pd);
       assertEquals(MY_CUSTOM_NAME, pd.getFirstValue());
-      pd = props.get(PropertyIds.CMIS_OBJECT_TYPE_ID);
+      pd = props.get(PropertyIds.OBJECT_TYPE_ID);
       assertEquals(TEST_CUSTOM_DOCUMENT_TYPE_ID, pd.getFirstValue());
       pd = props.get(TEST_DOCUMENT_MY_STRING_PROP_ID);
       assertEquals(newStringPropVal, pd.getFirstValue());
@@ -625,7 +625,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
       log.info("Test renaming");
       final String newName = "My Renamed Document"; // MY_CUSTOM_NAME
       properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, newName));
+      properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, newName));
       newProps = fFactory.createPropertiesData(properties);
       changeTokenHolder.setValue(newChangeToken);
       fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, newProps, null);
@@ -634,14 +634,14 @@ public class ObjectServiceTest extends AbstractServiceTst {
           null, false, false, null);
       assertNotNull(res);
       props = res.getProperties().getProperties();
-      pd = props.get(PropertyIds.CMIS_NAME);
+      pd = props.get(PropertyIds.NAME);
       assertNotNull(pd);
       assertEquals(newName, pd.getFirstValue());
 
       // test rename with a conflicting name
       createDocumentWithCustomType(fRootFolderId, false);
       properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, MY_CUSTOM_NAME));
+      properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, MY_CUSTOM_NAME));
       newProps = fFactory.createPropertiesData(properties);
       // now rename to old name
       try {
@@ -739,7 +739,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
   }
 
   private void moveObjectTest(boolean isFolder) {
-    final String propertyFilter=PropertyIds.CMIS_OBJECT_ID+","+PropertyIds.CMIS_NAME; //+","+PropertyIds.CMIS_OBJECT_TYPE_ID+","+PropertyIds.CMIS_BASE_TYPE_ID;
+    final String propertyFilter=PropertyIds.OBJECT_ID+","+PropertyIds.NAME; //+","+PropertyIds.CMIS_OBJECT_TYPE_ID+","+PropertyIds.CMIS_BASE_TYPE_ID;
     String rootFolderId = createFolder();
     ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
     // Set the type id for all created documents:
@@ -796,7 +796,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     // We only provide a name but not a type id, as spec says to copy missing attributes
     // from the existing one
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, name));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
     PropertiesData props = fFactory.createPropertiesData(properties);
     return props;
   }
@@ -805,10 +805,10 @@ public class ObjectServiceTest extends AbstractServiceTst {
   private void testReturnedProperties(String objectId, String objectName, String typeId, Map<String, PropertyData<?>> props) {
     super.testReturnedProperties(objectId, props);
 
-    PropertyData<?> pd = props.get(PropertyIds.CMIS_NAME);
+    PropertyData<?> pd = props.get(PropertyIds.NAME);
     assertNotNull(pd);
     assertEquals(objectName, pd.getFirstValue());
-    pd = props.get(PropertyIds.CMIS_OBJECT_TYPE_ID);
+    pd = props.get(PropertyIds.OBJECT_TYPE_ID);
     assertEquals(typeId, pd.getFirstValue());
   }
 
@@ -822,8 +822,8 @@ public class ObjectServiceTest extends AbstractServiceTst {
 
     // create the properties:
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, MY_CUSTOM_NAME));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, TEST_CUSTOM_DOCUMENT_TYPE_ID));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, MY_CUSTOM_NAME));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_CUSTOM_DOCUMENT_TYPE_ID));
     // Generate some property values for custom attributes
     properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "My pretty string"));
     properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, BigInteger.valueOf(4711)));
@@ -852,8 +852,8 @@ public class ObjectServiceTest extends AbstractServiceTst {
 
     // create the properties:
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, MY_CUSTOM_NAME));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, MY_CUSTOM_NAME));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID));
     // Generate some property values for custom attributes
     properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "My pretty string"));
     properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, BigInteger.valueOf(4711)));

@@ -20,13 +20,13 @@ package org.apache.chemistry.opencmis.inmemory.clientprovider;
 
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.VersioningService;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.VersioningService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryVersioningServiceImpl;
 

@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -165,51 +165,51 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     super.fillProperties(properties, objFactory, requestedIds);
 
     // fill the version related properties
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_LATEST_VERSION, requestedIds)) {
-      properties.put(PropertyIds.CMIS_IS_LATEST_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_VERSION, isLatestVersion()));
+    if (FilterParser.isContainedInFilter(PropertyIds.IS_LATEST_VERSION, requestedIds)) {
+      properties.put(PropertyIds.IS_LATEST_VERSION, objFactory.createPropertyBooleanData(PropertyIds.IS_LATEST_VERSION, isLatestVersion()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_MAJOR_VERSION, requestedIds)) {
-      properties.put(PropertyIds.CMIS_IS_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_MAJOR_VERSION, fIsMajor));
+    if (FilterParser.isContainedInFilter(PropertyIds.IS_MAJOR_VERSION, requestedIds)) {
+      properties.put(PropertyIds.IS_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.IS_MAJOR_VERSION, fIsMajor));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, requestedIds)) {
-      properties.put(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, isLatestMajorVersion()));
+    if (FilterParser.isContainedInFilter(PropertyIds.IS_LATEST_MAJOR_VERSION, requestedIds)) {
+      properties.put(PropertyIds.IS_LATEST_MAJOR_VERSION, objFactory.createPropertyBooleanData(PropertyIds.IS_LATEST_MAJOR_VERSION, isLatestMajorVersion()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_ID, requestedIds)) {
-      properties.put(PropertyIds.CMIS_VERSION_SERIES_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_ID, fContainer.getId()));
+    if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_ID, requestedIds)) {
+      properties.put(PropertyIds.VERSION_SERIES_ID, objFactory.createPropertyIdData(PropertyIds.VERSION_SERIES_ID, fContainer.getId()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
-      properties.put(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT, fContainer.isCheckedOut()));
+    if (FilterParser.isContainedInFilter(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
+      properties.put(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, fContainer.isCheckedOut()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, requestedIds)) {
-      properties.put(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY, fContainer.getCheckedOutBy()));
+    if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, requestedIds)) {
+      properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, objFactory.createPropertyStringData(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, fContainer.getCheckedOutBy()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, requestedIds)) {
-      properties.put(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID, pwc == null ? null : pwc.getId()));
+    if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, requestedIds)) {
+      properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, objFactory.createPropertyIdData(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, pwc == null ? null : pwc.getId()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CHECKIN_COMMENT, requestedIds)) {
-      properties.put(PropertyIds.CMIS_CHECKIN_COMMENT, objFactory.createPropertyStringData(PropertyIds.CMIS_CHECKIN_COMMENT, fComment));
+    if (FilterParser.isContainedInFilter(PropertyIds.CHECKIN_COMMENT, requestedIds)) {
+      properties.put(PropertyIds.CHECKIN_COMMENT, objFactory.createPropertyStringData(PropertyIds.CHECKIN_COMMENT, fComment));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_VERSION_LABEL, requestedIds)) {
-      properties.put(PropertyIds.CMIS_VERSION_LABEL, objFactory.createPropertyStringData(PropertyIds.CMIS_VERSION_LABEL, getVersionLabel()));
+    if (FilterParser.isContainedInFilter(PropertyIds.VERSION_LABEL, requestedIds)) {
+      properties.put(PropertyIds.VERSION_LABEL, objFactory.createPropertyStringData(PropertyIds.VERSION_LABEL, getVersionLabel()));
     }
 
     // Set the content related properties
     if (null != fContent) {
-      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, requestedIds)) {
-        properties.put(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, objFactory
-            .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, fContent
+      if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_FILE_NAME, requestedIds)) {
+        properties.put(PropertyIds.CONTENT_STREAM_FILE_NAME, objFactory
+            .createPropertyStringData(PropertyIds.CONTENT_STREAM_FILE_NAME, fContent
                 .getFileName()));
       }
 
       // omit: PropertyIds.CMIS_CONTENT_STREAM_ID
 
-      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, requestedIds)) {
-        properties.put(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, objFactory
-            .createPropertyIntegerData(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, fContent.getBigLength()));
+      if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
+        properties.put(PropertyIds.CONTENT_STREAM_LENGTH, objFactory
+            .createPropertyIntegerData(PropertyIds.CONTENT_STREAM_LENGTH, fContent.getBigLength()));
       }
-      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, requestedIds)) {
-        properties.put(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, objFactory
-            .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
+      if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_MIME_TYPE, requestedIds)) {
+        properties.put(PropertyIds.CONTENT_STREAM_MIME_TYPE, objFactory
+            .createPropertyStringData(PropertyIds.CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
       }
     }
   }

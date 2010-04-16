@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
@@ -212,8 +212,8 @@ public class NavigationServiceTest extends AbstractServiceTst {
   private void createLevel1Folders() {
     for (int i = 0; i < NUM_ROOT_FOLDERS; i++) {
       List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, "Folder " + i));
-      properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID,
+      properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "Folder " + i));
+      properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
           InMemoryFolderTypeDefinition.getRootFolderType().getId()));
       PropertiesData props = fFactory.createPropertiesData(properties);      
       String id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);

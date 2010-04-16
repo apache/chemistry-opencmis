@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 
 public class ContentStreamDataImpl implements ContentStream {
 
