@@ -66,209 +66,208 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public class PropertyCreationHelper {
-  private static Log log = LogFactory.getLog(PropertyCreationHelper.class);
-  
-  public static PropertyBooleanDefinitionImpl createBooleanDefinition(String id, String displayName) {    
-    PropertyBooleanDefinitionImpl prop = new PropertyBooleanDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.BOOLEAN, displayName, Cardinality.SINGLE);    
-    return prop;
-  }
+	private static Log log = LogFactory.getLog(PropertyCreationHelper.class);
 
-  public static PropertyBooleanDefinitionImpl createBooleanMultiDefinition(String id, String displayName) {
-    PropertyBooleanDefinitionImpl prop = new PropertyBooleanDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.BOOLEAN, displayName, Cardinality.MULTI);
-    return prop;
-  }
-  
-  public static PropertyDateTimeDefinitionImpl createDateTimeDefinition(String id, String displayName) {    
-    PropertyDateTimeDefinitionImpl prop = new PropertyDateTimeDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.DATETIME, displayName, Cardinality.SINGLE);    
-    return prop;
-  }
+	public static PropertyBooleanDefinitionImpl createBooleanDefinition(String id, String displayName) {
+		PropertyBooleanDefinitionImpl prop = new PropertyBooleanDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.BOOLEAN, displayName, Cardinality.SINGLE);
+		return prop;
+	}
 
-  public static PropertyDateTimeDefinitionImpl createDateTimeMultiDefinition(String id, String displayName) {
-    PropertyDateTimeDefinitionImpl prop = new PropertyDateTimeDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.DATETIME, displayName, Cardinality.MULTI);
-    return prop;
-  }
-  
-  public static PropertyDecimalDefinitionImpl createDecimalDefinition(String id, String displayName) {    
-    PropertyDecimalDefinitionImpl prop = new PropertyDecimalDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.DECIMAL, displayName, Cardinality.SINGLE);    
-    return prop;
-  }
+	public static PropertyBooleanDefinitionImpl createBooleanMultiDefinition(String id, String displayName) {
+		PropertyBooleanDefinitionImpl prop = new PropertyBooleanDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.BOOLEAN, displayName, Cardinality.MULTI);
+		return prop;
+	}
 
-  public static PropertyDecimalDefinitionImpl createDecimalMultiDefinition(String id, String displayName) {
-    PropertyDecimalDefinitionImpl prop = new PropertyDecimalDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.DECIMAL, displayName, Cardinality.MULTI);
-    return prop;
-  }
-  
-  public static PropertyHtmlDefinitionImpl createHtmlDefinition(String id, String displayName) {    
-    PropertyHtmlDefinitionImpl prop = new PropertyHtmlDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.HTML, displayName, Cardinality.SINGLE);    
-    return prop;
-  }
+	public static PropertyDateTimeDefinitionImpl createDateTimeDefinition(String id, String displayName) {
+		PropertyDateTimeDefinitionImpl prop = new PropertyDateTimeDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.DATETIME, displayName, Cardinality.SINGLE);
+		return prop;
+	}
 
-  public static PropertyHtmlDefinitionImpl createHtmlMultiDefinition(String id, String displayName) {
-    PropertyHtmlDefinitionImpl prop = new PropertyHtmlDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.HTML, displayName, Cardinality.MULTI);
-    return prop;
-  }
+	public static PropertyDateTimeDefinitionImpl createDateTimeMultiDefinition(String id, String displayName) {
+		PropertyDateTimeDefinitionImpl prop = new PropertyDateTimeDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.DATETIME, displayName, Cardinality.MULTI);
+		return prop;
+	}
 
-  public static PropertyIdDefinitionImpl createIdDefinition(String id, String displayName) {    
-    PropertyIdDefinitionImpl prop = new PropertyIdDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.ID, displayName, Cardinality.SINGLE);    
-    return prop;
-  }
+	public static PropertyDecimalDefinitionImpl createDecimalDefinition(String id, String displayName) {
+		PropertyDecimalDefinitionImpl prop = new PropertyDecimalDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.DECIMAL, displayName, Cardinality.SINGLE);
+		return prop;
+	}
 
-  public static PropertyIdDefinitionImpl createIdMultiDefinition(String id, String displayName) {
-    PropertyIdDefinitionImpl prop = new PropertyIdDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.ID, displayName, Cardinality.MULTI);
-    return prop;
-  }
+	public static PropertyDecimalDefinitionImpl createDecimalMultiDefinition(String id, String displayName) {
+		PropertyDecimalDefinitionImpl prop = new PropertyDecimalDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.DECIMAL, displayName, Cardinality.MULTI);
+		return prop;
+	}
 
-  public static PropertyIntegerDefinitionImpl createIntegerDefinition(String id, String displayName) {    
-    PropertyIntegerDefinitionImpl prop = new PropertyIntegerDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.INTEGER, displayName, Cardinality.SINGLE);    
-    return prop;
-  }
+	public static PropertyHtmlDefinitionImpl createHtmlDefinition(String id, String displayName) {
+		PropertyHtmlDefinitionImpl prop = new PropertyHtmlDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.HTML, displayName, Cardinality.SINGLE);
+		return prop;
+	}
 
-  public static PropertyIntegerDefinitionImpl createIntegerMultiDefinition(String id, String displayName) {
-    PropertyIntegerDefinitionImpl prop = new PropertyIntegerDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.INTEGER, displayName, Cardinality.MULTI);
-    return prop;
-  }
-  
-  public static PropertyStringDefinitionImpl createStringDefinition(String id, String displayName) {    
-    PropertyStringDefinitionImpl prop = new PropertyStringDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.STRING, displayName, Cardinality.SINGLE);    
-    return prop;
-  }
+	public static PropertyHtmlDefinitionImpl createHtmlMultiDefinition(String id, String displayName) {
+		PropertyHtmlDefinitionImpl prop = new PropertyHtmlDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.HTML, displayName, Cardinality.MULTI);
+		return prop;
+	}
 
-  public static PropertyStringDefinitionImpl createStringMultiDefinition(String id, String displayName) {
-    PropertyStringDefinitionImpl prop = new PropertyStringDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.STRING, displayName, Cardinality.MULTI);
-    return prop;
-  }
+	public static PropertyIdDefinitionImpl createIdDefinition(String id, String displayName) {
+		PropertyIdDefinitionImpl prop = new PropertyIdDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.ID, displayName, Cardinality.SINGLE);
+		return prop;
+	}
 
-  public static PropertyUriDefinitionImpl createUriDefinition(String id, String displayName) {    
-    PropertyUriDefinitionImpl prop = new PropertyUriDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.URI, displayName, Cardinality.SINGLE);    
-    return prop;
-  }
+	public static PropertyIdDefinitionImpl createIdMultiDefinition(String id, String displayName) {
+		PropertyIdDefinitionImpl prop = new PropertyIdDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.ID, displayName, Cardinality.MULTI);
+		return prop;
+	}
 
-  public static PropertyUriDefinitionImpl createUriMultiDefinition(String id, String displayName) {
-    PropertyUriDefinitionImpl prop = new PropertyUriDefinitionImpl();
-    createStandardDefinition(prop, id, PropertyType.URI, displayName, Cardinality.MULTI);
-    return prop;
-  }
-  
-  
-    public static<T> void  addElemToPicklist(AbstractPropertyDefinition<T> prop, T value) {
-      List<Choice<T>> choiceList = prop.getChoices();
-      if (choiceList == null)
-        choiceList = new ArrayList<Choice<T>>();
+	public static PropertyIntegerDefinitionImpl createIntegerDefinition(String id, String displayName) {
+		PropertyIntegerDefinitionImpl prop = new PropertyIntegerDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.INTEGER, displayName, Cardinality.SINGLE);
+		return prop;
+	}
 
-      ChoiceImpl<T> elem = new ChoiceImpl<T>();
-      elem.setValue( Collections.singletonList(value));
-      choiceList.add(elem);
-    }    
-    
-    public static<T> void setDefaultValue(AbstractPropertyDefinition<T> prop , T defVal) {
-      prop.setDefaultValue(Collections.singletonList(defVal));
-    }    
+	public static PropertyIntegerDefinitionImpl createIntegerMultiDefinition(String id, String displayName) {
+		PropertyIntegerDefinitionImpl prop = new PropertyIntegerDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.INTEGER, displayName, Cardinality.MULTI);
+		return prop;
+	}
 
-  
-  // internal helpers
-  private static void createStandardDefinition(AbstractPropertyDefinition<?> prop,
-      String id, PropertyType propType, String displayName, Cardinality card) {
+	public static PropertyStringDefinitionImpl createStringDefinition(String id, String displayName) {
+		PropertyStringDefinitionImpl prop = new PropertyStringDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.STRING, displayName, Cardinality.SINGLE);
+		return prop;
+	}
 
-    if (!NameValidator.isValidId(id))
-      if (!NameValidator.isValidId(id))
-        throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+	public static PropertyStringDefinitionImpl createStringMultiDefinition(String id, String displayName) {
+		PropertyStringDefinitionImpl prop = new PropertyStringDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.STRING, displayName, Cardinality.MULTI);
+		return prop;
+	}
 
-    prop.setId(id);
-    if (displayName == null)
-      prop.setDisplayName("Sample " + prop.getId() + " boolean property");
-    else
-      prop.setDisplayName(displayName);
-    prop.setLocalName(id);
-    prop.setLocalNamespace("local");
-    prop.setQueryName(id);
-    prop.setIsInherited(false);
-    prop.setCardinality(card);
-    prop.setIsOpenChoice(false);
-    prop.setIsQueryable(true);
-    prop.setIsRequired(false);
-    prop.setPropertyType(propType);
-    prop.setUpdatability(Updatability.READWRITE);
-  }
-  
-  public static Properties getPropertiesFromObject(String repositoryId, StoredObject so,
-      StoreManager storeManager, List<String> requestedIds) {
-    // build properties collection 
-    
-	  BindingsObjectFactory objectFactory = storeManager.getObjectFactory();
-    Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
-    so.fillProperties(properties, objectFactory, requestedIds);
+	public static PropertyUriDefinitionImpl createUriDefinition(String id, String displayName) {
+		PropertyUriDefinitionImpl prop = new PropertyUriDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.URI, displayName, Cardinality.SINGLE);
+		return prop;
+	}
 
-    String typeId = so.getTypeId();
-      // (String) props.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID).getFirstValue();
-    if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, requestedIds)) {
-      TypeDefinitionContainer typeDefC = storeManager.getTypeById(repositoryId, typeId);
-      if (typeDefC == null) {
-        log.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
-            + " is unknown");
-      } else {
-        TypeDefinition typeDef = typeDefC.getTypeDefinition();
-        String baseTypeId = typeDef.getBaseTypeId().value();
-        properties.put(PropertyIds.BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID, baseTypeId));
-      }
-    }   
-    List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>> (properties.values());
-    Properties props = objectFactory.createPropertiesData(propertiesList);
-    return props;    
-  }
-  
-  public static ObjectData getObjectData(StoreManager sm, StoredObject so, String filter,
-      Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-      String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
+	public static PropertyUriDefinitionImpl createUriMultiDefinition(String id, String displayName) {
+		PropertyUriDefinitionImpl prop = new PropertyUriDefinitionImpl();
+		createStandardDefinition(prop, id, PropertyType.URI, displayName, Cardinality.MULTI);
+		return prop;
+	}
 
-    ObjectDataImpl od = new ObjectDataImpl();
+	public static <T> void addElemToPicklist(AbstractPropertyDefinition<T> prop, T value) {
+		List<Choice<T>> choiceList = prop.getChoices();
+		if (choiceList == null)
+			choiceList = new ArrayList<Choice<T>>();
 
-    if (so == null)
-      throw new CmisObjectNotFoundException("Illegal object id: null");
+		ChoiceImpl<T> elem = new ChoiceImpl<T>();
+		elem.setValue(Collections.singletonList(value));
+		choiceList.add(elem);
+	}
 
-    // build properties collection
-    List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-    Properties props = getPropertiesFromObject(so.getRepositoryId(), so,
-        sm, requestedIds);
+	public static <T> void setDefaultValue(AbstractPropertyDefinition<T> prop, T defVal) {
+		prop.setDefaultValue(Collections.singletonList(defVal));
+	}
 
-    // fill output object
-    if (null != includeAllowableActions && includeAllowableActions) {
-      ObjectStore objectStore = sm.getObjectStore(so.getRepositoryId());
-      AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so);
-      od.setAllowableActions(allowableActions);
-    }
-    if (null != includeACL && includeACL)
-      od.setAcl(null);
-    od.setIsExactAcl(true);
+	// internal helpers
+	private static void createStandardDefinition(AbstractPropertyDefinition<?> prop, String id, PropertyType propType,
+			String displayName, Cardinality card) {
 
-    if (null != includePolicyIds && includePolicyIds)
-      od.setPolicyIds(DataObjectCreator.fillPolicyIds(so));
+		if (!NameValidator.isValidId(id))
+			if (!NameValidator.isValidId(id))
+				throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
-    if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE)
-      od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so));
+		prop.setId(id);
+		if (displayName == null)
+			prop.setDisplayName("Sample " + prop.getId() + " boolean property");
+		else
+			prop.setDisplayName(displayName);
+		prop.setLocalName(id);
+		prop.setLocalNamespace("local");
+		prop.setQueryName(id);
+		prop.setIsInherited(false);
+		prop.setCardinality(card);
+		prop.setIsOpenChoice(false);
+		prop.setIsQueryable(true);
+		prop.setIsRequired(false);
+		prop.setPropertyType(propType);
+		prop.setUpdatability(Updatability.READWRITE);
+	}
 
-    if (renditionFilter != null && renditionFilter.length() > 0)
-      od.setRenditions(DataObjectCreator.fillRenditions(so));
+	public static Properties getPropertiesFromObject(String repositoryId, StoredObject so, StoreManager storeManager,
+			List<String> requestedIds) {
+		// build properties collection
 
-    od.setProperties(props);
+		BindingsObjectFactory objectFactory = storeManager.getObjectFactory();
+		Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
+		so.fillProperties(properties, objectFactory, requestedIds);
 
-    // Note: do not set change event info for this call
-    log.debug("stop getObject()");
-    return od;
-  }
-  
+		String typeId = so.getTypeId();
+		// (String) props.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID).
+		// getFirstValue();
+		if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, requestedIds)) {
+			TypeDefinitionContainer typeDefC = storeManager.getTypeById(repositoryId, typeId);
+			if (typeDefC == null) {
+				log.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
+						+ " is unknown");
+			} else {
+				TypeDefinition typeDef = typeDefC.getTypeDefinition();
+				String baseTypeId = typeDef.getBaseTypeId().value();
+				properties.put(PropertyIds.BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID,
+						baseTypeId));
+			}
+		}
+		List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>>(properties.values());
+		Properties props = objectFactory.createPropertiesData(propertiesList);
+		return props;
+	}
+
+	public static ObjectData getObjectData(StoreManager sm, StoredObject so, String filter,
+			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
+
+		ObjectDataImpl od = new ObjectDataImpl();
+
+		if (so == null)
+			throw new CmisObjectNotFoundException("Illegal object id: null");
+
+		// build properties collection
+		List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
+		Properties props = getPropertiesFromObject(so.getRepositoryId(), so, sm, requestedIds);
+
+		// fill output object
+		if (null != includeAllowableActions && includeAllowableActions) {
+			ObjectStore objectStore = sm.getObjectStore(so.getRepositoryId());
+			AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so);
+			od.setAllowableActions(allowableActions);
+		}
+		if (null != includeACL && includeACL)
+			od.setAcl(null);
+		od.setIsExactAcl(true);
+
+		if (null != includePolicyIds && includePolicyIds)
+			od.setPolicyIds(DataObjectCreator.fillPolicyIds(so));
+
+		if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE)
+			od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so));
+
+		if (renditionFilter != null && renditionFilter.length() > 0)
+			od.setRenditions(DataObjectCreator.fillRenditions(so));
+
+		od.setProperties(props);
+
+		// Note: do not set change event info for this call
+		log.debug("stop getObject()");
+		return od;
+	}
+
 }

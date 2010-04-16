@@ -19,13 +19,13 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
 /**
- * A DocumentVersion is a concrete version of a versioned document. It has an id,
- * is stored in the object store, has content and adds versioning functionality. 
- * It does not have a path. It inherits also properties so each version may have 
- * its own properties. 
+ * A DocumentVersion is a concrete version of a versioned document. It has an
+ * id, is stored in the object store, has content and adds versioning
+ * functionality. It does not have a path. It inherits also properties so each
+ * version may have its own properties.
  * 
  * @author Jens
- *
+ * 
  */
 public interface DocumentVersion extends Version, Content, StoredObject, MultiFiling {
 

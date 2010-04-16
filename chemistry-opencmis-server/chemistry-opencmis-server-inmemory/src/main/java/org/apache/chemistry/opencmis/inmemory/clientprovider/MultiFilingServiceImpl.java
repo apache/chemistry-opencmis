@@ -22,23 +22,22 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.MultiFilingService;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryMultiFilingServiceImpl;
 
-public class MultiFilingServiceImpl  extends AbstractService implements MultiFilingService {
+public class MultiFilingServiceImpl extends AbstractService implements MultiFilingService {
 
-  private InMemoryMultiFilingServiceImpl fMultiSvc;
+	private InMemoryMultiFilingServiceImpl fMultiSvc;
 
-  public MultiFilingServiceImpl(InMemoryMultiFilingServiceImpl multiSvc) {
-    fMultiSvc = multiSvc;
-  }
+	public MultiFilingServiceImpl(InMemoryMultiFilingServiceImpl multiSvc) {
+		fMultiSvc = multiSvc;
+	}
 
-  public void addObjectToFolder(String repositoryId, String objectId, String folderId,
-      Boolean allVersions, ExtensionsData extension) {
+	public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
+			ExtensionsData extension) {
 
-    fMultiSvc.addObjectToFolder(fDummyCallContext, repositoryId, objectId, folderId, allVersions, extension, null);
-  }
+		fMultiSvc.addObjectToFolder(fDummyCallContext, repositoryId, objectId, folderId, allVersions, extension, null);
+	}
 
-  public void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
-      ExtensionsData extension) {
-    
-    fMultiSvc.removeObjectFromFolder(fDummyCallContext, repositoryId, objectId, folderId, extension, null);    
-  }
+	public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
+
+		fMultiSvc.removeObjectFromFolder(fDummyCallContext, repositoryId, objectId, folderId, extension, null);
+	}
 }

@@ -16,22 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
- package org.apache.chemistry.opencmis.inmemory;
+package org.apache.chemistry.opencmis.inmemory;
 
-public class ConfigConstants  {
-  public static final String REPOSITORY_ID = "InMemoryServer.RepositoryId";
-  public static final String TYPE_CREATOR_CLASS = "InMemoryServer.TypesCreatorClass";
-  public static final String REPOSITORY_INFO_CREATOR_CLASS = "InMemoryServer.RepositoryInfoCreatorClass";
-  public static final String REPOSITORY_CLASS = "InMemoryServer.Class";
+public class ConfigConstants {
+	public static final String REPOSITORY_ID = "InMemoryServer.RepositoryId";
+	public static final String TYPE_CREATOR_CLASS = "InMemoryServer.TypesCreatorClass";
+	public static final String REPOSITORY_INFO_CREATOR_CLASS = "InMemoryServer.RepositoryInfoCreatorClass";
+	public static final String REPOSITORY_CLASS = "InMemoryServer.Class";
 
-  // Helper constants that allow to fill a repository with data on initialization
-  public static final String USE_REPOSITORY_FILER = "RepositoryFiller.Enable";
-  public static final String FILLER_DOCUMENT_TYPE_ID = "RepositoryFiller.DocumentTypeId";
-  public static final String FILLER_FOLDER_TYPE_ID = "RepositoryFiller.FolderTypeId";
-  public static final String FILLER_DOCS_PER_FOLDER = "RepositoryFiller.DocsPerFolder";
-  public static final String FILLER_FOLDERS_PER_FOLDER = "RepositoryFiller.FolderPerFolder";
-  public static final String FILLER_DEPTH = "RepositoryFiller.Depth";
-  public static final String FILLER_CONTENT_SIZE = "RepositoryFiller.ContentSizeInKB";
-  public static final String FILLER_DOCUMENT_PROPERTY = "RepositoryFiller.DocumentProperty.";
-  public static final String FILLER_FOLDER_PROPERTY = "RepositoryFiller.FolderProperty.";
+	// Helper constants that allow to fill a repository with data on
+	// initialization
+	public static final String USE_REPOSITORY_FILER = "RepositoryFiller.Enable";
+	public static final String FILLER_DOCUMENT_TYPE_ID = "RepositoryFiller.DocumentTypeId";
+	public static final String FILLER_FOLDER_TYPE_ID = "RepositoryFiller.FolderTypeId";
+	public static final String FILLER_DOCS_PER_FOLDER = "RepositoryFiller.DocsPerFolder";
+	public static final String FILLER_FOLDERS_PER_FOLDER = "RepositoryFiller.FolderPerFolder";
+	public static final String FILLER_DEPTH = "RepositoryFiller.Depth";
+	public static final String FILLER_CONTENT_SIZE = "RepositoryFiller.ContentSizeInKB";
+	public static final String FILLER_DOCUMENT_PROPERTY = "RepositoryFiller.DocumentProperty.";
+	public static final String FILLER_FOLDER_PROPERTY = "RepositoryFiller.FolderProperty.";
 }

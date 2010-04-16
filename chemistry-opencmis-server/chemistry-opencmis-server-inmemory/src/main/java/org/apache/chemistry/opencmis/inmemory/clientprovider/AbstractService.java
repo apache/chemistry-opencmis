@@ -21,19 +21,19 @@ package org.apache.chemistry.opencmis.inmemory.clientprovider;
 import org.apache.chemistry.opencmis.inmemory.server.RuntimeContext;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 
-public class AbstractService  {
-  protected CallContext fDummyCallContext;
-  
-  protected AbstractService() {
-    // use an existing context if there is one, otherwise use null
-    fDummyCallContext = RuntimeContext.getCurrentContext(); 
-  }
-  
-  public void setCallContext(CallContext ctx) {
-    fDummyCallContext = ctx;
-  }
+public class AbstractService {
+	protected CallContext fDummyCallContext;
 
-  public CallContext getCallContext() {
-    return fDummyCallContext;
-  }
+	protected AbstractService() {
+		// use an existing context if there is one, otherwise use null
+		fDummyCallContext = RuntimeContext.getCurrentContext();
+	}
+
+	public void setCallContext(CallContext ctx) {
+		fDummyCallContext = ctx;
+	}
+
+	public CallContext getCallContext() {
+		return fDummyCallContext;
+	}
 }

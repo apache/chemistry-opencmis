@@ -23,14 +23,15 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 
 /**
- * A simple interface to create a type system. This needs to be implemented by a client (like a unit
- * test) in class and the name of the class is passed to the session. The in-memory repository
- * creates an instance of this class to generate the type system for this instance
+ * A simple interface to create a type system. This needs to be implemented by a
+ * client (like a unit test) in class and the name of the class is passed to the
+ * session. The in-memory repository creates an instance of this class to
+ * generate the type system for this instance
  * 
  * @author Jens
  * 
  */
 public interface TypeCreator {
 
-  List<TypeDefinition> createTypesList();
+	List<TypeDefinition> createTypesList();
 }

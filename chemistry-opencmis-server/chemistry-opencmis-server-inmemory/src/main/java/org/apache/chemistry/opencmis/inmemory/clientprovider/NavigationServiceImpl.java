@@ -38,64 +38,54 @@ import org.apache.chemistry.opencmis.inmemory.server.InMemoryNavigationServiceIm
  */
 
 public class NavigationServiceImpl extends AbstractService implements NavigationService {
-  private InMemoryNavigationServiceImpl fNavSvc;
+	private InMemoryNavigationServiceImpl fNavSvc;
 
-  public NavigationServiceImpl(InMemoryNavigationServiceImpl navSvc) {
-    fNavSvc = navSvc;
-  }
+	public NavigationServiceImpl(InMemoryNavigationServiceImpl navSvc) {
+		fNavSvc = navSvc;
+	}
 
-  public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter,
-      String orderBy, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-      String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+	public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
+			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
-    return fNavSvc.getCheckedOutDocs(fDummyCallContext, repositoryId, folderId, filter, orderBy,
-        includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount,
-        extension, null);
-  }
+		return fNavSvc.getCheckedOutDocs(fDummyCallContext, repositoryId, folderId, filter, orderBy,
+				includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension, null);
+	}
 
-  public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter,
-      String orderBy, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-      String renditionFilter, Boolean includePathSegment, BigInteger maxItems,
-      BigInteger skipCount, ExtensionsData extension) {
+	public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
+			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
-    return fNavSvc.getChildren(fDummyCallContext, repositoryId, folderId, filter, orderBy,
-        includeAllowableActions, includeRelationships, renditionFilter, includePathSegment,
-        maxItems, skipCount, extension, null);
-  }
+		return fNavSvc.getChildren(fDummyCallContext, repositoryId, folderId, filter, orderBy, includeAllowableActions,
+				includeRelationships, renditionFilter, includePathSegment, maxItems, skipCount, extension, null);
+	}
 
-  public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId,
-      BigInteger depth, String filter, Boolean includeAllowableActions,
-      IncludeRelationships includeRelationships, String renditionFilter,
-      Boolean includePathSegment, ExtensionsData extension) {
+	public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
+			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+			String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
 
-    return fNavSvc.getDescendants(fDummyCallContext, repositoryId, folderId, depth, filter,
-        includeAllowableActions, includeRelationships, renditionFilter, includePathSegment,
-        extension, null);
-  }
+		return fNavSvc.getDescendants(fDummyCallContext, repositoryId, folderId, depth, filter,
+				includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension, null);
+	}
 
-  public ObjectData getFolderParent(String repositoryId, String folderId, String filter,
-      ExtensionsData extension) {
+	public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
 
-    return fNavSvc.getFolderParent(fDummyCallContext, repositoryId, folderId, filter, extension,
-        null);
-  }
+		return fNavSvc.getFolderParent(fDummyCallContext, repositoryId, folderId, filter, extension, null);
+	}
 
-  public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId,
-      BigInteger depth, String filter, Boolean includeAllowableActions,
-      IncludeRelationships includeRelationships, String renditionFilter,
-      Boolean includePathSegment, ExtensionsData extension) {
+	public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
+			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+			String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
 
-    return fNavSvc.getDescendants(fDummyCallContext, repositoryId, folderId, depth, filter,
-        includeAllowableActions, includeRelationships, renditionFilter, includePathSegment,
-        extension, null);
-  }
+		return fNavSvc.getDescendants(fDummyCallContext, repositoryId, folderId, depth, filter,
+				includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension, null);
+	}
 
-  public List<ObjectParentData> getObjectParents(String repositoryId, String objectId,
-      String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-      String renditionFilter, Boolean includeRelativePathSegment, ExtensionsData extension) {
+	public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
+			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includeRelativePathSegment, ExtensionsData extension) {
 
-    return fNavSvc.getObjectParents(fDummyCallContext, repositoryId, objectId, filter,
-        includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment,
-        extension, null);
-  }
+		return fNavSvc.getObjectParents(fDummyCallContext, repositoryId, objectId, filter, includeAllowableActions,
+				includeRelationships, renditionFilter, includeRelativePathSegment, extension, null);
+	}
 }

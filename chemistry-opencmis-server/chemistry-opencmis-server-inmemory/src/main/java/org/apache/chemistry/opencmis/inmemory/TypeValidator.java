@@ -47,402 +47,364 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
  */
 public class TypeValidator {
 
-  public static void validateRequiredSystemProperties(Properties properties) {
-    if (properties == null || properties.getProperties() == null)
-      throw new RuntimeException("Cannot create object, no properties are given");
+	public static void validateRequiredSystemProperties(Properties properties) {
+		if (properties == null || properties.getProperties() == null)
+			throw new RuntimeException("Cannot create object, no properties are given");
 
-    if (!properties.getProperties().containsKey(PropertyIds.OBJECT_TYPE_ID))
-      throw new RuntimeException("Cannot create object, type id is missing");
+		if (!properties.getProperties().containsKey(PropertyIds.OBJECT_TYPE_ID))
+			throw new RuntimeException("Cannot create object, type id is missing");
 
-  }
-  
-  private static boolean isMandatorySystemProperty(String propertyId) {
-    // TODO Auto-generated method stub
-    return propertyId.equals(PropertyIds.OBJECT_TYPE_ID);
-  }
+	}
 
-  @SuppressWarnings("unchecked")
-  static <T> PropertyValidator<T> createPropertyValidator(PropertyDefinition<?> propDef) {
-    PropertyValidator<T> result = null;
-    if (propDef instanceof PropertyIntegerDefinition) {
-      result = (PropertyValidator<T>) new PropertyValidatorInteger();
-    }
-    else if (propDef instanceof PropertyDecimalDefinition) {
-      result = (PropertyValidator<T>) new PropertyValidatorDecimal();
-    }
-    else if (propDef instanceof PropertyStringDefinition) {
-      result = (PropertyValidator<T>) new PropertyValidatorString();
-    }
-    else {
-      result = new PropertyValidator<T>();
-    }
-    return result;
-  }
+	private static boolean isMandatorySystemProperty(String propertyId) {
+		// TODO Auto-generated method stub
+		return propertyId.equals(PropertyIds.OBJECT_TYPE_ID);
+	}
 
-  /*
-   * property validations: not readonly, all required are given, all are known in type
-   * cardinality: no multi values for single value, def min max check for Integer and Decimal,
-   * choices and in list Strings, max length set default value for omitted properties
-   */
-  static class PropertyValidator<T> {
+	@SuppressWarnings("unchecked")
+	static <T> PropertyValidator<T> createPropertyValidator(PropertyDefinition<?> propDef) {
+		PropertyValidator<T> result = null;
+		if (propDef instanceof PropertyIntegerDefinition) {
+			result = (PropertyValidator<T>) new PropertyValidatorInteger();
+		} else if (propDef instanceof PropertyDecimalDefinition) {
+			result = (PropertyValidator<T>) new PropertyValidatorDecimal();
+		} else if (propDef instanceof PropertyStringDefinition) {
+			result = (PropertyValidator<T>) new PropertyValidatorString();
+		} else {
+			result = new PropertyValidator<T>();
+		}
+		return result;
+	}
 
-    public void validate(PropertyDefinition<T> propDef, PropertyData<T> prop) {
+	/*
+	 * property validations: not readonly, all required are given, all are known
+	 * in type cardinality: no multi values for single value, def min max check
+	 * for Integer and Decimal, choices and in list Strings, max length set
+	 * default value for omitted properties
+	 */
+	static class PropertyValidator<T> {
 
-      // check general constraints for all property types
-      if (propDef.getCardinality() == Cardinality.SINGLE && prop.getValues().size() > 1)
-        throw new CmisConstraintException("The property with id " + propDef.getId()
-            + " is single valued, but multiple values are passed " + prop.getValues());
+		public void validate(PropertyDefinition<T> propDef, PropertyData<T> prop) {
 
-      if (propDef.getChoices() != null && propDef.getChoices().size() > 0) {
-        validateChoices(propDef, prop);
-      }
-    }
+			// check general constraints for all property types
+			if (propDef.getCardinality() == Cardinality.SINGLE && prop.getValues().size() > 1)
+				throw new CmisConstraintException("The property with id " + propDef.getId()
+						+ " is single valued, but multiple values are passed " + prop.getValues());
 
-    private void validateChoices(PropertyDefinition<T> propDef, PropertyData<T> prop) {
-      boolean isAllowedValue = true;
-      boolean hasMultiValueChoiceLists = false;
-      for (Choice<?> allowedValue : propDef.getChoices()) {
-        if (allowedValue.getValue() != null && allowedValue.getValue().size() > 1)
-          hasMultiValueChoiceLists = true;
-      }
+			if (propDef.getChoices() != null && propDef.getChoices().size() > 0) {
+				validateChoices(propDef, prop);
+			}
+		}
 
-      // check if value is in list
-      if (hasMultiValueChoiceLists) {
-        // do a complex check if this combination of actual values is allowed
-        // check if value is in list
-        isAllowedValue = false;
-        List<?> actualValues = prop.getValues();
-        for (Choice<?> allowedValue : propDef.getChoices()) {
-          if (allowedValue.getValue().size() == actualValues.size()) {
-            boolean listValuesAreEqual = true;
-            Iterator<?> it = allowedValue.getValue().iterator();
-            for (Object actualValue : actualValues) {
-              if (!actualValue.equals(it.next())) {
-                listValuesAreEqual = false;
-                break;
-              }
-            }
-            if (listValuesAreEqual) {
-              isAllowedValue = true;
-            }
-          }
+		private void validateChoices(PropertyDefinition<T> propDef, PropertyData<T> prop) {
+			boolean isAllowedValue = true;
+			boolean hasMultiValueChoiceLists = false;
+			for (Choice<?> allowedValue : propDef.getChoices()) {
+				if (allowedValue.getValue() != null && allowedValue.getValue().size() > 1)
+					hasMultiValueChoiceLists = true;
+			}
 
-          if (isAllowedValue)
-            break;
-        }
+			// check if value is in list
+			if (hasMultiValueChoiceLists) {
+				// do a complex check if this combination of actual values is
+				// allowed
+				// check if value is in list
+				isAllowedValue = false;
+				List<?> actualValues = prop.getValues();
+				for (Choice<?> allowedValue : propDef.getChoices()) {
+					if (allowedValue.getValue().size() == actualValues.size()) {
+						boolean listValuesAreEqual = true;
+						Iterator<?> it = allowedValue.getValue().iterator();
+						for (Object actualValue : actualValues) {
+							if (!actualValue.equals(it.next())) {
+								listValuesAreEqual = false;
+								break;
+							}
+						}
+						if (listValuesAreEqual) {
+							isAllowedValue = true;
+						}
+					}
 
-      }
-      else {
-        List<T> allowedValues = getAllowedValues(propDef.getChoices());
-        // do a simpler check if all values are choice elements
+					if (isAllowedValue)
+						break;
+				}
 
-        for (Object actualValue : prop.getValues()) {
-          if (!allowedValues.contains(actualValue)) {
-            isAllowedValue = false;
-            break;
-          }
-        }
-      }
+			} else {
+				List<T> allowedValues = getAllowedValues(propDef.getChoices());
+				// do a simpler check if all values are choice elements
 
-      if (!isAllowedValue)
-        throw new CmisConstraintException("The property with id " + propDef.getId()
-            + " has a fixed set of values. Value(s) " + prop.getValues() + " are not listed.");
-    }
-    
-    /**
-     * Calculate the list of allowed values for this property definition by recursively
-     * collecting all choice values from property definition
-     * 
-     * @param propDef
-     *          property definition
-     * @return
-     *    list of possible values in complete hierarchy
-     */
-    private List<T> getAllowedValues (List<Choice<T>> choices) {
-      List<T> allowedValues = new ArrayList<T>(choices.size());
-      for (Choice<T> choice : choices) {
-        if (choice.getValue() != null)
-          allowedValues.add(choice.getValue().get(0));
-        if (choice.getChoice() != null) {
-          List<Choice<T>> x = choice.getChoice();
-          allowedValues.addAll(getAllowedValues(x));
-        }
-      }  
-      return allowedValues;
-    }
-  }
+				for (Object actualValue : prop.getValues()) {
+					if (!allowedValues.contains(actualValue)) {
+						isAllowedValue = false;
+						break;
+					}
+				}
+			}
 
-  static class PropertyValidatorInteger extends PropertyValidator<BigInteger> {
+			if (!isAllowedValue)
+				throw new CmisConstraintException("The property with id " + propDef.getId()
+						+ " has a fixed set of values. Value(s) " + prop.getValues() + " are not listed.");
+		}
 
-    public void validate(PropertyDefinition<BigInteger> propDef, PropertyData<BigInteger> property) {
+		/**
+		 * Calculate the list of allowed values for this property definition by
+		 * recursively collecting all choice values from property definition
+		 * 
+		 * @param propDef
+		 *            property definition
+		 * @return list of possible values in complete hierarchy
+		 */
+		private List<T> getAllowedValues(List<Choice<T>> choices) {
+			List<T> allowedValues = new ArrayList<T>(choices.size());
+			for (Choice<T> choice : choices) {
+				if (choice.getValue() != null)
+					allowedValues.add(choice.getValue().get(0));
+				if (choice.getChoice() != null) {
+					List<Choice<T>> x = choice.getChoice();
+					allowedValues.addAll(getAllowedValues(x));
+				}
+			}
+			return allowedValues;
+		}
+	}
 
-      super.validate(propDef, property);
+	static class PropertyValidatorInteger extends PropertyValidator<BigInteger> {
 
-      BigInteger propVal = ((PropertyInteger) property).getFirstValue();
-      BigInteger minVal = ((PropertyIntegerDefinition) propDef).getMinValue();
-      BigInteger maxVal = ((PropertyIntegerDefinition) propDef).getMaxValue();
+		public void validate(PropertyDefinition<BigInteger> propDef, PropertyData<BigInteger> property) {
 
-      // check min and max
-      if (minVal != null && propVal != null && propVal.compareTo(minVal) == -1) {
-        throw new CmisConstraintException("For property with id " + propDef.getId() + " the value "
-            + propVal + " is less than the minimum value " + minVal);
-      }
-      if (maxVal != null && propVal != null && propVal.compareTo(maxVal) == 1) {
-        throw new CmisConstraintException("For property with id " + propDef.getId() + " the value "
-            + propVal + " is bigger than the maximum value " + maxVal);
-      }
-    }
-  }
+			super.validate(propDef, property);
 
-  static class PropertyValidatorDecimal extends PropertyValidator<BigDecimal> {
+			BigInteger propVal = ((PropertyInteger) property).getFirstValue();
+			BigInteger minVal = ((PropertyIntegerDefinition) propDef).getMinValue();
+			BigInteger maxVal = ((PropertyIntegerDefinition) propDef).getMaxValue();
 
-    public void validate(PropertyDefinition<BigDecimal> propDef, PropertyData<BigDecimal> property) {
+			// check min and max
+			if (minVal != null && propVal != null && propVal.compareTo(minVal) == -1) {
+				throw new CmisConstraintException("For property with id " + propDef.getId() + " the value " + propVal
+						+ " is less than the minimum value " + minVal);
+			}
+			if (maxVal != null && propVal != null && propVal.compareTo(maxVal) == 1) {
+				throw new CmisConstraintException("For property with id " + propDef.getId() + " the value " + propVal
+						+ " is bigger than the maximum value " + maxVal);
+			}
+		}
+	}
 
-      super.validate(propDef, property);
+	static class PropertyValidatorDecimal extends PropertyValidator<BigDecimal> {
 
-      BigDecimal propVal = ((PropertyDecimal) property).getFirstValue();
-      BigDecimal minVal = ((PropertyDecimalDefinition) propDef).getMinValue();
-      BigDecimal maxVal = ((PropertyDecimalDefinition) propDef).getMaxValue();
+		public void validate(PropertyDefinition<BigDecimal> propDef, PropertyData<BigDecimal> property) {
 
-      // check min and max
-      if (minVal != null && propVal != null && propVal.compareTo(minVal) == -1) {
-        throw new CmisConstraintException("For property with id " + propDef.getId() + " the value "
-            + propVal + " is less than the minimum value " + minVal);
-      }
-      if (maxVal != null && propVal != null && propVal.compareTo(maxVal) == 1) {
-        throw new CmisConstraintException("For property with id " + propDef.getId() + " the value "
-            + propVal + " is bigger than the maximum value " + maxVal);
-      }
-    }
-  }
+			super.validate(propDef, property);
 
-  static class PropertyValidatorString extends PropertyValidator<String> {
+			BigDecimal propVal = ((PropertyDecimal) property).getFirstValue();
+			BigDecimal minVal = ((PropertyDecimalDefinition) propDef).getMinValue();
+			BigDecimal maxVal = ((PropertyDecimalDefinition) propDef).getMaxValue();
 
-    public void validate(PropertyDefinition<String> propDef, PropertyData<String> property) {
+			// check min and max
+			if (minVal != null && propVal != null && propVal.compareTo(minVal) == -1) {
+				throw new CmisConstraintException("For property with id " + propDef.getId() + " the value " + propVal
+						+ " is less than the minimum value " + minVal);
+			}
+			if (maxVal != null && propVal != null && propVal.compareTo(maxVal) == 1) {
+				throw new CmisConstraintException("For property with id " + propDef.getId() + " the value " + propVal
+						+ " is bigger than the maximum value " + maxVal);
+			}
+		}
+	}
 
-      super.validate(propDef, property);
+	static class PropertyValidatorString extends PropertyValidator<String> {
 
-      long maxLen = ((PropertyStringDefinition) propDef).getMaxLength() == null ? -1
-          : ((PropertyStringDefinition) propDef).getMaxLength().longValue();
-      long len = ((PropertyData<String>) property).getFirstValue() == null ? -1
-          : ((PropertyData<String>) property).getFirstValue().length();
+		public void validate(PropertyDefinition<String> propDef, PropertyData<String> property) {
 
-      // check max length
-      if (maxLen >= 0 && len >= 0 && maxLen < len) {
-        throw new CmisConstraintException("For property with id " + propDef.getId()
-            + " the length of " + len + "is bigger than the maximum allowed length  " + maxLen);
-      }
-    }
-  }
+			super.validate(propDef, property);
 
-  @SuppressWarnings("unchecked")
-  public static <T> void validateProperties(TypeDefinition typeDef, Properties properties,
-      boolean checkMandatory) {
+			long maxLen = ((PropertyStringDefinition) propDef).getMaxLength() == null ? -1
+					: ((PropertyStringDefinition) propDef).getMaxLength().longValue();
+			long len = ((PropertyData<String>) property).getFirstValue() == null ? -1
+					: ((PropertyData<String>) property).getFirstValue().length();
 
-    List<String> propDefsRequired = getMandatoryPropDefs(typeDef.getPropertyDefinitions());
+			// check max length
+			if (maxLen >= 0 && len >= 0 && maxLen < len) {
+				throw new CmisConstraintException("For property with id " + propDef.getId() + " the length of " + len
+						+ "is bigger than the maximum allowed length  " + maxLen);
+			}
+		}
+	}
 
-    for (PropertyData<?> prop : properties.getProperties().values()) {
-      String propertyId = prop.getId();
-      BaseTypeId baseTypeId = typeDef.getBaseTypeId();
+	@SuppressWarnings("unchecked")
+	public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean checkMandatory) {
 
-      if (isSystemProperty(baseTypeId, propertyId))
-        continue; // ignore system properties for validation
+		List<String> propDefsRequired = getMandatoryPropDefs(typeDef.getPropertyDefinitions());
 
-      // Check if all properties are known in the type
-      if (!typeContainsProperty(typeDef, propertyId)) {
-        throw new CmisConstraintException("Unknown property " + propertyId + " in type "
-            + typeDef.getId());
-      }
+		for (PropertyData<?> prop : properties.getProperties().values()) {
+			String propertyId = prop.getId();
+			BaseTypeId baseTypeId = typeDef.getBaseTypeId();
 
-      // check that all mandatory attributes are present
-      if (checkMandatory && propDefsRequired.contains(propertyId))
-        propDefsRequired.remove(propertyId);
+			if (isSystemProperty(baseTypeId, propertyId))
+				continue; // ignore system properties for validation
 
-      // check all type specific constraints:
-      PropertyDefinition<T> propDef = getPropertyDefinition(typeDef, propertyId);
-      PropertyValidator<T> validator = createPropertyValidator(propDef);
-      validator.validate(propDef, (PropertyData<T>) prop);
-    }
+			// Check if all properties are known in the type
+			if (!typeContainsProperty(typeDef, propertyId)) {
+				throw new CmisConstraintException("Unknown property " + propertyId + " in type " + typeDef.getId());
+			}
 
-    if (checkMandatory && !propDefsRequired.isEmpty())
-      throw new CmisConstraintException("The following mandatory properties are missing: "
-          + propDefsRequired);
-  }
-  
-  public static void validateVersionStateForCreate(DocumentTypeDefinition typeDef, VersioningState verState) {
-    if (null==verState)
-      return;
-    if (typeDef.isVersionable() && verState.equals(VersioningState.NONE) || 
-        ! typeDef.isVersionable() && !verState.equals(VersioningState.NONE)) {
-      throw new CmisConstraintException("The versioning state flag is imcompatible to the type definition.");
-    }
+			// check that all mandatory attributes are present
+			if (checkMandatory && propDefsRequired.contains(propertyId))
+				propDefsRequired.remove(propertyId);
 
-  }
-  public static void validateAllowedChildObjectTypes(TypeDefinition childTypeDef, List<String> allowedChildTypes) {
-    
-    if (null == allowedChildTypes)
-      return; // all types are allowed
-    
-    for (String allowedChildType : allowedChildTypes ) {
-      if (allowedChildType.equals(childTypeDef.getId()))
-        return;
-    }
-    throw new RuntimeException("The requested type " + childTypeDef.getId() + " is not allowed in this folder");    
-  }
+			// check all type specific constraints:
+			PropertyDefinition<T> propDef = getPropertyDefinition(typeDef, propertyId);
+			PropertyValidator<T> validator = createPropertyValidator(propDef);
+			validator.validate(propDef, (PropertyData<T>) prop);
+		}
 
-  private static List<String> getMandatoryPropDefs(Map<String, PropertyDefinition<?>> propDefs) {
-    List<String> res = new ArrayList<String>();
-    if (null != propDefs) {
-      for (PropertyDefinition<?> propDef : propDefs.values()) {
-        if (propDef.isRequired() && !isMandatorySystemProperty(propDef.getId()) )
-          res.add(propDef.getId());
-      }
-    }
-    return res;
-  }
+		if (checkMandatory && !propDefsRequired.isEmpty())
+			throw new CmisConstraintException("The following mandatory properties are missing: " + propDefsRequired);
+	}
 
-  public static boolean typeContainsProperty(TypeDefinition typeDef, String propertyId) {
+	public static void validateVersionStateForCreate(DocumentTypeDefinition typeDef, VersioningState verState) {
+		if (null == verState)
+			return;
+		if (typeDef.isVersionable() && verState.equals(VersioningState.NONE) || !typeDef.isVersionable()
+				&& !verState.equals(VersioningState.NONE)) {
+			throw new CmisConstraintException("The versioning state flag is imcompatible to the type definition.");
+		}
 
-    Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
-    if (null == propDefs)
-      return false;
-    
-    PropertyDefinition<?> propDef = propDefs.get(propertyId);
-    
-    if (null == propDef)
-      return false; // unknown property id in this type
-    else
-      return true;
-  }
+	}
 
-  @SuppressWarnings("unchecked")
-  private static<T> PropertyDefinition<T> getPropertyDefinition(TypeDefinition typeDef,
-      String propertyId) {
+	public static void validateAllowedChildObjectTypes(TypeDefinition childTypeDef, List<String> allowedChildTypes) {
 
-    Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
-    if (null == propDefs)
-      return null;
-    
-    PropertyDefinition<?> propDef = propDefs.get(propertyId);
-    
-    if (null == propDef)
-      return null; // not found
-    else
-      return (PropertyDefinition<T>)propDef;
-  }
+		if (null == allowedChildTypes)
+			return; // all types are allowed
 
-  private static boolean isSystemProperty(BaseTypeId baseTypeId, String propertyId) {
+		for (String allowedChildType : allowedChildTypes) {
+			if (allowedChildType.equals(childTypeDef.getId()))
+				return;
+		}
+		throw new RuntimeException("The requested type " + childTypeDef.getId() + " is not allowed in this folder");
+	}
 
-    if (propertyId.equals(PropertyIds.NAME)) {
-      return true;
-    }
-    else if (propertyId.equals(PropertyIds.OBJECT_ID)) {
-      return true;
-    }
-    else if (propertyId.equals(PropertyIds.OBJECT_TYPE_ID)) {
-      return true;
-    }
-    else if (propertyId.equals(PropertyIds.BASE_TYPE_ID)) {
-      return true;
-    }
-    else if (propertyId.equals(PropertyIds.CREATED_BY)) {
-      return true;
-    }
-    else if (propertyId.equals(PropertyIds.CREATION_DATE)) {
-      return true;
-    }
-    else if (propertyId.equals(PropertyIds.LAST_MODIFIED_BY)) {
-      return true;
-    }
-    else if (propertyId.equals(PropertyIds.LAST_MODIFICATION_DATE)) {
-      return true;
-    }
-    else if (propertyId.equals(PropertyIds.CHANGE_TOKEN)) {
-      return true;
-    }
+	private static List<String> getMandatoryPropDefs(Map<String, PropertyDefinition<?>> propDefs) {
+		List<String> res = new ArrayList<String>();
+		if (null != propDefs) {
+			for (PropertyDefinition<?> propDef : propDefs.values()) {
+				if (propDef.isRequired() && !isMandatorySystemProperty(propDef.getId()))
+					res.add(propDef.getId());
+			}
+		}
+		return res;
+	}
 
-    if (baseTypeId.equals(BaseTypeId.CMIS_DOCUMENT)) {
-      if (propertyId.equals(PropertyIds.IS_IMMUTABLE)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.IS_LATEST_VERSION)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.IS_MAJOR_VERSION)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.VERSION_SERIES_ID)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.IS_LATEST_MAJOR_VERSION)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.VERSION_LABEL)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.VERSION_SERIES_ID)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.CHECKIN_COMMENT)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.CONTENT_STREAM_LENGTH)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.CONTENT_STREAM_MIME_TYPE)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.CONTENT_STREAM_FILE_NAME)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.CONTENT_STREAM_ID)) {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    else if (baseTypeId.equals(BaseTypeId.CMIS_FOLDER)) {
-      if (propertyId.equals(PropertyIds.PARENT_ID)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.PATH)) {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    else if (baseTypeId.equals(BaseTypeId.CMIS_POLICY)) {
-      if (propertyId.equals(PropertyIds.SOURCE_ID)) {
-        return true;
-      }
-      else if (propertyId.equals(PropertyIds.TARGET_ID)) {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    else { // relationship
-      if (propertyId.equals(PropertyIds.POLICY_TEXT)) {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-  }
+	public static boolean typeContainsProperty(TypeDefinition typeDef, String propertyId) {
+
+		Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
+		if (null == propDefs)
+			return false;
+
+		PropertyDefinition<?> propDef = propDefs.get(propertyId);
+
+		if (null == propDef)
+			return false; // unknown property id in this type
+		else
+			return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> PropertyDefinition<T> getPropertyDefinition(TypeDefinition typeDef, String propertyId) {
+
+		Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
+		if (null == propDefs)
+			return null;
+
+		PropertyDefinition<?> propDef = propDefs.get(propertyId);
+
+		if (null == propDef)
+			return null; // not found
+		else
+			return (PropertyDefinition<T>) propDef;
+	}
+
+	private static boolean isSystemProperty(BaseTypeId baseTypeId, String propertyId) {
+
+		if (propertyId.equals(PropertyIds.NAME)) {
+			return true;
+		} else if (propertyId.equals(PropertyIds.OBJECT_ID)) {
+			return true;
+		} else if (propertyId.equals(PropertyIds.OBJECT_TYPE_ID)) {
+			return true;
+		} else if (propertyId.equals(PropertyIds.BASE_TYPE_ID)) {
+			return true;
+		} else if (propertyId.equals(PropertyIds.CREATED_BY)) {
+			return true;
+		} else if (propertyId.equals(PropertyIds.CREATION_DATE)) {
+			return true;
+		} else if (propertyId.equals(PropertyIds.LAST_MODIFIED_BY)) {
+			return true;
+		} else if (propertyId.equals(PropertyIds.LAST_MODIFICATION_DATE)) {
+			return true;
+		} else if (propertyId.equals(PropertyIds.CHANGE_TOKEN)) {
+			return true;
+		}
+
+		if (baseTypeId.equals(BaseTypeId.CMIS_DOCUMENT)) {
+			if (propertyId.equals(PropertyIds.IS_IMMUTABLE)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.IS_LATEST_VERSION)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.IS_MAJOR_VERSION)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.VERSION_SERIES_ID)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.IS_LATEST_MAJOR_VERSION)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.VERSION_LABEL)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.VERSION_SERIES_ID)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.CHECKIN_COMMENT)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.CONTENT_STREAM_LENGTH)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.CONTENT_STREAM_MIME_TYPE)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.CONTENT_STREAM_FILE_NAME)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.CONTENT_STREAM_ID)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (baseTypeId.equals(BaseTypeId.CMIS_FOLDER)) {
+			if (propertyId.equals(PropertyIds.PARENT_ID)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.PATH)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (baseTypeId.equals(BaseTypeId.CMIS_POLICY)) {
+			if (propertyId.equals(PropertyIds.SOURCE_ID)) {
+				return true;
+			} else if (propertyId.equals(PropertyIds.TARGET_ID)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else { // relationship
+			if (propertyId.equals(PropertyIds.POLICY_TEXT)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 }

@@ -21,28 +21,32 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
 
 public interface Content {
-  
-  /** 
-   * return true if this object has content or false if there is no content attached.
-   * @return
-   */
-  boolean hasContent();
-  
-  /**
-   * retrieve the content of a document
-   * @return
-   *    object containing mime-type, length and a stream with content
-   */
-  ContentStream getContent(long offset, long length);
 
-  /**
-   * Assign content do a document. Existing content gets overwritten.
-   * The document is not yet persisted in the new state.
-   * @param content
-   *    content to be assigned to the document.
-   * @param mustPersist
-   *    persist document (set to false if content is set during creation of a document)
-   */
-  void setContent(ContentStream content, boolean mustPersist);
-  
+	/**
+	 * return true if this object has content or false if there is no content
+	 * attached.
+	 * 
+	 * @return
+	 */
+	boolean hasContent();
+
+	/**
+	 * retrieve the content of a document
+	 * 
+	 * @return object containing mime-type, length and a stream with content
+	 */
+	ContentStream getContent(long offset, long length);
+
+	/**
+	 * Assign content do a document. Existing content gets overwritten. The
+	 * document is not yet persisted in the new state.
+	 * 
+	 * @param content
+	 *            content to be assigned to the document.
+	 * @param mustPersist
+	 *            persist document (set to false if content is set during
+	 *            creation of a document)
+	 */
+	void setContent(ContentStream content, boolean mustPersist);
+
 }

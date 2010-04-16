@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.inmemory;
 
 /**
  * @author Jens
-*/
+ */
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,21 +28,23 @@ import java.util.List;
 
 public class FilterParser {
 
-  public static boolean isContainedInFilter(String propertyId, List<String> requestedIds) {
-    if (requestedIds.contains("*"))
-      return true;
-    return requestedIds.contains(propertyId);
-  }
+	public static boolean isContainedInFilter(String propertyId, List<String> requestedIds) {
+		if (requestedIds.contains("*"))
+			return true;
+		return requestedIds.contains(propertyId);
+	}
 
-  public static List<String> getRequestedIdsFromFilter(String filter) {
-    if (filter == null || filter.length() == 0)
-      return Collections.singletonList("*");
-    else {
-      List<String> requestedIds = Arrays.asList(filter.split(",\\s*")); // comma plus whitespace
-      if (requestedIds.contains("*"))
-        requestedIds = Collections.singletonList("*");
-      return requestedIds;
-    }
-  }
+	public static List<String> getRequestedIdsFromFilter(String filter) {
+		if (filter == null || filter.length() == 0)
+			return Collections.singletonList("*");
+		else {
+			List<String> requestedIds = Arrays.asList(filter.split(",\\s*")); // comma
+																				// plus
+																				// whitespace
+			if (requestedIds.contains("*"))
+				requestedIds = Collections.singletonList("*");
+			return requestedIds;
+		}
+	}
 
 }

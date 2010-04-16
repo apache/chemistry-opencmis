@@ -20,71 +20,60 @@ package org.apache.chemistry.opencmis.inmemory.server;
 
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 
-
 /**
- * This class uses a thread local storage to store the runtime context. The runtime
- * context can be accessed from everywhere using thread local storage access The runtime
- * context is only valid during the lifetime of a single request.
+ * This class uses a thread local storage to store the runtime context. The
+ * runtime context can be accessed from everywhere using thread local storage
+ * access The runtime context is only valid during the lifetime of a single
+ * request.
+ * 
  * @author jens
- *
+ * 
  */
 
 /*
-public class RuntimeContext {
-  public static class ThreadLocalRuntimeConfig extends ThreadLocal<CallContext> {    
-
-    public void attachCfg(CallContext ctx) {
-      if (null != ctx)
-        set(ctx);      
-    }
-
-    public synchronized String getConfigValue(String key) {
-      return get().get(key) ;
-    }
-
-    public void deleteCfg() {
-      set(null);      
-    }
-  };
-
-  private static ThreadLocalRuntimeConfig CONN = new ThreadLocalRuntimeConfig();
-  
-  public static ThreadLocalRuntimeConfig getRuntimeConfig() {
-    return CONN;
-  }
-
-  public static String getRuntimeConfigValue(String key) {
-    return CONN.getConfigValue(key);
-  }
-  
-  public static void remove() {
-    CONN.remove();
-  }
-}
-*/
+ * public class RuntimeContext { public static class ThreadLocalRuntimeConfig
+ * extends ThreadLocal<CallContext> {
+ * 
+ * public void attachCfg(CallContext ctx) { if (null != ctx) set(ctx); }
+ * 
+ * public synchronized String getConfigValue(String key) { return get().get(key)
+ * ; }
+ * 
+ * public void deleteCfg() { set(null); } };
+ * 
+ * private static ThreadLocalRuntimeConfig CONN = new
+ * ThreadLocalRuntimeConfig();
+ * 
+ * public static ThreadLocalRuntimeConfig getRuntimeConfig() { return CONN; }
+ * 
+ * public static String getRuntimeConfigValue(String key) { return
+ * CONN.getConfigValue(key); }
+ * 
+ * public static void remove() { CONN.remove(); } }
+ */
 
 public class RuntimeContext {
-  
-  private static ThreadLocal<CallContext> CTX_TLS =  new ThreadLocal<CallContext>(); 
 
-  public static void attachCfg(CallContext ctx) {      
-    CTX_TLS.set(ctx);      
-  }
+	private static ThreadLocal<CallContext> CTX_TLS = new ThreadLocal<CallContext>();
 
-  public static synchronized String getRuntimeConfigValue(String key) {
-    CallContext ctx = CTX_TLS.get();
-    if (null == ctx)
-      return null;
-    else      
-      return CTX_TLS.get().get(key) ;
-  }
-  
-  public static void remove() {
-    CTX_TLS.remove();
-  }
+	public static void attachCfg(CallContext ctx) {
+		CTX_TLS.set(ctx);
+	}
 
-  public static final CallContext getCurrentContext() {
-    return CTX_TLS.get();
-  }
-  
+	public static synchronized String getRuntimeConfigValue(String key) {
+		CallContext ctx = CTX_TLS.get();
+		if (null == ctx)
+			return null;
+		else
+			return CTX_TLS.get().get(key);
+	}
+
+	public static void remove() {
+		CTX_TLS.remove();
+	}
+
+	public static final CallContext getCurrentContext() {
+		return CTX_TLS.get();
+	}
+
 }

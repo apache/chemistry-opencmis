@@ -11,92 +11,91 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 
 public class ContentStreamDataImpl implements ContentStream {
 
-  private int fLength;
+	private int fLength;
 
-  private String fMimeType;
+	private String fMimeType;
 
-  private String fFileName;
+	private String fFileName;
 
-  private byte[] fContent;
+	private byte[] fContent;
 
-  private long fStreamLimitOffset;
+	private long fStreamLimitOffset;
 
-  private long fStreamLimitLength;
+	private long fStreamLimitLength;
 
-  public void setContent (InputStream in) throws IOException {
-    fStreamLimitOffset = fStreamLimitLength = -1;
-    if (null == in) {
-      fContent = null; // delete content
-      fLength = 0;
-    } else {
-      byte[] buffer = new byte[ 0xFFFF ];
-      ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
-      for ( int len=0; (len = in.read(buffer)) != -1; )  {
-        contentStream.write( buffer, 0, len );
-        fLength += len;
-      }
-      fContent = contentStream.toByteArray();
-      fLength = contentStream.size();
-      contentStream.close();
-      in.close();
-    }
-  }
+	public void setContent(InputStream in) throws IOException {
+		fStreamLimitOffset = fStreamLimitLength = -1;
+		if (null == in) {
+			fContent = null; // delete content
+			fLength = 0;
+		} else {
+			byte[] buffer = new byte[0xFFFF];
+			ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
+			for (int len = 0; (len = in.read(buffer)) != -1;) {
+				contentStream.write(buffer, 0, len);
+				fLength += len;
+			}
+			fContent = contentStream.toByteArray();
+			fLength = contentStream.size();
+			contentStream.close();
+			in.close();
+		}
+	}
 
-  public long getLength() {
-    return fLength;
-  }
+	public long getLength() {
+		return fLength;
+	}
 
-  public BigInteger getBigLength() {
-    return BigInteger.valueOf(fLength);
-  }
+	public BigInteger getBigLength() {
+		return BigInteger.valueOf(fLength);
+	}
 
-  public String getMimeType() {
-    return fMimeType;
-  }
+	public String getMimeType() {
+		return fMimeType;
+	}
 
-  public void setMimeType(String fMimeType) {
-    this.fMimeType = fMimeType;
-  }
+	public void setMimeType(String fMimeType) {
+		this.fMimeType = fMimeType;
+	}
 
-  public String getFileName() {
-    return fFileName;
-  }
+	public String getFileName() {
+		return fFileName;
+	}
 
-  public void setFileName(String fileName) {
-    this.fFileName = fileName;
-  }
+	public void setFileName(String fileName) {
+		this.fFileName = fileName;
+	}
 
-  public String getFilename() {
-    return fFileName;
-  }
+	public String getFilename() {
+		return fFileName;
+	}
 
-  public InputStream getStream() {
-    if (null == fContent)
-      return null;
-    else if (fStreamLimitOffset <= 0 && fStreamLimitLength < 0)
-      return new ByteArrayInputStream(fContent);
-    else
-      return new ByteArrayInputStream(fContent, (int)(fStreamLimitOffset<0 ? 0 : fStreamLimitOffset),
-          (int)(fStreamLimitLength<0 ? fLength : fStreamLimitLength));
-  }
+	public InputStream getStream() {
+		if (null == fContent)
+			return null;
+		else if (fStreamLimitOffset <= 0 && fStreamLimitLength < 0)
+			return new ByteArrayInputStream(fContent);
+		else
+			return new ByteArrayInputStream(fContent, (int) (fStreamLimitOffset < 0 ? 0 : fStreamLimitOffset),
+					(int) (fStreamLimitLength < 0 ? fLength : fStreamLimitLength));
+	}
 
-  public ContentStream getCloneWithLimits(long offset, long length) {
-    ContentStreamDataImpl clone = new ContentStreamDataImpl();
-    clone.fFileName = fFileName;
-    clone.fLength = fLength;
-    clone.fContent = fContent;
-    clone.fMimeType = fMimeType;
-    clone.fStreamLimitOffset = offset;
-    clone.fStreamLimitLength = length;
-    return clone;
-  }
+	public ContentStream getCloneWithLimits(long offset, long length) {
+		ContentStreamDataImpl clone = new ContentStreamDataImpl();
+		clone.fFileName = fFileName;
+		clone.fLength = fLength;
+		clone.fContent = fContent;
+		clone.fMimeType = fMimeType;
+		clone.fStreamLimitOffset = offset;
+		clone.fStreamLimitLength = length;
+		return clone;
+	}
 
+	public List<Object> getExtensions() {
+		return null;
+	}
 
-  public List<Object> getExtensions() {
-    return null;
-  }
-
-  public void setExtensions(List<Object> extensions) {
-    // not implemented
-  }
+	public void setExtensions(List<Object> extensions) {
+		// not implemented
+	}
 }

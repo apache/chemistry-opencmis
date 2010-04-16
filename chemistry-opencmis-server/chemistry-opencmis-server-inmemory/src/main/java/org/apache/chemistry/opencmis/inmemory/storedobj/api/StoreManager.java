@@ -26,124 +26,121 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 
 /**
- * interface to a repository implementation. This interface is the entry point to a 
- * repository that can persist CMIS objects. Using this interface the type information
- * can be retrieved or set, a repository can be created or for a given repository the
- * store can be retrieved. 
+ * interface to a repository implementation. This interface is the entry point
+ * to a repository that can persist CMIS objects. Using this interface the type
+ * information can be retrieved or set, a repository can be created or for a
+ * given repository the store can be retrieved.
  * 
  * @author Jens
  */
 public interface StoreManager {
 
-  /**
-   * return a list of all available repositories
-   * @return
-   */
-  List<String> getAllRepositoryIds();
-  
-  /**
-   * Initialize the store for the given repository. Only called for repositories
-   * that exist on startup (i.e. for each repository id returned in a previous
-   * getAllRepositoryIds() call.
-   * 
-   * @param repositoryId
-   *    id of repository to initialize
-   * @param isCreated
-   *    true if the repository was just created and is initialized for the first time
-   *    false if it existed before and is reloaded
-   */
-  public void initRepository(String repositoryId);
-  
-  /**
-   * get the object store for the given repository id.
-   * 
-   * @param repositoryId
-   * @return the object store in which objects for this repository are stored.
-   */
-  ObjectStore getObjectStore(String repositoryId);
+	/**
+	 * return a list of all available repositories
+	 * 
+	 * @return
+	 */
+	List<String> getAllRepositoryIds();
 
-  /**
-   * create a new repository with the given id. Create the repository, initiate
-   * the type system and initialize it so that it is ready for use
-   * 
-   * @param repositoryId
-   *    id of repository
-   * @param typeCreatorClassName
-   *    class implementing the type creation, the class must implement the interface
-   *    TypeCreator
-   */
-  void createAndInitRepository(String repositoryId, String typeCreatorClassName);
-    
-  /**
-   * retrieve a list with all type definitions. 
-   * @param repositoryId
-   *    id of repository 
-   * @param includePropertyDefinitions
-   *    indicates whether to include property definitions in returned type
-   * @return
-   *    map with type definition
-   */
-  Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
-      boolean includePropertyDefinitions);
-  
-  /**
-   * Retrieve a type definition for a give repository and type id
-   * 
-   * @param repositoryId
-   *    id of repository 
-   * @param typeId
-   *    id of type definition
-   * @return
-   *    type definition
-   */
-  TypeDefinitionContainer getTypeById(String repositoryId, String typeId);
+	/**
+	 * Initialize the store for the given repository. Only called for
+	 * repositories that exist on startup (i.e. for each repository id returned
+	 * in a previous getAllRepositoryIds() call.
+	 * 
+	 * @param repositoryId
+	 *            id of repository to initialize
+	 * @param isCreated
+	 *            true if the repository was just created and is initialized for
+	 *            the first time false if it existed before and is reloaded
+	 */
+	public void initRepository(String repositoryId);
 
-  /**
-   * Retrieve a type definition for a give repository and type id with or
-   * without property definitions and limited to depth in hierarchy
-   * 
-   * @param repositoryId
-   *    id of repository 
-   * @param typeId
-   *    id of type definition
-   * @param includePropertyDefinitions
-   *    indicates whether to include property definitions in returned type
-   * @param depth
-   *    limit depth of type hierarchy in return (-1 means unlimited)
-   * @return
-   *    type definition
-   */
-  TypeDefinitionContainer getTypeById(String repositoryId, String typeId,
-      boolean includePropertyDefinitions, int depth);
+	/**
+	 * get the object store for the given repository id.
+	 * 
+	 * @param repositoryId
+	 * @return the object store in which objects for this repository are stored.
+	 */
+	ObjectStore getObjectStore(String repositoryId);
 
-  /**
-   * Retrieve a factory to create CMIS data structures used as containers
-   * 
-   * @return
-   *    factory object
-   */
-  BindingsObjectFactory getObjectFactory();
+	/**
+	 * create a new repository with the given id. Create the repository,
+	 * initiate the type system and initialize it so that it is ready for use
+	 * 
+	 * @param repositoryId
+	 *            id of repository
+	 * @param typeCreatorClassName
+	 *            class implementing the type creation, the class must implement
+	 *            the interface TypeCreator
+	 */
+	void createAndInitRepository(String repositoryId, String typeCreatorClassName);
 
-  /**
-   * Retrieve a list of root types in the repositories. Root types are available by
-   * definition and need to to be created by a client. CMIS supports documents,
-   * folders, relations and policies as root types
-   * 
-   * @param repositoryId
-   *    id of repository
-   * @return
-   *    list of root types
-   */
-  List<TypeDefinitionContainer> getRootTypes(String repositoryId);
+	/**
+	 * retrieve a list with all type definitions.
+	 * 
+	 * @param repositoryId
+	 *            id of repository
+	 * @param includePropertyDefinitions
+	 *            indicates whether to include property definitions in returned
+	 *            type
+	 * @return map with type definition
+	 */
+	Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId, boolean includePropertyDefinitions);
 
-  /**
-   * Retrieve the repository information for a repository
-   * 
-   * @param repositoryId
-   *    id of repository
-   * @return
-   *    repository information
-   */
-  RepositoryInfo getRepositoryInfo(String repositoryId);
+	/**
+	 * Retrieve a type definition for a give repository and type id
+	 * 
+	 * @param repositoryId
+	 *            id of repository
+	 * @param typeId
+	 *            id of type definition
+	 * @return type definition
+	 */
+	TypeDefinitionContainer getTypeById(String repositoryId, String typeId);
+
+	/**
+	 * Retrieve a type definition for a give repository and type id with or
+	 * without property definitions and limited to depth in hierarchy
+	 * 
+	 * @param repositoryId
+	 *            id of repository
+	 * @param typeId
+	 *            id of type definition
+	 * @param includePropertyDefinitions
+	 *            indicates whether to include property definitions in returned
+	 *            type
+	 * @param depth
+	 *            limit depth of type hierarchy in return (-1 means unlimited)
+	 * @return type definition
+	 */
+	TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
+			int depth);
+
+	/**
+	 * Retrieve a factory to create CMIS data structures used as containers
+	 * 
+	 * @return factory object
+	 */
+	BindingsObjectFactory getObjectFactory();
+
+	/**
+	 * Retrieve a list of root types in the repositories. Root types are
+	 * available by definition and need to to be created by a client. CMIS
+	 * supports documents, folders, relations and policies as root types
+	 * 
+	 * @param repositoryId
+	 *            id of repository
+	 * @return list of root types
+	 */
+	List<TypeDefinitionContainer> getRootTypes(String repositoryId);
+
+	/**
+	 * Retrieve the repository information for a repository
+	 * 
+	 * @param repositoryId
+	 *            id of repository
+	 * @return repository information
+	 */
+	RepositoryInfo getRepositoryInfo(String repositoryId);
 
 }

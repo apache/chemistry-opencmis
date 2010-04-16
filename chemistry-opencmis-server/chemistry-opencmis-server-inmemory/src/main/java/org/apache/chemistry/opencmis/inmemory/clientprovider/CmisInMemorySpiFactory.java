@@ -27,26 +27,27 @@ import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpiFactory;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 
 /**
- * Factory class for an in-memory SMIS SPI. For the in-memory implementation the 
+ * Factory class for an in-memory SMIS SPI. For the in-memory implementation the
  * CMIS SPI creates one instance per session
  * 
  * @author Jens
- *
+ * 
  */
 public class CmisInMemorySpiFactory implements CmisSpiFactory {
 
-  private static Map<Integer, CmisInMemorySpi> IN_MEM_SPIS = new HashMap<Integer, CmisInMemorySpi>();
-  public CmisSpi getSpiInstance(Session session) {
-    // we maintain one InMemory SPI for each session
-    
-    int sessionId = System.identityHashCode(session);
-    CmisInMemorySpi spi = IN_MEM_SPIS.get(sessionId);
-    if (null == spi) {
-      // does not yet exist, create one:
-      spi = new CmisInMemorySpi(session);
-      IN_MEM_SPIS.put(sessionId, spi);
-    }
-    return spi;
-  }
+	private static Map<Integer, CmisInMemorySpi> IN_MEM_SPIS = new HashMap<Integer, CmisInMemorySpi>();
+
+	public CmisSpi getSpiInstance(Session session) {
+		// we maintain one InMemory SPI for each session
+
+		int sessionId = System.identityHashCode(session);
+		CmisInMemorySpi spi = IN_MEM_SPIS.get(sessionId);
+		if (null == spi) {
+			// does not yet exist, create one:
+			spi = new CmisInMemorySpi(session);
+			IN_MEM_SPIS.put(sessionId, spi);
+		}
+		return spi;
+	}
 
 }

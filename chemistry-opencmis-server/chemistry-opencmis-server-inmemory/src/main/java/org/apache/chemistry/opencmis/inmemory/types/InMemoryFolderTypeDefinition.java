@@ -30,71 +30,72 @@ import org.apache.chemistry.opencmis.inmemory.NameValidator;
 
 public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
 
-  private static final long serialVersionUID = 1L;
-  private static InMemoryFolderTypeDefinition FOLDER_TYPE = new InMemoryFolderTypeDefinition();
+	private static final long serialVersionUID = 1L;
+	private static InMemoryFolderTypeDefinition FOLDER_TYPE = new InMemoryFolderTypeDefinition();
 
-  public static InMemoryFolderTypeDefinition getRootFolderType() {
-    return FOLDER_TYPE;
-  }
+	public static InMemoryFolderTypeDefinition getRootFolderType() {
+		return FOLDER_TYPE;
+	}
 
-  /* This constructor is just for creating the root document */
-  public InMemoryFolderTypeDefinition() {
-    init(BaseTypeId.CMIS_FOLDER.value(), "CMIS Folder");
-    setParentTypeId(null);
-    // set base properties
-    Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
-    DocumentTypeCreationHelper.setBasicFolderPropertyDefinitions(props);
-  }
+	/* This constructor is just for creating the root document */
+	public InMemoryFolderTypeDefinition() {
+		init(BaseTypeId.CMIS_FOLDER.value(), "CMIS Folder");
+		setParentTypeId(null);
+		// set base properties
+		Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
+		DocumentTypeCreationHelper.setBasicFolderPropertyDefinitions(props);
+	}
 
-  public InMemoryFolderTypeDefinition(String id, String displayName) {
-    init(id, displayName);
-    setParentTypeId(FOLDER_TYPE.getId());
-  }
+	public InMemoryFolderTypeDefinition(String id, String displayName) {
+		init(id, displayName);
+		setParentTypeId(FOLDER_TYPE.getId());
+	}
 
-  public InMemoryFolderTypeDefinition(String id, String displayName, InMemoryFolderTypeDefinition parentType) {
-    // get root type
-    init(id, displayName);
-    if (parentType != null)
-      setBaseTypeId(parentType.getBaseTypeId());
-    else
-      throw new IllegalArgumentException(
-          "Must provide a parent type when creating a folder type definition");
-    setParentTypeId(parentType.getId());
-  }
+	public InMemoryFolderTypeDefinition(String id, String displayName, InMemoryFolderTypeDefinition parentType) {
+		// get root type
+		init(id, displayName);
+		if (parentType != null)
+			setBaseTypeId(parentType.getBaseTypeId());
+		else
+			throw new IllegalArgumentException("Must provide a parent type when creating a folder type definition");
+		setParentTypeId(parentType.getId());
+	}
 
-  /* 
-   * Set the property definitions for this type. The parameter propertyDefinitions should only
-   * contain the custom property definitions for this type. The standard property definitions are
-   * added automatically.
-   * @see org.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition#setPropertyDefinitions(java.util.Map)
-   */
-  public void addCustomPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
-    DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
-  }
+	/*
+	 * Set the property definitions for this type. The parameter
+	 * propertyDefinitions should only contain the custom property definitions
+	 * for this type. The standard property definitions are added automatically.
+	 * 
+	 * @seeorg.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition#
+	 * setPropertyDefinitions(java.util.Map)
+	 */
+	public void addCustomPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
+		DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
+	}
 
-  private void init(String id, String displayName) {
-    if (!NameValidator.isValidId(id))
-        throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+	private void init(String id, String displayName) {
+		if (!NameValidator.isValidId(id))
+			throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
-    setBaseTypeId(BaseTypeId.CMIS_FOLDER);
-    setId(id);
-    if (displayName == null)
-      displayName = '#' + id + '#';
-    setDisplayName(displayName);
-    // create some suitable defaults for convenience
-    setDescription("Description of " + getDisplayName() + " Type");
-    setLocalName(id);
-    setLocalNamespace("local");
-    setQueryName(id);
-    setIsControllableAcl(false);
-    setIsControllablePolicy(false);
-    setIsCreatable(true);
-    setIsFileable(true);
-    setIsFulltextIndexed(false);
-    setIsIncludedInSupertypeQuery(true);
-    setIsQueryable(false);
+		setBaseTypeId(BaseTypeId.CMIS_FOLDER);
+		setId(id);
+		if (displayName == null)
+			displayName = '#' + id + '#';
+		setDisplayName(displayName);
+		// create some suitable defaults for convenience
+		setDescription("Description of " + getDisplayName() + " Type");
+		setLocalName(id);
+		setLocalNamespace("local");
+		setQueryName(id);
+		setIsControllableAcl(false);
+		setIsControllablePolicy(false);
+		setIsCreatable(true);
+		setIsFileable(true);
+		setIsFulltextIndexed(false);
+		setIsIncludedInSupertypeQuery(true);
+		setIsQueryable(false);
 
-    Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();
-    setPropertyDefinitions(props); // set initial empty set of properties    
-  }
+		Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();
+		setPropertyDefinitions(props); // set initial empty set of properties
+	}
 }

@@ -41,101 +41,101 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
 
-  private StoreManager fStoreManager;
-  AtomLinkInfoProvider fAtomLinkProvider;
-  InMemoryNavigationServiceImpl fNavigationService; // real implementation of the service
-  InMemoryRepositoryServiceImpl fRepositoryService;
+	private StoreManager fStoreManager;
+	AtomLinkInfoProvider fAtomLinkProvider;
+	InMemoryNavigationServiceImpl fNavigationService; // real implementation of
+														// the service
+	InMemoryRepositoryServiceImpl fRepositoryService;
 
-  public InMemoryDiscoveryServiceImpl(StoreManager storeManager,
-      InMemoryRepositoryServiceImpl repSvc, InMemoryNavigationServiceImpl navSvc) {
-    fStoreManager = storeManager;
-    fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
-    fNavigationService = navSvc;
-    fRepositoryService = repSvc;
-  }
+	public InMemoryDiscoveryServiceImpl(StoreManager storeManager, InMemoryRepositoryServiceImpl repSvc,
+			InMemoryNavigationServiceImpl navSvc) {
+		fStoreManager = storeManager;
+		fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
+		fNavigationService = navSvc;
+		fRepositoryService = repSvc;
+	}
 
-  public ObjectList getContentChanges(CallContext context, String repositoryId,
-      Holder<String> changeLogToken, Boolean includeProperties, String filter,
-      Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension,
-      ObjectInfoHolder objectInfos) {
-    // dummy implementation using hard coded values
+	public ObjectList getContentChanges(CallContext context, String repositoryId, Holder<String> changeLogToken,
+			Boolean includeProperties, String filter, Boolean includePolicyIds, Boolean includeAcl,
+			BigInteger maxItems, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+		// dummy implementation using hard coded values
 
-    try {
-      // Attach the CallContext to a thread local context that can be accessed from everywhere
-      RuntimeContext.attachCfg(context);
+		try {
+			// Attach the CallContext to a thread local context that can be
+			// accessed from everywhere
+			RuntimeContext.attachCfg(context);
 
-      RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
-      String rootFolderId = rep.getRootFolderId();
+			RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
+			String rootFolderId = rep.getRootFolderId();
 
-      ObjectListImpl objList = new ObjectListImpl();
-      List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context,
-          repositoryId, rootFolderId, BigInteger.valueOf(3), filter, false,
-          IncludeRelationships.NONE, null, false, extension, null);
+			ObjectListImpl objList = new ObjectListImpl();
+			List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context, repositoryId,
+					rootFolderId, BigInteger.valueOf(3), filter, false, IncludeRelationships.NONE, null, false,
+					extension, null);
 
-      // convert ObjectInFolderContainerList to objectList
-      List<ObjectData> lod = new ArrayList<ObjectData>();
-      for (ObjectInFolderContainer obj : tempRes) {
-        convertList(lod, obj);
-      }
-      objList.setObjects(lod);
-      objList.setNumItems(BigInteger.valueOf(lod.size()));
+			// convert ObjectInFolderContainerList to objectList
+			List<ObjectData> lod = new ArrayList<ObjectData>();
+			for (ObjectInFolderContainer obj : tempRes) {
+				convertList(lod, obj);
+			}
+			objList.setObjects(lod);
+			objList.setNumItems(BigInteger.valueOf(lod.size()));
 
-      // To be able to provide all Atom links in the response we need additional information:
-      fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, null, objectInfos, objList);
-      return objList;
-    }
-    finally {
-      RuntimeContext.remove();
-    }
-  }
+			// To be able to provide all Atom links in the response we need
+			// additional information:
+			fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, null, objectInfos, objList);
+			return objList;
+		} finally {
+			RuntimeContext.remove();
+		}
+	}
 
-  private void convertList(List<ObjectData> lod, ObjectInFolderContainer obj) {
-    lod.add(obj.getObject().getObject());
-    // add dummy event info
-    ObjectData oif = obj.getObject().getObject();
-    ObjectDataImpl oifImpl = (ObjectDataImpl) oif;
-    ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
-    changeEventInfo.setChangeType(ChangeType.UPDATED);
-    changeEventInfo.setChangeTime(new GregorianCalendar());
-    oifImpl.setChangeEventInfo(changeEventInfo);
-    if (null != obj.getChildren()) {
-      for (ObjectInFolderContainer oifc : obj.getChildren()) {
-        convertList(lod, oifc);
-      }
-    }
-  }
+	private void convertList(List<ObjectData> lod, ObjectInFolderContainer obj) {
+		lod.add(obj.getObject().getObject());
+		// add dummy event info
+		ObjectData oif = obj.getObject().getObject();
+		ObjectDataImpl oifImpl = (ObjectDataImpl) oif;
+		ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
+		changeEventInfo.setChangeType(ChangeType.UPDATED);
+		changeEventInfo.setChangeTime(new GregorianCalendar());
+		oifImpl.setChangeEventInfo(changeEventInfo);
+		if (null != obj.getChildren()) {
+			for (ObjectInFolderContainer oifc : obj.getChildren()) {
+				convertList(lod, oifc);
+			}
+		}
+	}
 
-  public ObjectList query(CallContext context, String repositoryId, String statement,
-      Boolean searchAllVersions, Boolean includeAllowableActions,
-      IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems,
-      BigInteger skipCount, ExtensionsData extension) {
-    // dummy implementation using hard coded values
+	public ObjectList query(CallContext context, String repositoryId, String statement, Boolean searchAllVersions,
+			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		// dummy implementation using hard coded values
 
-    try {
-      // Attach the CallContext to a thread local context that can be accessed from everywhere
-      RuntimeContext.attachCfg(context);
+		try {
+			// Attach the CallContext to a thread local context that can be
+			// accessed from everywhere
+			RuntimeContext.attachCfg(context);
 
-      // use descendants of root folder as result
-      RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
-      String rootFolderId = rep.getRootFolderId();
-      ObjectListImpl objList = new ObjectListImpl();
-      List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context,
-          repositoryId, rootFolderId, BigInteger.valueOf(3), "*", includeAllowableActions,
-          includeRelationships, renditionFilter, false, extension, null);
+			// use descendants of root folder as result
+			RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
+			String rootFolderId = rep.getRootFolderId();
+			ObjectListImpl objList = new ObjectListImpl();
+			List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context, repositoryId,
+					rootFolderId, BigInteger.valueOf(3), "*", includeAllowableActions, includeRelationships,
+					renditionFilter, false, extension, null);
 
-      // convert ObjectInFolderContainerList to objectList
-      List<ObjectData> lod = new ArrayList<ObjectData>();
-      for (ObjectInFolderContainer obj : tempRes) {
-        convertList(lod, obj);
-      }
-      objList.setObjects(lod);
-      objList.setNumItems(BigInteger.valueOf(lod.size()));
+			// convert ObjectInFolderContainerList to objectList
+			List<ObjectData> lod = new ArrayList<ObjectData>();
+			for (ObjectInFolderContainer obj : tempRes) {
+				convertList(lod, obj);
+			}
+			objList.setObjects(lod);
+			objList.setNumItems(BigInteger.valueOf(lod.size()));
 
-      return objList;
-    }
-    finally {
-      RuntimeContext.remove();
-    }
-  }
+			return objList;
+		} finally {
+			RuntimeContext.remove();
+		}
+	}
 
 }

@@ -21,20 +21,21 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 import java.util.List;
 
 /**
- * A folder is a concrete object (meaning it can be stored) and has 
- * Each folder is contained in a parent folder. The parent folder for
- * the special root folder is null.
+ * A folder is a concrete object (meaning it can be stored) and has Each folder
+ * is contained in a parent folder. The parent folder for the special root
+ * folder is null.
  * 
  * @author Jens
- *
+ * 
  */
 
 public interface Folder extends Children, SingleFiling, StoredObject {
-  
-  /**
-   * return a list of allowed types of children in this folder
-   * @return
-   */
-  List<String> getAllowedChildObjectTypeIds();
-  
+
+	/**
+	 * return a list of allowed types of children in this folder
+	 * 
+	 * @return
+	 */
+	List<String> getAllowedChildObjectTypeIds();
+
 }
