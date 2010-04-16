@@ -46,160 +46,165 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
  */
 public class CmisInMemorySpi extends CmisInMemoryProvider implements CmisSpi {
 
-  // private static Log log = LogFactory.getLog(CmisInMemorySpi.class);
-  private Session fSession;
-  
-  CmisInMemorySpi(Session session) { // package visibility
-    fSession = session;
-    setup();
-  }
+	// private static Log log = LogFactory.getLog(CmisInMemorySpi.class);
+	private Session fSession;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getRepositoryService()
-   */
-  public RepositoryService getRepositoryService() {
-    return fRepositoryService;
-  }
+	CmisInMemorySpi(Session session) { // package visibility
+		fSession = session;
+		setup();
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPIFactory#getSPIInstance(org.apache.opencmis.client.
-   * provider.spi.Session)
-   */
-  public CmisSpi getSpiInstance(Session session) {
-    fSession = session;
-    setup();
-    return this;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getRepositoryService()
+	 */
+	public RepositoryService getRepositoryService() {
+		return fRepositoryService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getACLService()
-   */
-  public AclService getAclService() {
-    // TODO to be completed if ACLs are implemented
-    return null;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPIFactory#getSPIInstance
+	 * (org.apache.opencmis.client. provider.spi.Session)
+	 */
+	public CmisSpi getSpiInstance(Session session) {
+		fSession = session;
+		setup();
+		return this;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getDiscoveryService()
-   */
-  public DiscoveryService getDiscoveryService() {
-    // TODO to be completed if query is implemented
-    return null;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#getACLService()
+	 */
+	public AclService getAclService() {
+		// TODO to be completed if ACLs are implemented
+		return null;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getMultiFilingService()
-   */
-  public MultiFilingService getMultiFilingService() {
-    return fMultiService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getDiscoveryService()
+	 */
+	public DiscoveryService getDiscoveryService() {
+		// TODO to be completed if query is implemented
+		return null;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getNavigationService()
-   */
-  public NavigationService getNavigationService() {
-    return fNavigationService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getMultiFilingService()
+	 */
+	public MultiFilingService getMultiFilingService() {
+		return fMultiService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getObjectService()
-   */
-  public ObjectService getObjectService() {
-    return fObjectService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getNavigationService()
+	 */
+	public NavigationService getNavigationService() {
+		return fNavigationService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getPolicyService()
-   */
-  public PolicyService getPolicyService() {
-    // TODO to be completed if policies are implemented
-    return null;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#getObjectService()
+	 */
+	public ObjectService getObjectService() {
+		return fObjectService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getRelationshipService()
-   */
-  public RelationshipService getRelationshipService() {
-    // TODO to be completed if relationships are implemented
-    return null;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#getPolicyService()
+	 */
+	public PolicyService getPolicyService() {
+		// TODO to be completed if policies are implemented
+		return null;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getVersioningService()
-   */
-  public VersioningService getVersioningService() {
-    return fVersioningService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getRelationshipService()
+	 */
+	public RelationshipService getRelationshipService() {
+		// TODO to be completed if relationships are implemented
+		return null;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#clearAllCaches()
-   */
-  public void clearAllCaches() {
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getVersioningService()
+	 */
+	public VersioningService getVersioningService() {
+		return fVersioningService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#clearRepositoryCache(java.lang.String)
-   */
-  public void clearRepositoryCache(String repositoryId) {
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#clearAllCaches()
+	 */
+	public void clearAllCaches() {
+	}
 
-  
-  /**
-   * Returns the repository info.
-   */
-  public RepositoryInfo getRepositoryInfo() {
-    return fRepositoryInfo;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#clearRepositoryCache(
+	 * java.lang.String)
+	 */
+	public void clearRepositoryCache(String repositoryId) {
+	}
 
-  public String getStoredObjectFactoryName() {
-    return StoreManagerImpl.class.getName();
-  }
-  
-  public StoreManager getStoreManager() {
+	/**
+	 * Returns the repository info.
+	 */
+	public RepositoryInfo getRepositoryInfo() {
+		return fRepositoryInfo;
+	}
+
+	public String getStoredObjectFactoryName() {
+		return StoreManagerImpl.class.getName();
+	}
+
+	public StoreManager getStoreManager() {
 		return fStoreManager;
 	}
 
-  // ---- internal ----
-    
-  private void setup() {
-    Map<String, String> cfgParams = new HashMap<String, String>();
-    String[] configParamKeys = {ConfigConstants.REPOSITORY_CLASS, ConfigConstants.REPOSITORY_ID, 
-        ConfigConstants.TYPE_CREATOR_CLASS };
+	// ---- internal ----
 
-    
-    for (String key : configParamKeys) {
-      String value = (String) fSession.get(key);
-      if (null != value)
-        cfgParams.put(key, value);
-    }
-    
+	private void setup() {
+		Map<String, String> cfgParams = new HashMap<String, String>();
+		String[] configParamKeys = { ConfigConstants.REPOSITORY_CLASS, ConfigConstants.REPOSITORY_ID,
+				ConfigConstants.TYPE_CREATOR_CLASS };
 
-    super.setup(cfgParams);
-  }
+		for (String key : configParamKeys) {
+			String value = (String) fSession.get(key);
+			if (null != value)
+				cfgParams.put(key, value);
+		}
 
-  
+		super.setup(cfgParams);
+	}
+
 }

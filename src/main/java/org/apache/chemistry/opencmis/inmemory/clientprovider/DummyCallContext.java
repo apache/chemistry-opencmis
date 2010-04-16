@@ -6,35 +6,35 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.server.spi.CallContext;
 
 public class DummyCallContext implements CallContext {
-  private Map<String, String> fParameter = new HashMap<String, String>();
+	private Map<String, String> fParameter = new HashMap<String, String>();
 
-  public DummyCallContext() {
-    fParameter.put( USERNAME, "TestUser");
-    fParameter.put( PASSWORD, "secret");
-    fParameter.put( LOCALE, "en");
-  }
-  
-  public String get(String key) {
-    return fParameter.get(key);
-  }
+	public DummyCallContext() {
+		fParameter.put(USERNAME, "TestUser");
+		fParameter.put(PASSWORD, "secret");
+		fParameter.put(LOCALE, "en");
+	}
 
-  public String getBinding() {
-    return BINDING_ATOMPUB;
-  }
+	public String get(String key) {
+		return fParameter.get(key);
+	}
 
-  public String getLocale() {
-    return get(LOCALE);
-  }
+	public String getBinding() {
+		return BINDING_ATOMPUB;
+	}
 
-  public String getPassword() {
-    return get(PASSWORD);
-  }
+	public String getLocale() {
+		return get(LOCALE);
+	}
 
-  public String getUsername() {
-    return get(USERNAME);
-  }
+	public String getPassword() {
+		return get(PASSWORD);
+	}
 
-  public void put(String key, String value) {
-    fParameter.put(key, value);
-  }
+	public String getUsername() {
+		return get(USERNAME);
+	}
+
+	public void put(String key, String value) {
+		fParameter.put(key, value);
+	}
 }

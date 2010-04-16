@@ -21,13 +21,14 @@ package org.apache.chemistry.opencmis.inmemory;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 
 /**
- * A simple interface to create the repository info. This needs to be implemented by a client (like a unit
- * test) in class and the name of the class is passed to the session. The in-memory repository
- * creates an instance of this class to generate the repository info for its instance.
+ * A simple interface to create the repository info. This needs to be
+ * implemented by a client (like a unit test) in class and the name of the class
+ * is passed to the session. The in-memory repository creates an instance of
+ * this class to generate the repository info for its instance.
  * 
  * @author Jens
  * 
  */
 public interface RepositoryInfoCreator {
-  RepositoryInfo createRepositoryInfo();
+	RepositoryInfo createRepositoryInfo();
 }

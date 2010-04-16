@@ -27,29 +27,27 @@ import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryDiscoveryServiceImpl;
 
-public class DiscoveryServiceImpl  extends AbstractService implements DiscoveryService {
+public class DiscoveryServiceImpl extends AbstractService implements DiscoveryService {
 
-  private InMemoryDiscoveryServiceImpl fDiscoverySvc;
+	private InMemoryDiscoveryServiceImpl fDiscoverySvc;
 
-  public DiscoveryServiceImpl(InMemoryDiscoveryServiceImpl disSvc) {
-    fDiscoverySvc = disSvc;
-  }
+	public DiscoveryServiceImpl(InMemoryDiscoveryServiceImpl disSvc) {
+		fDiscoverySvc = disSvc;
+	}
 
-  public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken,
-      Boolean includeProperties, String filter, Boolean includePolicyIds, Boolean includeAcl,
-      BigInteger maxItems, ExtensionsData extension) {
+	public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
+			String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
 
-    return fDiscoverySvc.getContentChanges(fDummyCallContext, repositoryId, changeLogToken,
-        includeProperties, filter, includePolicyIds, includeAcl, maxItems, extension, null);
-  }
+		return fDiscoverySvc.getContentChanges(fDummyCallContext, repositoryId, changeLogToken, includeProperties,
+				filter, includePolicyIds, includeAcl, maxItems, extension, null);
+	}
 
-  public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
-      Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-      String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+	public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
+			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
-    return fDiscoverySvc.query(fDummyCallContext, repositoryId, statement, searchAllVersions,
-        includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount,
-        extension);
-  }
+		return fDiscoverySvc.query(fDummyCallContext, repositoryId, statement, searchAllVersions,
+				includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension);
+	}
 
 }

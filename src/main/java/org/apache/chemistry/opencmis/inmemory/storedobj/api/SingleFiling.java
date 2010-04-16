@@ -19,31 +19,33 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
 /**
- * Folders have in the CMIS specification exactly one parent. This interface describes
- * the behavior of objects with a single parent object.
+ * Folders have in the CMIS specification exactly one parent. This interface
+ * describes the behavior of objects with a single parent object.
  * 
  * @author Jens
- *
+ * 
  */
 public interface SingleFiling extends Filing {
 
-  /**
-   * @return
-   */
-  String getPath();
+	/**
+	 * @return
+	 */
+	String getPath();
 
-  /**
-   * @return
-   */
-  Folder getParent();
+	/**
+	 * @return
+	 */
+	Folder getParent();
 
-  /** Put the document in a folder and set the parent. This method should not 
-   * be used to file a document in a folder. It is used internally when a document
-   * is filed to the folder. The document does not get persisted in this call.
-   * 
-   * @param parent
-   *    parent folder of the document to be assigned.
-   */
-  void setParent(Folder parent);
-  
+	/**
+	 * Put the document in a folder and set the parent. This method should not
+	 * be used to file a document in a folder. It is used internally when a
+	 * document is filed to the folder. The document does not get persisted in
+	 * this call.
+	 * 
+	 * @param parent
+	 *            parent folder of the document to be assigned.
+	 */
+	void setParent(Folder parent);
+
 }

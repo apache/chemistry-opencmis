@@ -45,189 +45,186 @@ import static org.junit.Assert.*;
  * @author Jens
  */
 public class NavigationServiceTest extends AbstractServiceTst {
-  private static Log log = LogFactory.getLog(NavigationServiceTest.class);
-  private static final int NUM_ROOT_FOLDERS = 10;
-  private String fLevel1FolderId;
+	private static Log log = LogFactory.getLog(NavigationServiceTest.class);
+	private static final int NUM_ROOT_FOLDERS = 10;
+	private String fLevel1FolderId;
 
-  @Before
-  public void setUp() throws Exception {
-    super.setUp();
-  }
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+	}
 
-  @After
-  public void tearDown() throws Exception {
-    super.tearDown();
-  }
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
+	}
 
-  @Test
-  public void testGetChildren() {
-    log.info("starting testGetChildren() ...");
-    createLevel1Folders();
+	@Test
+	public void testGetChildren() {
+		log.info("starting testGetChildren() ...");
+		createLevel1Folders();
 
-    log.info("test getting all objects with getChildren");
-    BigInteger maxItems = BigInteger.valueOf(NUM_ROOT_FOLDERS *2);
-    BigInteger skipCount = BigInteger.valueOf(0);
-    ObjectInFolderList result = fNavSvc.getChildren(fRepositoryId, fRootFolderId, "*", null, false,
-        IncludeRelationships.NONE, null, true, maxItems, skipCount, null);
-    List<ObjectInFolderData> folders = result.getObjects();
-    log.info(" found " + folders.size() + " folders in getChildren()");
-    for (ObjectInFolderData folder : folders) {
-      log.info("   found folder id " + folder.getObject().getId() + " path segment "
-          + folder.getPathSegment());
-    }
-    assertEquals(NUM_ROOT_FOLDERS, folders.size());
-    
-    log.info("test paging with getChildren");
-    maxItems = BigInteger.valueOf(3);
-    skipCount = BigInteger.valueOf(3);    
-    result = fNavSvc.getChildren(fRepositoryId, fRootFolderId, "*", null, false,
-        IncludeRelationships.NONE, null, true, maxItems, skipCount, null);
-    folders = result.getObjects();
-    log.info(" found " + folders.size() + " folders in getChildren()");
-    for (ObjectInFolderData folder : folders) {
-      log.info("   found folder id " + folder.getObject().getId() + " path segment "
-          + folder.getPathSegment());
-    }
-    assertEquals(3, folders.size());
-    assertEquals("Folder 3", folders.get(0).getPathSegment());
-    log.info("... testGetChildren() finished.");
-  }
+		log.info("test getting all objects with getChildren");
+		BigInteger maxItems = BigInteger.valueOf(NUM_ROOT_FOLDERS * 2);
+		BigInteger skipCount = BigInteger.valueOf(0);
+		ObjectInFolderList result = fNavSvc.getChildren(fRepositoryId, fRootFolderId, "*", null, false,
+				IncludeRelationships.NONE, null, true, maxItems, skipCount, null);
+		List<ObjectInFolderData> folders = result.getObjects();
+		log.info(" found " + folders.size() + " folders in getChildren()");
+		for (ObjectInFolderData folder : folders) {
+			log.info("   found folder id " + folder.getObject().getId() + " path segment " + folder.getPathSegment());
+		}
+		assertEquals(NUM_ROOT_FOLDERS, folders.size());
 
-  @Test
-  public void testGetFolderTree() {
-    log.info("starting testGetFolderTree() ...");    
-    createFolderHierachy(3, 5);
+		log.info("test paging with getChildren");
+		maxItems = BigInteger.valueOf(3);
+		skipCount = BigInteger.valueOf(3);
+		result = fNavSvc.getChildren(fRepositoryId, fRootFolderId, "*", null, false, IncludeRelationships.NONE, null,
+				true, maxItems, skipCount, null);
+		folders = result.getObjects();
+		log.info(" found " + folders.size() + " folders in getChildren()");
+		for (ObjectInFolderData folder : folders) {
+			log.info("   found folder id " + folder.getObject().getId() + " path segment " + folder.getPathSegment());
+		}
+		assertEquals(3, folders.size());
+		assertEquals("Folder 3", folders.get(0).getPathSegment());
+		log.info("... testGetChildren() finished.");
+	}
 
-    log.info("test getting all objects with getFolderTree");
-    BigInteger depth = BigInteger.valueOf(-1);
-    Boolean includePathSegments = true;
-    String propertyFilter = "*";
-    String renditionFilter = null;
-    Boolean includeAllowableActions = false;
-    String objectId = fRootFolderId;
-    
-    List<ObjectInFolderContainer> tree = fNavSvc.getFolderTree(fRepositoryId, objectId,
-        depth, propertyFilter, includeAllowableActions, IncludeRelationships.NONE, renditionFilter,
-        includePathSegments, null);    
-    
-    log.info("Descendants for object id " + objectId + " are: ");
-    for (ObjectInFolderContainer folder : tree) {
-      logFolderContainer(folder, 0);
-    }
-    
-    log.info("... testGetFolderTree() finished.");
-  }
+	@Test
+	public void testGetFolderTree() {
+		log.info("starting testGetFolderTree() ...");
+		createFolderHierachy(3, 5);
 
-  private void logFolderContainer(ObjectInFolderContainer folder, int depth) {
-    StringBuilder prefix = new StringBuilder();
-    for (int i=0; i<depth; i++)
-      prefix.append("   ");
-    
-    log.info(prefix + "name: " + folder.getObject().getPathSegment());
-    List<ObjectInFolderContainer> children = folder.getChildren();
-    if (null != children) {
-      for (ObjectInFolderContainer child: children) {
-        logFolderContainer(child, depth+1);
-      } 
-    }
-  }
+		log.info("test getting all objects with getFolderTree");
+		BigInteger depth = BigInteger.valueOf(-1);
+		Boolean includePathSegments = true;
+		String propertyFilter = "*";
+		String renditionFilter = null;
+		Boolean includeAllowableActions = false;
+		String objectId = fRootFolderId;
 
-  @Test
-  public void testGetDescendants() {
-    log.info("starting testGetDescendants() ...");
-    final int numLevels = 3;
-    final int childrenPerLevel = 3;
-    int objCount = createFolderHierachy(numLevels, childrenPerLevel);
+		List<ObjectInFolderContainer> tree = fNavSvc.getFolderTree(fRepositoryId, objectId, depth, propertyFilter,
+				includeAllowableActions, IncludeRelationships.NONE, renditionFilter, includePathSegments, null);
 
-    log.info("test getting all objects with getDescendants");
-    List<ObjectInFolderContainer> result = fNavSvc.getDescendants(fRepositoryId, fRootFolderId, BigInteger.valueOf(-1),
-        "*", Boolean.TRUE, IncludeRelationships.NONE, null, Boolean.TRUE, null);
-    
-    for (ObjectInFolderContainer obj: result) {
-      log.info("   found folder id " + obj.getObject().getObject().getId() + " path segment "
-          + obj.getObject().getPathSegment());
-    }
-    int sizeOfDescs = getSizeOfDescendants(result);
-    assertEquals(objCount, sizeOfDescs);
+		log.info("Descendants for object id " + objectId + " are: ");
+		for (ObjectInFolderContainer folder : tree) {
+			logFolderContainer(folder, 0);
+		}
 
-    log.info("test getting one level with getDescendants");
-    result = fNavSvc.getDescendants(fRepositoryId, fRootFolderId, BigInteger.valueOf(1),
-        "*", Boolean.TRUE, IncludeRelationships.NONE, null, Boolean.TRUE, null);
-    
-    for (ObjectInFolderContainer obj: result) {
-      log.info("   found folder id " + obj.getObject().getObject().getId() + " path segment "
-          + obj.getObject().getPathSegment());
-    }
-    sizeOfDescs = getSizeOfDescendants(result);
-    assertEquals(childrenPerLevel, sizeOfDescs);
-    
-    log.info("test getting two levels with getDescendants");
-    result = fNavSvc.getDescendants(fRepositoryId, fRootFolderId, BigInteger.valueOf(2),
-        "*", Boolean.TRUE, IncludeRelationships.NONE, null, Boolean.TRUE, null);
-    
-    for (ObjectInFolderContainer obj: result) {
-      log.info("   found folder id " + obj.getObject().getObject().getId() + " path segment "
-          + obj.getObject().getPathSegment());
-    }
-    sizeOfDescs = getSizeOfDescendants(result);
-    assertEquals(childrenPerLevel*childrenPerLevel+childrenPerLevel, sizeOfDescs);
+		log.info("... testGetFolderTree() finished.");
+	}
 
-    log.info("... testGetDescendants() finished.");
-  }
-  
-  @Test
-  public void testGetFolderParent() {
-    log.info("starting testGetFolderParent() ...");
-    createLevel1Folders();
-    String folderId = fLevel1FolderId;
-    
-    ObjectData result = fNavSvc.getFolderParent(fRepositoryId, folderId, null, null);
-    log.info(" found parent for id \'" + folderId + "\' is \'" + result.getId() + "\'");
-    assertEquals(fRootFolderId, result.getId()); // should be root folder 
-    
-    folderId = fRootFolderId;
-    try {
-      result = fNavSvc.getFolderParent(fRepositoryId, folderId, null, null);
-      log.info(" found parent for id " + folderId + " is " + result.getId());
-      fail("Should not be possible to get parent for root folder");
-    } catch (Exception e) {
-      assertEquals(CmisInvalidArgumentException.class, e.getClass());
-      log.info(" getParent() for root folder raised expected exception");      
-    }
-    log.info("... testGetFolderParent() finished.");
-  }
+	private void logFolderContainer(ObjectInFolderContainer folder, int depth) {
+		StringBuilder prefix = new StringBuilder();
+		for (int i = 0; i < depth; i++)
+			prefix.append("   ");
 
-  private int getSizeOfDescendants(List<ObjectInFolderContainer> objs) {
-    int sum = 0; 
-    if (null != objs) {
-      sum = objs.size();
-      for (ObjectInFolderContainer obj: objs) {
-        if (null != obj.getChildren())
-          sum += getSizeOfDescendants(obj.getChildren());
-      }
-    }
-    return sum;
-  }
-  
-  private void createLevel1Folders() {
-    for (int i = 0; i < NUM_ROOT_FOLDERS; i++) {
-      List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-      properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "Folder " + i));
-      properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
-          InMemoryFolderTypeDefinition.getRootFolderType().getId()));
-      Properties props = fFactory.createPropertiesData(properties);      
-      String id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
-      if (i==3) // store one
-        fLevel1FolderId = id;
-    }
-  }
-  
-  private int createFolderHierachy(int levels, int childrenPerLevel) {
+		log.info(prefix + "name: " + folder.getObject().getPathSegment());
+		List<ObjectInFolderContainer> children = folder.getChildren();
+		if (null != children) {
+			for (ObjectInFolderContainer child : children) {
+				logFolderContainer(child, depth + 1);
+			}
+		}
+	}
 
-    ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
-    gen.createFolderHierachy(levels, childrenPerLevel, fRootFolderId);
-    int objCount = gen.getObjectsInTotal();
-    return objCount;
-  }
-  
+	@Test
+	public void testGetDescendants() {
+		log.info("starting testGetDescendants() ...");
+		final int numLevels = 3;
+		final int childrenPerLevel = 3;
+		int objCount = createFolderHierachy(numLevels, childrenPerLevel);
+
+		log.info("test getting all objects with getDescendants");
+		List<ObjectInFolderContainer> result = fNavSvc.getDescendants(fRepositoryId, fRootFolderId, BigInteger
+				.valueOf(-1), "*", Boolean.TRUE, IncludeRelationships.NONE, null, Boolean.TRUE, null);
+
+		for (ObjectInFolderContainer obj : result) {
+			log.info("   found folder id " + obj.getObject().getObject().getId() + " path segment "
+					+ obj.getObject().getPathSegment());
+		}
+		int sizeOfDescs = getSizeOfDescendants(result);
+		assertEquals(objCount, sizeOfDescs);
+
+		log.info("test getting one level with getDescendants");
+		result = fNavSvc.getDescendants(fRepositoryId, fRootFolderId, BigInteger.valueOf(1), "*", Boolean.TRUE,
+				IncludeRelationships.NONE, null, Boolean.TRUE, null);
+
+		for (ObjectInFolderContainer obj : result) {
+			log.info("   found folder id " + obj.getObject().getObject().getId() + " path segment "
+					+ obj.getObject().getPathSegment());
+		}
+		sizeOfDescs = getSizeOfDescendants(result);
+		assertEquals(childrenPerLevel, sizeOfDescs);
+
+		log.info("test getting two levels with getDescendants");
+		result = fNavSvc.getDescendants(fRepositoryId, fRootFolderId, BigInteger.valueOf(2), "*", Boolean.TRUE,
+				IncludeRelationships.NONE, null, Boolean.TRUE, null);
+
+		for (ObjectInFolderContainer obj : result) {
+			log.info("   found folder id " + obj.getObject().getObject().getId() + " path segment "
+					+ obj.getObject().getPathSegment());
+		}
+		sizeOfDescs = getSizeOfDescendants(result);
+		assertEquals(childrenPerLevel * childrenPerLevel + childrenPerLevel, sizeOfDescs);
+
+		log.info("... testGetDescendants() finished.");
+	}
+
+	@Test
+	public void testGetFolderParent() {
+		log.info("starting testGetFolderParent() ...");
+		createLevel1Folders();
+		String folderId = fLevel1FolderId;
+
+		ObjectData result = fNavSvc.getFolderParent(fRepositoryId, folderId, null, null);
+		log.info(" found parent for id \'" + folderId + "\' is \'" + result.getId() + "\'");
+		assertEquals(fRootFolderId, result.getId()); // should be root folder
+
+		folderId = fRootFolderId;
+		try {
+			result = fNavSvc.getFolderParent(fRepositoryId, folderId, null, null);
+			log.info(" found parent for id " + folderId + " is " + result.getId());
+			fail("Should not be possible to get parent for root folder");
+		} catch (Exception e) {
+			assertEquals(CmisInvalidArgumentException.class, e.getClass());
+			log.info(" getParent() for root folder raised expected exception");
+		}
+		log.info("... testGetFolderParent() finished.");
+	}
+
+	private int getSizeOfDescendants(List<ObjectInFolderContainer> objs) {
+		int sum = 0;
+		if (null != objs) {
+			sum = objs.size();
+			for (ObjectInFolderContainer obj : objs) {
+				if (null != obj.getChildren())
+					sum += getSizeOfDescendants(obj.getChildren());
+			}
+		}
+		return sum;
+	}
+
+	private void createLevel1Folders() {
+		for (int i = 0; i < NUM_ROOT_FOLDERS; i++) {
+			List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
+			properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "Folder " + i));
+			properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, InMemoryFolderTypeDefinition
+					.getRootFolderType().getId()));
+			Properties props = fFactory.createPropertiesData(properties);
+			String id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
+			if (i == 3) // store one
+				fLevel1FolderId = id;
+		}
+	}
+
+	private int createFolderHierachy(int levels, int childrenPerLevel) {
+
+		ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
+		gen.createFolderHierachy(levels, childrenPerLevel, fRootFolderId);
+		int objCount = gen.getObjectsInTotal();
+		return objCount;
+	}
+
 }

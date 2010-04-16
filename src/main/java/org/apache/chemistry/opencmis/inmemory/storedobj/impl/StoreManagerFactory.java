@@ -29,41 +29,38 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public class StoreManagerFactory {
-  private static Log log = LogFactory.getLog(StoreManagerFactory.class);
+	private static Log log = LogFactory.getLog(StoreManagerFactory.class);
 
-  public static StoreManager createInstance(String className) {
+	public static StoreManager createInstance(String className) {
 
-    Class<?> clazz = null;
-    try {
-      clazz = Class.forName(className);
-    }
-    catch (ClassNotFoundException e) {
-      String msg = "Failed to create StoredObjectCreator, class " + className + " does not exist.";
-      log.error(msg, e);
-      e.printStackTrace();
-      throw new RuntimeException(msg, e);
-    }
+		Class<?> clazz = null;
+		try {
+			clazz = Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			String msg = "Failed to create StoredObjectCreator, class " + className + " does not exist.";
+			log.error(msg, e);
+			e.printStackTrace();
+			throw new RuntimeException(msg, e);
+		}
 
-    Object obj = null;
-    try {
-      obj = clazz.newInstance();
-    }
-    catch (InstantiationException e) {
-      log.error("Failed to create StoredObjectCreator from class " + className, e);
-      e.printStackTrace();
-    }
-    catch (IllegalAccessException e) {
-      log.error("Failed to create StoredObjectCreator from class " + className, e);
-      e.printStackTrace();
-    }
+		Object obj = null;
+		try {
+			obj = clazz.newInstance();
+		} catch (InstantiationException e) {
+			log.error("Failed to create StoredObjectCreator from class " + className, e);
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			log.error("Failed to create StoredObjectCreator from class " + className, e);
+			e.printStackTrace();
+		}
 
-    if (obj instanceof StoreManager)
-      return (StoreManager) obj;
-    else {
-      log.error("Failed to create StoredObjectCreator, class " + className
-          + " does not implement interface StoredObjectCreator");
-      return null;
-    }
-  }
+		if (obj instanceof StoreManager)
+			return (StoreManager) obj;
+		else {
+			log.error("Failed to create StoredObjectCreator, class " + className
+					+ " does not implement interface StoredObjectCreator");
+			return null;
+		}
+	}
 
 }
