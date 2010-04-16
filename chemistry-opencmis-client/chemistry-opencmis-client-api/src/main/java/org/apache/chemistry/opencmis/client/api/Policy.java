@@ -23,6 +23,6 @@ package org.apache.chemistry.opencmis.client.api;
  */
 public interface Policy extends FileableCmisObject {
 
-  public String getPolicyText(); // cmis:policyText
+	public String getPolicyText(); // cmis:policyText
 
 }

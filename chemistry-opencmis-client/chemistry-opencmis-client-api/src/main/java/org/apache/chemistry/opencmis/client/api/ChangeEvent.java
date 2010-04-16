@@ -24,25 +24,26 @@ import org.apache.chemistry.opencmis.commons.api.ChangeEventInfo;
 
 /**
  * Change Event from the change log.
- *
+ * 
  * @see Session#getContentChanges(String, StringBuffer)
- *
+ * 
  *      See CMIS Domain Model - section 2.1.11.
  */
 public interface ChangeEvent extends ChangeEventInfo {
 
-  /**
-   * Gets the id of the object.
-   *
-   * @return the object ID
-   */
-  String getObjectId();
+	/**
+	 * Gets the id of the object.
+	 * 
+	 * @return the object ID
+	 */
+	String getObjectId();
 
-  /**
-   * For change events with change type "updated": The list of properties now applied to the object.
-   *
-   * @return the list with the new properties, might be {@code null}
-   */
-  List<Property<?>> getNewProperties();
+	/**
+	 * For change events with change type "updated": The list of properties now
+	 * applied to the object.
+	 * 
+	 * @return the list with the new properties, might be {@code null}
+	 */
+	List<Property<?>> getNewProperties();
 
 }

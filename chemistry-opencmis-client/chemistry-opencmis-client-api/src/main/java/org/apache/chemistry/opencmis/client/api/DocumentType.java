@@ -27,20 +27,21 @@ import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
  */
 public interface DocumentType extends ObjectType {
 
-  /**
-   * Get the {@code isVersionable} flag.
-   * 
-   * @return {@code true} if this document type is versionable, {@code false} if documents of this
-   *         type cannot be versioned.
-   */
-  Boolean isVersionable();
+	/**
+	 * Get the {@code isVersionable} flag.
+	 * 
+	 * @return {@code true} if this document type is versionable, {@code false}
+	 *         if documents of this type cannot be versioned.
+	 */
+	Boolean isVersionable();
 
-  /**
-   * Get the enum that describes, how content streams have to be handled with this document type.
-   * 
-   * @return the mode of content stream support ({@code notallowed}, {@code allowed}, or {@code
-   *         required}).
-   */
-  ContentStreamAllowed getContentStreamAllowed();
+	/**
+	 * Get the enum that describes, how content streams have to be handled with
+	 * this document type.
+	 * 
+	 * @return the mode of content stream support ({@code notallowed}, {@code
+	 *         allowed}, or {@code required}).
+	 */
+	ContentStreamAllowed getContentStreamAllowed();
 
 }

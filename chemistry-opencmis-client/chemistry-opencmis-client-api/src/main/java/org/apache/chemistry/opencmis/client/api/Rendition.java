@@ -26,15 +26,15 @@ import org.apache.chemistry.opencmis.commons.api.RenditionData;
  */
 public interface Rendition extends RenditionData {
 
-  long getLength();
+	long getLength();
 
-  long getHeight();
+	long getHeight();
 
-  long getWidth();
+	long getWidth();
 
-  Document getRenditionDocument();
+	Document getRenditionDocument();
 
-  Document getRenditionDocument(OperationContext context);
+	Document getRenditionDocument(OperationContext context);
 
-  ContentStream getContentStream();
+	ContentStream getContentStream();
 }

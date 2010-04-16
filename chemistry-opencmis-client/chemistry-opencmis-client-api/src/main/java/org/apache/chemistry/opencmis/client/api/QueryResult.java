@@ -28,23 +28,23 @@ import org.apache.chemistry.opencmis.commons.api.PropertyData;
  */
 public interface QueryResult {
 
-  List<PropertyData<?>> getProperties();
+	List<PropertyData<?>> getProperties();
 
-  <T> PropertyData<T> getPropertyById(String id);
+	<T> PropertyData<T> getPropertyById(String id);
 
-  <T> PropertyData<T> getPropertyByQueryName(String queryName);
+	<T> PropertyData<T> getPropertyByQueryName(String queryName);
 
-  <T> T getPropertyValueById(String id);
+	<T> T getPropertyValueById(String id);
 
-  <T> T getPropertyValueByQueryName(String queryName);
+	<T> T getPropertyValueByQueryName(String queryName);
 
-  <T> List<T> getPropertyMultivalueById(String id);
+	<T> List<T> getPropertyMultivalueById(String id);
 
-  <T> List<T> getPropertyMultivalueByQueryName(String queryName);
+	<T> List<T> getPropertyMultivalueByQueryName(String queryName);
 
-  AllowableActions getAllowableActions();
+	AllowableActions getAllowableActions();
 
-  List<Relationship> getRelationships();
+	List<Relationship> getRelationships();
 
-  List<Rendition> getRenditions();
+	List<Rendition> getRenditions();
 }

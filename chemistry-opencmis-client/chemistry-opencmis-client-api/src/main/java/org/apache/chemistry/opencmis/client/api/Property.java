@@ -24,19 +24,20 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 
 /**
  * {@see org.apache.opencmis.client.api.CMISObject#getProperties()}, {@see
- * org.apache.opencmis.client.api.Session#createProperty(String, Object)} and {@see
- * org.apache.opencmis.client.api.Session#createPropertyMultivalue(String, List)}. Domain Model 2.2.1
- *
+ * org.apache.opencmis.client.api.Session#createProperty(String, Object)} and
+ * {@see org.apache.opencmis.client.api.Session#createPropertyMultivalue(String,
+ * List)}. Domain Model 2.2.1
+ * 
  * @param <T>
  */
 public interface Property<T> extends PropertyData<T> {
 
-  boolean isMultiValued();
+	boolean isMultiValued();
 
-  PropertyType getType();
+	PropertyType getType();
 
-  PropertyDefinition<T> getDefinition();
+	PropertyDefinition<T> getDefinition();
 
-  String getValueAsString();
+	String getValueAsString();
 
 }

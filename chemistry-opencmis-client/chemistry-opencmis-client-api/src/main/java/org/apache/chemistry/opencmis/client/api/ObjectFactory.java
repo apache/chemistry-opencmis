@@ -36,52 +36,50 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 
 /**
  * A factory to create CMIS objects.
- *
+ * 
  * @see org.apache.chemistry.opencmis.client.api.Session#getObjectFactory()
  */
 public interface ObjectFactory {
 
-  // ACL and ACE
+	// ACL and ACE
 
-  Acl convertAces(List<Ace> aces);
+	Acl convertAces(List<Ace> aces);
 
-  // policies
+	// policies
 
-  List<String> convertPolicies(List<Policy> policies);
+	List<String> convertPolicies(List<Policy> policies);
 
-  // renditions
+	// renditions
 
-  Rendition convertRendition(String objectId, RenditionData rendition);
+	Rendition convertRendition(String objectId, RenditionData rendition);
 
-  // content stream
+	// content stream
 
-  ContentStream createContentStream(String filename, long length, String mimetype,
-      InputStream stream);
+	ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream);
 
-  ContentStream convertContentStream(ContentStream contentStream);
+	ContentStream convertContentStream(ContentStream contentStream);
 
-  // types
+	// types
 
-  ObjectType convertTypeDefinition(TypeDefinition typeDefinition);
+	ObjectType convertTypeDefinition(TypeDefinition typeDefinition);
 
-  ObjectType getTypeFromObjectData(ObjectData objectData);
+	ObjectType getTypeFromObjectData(ObjectData objectData);
 
-  // properties
+	// properties
 
-  <T> Property<T> createProperty(PropertyDefinition<?> type, T value);
+	<T> Property<T> createProperty(PropertyDefinition<?> type, T value);
 
-  <T> Property<T> createPropertyMultivalue(PropertyDefinition<?> type, List<T> values);
+	<T> Property<T> createPropertyMultivalue(PropertyDefinition<?> type, List<T> values);
 
-  Map<String, Property<?>> convertProperties(ObjectType objectType, Properties properties);
+	Map<String, Property<?>> convertProperties(ObjectType objectType, Properties properties);
 
-  Properties convertProperties(Map<String, ?> properties, ObjectType type,
-      Set<Updatability> updatabilityFilter);
+	Properties convertProperties(Map<String, ?> properties, ObjectType type, Set<Updatability> updatabilityFilter);
 
-  List<PropertyData<?>> convertQueryProperties(Properties properties);
+	List<PropertyData<?>> convertQueryProperties(Properties properties);
 
-  // objects
+	// objects
 
-  CmisObject convertObject(ObjectData objectData, OperationContext context);
+	CmisObject convertObject(ObjectData objectData, OperationContext context);
 
-  QueryResult convertQueryResult(ObjectData objectData);
+	QueryResult convertQueryResult(ObjectData objectData);
 }

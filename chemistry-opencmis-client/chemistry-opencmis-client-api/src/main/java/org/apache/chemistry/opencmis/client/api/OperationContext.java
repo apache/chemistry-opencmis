@@ -24,52 +24,53 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
 public interface OperationContext {
 
-  Set<String> getFilter();
+	Set<String> getFilter();
 
-  void setFilter(Set<String> propertyFilter);
+	void setFilter(Set<String> propertyFilter);
 
-  void setFilterString(String propertyFilter);
+	void setFilterString(String propertyFilter);
 
-  /**
-   * Returns the filter extended by cmis:objectId, cmis:objectTypeId and cmis:baseTypeId.
-   */
-  String getFilterString();
+	/**
+	 * Returns the filter extended by cmis:objectId, cmis:objectTypeId and
+	 * cmis:baseTypeId.
+	 */
+	String getFilterString();
 
-  boolean isIncludeAllowableActions();
+	boolean isIncludeAllowableActions();
 
-  void setIncludeAllowableActions(boolean include);
+	void setIncludeAllowableActions(boolean include);
 
-  boolean isIncludeAcls();
+	boolean isIncludeAcls();
 
-  void setIncludeAcls(boolean include);
+	void setIncludeAcls(boolean include);
 
-  IncludeRelationships getIncludeRelationships();
+	IncludeRelationships getIncludeRelationships();
 
-  void setIncludeRelationships(IncludeRelationships include);
+	void setIncludeRelationships(IncludeRelationships include);
 
-  boolean isIncludePolicies();
+	boolean isIncludePolicies();
 
-  void setIncludePolicies(boolean include);
+	void setIncludePolicies(boolean include);
 
-  Set<String> getRenditionFilter();
+	Set<String> getRenditionFilter();
 
-  void setRenditionFilter(Set<String> renditionFilter);
+	void setRenditionFilter(Set<String> renditionFilter);
 
-  void setRenditionFilterString(String renditionFilter);
+	void setRenditionFilterString(String renditionFilter);
 
-  String getRenditionFilterString();
+	String getRenditionFilterString();
 
-  boolean isIncludePathSegments();
+	boolean isIncludePathSegments();
 
-  void setIncludePathSegments(boolean include);
+	void setIncludePathSegments(boolean include);
 
-  String getOrderBy();
+	String getOrderBy();
 
-  void setOrderBy(String orderBy);
+	void setOrderBy(String orderBy);
 
-  boolean isCacheEnabled();
+	boolean isCacheEnabled();
 
-  void setCacheEnabled(boolean cacheEnabled);
+	void setCacheEnabled(boolean cacheEnabled);
 
-  String getCacheKey();
+	String getCacheKey();
 }

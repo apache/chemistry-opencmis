@@ -23,13 +23,13 @@ package org.apache.chemistry.opencmis.client.api;
  */
 public interface Relationship extends CmisObject {
 
-  // relationship specific properties
+	// relationship specific properties
 
-  CmisObject getSource(); // cmis:sourceId
+	CmisObject getSource(); // cmis:sourceId
 
-  CmisObject getSource(OperationContext context);
+	CmisObject getSource(OperationContext context);
 
-  CmisObject getTarget(); // cmis:targetId
+	CmisObject getTarget(); // cmis:targetId
 
-  CmisObject getTarget(OperationContext context);
+	CmisObject getTarget(OperationContext context);
 }
