@@ -30,169 +30,166 @@ import org.apache.chemistry.opencmis.client.bindings.cache.CacheLevel;
  */
 public abstract class AbstractMapCacheLevel implements CacheLevel {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private Map<String, Object> fMap;
-  private boolean fFallbackEnabled = false;
-  private String fFallbackKey = null;
-  private boolean fSingleValueEnabled = false;
+	private Map<String, Object> fMap;
+	private boolean fFallbackEnabled = false;
+	private String fFallbackKey = null;
+	private boolean fSingleValueEnabled = false;
 
-  public abstract void initialize(Map<String, String> parameters);
+	public abstract void initialize(Map<String, String> parameters);
 
-  public Object get(String key) {
-    Object value = fMap.get(key);
+	public Object get(String key) {
+		Object value = fMap.get(key);
 
-    if ((value == null) && fFallbackEnabled) {
-      value = fMap.get(fFallbackKey);
-    }
+		if ((value == null) && fFallbackEnabled) {
+			value = fMap.get(fFallbackKey);
+		}
 
-    if ((value == null) && fSingleValueEnabled) {
-      if (fMap.size() == 1) {
-        value = fMap.values().iterator().next();
-      }
-    }
+		if ((value == null) && fSingleValueEnabled) {
+			if (fMap.size() == 1) {
+				value = fMap.values().iterator().next();
+			}
+		}
 
-    return value;
-  }
+		return value;
+	}
 
-  public void put(Object value, String key) {
-    fMap.put(key, value);
-  }
+	public void put(Object value, String key) {
+		fMap.put(key, value);
+	}
 
-  public void remove(String key) {
-    fMap.remove(key);
-  }
+	public void remove(String key) {
+		fMap.remove(key);
+	}
 
-  /**
-   * Returns the internal map.
-   */
-  protected Map<String, Object> getMap() {
-    return fMap;
-  }
+	/**
+	 * Returns the internal map.
+	 */
+	protected Map<String, Object> getMap() {
+		return fMap;
+	}
 
-  /**
-   * Sets the internal map.
-   */
-  protected void setMap(Map<String, Object> map) {
-    fMap = map;
-  }
+	/**
+	 * Sets the internal map.
+	 */
+	protected void setMap(Map<String, Object> map) {
+		fMap = map;
+	}
 
-  /**
-   * Enables a fallback key if no value was found for a requested key.
-   */
-  protected void enableKeyFallback(String key) {
-    fFallbackKey = key;
-    fFallbackEnabled = true;
-  }
+	/**
+	 * Enables a fallback key if no value was found for a requested key.
+	 */
+	protected void enableKeyFallback(String key) {
+		fFallbackKey = key;
+		fFallbackEnabled = true;
+	}
 
-  /**
-   * Disables the fallback key.
-   */
-  protected void disableKeyFallback() {
-    fFallbackEnabled = false;
-  }
+	/**
+	 * Disables the fallback key.
+	 */
+	protected void disableKeyFallback() {
+		fFallbackEnabled = false;
+	}
 
-  /**
-   * Enables the single value fallback.
-   */
-  protected void enableSingeValueFallback() {
-    fSingleValueEnabled = true;
-  }
+	/**
+	 * Enables the single value fallback.
+	 */
+	protected void enableSingeValueFallback() {
+		fSingleValueEnabled = true;
+	}
 
-  /**
-   * Disables the single value fallback.
-   */
-  protected void disableSingeValueFallback() {
-    fSingleValueEnabled = false;
-  }
+	/**
+	 * Disables the single value fallback.
+	 */
+	protected void disableSingeValueFallback() {
+		fSingleValueEnabled = false;
+	}
 
-  /**
-   * Extracts an integer parameter from the parameters.
-   * 
-   * @param parameters
-   *          the parameter map
-   * @param name
-   *          the parameter name
-   * @param defValue
-   *          the default value if the parameter can't be found
-   */
-  protected int getIntParameter(Map<String, String> parameters, String name, int defValue) {
-    if (parameters == null) {
-      return defValue;
-    }
+	/**
+	 * Extracts an integer parameter from the parameters.
+	 * 
+	 * @param parameters
+	 *            the parameter map
+	 * @param name
+	 *            the parameter name
+	 * @param defValue
+	 *            the default value if the parameter can't be found
+	 */
+	protected int getIntParameter(Map<String, String> parameters, String name, int defValue) {
+		if (parameters == null) {
+			return defValue;
+		}
 
-    String value = parameters.get(name);
-    if ((value == null) || (value.trim().length() == 0)) {
-      return defValue;
-    }
+		String value = parameters.get(name);
+		if ((value == null) || (value.trim().length() == 0)) {
+			return defValue;
+		}
 
-    try {
-      return Integer.valueOf(value);
-    }
-    catch (NumberFormatException e) {
-      return defValue;
-    }
-  }
+		try {
+			return Integer.valueOf(value);
+		} catch (NumberFormatException e) {
+			return defValue;
+		}
+	}
 
-  /**
-   * Extracts a float parameter from the parameters.
-   * 
-   * @param parameters
-   *          the parameter map
-   * @param name
-   *          the parameter name
-   * @param defValue
-   *          the default value if the parameter can't be found
-   */
-  protected float getFloatParameter(Map<String, String> parameters, String name, float defValue) {
-    if (parameters == null) {
-      return defValue;
-    }
+	/**
+	 * Extracts a float parameter from the parameters.
+	 * 
+	 * @param parameters
+	 *            the parameter map
+	 * @param name
+	 *            the parameter name
+	 * @param defValue
+	 *            the default value if the parameter can't be found
+	 */
+	protected float getFloatParameter(Map<String, String> parameters, String name, float defValue) {
+		if (parameters == null) {
+			return defValue;
+		}
 
-    String value = parameters.get(name);
-    if ((value == null) || (value.trim().length() == 0)) {
-      return defValue;
-    }
+		String value = parameters.get(name);
+		if ((value == null) || (value.trim().length() == 0)) {
+			return defValue;
+		}
 
-    try {
-      return Float.valueOf(value);
-    }
-    catch (NumberFormatException e) {
-      return defValue;
-    }
-  }
+		try {
+			return Float.valueOf(value);
+		} catch (NumberFormatException e) {
+			return defValue;
+		}
+	}
 
-  /**
-   * Extracts a boolean parameter from the parameters.
-   * 
-   * @param parameters
-   *          the parameter map
-   * @param name
-   *          the parameter name
-   * @param defValue
-   *          the default value if the parameter can't be found
-   */
-  protected boolean getBooleanParameter(Map<String, String> parameters, String name,
-      boolean defValue) {
-    if (parameters == null) {
-      return defValue;
-    }
+	/**
+	 * Extracts a boolean parameter from the parameters.
+	 * 
+	 * @param parameters
+	 *            the parameter map
+	 * @param name
+	 *            the parameter name
+	 * @param defValue
+	 *            the default value if the parameter can't be found
+	 */
+	protected boolean getBooleanParameter(Map<String, String> parameters, String name, boolean defValue) {
+		if (parameters == null) {
+			return defValue;
+		}
 
-    String value = parameters.get(name);
-    if ((value == null) || (value.trim().length() == 0)) {
-      return defValue;
-    }
+		String value = parameters.get(name);
+		if ((value == null) || (value.trim().length() == 0)) {
+			return defValue;
+		}
 
-    return Boolean.parseBoolean(value);
-  }
+		return Boolean.parseBoolean(value);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return (fMap == null ? "[no map]" : fMap.toString());
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return (fMap == null ? "[no map]" : fMap.toString());
+	}
 }

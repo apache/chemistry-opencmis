@@ -30,33 +30,36 @@ import org.apache.chemistry.opencmis.commons.api.CmisBinding;
  */
 public class SimpleReadWriteTests extends AbstractSimpleReadWriteTests {
 
-  private Set<String> fTests;
+	private Set<String> fTests;
 
-  public SimpleReadWriteTests() {
-    fTests = new HashSet<String>();
-    fTests.add(TEST_CREATE_FOLDER);
-    fTests.add(TEST_CREATE_DOCUMENT);
-    fTests.add(TEST_SET_AND_DELETE_CONTENT);
-    fTests.add(TEST_UPDATE_PROPERTIES);
-    fTests.add(TEST_DELETE_TREE);
-    fTests.add(TEST_MOVE_OBJECT);
-    fTests.add(TEST_VERSIONING);
-  }
+	public SimpleReadWriteTests() {
+		fTests = new HashSet<String>();
+		fTests.add(TEST_CREATE_FOLDER);
+		fTests.add(TEST_CREATE_DOCUMENT);
+		fTests.add(TEST_SET_AND_DELETE_CONTENT);
+		fTests.add(TEST_UPDATE_PROPERTIES);
+		fTests.add(TEST_DELETE_TREE);
+		fTests.add(TEST_MOVE_OBJECT);
+		fTests.add(TEST_VERSIONING);
+	}
 
-  @Override
-  protected CmisBinding createBinding() {
-    // Add the default Java cookie manager from Java 1.6 to optimize authentication
-    // by reusing the common case where a token is stored in a cookie.
-    // Note: Enable cookie management requires Java 1.6, uncomment the following two lines to
-    // enable cookie management for the tests.
-    // java.net.CookieManager cm = new java.net.CookieManager(null, CookiePolicy.ACCEPT_ALL);
-    // java.net.CookieHandler.setDefault(cm);
+	@Override
+	protected CmisBinding createBinding() {
+		// Add the default Java cookie manager from Java 1.6 to optimize
+		// authentication
+		// by reusing the common case where a token is stored in a cookie.
+		// Note: Enable cookie management requires Java 1.6, uncomment the
+		// following two lines to
+		// enable cookie management for the tests.
+		// java.net.CookieManager cm = new java.net.CookieManager(null,
+		// CookiePolicy.ACCEPT_ALL);
+		// java.net.CookieHandler.setDefault(cm);
 
-    return AtomPubTestBindingFactory.createBinding(getAtomPubURL(), getUsername(), getPassword());
-  }
+		return AtomPubTestBindingFactory.createBinding(getAtomPubURL(), getUsername(), getPassword());
+	}
 
-  @Override
-  protected Set<String> getEnabledTests() {
-    return fTests;
-  }
+	@Override
+	protected Set<String> getEnabledTests() {
+		return fTests;
+	}
 }

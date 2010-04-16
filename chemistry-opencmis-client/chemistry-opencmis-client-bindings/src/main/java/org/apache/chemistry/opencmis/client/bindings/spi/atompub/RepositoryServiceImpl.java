@@ -50,215 +50,209 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
  */
 public class RepositoryServiceImpl extends AbstractAtomPubService implements RepositoryService {
 
-  /**
-   * Constructor.
-   */
-  public RepositoryServiceImpl(Session session) {
-    setSession(session);
-  }
+	/**
+	 * Constructor.
+	 */
+	public RepositoryServiceImpl(Session session) {
+		setSession(session);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos(org.apache.opencmis
-   * .client.provider .ExtensionsData)
-   */
-  public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-    return getRepositoriesInternal(null);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos
+	 * (org.apache.opencmis .client.provider .ExtensionsData)
+	 */
+	public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
+		return getRepositoriesInternal(null);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo(java.lang.String,
-   * org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-    List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo
+	 * (java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+		List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
-    // find the repository
-    for (RepositoryInfo info : repositoryInfos) {
-      if (info.getId() == null) {
-        continue;
-      }
+		// find the repository
+		for (RepositoryInfo info : repositoryInfos) {
+			if (info.getId() == null) {
+				continue;
+			}
 
-      if (info.getId().equals(repositoryId)) {
-        return info;
-      }
-    }
+			if (info.getId().equals(repositoryId)) {
+				return info;
+			}
+		}
 
-    throw new CmisObjectNotFoundException("Repository not found!");
-  }
+		throw new CmisObjectNotFoundException("Repository not found!");
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.RepositoryService#getTypeDefinition(java.lang.String,
-   * java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public TypeDefinition getTypeDefinition(String repositoryId, String typeId,
-      ExtensionsData extension) {
-    return getTypeDefinitionInternal(repositoryId, typeId);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getTypeDefinition
+	 * (java.lang.String, java.lang.String,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
+		return getTypeDefinitionInternal(repositoryId, typeId);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.RepositoryService#getTypeChildren(java.lang.String,
-   * java.lang.String, java.lang.Boolean, java.math.BigInteger, java.math.BigInteger,
-   * org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public TypeDefinitionList getTypeChildren(String repositoryId, String typeId,
-      Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount,
-      ExtensionsData extension) {
-    TypeDefinitionListImpl result = new TypeDefinitionListImpl();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getTypeChildren
+	 * (java.lang.String, java.lang.String, java.lang.Boolean,
+	 * java.math.BigInteger, java.math.BigInteger,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		TypeDefinitionListImpl result = new TypeDefinitionListImpl();
 
-    // find the link
-    String link = null;
-    if (typeId == null) {
-      link = loadCollection(repositoryId, Constants.COLLECTION_TYPES);
-    }
-    else {
-      link = loadTypeLink(repositoryId, typeId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
-    }
+		// find the link
+		String link = null;
+		if (typeId == null) {
+			link = loadCollection(repositoryId, Constants.COLLECTION_TYPES);
+		} else {
+			link = loadTypeLink(repositoryId, typeId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+		}
 
-    if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or type!");
-    }
+		if (link == null) {
+			throw new CmisObjectNotFoundException("Unknown repository or type!");
+		}
 
-    UrlBuilder url = new UrlBuilder(link);
-    url.addParameter(Constants.PARAM_TYPE_ID, typeId);
-    url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
-    url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
-    url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+		UrlBuilder url = new UrlBuilder(link);
+		url.addParameter(Constants.PARAM_TYPE_ID, typeId);
+		url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
+		url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+		url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
 
-    // read and parse
-    HttpUtils.Response resp = read(url);
-    AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+		// read and parse
+		HttpUtils.Response resp = read(url);
+		AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
-    // handle top level
-    for (AtomElement element : feed.getElements()) {
-      if (element.getObject() instanceof AtomLink) {
-        if (isNextLink(element)) {
-          result.setHasMoreItems(Boolean.TRUE);
-        }
-      }
-      else if (isInt(NAME_NUM_ITEMS, element)) {
-        result.setNumItems((BigInteger) element.getObject());
-      }
-    }
+		// handle top level
+		for (AtomElement element : feed.getElements()) {
+			if (element.getObject() instanceof AtomLink) {
+				if (isNextLink(element)) {
+					result.setHasMoreItems(Boolean.TRUE);
+				}
+			} else if (isInt(NAME_NUM_ITEMS, element)) {
+				result.setNumItems((BigInteger) element.getObject());
+			}
+		}
 
-    result.setList(new ArrayList<TypeDefinition>(feed.getEntries().size()));
+		result.setList(new ArrayList<TypeDefinition>(feed.getEntries().size()));
 
-    // get the children
-    if (!feed.getEntries().isEmpty()) {
-      for (AtomEntry entry : feed.getEntries()) {
-        TypeDefinition child = null;
+		// get the children
+		if (!feed.getEntries().isEmpty()) {
+			for (AtomEntry entry : feed.getEntries()) {
+				TypeDefinition child = null;
 
-        lockTypeLinks();
-        try {
-          // walk through the entry
-          for (AtomElement element : entry.getElements()) {
-            if (element.getObject() instanceof AtomLink) {
-              addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-            }
-            else if (element.getObject() instanceof CmisTypeDefinitionType) {
-              child = convert((CmisTypeDefinitionType) element.getObject());
-            }
-          }
-        }
-        finally {
-          unlockTypeLinks();
-        }
+				lockTypeLinks();
+				try {
+					// walk through the entry
+					for (AtomElement element : entry.getElements()) {
+						if (element.getObject() instanceof AtomLink) {
+							addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+						} else if (element.getObject() instanceof CmisTypeDefinitionType) {
+							child = convert((CmisTypeDefinitionType) element.getObject());
+						}
+					}
+				} finally {
+					unlockTypeLinks();
+				}
 
-        if (child != null) {
-          result.getList().add(child);
-        }
-      }
-    }
+				if (child != null) {
+					result.getList().add(child);
+				}
+			}
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.RepositoryService#getTypeDescendants(java.lang.String,
-   * java.lang.String, java.math.BigInteger, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId,
-      BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
-    List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getTypeDescendants
+	 * (java.lang.String, java.lang.String, java.math.BigInteger,
+	 * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
+			Boolean includePropertyDefinitions, ExtensionsData extension) {
+		List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
 
-    // find the link
-    String link = null;
-    if (typeId == null) {
-      link = loadRepositoryLink(repositoryId, Constants.REP_REL_TYPEDESC);
-    }
-    else {
-      link = loadTypeLink(repositoryId, typeId, Constants.REL_DOWN, Constants.MEDIATYPE_DESCENDANTS);
-    }
+		// find the link
+		String link = null;
+		if (typeId == null) {
+			link = loadRepositoryLink(repositoryId, Constants.REP_REL_TYPEDESC);
+		} else {
+			link = loadTypeLink(repositoryId, typeId, Constants.REL_DOWN, Constants.MEDIATYPE_DESCENDANTS);
+		}
 
-    if (link == null) {
-      throw new CmisObjectNotFoundException("Unknown repository or type!");
-    }
+		if (link == null) {
+			throw new CmisObjectNotFoundException("Unknown repository or type!");
+		}
 
-    UrlBuilder url = new UrlBuilder(link);
-    url.addParameter(Constants.PARAM_TYPE_ID, typeId);
-    url.addParameter(Constants.PARAM_DEPTH, depth);
-    url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
+		UrlBuilder url = new UrlBuilder(link);
+		url.addParameter(Constants.PARAM_TYPE_ID, typeId);
+		url.addParameter(Constants.PARAM_DEPTH, depth);
+		url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
 
-    // read and parse
-    HttpUtils.Response resp = read(url);
-    AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+		// read and parse
+		HttpUtils.Response resp = read(url);
+		AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
-    // process tree
-    addTypeDescendantsLevel(repositoryId, feed, result);
+		// process tree
+		addTypeDescendantsLevel(repositoryId, feed, result);
 
-    return result;
-  }
+		return result;
+	}
 
-  /**
-   * Adds type descendants level recursively.
-   */
-  private void addTypeDescendantsLevel(String repositoryId, AtomFeed feed,
-      List<TypeDefinitionContainer> containerList) {
-    if ((feed == null) || (feed.getEntries().isEmpty())) {
-      return;
-    }
+	/**
+	 * Adds type descendants level recursively.
+	 */
+	private void addTypeDescendantsLevel(String repositoryId, AtomFeed feed, List<TypeDefinitionContainer> containerList) {
+		if ((feed == null) || (feed.getEntries().isEmpty())) {
+			return;
+		}
 
-    // walk through the feed
-    for (AtomEntry entry : feed.getEntries()) {
-      TypeDefinitionContainerImpl childContainer = null;
-      List<TypeDefinitionContainer> childContainerList = new ArrayList<TypeDefinitionContainer>();
+		// walk through the feed
+		for (AtomEntry entry : feed.getEntries()) {
+			TypeDefinitionContainerImpl childContainer = null;
+			List<TypeDefinitionContainer> childContainerList = new ArrayList<TypeDefinitionContainer>();
 
-      // walk through the entry
-      lockTypeLinks();
-      try {
-        for (AtomElement element : entry.getElements()) {
-          if (element.getObject() instanceof AtomLink) {
-            addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-          }
-          else if (element.getObject() instanceof CmisTypeDefinitionType) {
-            childContainer = new TypeDefinitionContainerImpl(
-                convert((CmisTypeDefinitionType) element.getObject()));
-          }
-          else if (element.getObject() instanceof AtomFeed) {
-            addTypeDescendantsLevel(repositoryId, (AtomFeed) element.getObject(),
-                childContainerList);
-          }
-        }
-      }
-      finally {
-        unlockTypeLinks();
-      }
+			// walk through the entry
+			lockTypeLinks();
+			try {
+				for (AtomElement element : entry.getElements()) {
+					if (element.getObject() instanceof AtomLink) {
+						addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+					} else if (element.getObject() instanceof CmisTypeDefinitionType) {
+						childContainer = new TypeDefinitionContainerImpl(convert((CmisTypeDefinitionType) element
+								.getObject()));
+					} else if (element.getObject() instanceof AtomFeed) {
+						addTypeDescendantsLevel(repositoryId, (AtomFeed) element.getObject(), childContainerList);
+					}
+				}
+			} finally {
+				unlockTypeLinks();
+			}
 
-      if (childContainer != null) {
-        childContainer.setChildren(childContainerList);
-        containerList.add(childContainer);
-      }
-    }
-  }
+			if (childContainer != null) {
+				childContainer.setChildren(childContainerList);
+				containerList.add(childContainer);
+			}
+		}
+	}
 }

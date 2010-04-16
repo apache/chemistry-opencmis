@@ -39,153 +39,161 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CmisAtomPubSpi implements CmisSpiFactory, CmisSpi {
 
-  private static Log log = LogFactory.getLog(CmisAtomPubSpi.class);
+	private static Log log = LogFactory.getLog(CmisAtomPubSpi.class);
 
-  private Session fSession;
+	private Session fSession;
 
-  private RepositoryService fRepositoryService;
-  private NavigationService fNavigationService;
-  private ObjectService fObjectService;
-  private VersioningService fVersioningService;
-  private DiscoveryService fDiscoveryService;
-  private MultiFilingService fMultiFilingService;
-  private RelationshipService fRelationshipService;
-  private PolicyService fPolicyService;
-  private AclService fACLService;
+	private RepositoryService fRepositoryService;
+	private NavigationService fNavigationService;
+	private ObjectService fObjectService;
+	private VersioningService fVersioningService;
+	private DiscoveryService fDiscoveryService;
+	private MultiFilingService fMultiFilingService;
+	private RelationshipService fRelationshipService;
+	private PolicyService fPolicyService;
+	private AclService fACLService;
 
-  /**
-   * Constructor.
-   */
-  public CmisAtomPubSpi() {
-  }
+	/**
+	 * Constructor.
+	 */
+	public CmisAtomPubSpi() {
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.client.provider.spi.CMISSPIFactory#getSPIInstance(org.apache.opencmis.client
-   * .provider .spi.Session)
-   */
-  public CmisSpi getSpiInstance(Session session) {
-    if (log.isDebugEnabled()) {
-      log.debug("Initializing AtomPub SPI...");
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPIFactory#getSPIInstance
+	 * (org.apache.opencmis.client .provider .spi.Session)
+	 */
+	public CmisSpi getSpiInstance(Session session) {
+		if (log.isDebugEnabled()) {
+			log.debug("Initializing AtomPub SPI...");
+		}
 
-    fSession = session;
+		fSession = session;
 
-    fRepositoryService = new RepositoryServiceImpl(fSession);
-    fNavigationService = new NavigationServiceImpl(fSession);
-    fObjectService = new ObjectServiceImpl(fSession);
-    fVersioningService = new VersioningServiceImpl(fSession);
-    fDiscoveryService = new DiscoveryServiceImpl(fSession);
-    fMultiFilingService = new MultiFilingServiceImpl(fSession);
-    fRelationshipService = new RelationshipServiceImpl(fSession);
-    fPolicyService = new PolicyServiceImpl(fSession);
-    fACLService = new AclServiceImpl(fSession);
+		fRepositoryService = new RepositoryServiceImpl(fSession);
+		fNavigationService = new NavigationServiceImpl(fSession);
+		fObjectService = new ObjectServiceImpl(fSession);
+		fVersioningService = new VersioningServiceImpl(fSession);
+		fDiscoveryService = new DiscoveryServiceImpl(fSession);
+		fMultiFilingService = new MultiFilingServiceImpl(fSession);
+		fRelationshipService = new RelationshipServiceImpl(fSession);
+		fPolicyService = new PolicyServiceImpl(fSession);
+		fACLService = new AclServiceImpl(fSession);
 
-    return this;
-  }
+		return this;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getRepositoryService()
-   */
-  public RepositoryService getRepositoryService() {
-    return fRepositoryService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getRepositoryService()
+	 */
+	public RepositoryService getRepositoryService() {
+		return fRepositoryService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getNavigationService()
-   */
-  public NavigationService getNavigationService() {
-    return fNavigationService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getNavigationService()
+	 */
+	public NavigationService getNavigationService() {
+		return fNavigationService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getObjectService()
-   */
-  public ObjectService getObjectService() {
-    return fObjectService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#getObjectService()
+	 */
+	public ObjectService getObjectService() {
+		return fObjectService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getDiscoveryService()
-   */
-  public DiscoveryService getDiscoveryService() {
-    return fDiscoveryService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getDiscoveryService()
+	 */
+	public DiscoveryService getDiscoveryService() {
+		return fDiscoveryService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getVersioningService()
-   */
-  public VersioningService getVersioningService() {
-    return fVersioningService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getVersioningService()
+	 */
+	public VersioningService getVersioningService() {
+		return fVersioningService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getMultiFilingService()
-   */
-  public MultiFilingService getMultiFilingService() {
-    return fMultiFilingService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getMultiFilingService()
+	 */
+	public MultiFilingService getMultiFilingService() {
+		return fMultiFilingService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getRelationshipService()
-   */
-  public RelationshipService getRelationshipService() {
-    return fRelationshipService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#getRelationshipService()
+	 */
+	public RelationshipService getRelationshipService() {
+		return fRelationshipService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getPolicyService()
-   */
-  public PolicyService getPolicyService() {
-    return fPolicyService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#getPolicyService()
+	 */
+	public PolicyService getPolicyService() {
+		return fPolicyService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#getACLService()
-   */
-  public AclService getAclService() {
-    return fACLService;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#getACLService()
+	 */
+	public AclService getAclService() {
+		return fACLService;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#clearAllCaches()
-   */
-  public void clearAllCaches() {
-    fSession.remove(SpiSessionParameter.LINK_CACHE);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#clearAllCaches()
+	 */
+	public void clearAllCaches() {
+		fSession.remove(SpiSessionParameter.LINK_CACHE);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.CMISSPI#clearRepositoryCache(java.lang.String)
-   */
-  public void clearRepositoryCache(String repositoryId) {
-    LinkCache linkCache = (LinkCache) fSession.get(SpiSessionParameter.LINK_CACHE);
-    if (linkCache != null) {
-      linkCache.clearRepository(repositoryId);
-    }
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.CMISSPI#clearRepositoryCache(
+	 * java.lang.String)
+	 */
+	public void clearRepositoryCache(String repositoryId) {
+		LinkCache linkCache = (LinkCache) fSession.get(SpiSessionParameter.LINK_CACHE);
+		if (linkCache != null) {
+			linkCache.clearRepository(repositoryId);
+		}
+	}
 
 }

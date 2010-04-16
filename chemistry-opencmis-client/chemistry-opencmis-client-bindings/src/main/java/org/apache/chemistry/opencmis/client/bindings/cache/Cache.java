@@ -24,14 +24,15 @@ import java.io.Serializable;
  * An interface for an hierarchical cache.
  * 
  * <p>
- * Each level of the hierarchy could use a different caching strategy. The cache is initialize by
- * defining the classes that handle the caching for one level. These classes must implement the
- * {@link CacheLevel} interface.<br/>
+ * Each level of the hierarchy could use a different caching strategy. The cache
+ * is initialize by defining the classes that handle the caching for one level.
+ * These classes must implement the {@link CacheLevel} interface.<br/>
  * <br/>
  * Level configuration string format: "
  * <code>&lt;class name&gt; [param1=value1,param2=value2,...]</code>".<br/>
  * For example:
- * <code>org.apache.opencmis.client.bindings.cache.impl.MapCacheLevelImpl capacity=10</code><br/>
+ * <code>org.apache.opencmis.client.bindings.cache.impl.MapCacheLevelImpl capacity=10</code>
+ * <br/>
  * </p>
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
@@ -40,59 +41,59 @@ import java.io.Serializable;
  */
 public interface Cache extends Serializable {
 
-  /**
-   * Initializes the cache.
-   * 
-   * @param cacheLevelConfig
-   *          the level configuration strings from the root to the leafs
-   */
-  void initialize(String[] cacheLevelConfig);
+	/**
+	 * Initializes the cache.
+	 * 
+	 * @param cacheLevelConfig
+	 *            the level configuration strings from the root to the leafs
+	 */
+	void initialize(String[] cacheLevelConfig);
 
-  /**
-   * Adds an object to the cache.
-   * 
-   * @param value
-   *          the object
-   * @param keys
-   *          the keys for this object
-   */
-  void put(Object value, String... keys);
+	/**
+	 * Adds an object to the cache.
+	 * 
+	 * @param value
+	 *            the object
+	 * @param keys
+	 *            the keys for this object
+	 */
+	void put(Object value, String... keys);
 
-  /**
-   * Retrieves an object from the cache.
-   * 
-   * @param keys
-   *          the keys
-   * @return the object or <code>null<code> if the branch or leaf doesn't exist
-   */
-  Object get(String... keys);
+	/**
+	 * Retrieves an object from the cache.
+	 * 
+	 * @param keys
+	 *            the keys
+	 * @return the object or <code>null<code> if the branch or leaf doesn't exist
+	 */
+	Object get(String... keys);
 
-  /**
-   * Removes a branch or leaf from the cache.
-   * 
-   * @param keys
-   *          the keys of the branch or leaf
-   */
-  void remove(String... keys);
+	/**
+	 * Removes a branch or leaf from the cache.
+	 * 
+	 * @param keys
+	 *            the keys of the branch or leaf
+	 */
+	void remove(String... keys);
 
-  /**
-   * Checks if a given key is in the cache.
-   * 
-   * @param keys
-   *          the keys of the branch or leaf
-   * 
-   * @return the index of the first key part that is not in the cache or <code>keys.length</code> if
-   *         the object is in the cache
-   */
-  int check(String... keys);
+	/**
+	 * Checks if a given key is in the cache.
+	 * 
+	 * @param keys
+	 *            the keys of the branch or leaf
+	 * 
+	 * @return the index of the first key part that is not in the cache or
+	 *         <code>keys.length</code> if the object is in the cache
+	 */
+	int check(String... keys);
 
-  /**
-   * Applies a write lock.
-   */
-  void writeLock();
+	/**
+	 * Applies a write lock.
+	 */
+	void writeLock();
 
-  /**
-   * Releases a write lock.
-   */
-  void writeUnlock();
+	/**
+	 * Releases a write lock.
+	 */
+	void writeUnlock();
 }

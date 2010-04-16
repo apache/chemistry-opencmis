@@ -46,95 +46,91 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
  */
 public class RelationshipServiceImpl extends AbstractAtomPubService implements RelationshipService {
 
-  /**
-   * Constructor.
-   */
-  public RelationshipServiceImpl(Session session) {
-    setSession(session);
-  }
+	/**
+	 * Constructor.
+	 */
+	public RelationshipServiceImpl(Session session) {
+		setSession(session);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.client.provider.RelationshipService#getObjectRelationships(java.lang.String
-   * , java.lang.String, java.lang.Boolean, org.apache.opencmis.commons.enums.RelationshipDirection,
-   * java.lang.String, java.lang.String, java.lang.Boolean, java.math.BigInteger,
-   * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public ObjectList getObjectRelationships(String repositoryId, String objectId,
-      Boolean includeSubRelationshipTypes, RelationshipDirection relationshipDirection,
-      String typeId, String filter, Boolean includeAllowableActions, BigInteger maxItems,
-      BigInteger skipCount, ExtensionsData extension) {
-    ObjectListImpl result = new ObjectListImpl();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.apache.opencmis.client.provider.RelationshipService#
+	 * getObjectRelationships(java.lang.String , java.lang.String,
+	 * java.lang.Boolean,
+	 * org.apache.opencmis.commons.enums.RelationshipDirection,
+	 * java.lang.String, java.lang.String, java.lang.Boolean,
+	 * java.math.BigInteger, java.math.BigInteger,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
+			RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		ObjectListImpl result = new ObjectListImpl();
 
-    // find the link
-    String link = loadLink(repositoryId, objectId, Constants.REL_RELATIONSHIPS,
-        Constants.MEDIATYPE_FEED);
+		// find the link
+		String link = loadLink(repositoryId, objectId, Constants.REL_RELATIONSHIPS, Constants.MEDIATYPE_FEED);
 
-    if (link == null) {
-      throwLinkException(repositoryId, objectId, Constants.REL_RELATIONSHIPS,
-          Constants.MEDIATYPE_FEED);
-    }
+		if (link == null) {
+			throwLinkException(repositoryId, objectId, Constants.REL_RELATIONSHIPS, Constants.MEDIATYPE_FEED);
+		}
 
-    UrlBuilder url = new UrlBuilder(link);
-    url.addParameter(Constants.PARAM_SUB_RELATIONSHIP_TYPES, includeSubRelationshipTypes);
-    url.addParameter(Constants.PARAM_RELATIONSHIP_DIRECTION, relationshipDirection);
-    url.addParameter(Constants.PARAM_TYPE_ID, typeId);
-    url.addParameter(Constants.PARAM_FILTER, filter);
-    url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
-    url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
-    url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+		UrlBuilder url = new UrlBuilder(link);
+		url.addParameter(Constants.PARAM_SUB_RELATIONSHIP_TYPES, includeSubRelationshipTypes);
+		url.addParameter(Constants.PARAM_RELATIONSHIP_DIRECTION, relationshipDirection);
+		url.addParameter(Constants.PARAM_TYPE_ID, typeId);
+		url.addParameter(Constants.PARAM_FILTER, filter);
+		url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+		url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+		url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
 
-    // read and parse
-    HttpUtils.Response resp = read(url);
-    AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+		// read and parse
+		HttpUtils.Response resp = read(url);
+		AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
-    // handle top level
-    for (AtomElement element : feed.getElements()) {
-      if (element.getObject() instanceof AtomLink) {
-        if (isNextLink(element)) {
-          result.setHasMoreItems(Boolean.TRUE);
-        }
-      }
-      else if (isInt(NAME_NUM_ITEMS, element)) {
-        result.setNumItems((BigInteger) element.getObject());
-      }
-    }
+		// handle top level
+		for (AtomElement element : feed.getElements()) {
+			if (element.getObject() instanceof AtomLink) {
+				if (isNextLink(element)) {
+					result.setHasMoreItems(Boolean.TRUE);
+				}
+			} else if (isInt(NAME_NUM_ITEMS, element)) {
+				result.setNumItems((BigInteger) element.getObject());
+			}
+		}
 
-    // get the children
-    if (!feed.getEntries().isEmpty()) {
-      result.setObjects(new ArrayList<ObjectData>(feed.getEntries().size()));
+		// get the children
+		if (!feed.getEntries().isEmpty()) {
+			result.setObjects(new ArrayList<ObjectData>(feed.getEntries().size()));
 
-      for (AtomEntry entry : feed.getEntries()) {
-        ObjectData relationship = null;
+			for (AtomEntry entry : feed.getEntries()) {
+				ObjectData relationship = null;
 
-        lockLinks();
-        try {
-          // clean up cache
-          removeLinks(repositoryId, entry.getId());
+				lockLinks();
+				try {
+					// clean up cache
+					removeLinks(repositoryId, entry.getId());
 
-          // walk through the entry
-          for (AtomElement element : entry.getElements()) {
-            if (element.getObject() instanceof AtomLink) {
-              addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-            }
-            else if (element.getObject() instanceof CmisObjectType) {
-              relationship = convert((CmisObjectType) element.getObject());
-            }
-          }
-        }
-        finally {
-          unlockLinks();
-        }
+					// walk through the entry
+					for (AtomElement element : entry.getElements()) {
+						if (element.getObject() instanceof AtomLink) {
+							addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+						} else if (element.getObject() instanceof CmisObjectType) {
+							relationship = convert((CmisObjectType) element.getObject());
+						}
+					}
+				} finally {
+					unlockLinks();
+				}
 
-        if (relationship != null) {
-          result.getObjects().add(relationship);
-        }
-      }
+				if (relationship != null) {
+					result.getObjects().add(relationship);
+				}
+			}
 
-    }
+		}
 
-    return result;
-  }
+		return result;
+	}
 }

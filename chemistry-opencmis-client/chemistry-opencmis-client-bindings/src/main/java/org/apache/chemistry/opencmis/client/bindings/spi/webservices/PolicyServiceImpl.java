@@ -43,98 +43,96 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyServicePort;
  */
 public class PolicyServiceImpl extends AbstractWebServicesService implements PolicyService {
 
-  private final PortProvider fPortProvider;
+	private final PortProvider fPortProvider;
 
-  /**
-   * Constructor.
-   */
-  public PolicyServiceImpl(Session session, PortProvider portProvider) {
-    setSession(session);
-    fPortProvider = portProvider;
-  }
+	/**
+	 * Constructor.
+	 */
+	public PolicyServiceImpl(Session session, PortProvider portProvider) {
+		setSession(session);
+		fPortProvider = portProvider;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.PolicyService#applyPolicy(java.lang.String,
-   * java.lang.String, java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public void applyPolicy(String repositoryId, String policyId, String objectId,
-      ExtensionsData extension) {
-    PolicyServicePort port = fPortProvider.getPolicyServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.PolicyService#applyPolicy(java.lang
+	 * .String, java.lang.String, java.lang.String,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
+		PolicyServicePort port = fPortProvider.getPolicyServicePort();
 
-    try {
-      javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+		try {
+			javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
-      port.applyPolicy(repositoryId, policyId, objectId, portExtension);
+			port.applyPolicy(repositoryId, policyId, objectId, portExtension);
 
-      setExtensionValues(portExtension, extension);
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+			setExtensionValues(portExtension, extension);
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.PolicyService#removePolicy(java.lang.String,
-   * java.lang.String, java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public void removePolicy(String repositoryId, String policyId, String objectId,
-      ExtensionsData extension) {
-    PolicyServicePort port = fPortProvider.getPolicyServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.PolicyService#removePolicy(java.lang
+	 * .String, java.lang.String, java.lang.String,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
+		PolicyServicePort port = fPortProvider.getPolicyServicePort();
 
-    try {
-      javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+		try {
+			javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
-      port.removePolicy(repositoryId, policyId, objectId, portExtension);
+			port.removePolicy(repositoryId, policyId, objectId, portExtension);
 
-      setExtensionValues(portExtension, extension);
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+			setExtensionValues(portExtension, extension);
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.PolicyService#getAppliedPolicies(java.lang.String,
-   * java.lang.String, java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
-      ExtensionsData extension) {
-    PolicyServicePort port = fPortProvider.getPolicyServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.PolicyService#getAppliedPolicies(
+	 * java.lang.String, java.lang.String, java.lang.String,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
+			ExtensionsData extension) {
+		PolicyServicePort port = fPortProvider.getPolicyServicePort();
 
-    try {
-      List<CmisObjectType> policyList = port.getAppliedPolicies(repositoryId, objectId, filter,
-          convert(extension));
+		try {
+			List<CmisObjectType> policyList = port.getAppliedPolicies(repositoryId, objectId, filter,
+					convert(extension));
 
-      // no list?
-      if (policyList == null) {
-        return null;
-      }
+			// no list?
+			if (policyList == null) {
+				return null;
+			}
 
-      // convert list
-      List<ObjectData> result = new ArrayList<ObjectData>();
-      for (CmisObjectType policy : policyList) {
-        result.add(convert(policy));
-      }
+			// convert list
+			List<ObjectData> result = new ArrayList<ObjectData>();
+			for (CmisObjectType policy : policyList) {
+				result.add(convert(policy));
+			}
 
-      return result;
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+			return result;
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 }

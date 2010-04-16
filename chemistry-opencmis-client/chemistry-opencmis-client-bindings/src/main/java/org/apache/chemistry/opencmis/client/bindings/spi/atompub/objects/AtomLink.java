@@ -26,41 +26,41 @@ import java.io.Serializable;
  */
 public class AtomLink implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private String fRel;
-  private String fType;
-  private String fHref;
+	private String fRel;
+	private String fType;
+	private String fHref;
 
-  public AtomLink() {
-  }
+	public AtomLink() {
+	}
 
-  public String getRel() {
-    return fRel;
-  }
+	public String getRel() {
+		return fRel;
+	}
 
-  public void setRel(String rel) {
-    fRel = rel;
-  }
+	public void setRel(String rel) {
+		fRel = rel;
+	}
 
-  public String getType() {
-    return fType;
-  }
+	public String getType() {
+		return fType;
+	}
 
-  public void setType(String type) {
-    fType = type;
-  }
+	public void setType(String type) {
+		fType = type;
+	}
 
-  public String getHref() {
-    return fHref;
-  }
+	public String getHref() {
+		return fHref;
+	}
 
-  public void setHref(String href) {
-    fHref = href;
-  }
+	public void setHref(String href) {
+		fHref = href;
+	}
 
-  @Override
-  public String toString() {
-    return "Link: rel=\"" + fRel + "\" type=\"" + fType + "\" href=\"" + fHref + "\"";
-  }
+	@Override
+	public String toString() {
+		return "Link: rel=\"" + fRel + "\" type=\"" + fType + "\" href=\"" + fHref + "\"";
+	}
 }

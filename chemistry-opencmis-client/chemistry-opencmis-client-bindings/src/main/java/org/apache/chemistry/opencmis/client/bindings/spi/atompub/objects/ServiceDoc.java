@@ -27,35 +27,37 @@ import java.util.List;
  */
 public class ServiceDoc extends AtomBase {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private List<RepositoryWorkspace> fWorkspaces = new ArrayList<RepositoryWorkspace>();
+	private List<RepositoryWorkspace> fWorkspaces = new ArrayList<RepositoryWorkspace>();
 
-  public ServiceDoc() {
-  }
+	public ServiceDoc() {
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType()
-   */
-  @Override
-  public String getType() {
-    return "Service Document";
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType
+	 * ()
+	 */
+	@Override
+	public String getType() {
+		return "Service Document";
+	}
 
-  public List<RepositoryWorkspace> getWorkspaces() {
-    return fWorkspaces;
-  }
+	public List<RepositoryWorkspace> getWorkspaces() {
+		return fWorkspaces;
+	}
 
-  public void addWorkspace(RepositoryWorkspace ws) {
-    if (ws != null) {
-      fWorkspaces.add(ws);
-    }
-  }
+	public void addWorkspace(RepositoryWorkspace ws) {
+		if (ws != null) {
+			fWorkspaces.add(ws);
+		}
+	}
 
-  @Override
-  public String toString() {
-    return "Service Doc: " + fWorkspaces;
-  }
+	@Override
+	public String toString() {
+		return "Service Doc: " + fWorkspaces;
+	}
 }

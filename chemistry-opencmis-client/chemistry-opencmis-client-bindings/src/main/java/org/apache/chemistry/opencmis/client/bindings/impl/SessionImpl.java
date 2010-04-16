@@ -33,113 +33,107 @@ import org.apache.chemistry.opencmis.client.bindings.spi.Session;
  */
 public class SessionImpl implements Session {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private Map<String, Object> fData;
+	private Map<String, Object> fData;
 
-  private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
+	private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
 
-  /**
-   * Constructor.
-   */
-  public SessionImpl() {
-    fData = new HashMap<String, Object>();
-  }
+	/**
+	 * Constructor.
+	 */
+	public SessionImpl() {
+		fData = new HashMap<String, Object>();
+	}
 
-  public Object get(String key) {
-    Object value = null;
+	public Object get(String key) {
+		Object value = null;
 
-    fLock.readLock().lock();
-    try {
-      value = fData.get(key);
-    }
-    finally {
-      fLock.readLock().unlock();
-    }
+		fLock.readLock().lock();
+		try {
+			value = fData.get(key);
+		} finally {
+			fLock.readLock().unlock();
+		}
 
-    if (value instanceof TransientWrapper) {
-      return ((TransientWrapper) value).getObject();
-    }
+		if (value instanceof TransientWrapper) {
+			return ((TransientWrapper) value).getObject();
+		}
 
-    return value;
-  }
+		return value;
+	}
 
-  public Object get(String key, Object defValue) {
-    Object value = get(key);
-    return (value == null ? defValue : value);
-  }
+	public Object get(String key, Object defValue) {
+		Object value = get(key);
+		return (value == null ? defValue : value);
+	}
 
-  public int get(String key, int defValue) {
-    Object value = get(key);
-    int intValue = defValue;
+	public int get(String key, int defValue) {
+		Object value = get(key);
+		int intValue = defValue;
 
-    if (value instanceof Integer) {
-      intValue = ((Integer) value).intValue();
-    }
-    else if (value instanceof String) {
-      try {
-        intValue = Integer.valueOf((String) value);
-      }
-      catch (NumberFormatException e) {
-      }
-    }
+		if (value instanceof Integer) {
+			intValue = ((Integer) value).intValue();
+		} else if (value instanceof String) {
+			try {
+				intValue = Integer.valueOf((String) value);
+			} catch (NumberFormatException e) {
+			}
+		}
 
-    return intValue;
-  }
+		return intValue;
+	}
 
-  public void put(String key, Serializable obj) {
-    fLock.writeLock().lock();
-    try {
-      fData.put(key, obj);
-    }
-    finally {
-      fLock.writeLock().unlock();
-    }
-  }
+	public void put(String key, Serializable obj) {
+		fLock.writeLock().lock();
+		try {
+			fData.put(key, obj);
+		} finally {
+			fLock.writeLock().unlock();
+		}
+	}
 
-  public void put(String key, Object obj, boolean isTransient) {
-    Object value = (isTransient ? new TransientWrapper(obj) : obj);
-    if (!(value instanceof Serializable)) {
-      throw new IllegalArgumentException("Object must be serializable!");
-    }
+	public void put(String key, Object obj, boolean isTransient) {
+		Object value = (isTransient ? new TransientWrapper(obj) : obj);
+		if (!(value instanceof Serializable)) {
+			throw new IllegalArgumentException("Object must be serializable!");
+		}
 
-    fLock.writeLock().lock();
-    try {
-      fData.put(key, value);
-    }
-    finally {
-      fLock.writeLock().unlock();
-    }
-  }
+		fLock.writeLock().lock();
+		try {
+			fData.put(key, value);
+		} finally {
+			fLock.writeLock().unlock();
+		}
+	}
 
-  public void remove(String key) {
-    fLock.writeLock().lock();
-    try {
-      fData.remove(key);
-    }
-    finally {
-      fLock.writeLock().unlock();
-    }
-  }
+	public void remove(String key) {
+		fLock.writeLock().lock();
+		try {
+			fData.remove(key);
+		} finally {
+			fLock.writeLock().unlock();
+		}
+	}
 
-  public void readLock() {
-    fLock.readLock().lock();
-  }
+	public void readLock() {
+		fLock.readLock().lock();
+	}
 
-  public void readUnlock() {
-    fLock.readLock().unlock();
-  }
+	public void readUnlock() {
+		fLock.readLock().unlock();
+	}
 
-  public void writeLock() {
-    fLock.writeLock().lock();
-  }
+	public void writeLock() {
+		fLock.writeLock().lock();
+	}
 
-  public void writeUnlock() {
-    fLock.writeLock().unlock();
-  }
+	public void writeUnlock() {
+		fLock.writeLock().unlock();
+	}
 
-  @Override
-  public String toString() {
-    return fData.toString();
-  }
+	@Override
+	public String toString() {
+		return fData.toString();
+	}
 }

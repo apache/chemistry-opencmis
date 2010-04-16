@@ -26,34 +26,36 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
  */
 public class AtomAllowableActions extends AtomBase {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private CmisAllowableActionsType fAllowableActions;
+	private CmisAllowableActionsType fAllowableActions;
 
-  public AtomAllowableActions() {
-    super();
-  }
+	public AtomAllowableActions() {
+		super();
+	}
 
-  public AtomAllowableActions(CmisAllowableActionsType allowableActions) {
-    this();
-    setAllowableActions(allowableActions);
-  }
+	public AtomAllowableActions(CmisAllowableActionsType allowableActions) {
+		this();
+		setAllowableActions(allowableActions);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType()
-   */
-  @Override
-  public String getType() {
-    return "Allowable Actions";
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType
+	 * ()
+	 */
+	@Override
+	public String getType() {
+		return "Allowable Actions";
+	}
 
-  public CmisAllowableActionsType getAllowableActions() {
-    return fAllowableActions;
-  }
+	public CmisAllowableActionsType getAllowableActions() {
+		return fAllowableActions;
+	}
 
-  public void setAllowableActions(CmisAllowableActionsType allowableActions) {
-    fAllowableActions = allowableActions;
-  }
+	public void setAllowableActions(CmisAllowableActionsType allowableActions) {
+		fAllowableActions = allowableActions;
+	}
 }

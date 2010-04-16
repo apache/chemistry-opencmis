@@ -42,144 +42,139 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
  */
 public class RepositoryServiceImpl implements RepositoryService, Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private final Session fSession;
+	private final Session fSession;
 
-  /**
-   * Constructor.
-   */
-  public RepositoryServiceImpl(Session session) {
-    fSession = session;
-  }
+	/**
+	 * Constructor.
+	 */
+	public RepositoryServiceImpl(Session session) {
+		fSession = session;
+	}
 
-  public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-    RepositoryInfo result = null;
-    boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+		RepositoryInfo result = null;
+		boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
 
-    RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(fSession);
+		RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(fSession);
 
-    // if extension is not set, check the cache first
-    if (!hasExtension) {
-      result = cache.get(repositoryId);
-      if (result != null) {
-        return result;
-      }
-    }
+		// if extension is not set, check the cache first
+		if (!hasExtension) {
+			result = cache.get(repositoryId);
+			if (result != null) {
+				return result;
+			}
+		}
 
-    // it was not in the cache -> get the SPI and fetch the repository info
-    CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
-    result = spi.getRepositoryService().getRepositoryInfo(repositoryId, extension);
+		// it was not in the cache -> get the SPI and fetch the repository info
+		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		result = spi.getRepositoryService().getRepositoryInfo(repositoryId, extension);
 
-    // put it into the cache
-    if (!hasExtension) {
-      cache.put(result);
-    }
+		// put it into the cache
+		if (!hasExtension) {
+			cache.put(result);
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-    List<RepositoryInfo> result = null;
-    boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+	public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
+		List<RepositoryInfo> result = null;
+		boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
 
-    // get the SPI and fetch the repository infos
-    CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
-    result = spi.getRepositoryService().getRepositoryInfos(extension);
+		// get the SPI and fetch the repository infos
+		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		result = spi.getRepositoryService().getRepositoryInfos(extension);
 
-    // put it into the cache
-    if (!hasExtension && (result != null)) {
-      RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(fSession);
-      for (RepositoryInfo rid : result) {
-        cache.put(rid);
-      }
-    }
+		// put it into the cache
+		if (!hasExtension && (result != null)) {
+			RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(fSession);
+			for (RepositoryInfo rid : result) {
+				cache.put(rid);
+			}
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  public TypeDefinitionList getTypeChildren(String repositoryId, String typeId,
-      Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount,
-      ExtensionsData extension) {
-    TypeDefinitionList result = null;
-    boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
-    boolean propDefs = (includePropertyDefinitions == null ? false : includePropertyDefinitions
-        .booleanValue());
+	public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		TypeDefinitionList result = null;
+		boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+		boolean propDefs = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
 
-    // get the SPI and fetch the type definitions
-    CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
-    result = spi.getRepositoryService().getTypeChildren(repositoryId, typeId,
-        includePropertyDefinitions, maxItems, skipCount, extension);
+		// get the SPI and fetch the type definitions
+		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		result = spi.getRepositoryService().getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems,
+				skipCount, extension);
 
-    // put it into the cache
-    if (!hasExtension && propDefs && (result != null)) {
-      TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(fSession);
+		// put it into the cache
+		if (!hasExtension && propDefs && (result != null)) {
+			TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(fSession);
 
-      for (TypeDefinition tdd : result.getList()) {
-        cache.put(repositoryId, tdd);
-      }
-    }
+			for (TypeDefinition tdd : result.getList()) {
+				cache.put(repositoryId, tdd);
+			}
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  public TypeDefinition getTypeDefinition(String repositoryId, String typeId,
-      ExtensionsData extension) {
-    TypeDefinition result = null;
-    boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+	public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
+		TypeDefinition result = null;
+		boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
 
-    TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(fSession);
+		TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(fSession);
 
-    // if extension is not set, check the cache first
-    if (!hasExtension) {
-      result = cache.get(repositoryId, typeId);
-      if (result != null) {
-        return result;
-      }
-    }
+		// if extension is not set, check the cache first
+		if (!hasExtension) {
+			result = cache.get(repositoryId, typeId);
+			if (result != null) {
+				return result;
+			}
+		}
 
-    // it was not in the cache -> get the SPI and fetch the type definition
-    CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
-    result = spi.getRepositoryService().getTypeDefinition(repositoryId, typeId, extension);
+		// it was not in the cache -> get the SPI and fetch the type definition
+		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		result = spi.getRepositoryService().getTypeDefinition(repositoryId, typeId, extension);
 
-    // put it into the cache
-    if (!hasExtension && (result != null)) {
-      cache.put(repositoryId, result);
-    }
+		// put it into the cache
+		if (!hasExtension && (result != null)) {
+			cache.put(repositoryId, result);
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId,
-      BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
-    List<TypeDefinitionContainer> result = null;
-    boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
-    boolean propDefs = (includePropertyDefinitions == null ? false : includePropertyDefinitions
-        .booleanValue());
+	public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
+			Boolean includePropertyDefinitions, ExtensionsData extension) {
+		List<TypeDefinitionContainer> result = null;
+		boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+		boolean propDefs = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
 
-    // get the SPI and fetch the type definitions
-    CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
-    result = spi.getRepositoryService().getTypeDescendants(repositoryId, typeId, depth,
-        includePropertyDefinitions, extension);
+		// get the SPI and fetch the type definitions
+		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		result = spi.getRepositoryService().getTypeDescendants(repositoryId, typeId, depth, includePropertyDefinitions,
+				extension);
 
-    // put it into the cache
-    if (!hasExtension && propDefs && (result != null)) {
-      TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(fSession);
-      addToTypeCache(cache, repositoryId, result);
-    }
+		// put it into the cache
+		if (!hasExtension && propDefs && (result != null)) {
+			TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(fSession);
+			addToTypeCache(cache, repositoryId, result);
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  private void addToTypeCache(TypeDefinitionCache cache, String repositoryId,
-      List<TypeDefinitionContainer> containers) {
-    if (containers == null) {
-      return;
-    }
+	private void addToTypeCache(TypeDefinitionCache cache, String repositoryId, List<TypeDefinitionContainer> containers) {
+		if (containers == null) {
+			return;
+		}
 
-    for (TypeDefinitionContainer container : containers) {
-      cache.put(repositoryId, container.getTypeDefinition());
-      addToTypeCache(cache, repositoryId, container.getChildren());
-    }
-  }
+		for (TypeDefinitionContainer container : containers) {
+			cache.put(repositoryId, container.getTypeDefinition());
+			addToTypeCache(cache, repositoryId, container.getChildren());
+		}
+	}
 }

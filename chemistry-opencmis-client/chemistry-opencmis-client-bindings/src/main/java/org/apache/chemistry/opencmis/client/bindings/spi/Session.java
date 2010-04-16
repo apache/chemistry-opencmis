@@ -28,53 +28,53 @@ import java.io.Serializable;
  */
 public interface Session extends Serializable {
 
-  /**
-   * Gets a session value.
-   */
-  Object get(String key);
+	/**
+	 * Gets a session value.
+	 */
+	Object get(String key);
 
-  /**
-   * Returns a session value or the default value if the key doesn't exist.
-   */
-  Object get(String key, Object defValue);
+	/**
+	 * Returns a session value or the default value if the key doesn't exist.
+	 */
+	Object get(String key, Object defValue);
 
-  /**
-   * Returns a session value or the default value if the key doesn't exist.
-   */
-  int get(String key, int defValue);
+	/**
+	 * Returns a session value or the default value if the key doesn't exist.
+	 */
+	int get(String key, int defValue);
 
-  /**
-   * Adds a non-transient session value.
-   */
-  void put(String key, Serializable object);
+	/**
+	 * Adds a non-transient session value.
+	 */
+	void put(String key, Serializable object);
 
-  /**
-   * Adds a session value.
-   */
-  void put(String key, Object object, boolean isTransient);
+	/**
+	 * Adds a session value.
+	 */
+	void put(String key, Object object, boolean isTransient);
 
-  /**
-   * Removes a session value.
-   */
-  void remove(String key);
+	/**
+	 * Removes a session value.
+	 */
+	void remove(String key);
 
-  /**
-   * Acquires a read lock.
-   */
-  void readLock();
+	/**
+	 * Acquires a read lock.
+	 */
+	void readLock();
 
-  /**
-   * Releases a read lock.
-   */
-  void readUnlock();
+	/**
+	 * Releases a read lock.
+	 */
+	void readUnlock();
 
-  /**
-   * Acquires a write lock.
-   */
-  void writeLock();
+	/**
+	 * Acquires a write lock.
+	 */
+	void writeLock();
 
-  /**
-   * Releases a write lock.
-   */
-  void writeUnlock();
+	/**
+	 * Releases a write lock.
+	 */
+	void writeUnlock();
 }

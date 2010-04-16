@@ -30,33 +30,36 @@ import org.apache.chemistry.opencmis.commons.api.CmisBinding;
  */
 public class SimpleReadOnlyTests extends AbstractSimpleReadOnlyTests {
 
-  private Set<String> fTests;
+	private Set<String> fTests;
 
-  public SimpleReadOnlyTests() {
-    fTests = new HashSet<String>();
-    fTests.add(TEST_REPOSITORY_INFO);
-    fTests.add(TEST_TYPES);
-    fTests.add(TEST_NAVIGATION);
-    fTests.add(TEST_CONTENT_STREAM);
-    fTests.add(TEST_QUERY);
-    fTests.add(TEST_CHECKEDOUT);
-    fTests.add(TEST_CONTENT_CHANGES);
-  }
+	public SimpleReadOnlyTests() {
+		fTests = new HashSet<String>();
+		fTests.add(TEST_REPOSITORY_INFO);
+		fTests.add(TEST_TYPES);
+		fTests.add(TEST_NAVIGATION);
+		fTests.add(TEST_CONTENT_STREAM);
+		fTests.add(TEST_QUERY);
+		fTests.add(TEST_CHECKEDOUT);
+		fTests.add(TEST_CONTENT_CHANGES);
+	}
 
-  @Override
-  protected CmisBinding createBinding() {
-    // Add the default Java cookie manager from Java 1.6 to optimize authentication
-    // by reusing the common case where a token is stored in a cookie.
-    // Note: Enable cookie management requires Java 1.6, uncomment the following two lines to
-    // enable cookie management for the tests.
-    // java.net.CookieManager cm = new java.net.CookieManager(null, CookiePolicy.ACCEPT_ALL);
-    // java.net.CookieHandler.setDefault(cm);
+	@Override
+	protected CmisBinding createBinding() {
+		// Add the default Java cookie manager from Java 1.6 to optimize
+		// authentication
+		// by reusing the common case where a token is stored in a cookie.
+		// Note: Enable cookie management requires Java 1.6, uncomment the
+		// following two lines to
+		// enable cookie management for the tests.
+		// java.net.CookieManager cm = new java.net.CookieManager(null,
+		// CookiePolicy.ACCEPT_ALL);
+		// java.net.CookieHandler.setDefault(cm);
 
-    return AtomPubTestBindingFactory.createBinding(getAtomPubURL(), getUsername(), getPassword());
-  }
+		return AtomPubTestBindingFactory.createBinding(getAtomPubURL(), getUsername(), getPassword());
+	}
 
-  @Override
-  protected Set<String> getEnabledTests() {
-    return fTests;
-  }
+	@Override
+	protected Set<String> getEnabledTests() {
+		return fTests;
+	}
 }

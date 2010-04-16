@@ -46,137 +46,131 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
  */
 public class RepositoryServiceImpl extends AbstractWebServicesService implements RepositoryService {
 
-  private final PortProvider fPortProvider;
+	private final PortProvider fPortProvider;
 
-  /**
-   * Constructor.
-   */
-  public RepositoryServiceImpl(Session session, PortProvider portProvider) {
-    setSession(session);
-    fPortProvider = portProvider;
-  }
+	/**
+	 * Constructor.
+	 */
+	public RepositoryServiceImpl(Session session, PortProvider portProvider) {
+		setSession(session);
+		fPortProvider = portProvider;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos(org.apache.opencmis.client.provider
-   * .ExtensionsData)
-   */
-  public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-    RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos
+	 * (org.apache.opencmis.client.provider .ExtensionsData)
+	 */
+	public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
+		RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
 
-    List<RepositoryInfo> infos = null;
-    try {
-      // get the list of repositories
-      List<CmisRepositoryEntryType> entries = port.getRepositories(convert(extension));
+		List<RepositoryInfo> infos = null;
+		try {
+			// get the list of repositories
+			List<CmisRepositoryEntryType> entries = port.getRepositories(convert(extension));
 
-      if (entries != null) {
-        infos = new ArrayList<RepositoryInfo>();
+			if (entries != null) {
+				infos = new ArrayList<RepositoryInfo>();
 
-        // iterate through the list and fetch repository infos
-        for (CmisRepositoryEntryType entry : entries) {
-          CmisRepositoryInfoType info = port.getRepositoryInfo(entry.getRepositoryId(), null);
-          infos.add(convert(info));
-        }
-      }
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
+				// iterate through the list and fetch repository infos
+				for (CmisRepositoryEntryType entry : entries) {
+					CmisRepositoryInfoType info = port.getRepositoryInfo(entry.getRepositoryId(), null);
+					infos.add(convert(info));
+				}
+			}
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
 
-    return infos;
-  }
+		return infos;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo(java.lang.String,
-   * org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-    RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo
+	 * (java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+		RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
 
-    try {
-      return convert(port.getRepositoryInfo(repositoryId, convert(extension)));
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+		try {
+			return convert(port.getRepositoryInfo(repositoryId, convert(extension)));
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.RepositoryService#getTypeDefinition(java.lang.String,
-   * java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public TypeDefinition getTypeDefinition(String repositoryId, String typeId,
-      ExtensionsData extension) {
-    RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getTypeDefinition
+	 * (java.lang.String, java.lang.String,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
+		RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
 
-    try {
-      return convert(port.getTypeDefinition(repositoryId, typeId, convert(extension)));
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+		try {
+			return convert(port.getTypeDefinition(repositoryId, typeId, convert(extension)));
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.RepositoryService#getTypeChildren(java.lang.String,
-   * java.lang.String, java.lang.Boolean, java.math.BigInteger, java.math.BigInteger,
-   * org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public TypeDefinitionList getTypeChildren(String repositoryId, String typeId,
-      Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount,
-      ExtensionsData extension) {
-    RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getTypeChildren
+	 * (java.lang.String, java.lang.String, java.lang.Boolean,
+	 * java.math.BigInteger, java.math.BigInteger,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
 
-    try {
-      return convert(port.getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
-          maxItems, skipCount, convert(extension)));
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+		try {
+			return convert(port.getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems, skipCount,
+					convert(extension)));
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.RepositoryService#getTypeDescendants(java.lang.String,
-   * java.lang.String, java.math.BigInteger, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId,
-      BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
-    RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.RepositoryService#getTypeDescendants
+	 * (java.lang.String, java.lang.String, java.math.BigInteger,
+	 * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
+			Boolean includePropertyDefinitions, ExtensionsData extension) {
+		RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
 
-    try {
-      return convertTypeContainerList(port.getTypeDescendants(repositoryId, typeId, depth,
-          includePropertyDefinitions, convert(extension)));
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+		try {
+			return convertTypeContainerList(port.getTypeDescendants(repositoryId, typeId, depth,
+					includePropertyDefinitions, convert(extension)));
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
 }

@@ -44,72 +44,71 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
  */
 public class DiscoveryServiceImpl extends AbstractWebServicesService implements DiscoveryService {
 
-  private final PortProvider fPortProvider;
+	private final PortProvider fPortProvider;
 
-  /**
-   * Constructor.
-   */
-  public DiscoveryServiceImpl(Session session, PortProvider portProvider) {
-    setSession(session);
-    fPortProvider = portProvider;
-  }
+	/**
+	 * Constructor.
+	 */
+	public DiscoveryServiceImpl(Session session, PortProvider portProvider) {
+		setSession(session);
+		fPortProvider = portProvider;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.DiscoveryService#getContentChanges(java.lang.String,
-   * org.apache.opencmis.client.provider.Holder, java.lang.Boolean, java.lang.String,
-   * java.lang.Boolean, java.lang.Boolean, java.math.BigInteger,
-   * org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken,
-      Boolean includeProperties, String filter, Boolean includePolicyIds, Boolean includeACL,
-      BigInteger maxItems, ExtensionsData extension) {
-    DiscoveryServicePort port = fPortProvider.getDiscoveryServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.DiscoveryService#getContentChanges
+	 * (java.lang.String, org.apache.opencmis.client.provider.Holder,
+	 * java.lang.Boolean, java.lang.String, java.lang.Boolean,
+	 * java.lang.Boolean, java.math.BigInteger,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
+			String filter, Boolean includePolicyIds, Boolean includeACL, BigInteger maxItems, ExtensionsData extension) {
+		DiscoveryServicePort port = fPortProvider.getDiscoveryServicePort();
 
-    try {
-      javax.xml.ws.Holder<String> portChangeLokToken = convertHolder(changeLogToken);
-      javax.xml.ws.Holder<CmisObjectListType> portObjects = new javax.xml.ws.Holder<CmisObjectListType>();
+		try {
+			javax.xml.ws.Holder<String> portChangeLokToken = convertHolder(changeLogToken);
+			javax.xml.ws.Holder<CmisObjectListType> portObjects = new javax.xml.ws.Holder<CmisObjectListType>();
 
-      port.getContentChanges(repositoryId, portChangeLokToken, includeProperties, filter,
-          includePolicyIds, includeACL, maxItems, convert(extension), portObjects);
+			port.getContentChanges(repositoryId, portChangeLokToken, includeProperties, filter, includePolicyIds,
+					includeACL, maxItems, convert(extension), portObjects);
 
-      setHolderValue(portChangeLokToken, changeLogToken);
+			setHolderValue(portChangeLokToken, changeLogToken);
 
-      return convert(portObjects.value);
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+			return convert(portObjects.value);
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.DiscoveryService#query(java.lang.String,
-   * java.lang.String, java.lang.Boolean, java.lang.Boolean,
-   * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String, java.math.BigInteger,
-   * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
-      Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-      String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-    DiscoveryServicePort port = fPortProvider.getDiscoveryServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.DiscoveryService#query(java.lang.
+	 * String, java.lang.String, java.lang.Boolean, java.lang.Boolean,
+	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+	 * java.math.BigInteger, java.math.BigInteger,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
+			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		DiscoveryServicePort port = fPortProvider.getDiscoveryServicePort();
 
-    try {
-      return convert(port.query(repositoryId, statement, searchAllVersions,
-          includeAllowableActions, convert(EnumIncludeRelationships.class, includeRelationships),
-          renditionFilter, maxItems, skipCount, convert(extension)));
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+		try {
+			return convert(port.query(repositoryId, statement, searchAllVersions, includeAllowableActions, convert(
+					EnumIncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
+					convert(extension)));
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
 }

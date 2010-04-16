@@ -24,8 +24,8 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
  */
 public final class SpiSessionParameter {
 
-  public static final String PORTS = "org.apache.chemistry.opencmis.provider.webservices.ports";
+	public static final String PORTS = "org.apache.chemistry.opencmis.provider.webservices.ports";
 
-  private SpiSessionParameter() {
-  }
+	private SpiSessionParameter() {
+	}
 }

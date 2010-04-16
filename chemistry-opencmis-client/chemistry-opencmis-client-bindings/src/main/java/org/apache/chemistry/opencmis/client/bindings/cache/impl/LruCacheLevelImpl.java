@@ -29,20 +29,20 @@ import java.util.Map;
  */
 public class LruCacheLevelImpl extends AbstractMapCacheLevel {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  public final static String MAX_ENTRIES = "maxEntries";
+	public final static String MAX_ENTRIES = "maxEntries";
 
-  public void initialize(Map<String, String> parameters) {
-    final int maxEntries = getIntParameter(parameters, MAX_ENTRIES, 100);
+	public void initialize(Map<String, String> parameters) {
+		final int maxEntries = getIntParameter(parameters, MAX_ENTRIES, 100);
 
-    setMap(new LinkedHashMap<String, Object>(maxEntries + 1, 0.70f, true) {
-      private static final long serialVersionUID = 1L;
+		setMap(new LinkedHashMap<String, Object>(maxEntries + 1, 0.70f, true) {
+			private static final long serialVersionUID = 1L;
 
-      @Override
-      public boolean removeEldestEntry(Map.Entry<String, Object> eldest) {
-        return size() > maxEntries;
-      }
-    });
-  }
+			@Override
+			public boolean removeEldestEntry(Map.Entry<String, Object> eldest) {
+				return size() > maxEntries;
+			}
+		});
+	}
 }

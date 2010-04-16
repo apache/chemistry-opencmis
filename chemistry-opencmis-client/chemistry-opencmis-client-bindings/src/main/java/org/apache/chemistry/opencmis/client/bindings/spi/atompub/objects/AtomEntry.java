@@ -24,34 +24,36 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects;
  */
 public class AtomEntry extends AtomBase {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private String fId;
+	private String fId;
 
-  public AtomEntry() {
-    super();
-  }
+	public AtomEntry() {
+		super();
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType()
-   */
-  @Override
-  public String getType() {
-    return "Atom Entry";
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType
+	 * ()
+	 */
+	@Override
+	public String getType() {
+		return "Atom Entry";
+	}
 
-  public String getId() {
-    return fId;
-  }
+	public String getId() {
+		return fId;
+	}
 
-  public void setId(String id) {
-    fId = id;
-  }
+	public void setId(String id) {
+		fId = id;
+	}
 
-  @Override
-  public String toString() {
-    return "Entry \"" + fId + "\": " + getElements();
-  }
+	@Override
+	public String toString() {
+		return "Entry \"" + fId + "\": " + getElements();
+	}
 }

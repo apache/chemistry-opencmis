@@ -30,38 +30,38 @@ import java.util.Map;
  */
 public interface CacheLevel extends Serializable {
 
-  /**
-   * Initialize the cache level.
-   * 
-   * @param parameters
-   *          level parameters
-   */
-  void initialize(Map<String, String> parameters);
+	/**
+	 * Initialize the cache level.
+	 * 
+	 * @param parameters
+	 *            level parameters
+	 */
+	void initialize(Map<String, String> parameters);
 
-  /**
-   * Adds an object to the cache level.
-   * 
-   * @param value
-   *          the object
-   * @param key
-   *          the key at this level
-   */
-  void put(Object value, String key);
+	/**
+	 * Adds an object to the cache level.
+	 * 
+	 * @param value
+	 *            the object
+	 * @param key
+	 *            the key at this level
+	 */
+	void put(Object value, String key);
 
-  /**
-   * Retrieves an object from the cache level.
-   * 
-   * @param key
-   *          the key at this cache level
-   * @return the object or <code>null</code> if the object doesn't exist
-   */
-  Object get(String key);
+	/**
+	 * Retrieves an object from the cache level.
+	 * 
+	 * @param key
+	 *            the key at this cache level
+	 * @return the object or <code>null</code> if the object doesn't exist
+	 */
+	Object get(String key);
 
-  /**
-   * Removes an object from this cache level.
-   * 
-   * @param key
-   *          the key at this cache level
-   */
-  void remove(String key);
+	/**
+	 * Removes an object from this cache level.
+	 * 
+	 * @param key
+	 *            the key at this cache level
+	 */
+	void remove(String key);
 }

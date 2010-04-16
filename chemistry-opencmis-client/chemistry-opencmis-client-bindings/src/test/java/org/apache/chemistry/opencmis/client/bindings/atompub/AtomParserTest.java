@@ -48,114 +48,113 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyString;
  */
 public class AtomParserTest extends TestCase {
 
-  private static final byte[] CONTENT = "This is my test content!".getBytes();
-  private static final String CONTENT_TYPE = "text/plain";
+	private static final byte[] CONTENT = "This is my test content!".getBytes();
+	private static final String CONTENT_TYPE = "text/plain";
 
-  public void testParser() throws Exception {
-    ByteArrayOutputStream bao = new ByteArrayOutputStream();
+	public void testParser() throws Exception {
+		ByteArrayOutputStream bao = new ByteArrayOutputStream();
 
-    // set up an object
-    CmisPropertiesType properties = new CmisPropertiesType();
+		// set up an object
+		CmisPropertiesType properties = new CmisPropertiesType();
 
-    CmisPropertyString propName = new CmisPropertyString();
-    propName.setPropertyDefinitionId(PropertyIds.NAME);
-    propName.getValue().add("TestName");
-    properties.getProperty().add(propName);
+		CmisPropertyString propName = new CmisPropertyString();
+		propName.setPropertyDefinitionId(PropertyIds.NAME);
+		propName.getValue().add("TestName");
+		properties.getProperty().add(propName);
 
-    CmisPropertyInteger propInt = new CmisPropertyInteger();
-    propInt.setPropertyDefinitionId("IntProp");
-    propInt.getValue().add(BigInteger.valueOf(1));
-    propInt.getValue().add(BigInteger.valueOf(2));
-    propInt.getValue().add(BigInteger.valueOf(3));
-    properties.getProperty().add(propInt);
+		CmisPropertyInteger propInt = new CmisPropertyInteger();
+		propInt.setPropertyDefinitionId("IntProp");
+		propInt.getValue().add(BigInteger.valueOf(1));
+		propInt.getValue().add(BigInteger.valueOf(2));
+		propInt.getValue().add(BigInteger.valueOf(3));
+		properties.getProperty().add(propInt);
 
-    CmisPropertyDecimal propDec = new CmisPropertyDecimal();
-    propDec.setPropertyDefinitionId("DecProp");
-    propDec.getValue().add(
-        new BigDecimal("3.14159253589793238462643383279502884197"
-            + "169399375105820974944592307816406286208998628034825342117067982148086513"));
-    properties.getProperty().add(propDec);
+		CmisPropertyDecimal propDec = new CmisPropertyDecimal();
+		propDec.setPropertyDefinitionId("DecProp");
+		propDec.getValue().add(
+				new BigDecimal("3.14159253589793238462643383279502884197"
+						+ "169399375105820974944592307816406286208998628034825342117067982148086513"));
+		properties.getProperty().add(propDec);
 
-    CmisObjectType object1 = new CmisObjectType();
-    object1.setProperties(properties);
+		CmisObjectType object1 = new CmisObjectType();
+		object1.setProperties(properties);
 
-    // write the entry
-    AtomEntryWriter aew = new AtomEntryWriter(object1, CONTENT_TYPE, new ByteArrayInputStream(
-        CONTENT));
-    aew.write(bao);
+		// write the entry
+		AtomEntryWriter aew = new AtomEntryWriter(object1, CONTENT_TYPE, new ByteArrayInputStream(CONTENT));
+		aew.write(bao);
 
-    byte[] entryContent = bao.toByteArray();
-    assertTrue(entryContent.length > 0);
+		byte[] entryContent = bao.toByteArray();
+		assertTrue(entryContent.length > 0);
 
-    String entryContentStr = new String(entryContent, "UTF-8");
-    System.out.println(entryContentStr);
+		String entryContentStr = new String(entryContent, "UTF-8");
+		System.out.println(entryContentStr);
 
-    // parse it
-    AtomPubParser parser = new AtomPubParser(new ByteArrayInputStream(entryContent));
-    parser.parse();
-    AtomBase parseResult = parser.getResults();
+		// parse it
+		AtomPubParser parser = new AtomPubParser(new ByteArrayInputStream(entryContent));
+		parser.parse();
+		AtomBase parseResult = parser.getResults();
 
-    assertTrue(parseResult instanceof AtomEntry);
-    AtomEntry entry = (AtomEntry) parseResult;
+		assertTrue(parseResult instanceof AtomEntry);
+		AtomEntry entry = (AtomEntry) parseResult;
 
-    assertNotNull(entry);
-    assertTrue(entry.getElements().size() > 0);
+		assertNotNull(entry);
+		assertTrue(entry.getElements().size() > 0);
 
-    // find the object
-    CmisObjectType object2 = null;
-    for (AtomElement element : entry.getElements()) {
-      if (element.getObject() instanceof CmisObjectType) {
-        assertNull(object2);
-        object2 = (CmisObjectType) element.getObject();
-      }
-    }
+		// find the object
+		CmisObjectType object2 = null;
+		for (AtomElement element : entry.getElements()) {
+			if (element.getObject() instanceof CmisObjectType) {
+				assertNull(object2);
+				object2 = (CmisObjectType) element.getObject();
+			}
+		}
 
-    assertNotNull(object2);
-    assertNotNull(object2.getProperties());
+		assertNotNull(object2);
+		assertNotNull(object2.getProperties());
 
-    // compare properteis
-    for (CmisProperty property1 : object1.getProperties().getProperty()) {
-      boolean found = false;
+		// compare properteis
+		for (CmisProperty property1 : object1.getProperties().getProperty()) {
+			boolean found = false;
 
-      for (CmisProperty property2 : object2.getProperties().getProperty()) {
-        if (property1.getPropertyDefinitionId().equals(property2.getPropertyDefinitionId())) {
-          found = true;
+			for (CmisProperty property2 : object2.getProperties().getProperty()) {
+				if (property1.getPropertyDefinitionId().equals(property2.getPropertyDefinitionId())) {
+					found = true;
 
-          assertEquals(property1, property2);
-          break;
-        }
-      }
+					assertEquals(property1, property2);
+					break;
+				}
+			}
 
-      assertTrue(found);
-    }
-  }
+			assertTrue(found);
+		}
+	}
 
-  protected void assertEquals(CmisProperty expected, CmisProperty actual) throws Exception {
-    if ((expected == null) && (actual == null)) {
-      return;
-    }
+	protected void assertEquals(CmisProperty expected, CmisProperty actual) throws Exception {
+		if ((expected == null) && (actual == null)) {
+			return;
+		}
 
-    if ((expected == null) || (actual == null)) {
-      fail("Property is null!");
-    }
+		if ((expected == null) || (actual == null)) {
+			fail("Property is null!");
+		}
 
-    assertEquals(expected.getPropertyDefinitionId(), actual.getPropertyDefinitionId());
-    assertEquals(expected.getClass(), actual.getClass());
+		assertEquals(expected.getPropertyDefinitionId(), actual.getPropertyDefinitionId());
+		assertEquals(expected.getClass(), actual.getClass());
 
-    Method m1 = expected.getClass().getMethod("getValue", new Class<?>[0]);
-    List<?> values1 = (List<?>) m1.invoke(expected, new Object[0]);
-    assertNotNull(values1);
-    assertFalse(values1.isEmpty());
+		Method m1 = expected.getClass().getMethod("getValue", new Class<?>[0]);
+		List<?> values1 = (List<?>) m1.invoke(expected, new Object[0]);
+		assertNotNull(values1);
+		assertFalse(values1.isEmpty());
 
-    Method m2 = actual.getClass().getMethod("getValue", new Class<?>[0]);
-    List<?> values2 = (List<?>) m2.invoke(actual, new Object[0]);
-    assertNotNull(values2);
-    assertFalse(values2.isEmpty());
+		Method m2 = actual.getClass().getMethod("getValue", new Class<?>[0]);
+		List<?> values2 = (List<?>) m2.invoke(actual, new Object[0]);
+		assertNotNull(values2);
+		assertFalse(values2.isEmpty());
 
-    assertEquals(values1.size(), values2.size());
+		assertEquals(values1.size(), values2.size());
 
-    for (int i = 0; i < values1.size(); i++) {
-      assertEquals(values1.get(i), values2.get(i));
-    }
-  }
+		for (int i = 0; i < values1.size(); i++) {
+			assertEquals(values1.get(i), values2.get(i));
+		}
+	}
 }

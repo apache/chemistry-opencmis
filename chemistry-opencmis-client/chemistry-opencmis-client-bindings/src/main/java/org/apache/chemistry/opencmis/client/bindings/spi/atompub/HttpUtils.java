@@ -47,238 +47,230 @@ import org.apache.commons.logging.LogFactory;
  */
 public class HttpUtils {
 
-  private static final Log log = LogFactory.getLog(HttpUtils.class);
+	private static final Log log = LogFactory.getLog(HttpUtils.class);
 
-  private static final int BUFFER_SIZE = 4096;
+	private static final int BUFFER_SIZE = 4096;
 
-  private HttpUtils() {
-  }
+	private HttpUtils() {
+	}
 
-  public static Response invokeGET(UrlBuilder url, Session session) {
-    return invoke(url, "GET", null, null, session, null, null);
-  }
+	public static Response invokeGET(UrlBuilder url, Session session) {
+		return invoke(url, "GET", null, null, session, null, null);
+	}
 
-  public static Response invokeGET(UrlBuilder url, Session session, BigInteger offset,
-      BigInteger length) {
-    return invoke(url, "GET", null, null, session, offset, length);
-  }
+	public static Response invokeGET(UrlBuilder url, Session session, BigInteger offset, BigInteger length) {
+		return invoke(url, "GET", null, null, session, offset, length);
+	}
 
-  public static Response invokePOST(UrlBuilder url, String contentType, Output writer,
-      Session session) {
-    return invoke(url, "POST", contentType, writer, session, null, null);
-  }
+	public static Response invokePOST(UrlBuilder url, String contentType, Output writer, Session session) {
+		return invoke(url, "POST", contentType, writer, session, null, null);
+	}
 
-  public static Response invokePUT(UrlBuilder url, String contentType, Output writer,
-      Session session) {
-    return invoke(url, "PUT", contentType, writer, session, null, null);
-  }
+	public static Response invokePUT(UrlBuilder url, String contentType, Output writer, Session session) {
+		return invoke(url, "PUT", contentType, writer, session, null, null);
+	}
 
-  public static Response invokeDELETE(UrlBuilder url, Session session) {
-    return invoke(url, "DELETE", null, null, session, null, null);
-  }
+	public static Response invokeDELETE(UrlBuilder url, Session session) {
+		return invoke(url, "DELETE", null, null, session, null, null);
+	}
 
-  private static Response invoke(UrlBuilder url, String method, String contentType, Output writer,
-      Session session, BigInteger offset, BigInteger length) {
-    try {
-      // log before connect
-      if (log.isDebugEnabled()) {
-        log.debug(method + " " + url);
-      }
+	private static Response invoke(UrlBuilder url, String method, String contentType, Output writer, Session session,
+			BigInteger offset, BigInteger length) {
+		try {
+			// log before connect
+			if (log.isDebugEnabled()) {
+				log.debug(method + " " + url);
+			}
 
-      // connect
-      HttpURLConnection conn = (HttpURLConnection) (new URL(url.toString())).openConnection();
-      conn.setRequestMethod(method);
-      conn.setDoInput(true);
-      conn.setDoOutput(writer != null);
+			// connect
+			HttpURLConnection conn = (HttpURLConnection) (new URL(url.toString())).openConnection();
+			conn.setRequestMethod(method);
+			conn.setDoInput(true);
+			conn.setDoOutput(writer != null);
 
-      // set content type
-      if (contentType != null) {
-        conn.setRequestProperty("Content-Type", contentType);
-      }
+			// set content type
+			if (contentType != null) {
+				conn.setRequestProperty("Content-Type", contentType);
+			}
 
-      // authenticate
-      AbstractAuthenticationProvider authProvider = CmisBindingsHelper
-          .getAuthenticationProvider(session);
-      if (authProvider != null) {
-        Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(url.toString());
-        if (httpHeaders != null) {
-          for (Map.Entry<String, List<String>> header : httpHeaders.entrySet()) {
-            if (header.getValue() != null) {
-              for (String value : header.getValue()) {
-                conn.setRequestProperty(header.getKey(), value);
-              }
-            }
-          }
-        }
-      }
+			// authenticate
+			AbstractAuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
+			if (authProvider != null) {
+				Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(url.toString());
+				if (httpHeaders != null) {
+					for (Map.Entry<String, List<String>> header : httpHeaders.entrySet()) {
+						if (header.getValue() != null) {
+							for (String value : header.getValue()) {
+								conn.setRequestProperty(header.getKey(), value);
+							}
+						}
+					}
+				}
+			}
 
-      // range
-      if ((offset != null) || (length != null)) {
-        StringBuilder sb = new StringBuilder("bytes=");
+			// range
+			if ((offset != null) || (length != null)) {
+				StringBuilder sb = new StringBuilder("bytes=");
 
-        if ((offset == null) || (offset.signum() == -1)) {
-          offset = BigInteger.ZERO;
-        }
+				if ((offset == null) || (offset.signum() == -1)) {
+					offset = BigInteger.ZERO;
+				}
 
-        sb.append(offset.toString());
-        sb.append("-");
+				sb.append(offset.toString());
+				sb.append("-");
 
-        if ((length != null) && (length.signum() == 1)) {
-          sb.append(offset.add(length.subtract(BigInteger.ONE)).toString());
-        }
+				if ((length != null) && (length.signum() == 1)) {
+					sb.append(offset.add(length.subtract(BigInteger.ONE)).toString());
+				}
 
-        conn.setRequestProperty("Range", sb.toString());
-      }
+				conn.setRequestProperty("Range", sb.toString());
+			}
 
-      // send data
-      if (writer != null) {
-        OutputStream out = new BufferedOutputStream(conn.getOutputStream(), BUFFER_SIZE);
-        writer.write(out);
-        out.flush();
-      }
+			// send data
+			if (writer != null) {
+				OutputStream out = new BufferedOutputStream(conn.getOutputStream(), BUFFER_SIZE);
+				writer.write(out);
+				out.flush();
+			}
 
-      // connect
-      conn.connect();
+			// connect
+			conn.connect();
 
-      // get stream, if present
-      int respCode = conn.getResponseCode();
-      InputStream inputStream = null;
-      if ((respCode == 200) || (respCode == 201) || (respCode == 203) || (respCode == 206)) {
-        inputStream = conn.getInputStream();
-      }
+			// get stream, if present
+			int respCode = conn.getResponseCode();
+			InputStream inputStream = null;
+			if ((respCode == 200) || (respCode == 201) || (respCode == 203) || (respCode == 206)) {
+				inputStream = conn.getInputStream();
+			}
 
-      // get the response
-      return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream,
-          conn.getErrorStream());
-    }
-    catch (Exception e) {
-      throw new CmisConnectionException("Cannot access " + url + ": " + e.getMessage(), e);
-    }
-  }
+			// get the response
+			return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream, conn
+					.getErrorStream());
+		} catch (Exception e) {
+			throw new CmisConnectionException("Cannot access " + url + ": " + e.getMessage(), e);
+		}
+	}
 
-  /**
-   * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
-   * 
-   */
-  public static class Response {
-    private int fResponseCode;
-    private String fResponseMessage;
-    private Map<String, List<String>> fHeaders;
-    private InputStream fStream;
-    private String fErrorContent;
+	/**
+	 * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+	 * 
+	 */
+	public static class Response {
+		private int fResponseCode;
+		private String fResponseMessage;
+		private Map<String, List<String>> fHeaders;
+		private InputStream fStream;
+		private String fErrorContent;
 
-    public Response(int responseCode, String responseMessage, Map<String, List<String>> headers,
-        InputStream stream, InputStream errorStream) {
-      fResponseCode = responseCode;
-      fResponseMessage = responseMessage;
-      fStream = stream;
+		public Response(int responseCode, String responseMessage, Map<String, List<String>> headers,
+				InputStream stream, InputStream errorStream) {
+			fResponseCode = responseCode;
+			fResponseMessage = responseMessage;
+			fStream = stream;
 
-      fHeaders = new HashMap<String, List<String>>();
-      if (headers != null) {
-        for (Map.Entry<String, List<String>> e : headers.entrySet()) {
-          fHeaders.put(e.getKey() == null ? null : e.getKey().toLowerCase(), e.getValue());
-        }
-      }
+			fHeaders = new HashMap<String, List<String>>();
+			if (headers != null) {
+				for (Map.Entry<String, List<String>> e : headers.entrySet()) {
+					fHeaders.put(e.getKey() == null ? null : e.getKey().toLowerCase(), e.getValue());
+				}
+			}
 
-      // if there is an error page, get it
-      if (errorStream != null) {
-        String contentType = getContentTypeHeader();
-        if ((contentType != null) && (contentType.toLowerCase().startsWith("text/"))) {
-          StringBuilder sb = new StringBuilder();
+			// if there is an error page, get it
+			if (errorStream != null) {
+				String contentType = getContentTypeHeader();
+				if ((contentType != null) && (contentType.toLowerCase().startsWith("text/"))) {
+					StringBuilder sb = new StringBuilder();
 
-          try {
-            InputStreamReader reader = new InputStreamReader(errorStream);
-            char[] buffer = new char[4096];
-            int b;
-            while ((b = reader.read(buffer)) > -1) {
-              sb.append(buffer, 0, b);
-            }
-            reader.close();
+					try {
+						InputStreamReader reader = new InputStreamReader(errorStream);
+						char[] buffer = new char[4096];
+						int b;
+						while ((b = reader.read(buffer)) > -1) {
+							sb.append(buffer, 0, b);
+						}
+						reader.close();
 
-            fErrorContent = sb.toString();
-          }
-          catch (IOException e) {
-            fErrorContent = "Unable to retrieve content: " + e.getMessage();
-          }
-        }
-      }
-    }
+						fErrorContent = sb.toString();
+					} catch (IOException e) {
+						fErrorContent = "Unable to retrieve content: " + e.getMessage();
+					}
+				}
+			}
+		}
 
-    public int getResponseCode() {
-      return fResponseCode;
-    }
+		public int getResponseCode() {
+			return fResponseCode;
+		}
 
-    public String getResponseMessage() {
-      return fResponseMessage;
-    }
+		public String getResponseMessage() {
+			return fResponseMessage;
+		}
 
-    public Map<String, List<String>> getHeaders() {
-      return fHeaders;
-    }
+		public Map<String, List<String>> getHeaders() {
+			return fHeaders;
+		}
 
-    public String getHeader(String name) {
-      List<String> list = fHeaders.get(name.toLowerCase(Locale.US));
-      if ((list == null) || (list.isEmpty())) {
-        return null;
-      }
+		public String getHeader(String name) {
+			List<String> list = fHeaders.get(name.toLowerCase(Locale.US));
+			if ((list == null) || (list.isEmpty())) {
+				return null;
+			}
 
-      return list.get(0);
-    }
+			return list.get(0);
+		}
 
-    public String getContentTypeHeader() {
-      return getHeader("Content-Type");
-    }
+		public String getContentTypeHeader() {
+			return getHeader("Content-Type");
+		}
 
-    public BigInteger getContentLengthHeader() {
-      String lengthStr = getHeader("Content-Length");
-      if (lengthStr == null) {
-        return null;
-      }
+		public BigInteger getContentLengthHeader() {
+			String lengthStr = getHeader("Content-Length");
+			if (lengthStr == null) {
+				return null;
+			}
 
-      try {
-        return new BigInteger(lengthStr);
-      }
-      catch (NumberFormatException e) {
-        return null;
-      }
-    }
+			try {
+				return new BigInteger(lengthStr);
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		}
 
-    public String getLocactionHeader() {
-      return getHeader("Location");
-    }
+		public String getLocactionHeader() {
+			return getHeader("Location");
+		}
 
-    public String getContentLocactionHeader() {
-      return getHeader("Content-Location");
-    }
+		public String getContentLocactionHeader() {
+			return getHeader("Content-Location");
+		}
 
-    public BigInteger getContentLength() {
-      String lenStr = getHeader("Content-Length");
-      if (lenStr == null) {
-        return null;
-      }
+		public BigInteger getContentLength() {
+			String lenStr = getHeader("Content-Length");
+			if (lenStr == null) {
+				return null;
+			}
 
-      try {
-        return new BigInteger(lenStr);
-      }
-      catch (NumberFormatException nfe) {
-        return null;
-      }
-    }
+			try {
+				return new BigInteger(lenStr);
+			} catch (NumberFormatException nfe) {
+				return null;
+			}
+		}
 
-    public InputStream getStream() {
-      return fStream;
-    }
+		public InputStream getStream() {
+			return fStream;
+		}
 
-    public String getErrorContent() {
-      return fErrorContent;
-    }
-  }
+		public String getErrorContent() {
+			return fErrorContent;
+		}
+	}
 
-  /**
-   * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
-   * 
-   */
-  public interface Output {
-    void write(OutputStream out) throws Exception;
-  }
+	/**
+	 * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+	 * 
+	 */
+	public interface Output {
+		void write(OutputStream out) throws Exception;
+	}
 }

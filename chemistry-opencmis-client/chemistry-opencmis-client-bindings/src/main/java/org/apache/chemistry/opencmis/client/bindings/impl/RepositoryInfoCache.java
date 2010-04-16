@@ -36,66 +36,67 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
  */
 public class RepositoryInfoCache implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private static final int CACHE_SIZE_REPOSITORIES = 10;
+	private static final int CACHE_SIZE_REPOSITORIES = 10;
 
-  private Cache fCache;
+	private Cache fCache;
 
-  /**
-   * Constructor.
-   * 
-   * @param session
-   *          the session object
-   */
-  public RepositoryInfoCache(Session session) {
-    int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES, CACHE_SIZE_REPOSITORIES);
-    if (repCount < 1) {
-      repCount = CACHE_SIZE_REPOSITORIES;
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param session
+	 *            the session object
+	 */
+	public RepositoryInfoCache(Session session) {
+		int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES, CACHE_SIZE_REPOSITORIES);
+		if (repCount < 1) {
+			repCount = CACHE_SIZE_REPOSITORIES;
+		}
 
-    fCache = new CacheImpl("Repository Info Cache");
-    fCache.initialize(new String[] { MapCacheLevelImpl.class.getName() + " "
-        + MapCacheLevelImpl.CAPACITY + "=" + repCount });
-  }
+		fCache = new CacheImpl("Repository Info Cache");
+		fCache.initialize(new String[] { MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "="
+				+ repCount });
+	}
 
-  /**
-   * Adds a repository info object to the cache.
-   * 
-   * @param repositoryInfo
-   *          the repository info object
-   */
-  public void put(RepositoryInfo repositoryInfo) {
-    if ((repositoryInfo == null) || (repositoryInfo.getId() == null)) {
-      return;
-    }
+	/**
+	 * Adds a repository info object to the cache.
+	 * 
+	 * @param repositoryInfo
+	 *            the repository info object
+	 */
+	public void put(RepositoryInfo repositoryInfo) {
+		if ((repositoryInfo == null) || (repositoryInfo.getId() == null)) {
+			return;
+		}
 
-    fCache.put(repositoryInfo, repositoryInfo.getId());
-  }
+		fCache.put(repositoryInfo, repositoryInfo.getId());
+	}
 
-  /**
-   * Retrieves a repository info object from the cache.
-   * 
-   * @param repositoryId
-   *          the repository id
-   * @return the repository info object or <code>null</code> if the object is not in the cache
-   */
-  public RepositoryInfo get(String repositoryId) {
-    return (RepositoryInfo) fCache.get(repositoryId);
-  }
+	/**
+	 * Retrieves a repository info object from the cache.
+	 * 
+	 * @param repositoryId
+	 *            the repository id
+	 * @return the repository info object or <code>null</code> if the object is
+	 *         not in the cache
+	 */
+	public RepositoryInfo get(String repositoryId) {
+		return (RepositoryInfo) fCache.get(repositoryId);
+	}
 
-  /**
-   * Removes a repository info object from the cache.
-   * 
-   * @param repositoryId
-   *          the repository id
-   */
-  public void remove(String repositoryId) {
-    fCache.remove(repositoryId);
-  }
+	/**
+	 * Removes a repository info object from the cache.
+	 * 
+	 * @param repositoryId
+	 *            the repository id
+	 */
+	public void remove(String repositoryId) {
+		fCache.remove(repositoryId);
+	}
 
-  @Override
-  public String toString() {
-    return fCache.toString();
-  }
+	@Override
+	public String toString() {
+		return fCache.toString();
+	}
 }

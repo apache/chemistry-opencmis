@@ -35,68 +35,65 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class MultiFilingServiceImpl extends AbstractWebServicesService implements
-    MultiFilingService {
+public class MultiFilingServiceImpl extends AbstractWebServicesService implements MultiFilingService {
 
-  private final PortProvider fPortProvider;
+	private final PortProvider fPortProvider;
 
-  /**
-   * Constructor.
-   */
-  public MultiFilingServiceImpl(Session session, PortProvider portProvider) {
-    setSession(session);
-    fPortProvider = portProvider;
-  }
+	/**
+	 * Constructor.
+	 */
+	public MultiFilingServiceImpl(Session session, PortProvider portProvider) {
+		setSession(session);
+		fPortProvider = portProvider;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.MultiFilingService#addObjectToFolder(java.lang.String,
-   * java.lang.String, java.lang.String, java.lang.Boolean,
-   * org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public void addObjectToFolder(String repositoryId, String objectId, String folderId,
-      Boolean allVersions, ExtensionsData extension) {
-    MultiFilingServicePort port = fPortProvider.getMultiFilingServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.MultiFilingService#addObjectToFolder
+	 * (java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
+			ExtensionsData extension) {
+		MultiFilingServicePort port = fPortProvider.getMultiFilingServicePort();
 
-    try {
-      javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+		try {
+			javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
-      port.addObjectToFolder(repositoryId, objectId, folderId, allVersions, portExtension);
+			port.addObjectToFolder(repositoryId, objectId, folderId, allVersions, portExtension);
 
-      setExtensionValues(portExtension, extension);
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+			setExtensionValues(portExtension, extension);
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.client.provider.MultiFilingService#removeObjectFromFolder(java.lang.String,
-   * java.lang.String, java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-   */
-  public void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
-      ExtensionsData extension) {
-    MultiFilingServicePort port = fPortProvider.getMultiFilingServicePort();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.client.provider.MultiFilingService#removeObjectFromFolder
+	 * (java.lang.String, java.lang.String, java.lang.String,
+	 * org.apache.opencmis.client.provider.ExtensionsData)
+	 */
+	public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
+		MultiFilingServicePort port = fPortProvider.getMultiFilingServicePort();
 
-    try {
-      javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+		try {
+			javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
-      port.removeObjectFromFolder(repositoryId, objectId, folderId, portExtension);
+			port.removeObjectFromFolder(repositoryId, objectId, folderId, portExtension);
 
-      setExtensionValues(portExtension, extension);
-    }
-    catch (CmisException e) {
-      throw convertException(e);
-    }
-    catch (Exception e) {
-      throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-    }
-  }
+			setExtensionValues(portExtension, extension);
+		} catch (CmisException e) {
+			throw convertException(e);
+		} catch (Exception e) {
+			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+		}
+	}
 
 }
