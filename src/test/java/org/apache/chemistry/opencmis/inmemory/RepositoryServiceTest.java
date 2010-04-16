@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
@@ -191,9 +191,9 @@ public class RepositoryServiceTest extends AbstractServiceTst {
       TypeDefinition typeDef = type.getTypeDefinition();
       assertNotNull(typeDef);
       assertNotNull(typeDef.getId());
-      assertNotNull(typeDef.getBaseId());
+      assertNotNull(typeDef.getBaseTypeId());
       log.info("Found type: " + typeDef.getId() + ", display name is: " + typeDef.getDisplayName());
-      log.info("  Base type is: " + typeDef.getBaseId());
+      log.info("  Base type is: " + typeDef.getBaseTypeId());
       log.info("  Number of children types is: " + type.getChildren().size());
       Map<String, PropertyDefinition<?>> propDefs = type.getTypeDefinition().getPropertyDefinitions();
       log.info("  Number of properties is: " + (propDefs==null ? 0 : propDefs.size()));
@@ -212,7 +212,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     // get types
     int depth = 1;
     List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(
-        repositoryId, BaseObjectTypeIds.CMIS_DOCUMENT.value(), BigInteger.valueOf(depth), Boolean.TRUE, null);
+        repositoryId, BaseTypeId.CMIS_DOCUMENT.value(), BigInteger.valueOf(depth), Boolean.TRUE, null);
     assertNotNull(types);
     log.info("Found in repository " + repositoryId + " " + types.size() + " type(s) with depth "
         + depth + ".");
@@ -220,15 +220,15 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     for (TypeDefinitionContainer type : types) {
       TypeDefinition typeDef = type.getTypeDefinition();
       log.info("Found type: " + typeDef.getId() + ", display name is: " + typeDef.getDisplayName());
-      log.info("  Base type is: " + typeDef.getBaseId());
+      log.info("  Base type is: " + typeDef.getBaseTypeId());
       log.info("  Number of children types is: " + type.getChildren().size());
       containsAllBasePropertyDefinitions(typeDef);
     }
 
     int totalSize = getRecursiveSize(types);
     assertEquals(4, totalSize); // all RepositoryTestTypeSystemCreator types minus one in level two plus cmis.docment
-    assertFalse(containsTypeByIdRecursive(BaseObjectTypeIds.CMIS_DOCUMENT.value(), types));
-    assertFalse(containsTypeByIdRecursive(BaseObjectTypeIds.CMIS_FOLDER.value(), types));
+    assertFalse(containsTypeByIdRecursive(BaseTypeId.CMIS_DOCUMENT.value(), types));
+    assertFalse(containsTypeByIdRecursive(BaseTypeId.CMIS_FOLDER.value(), types));
     
     assertTrue(containsTypeByIdRecursive("MyDocType1", types));
     assertTrue(containsTypeByIdRecursive("MyDocType2", types));
@@ -240,7 +240,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
       TypeDefinition typeDef = type.getTypeDefinition();
       assertNotNull(typeDef);
       assertNotNull(typeDef.getId());
-      assertNotNull(typeDef.getBaseId());
+      assertNotNull(typeDef.getBaseTypeId());
     }
 
     log.info("... testGetAllTypesLimitedDepth() finished.");
@@ -271,9 +271,9 @@ public class RepositoryServiceTest extends AbstractServiceTst {
       TypeDefinition typeDef = type.getTypeDefinition();
       assertNotNull(typeDef);
       assertNotNull(typeDef.getId());
-      assertNotNull(typeDef.getBaseId());
+      assertNotNull(typeDef.getBaseTypeId());
       log.info("Found type: " + typeDef.getId() + ", display name is: " + typeDef.getDisplayName());
-      log.info("  Base type is: " + typeDef.getBaseId());
+      log.info("  Base type is: " + typeDef.getBaseTypeId());
       log.info("  Number of children types is: " + type.getChildren().size());
       containsAllBasePropertyDefinitions(typeDef);
     }
@@ -286,7 +286,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     log.info("");
     log.info("starting testGetTypesWithoutProperties()...");
     String repositoryId = getRepositoryId();
-    String typeId = BaseObjectTypeIds.CMIS_DOCUMENT.value();
+    String typeId = BaseTypeId.CMIS_DOCUMENT.value();
 
     // get types
     List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(
@@ -305,7 +305,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     TypeDefinition typeDef = typeWithProps.getTypeDefinition();
     Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
     log.info("Found type: " + typeDef.getId() + ", display name is: " + typeDef.getDisplayName());
-    log.info("  Base type is: " + typeDef.getBaseId());
+    log.info("  Base type is: " + typeDef.getBaseTypeId());
     log.info("  Number of properties is: " + (propDefs==null ? 0 : propDefs.size()));
     assertTrue(propDefs==null || propDefs.size()==0);
     log.info("... testGetTypesWithoutProperties() finished.");
@@ -520,7 +520,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
 
   private void containsAllBasePropertyDefinitions(TypeDefinition typeDef) {
     Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
-    String baseTypeId = typeDef.getBaseId().value();
+    String baseTypeId = typeDef.getBaseTypeId().value();
     
     assertTrue(propDefs.containsKey(PropertyIds.NAME));
     assertTrue(propDefs.containsKey(PropertyIds.OBJECT_ID));
@@ -532,7 +532,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     assertTrue(propDefs.containsKey(PropertyIds.LAST_MODIFICATION_DATE));
     assertTrue(propDefs.containsKey(PropertyIds.CHANGE_TOKEN));
 
-    if (baseTypeId.equals(BaseObjectTypeIds.CMIS_DOCUMENT.value())) {
+    if (baseTypeId.equals(BaseTypeId.CMIS_DOCUMENT.value())) {
       assertTrue(propDefs.containsKey(PropertyIds.IS_IMMUTABLE));
       assertTrue(propDefs.containsKey(PropertyIds.IS_LATEST_VERSION));
       assertTrue(propDefs.containsKey(PropertyIds.IS_MAJOR_VERSION));
@@ -548,13 +548,13 @@ public class RepositoryServiceTest extends AbstractServiceTst {
       assertTrue(propDefs.containsKey(PropertyIds.CONTENT_STREAM_FILE_NAME));
       assertTrue(propDefs.containsKey(PropertyIds.CONTENT_STREAM_ID));
       assertTrue(propDefs.containsKey(PropertyIds.CHANGE_TOKEN));      
-    } else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_FOLDER.value())) {
+    } else if (baseTypeId.equals(BaseTypeId.CMIS_FOLDER.value())) {
       assertTrue(propDefs.containsKey(PropertyIds.PARENT_ID));      
       assertTrue(propDefs.containsKey(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS));      
       assertTrue(propDefs.containsKey(PropertyIds.PATH));            
-    } else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_POLICY.value())) {
+    } else if (baseTypeId.equals(BaseTypeId.CMIS_POLICY.value())) {
       assertTrue(propDefs.containsKey(PropertyIds.POLICY_TEXT));            
-    } else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_RELATIONSHIP.value())) {
+    } else if (baseTypeId.equals(BaseTypeId.CMIS_RELATIONSHIP.value())) {
       assertTrue(propDefs.containsKey(PropertyIds.SOURCE_ID));      
       assertTrue(propDefs.containsKey(PropertyIds.TARGET_ID));            
     } else

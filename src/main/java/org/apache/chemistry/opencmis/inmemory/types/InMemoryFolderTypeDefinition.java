@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
@@ -39,8 +39,8 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
 
   /* This constructor is just for creating the root document */
   public InMemoryFolderTypeDefinition() {
-    init(BaseObjectTypeIds.CMIS_FOLDER.value(), "CMIS Folder");
-    setParentId(null);
+    init(BaseTypeId.CMIS_FOLDER.value(), "CMIS Folder");
+    setParentTypeId(null);
     // set base properties
     Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
     DocumentTypeCreationHelper.setBasicFolderPropertyDefinitions(props);
@@ -48,18 +48,18 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
 
   public InMemoryFolderTypeDefinition(String id, String displayName) {
     init(id, displayName);
-    setParentId(FOLDER_TYPE.getId());
+    setParentTypeId(FOLDER_TYPE.getId());
   }
 
   public InMemoryFolderTypeDefinition(String id, String displayName, InMemoryFolderTypeDefinition parentType) {
     // get root type
     init(id, displayName);
     if (parentType != null)
-      setBaseId(parentType.getBaseId());
+      setBaseTypeId(parentType.getBaseTypeId());
     else
       throw new IllegalArgumentException(
           "Must provide a parent type when creating a folder type definition");
-    setParentId(parentType.getId());
+    setParentTypeId(parentType.getId());
   }
 
   /* 
@@ -76,7 +76,7 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
     if (!NameValidator.isValidId(id))
         throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
-    setBaseId(BaseObjectTypeIds.CMIS_FOLDER);
+    setBaseTypeId(BaseTypeId.CMIS_FOLDER);
     setId(id);
     if (displayName == null)
       displayName = '#' + id + '#';

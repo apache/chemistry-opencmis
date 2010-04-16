@@ -77,7 +77,7 @@ public class AtomLinkInfoProvider {
     objInfo.setCreationDate(so.getCreatedAt()); //!
     objInfo.setLastModificationDate(so.getModifiedAt());
     objInfo.setTypeId(so.getTypeId());
-    objInfo.setBaseType(typeDef.getBaseId());
+    objInfo.setBaseType(typeDef.getBaseTypeId());
 
     // versioning information:
     if (so instanceof DocumentVersion) {

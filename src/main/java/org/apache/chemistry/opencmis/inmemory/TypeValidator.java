@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyIntegerData;
 import org.apache.chemistry.opencmis.commons.api.PropertyIntegerDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -243,7 +243,7 @@ public class TypeValidator {
 
     for (PropertyData<?> prop : properties.getProperties().values()) {
       String propertyId = prop.getId();
-      BaseObjectTypeIds baseTypeId = typeDef.getBaseId();
+      BaseTypeId baseTypeId = typeDef.getBaseTypeId();
 
       if (isSystemProperty(baseTypeId, propertyId))
         continue; // ignore system properties for validation
@@ -331,7 +331,7 @@ public class TypeValidator {
       return (PropertyDefinition<T>)propDef;
   }
 
-  private static boolean isSystemProperty(BaseObjectTypeIds baseTypeId, String propertyId) {
+  private static boolean isSystemProperty(BaseTypeId baseTypeId, String propertyId) {
 
     if (propertyId.equals(PropertyIds.NAME)) {
       return true;
@@ -361,7 +361,7 @@ public class TypeValidator {
       return true;
     }
 
-    if (baseTypeId.equals(BaseObjectTypeIds.CMIS_DOCUMENT)) {
+    if (baseTypeId.equals(BaseTypeId.CMIS_DOCUMENT)) {
       if (propertyId.equals(PropertyIds.IS_IMMUTABLE)) {
         return true;
       }
@@ -411,7 +411,7 @@ public class TypeValidator {
         return false;
       }
     }
-    else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_FOLDER)) {
+    else if (baseTypeId.equals(BaseTypeId.CMIS_FOLDER)) {
       if (propertyId.equals(PropertyIds.PARENT_ID)) {
         return true;
       }
@@ -425,7 +425,7 @@ public class TypeValidator {
         return false;
       }
     }
-    else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_POLICY)) {
+    else if (baseTypeId.equals(BaseTypeId.CMIS_POLICY)) {
       if (propertyId.equals(PropertyIds.SOURCE_ID)) {
         return true;
       }

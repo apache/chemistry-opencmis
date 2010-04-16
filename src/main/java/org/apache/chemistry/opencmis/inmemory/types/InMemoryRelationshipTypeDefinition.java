@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
@@ -39,8 +39,8 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
 
   /* This constructor is just for creating the root document */
   public InMemoryRelationshipTypeDefinition() {
-    init(BaseObjectTypeIds.CMIS_RELATIONSHIP.value(), "CMIS Relation");
-    setParentId(null);
+    init(BaseTypeId.CMIS_RELATIONSHIP.value(), "CMIS Relation");
+    setParentTypeId(null);
 
     Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
     DocumentTypeCreationHelper.setBasicRelationshipPropertyDefinitions(props);
@@ -48,7 +48,7 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
 
   public InMemoryRelationshipTypeDefinition(String id, String displayName) {
     init(id, displayName);
-    setParentId(RELATIONSHIP_TYPE.getId());
+    setParentTypeId(RELATIONSHIP_TYPE.getId());
   }
 
   public InMemoryRelationshipTypeDefinition(String id, String displayName,
@@ -56,11 +56,11 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
     // get root type
     init(id, displayName);
     if (parentType != null)
-      setBaseId(parentType.getBaseId());
+      setBaseTypeId(parentType.getBaseTypeId());
     else
       throw new IllegalArgumentException(
           "Must provide a parent type when creating a relationship definition");
-    setParentId(parentType.getId());
+    setParentTypeId(parentType.getId());
   }
 
   /* 
@@ -77,7 +77,7 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
     if (!NameValidator.isValidId(id))
       throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
-    setBaseId(BaseObjectTypeIds.CMIS_RELATIONSHIP);
+    setBaseTypeId(BaseTypeId.CMIS_RELATIONSHIP);
     setId(id);
     if (displayName == null)
       displayName = '#' + id + '#';

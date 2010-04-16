@@ -73,7 +73,7 @@ public class TypeManager {
     List<TypeDefinitionContainer> typeRoots = new ArrayList<TypeDefinitionContainer>();
     // iterate types map and return a list collecting the root types:
     for (TypeDefinitionContainer typeDef : fTypesMap.values()) {
-      if (typeDef.getTypeDefinition().getParentId()==null)
+      if (typeDef.getTypeDefinition().getParentTypeId()==null)
         typeRoots.add(typeDef);
     }
     
@@ -135,12 +135,12 @@ public class TypeManager {
 
     TypeDefinitionContainerImpl typeContainer = new TypeDefinitionContainerImpl(cmisType);
 
-    if (!fTypesMap.containsKey(cmisType.getParentId()))
+    if (!fTypesMap.containsKey(cmisType.getParentTypeId()))
       throw new RuntimeException("Cannot add type, because parent with id "
-          + cmisType.getParentId() + " does not exist.");
+          + cmisType.getParentTypeId() + " does not exist.");
 
     // add new type to children of parent types
-    TypeDefinitionContainer parentTypeContainer = fTypesMap.get(cmisType.getParentId());
+    TypeDefinitionContainer parentTypeContainer = fTypesMap.get(cmisType.getParentTypeId());
     parentTypeContainer.getChildren().add(typeContainer);
 
     // recursively add inherited properties
@@ -173,7 +173,7 @@ public class TypeManager {
       addInheritedPropertyDefinitions(propDefs, typeDefinition.getPropertyDefinitions());
       // propDefs.putAll(typeDefinition.getPropertyDefinitions());
 
-    TypeDefinitionContainer parentTypeContainer = fTypesMap.get(typeDefinition.getParentId());
+    TypeDefinitionContainer parentTypeContainer = fTypesMap.get(typeDefinition.getParentTypeId());
     TypeDefinition parentType = (null == parentTypeContainer ? null : parentTypeContainer
         .getTypeDefinition());
     addInheritedProperties(propDefs, parentType);

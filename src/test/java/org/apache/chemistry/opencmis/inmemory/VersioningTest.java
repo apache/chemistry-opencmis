@@ -45,7 +45,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
 import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -442,7 +442,7 @@ public class VersioningTest extends AbstractServiceTst {
       List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
       properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "Folder " + i));
       properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
-          BaseObjectTypeIds.CMIS_FOLDER.value()));
+          BaseTypeId.CMIS_FOLDER.value()));
       PropertiesData props = fFactory.createPropertiesData(properties);      
       String id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
       res[i] = id;

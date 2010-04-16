@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
@@ -45,8 +45,8 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
 
   /* This constructor is just for creating the root document */
   public InMemoryDocumentTypeDefinition() {
-    init(BaseObjectTypeIds.CMIS_DOCUMENT.value(), "CMIS Document");
-    setParentId(null);
+    init(BaseTypeId.CMIS_DOCUMENT.value(), "CMIS Document");
+    setParentTypeId(null);
     // set base properties
     Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
     DocumentTypeCreationHelper.setBasicDocumentPropertyDefinitions(props);
@@ -54,18 +54,18 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
 
   public InMemoryDocumentTypeDefinition(String id, String displayName) {
     init(id, displayName);
-    setParentId(DOCUMENT_TYPE.getId());
+    setParentTypeId(DOCUMENT_TYPE.getId());
   }
 
   public InMemoryDocumentTypeDefinition(String id, String displayName, InMemoryDocumentTypeDefinition parentType) {
     // get root type
     init(id, displayName);
     if (parentType != null)
-      setBaseId(parentType.getBaseId());
+      setBaseTypeId(parentType.getBaseTypeId());
     else
       throw new IllegalArgumentException(
           "Must provide a parent type when creating a document type definition");
-    setParentId(parentType.getId());
+    setParentTypeId(parentType.getId());
   }
 
   /* 
@@ -87,7 +87,7 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
     if (!NameValidator.isValidId(id))
       throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_ID);
 
-    setBaseId(BaseObjectTypeIds.CMIS_DOCUMENT);
+    setBaseTypeId(BaseTypeId.CMIS_DOCUMENT);
     setId(id);
     if (displayName == null)
       displayName = '#' + id + '#';

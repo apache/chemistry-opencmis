@@ -38,7 +38,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -245,20 +245,20 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
         throw new RuntimeException("Cannot create object, a type with id " + typeId + " is unknown");
 
       // check if the given type is a document type
-      BaseObjectTypeIds typeBaseId = typeDefC.getTypeDefinition().getBaseId();
+      BaseTypeId typeBaseId = typeDefC.getTypeDefinition().getBaseTypeId();
       StoredObject so = null;
-      if (typeBaseId.equals(InMemoryDocumentTypeDefinition.getRootDocumentType().getBaseId())) {
+      if (typeBaseId.equals(InMemoryDocumentTypeDefinition.getRootDocumentType().getBaseTypeId())) {
         so = createDocumentIntern(repositoryId, properties, folderId, contentStream,
             versioningState, null, null, null, null);
       }
-      else if (typeBaseId.equals(InMemoryFolderTypeDefinition.getRootFolderType().getBaseId())) {
+      else if (typeBaseId.equals(InMemoryFolderTypeDefinition.getRootFolderType().getBaseTypeId())) {
         so = createFolderIntern(repositoryId, properties, folderId, null, null, null, null);
       }
-      else if (typeBaseId.equals(InMemoryPolicyTypeDefinition.getRootPolicyType().getBaseId())) {
+      else if (typeBaseId.equals(InMemoryPolicyTypeDefinition.getRootPolicyType().getBaseTypeId())) {
         so = createPolicyIntern(repositoryId, properties, folderId, null, null, null, null);
       }
       else if (typeBaseId.equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType()
-          .getBaseId())) {
+          .getBaseTypeId())) {
         so = createRelationshipIntern(repositoryId, properties, null, null, null, null);
       }
       else
@@ -810,7 +810,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     }
 
     // check if the given type is a document type
-    if (!typeDef.getBaseId().equals(BaseObjectTypeIds.CMIS_DOCUMENT))
+    if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT))
       throw new RuntimeException("Cannot create a document, with a non-document type: "
           + typeDef.getId());
 
@@ -889,7 +889,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     TypeDefinition typeDef = getTypeDefinition(repositoryId, properties);
 
     // check if the given type is a folder type
-    if (!typeDef.getBaseId().equals(BaseObjectTypeIds.CMIS_FOLDER))
+    if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_FOLDER))
       throw new RuntimeException("Cannot create a folder, with a non-folder type: "
           + typeDef.getId());
 

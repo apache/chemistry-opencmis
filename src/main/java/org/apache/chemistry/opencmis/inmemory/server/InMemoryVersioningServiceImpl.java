@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.PropertiesData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
@@ -124,7 +124,7 @@ public class InMemoryVersioningServiceImpl extends AbstractServiceImpl implement
 
       StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
       TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
-      if (!typeDef.getBaseId().equals(BaseObjectTypeIds.CMIS_DOCUMENT))
+      if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT))
         throw new CmisNotSupportedException("Only documents can be checked-out.");
       else if (!((DocumentTypeDefinition) typeDef).isVersionable())
         throw new CmisNotSupportedException("Object can't be checked-out, type is not versionable.");
