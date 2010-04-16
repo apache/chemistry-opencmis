@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.api.NavigationService;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.RepositoryService;
@@ -127,7 +127,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
   }
 
   protected String createFolder(String folderName, String parentFolderId, String typeId) {
-    PropertiesData props = createFolderProperties(folderName, typeId);
+    Properties props = createFolderProperties(folderName, typeId);
     String id = null;
     try {
       id = fObjSvc.createFolder(fRepositoryId, props, parentFolderId, null, null, null, null);
@@ -146,7 +146,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
     Acl removeACEs = null;
     ExtensionsData extension = null;
 
-    PropertiesData props = createDocumentProperties(name, typeId);
+    Properties props = createDocumentProperties(name, typeId);
 
     if (withContent)
       contentStream = createContent();
@@ -168,19 +168,19 @@ public class AbstractServiceTst /* extends TestCase*/ {
     return createDocument(name, folderId, typeId, versioningState, withContent);
   }
 
-  protected PropertiesData createDocumentProperties(String name, String typeId) {
+  protected Properties createDocumentProperties(String name, String typeId) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
     properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
-    PropertiesData props = fFactory.createPropertiesData(properties);
+    Properties props = fFactory.createPropertiesData(properties);
     return props;
   }
 
-  protected PropertiesData createFolderProperties(String folderName, String typeId) {
+  protected Properties createFolderProperties(String folderName, String typeId) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
     properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, folderName));
     properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
-    PropertiesData props = fFactory.createPropertiesData(properties);
+    Properties props = fFactory.createPropertiesData(properties);
     return props;
   }
 
@@ -263,7 +263,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
     String path=null;
     try {
       String filter = PropertyIds.PATH;
-      PropertiesData res = fObjSvc.getProperties(fRepositoryId, id, filter, null);
+      Properties res = fObjSvc.getProperties(fRepositoryId, id, filter, null);
       assertNotNull(res);
       PropertyData<String> pd = (PropertyData<String>) res.getProperties().get(PropertyIds.PATH);
       assertNotNull(pd);

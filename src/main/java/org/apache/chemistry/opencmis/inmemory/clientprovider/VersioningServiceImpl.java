@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.VersioningService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryVersioningServiceImpl;
@@ -44,7 +44,7 @@ public class VersioningServiceImpl extends AbstractService implements Versioning
   }
 
   public void checkIn(String repositoryId, Holder<String> objectId, Boolean major,
-      PropertiesData properties, ContentStream contentStream, String checkinComment,
+      Properties properties, ContentStream contentStream, String checkinComment,
       List<String> policies, Acl addAces, Acl removeAces,
       ExtensionsData extension) {
 
@@ -82,7 +82,7 @@ public class VersioningServiceImpl extends AbstractService implements Versioning
         renditionFilter, includePolicyIds, includeAcl, extension, null);
   }
 
-  public PropertiesData getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId,
+  public Properties getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId,
       Boolean major, String filter, ExtensionsData extension) {
 
     return fVersioningSvc.getPropertiesOfLatestVersion(fDummyCallContext, repositoryId,

@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.TypeOfChanges;
+import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
@@ -95,7 +95,7 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
     ObjectData oif = obj.getObject().getObject();
     ObjectDataImpl oifImpl = (ObjectDataImpl) oif;
     ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
-    changeEventInfo.setTypeOfChanges(TypeOfChanges.UPDATED);
+    changeEventInfo.setChangeType(ChangeType.UPDATED);
     changeEventInfo.setChangeTime(new GregorianCalendar());
     oifImpl.setChangeEventInfo(changeEventInfo);
     if (null != obj.getChildren()) {

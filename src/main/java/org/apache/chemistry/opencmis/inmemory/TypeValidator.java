@@ -28,12 +28,12 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Choice;
 import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyDecimalData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDecimal;
 import org.apache.chemistry.opencmis.commons.api.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyIntegerData;
+import org.apache.chemistry.opencmis.commons.api.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.api.PropertyIntegerDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
@@ -47,7 +47,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
  */
 public class TypeValidator {
 
-  public static void validateRequiredSystemProperties(PropertiesData properties) {
+  public static void validateRequiredSystemProperties(Properties properties) {
     if (properties == null || properties.getProperties() == null)
       throw new RuntimeException("Cannot create object, no properties are given");
 
@@ -178,7 +178,7 @@ public class TypeValidator {
 
       super.validate(propDef, property);
 
-      BigInteger propVal = ((PropertyIntegerData) property).getFirstValue();
+      BigInteger propVal = ((PropertyInteger) property).getFirstValue();
       BigInteger minVal = ((PropertyIntegerDefinition) propDef).getMinValue();
       BigInteger maxVal = ((PropertyIntegerDefinition) propDef).getMaxValue();
 
@@ -200,7 +200,7 @@ public class TypeValidator {
 
       super.validate(propDef, property);
 
-      BigDecimal propVal = ((PropertyDecimalData) property).getFirstValue();
+      BigDecimal propVal = ((PropertyDecimal) property).getFirstValue();
       BigDecimal minVal = ((PropertyDecimalDefinition) propDef).getMinValue();
       BigDecimal maxVal = ((PropertyDecimalDefinition) propDef).getMaxValue();
 
@@ -236,7 +236,7 @@ public class TypeValidator {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> void validateProperties(TypeDefinition typeDef, PropertiesData properties,
+  public static <T> void validateProperties(TypeDefinition typeDef, Properties properties,
       boolean checkMandatory) {
 
     List<String> propDefsRequired = getMandatoryPropDefs(typeDef.getPropertyDefinitions());

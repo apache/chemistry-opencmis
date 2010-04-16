@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -80,7 +80,7 @@ public class InMemoryVersioningServiceImpl extends AbstractServiceImpl implement
   }
 
   public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId,
-      Boolean major, PropertiesData properties, ContentStream contentStream,
+      Boolean major, Properties properties, ContentStream contentStream,
       String checkinComment, List<String> policies, Acl addAces,
       Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
@@ -233,7 +233,7 @@ public class InMemoryVersioningServiceImpl extends AbstractServiceImpl implement
     }
   }
 
-  public PropertiesData getPropertiesOfLatestVersion(CallContext context, String repositoryId,
+  public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId,
       String versionSeriesId, Boolean major, String filter, ExtensionsData extension) {
 
     try {
@@ -254,7 +254,7 @@ public class InMemoryVersioningServiceImpl extends AbstractServiceImpl implement
         throw new RuntimeException("Object is not instance of a document (version series)");
 
       List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-      PropertiesData props = PropertyCreationHelper.getPropertiesFromObject(repositoryId,
+      Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId,
           latestVersionObject, fStoreManager, requestedIds);
 
       return props;

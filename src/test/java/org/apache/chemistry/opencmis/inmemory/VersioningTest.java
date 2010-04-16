@@ -38,12 +38,12 @@ import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
-import org.apache.chemistry.opencmis.commons.api.PropertyBooleanData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
+import org.apache.chemistry.opencmis.commons.api.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -133,7 +133,7 @@ public class VersioningTest extends AbstractServiceTst {
     fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
     String pwcId = idHolder.getValue();
     // test that object is checked out and that all properties are set correctly
-    PropertiesData props = fObjSvc.getProperties(fRepositoryId, pwcId, "*", null);
+    Properties props = fObjSvc.getProperties(fRepositoryId, pwcId, "*", null);
     String changeToken = (String) props.getProperties().get(PropertyIds.CHANGE_TOKEN).getFirstValue();
     checkVersionProperties(pwcId, VersioningState.CHECKEDOUT, props.getProperties(), null);
     
@@ -188,7 +188,7 @@ public class VersioningTest extends AbstractServiceTst {
     String pwcId = idHolder.getValue();
     
     ContentStream altContent = fCreator.createAlternateContent();
-    PropertiesData newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
+    Properties newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
     idHolder = new Holder<String>(pwcId);
     assertTrue(isCheckedOut(docId));
     assertTrue(isCheckedOut(pwcId));
@@ -280,7 +280,7 @@ public class VersioningTest extends AbstractServiceTst {
     String pwcId = idHolder.getValue();
     
     // Set a new content and modify property
-    PropertiesData props = fObjSvc.getProperties(fRepositoryId, pwcId, "*", null);
+    Properties props = fObjSvc.getProperties(fRepositoryId, pwcId, "*", null);
     String changeToken = (String) props.getProperties().get(PropertyIds.CHANGE_TOKEN).getFirstValue();
     ContentStream altContent = fCreator.createAlternateContent();
     idHolder = new Holder<String>(pwcId);
@@ -323,7 +323,7 @@ public class VersioningTest extends AbstractServiceTst {
     String pwcId = idHolder.getValue();
     
     ContentStream altContent = fCreator.createAlternateContent();
-    PropertiesData newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
+    Properties newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
     idHolder = new Holder<String>(pwcId);
     assertTrue(isCheckedOut(docId));
     assertTrue(isCheckedOut(pwcId));
@@ -333,7 +333,7 @@ public class VersioningTest extends AbstractServiceTst {
     fVerSvc.checkIn(fRepositoryId, idHolder, true, newProps, altContent, checkinComment, null, null, null,
         null);
     
-    PropertiesData latest = fVerSvc.getPropertiesOfLatestVersion(fRepositoryId, docId, true, "*", null);
+    Properties latest = fVerSvc.getPropertiesOfLatestVersion(fRepositoryId, docId, true, "*", null);
     assertNotNull(latest);
     
     checkVersionProperties(verId, versioningState, latest.getProperties(), checkinComment);        
@@ -355,7 +355,7 @@ public class VersioningTest extends AbstractServiceTst {
     String pwcId = idHolder.getValue();
     
     ContentStream altContent = fCreator.createAlternateContent();
-    PropertiesData newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
+    Properties newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
     idHolder = new Holder<String>(pwcId);
     assertTrue(isCheckedOut(docId));
     assertTrue(isCheckedOut(pwcId));
@@ -443,7 +443,7 @@ public class VersioningTest extends AbstractServiceTst {
       properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "Folder " + i));
       properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
           BaseTypeId.CMIS_FOLDER.value()));
-      PropertiesData props = fFactory.createPropertiesData(properties);      
+      Properties props = fFactory.createPropertiesData(properties);      
       String id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
       res[i] = id;
     }
@@ -466,7 +466,7 @@ public class VersioningTest extends AbstractServiceTst {
   }
   
   private String getVersionSeriesId(String docId, Map<String, PropertyData<?>> props) {
-    PropertyIdData pdid = (PropertyIdData) props.get(PropertyIds.VERSION_SERIES_ID);
+    PropertyId pdid = (PropertyId) props.get(PropertyIds.VERSION_SERIES_ID);
     assertNotNull(pdid);
     String sVal = pdid.getFirstValue();
     assertNotNull(sVal);
@@ -474,12 +474,12 @@ public class VersioningTest extends AbstractServiceTst {
   }
   
   private boolean isCheckedOut(String objectId) {
-    PropertiesData props = fObjSvc.getProperties(fRepositoryId, objectId, "*", null);
+    Properties props = fObjSvc.getProperties(fRepositoryId, objectId, "*", null);
     return isCheckedOut(props.getProperties());
   }
   
   private boolean isCheckedOut( Map<String, PropertyData<?>> props) {
-    PropertyBooleanData pdb = (PropertyBooleanData) props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
+    PropertyBoolean pdb = (PropertyBoolean) props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
     assertNotNull(pdb);
     boolean bVal = pdb.getFirstValue();
     return bVal;
@@ -492,22 +492,22 @@ public class VersioningTest extends AbstractServiceTst {
     }
     
     DocumentTypeDefinition typeDef = (DocumentTypeDefinition) fRepSvc.getTypeDefinition(fRepositoryId, VersionTestTypeSystemCreator.VERSION_TEST_DOCUMENT_TYPE_ID, null);
-    PropertyBooleanData pdb = (PropertyBooleanData) props.get(PropertyIds.IS_LATEST_VERSION);
+    PropertyBoolean pdb = (PropertyBoolean) props.get(PropertyIds.IS_LATEST_VERSION);
     assertNotNull(pdb);
     boolean bVal = pdb.getFirstValue();
     assertEquals(versioningState != VersioningState.CHECKEDOUT, bVal); // if checked out it isn't the latest version
 
-    pdb = (PropertyBooleanData) props.get(PropertyIds.IS_MAJOR_VERSION);
+    pdb = (PropertyBoolean) props.get(PropertyIds.IS_MAJOR_VERSION);
     assertNotNull(pdb);
     bVal = pdb.getFirstValue();
     assertEquals(versioningState == VersioningState.MAJOR, bVal);
     
-    pdb = (PropertyBooleanData) props.get(PropertyIds.IS_LATEST_MAJOR_VERSION);
+    pdb = (PropertyBoolean) props.get(PropertyIds.IS_LATEST_MAJOR_VERSION);
     assertNotNull(pdb);
     bVal = pdb.getFirstValue();
     assertEquals(versioningState == VersioningState.MAJOR, bVal);
     
-    PropertyIdData pdid = (PropertyIdData) props.get(PropertyIds.VERSION_SERIES_ID);
+    PropertyId pdid = (PropertyId) props.get(PropertyIds.VERSION_SERIES_ID);
     assertNotNull(pdb);
     String sVal = pdid.getFirstValue();
     if (typeDef.isVersionable())
@@ -515,12 +515,12 @@ public class VersioningTest extends AbstractServiceTst {
     else
       assertEquals(docId, sVal);
 
-    pdb = (PropertyBooleanData) props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
+    pdb = (PropertyBoolean) props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
     assertNotNull(pdb);
     bVal = pdb.getFirstValue();
     assertEquals(versioningState == VersioningState.CHECKEDOUT, bVal);
     
-    PropertyStringData pds = (PropertyStringData) props.get(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY);
+    PropertyString pds = (PropertyString) props.get(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY);
     assertNotNull(pdb);
     sVal = pds.getFirstValue();
     if (versioningState == VersioningState.CHECKEDOUT)
@@ -528,7 +528,7 @@ public class VersioningTest extends AbstractServiceTst {
     else
       assertTrue(null == sVal || sVal.equals(""));
 
-    pdid = (PropertyIdData) props.get(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID);
+    pdid = (PropertyId) props.get(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID);
     assertNotNull(pdid);
     sVal = pdid.getFirstValue();
     if (versioningState == VersioningState.CHECKEDOUT)
@@ -536,7 +536,7 @@ public class VersioningTest extends AbstractServiceTst {
     else
       assertTrue(null == sVal || sVal.equals(""));
     
-    pds = (PropertyStringData) props.get(PropertyIds.CHECKIN_COMMENT);
+    pds = (PropertyString) props.get(PropertyIds.CHECKIN_COMMENT);
     assertNotNull(pdb);
     sVal = pds.getFirstValue();
     if (checkinComment == null)
@@ -599,7 +599,7 @@ public class VersioningTest extends AbstractServiceTst {
     fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
 
     ContentStream content2 = createContent('a');
-    PropertiesData newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, "PropertyFromVersion2");    
+    Properties newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, "PropertyFromVersion2");    
     idHolder = new Holder<String>(verIdV1);    
     // Test check-in and pass content and properties
     String checkinComment = "Checkin from Unit Test-2.";

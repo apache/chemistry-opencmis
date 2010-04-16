@@ -27,16 +27,16 @@ import java.util.Set;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.AllowableActions;
-import org.apache.chemistry.opencmis.commons.api.ChangeEventInfoData;
+import org.apache.chemistry.opencmis.commons.api.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PolicyIdListData;
+import org.apache.chemistry.opencmis.commons.api.PolicyIdList;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
-import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.inmemory.server.RuntimeContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
@@ -73,55 +73,55 @@ public class DataObjectCreator {
     }
 
     AllowableActionsImpl allowableActions = new AllowableActionsImpl();
-    Set<AllowableActionsEnum> set = allowableActions.getAllowableActions();
+    Set<Action> set = allowableActions.getAllowableActions();
 
-    set.add(AllowableActionsEnum.CAN_DELETE_OBJECT);
-    set.add(AllowableActionsEnum.CAN_UPDATE_PROPERTIES);
+    set.add(Action.CAN_DELETE_OBJECT);
+    set.add(Action.CAN_UPDATE_PROPERTIES);
 
     if (isFolder || isDocument) {
-      set.add(AllowableActionsEnum.CAN_GET_PROPERTIES);
+      set.add(Action.CAN_GET_PROPERTIES);
       if (!so.equals(objStore.getRootFolder())) {
-          set.add(AllowableActionsEnum.CAN_GET_OBJECT_PARENTS);
+          set.add(Action.CAN_GET_OBJECT_PARENTS);
       }
-      set.add(AllowableActionsEnum.CAN_MOVE_OBJECT);
+      set.add(Action.CAN_MOVE_OBJECT);
     }
 
     if (isFolder) {
         if (!so.equals(objStore.getRootFolder())) {
-            set.add(AllowableActionsEnum.CAN_GET_FOLDER_PARENT);
+            set.add(Action.CAN_GET_FOLDER_PARENT);
         }
-        set.add(AllowableActionsEnum.CAN_GET_FOLDER_TREE);
-        set.add(AllowableActionsEnum.CAN_GET_DESCENDANTS);
+        set.add(Action.CAN_GET_FOLDER_TREE);
+        set.add(Action.CAN_GET_DESCENDANTS);
 
-        set.add(AllowableActionsEnum.CAN_ADD_OBJECT_TO_FOLDER);
-        set.add(AllowableActionsEnum.CAN_REMOVE_OBJECT_FROM_FOLDER);
-        set.add(AllowableActionsEnum.CAN_CREATE_DOCUMENT);
-        set.add(AllowableActionsEnum.CAN_CREATE_FOLDER);
-        set.add(AllowableActionsEnum.CAN_GET_CHILDREN);
-        set.add(AllowableActionsEnum.CAN_DELETE_TREE);
+        set.add(Action.CAN_ADD_OBJECT_TO_FOLDER);
+        set.add(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
+        set.add(Action.CAN_CREATE_DOCUMENT);
+        set.add(Action.CAN_CREATE_FOLDER);
+        set.add(Action.CAN_GET_CHILDREN);
+        set.add(Action.CAN_DELETE_TREE);
     }
 
     if (hasContent) {
-        set.add(AllowableActionsEnum.CAN_DELETE_CONTENT_STREAM);
-        set.add(AllowableActionsEnum.CAN_GET_CONTENT_STREAM);
+        set.add(Action.CAN_DELETE_CONTENT_STREAM);
+        set.add(Action.CAN_GET_CONTENT_STREAM);
     }
 
    if (isVersioned) {
        if (canCheckOut) {
-           set.add(AllowableActionsEnum.CAN_CHECK_OUT);
+           set.add(Action.CAN_CHECK_OUT);
        }
        if (isCheckedOut) {
-           set.add(AllowableActionsEnum.CAN_CANCEL_CHECK_OUT);
+           set.add(Action.CAN_CANCEL_CHECK_OUT);
        }
        if (canCheckIn) {
-           set.add(AllowableActionsEnum.CAN_CHECK_IN);
+           set.add(Action.CAN_CHECK_IN);
        }
-       set.add(AllowableActionsEnum.CAN_GET_ALL_VERSIONS);
+       set.add(Action.CAN_GET_ALL_VERSIONS);
     }
 
     if (isDocument) {
         if (!isVersioned || canCheckIn) {
-            set.add(AllowableActionsEnum.CAN_SET_CONTENT_STREAM);
+            set.add(Action.CAN_SET_CONTENT_STREAM);
         }
     }
 
@@ -137,9 +137,9 @@ public class DataObjectCreator {
     return acl;
   }
 
-  public static PolicyIdListData fillPolicyIds(StoredObject so) {
+  public static PolicyIdList fillPolicyIds(StoredObject so) {
     // TODO: to be completed if policies are implemented
-    PolicyIdListDataImpl polIds = new PolicyIdListDataImpl();
+    PolicyIdListImpl polIds = new PolicyIdListImpl();
     // polIds.setPolicyIds(...);
     return polIds;
   }
@@ -157,9 +157,9 @@ public class DataObjectCreator {
     return renditions;
   }
 
-  public static ChangeEventInfoData fillChangeEventInfo(StoredObject so) {
+  public static ChangeEventInfo fillChangeEventInfo(StoredObject so) {
     // TODO: to be completed if change information is implemented
-    ChangeEventInfoData changeEventInfo = new ChangeEventInfoDataImpl();
+    ChangeEventInfo changeEventInfo = new ChangeEventInfoDataImpl();
     return changeEventInfo;
   }
 }

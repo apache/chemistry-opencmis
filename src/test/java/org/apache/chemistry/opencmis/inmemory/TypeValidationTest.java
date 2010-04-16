@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.api.Choice;
-import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
@@ -95,7 +95,7 @@ public class TypeValidationTest extends TestCase {
     // of the ObjectService
 
     List<PropertyData<?>> properties =  createPropertiesWithNameAndTypeId(MY_DOC_TYPE);
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
     
     // validate properties according to type
     TypeDefinition typeDef = buildMyType();
@@ -127,7 +127,7 @@ public class TypeValidationTest extends TestCase {
     List<PropertyData<?>> properties =  createPropertiesWithNameAndTypeId(STRING_DOC_TYPE);
     properties.add(FACTORY.createPropertyStringData(STRING_PROP_TYPE,
         "A String property with quite a long value exceeding the max. length."));
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
 
     // try exceeding string length
     try {
@@ -156,7 +156,7 @@ public class TypeValidationTest extends TestCase {
     
     List<PropertyData<?>> properties = createPropertiesWithNameAndTypeId(INT_DOC_TYPE);
     properties.add(FACTORY.createPropertyIntegerData(INT_PROP_TYPE, BigInteger.valueOf(-100))); // try wrong value
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
 
     // try exceeding string length
     try {
@@ -185,7 +185,7 @@ public class TypeValidationTest extends TestCase {
 
     List<PropertyData<?>> properties = createPropertiesWithNameAndTypeId(DECIMAL_DOC_TYPE);
     properties.add(FACTORY.createPropertyDecimalData(DECIMAL_PROP_TYPE, BigDecimal.valueOf(-11.11)));
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
 
     // try exceeding string length
     try {
@@ -213,7 +213,7 @@ public class TypeValidationTest extends TestCase {
 
     List<PropertyData<?>> properties = createPropertiesWithNameAndTypeId(PICK_LIST_DOC_TYPE);
     properties.add(FACTORY.createPropertyStringData(PICK_LIST_PROP_DEF, "pink"));
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
 
     // try wrong value
     try {
@@ -246,7 +246,7 @@ public class TypeValidationTest extends TestCase {
     propValues.add("red");
     propValues.add("pink");    
     properties.add(FACTORY.createPropertyStringData(PICK_LIST_PROP_DEF, propValues));
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
 
     // try wrong value
     try {
@@ -282,7 +282,7 @@ public class TypeValidationTest extends TestCase {
     propValues.add("green");
     propValues.add("pink");    
     properties.add(FACTORY.createPropertyStringData(PICK_LIST_PROP_DEF, propValues));
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
 
     // try wrong value
     try {
@@ -316,7 +316,7 @@ public class TypeValidationTest extends TestCase {
 
     List<PropertyData<?>> properties = createPropertiesWithNameAndTypeId(PICK_LIST_DOC_TYPE);
     properties.add(FACTORY.createPropertyStringData(PICK_LIST_PROP_DEF, "frankfurt"));
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
 
     // try wrong value
     try {
@@ -349,7 +349,7 @@ public class TypeValidationTest extends TestCase {
     propValues.add("stuttgart");
     propValues.add("hintertupfingen");
     properties.add(FACTORY.createPropertyStringData(PICK_LIST_PROP_DEF, propValues));
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
 
     // try wrong value
     try {
@@ -385,7 +385,7 @@ public class TypeValidationTest extends TestCase {
     List<PropertyData<?>> properties =  createPropertiesWithNameAndTypeId(DOC_TYPE_SUB);
     properties.add(FACTORY.createPropertyStringData(STRING_PROP_TYPE_SUB,
         "A String property with quite a long value exceeding the max. length."));
-    PropertiesData props = FACTORY.createPropertiesData(properties);
+    Properties props = FACTORY.createPropertiesData(properties);
 
     // try exceeding string length on org property
     try {
