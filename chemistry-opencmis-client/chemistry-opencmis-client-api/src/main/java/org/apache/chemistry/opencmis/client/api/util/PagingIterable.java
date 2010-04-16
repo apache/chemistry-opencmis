@@ -20,53 +20,18 @@ package org.apache.chemistry.opencmis.client.api.util;
 
 
 /**
- * Basically this is a nested list of lists where the outer list represent pages and the inner list
- * is the result set with items of type T. <code>PagingList</code> implementations can support lazy
- * load of result sets. The first page has the page number 0.
+ * Iterable for CMIS collections that allows ability to skip to specific position.
  * 
  * @param <T>
  */
 public interface PagingIterable<T> extends Iterable<T> {
 
+  /**
+   * Skip to position within CMIS collection
+   * 
+   * @param position
+   * @return iterable whose starting point is the specicied skip to position
+   */
   PagingIterable<T> skipTo(long position);
 
-  /**
-   * Returns the maximum number of items in one page. The repository MUST NOT exceed this maximum.
-   */
-//  int getMaxItemsPerPage();
-
-  /**
-   * Returns the maximum number of pages calculated from number of <code>numItems</code> and
-   * <code>maxItemsPerPage</code>. If the number of <code>numItems</code> is not known then -1 is
-   * returned.
-   * 
-   * @return Number of pages or (-1)
-   */
-//  int size();
-
-  /**
-   * Return one page as list of items of type T.
-   * 
-   * @param pageNumber
-   *          The number of the page to return.
-   * @return a page of items
-   */
-//  List<T> get(int pageNumber);
-
-  /**
-   * Returns if the list contains items. This method might fetch the first page to determine the
-   * return value!
-   * 
-   * @return <code>true</code> if the list does not contain items, <code>false</code>otherwise
-   */
-//  boolean isEmpty();
-
-  /**
-   * Sets the size of the page LRU cache. A size &lt; 1 de-activates the cache. Default cache size
-   * is 0. Re-setting the cache size clears the cache.
-   * 
-   * @param cacheSize
-   *          size of the cache in pages
-   */
-//  void setCacheSize(int cacheSize);
 }

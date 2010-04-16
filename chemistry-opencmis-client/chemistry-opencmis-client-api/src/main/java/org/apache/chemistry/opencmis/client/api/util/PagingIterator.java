@@ -20,8 +20,19 @@ package org.apache.chemistry.opencmis.client.api.util;
 
 import java.util.Iterator;
 
+
+/**
+ * Iterator for scrolling through CMIS collections  
+ *
+ * @param <T>
+ */
 public interface PagingIterator<T> extends Iterator<T> {
 
+  /**
+   * Returns the current position within the iterator.
+   * 
+   * @return iterator position
+   */
   long getPosition();
   
   /**
