@@ -27,16 +27,16 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
- * @see <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS CMIS
- *      Technical Committee</a>
+ * @see <a
+ *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
+ *      CMIS Technical Committee</a>
  */
 public interface DiscoveryService {
 
-  public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
-      Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-      String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
+	public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
+			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
-  public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken,
-      Boolean includeProperties, String filter, Boolean includePolicyIds, Boolean includeAcl,
-      BigInteger maxItems, ExtensionsData extension);
+	public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
+			String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension);
 }

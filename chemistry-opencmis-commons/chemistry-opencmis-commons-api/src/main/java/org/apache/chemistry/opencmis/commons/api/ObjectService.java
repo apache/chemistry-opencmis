@@ -30,65 +30,61 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
- * @see <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS CMIS
- *      Technical Committee</a>
+ * @see <a
+ *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
+ *      CMIS Technical Committee</a>
  */
 public interface ObjectService {
 
-  String createDocument(String repositoryId, Properties properties, String folderId,
-      ContentStream contentStream, VersioningState versioningState, List<String> policies,
-      Acl addAces, Acl removeAces, ExtensionsData extension);
+	String createDocument(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
+			VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
+			ExtensionsData extension);
 
-  String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
-      String folderId, VersioningState versioningState, List<String> policies,
-      Acl addAces, Acl removeAces, ExtensionsData extension);
+	String createDocumentFromSource(String repositoryId, String sourceId, Properties properties, String folderId,
+			VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
+			ExtensionsData extension);
 
-  String createFolder(String repositoryId, Properties properties, String folderId,
-      List<String> policies, Acl addAces, Acl removeAces,
-      ExtensionsData extension);
+	String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
+			Acl addAces, Acl removeAces, ExtensionsData extension);
 
-  String createRelationship(String repositoryId, Properties properties, List<String> policies,
-      Acl addAces, Acl removeAces, ExtensionsData extension);
+	String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
+			Acl removeAces, ExtensionsData extension);
 
-  String createPolicy(String repositoryId, Properties properties, String folderId,
-      List<String> policies, Acl addAces, Acl removeAces,
-      ExtensionsData extension);
+	String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
+			Acl addAces, Acl removeAces, ExtensionsData extension);
 
-  AllowableActions getAllowableActions(String repositoryId, String objectId,
-      ExtensionsData extension);
+	AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension);
 
-  ObjectData getObject(String repositoryId, String objectId, String filter,
-      Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-      String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension);
+	ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
+			Boolean includeAcl, ExtensionsData extension);
 
-  Properties getProperties(String repositoryId, String objectId, String filter,
-      ExtensionsData extension);
+	Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension);
 
-  List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
-      BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
+	List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
-  ObjectData getObjectByPath(String repositoryId, String path, String filter,
-      Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-      String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension);
+	ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
+			Boolean includeAcl, ExtensionsData extension);
 
-  ContentStream getContentStream(String repositoryId, String objectId, String streamId,
-      BigInteger offset, BigInteger length, ExtensionsData extension);
+	ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
+			BigInteger length, ExtensionsData extension);
 
-  void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-      Properties properties, ExtensionsData extension);
+	void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+			Properties properties, ExtensionsData extension);
 
-  void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId,
-      String sourceFolderId, ExtensionsData extension);
+	void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
+			ExtensionsData extension);
 
-  void deleteObject(String repositoryId, String objectId, Boolean allVersions,
-      ExtensionsData extension);
+	void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension);
 
-  FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
-      UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension);
+	FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
+			UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension);
 
-  void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
-      Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension);
+	void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
+			Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension);
 
-  void deleteContentStream(String repositoryId, Holder<String> objectId,
-      Holder<String> changeToken, ExtensionsData extension);
+	void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+			ExtensionsData extension);
 }

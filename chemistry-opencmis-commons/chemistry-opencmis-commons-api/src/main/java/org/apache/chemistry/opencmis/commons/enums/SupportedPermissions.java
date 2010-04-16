@@ -26,23 +26,23 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum SupportedPermissions {
 
-  BASIC("basic"), REPOSITORY("repository"), BOTH("both");
-  private final String value;
+	BASIC("basic"), REPOSITORY("repository"), BOTH("both");
+	private final String value;
 
-  SupportedPermissions(String v) {
-    value = v;
-  }
+	SupportedPermissions(String v) {
+		value = v;
+	}
 
-  public String value() {
-    return value;
-  }
+	public String value() {
+		return value;
+	}
 
-  public static SupportedPermissions fromValue(String v) {
-    for (SupportedPermissions c : SupportedPermissions.values()) {
-      if (c.value.equals(v)) {
-        return c;
-      }
-    }
-    throw new IllegalArgumentException(v);
-  }
+	public static SupportedPermissions fromValue(String v) {
+		for (SupportedPermissions c : SupportedPermissions.values()) {
+			if (c.value.equals(v)) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException(v);
+	}
 }

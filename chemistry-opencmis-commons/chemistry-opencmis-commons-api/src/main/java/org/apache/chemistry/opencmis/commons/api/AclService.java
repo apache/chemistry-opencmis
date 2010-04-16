@@ -25,14 +25,14 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
- * @see <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS CMIS
- *      Technical Committee</a>
+ * @see <a
+ *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
+ *      CMIS Technical Committee</a>
  */
 public interface AclService {
 
-  Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions,
-      ExtensionsData extension);
+	Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension);
 
-  Acl applyAcl(String repositoryId, String objectId, Acl addAces,
-      Acl removeAces, AclPropagation aclPropagation, ExtensionsData extension);
+	Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces, AclPropagation aclPropagation,
+			ExtensionsData extension);
 }

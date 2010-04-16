@@ -26,24 +26,24 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum CapabilityRenditions {
 
-  NONE("none"), READ("read");
-  private final String value;
+	NONE("none"), READ("read");
+	private final String value;
 
-  CapabilityRenditions(String v) {
-    value = v;
-  }
+	CapabilityRenditions(String v) {
+		value = v;
+	}
 
-  public String value() {
-    return value;
-  }
+	public String value() {
+		return value;
+	}
 
-  public static CapabilityRenditions fromValue(String v) {
-    for (CapabilityRenditions c : CapabilityRenditions.values()) {
-      if (c.value.equals(v)) {
-        return c;
-      }
-    }
-    throw new IllegalArgumentException(v);
-  }
+	public static CapabilityRenditions fromValue(String v) {
+		for (CapabilityRenditions c : CapabilityRenditions.values()) {
+			if (c.value.equals(v)) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException(v);
+	}
 
 }

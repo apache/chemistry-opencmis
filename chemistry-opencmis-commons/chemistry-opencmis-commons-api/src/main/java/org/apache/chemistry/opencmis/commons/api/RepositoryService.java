@@ -21,27 +21,26 @@ package org.apache.chemistry.opencmis.commons.api;
 import java.math.BigInteger;
 import java.util.List;
 
-
 /**
  * Repository Service interface. See CMIS 1.0 domain model for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
- * @see <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS CMIS
- *      Technical Committee</a>
+ * @see <a
+ *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
+ *      CMIS Technical Committee</a>
  */
 public interface RepositoryService {
 
-  List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension);
+	List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension);
 
-  RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension);
+	RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension);
 
-  TypeDefinitionList getTypeChildren(String repositoryId, String typeId,
-      Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount,
-      ExtensionsData extension);
+	TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
-  List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId,
-      BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension);
+	List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
+			Boolean includePropertyDefinitions, ExtensionsData extension);
 
-  TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension);
+	TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension);
 }

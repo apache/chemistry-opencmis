@@ -24,9 +24,9 @@ import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 
 public interface PropertyDecimalDefinition extends PropertyDefinition<BigDecimal> {
 
-  BigDecimal getMinValue();
+	BigDecimal getMinValue();
 
-  BigDecimal getMaxValue();
+	BigDecimal getMaxValue();
 
-  DecimalPrecision getPrecision();
+	DecimalPrecision getPrecision();
 }

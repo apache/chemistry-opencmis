@@ -24,5 +24,5 @@ import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 
 public interface PropertyDateTimeDefinition extends PropertyDefinition<GregorianCalendar> {
 
-  DateTimeResolution getDateTimeResolution();
+	DateTimeResolution getDateTimeResolution();
 }

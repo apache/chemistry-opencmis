@@ -20,14 +20,13 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.util.List;
 
-
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public interface Acl extends ExtensionsData {
 
-  List<Ace> getAces();
+	List<Ace> getAces();
 
-  Boolean isExact();
+	Boolean isExact();
 }

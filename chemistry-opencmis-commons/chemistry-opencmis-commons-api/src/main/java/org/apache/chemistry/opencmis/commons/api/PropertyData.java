@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.util.List;
 
-
 /**
  * Base property interface.
  * 
@@ -29,46 +28,47 @@ import java.util.List;
  */
 public interface PropertyData<T> extends ExtensionsData {
 
-  /**
-   * Returns the property id.
-   * 
-   * @return the property id
-   */
-  String getId();
+	/**
+	 * Returns the property id.
+	 * 
+	 * @return the property id
+	 */
+	String getId();
 
-  /**
-   * Returns the local name.
-   * 
-   * @return the local name or <code>null</code>
-   */
-  String getLocalName();
+	/**
+	 * Returns the local name.
+	 * 
+	 * @return the local name or <code>null</code>
+	 */
+	String getLocalName();
 
-  /**
-   * Returns the display name.
-   * 
-   * @return the display name or <code>null</code>
-   */
-  String getDisplayName();
+	/**
+	 * Returns the display name.
+	 * 
+	 * @return the display name or <code>null</code>
+	 */
+	String getDisplayName();
 
-  /**
-   * Returns the query name.
-   * 
-   * @return the query name or <code>null</code>
-   */
-  String getQueryName();
+	/**
+	 * Returns the query name.
+	 * 
+	 * @return the query name or <code>null</code>
+	 */
+	String getQueryName();
 
-  /**
-   * Returns the list of values of this property. For a single value property this is a list with
-   * one entry.
-   * 
-   * @return the list of values or (in rare cases) <code>null</code>
-   */
-  List<T> getValues();
+	/**
+	 * Returns the list of values of this property. For a single value property
+	 * this is a list with one entry.
+	 * 
+	 * @return the list of values or (in rare cases) <code>null</code>
+	 */
+	List<T> getValues();
 
-  /**
-   * Returns the first entry of the list of values.
-   * 
-   * @return first entry of the list of values or (in rare cases) <code>null</code>
-   */
-  T getFirstValue();
+	/**
+	 * Returns the first entry of the list of values.
+	 * 
+	 * @return first entry of the list of values or (in rare cases)
+	 *         <code>null</code>
+	 */
+	T getFirstValue();
 }

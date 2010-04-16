@@ -18,6 +18,5 @@
  */
 package org.apache.chemistry.opencmis.commons.api;
 
-
 public interface PropertyHtmlDefinition extends PropertyDefinition<String> {
 }

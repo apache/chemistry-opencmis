@@ -18,10 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.api;
 
-
 public interface ObjectInFolderData extends ExtensionsData {
 
-  ObjectData getObject();
+	ObjectData getObject();
 
-  String getPathSegment();
+	String getPathSegment();
 }

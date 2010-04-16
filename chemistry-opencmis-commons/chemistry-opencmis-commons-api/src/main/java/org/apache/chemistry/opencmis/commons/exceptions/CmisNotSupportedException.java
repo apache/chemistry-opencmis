@@ -28,33 +28,33 @@ import java.math.BigInteger;
  */
 public class CmisNotSupportedException extends CmisBaseException {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  public CmisNotSupportedException() {
-    super();
-  }
+	public CmisNotSupportedException() {
+		super();
+	}
 
-  public CmisNotSupportedException(String message, BigInteger code, Throwable cause) {
-    super(message, code, cause);
-  }
+	public CmisNotSupportedException(String message, BigInteger code, Throwable cause) {
+		super(message, code, cause);
+	}
 
-  public CmisNotSupportedException(String message, String errorContent) {
-    super(message, errorContent);
-  }
+	public CmisNotSupportedException(String message, String errorContent) {
+		super(message, errorContent);
+	}
 
-  public CmisNotSupportedException(String message, BigInteger code) {
-    super(message, code);
-  }
+	public CmisNotSupportedException(String message, BigInteger code) {
+		super(message, code);
+	}
 
-  public CmisNotSupportedException(String message, String errorContent, Throwable cause) {
-    super(message, errorContent, cause);
-  }
+	public CmisNotSupportedException(String message, String errorContent, Throwable cause) {
+		super(message, errorContent, cause);
+	}
 
-  public CmisNotSupportedException(String message, Throwable cause) {
-    super(message, (BigInteger) null, cause);
-  }
+	public CmisNotSupportedException(String message, Throwable cause) {
+		super(message, (BigInteger) null, cause);
+	}
 
-  public CmisNotSupportedException(String message) {
-    super(message, (BigInteger) null);
-  }
+	public CmisNotSupportedException(String message) {
+		super(message, (BigInteger) null);
+	}
 }

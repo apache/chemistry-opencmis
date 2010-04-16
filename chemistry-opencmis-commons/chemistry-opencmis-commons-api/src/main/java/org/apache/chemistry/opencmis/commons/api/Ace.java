@@ -20,18 +20,17 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.util.List;
 
-
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
+ * 
  */
 public interface Ace extends ExtensionsData {
 
-  Principal getPrincipal();
+	Principal getPrincipal();
 
-  String getPrincipalId();
+	String getPrincipalId();
 
-  List<String> getPermissions();
+	List<String> getPermissions();
 
-  boolean isDirect();
+	boolean isDirect();
 }

@@ -28,33 +28,33 @@ import java.math.BigInteger;
  */
 public class CmisStorageException extends CmisBaseException {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  public CmisStorageException() {
-    super();
-  }
+	public CmisStorageException() {
+		super();
+	}
 
-  public CmisStorageException(String message, BigInteger code, Throwable cause) {
-    super(message, code, cause);
-  }
+	public CmisStorageException(String message, BigInteger code, Throwable cause) {
+		super(message, code, cause);
+	}
 
-  public CmisStorageException(String message, String errorContent) {
-    super(message, errorContent);
-  }
+	public CmisStorageException(String message, String errorContent) {
+		super(message, errorContent);
+	}
 
-  public CmisStorageException(String message, BigInteger code) {
-    super(message, code);
-  }
+	public CmisStorageException(String message, BigInteger code) {
+		super(message, code);
+	}
 
-  public CmisStorageException(String message, String errorContent, Throwable cause) {
-    super(message, errorContent, cause);
-  }
+	public CmisStorageException(String message, String errorContent, Throwable cause) {
+		super(message, errorContent, cause);
+	}
 
-  public CmisStorageException(String message, Throwable cause) {
-    super(message, (BigInteger) null, cause);
-  }
+	public CmisStorageException(String message, Throwable cause) {
+		super(message, (BigInteger) null, cause);
+	}
 
-  public CmisStorageException(String message) {
-    super(message, (BigInteger) null);
-  }
+	public CmisStorageException(String message) {
+		super(message, (BigInteger) null);
+	}
 }

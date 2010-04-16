@@ -28,33 +28,33 @@ import java.math.BigInteger;
  */
 public class CmisObjectNotFoundException extends CmisBaseException {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  public CmisObjectNotFoundException() {
-    super();
-  }
+	public CmisObjectNotFoundException() {
+		super();
+	}
 
-  public CmisObjectNotFoundException(String message, BigInteger code, Throwable cause) {
-    super(message, code, cause);
-  }
+	public CmisObjectNotFoundException(String message, BigInteger code, Throwable cause) {
+		super(message, code, cause);
+	}
 
-  public CmisObjectNotFoundException(String message, String errorContent) {
-    super(message, errorContent);
-  }
+	public CmisObjectNotFoundException(String message, String errorContent) {
+		super(message, errorContent);
+	}
 
-  public CmisObjectNotFoundException(String message, BigInteger code) {
-    super(message, code);
-  }
+	public CmisObjectNotFoundException(String message, BigInteger code) {
+		super(message, code);
+	}
 
-  public CmisObjectNotFoundException(String message, String errorContent, Throwable cause) {
-    super(message, errorContent, cause);
-  }
+	public CmisObjectNotFoundException(String message, String errorContent, Throwable cause) {
+		super(message, errorContent, cause);
+	}
 
-  public CmisObjectNotFoundException(String message, Throwable cause) {
-    super(message, (BigInteger) null, cause);
-  }
+	public CmisObjectNotFoundException(String message, Throwable cause) {
+		super(message, (BigInteger) null, cause);
+	}
 
-  public CmisObjectNotFoundException(String message) {
-    super(message, (BigInteger) null);
-  }
+	public CmisObjectNotFoundException(String message) {
+		super(message, (BigInteger) null);
+	}
 }

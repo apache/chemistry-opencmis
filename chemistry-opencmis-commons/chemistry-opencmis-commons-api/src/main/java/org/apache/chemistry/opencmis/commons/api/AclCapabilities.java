@@ -27,12 +27,12 @@ import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 
 public interface AclCapabilities extends Serializable, ExtensionsData {
 
-  SupportedPermissions getSupportedPermissions();
+	SupportedPermissions getSupportedPermissions();
 
-  AclPropagation getAclPropagation();
+	AclPropagation getAclPropagation();
 
-  List<PermissionDefinition> getPermissions();
+	List<PermissionDefinition> getPermissions();
 
-  Map<String, PermissionMapping> getPermissionMapping();
+	Map<String, PermissionMapping> getPermissionMapping();
 
 }

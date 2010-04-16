@@ -22,7 +22,7 @@ import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 
 public interface DocumentTypeDefinition extends TypeDefinition {
 
-  Boolean isVersionable();
+	Boolean isVersionable();
 
-  ContentStreamAllowed getContentStreamAllowed();
+	ContentStreamAllowed getContentStreamAllowed();
 }

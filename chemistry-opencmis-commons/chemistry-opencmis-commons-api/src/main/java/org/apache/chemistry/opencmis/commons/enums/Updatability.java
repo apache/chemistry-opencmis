@@ -26,25 +26,24 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum Updatability {
 
-  READONLY("readonly"), READWRITE("readwrite"), WHENCHECKEDOUT("whencheckedout"), ONCREATE(
-      "oncreate");
-  private final String value;
+	READONLY("readonly"), READWRITE("readwrite"), WHENCHECKEDOUT("whencheckedout"), ONCREATE("oncreate");
+	private final String value;
 
-  Updatability(String v) {
-    value = v;
-  }
+	Updatability(String v) {
+		value = v;
+	}
 
-  public String value() {
-    return value;
-  }
+	public String value() {
+		return value;
+	}
 
-  public static Updatability fromValue(String v) {
-    for (Updatability c : Updatability.values()) {
-      if (c.value.equals(v)) {
-        return c;
-      }
-    }
-    throw new IllegalArgumentException(v);
-  }
+	public static Updatability fromValue(String v) {
+		for (Updatability c : Updatability.values()) {
+			if (c.value.equals(v)) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException(v);
+	}
 
 }

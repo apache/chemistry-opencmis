@@ -26,24 +26,24 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum CapabilityAcl {
 
-  NONE("none"), DISCOVER("discover"), MANAGE("manage");
-  private final String value;
+	NONE("none"), DISCOVER("discover"), MANAGE("manage");
+	private final String value;
 
-  CapabilityAcl(String v) {
-    value = v;
-  }
+	CapabilityAcl(String v) {
+		value = v;
+	}
 
-  public String value() {
-    return value;
-  }
+	public String value() {
+		return value;
+	}
 
-  public static CapabilityAcl fromValue(String v) {
-    for (CapabilityAcl c : CapabilityAcl.values()) {
-      if (c.value.equals(v)) {
-        return c;
-      }
-    }
-    throw new IllegalArgumentException(v);
-  }
+	public static CapabilityAcl fromValue(String v) {
+		for (CapabilityAcl c : CapabilityAcl.values()) {
+			if (c.value.equals(v)) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException(v);
+	}
 
 }

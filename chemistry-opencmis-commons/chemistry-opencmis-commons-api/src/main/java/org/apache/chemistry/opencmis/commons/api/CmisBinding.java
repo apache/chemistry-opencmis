@@ -20,16 +20,17 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.io.Serializable;
 
-
 /**
- * Entry point for all CMIS binding related operations. It provides access to the service interface
- * objects which are very similar to the CMIS 1.0 domain model.
+ * Entry point for all CMIS binding related operations. It provides access to
+ * the service interface objects which are very similar to the CMIS 1.0 domain
+ * model.
  * 
  * <p>
- * Each instance of this class represents a session. A session comprises of a connection to one CMIS
- * endpoint over one binding for one particular user and a set of caches. All repositories that are
- * exposed by this CMIS endpoint are accessible in this session. All CMIS operations and extension
- * points are provided if they are supported by the underlying binding.
+ * Each instance of this class represents a session. A session comprises of a
+ * connection to one CMIS endpoint over one binding for one particular user and
+ * a set of caches. All repositories that are exposed by this CMIS endpoint are
+ * accessible in this session. All CMIS operations and extension points are
+ * provided if they are supported by the underlying binding.
  * </p>
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
@@ -37,66 +38,67 @@ import java.io.Serializable;
  */
 public interface CmisBinding extends Serializable {
 
-  /**
-   * Gets a Repository Service interface object.
-   */
-  RepositoryService getRepositoryService();
+	/**
+	 * Gets a Repository Service interface object.
+	 */
+	RepositoryService getRepositoryService();
 
-  /**
-   * Gets a Navigation Service interface object.
-   */
-  NavigationService getNavigationService();
+	/**
+	 * Gets a Navigation Service interface object.
+	 */
+	NavigationService getNavigationService();
 
-  /**
-   * Gets an Object Service interface object.
-   */
-  ObjectService getObjectService();
+	/**
+	 * Gets an Object Service interface object.
+	 */
+	ObjectService getObjectService();
 
-  /**
-   * Gets a Versioning Service interface object.
-   */
-  VersioningService getVersioningService();
+	/**
+	 * Gets a Versioning Service interface object.
+	 */
+	VersioningService getVersioningService();
 
-  /**
-   * Gets a Relationship Service interface object.
-   */
-  RelationshipService getRelationshipService();
+	/**
+	 * Gets a Relationship Service interface object.
+	 */
+	RelationshipService getRelationshipService();
 
-  /**
-   * Gets a Discovery Service interface object.
-   */
-  DiscoveryService getDiscoveryService();
+	/**
+	 * Gets a Discovery Service interface object.
+	 */
+	DiscoveryService getDiscoveryService();
 
-  /**
-   * Gets a Multifiling Service interface object.
-   */
-  MultiFilingService getMultiFilingService();
+	/**
+	 * Gets a Multifiling Service interface object.
+	 */
+	MultiFilingService getMultiFilingService();
 
-  /**
-   * Gets an ACL Service interface object.
-   */
-  AclService getAclService();
+	/**
+	 * Gets an ACL Service interface object.
+	 */
+	AclService getAclService();
 
-  /**
-   * Gets a Policy Service interface object.
-   */
-  PolicyService getPolicyService();
+	/**
+	 * Gets a Policy Service interface object.
+	 */
+	PolicyService getPolicyService();
 
-  /**
-   * Gets a factory for CMIS provider specific objects.
-   */
-  BindingsObjectFactory getObjectFactory();
+	/**
+	 * Gets a factory for CMIS provider specific objects.
+	 */
+	BindingsObjectFactory getObjectFactory();
 
-  /**
-   * Clears all caches of the current CMIS binding session.
-   */
-  void clearAllCaches();
+	/**
+	 * Clears all caches of the current CMIS binding session.
+	 */
+	void clearAllCaches();
 
-  /**
-   * Clears all caches of the current CMIS binding session that are related to the given repository.
-   * 
-   * @param repositoryId
-   *          the repository id
-   */
-  void clearRepositoryCache(String repositoryId);
+	/**
+	 * Clears all caches of the current CMIS binding session that are related to
+	 * the given repository.
+	 * 
+	 * @param repositoryId
+	 *            the repository id
+	 */
+	void clearRepositoryCache(String repositoryId);
 }

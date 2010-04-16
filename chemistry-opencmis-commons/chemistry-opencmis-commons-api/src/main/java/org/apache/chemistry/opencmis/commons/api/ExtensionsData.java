@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface ExtensionsData {
 
-  List<Object> getExtensions();
+	List<Object> getExtensions();
 
-  void setExtensions(List<Object> extensions);
+	void setExtensions(List<Object> extensions);
 }

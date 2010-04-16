@@ -18,10 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.api;
 
-
 public interface ObjectParentData extends ExtensionsData {
 
-  ObjectData getObject();
+	ObjectData getObject();
 
-  String getRelativePathSegment();
+	String getRelativePathSegment();
 }

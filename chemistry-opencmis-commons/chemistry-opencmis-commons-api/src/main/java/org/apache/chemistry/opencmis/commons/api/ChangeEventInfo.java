@@ -24,7 +24,7 @@ import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 
 public interface ChangeEventInfo extends ExtensionsData {
 
-  ChangeType getChangeType();
+	ChangeType getChangeType();
 
-  GregorianCalendar getChangeTime();
+	GregorianCalendar getChangeTime();
 }

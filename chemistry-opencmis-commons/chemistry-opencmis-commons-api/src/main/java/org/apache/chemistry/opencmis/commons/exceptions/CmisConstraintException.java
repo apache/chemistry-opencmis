@@ -28,33 +28,33 @@ import java.math.BigInteger;
  */
 public class CmisConstraintException extends CmisBaseException {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  public CmisConstraintException() {
-    super();
-  }
+	public CmisConstraintException() {
+		super();
+	}
 
-  public CmisConstraintException(String message, BigInteger code, Throwable cause) {
-    super(message, code, cause);
-  }
+	public CmisConstraintException(String message, BigInteger code, Throwable cause) {
+		super(message, code, cause);
+	}
 
-  public CmisConstraintException(String message, String errorContent) {
-    super(message, errorContent);
-  }
+	public CmisConstraintException(String message, String errorContent) {
+		super(message, errorContent);
+	}
 
-  public CmisConstraintException(String message, BigInteger code) {
-    super(message, code);
-  }
+	public CmisConstraintException(String message, BigInteger code) {
+		super(message, code);
+	}
 
-  public CmisConstraintException(String message, String errorContent, Throwable cause) {
-    super(message, errorContent, cause);
-  }
+	public CmisConstraintException(String message, String errorContent, Throwable cause) {
+		super(message, errorContent, cause);
+	}
 
-  public CmisConstraintException(String message, Throwable cause) {
-    super(message, (BigInteger) null, cause);
-  }
+	public CmisConstraintException(String message, Throwable cause) {
+		super(message, (BigInteger) null, cause);
+	}
 
-  public CmisConstraintException(String message) {
-    super(message, (BigInteger) null);
-  }
+	public CmisConstraintException(String message) {
+		super(message, (BigInteger) null);
+	}
 }

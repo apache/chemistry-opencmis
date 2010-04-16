@@ -27,14 +27,14 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
- * @see <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS CMIS
- *      Technical Committee</a>
+ * @see <a
+ *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
+ *      CMIS Technical Committee</a>
  */
 public interface RelationshipService {
 
-  public ObjectList getObjectRelationships(String repositoryId, String objectId,
-      Boolean includeSubRelationshipTypes, RelationshipDirection relationshipDirection,
-      String typeId, String filter, Boolean includeAllowableActions, BigInteger maxItems,
-      BigInteger skipCount, ExtensionsData extension);
+	public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
+			RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
 }

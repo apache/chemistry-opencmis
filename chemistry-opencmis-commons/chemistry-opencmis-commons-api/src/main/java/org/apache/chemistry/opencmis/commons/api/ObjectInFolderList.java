@@ -21,12 +21,11 @@ package org.apache.chemistry.opencmis.commons.api;
 import java.math.BigInteger;
 import java.util.List;
 
-
 public interface ObjectInFolderList extends ExtensionsData {
 
-  List<ObjectInFolderData> getObjects();
+	List<ObjectInFolderData> getObjects();
 
-  Boolean hasMoreItems();
+	Boolean hasMoreItems();
 
-  BigInteger getNumItems();
+	BigInteger getNumItems();
 }

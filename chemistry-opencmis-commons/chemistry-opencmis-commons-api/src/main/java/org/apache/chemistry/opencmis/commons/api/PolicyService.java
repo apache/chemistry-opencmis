@@ -20,24 +20,22 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.util.List;
 
-
 /**
  * Policy Service interface. See CMIS 1.0 domain model for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
- * @see <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS CMIS
- *      Technical Committee</a>
+ * @see <a
+ *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
+ *      CMIS Technical Committee</a>
  */
 public interface PolicyService {
 
-  public void applyPolicy(String repositoryId, String policyId, String objectId,
-      ExtensionsData extension);
+	public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
 
-  public void removePolicy(String repositoryId, String policyId, String objectId,
-      ExtensionsData extension);
+	public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
 
-  public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
-      ExtensionsData extension);
+	public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
+			ExtensionsData extension);
 
 }

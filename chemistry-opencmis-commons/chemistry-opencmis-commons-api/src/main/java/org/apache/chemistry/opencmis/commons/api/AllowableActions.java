@@ -24,6 +24,6 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 
 public interface AllowableActions extends ExtensionsData {
 
-  Set<Action> getAllowableActions();
+	Set<Action> getAllowableActions();
 
 }

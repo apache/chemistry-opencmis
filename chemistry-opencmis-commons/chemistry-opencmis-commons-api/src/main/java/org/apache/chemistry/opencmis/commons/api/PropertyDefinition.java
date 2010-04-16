@@ -33,125 +33,126 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
  */
 public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
 
-  /**
-   * Returns the property definition id.
-   * 
-   * @return the property definition id
-   */
-  String getId();
+	/**
+	 * Returns the property definition id.
+	 * 
+	 * @return the property definition id
+	 */
+	String getId();
 
-  /**
-   * Returns the local name.
-   * 
-   * @return the local name
-   */
-  String getLocalName();
+	/**
+	 * Returns the local name.
+	 * 
+	 * @return the local name
+	 */
+	String getLocalName();
 
-  /**
-   * Returns the local namespace.
-   * 
-   * @return the local namespace
-   */
-  String getLocalNamespace();
+	/**
+	 * Returns the local namespace.
+	 * 
+	 * @return the local namespace
+	 */
+	String getLocalNamespace();
 
-  /**
-   * Returns the display name.
-   * 
-   * @return the display name
-   */
-  String getDisplayName();
+	/**
+	 * Returns the display name.
+	 * 
+	 * @return the display name
+	 */
+	String getDisplayName();
 
-  /**
-   * Returns the query name
-   * 
-   * @return the query name
-   */
-  String getQueryName();
+	/**
+	 * Returns the query name
+	 * 
+	 * @return the query name
+	 */
+	String getQueryName();
 
-  /**
-   * Returns the property description.
-   * 
-   * @return returns the description
-   */
-  String getDescription();
+	/**
+	 * Returns the property description.
+	 * 
+	 * @return returns the description
+	 */
+	String getDescription();
 
-  /**
-   * Returns the property type.
-   * 
-   * @return the property type
-   */
-  PropertyType getPropertyType();
+	/**
+	 * Returns the property type.
+	 * 
+	 * @return the property type
+	 */
+	PropertyType getPropertyType();
 
-  /**
-   * Returns the cardinality.
-   * 
-   * @return the cardinality
-   */
-  Cardinality getCardinality();
+	/**
+	 * Returns the cardinality.
+	 * 
+	 * @return the cardinality
+	 */
+	Cardinality getCardinality();
 
-  /**
-   * Returns the updatability.
-   * 
-   * @return the updatability
-   */
-  Updatability getUpdatability();
+	/**
+	 * Returns the updatability.
+	 * 
+	 * @return the updatability
+	 */
+	Updatability getUpdatability();
 
-  /**
-   * Returns if the property is inherited by a parent type.
-   * 
-   * @return <code>true</code> - is inherited;
-   *         <code>false</false> - is not inherited; <code>null</code> - unknown (noncompliant
-   *         repository)
-   */
-  Boolean isInherited();
+	/**
+	 * Returns if the property is inherited by a parent type.
+	 * 
+	 * @return <code>true</code> - is inherited;
+	 *         <code>false</false> - is not inherited; <code>null</code> -
+	 *         unknown (noncompliant repository)
+	 */
+	Boolean isInherited();
 
-  /**
-   * Returns if the property is required.
-   * 
-   * @return <code>true</code> - is required;
-   *         <code>false</false> - is not required; <code>null</code> - unknown (noncompliant
-   *         repository)
-   */
-  Boolean isRequired();
+	/**
+	 * Returns if the property is required.
+	 * 
+	 * @return <code>true</code> - is required;
+	 *         <code>false</false> - is not required; <code>null</code> -
+	 *         unknown (noncompliant repository)
+	 */
+	Boolean isRequired();
 
-  /**
-   * Returns if the property is queryable.
-   * 
-   * @return <code>true</code> - is queryable;
-   *         <code>false</false> - is not queryable; <code>null</code> - unknown (noncompliant
-   *         repository)
-   */
-  Boolean isQueryable();
+	/**
+	 * Returns if the property is queryable.
+	 * 
+	 * @return <code>true</code> - is queryable;
+	 *         <code>false</false> - is not queryable; <code>null</code> -
+	 *         unknown (noncompliant repository)
+	 */
+	Boolean isQueryable();
 
-  /**
-   * Returns if the property is Orderable.
-   * 
-   * @return <code>true</code> - is Orderable;
-   *         <code>false</false> - is not Orderable; <code>null</code> - unknown (noncompliant
-   *         repository)
-   */
-  Boolean isOrderable();
+	/**
+	 * Returns if the property is Orderable.
+	 * 
+	 * @return <code>true</code> - is Orderable;
+	 *         <code>false</false> - is not Orderable; <code>null</code> -
+	 *         unknown (noncompliant repository)
+	 */
+	Boolean isOrderable();
 
-  /**
-   * Returns if the property supports open choice.
-   * 
-   * @return <code>true</code> - supports open choice;
-   *         <code>false</false> - does not support open choice; <code>null</code> - unknown or not
-   *         applicable
-   */
-  Boolean isOpenChoice();
+	/**
+	 * Returns if the property supports open choice.
+	 * 
+	 * @return <code>true</code> - supports open choice;
+	 *         <code>false</false> - does not support open choice; <code>null</code>
+	 *         - unknown or not applicable
+	 */
+	Boolean isOpenChoice();
 
-  /**
-   * Returns the default value.
-   * 
-   * @return the default value (list) or <code>null</code> if no default value is defined
-   */
-  List<T> getDefaultValue();
+	/**
+	 * Returns the default value.
+	 * 
+	 * @return the default value (list) or <code>null</code> if no default value
+	 *         is defined
+	 */
+	List<T> getDefaultValue();
 
-  /**
-   * Returns the choices for this property.
-   * 
-   * @return the choices or <code>null</code> if no choices are defined
-   */
-  List<Choice<T>> getChoices();
+	/**
+	 * Returns the choices for this property.
+	 * 
+	 * @return the choices or <code>null</code> if no choices are defined
+	 */
+	List<Choice<T>> getChoices();
 }

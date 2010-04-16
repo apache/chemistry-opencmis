@@ -20,8 +20,7 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.math.BigInteger;
 
-
 public interface PropertyStringDefinition extends PropertyDefinition<String> {
 
-  BigInteger getMaxLength();
+	BigInteger getMaxLength();
 }

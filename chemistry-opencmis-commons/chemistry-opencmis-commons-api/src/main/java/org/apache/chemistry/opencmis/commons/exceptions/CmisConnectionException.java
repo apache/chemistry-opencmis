@@ -28,33 +28,33 @@ import java.math.BigInteger;
  */
 public class CmisConnectionException extends CmisBaseException {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  public CmisConnectionException() {
-    super();
-  }
+	public CmisConnectionException() {
+		super();
+	}
 
-  public CmisConnectionException(String message, BigInteger code, Throwable cause) {
-    super(message, code, cause);
-  }
+	public CmisConnectionException(String message, BigInteger code, Throwable cause) {
+		super(message, code, cause);
+	}
 
-  public CmisConnectionException(String message, String errorContent) {
-    super(message, errorContent);
-  }
+	public CmisConnectionException(String message, String errorContent) {
+		super(message, errorContent);
+	}
 
-  public CmisConnectionException(String message, BigInteger code) {
-    super(message, code);
-  }
+	public CmisConnectionException(String message, BigInteger code) {
+		super(message, code);
+	}
 
-  public CmisConnectionException(String message, String errorContent, Throwable cause) {
-    super(message, errorContent, cause);
-  }
+	public CmisConnectionException(String message, String errorContent, Throwable cause) {
+		super(message, errorContent, cause);
+	}
 
-  public CmisConnectionException(String message, Throwable cause) {
-    super(message, (BigInteger) null, cause);
-  }
+	public CmisConnectionException(String message, Throwable cause) {
+		super(message, (BigInteger) null, cause);
+	}
 
-  public CmisConnectionException(String message) {
-    super(message, (BigInteger) null);
-  }
+	public CmisConnectionException(String message) {
+		super(message, (BigInteger) null);
+	}
 }

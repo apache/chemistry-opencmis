@@ -20,10 +20,9 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.util.List;
 
-
 public interface ObjectInFolderContainer extends ExtensionsData {
 
-  ObjectInFolderData getObject();
+	ObjectInFolderData getObject();
 
-  List<ObjectInFolderContainer> getChildren();
+	List<ObjectInFolderContainer> getChildren();
 }

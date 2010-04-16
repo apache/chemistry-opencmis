@@ -18,21 +18,20 @@
  */
 package org.apache.chemistry.opencmis.commons.api;
 
-
 /**
  * MultiFiling Service interface. See CMIS 1.0 domain model for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
- * @see <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS CMIS
- *      Technical Committee</a>
+ * @see <a
+ *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
+ *      CMIS Technical Committee</a>
  */
 public interface MultiFilingService {
 
-  void addObjectToFolder(String repositoryId, String objectId, String folderId,
-      Boolean allVersions, ExtensionsData extension);
+	void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
+			ExtensionsData extension);
 
-  void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
-      ExtensionsData extension);
+	void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension);
 
 }

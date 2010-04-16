@@ -20,10 +20,9 @@ package org.apache.chemistry.opencmis.commons.api;
 
 import java.util.List;
 
-
 public interface TypeDefinitionContainer extends ExtensionsData {
 
-  TypeDefinition getTypeDefinition();
+	TypeDefinition getTypeDefinition();
 
-  List<TypeDefinitionContainer> getChildren();
+	List<TypeDefinitionContainer> getChildren();
 }

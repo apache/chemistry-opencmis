@@ -25,35 +25,35 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 public interface RepositoryInfo extends Serializable, ExtensionsData {
 
-  String getId();
+	String getId();
 
-  String getName();
+	String getName();
 
-  String getDescription();
+	String getDescription();
 
-  String getVendorName();
+	String getVendorName();
 
-  String getProductName();
+	String getProductName();
 
-  String getProductVersion();
+	String getProductVersion();
 
-  String getRootFolderId();
+	String getRootFolderId();
 
-  RepositoryCapabilities getCapabilities();
+	RepositoryCapabilities getCapabilities();
 
-  AclCapabilities getAclCapabilities();
+	AclCapabilities getAclCapabilities();
 
-  String getLatestChangeLogToken();
+	String getLatestChangeLogToken();
 
-  String getCmisVersionSupported();
+	String getCmisVersionSupported();
 
-  String getThinClientUri();
+	String getThinClientUri();
 
-  Boolean getChangesIncomplete();
+	Boolean getChangesIncomplete();
 
-  List<BaseTypeId> getChangesOnType();
+	List<BaseTypeId> getChangesOnType();
 
-  String getPrincipalIdAnonymous();
+	String getPrincipalIdAnonymous();
 
-  String getPrincipalIdAnyone();
+	String getPrincipalIdAnyone();
 }

@@ -26,24 +26,24 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum ContentStreamAllowed {
 
-  NOTALLOWED("notallowed"), ALLOWED("allowed"), REQUIRED("required");
-  private final String value;
+	NOTALLOWED("notallowed"), ALLOWED("allowed"), REQUIRED("required");
+	private final String value;
 
-  ContentStreamAllowed(String v) {
-    value = v;
-  }
+	ContentStreamAllowed(String v) {
+		value = v;
+	}
 
-  public String value() {
-    return value;
-  }
+	public String value() {
+		return value;
+	}
 
-  public static ContentStreamAllowed fromValue(String v) {
-    for (ContentStreamAllowed c : ContentStreamAllowed.values()) {
-      if (c.value.equals(v)) {
-        return c;
-      }
-    }
-    throw new IllegalArgumentException(v);
-  }
+	public static ContentStreamAllowed fromValue(String v) {
+		for (ContentStreamAllowed c : ContentStreamAllowed.values()) {
+			if (c.value.equals(v)) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException(v);
+	}
 
 }
