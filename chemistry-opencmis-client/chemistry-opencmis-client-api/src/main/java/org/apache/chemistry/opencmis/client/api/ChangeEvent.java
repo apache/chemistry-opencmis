@@ -20,29 +20,28 @@ package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.api.ChangeEventInfoData;
 import org.apache.chemistry.opencmis.commons.enums.TypeOfChanges;
 
 /**
  * Change Event from the change log.
- * 
+ *
  * @see Session#getContentChanges(String, StringBuffer)
- * 
+ *
  *      See CMIS Domain Model - section 2.1.11.
  */
-public interface ChangeEvent {
+public interface ChangeEvent extends ChangeEventInfoData {
 
+  /**
+   * Gets the id of the object.
+   *
+   * @return the object ID
+   */
   String getObjectId();
 
   /**
-   * Get the type of the change.
-   * 
-   * @return the type of change
-   */
-  TypeOfChanges getChangeType();
-
-  /**
    * For change events with change type "updated": The list of properties now applied to the object.
-   * 
+   *
    * @return the list with the new properties, might be {@code null}
    */
   List<Property<?>> getNewProperties();
