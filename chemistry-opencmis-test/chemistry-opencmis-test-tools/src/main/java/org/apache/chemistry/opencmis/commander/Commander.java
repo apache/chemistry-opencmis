@@ -39,119 +39,114 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
  */
 public class Commander {
 
-  private final static Map<String, Command> COMMAND_MAP = new LinkedHashMap<String, Command>();
-  static {
-    addCommand(new InfosCommand());
-    addCommand(new ListCommand());
-    addCommand(new DeleteCommand());
-  }
+	private final static Map<String, Command> COMMAND_MAP = new LinkedHashMap<String, Command>();
+	static {
+		addCommand(new InfosCommand());
+		addCommand(new ListCommand());
+		addCommand(new DeleteCommand());
+	}
 
-  private PrintWriter fPW;
+	private PrintWriter fPW;
 
-  /**
-   * Constructor.
-   */
-  public Commander(String[] args) {
-    fPW = new PrintWriter(System.out);
+	/**
+	 * Constructor.
+	 */
+	public Commander(String[] args) {
+		fPW = new PrintWriter(System.out);
 
-    if (args.length < 2) {
-      printUsage(fPW);
-      return;
-    }
+		if (args.length < 2) {
+			printUsage(fPW);
+			return;
+		}
 
-    try {
-      // get the command object
-      Command command = COMMAND_MAP.get(args[1].toLowerCase());
-      if (command == null) {
-        printUsage(fPW);
-        return;
-      }
+		try {
+			// get the command object
+			Command command = COMMAND_MAP.get(args[1].toLowerCase());
+			if (command == null) {
+				printUsage(fPW);
+				return;
+			}
 
-      // get provider object
-      CmisBinding binding = createBinding(args[0]);
+			// get provider object
+			CmisBinding binding = createBinding(args[0]);
 
-      // prepare args
-      String[] commandArgs = new String[args.length - 2];
-      System.arraycopy(args, 2, commandArgs, 0, commandArgs.length);
+			// prepare args
+			String[] commandArgs = new String[args.length - 2];
+			System.arraycopy(args, 2, commandArgs, 0, commandArgs.length);
 
-      // execute
-      command.execute(binding, commandArgs, fPW);
-    }
-    catch (Exception e) {
-      fPW.println("Exception:");
+			// execute
+			command.execute(binding, commandArgs, fPW);
+		} catch (Exception e) {
+			fPW.println("Exception:");
 
-      if (e instanceof CmisBaseException) {
-        fPW.println(e);
-      }
-      else {
-        e.printStackTrace(fPW);
-      }
-    }
-    finally {
-      fPW.flush();
-    }
-  }
+			if (e instanceof CmisBaseException) {
+				fPW.println(e);
+			} else {
+				e.printStackTrace(fPW);
+			}
+		} finally {
+			fPW.flush();
+		}
+	}
 
-  /**
-   * Prints usage.
-   */
-  private void printUsage(PrintWriter output) {
-    output.println("CMIS Commander\n");
-    output.println("Usage: Commander <config file> <command>\n");
-    output.println("Available commands:");
-    for (Command command : COMMAND_MAP.values()) {
-      output.println("  " + command.getUsage());
-    }
+	/**
+	 * Prints usage.
+	 */
+	private void printUsage(PrintWriter output) {
+		output.println("CMIS Commander\n");
+		output.println("Usage: Commander <config file> <command>\n");
+		output.println("Available commands:");
+		for (Command command : COMMAND_MAP.values()) {
+			output.println("  " + command.getUsage());
+		}
 
-    output.flush();
-  }
+		output.flush();
+	}
 
-  /**
-   * Creates the provider object
-   */
-  private CmisBinding createBinding(String configFile) throws Exception {
-    Properties properties = new Properties();
-    properties.load(new FileInputStream(configFile));
+	/**
+	 * Creates the provider object
+	 */
+	private CmisBinding createBinding(String configFile) throws Exception {
+		Properties properties = new Properties();
+		properties.load(new FileInputStream(configFile));
 
-    Map<String, String> sessionParameters = new HashMap<String, String>();
+		Map<String, String> sessionParameters = new HashMap<String, String>();
 
-    for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
-      String key = (String) e.nextElement();
-      String value = properties.getProperty(key);
-      sessionParameters.put(key, value);
-    }
+		for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
+			String key = (String) e.nextElement();
+			String value = properties.getProperty(key);
+			sessionParameters.put(key, value);
+		}
 
-    CmisBindingFactory factory = CmisBindingFactory.newInstance();
+		CmisBindingFactory factory = CmisBindingFactory.newInstance();
 
-    CmisBinding result = null;
-    if (sessionParameters.containsKey(SessionParameter.ATOMPUB_URL)) {
-      result = factory.createCmisAtomPubBinding(sessionParameters);
-    }
-    else if (sessionParameters.containsKey(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE)) {
-      result = factory.createCmisWebServicesBinding(sessionParameters);
-    }
-    else {
-      throw new IllegalArgumentException("Cannot find CMIS binding information in config file!");
-    }
+		CmisBinding result = null;
+		if (sessionParameters.containsKey(SessionParameter.ATOMPUB_URL)) {
+			result = factory.createCmisAtomPubBinding(sessionParameters);
+		} else if (sessionParameters.containsKey(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE)) {
+			result = factory.createCmisWebServicesBinding(sessionParameters);
+		} else {
+			throw new IllegalArgumentException("Cannot find CMIS binding information in config file!");
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  /**
-   * Adds a command
-   */
-  private final static void addCommand(Command command) {
-    if ((command == null) || (command.getCommandName() == null)) {
-      return;
-    }
+	/**
+	 * Adds a command
+	 */
+	private final static void addCommand(Command command) {
+		if ((command == null) || (command.getCommandName() == null)) {
+			return;
+		}
 
-    COMMAND_MAP.put(command.getCommandName().toLowerCase(), command);
-  }
+		COMMAND_MAP.put(command.getCommandName().toLowerCase(), command);
+	}
 
-  /**
-   * Main.
-   */
-  public static void main(String[] args) {
-    new Commander(args);
-  }
+	/**
+	 * Main.
+	 */
+	public static void main(String[] args) {
+		new Commander(args);
+	}
 }

@@ -24,39 +24,39 @@ import org.apache.chemistry.opencmis.commons.api.CmisBinding;
 
 public class DeleteCommand implements Command {
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.commander.Command#getCommandName()
-   */
-  public String getCommandName() {
-    return "delete";
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.commander.Command#getCommandName()
+	 */
+	public String getCommandName() {
+		return "delete";
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.commander.Command#getUsage()
-   */
-  public String getUsage() {
-    return "DELETE <repository id> <object id> [all versions: true/false]";
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.commander.Command#getUsage()
+	 */
+	public String getUsage() {
+		return "DELETE <repository id> <object id> [all versions: true/false]";
+	}
 
-  public void execute(CmisBinding binding, String[] args, PrintWriter output) {
-    if (args.length < 2) {
-      output.println(getUsage());
-      return;
-    }
+	public void execute(CmisBinding binding, String[] args, PrintWriter output) {
+		if (args.length < 2) {
+			output.println(getUsage());
+			return;
+		}
 
-    String repositoryId = args[0];
-    String objectId = args[1];
-    Boolean allVersions = (args.length > 2 ? Boolean.valueOf(args[2]) : null);
+		String repositoryId = args[0];
+		String objectId = args[1];
+		Boolean allVersions = (args.length > 2 ? Boolean.valueOf(args[2]) : null);
 
-    output.println("Deleting " + objectId + " ...");
-    output.flush();
+		output.println("Deleting " + objectId + " ...");
+		output.flush();
 
-    binding.getObjectService().deleteObject(repositoryId, objectId, allVersions, null);
+		binding.getObjectService().deleteObject(repositoryId, objectId, allVersions, null);
 
-    output.println("done.");
-  }
+		output.println("done.");
+	}
 }
