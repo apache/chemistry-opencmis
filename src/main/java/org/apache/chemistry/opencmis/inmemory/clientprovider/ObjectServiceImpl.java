@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
@@ -99,7 +99,7 @@ public class ObjectServiceImpl extends AbstractService implements ObjectService 
     return fObjSvc.deleteTree(fDummyCallContext, repositoryId, folderId, allVersions, unfileObjects, continueOnFailure, extension);
   }
 
-  public AllowableActionsData getAllowableActions(String repositoryId, String objectId,
+  public AllowableActions getAllowableActions(String repositoryId, String objectId,
       ExtensionsData extension) {
     
     return fObjSvc.getAllowableActions(fDummyCallContext, repositoryId, objectId, extension);

@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
@@ -319,7 +319,7 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
       if (includePathSegments != null && includePathSegments)
         oifd.setPathSegment(spo.getName());
       if (includeAllowableActions != null && includeAllowableActions) {
-        AllowableActionsData allowableActions = DataObjectCreator.fillAllowableActions(fs, spo);
+        AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(fs, spo);
         objectData.setAllowableActions(allowableActions);
       }
       if (includeRelationships != null && includeRelationships != IncludeRelationships.NONE) {

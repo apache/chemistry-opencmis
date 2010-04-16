@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActionsData;
+import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
 import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
 import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.bindings.Holder;
@@ -371,7 +371,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     }
   }
 
-  public AllowableActionsData getAllowableActions(CallContext context, String repositoryId,
+  public AllowableActions getAllowableActions(CallContext context, String repositoryId,
       String objectId, ExtensionsData extension) {
 
     try {
@@ -385,7 +385,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
       if (so == null)
         throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
-      AllowableActionsData allowableActions = DataObjectCreator.fillAllowableActions(objectStore,
+      AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore,
           so);
       LOG.debug("stop getAllowableActions()");
       return allowableActions;
