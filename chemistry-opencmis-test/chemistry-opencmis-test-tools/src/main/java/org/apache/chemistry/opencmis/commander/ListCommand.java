@@ -21,10 +21,10 @@ package org.apache.chemistry.opencmis.commander;
 import java.io.PrintWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 
 public class ListCommand implements Command {
 
@@ -59,9 +59,9 @@ public class ListCommand implements Command {
         null, null, null, null, null, null, null, null, null);
 
     for (ObjectInFolderData object : list.getObjects()) {
-      output.println(getPropertyValue(object, PropertyIds.CMIS_OBJECT_ID) + "\t"
-          + getPropertyValue(object, PropertyIds.CMIS_NAME) + "\t"
-          + getPropertyValue(object, PropertyIds.CMIS_OBJECT_TYPE_ID));
+      output.println(getPropertyValue(object, PropertyIds.OBJECT_ID) + "\t"
+          + getPropertyValue(object, PropertyIds.NAME) + "\t"
+          + getPropertyValue(object, PropertyIds.OBJECT_TYPE_ID));
     }
   }
 

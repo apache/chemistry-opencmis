@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>

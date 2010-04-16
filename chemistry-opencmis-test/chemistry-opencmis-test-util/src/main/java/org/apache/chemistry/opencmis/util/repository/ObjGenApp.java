@@ -33,9 +33,9 @@ import joptsimple.OptionSpec;
 
 import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.RepositoryService;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 

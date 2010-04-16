@@ -46,12 +46,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.ObjectList;
+import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;

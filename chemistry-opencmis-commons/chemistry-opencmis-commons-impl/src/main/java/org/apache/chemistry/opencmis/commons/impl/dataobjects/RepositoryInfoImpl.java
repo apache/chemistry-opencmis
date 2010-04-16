@@ -20,9 +20,9 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.AclCapabilities;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryCapabilities;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.api.RepositoryCapabilities;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 
 /**

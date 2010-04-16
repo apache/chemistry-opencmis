@@ -27,10 +27,10 @@ import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.util.Container;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 

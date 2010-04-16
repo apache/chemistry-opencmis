@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
 
 /**
  * Query result.

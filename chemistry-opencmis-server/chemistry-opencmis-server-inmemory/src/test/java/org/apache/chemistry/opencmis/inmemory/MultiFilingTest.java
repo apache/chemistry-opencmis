@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -263,7 +263,7 @@ public class MultiFilingTest extends AbstractServiceTst {
   private void renameDocumentAndCheckResult(String docId) {
     Holder<String> idHolder = new Holder<String>(docId);    
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, RENAMED_DOC_NAME));      
+    properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, RENAMED_DOC_NAME));      
     PropertiesData newProps = fFactory.createPropertiesData(properties);
     Holder<String> changeTokenHolder = new Holder<String>();
     fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, newProps, null);
@@ -272,7 +272,7 @@ public class MultiFilingTest extends AbstractServiceTst {
         null, false, false, null);
     assertNotNull(res);
     Map<String, PropertyData<?>> propMap = res.getProperties().getProperties();
-    PropertyData<?> pd = propMap.get(PropertyIds.CMIS_NAME);
+    PropertyData<?> pd = propMap.get(PropertyIds.NAME);
     assertNotNull(pd);
     assertEquals(RENAMED_DOC_NAME, pd.getFirstValue());    
   }

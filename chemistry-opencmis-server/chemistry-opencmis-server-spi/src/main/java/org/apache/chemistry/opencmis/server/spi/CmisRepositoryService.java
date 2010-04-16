@@ -22,10 +22,10 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 
 /**
  * CMIS Repository Service interface. Please refer to the CMIS specification and the OpenCMIS

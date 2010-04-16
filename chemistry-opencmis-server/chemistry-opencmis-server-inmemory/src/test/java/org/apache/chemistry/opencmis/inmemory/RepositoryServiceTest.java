@@ -29,10 +29,10 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Choice;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
@@ -522,41 +522,41 @@ public class RepositoryServiceTest extends AbstractServiceTst {
     Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
     String baseTypeId = typeDef.getBaseId().value();
     
-    assertTrue(propDefs.containsKey(PropertyIds.CMIS_NAME));
-    assertTrue(propDefs.containsKey(PropertyIds.CMIS_OBJECT_ID));
-    assertTrue(propDefs.containsKey(PropertyIds.CMIS_OBJECT_TYPE_ID));
-    assertTrue(propDefs.containsKey(PropertyIds.CMIS_BASE_TYPE_ID));
-    assertTrue(propDefs.containsKey(PropertyIds.CMIS_CREATED_BY));
-    assertTrue(propDefs.containsKey(PropertyIds.CMIS_CREATION_DATE));
-    assertTrue(propDefs.containsKey(PropertyIds.CMIS_LAST_MODIFIED_BY));
-    assertTrue(propDefs.containsKey(PropertyIds.CMIS_LAST_MODIFICATION_DATE));
-    assertTrue(propDefs.containsKey(PropertyIds.CMIS_CHANGE_TOKEN));
+    assertTrue(propDefs.containsKey(PropertyIds.NAME));
+    assertTrue(propDefs.containsKey(PropertyIds.OBJECT_ID));
+    assertTrue(propDefs.containsKey(PropertyIds.OBJECT_TYPE_ID));
+    assertTrue(propDefs.containsKey(PropertyIds.BASE_TYPE_ID));
+    assertTrue(propDefs.containsKey(PropertyIds.CREATED_BY));
+    assertTrue(propDefs.containsKey(PropertyIds.CREATION_DATE));
+    assertTrue(propDefs.containsKey(PropertyIds.LAST_MODIFIED_BY));
+    assertTrue(propDefs.containsKey(PropertyIds.LAST_MODIFICATION_DATE));
+    assertTrue(propDefs.containsKey(PropertyIds.CHANGE_TOKEN));
 
     if (baseTypeId.equals(BaseObjectTypeIds.CMIS_DOCUMENT.value())) {
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_IS_IMMUTABLE));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_IS_LATEST_VERSION));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_IS_MAJOR_VERSION));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_VERSION_LABEL));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_VERSION_SERIES_ID));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_CHECKIN_COMMENT));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_CONTENT_STREAM_LENGTH));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_CONTENT_STREAM_ID));
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_CHANGE_TOKEN));      
+      assertTrue(propDefs.containsKey(PropertyIds.IS_IMMUTABLE));
+      assertTrue(propDefs.containsKey(PropertyIds.IS_LATEST_VERSION));
+      assertTrue(propDefs.containsKey(PropertyIds.IS_MAJOR_VERSION));
+      assertTrue(propDefs.containsKey(PropertyIds.IS_LATEST_MAJOR_VERSION));
+      assertTrue(propDefs.containsKey(PropertyIds.VERSION_LABEL));
+      assertTrue(propDefs.containsKey(PropertyIds.VERSION_SERIES_ID));
+      assertTrue(propDefs.containsKey(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT));
+      assertTrue(propDefs.containsKey(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY));
+      assertTrue(propDefs.containsKey(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID));
+      assertTrue(propDefs.containsKey(PropertyIds.CHECKIN_COMMENT));
+      assertTrue(propDefs.containsKey(PropertyIds.CONTENT_STREAM_LENGTH));
+      assertTrue(propDefs.containsKey(PropertyIds.CONTENT_STREAM_MIME_TYPE));
+      assertTrue(propDefs.containsKey(PropertyIds.CONTENT_STREAM_FILE_NAME));
+      assertTrue(propDefs.containsKey(PropertyIds.CONTENT_STREAM_ID));
+      assertTrue(propDefs.containsKey(PropertyIds.CHANGE_TOKEN));      
     } else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_FOLDER.value())) {
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_PARENT_ID));      
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS));      
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_PATH));            
+      assertTrue(propDefs.containsKey(PropertyIds.PARENT_ID));      
+      assertTrue(propDefs.containsKey(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS));      
+      assertTrue(propDefs.containsKey(PropertyIds.PATH));            
     } else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_POLICY.value())) {
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_POLICY_TEXT));            
+      assertTrue(propDefs.containsKey(PropertyIds.POLICY_TEXT));            
     } else if (baseTypeId.equals(BaseObjectTypeIds.CMIS_RELATIONSHIP.value())) {
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_SOURCE_ID));      
-      assertTrue(propDefs.containsKey(PropertyIds.CMIS_TARGET_ID));            
+      assertTrue(propDefs.containsKey(PropertyIds.SOURCE_ID));      
+      assertTrue(propDefs.containsKey(PropertyIds.TARGET_ID));            
     } else
       fail("Unknown base type id in type definition");
   }

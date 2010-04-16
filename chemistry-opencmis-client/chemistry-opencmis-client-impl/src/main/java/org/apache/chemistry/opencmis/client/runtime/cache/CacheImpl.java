@@ -251,7 +251,7 @@ public class CacheImpl implements Cache, Serializable {
       cacheKeyMap.put(cacheKey, object);
 
       // folders may have a path, use it!
-      String path = object.getPropertyValue(PropertyIds.CMIS_PATH);
+      String path = object.getPropertyValue(PropertyIds.PATH);
       if (path != null) {
         pathToIdMap.put(path, object.getId());
       }

@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -112,9 +112,9 @@ public abstract class AbstractBindingIT {
     // set up properties
     List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
     propertyList.add(getBinding().getObjectFactory().createPropertyStringData(
-        PropertyIds.CMIS_NAME, "provider-tests-" + System.currentTimeMillis()));
+        PropertyIds.NAME, "provider-tests-" + System.currentTimeMillis()));
     propertyList.add(getBinding().getObjectFactory().createPropertyIdData(
-        PropertyIds.CMIS_OBJECT_TYPE_ID, FOLDER_TYPE));
+        PropertyIds.OBJECT_TYPE_ID, FOLDER_TYPE));
 
     PropertiesData properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
 

@@ -24,20 +24,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
@@ -234,7 +234,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
 
       // Find out what kind of object needs to be created
       PropertyData<String> pd = (PropertyData<String>) properties.getProperties().get(
-          PropertyIds.CMIS_OBJECT_TYPE_ID);
+          PropertyIds.OBJECT_TYPE_ID);
       String typeId = pd == null ? null : pd.getFirstValue();
       if (null == typeId)
         throw new RuntimeException(
@@ -684,7 +684,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
       boolean hasUpdatedOtherProps = false;
 
       for (String key : properties.getProperties().keySet()) {
-        if (key.equals(PropertyIds.CMIS_NAME))
+        if (key.equals(PropertyIds.NAME))
           continue; // ignore here
 
         PropertyData<?> value = properties.getProperties().get(key);
@@ -715,7 +715,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
 
       // get name from properties and perform special rename to check if path
       // already exists
-      PropertyData<?> pd = properties.getProperties().get(PropertyIds.CMIS_NAME);
+      PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
       if (pd != null && so instanceof Filing) {
         String newName = (String) pd.getFirstValue();
         List<Folder> parents = ((Filing) so).getParents();
@@ -785,7 +785,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
 
     // get name from properties
-    PropertyData<?> pd = properties.getProperties().get(PropertyIds.CMIS_NAME);
+    PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
     String name = (String) pd.getFirstValue();
 
     // Validation stuff
@@ -874,7 +874,7 @@ public class InMemoryObjectServiceImpl extends AbstractServiceImpl implements Cm
     Folder parent = null;
 
     // get required properties
-    PropertyData<?> pd = properties.getProperties().get(PropertyIds.CMIS_NAME);
+    PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
     String folderName = (String) pd.getFirstValue();
     if (null == folderName || folderName.length() == 0)
       throw new CmisInvalidArgumentException("Cannot create a folder without a name.");

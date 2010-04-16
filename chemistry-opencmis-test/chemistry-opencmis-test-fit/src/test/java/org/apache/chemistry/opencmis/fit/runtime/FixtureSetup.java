@@ -24,10 +24,10 @@ import java.util.List;
 import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.junit.Assert;
@@ -77,9 +77,9 @@ public class FixtureSetup {
 		// create test root folder
 		List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
 		propList.add(this.binding.getObjectFactory().createPropertyStringData(
-				PropertyIds.CMIS_NAME, Fixture.TEST_ROOT_FOLDER_NAME));
+				PropertyIds.NAME, Fixture.TEST_ROOT_FOLDER_NAME));
 		propList.add(this.binding.getObjectFactory().createPropertyIdData(
-				PropertyIds.CMIS_OBJECT_TYPE_ID, folderTypeId));
+				PropertyIds.OBJECT_TYPE_ID, folderTypeId));
 
 		PropertiesData properties = this.binding.getObjectFactory()
 				.createPropertiesData(propList);

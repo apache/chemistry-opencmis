@@ -147,7 +147,7 @@ public class AtomEntryWriter implements CmisAtomPubConstants {
     String result = "";
 
     for (CmisProperty property : fObject.getProperties().getProperty()) {
-      if (PropertyIds.CMIS_NAME.equals(property.getPropertyDefinitionId())
+      if (PropertyIds.NAME.equals(property.getPropertyDefinitionId())
           && (property instanceof CmisPropertyString)) {
         List<String> values = ((CmisPropertyString) property).getValue();
         if (!values.isEmpty()) {

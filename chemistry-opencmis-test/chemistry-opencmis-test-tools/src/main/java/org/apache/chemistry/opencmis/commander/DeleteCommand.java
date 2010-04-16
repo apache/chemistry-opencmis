@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commander;
 
 import java.io.PrintWriter;
 
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
 
 public class DeleteCommand implements Command {
 

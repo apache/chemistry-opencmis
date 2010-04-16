@@ -25,15 +25,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.api.Choice;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
@@ -215,7 +215,7 @@ public class PropertyCreationHelper {
 
     String typeId = so.getTypeId();
       // (String) props.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID).getFirstValue();
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_BASE_TYPE_ID, requestedIds)) {
+    if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, requestedIds)) {
       TypeDefinitionContainer typeDefC = storeManager.getTypeById(repositoryId, typeId);
       if (typeDefC == null) {
         log.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
@@ -223,7 +223,7 @@ public class PropertyCreationHelper {
       } else {
         TypeDefinition typeDef = typeDefC.getTypeDefinition();
         String baseTypeId = typeDef.getBaseId().value();
-        properties.put(PropertyIds.CMIS_BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.CMIS_BASE_TYPE_ID, baseTypeId));
+        properties.put(PropertyIds.BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID, baseTypeId));
       }
     }   
     List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>> (properties.values());

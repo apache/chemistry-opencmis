@@ -42,16 +42,16 @@ import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
-import org.apache.chemistry.opencmis.commons.bindings.RelationshipService;
-import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
+import org.apache.chemistry.opencmis.commons.api.RelationshipService;
+import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
@@ -263,7 +263,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       updatebility.add(Updatability.READWRITE);
 
       // check if checked out
-      Boolean isCheckedOut = getPropertyValue(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT);
+      Boolean isCheckedOut = getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
       if ((isCheckedOut != null) && isCheckedOut.booleanValue()) {
         updatebility.add(Updatability.WHENCHECKEDOUT);
       }
@@ -307,7 +307,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
       updatebility.add(Updatability.READWRITE);
 
       // check if checked out
-      Boolean isCheckedOut = getPropertyValue(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT);
+      Boolean isCheckedOut = getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
       if ((isCheckedOut != null) && isCheckedOut.booleanValue()) {
         updatebility.add(Updatability.WHENCHECKEDOUT);
       }
@@ -350,7 +350,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getBaseTypeId()
    */
   public BaseObjectTypeIds getBaseTypeId() {
-    String baseType = getPropertyValue(PropertyIds.CMIS_BASE_TYPE_ID);
+    String baseType = getPropertyValue(PropertyIds.BASE_TYPE_ID);
     if (baseType == null) {
       return null;
     }
@@ -364,7 +364,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getChangeToken()
    */
   public String getChangeToken() {
-    return getPropertyValue(PropertyIds.CMIS_CHANGE_TOKEN);
+    return getPropertyValue(PropertyIds.CHANGE_TOKEN);
   }
 
   /*
@@ -373,7 +373,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getCreatedBy()
    */
   public String getCreatedBy() {
-    return getPropertyValue(PropertyIds.CMIS_CREATED_BY);
+    return getPropertyValue(PropertyIds.CREATED_BY);
   }
 
   /*
@@ -382,7 +382,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getCreationDate()
    */
   public GregorianCalendar getCreationDate() {
-    return getPropertyValue(PropertyIds.CMIS_CREATION_DATE);
+    return getPropertyValue(PropertyIds.CREATION_DATE);
   }
 
   /*
@@ -391,7 +391,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getId()
    */
   public String getId() {
-    return getPropertyValue(PropertyIds.CMIS_OBJECT_ID);
+    return getPropertyValue(PropertyIds.OBJECT_ID);
   }
 
   /*
@@ -400,7 +400,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getLastModificationDate()
    */
   public GregorianCalendar getLastModificationDate() {
-    return getPropertyValue(PropertyIds.CMIS_LAST_MODIFICATION_DATE);
+    return getPropertyValue(PropertyIds.LAST_MODIFICATION_DATE);
   }
 
   /*
@@ -409,7 +409,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getLastModifiedBy()
    */
   public String getLastModifiedBy() {
-    return getPropertyValue(PropertyIds.CMIS_LAST_MODIFIED_BY);
+    return getPropertyValue(PropertyIds.LAST_MODIFIED_BY);
   }
 
   /*
@@ -418,7 +418,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#getName()
    */
   public String getName() {
-    return getPropertyValue(PropertyIds.CMIS_NAME);
+    return getPropertyValue(PropertyIds.NAME);
   }
 
   /*
@@ -486,7 +486,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
    * @see org.apache.opencmis.client.api.CmisObject#setName(java.lang.String)
    */
   public void setName(String name) {
-    setProperty(PropertyIds.CMIS_NAME, name);
+    setProperty(PropertyIds.NAME, name);
   }
 
   /*

@@ -21,10 +21,10 @@ package org.apache.chemistry.opencmis.client.bindings.framework;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
@@ -94,8 +94,8 @@ public class Tools {
       }
 
       PropertiesData properties = container.getObject().getObject().getProperties();
-      System.out.println(properties.getProperties().get(PropertyIds.CMIS_NAME).getFirstValue()
-          + " (" + properties.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID).getFirstValue()
+      System.out.println(properties.getProperties().get(PropertyIds.NAME).getFirstValue()
+          + " (" + properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue()
           + ")");
 
       print(container.getChildren(), level + 1);

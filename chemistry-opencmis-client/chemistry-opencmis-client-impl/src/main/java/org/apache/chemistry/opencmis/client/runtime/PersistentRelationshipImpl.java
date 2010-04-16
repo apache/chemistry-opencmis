@@ -23,7 +23,7 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
 
 public class PersistentRelationshipImpl extends AbstractPersistentCmisObject implements
     Relationship {
@@ -53,7 +53,7 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
   public CmisObject getSource(OperationContext context) {
     readLock();
     try {
-      String sourceId = getPropertyValue(PropertyIds.CMIS_SOURCE_ID);
+      String sourceId = getPropertyValue(PropertyIds.SOURCE_ID);
       if (sourceId == null) {
         return null;
       }
@@ -82,7 +82,7 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
   public CmisObject getTarget(OperationContext context) {
     readLock();
     try {
-      String targetId = getPropertyValue(PropertyIds.CMIS_TARGET_ID);
+      String targetId = getPropertyValue(PropertyIds.TARGET_ID);
       if (targetId == null) {
         return null;
       }

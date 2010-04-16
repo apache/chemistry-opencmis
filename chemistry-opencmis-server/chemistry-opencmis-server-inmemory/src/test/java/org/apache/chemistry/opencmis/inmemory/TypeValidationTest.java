@@ -29,12 +29,12 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.api.Choice;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -84,8 +84,8 @@ public class TypeValidationTest extends TestCase {
   
   private List<PropertyData<?>> createPropertiesWithNameAndTypeId(String typeId) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(FACTORY.createPropertyIdData(PropertyIds.CMIS_NAME, "Document_1"));
-    properties.add(FACTORY.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, typeId));
+    properties.add(FACTORY.createPropertyIdData(PropertyIds.NAME, "Document_1"));
+    properties.add(FACTORY.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
     return properties;
   }
 

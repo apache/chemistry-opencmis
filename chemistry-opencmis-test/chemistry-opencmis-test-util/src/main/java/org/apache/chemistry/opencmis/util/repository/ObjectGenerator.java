@@ -30,17 +30,17 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.NavigationService;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.ObjectService;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
@@ -213,15 +213,15 @@ public class ObjectGenerator {
    */
   public String getFolderId(String rootId, int level, int index) {
     String objectId = rootId;
-    final String requiredProperties = PropertyIds.CMIS_OBJECT_ID + "," + PropertyIds.CMIS_OBJECT_TYPE_ID +
-      "," + PropertyIds.CMIS_BASE_TYPE_ID;
+    final String requiredProperties = PropertyIds.OBJECT_ID + "," + PropertyIds.OBJECT_TYPE_ID +
+      "," + PropertyIds.BASE_TYPE_ID;
     // Note: This works because first folders are created then documents
     for (int i=0; i<level; i++) {
-      ObjectInFolderList result = fNavSvc.getChildren(fRepositoryId, objectId, requiredProperties, PropertyIds.CMIS_OBJECT_TYPE_ID, false,
+      ObjectInFolderList result = fNavSvc.getChildren(fRepositoryId, objectId, requiredProperties, PropertyIds.OBJECT_TYPE_ID, false,
           IncludeRelationships.NONE, null, true, BigInteger.valueOf(-1), BigInteger.valueOf(-1), null);
       List<ObjectInFolderData> children = result.getObjects();
       ObjectData child = children.get(index).getObject();
-      objectId = (String) child.getProperties().getProperties().get(PropertyIds.CMIS_OBJECT_ID).getFirstValue();        
+      objectId = (String) child.getProperties().getProperties().get(PropertyIds.OBJECT_ID).getFirstValue();        
     }
     return objectId;    
   }
@@ -236,16 +236,16 @@ public class ObjectGenerator {
    */
   public String getDocumentId(String folderId, int index) {
     String docId = null;
-    final String requiredProperties = PropertyIds.CMIS_OBJECT_ID + "," + PropertyIds.CMIS_OBJECT_TYPE_ID +
-      "," + PropertyIds.CMIS_BASE_TYPE_ID;
+    final String requiredProperties = PropertyIds.OBJECT_ID + "," + PropertyIds.OBJECT_TYPE_ID +
+      "," + PropertyIds.BASE_TYPE_ID;
     ObjectInFolderList result = fNavSvc.getChildren(fRepositoryId, folderId, requiredProperties,
-        PropertyIds.CMIS_OBJECT_TYPE_ID, false, IncludeRelationships.NONE, null, true, BigInteger
+        PropertyIds.OBJECT_TYPE_ID, false, IncludeRelationships.NONE, null, true, BigInteger
             .valueOf(-1), BigInteger.valueOf(-1), null);
     List<ObjectInFolderData> children = result.getObjects();
     int numDocsFound = 0;
     for (int i=0; i<children.size(); i++) {
       ObjectData child = children.get(i).getObject();
-      docId = (String) child.getProperties().getProperties().get(PropertyIds.CMIS_OBJECT_ID).getFirstValue();        
+      docId = (String) child.getProperties().getProperties().get(PropertyIds.OBJECT_ID).getFirstValue();        
       if (child.getBaseTypeId().equals(BaseObjectTypeIds.CMIS_DOCUMENT)) {
         if (numDocsFound == index)
           return docId;
@@ -470,8 +470,8 @@ public class ObjectGenerator {
 
   private PropertiesData createFolderProperties(int no, int level) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyStringData(PropertyIds.CMIS_NAME, generateFolderNameValue(no, level)));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, fFolderTypeId));
+    properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, generateFolderNameValue(no, level)));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, fFolderTypeId));
     // Generate some property values for custom attributes
     for (String stringPropId : fStringPropertyIdsToSetForFolder) {
       properties.add(fFactory.createPropertyStringData(stringPropId, generateStringPropValueFolder()));      
@@ -482,8 +482,8 @@ public class ObjectGenerator {
 
   private PropertiesData createDocumentProperties(int no, int level) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyStringData(PropertyIds.CMIS_NAME, generateDocNameValue(no, level)));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, fDocTypeId));
+    properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, generateDocNameValue(no, level)));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, fDocTypeId));
     // Generate some property values for custom attributes
     for (String stringPropId : fStringPropertyIdsToSetForDocument) {
       properties.add(fFactory.createPropertyStringData(stringPropId, generateStringPropValueDoc()));      
@@ -526,8 +526,8 @@ public class ObjectGenerator {
     log.info("starting dumpFolder() id " + folderId + " ...");
     boolean allRequiredPropertiesArePresent =  propertyFilter!= null && propertyFilter.equals("*"); // can be optimized
     final String requiredProperties = allRequiredPropertiesArePresent ? propertyFilter :
-       PropertyIds.CMIS_OBJECT_ID+","+PropertyIds.CMIS_NAME + ","+PropertyIds.CMIS_OBJECT_TYPE_ID +
-       ","+PropertyIds.CMIS_BASE_TYPE_ID;
+       PropertyIds.OBJECT_ID+","+PropertyIds.NAME + ","+PropertyIds.OBJECT_TYPE_ID +
+       ","+PropertyIds.BASE_TYPE_ID;
     // if all required properties are contained in the filter use we use the filter otherwise
     // we use our own set and get those from the filter later in an extra call
     String propertyFilterIntern = allRequiredPropertiesArePresent ? propertyFilter : requiredProperties;
@@ -571,7 +571,7 @@ public class ObjectGenerator {
     log.info(prefix + "found object id " + object.getId());
     Map<String, PropertyData<?>> propMap;
     if (mustFetchProperties) {
-      String objId = (String) object.getProperties().getProperties().get(PropertyIds.CMIS_OBJECT_ID).getFirstValue();
+      String objId = (String) object.getProperties().getProperties().get(PropertyIds.OBJECT_ID).getFirstValue();
       PropertiesData props = fObjSvc.getProperties(fRepositoryId, objId, propertyFilter, null);
       propMap = props.getProperties();
     } else {

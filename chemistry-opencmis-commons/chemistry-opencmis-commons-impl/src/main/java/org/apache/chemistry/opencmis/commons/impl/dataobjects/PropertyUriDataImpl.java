@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.PropertyUriData;
+import org.apache.chemistry.opencmis.commons.api.PropertyUriData;
 
 /**
  * Uri property data implementation.

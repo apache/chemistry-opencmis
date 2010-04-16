@@ -40,12 +40,12 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.Reposit
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.ServiceDoc;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -441,7 +441,7 @@ public class AbstractAtomPubService {
 
     CmisPropertyId idProperty = new CmisPropertyId();
     properties.getProperty().add(idProperty);
-    idProperty.setPropertyDefinitionId(PropertyIds.CMIS_OBJECT_ID);
+    idProperty.setPropertyDefinitionId(PropertyIds.OBJECT_ID);
     idProperty.getValue().add(objectId);
 
     return object;

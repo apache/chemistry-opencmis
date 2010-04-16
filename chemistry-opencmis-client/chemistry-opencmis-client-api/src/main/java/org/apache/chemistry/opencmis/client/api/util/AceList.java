@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.api.util;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
+import org.apache.chemistry.opencmis.commons.api.Ace;
 
 public interface AceList extends List<Ace> {
   boolean isExact();

@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.PropertyBooleanData;
+import org.apache.chemistry.opencmis.commons.api.PropertyBooleanData;
 
 /**
  * Boolean property data implementation.

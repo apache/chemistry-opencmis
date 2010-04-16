@@ -58,7 +58,7 @@ public class AtomParserTest extends TestCase {
     CmisPropertiesType properties = new CmisPropertiesType();
 
     CmisPropertyString propName = new CmisPropertyString();
-    propName.setPropertyDefinitionId(PropertyIds.CMIS_NAME);
+    propName.setPropertyDefinitionId(PropertyIds.NAME);
     propName.getValue().add("TestName");
     properties.getProperty().add(propName);
 

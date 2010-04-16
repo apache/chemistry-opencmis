@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.client.bindings.cache.impl.CacheImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 
 /**
  * A cache for repository info objects.

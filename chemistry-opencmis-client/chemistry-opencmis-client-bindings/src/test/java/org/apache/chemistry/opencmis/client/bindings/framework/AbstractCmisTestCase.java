@@ -32,27 +32,27 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.RenditionData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyDateTimeData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
-import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
@@ -461,10 +461,10 @@ public abstract class AbstractCmisTestCase extends TestCase {
     assertNotNull(folderObject);
     assertNotNull(folderObject.getProperties());
     assertNotNull(folderObject.getProperties().getProperties());
-    assertTrue(folderObject.getProperties().getProperties().get(PropertyIds.CMIS_PATH) instanceof PropertyStringData);
+    assertTrue(folderObject.getProperties().getProperties().get(PropertyIds.PATH) instanceof PropertyStringData);
 
     PropertyStringData pathProperty = (PropertyStringData) folderObject.getProperties()
-        .getProperties().get(PropertyIds.CMIS_PATH);
+        .getProperties().get(PropertyIds.PATH);
 
     assertNotNull(pathProperty.getValues());
     assertEquals(1, pathProperty.getValues().size());
@@ -534,7 +534,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
    */
   protected boolean existsObject(String objectId) {
     try {
-      ObjectData object = getObject(objectId, PropertyIds.CMIS_OBJECT_ID, Boolean.FALSE,
+      ObjectData object = getObject(objectId, PropertyIds.OBJECT_ID, Boolean.FALSE,
           IncludeRelationships.NONE, null, Boolean.FALSE, Boolean.FALSE, null);
 
       assertNotNull(object);
@@ -587,7 +587,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
    */
   protected String getVersionSeriesId(ObjectData object) {
     PropertyData<?> versionSeriesId = object.getProperties().getProperties().get(
-        PropertyIds.CMIS_VERSION_SERIES_ID);
+        PropertyIds.VERSION_SERIES_ID);
     assertNotNull(versionSeriesId);
     assertTrue(versionSeriesId instanceof PropertyIdData);
 
@@ -618,16 +618,16 @@ public abstract class AbstractCmisTestCase extends TestCase {
         AllowableActionsEnum.CAN_GET_PROPERTIES, true);
 
     // check name
-    PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.CMIS_NAME);
+    PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.NAME);
     if (nameProp != null) {
-      assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.CMIS_NAME,
+      assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.NAME,
           PropertyStringData.class, nameProp.getFirstValue());
     }
 
     // check object type
-    PropertyData<?> typeProp = properties.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID);
+    PropertyData<?> typeProp = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
     assertNotNull(typeProp);
-    assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.CMIS_OBJECT_TYPE_ID,
+    assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.OBJECT_TYPE_ID,
         PropertyIdData.class, typeProp.getFirstValue());
 
     // check parent
@@ -636,8 +636,8 @@ public abstract class AbstractCmisTestCase extends TestCase {
     assertNotNull(parent);
     assertNotNull(parent.getProperties());
     assertNotNull(parent.getProperties().getProperties());
-    assertNotNull(parent.getProperties().getProperties().get(PropertyIds.CMIS_OBJECT_ID));
-    assertEquals(folderId, parent.getProperties().getProperties().get(PropertyIds.CMIS_OBJECT_ID)
+    assertNotNull(parent.getProperties().getProperties().get(PropertyIds.OBJECT_ID));
+    assertEquals(folderId, parent.getProperties().getProperties().get(PropertyIds.OBJECT_ID)
         .getFirstValue());
 
     return objectId;
@@ -648,8 +648,8 @@ public abstract class AbstractCmisTestCase extends TestCase {
    */
   protected String createDefaultFolder(String folderId, String name) {
     List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
-    propList.add(getObjectFactory().createPropertyStringData(PropertyIds.CMIS_NAME, name));
-    propList.add(getObjectFactory().createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID,
+    propList.add(getObjectFactory().createPropertyStringData(PropertyIds.NAME, name));
+    propList.add(getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
         getDefaultFolderType()));
 
     PropertiesData properties = getObjectFactory().createPropertiesData(propList);
@@ -682,16 +682,16 @@ public abstract class AbstractCmisTestCase extends TestCase {
       }
 
       // check name
-      PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.CMIS_NAME);
+      PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.NAME);
       if (nameProp != null) {
-        assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.CMIS_NAME,
+        assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.NAME,
             PropertyStringData.class, nameProp.getFirstValue());
       }
 
       // check object type
-      PropertyData<?> typeProp = properties.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID);
+      PropertyData<?> typeProp = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
       assertNotNull(typeProp);
-      assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.CMIS_OBJECT_TYPE_ID,
+      assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.OBJECT_TYPE_ID,
           PropertyIdData.class, typeProp.getFirstValue());
 
       // check parent
@@ -707,20 +707,20 @@ public abstract class AbstractCmisTestCase extends TestCase {
       assertNotNull(parent.getObject());
       assertNotNull(parent.getObject().getProperties().getProperties());
       assertNotNull(parent.getObject().getProperties().getProperties().get(
-          PropertyIds.CMIS_OBJECT_ID));
+          PropertyIds.OBJECT_ID));
       assertEquals(folderId, parent.getObject().getProperties().getProperties().get(
-          PropertyIds.CMIS_OBJECT_ID).getFirstValue());
+          PropertyIds.OBJECT_ID).getFirstValue());
 
       // get document by path (check relative path segment)
-      assertNotNull(parent.getObject().getProperties().getProperties().get(PropertyIds.CMIS_PATH));
+      assertNotNull(parent.getObject().getProperties().getProperties().get(PropertyIds.PATH));
       String parentPath = parent.getObject().getProperties().getProperties().get(
-          PropertyIds.CMIS_PATH).getFirstValue().toString();
+          PropertyIds.PATH).getFirstValue().toString();
 
       ObjectData docByPath = getObjectByPath((parentPath.equals("/") ? "" : parentPath) + "/"
           + parent.getRelativePathSegment());
 
       PropertyData<?> idProp = docByPath.getProperties().getProperties().get(
-          PropertyIds.CMIS_OBJECT_ID);
+          PropertyIds.OBJECT_ID);
       assertNotNull(idProp);
       assertEquals(objectId, idProp.getFirstValue());
     }
@@ -744,8 +744,8 @@ public abstract class AbstractCmisTestCase extends TestCase {
         : VersioningState.NONE);
 
     List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
-    propList.add(getObjectFactory().createPropertyStringData(PropertyIds.CMIS_NAME, name));
-    propList.add(getObjectFactory().createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID,
+    propList.add(getObjectFactory().createPropertyStringData(PropertyIds.NAME, name));
+    propList.add(getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
         getDefaultDocumentType()));
 
     PropertiesData properties = getObjectFactory().createPropertiesData(propList);
@@ -771,9 +771,9 @@ public abstract class AbstractCmisTestCase extends TestCase {
       ObjectInFolderData folderChild = getChild(folderId, objectId);
 
       // check name
-      PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.CMIS_NAME);
+      PropertyData<?> nameProp = properties.getProperties().get(PropertyIds.NAME);
       if (nameProp != null) {
-        assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.CMIS_NAME,
+        assertPropertyValue(folderChild.getObject().getProperties(), PropertyIds.NAME,
             PropertyStringData.class, nameProp.getValues().get(0));
       }
 
@@ -790,9 +790,9 @@ public abstract class AbstractCmisTestCase extends TestCase {
       assertNotNull(parent.getObject());
       assertNotNull(parent.getObject().getProperties().getProperties());
       assertNotNull(parent.getObject().getProperties().getProperties().get(
-          PropertyIds.CMIS_OBJECT_ID));
+          PropertyIds.OBJECT_ID));
       assertEquals(folderId, parent.getObject().getProperties().getProperties().get(
-          PropertyIds.CMIS_OBJECT_ID).getFirstValue());
+          PropertyIds.OBJECT_ID).getFirstValue());
     }
 
     return objectId;
@@ -1040,22 +1040,22 @@ public abstract class AbstractCmisTestCase extends TestCase {
     assertNotNull(properties);
     assertNotNull(properties.getProperties());
 
-    assertProperty(properties.getProperties().get(PropertyIds.CMIS_OBJECT_ID),
-        PropertyIds.CMIS_OBJECT_ID, PropertyIdData.class);
-    assertProperty(properties.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID),
-        PropertyIds.CMIS_OBJECT_TYPE_ID, PropertyIdData.class);
-    assertProperty(properties.getProperties().get(PropertyIds.CMIS_BASE_TYPE_ID),
-        PropertyIds.CMIS_BASE_TYPE_ID, PropertyIdData.class);
-    assertProperty(properties.getProperties().get(PropertyIds.CMIS_NAME), PropertyIds.CMIS_NAME,
+    assertProperty(properties.getProperties().get(PropertyIds.OBJECT_ID),
+        PropertyIds.OBJECT_ID, PropertyIdData.class);
+    assertProperty(properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID),
+        PropertyIds.OBJECT_TYPE_ID, PropertyIdData.class);
+    assertProperty(properties.getProperties().get(PropertyIds.BASE_TYPE_ID),
+        PropertyIds.BASE_TYPE_ID, PropertyIdData.class);
+    assertProperty(properties.getProperties().get(PropertyIds.NAME), PropertyIds.NAME,
         PropertyStringData.class);
-    assertProperty(properties.getProperties().get(PropertyIds.CMIS_CREATED_BY),
-        PropertyIds.CMIS_CREATED_BY, PropertyStringData.class);
-    assertProperty(properties.getProperties().get(PropertyIds.CMIS_CREATION_DATE),
-        PropertyIds.CMIS_CREATION_DATE, PropertyDateTimeData.class);
-    assertProperty(properties.getProperties().get(PropertyIds.CMIS_LAST_MODIFIED_BY),
-        PropertyIds.CMIS_LAST_MODIFIED_BY, PropertyStringData.class);
-    assertProperty(properties.getProperties().get(PropertyIds.CMIS_LAST_MODIFICATION_DATE),
-        PropertyIds.CMIS_LAST_MODIFICATION_DATE, PropertyDateTimeData.class);
+    assertProperty(properties.getProperties().get(PropertyIds.CREATED_BY),
+        PropertyIds.CREATED_BY, PropertyStringData.class);
+    assertProperty(properties.getProperties().get(PropertyIds.CREATION_DATE),
+        PropertyIds.CREATION_DATE, PropertyDateTimeData.class);
+    assertProperty(properties.getProperties().get(PropertyIds.LAST_MODIFIED_BY),
+        PropertyIds.LAST_MODIFIED_BY, PropertyStringData.class);
+    assertProperty(properties.getProperties().get(PropertyIds.LAST_MODIFICATION_DATE),
+        PropertyIds.LAST_MODIFICATION_DATE, PropertyDateTimeData.class);
   }
 
   protected void assertProperty(PropertyData<?> property, String id, Class<?> clazz) {

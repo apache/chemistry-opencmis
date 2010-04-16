@@ -33,18 +33,18 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
+import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectService;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -258,7 +258,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     checkCreateProperties(properties);
 
     // find source id
-    PropertyData<?> sourceIdProperty = properties.getProperties().get(PropertyIds.CMIS_SOURCE_ID);
+    PropertyData<?> sourceIdProperty = properties.getProperties().get(PropertyIds.SOURCE_ID);
     if (!(sourceIdProperty instanceof PropertyIdData)) {
       throw new CmisInvalidArgumentException("Source Id is not set!");
     }
@@ -376,7 +376,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
             if (object.getProperties() != null) {
               for (CmisProperty property : object.getProperties().getProperty()) {
-                if (PropertyIds.CMIS_CHANGE_TOKEN.equals(property.getPropertyDefinitionId())
+                if (PropertyIds.CHANGE_TOKEN.equals(property.getPropertyDefinitionId())
                     && (property instanceof CmisPropertyString)) {
 
                   CmisPropertyString changeTokenProperty = (CmisPropertyString) property;
@@ -579,7 +579,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
   public List<RenditionData> getRenditions(String repositoryId, String objectId,
       String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
     ObjectData object = getObjectInternal(repositoryId, IdentifierType.ID, objectId,
-        ReturnVersion.THIS, PropertyIds.CMIS_OBJECT_ID, Boolean.FALSE, IncludeRelationships.NONE,
+        ReturnVersion.THIS, PropertyIds.OBJECT_ID, Boolean.FALSE, IncludeRelationships.NONE,
         renditionFilter, Boolean.FALSE, Boolean.FALSE, extension);
 
     List<RenditionData> result = object.getRenditions();
@@ -742,13 +742,13 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
       throw new CmisInvalidArgumentException("Properties must be set!");
     }
 
-    if (!properties.getProperties().containsKey(PropertyIds.CMIS_OBJECT_TYPE_ID)) {
-      throw new CmisInvalidArgumentException("Property " + PropertyIds.CMIS_OBJECT_TYPE_ID
+    if (!properties.getProperties().containsKey(PropertyIds.OBJECT_TYPE_ID)) {
+      throw new CmisInvalidArgumentException("Property " + PropertyIds.OBJECT_TYPE_ID
           + " must be set!");
     }
 
-    if (properties.getProperties().containsKey(PropertyIds.CMIS_OBJECT_ID)) {
-      throw new CmisInvalidArgumentException("Property " + PropertyIds.CMIS_OBJECT_ID
+    if (properties.getProperties().containsKey(PropertyIds.OBJECT_ID)) {
+      throw new CmisInvalidArgumentException("Property " + PropertyIds.OBJECT_ID
           + " must not be set!");
     }
   }

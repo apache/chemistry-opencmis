@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.PropertyDateTimeData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeData;
 
 /**
  * DateTime property data implementation.

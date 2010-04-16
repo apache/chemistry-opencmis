@@ -25,10 +25,10 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.setHolderValu
 import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.DiscoveryService;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;

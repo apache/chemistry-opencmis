@@ -22,7 +22,7 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
 
 public class PersistentPolicyImpl extends AbstractPersistentFilableCmisObject implements Policy {
 
@@ -35,7 +35,7 @@ public class PersistentPolicyImpl extends AbstractPersistentFilableCmisObject im
   }
 
   public String getPolicyText() {
-    return getPropertyValue(PropertyIds.CMIS_POLICY_TEXT);
+    return getPropertyValue(PropertyIds.POLICY_TEXT);
   }
 
 }

@@ -32,8 +32,7 @@ import java.util.UUID;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.enums.CmisProperties;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.junit.Test;
@@ -80,8 +79,8 @@ public class WriteObjectIT extends AbstractSessionTest {
         */
 
         Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(PropertyIds.CMIS_NAME, folderName);
-        properties.put(PropertyIds.CMIS_OBJECT_TYPE_ID, typeId);
+        properties.put(PropertyIds.NAME, folderName);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
 
         ObjectId id = this.session.createFolder(properties, parentId, null,
                 null, null);
@@ -133,8 +132,8 @@ public class WriteObjectIT extends AbstractSessionTest {
 */
 
         Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(PropertyIds.CMIS_NAME, folderName);
-        properties.put(PropertyIds.CMIS_OBJECT_TYPE_ID, typeId);
+        properties.put(PropertyIds.NAME, folderName);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
 
         String filename = UUID.randomUUID().toString();
         String mimetype = "text/html; charset=UTF-8";
@@ -194,7 +193,7 @@ public class WriteObjectIT extends AbstractSessionTest {
             String name = UUID.randomUUID().toString();
 
             Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put(PropertyIds.CMIS_NAME, name);
+            properties.put(PropertyIds.NAME, name);
 
             ObjectId dstDocumentId = this.session.createDocumentFromSource(
                     srcDocument, properties, parentFolder,
@@ -261,7 +260,7 @@ public class WriteObjectIT extends AbstractSessionTest {
         Document document = (Document) this.session.getObjectByPath(path);
         assertNotNull("Document not found: " + path, document);
 
-        document.setProperty(CmisProperties.NAME.value(), "Neuer Name");
+        document.setProperty(PropertyIds.NAME, "Neuer Name");
         document.updateProperties();
         assertTrue(true);
     }

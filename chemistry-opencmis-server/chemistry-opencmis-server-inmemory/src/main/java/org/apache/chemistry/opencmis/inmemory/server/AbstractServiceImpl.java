@@ -19,9 +19,9 @@
 package org.apache.chemistry.opencmis.inmemory.server;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -89,7 +89,7 @@ public class AbstractServiceImpl {
   }
   
   protected TypeDefinition getTypeDefinition(String repositoryId, PropertiesData properties) {
-    String typeId = (String) properties.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID)
+    String typeId = (String) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID)
         .getFirstValue();
     TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
     if (typeDefC == null)

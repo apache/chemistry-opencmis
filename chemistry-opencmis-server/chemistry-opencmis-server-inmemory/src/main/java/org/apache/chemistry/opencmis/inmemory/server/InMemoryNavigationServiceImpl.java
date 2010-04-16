@@ -24,15 +24,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.ObjectList;
+import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -354,7 +354,7 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 
     List<ObjectInFolderContainer> childrenOfFolderId = null;
     if (maxLevels == -1 || level < maxLevels) {
-      String orderBy = PropertyIds.CMIS_NAME;
+      String orderBy = PropertyIds.NAME;
       ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
           includeAllowableActions, includeRelationships, renditionFilter, includePathSegments,
           1000, 0, folderOnly, objectInfos);

@@ -190,9 +190,9 @@ public class OperationContextImpl implements OperationContext, Serializable {
       return PROPERTIES_STAR;
     }
 
-    this.filter.add(PropertyIds.CMIS_OBJECT_ID);
-    this.filter.add(PropertyIds.CMIS_BASE_TYPE_ID);
-    this.filter.add(PropertyIds.CMIS_OBJECT_TYPE_ID);
+    this.filter.add(PropertyIds.OBJECT_ID);
+    this.filter.add(PropertyIds.BASE_TYPE_ID);
+    this.filter.add(PropertyIds.OBJECT_TYPE_ID);
 
     StringBuilder sb = new StringBuilder();
 

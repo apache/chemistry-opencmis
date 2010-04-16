@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.fit.runtime;
 
 import junit.framework.Assert;
 
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryCapabilities;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.RepositoryCapabilities;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;

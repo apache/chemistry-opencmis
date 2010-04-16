@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 
 /**
  * A simple interface to create the repository info. This needs to be implemented by a client (like a unit

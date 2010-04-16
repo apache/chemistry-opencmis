@@ -21,14 +21,14 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
-import org.apache.chemistry.opencmis.commons.bindings.ChangeEventInfoData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.PolicyIdListData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.ChangeEventInfoData;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.PolicyIdListData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 
 /**
@@ -52,7 +52,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
    * @see org.apache.opencmis.client.provider.ObjectData#getId()
    */
   public String getId() {
-    Object value = getFirstValue(PropertyIds.CMIS_OBJECT_ID);
+    Object value = getFirstValue(PropertyIds.OBJECT_ID);
     if (value instanceof String) {
       return (String) value;
     }
@@ -66,7 +66,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
    * @see org.apache.opencmis.client.provider.ObjectData#getBaseTypeId()
    */
   public BaseObjectTypeIds getBaseTypeId() {
-    Object value = getFirstValue(PropertyIds.CMIS_BASE_TYPE_ID);
+    Object value = getFirstValue(PropertyIds.BASE_TYPE_ID);
     if (value instanceof String) {
       try {
         return BaseObjectTypeIds.fromValue((String) value);

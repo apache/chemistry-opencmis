@@ -17,21 +17,21 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.bindings.factory.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.MultiFilingService;
-import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
-import org.apache.chemistry.opencmis.commons.bindings.VersioningService;
+import org.apache.chemistry.opencmis.commons.api.MultiFilingService;
+import org.apache.chemistry.opencmis.commons.api.NavigationService;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.api.ObjectService;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.RepositoryService;
+import org.apache.chemistry.opencmis.commons.api.VersioningService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -170,16 +170,16 @@ public class AbstractServiceTst /* extends TestCase*/ {
 
   protected PropertiesData createDocumentProperties(String name, String typeId) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, name));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, typeId));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
     PropertiesData props = fFactory.createPropertiesData(properties);
     return props;
   }
 
   protected PropertiesData createFolderProperties(String folderName, String typeId) {
     List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME, folderName));
-    properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, typeId));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, folderName));
+    properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
     PropertiesData props = fFactory.createPropertiesData(properties);
     return props;
   }
@@ -262,10 +262,10 @@ public class AbstractServiceTst /* extends TestCase*/ {
   protected String getPathOfFolder(String id) {
     String path=null;
     try {
-      String filter = PropertyIds.CMIS_PATH;
+      String filter = PropertyIds.PATH;
       PropertiesData res = fObjSvc.getProperties(fRepositoryId, id, filter, null);
       assertNotNull(res);
-      PropertyData<String> pd = (PropertyData<String>) res.getProperties().get(PropertyIds.CMIS_PATH);
+      PropertyData<String> pd = (PropertyData<String>) res.getProperties().get(PropertyIds.PATH);
       assertNotNull(pd);
       path = pd.getFirstValue();
       assertNotNull(path);
@@ -281,7 +281,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
     String filter = "*";
     List<ObjectParentData> parentData = fNavSvc.getObjectParents(fRepositoryId, id, filter, false, IncludeRelationships.NONE, null, true, null);
     String name = parentData.get(0).getRelativePathSegment();
-    PropertyData<String> pd = (PropertyData<String>) parentData.get(0).getObject().getProperties().getProperties().get(PropertyIds.CMIS_PATH);
+    PropertyData<String> pd = (PropertyData<String>) parentData.get(0).getObject().getProperties().getProperties().get(PropertyIds.PATH);
     assertNotNull(pd);
     path = pd.getFirstValue() + "/" + name;
     return path;
@@ -314,7 +314,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
       LOG.debug("return property id: " + pd.getId() + ", value: " + pd.getValues());
     }
 
-    PropertyData<?> pd = props.get(PropertyIds.CMIS_OBJECT_ID);
+    PropertyData<?> pd = props.get(PropertyIds.OBJECT_ID);
     assertNotNull(pd);
     assertEquals(objectId, pd.getFirstValue());
   }
@@ -356,7 +356,7 @@ public class AbstractServiceTst /* extends TestCase*/ {
 
   protected String getStringProperty(ObjectData objData, String propertyKey) {
     PropertyData<? extends Object> pd = (PropertyData<? extends Object>) objData.getProperties()
-        .getProperties().get(PropertyIds.CMIS_PATH);
+        .getProperties().get(PropertyIds.PATH);
     assertNotNull(pd.getFirstValue());
     assertTrue(pd.getFirstValue() instanceof String);
     return (String)pd.getFirstValue();

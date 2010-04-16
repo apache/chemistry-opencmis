@@ -34,10 +34,10 @@ import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -55,60 +55,60 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
   // properties
 
   public String getCheckinComment() {
-    return getPropertyValue(PropertyIds.CMIS_CHECKIN_COMMENT);
+    return getPropertyValue(PropertyIds.CHECKIN_COMMENT);
   }
 
   public String getVersionLabel() {
-    return getPropertyValue(PropertyIds.CMIS_VERSION_LABEL);
+    return getPropertyValue(PropertyIds.VERSION_LABEL);
   }
 
   public String getVersionSeriesId() {
-    return getPropertyValue(PropertyIds.CMIS_VERSION_SERIES_ID);
+    return getPropertyValue(PropertyIds.VERSION_SERIES_ID);
   }
 
   public String getVersionSeriesCheckedOutId() {
-    return getPropertyValue(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID);
+    return getPropertyValue(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID);
   }
 
   public String getVersionSeriesCheckedOutBy() {
-    return getPropertyValue(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY);
+    return getPropertyValue(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY);
   }
 
   public Boolean isImmutable() {
-    return getPropertyValue(PropertyIds.CMIS_IS_IMMUTABLE);
+    return getPropertyValue(PropertyIds.IS_IMMUTABLE);
   }
 
   public Boolean isLatestMajorVersion() {
-    return getPropertyValue(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION);
+    return getPropertyValue(PropertyIds.IS_LATEST_MAJOR_VERSION);
   }
 
   public Boolean isLatestVersion() {
-    return getPropertyValue(PropertyIds.CMIS_IS_LATEST_VERSION);
+    return getPropertyValue(PropertyIds.IS_LATEST_VERSION);
   }
 
   public Boolean isMajorVersion() {
-    return getPropertyValue(PropertyIds.CMIS_IS_MAJOR_VERSION);
+    return getPropertyValue(PropertyIds.IS_MAJOR_VERSION);
   }
 
   public Boolean isVersionSeriesCheckedOut() {
-    return getPropertyValue(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT);
+    return getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
   }
 
   public long getContentStreamLength() {
-    BigInteger bigInt = getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_LENGTH);
+    BigInteger bigInt = getPropertyValue(PropertyIds.CONTENT_STREAM_LENGTH);
     return (bigInt == null) ? (long) -1 : bigInt.longValue();
   }
 
   public String getContentStreamMimeType() {
-    return getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE);
+    return getPropertyValue(PropertyIds.CONTENT_STREAM_MIME_TYPE);
   }
 
   public String getContentStreamFileName() {
-    return getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME);
+    return getPropertyValue(PropertyIds.CONTENT_STREAM_FILE_NAME);
   }
 
   public String getContentStreamId() {
-    return getPropertyValue(PropertyIds.CMIS_CONTENT_STREAM_ID);
+    return getPropertyValue(PropertyIds.CONTENT_STREAM_ID);
   }
 
   // operations
@@ -322,7 +322,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     readLock();
     try {
       objectId = getObjectId();
-      changeToken = getPropertyValue(PropertyIds.CMIS_CHANGE_TOKEN);
+      changeToken = getPropertyValue(PropertyIds.CHANGE_TOKEN);
     }
     finally {
       readUnlock();
@@ -353,7 +353,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     readLock();
     try {
       objectId = getObjectId();
-      changeToken = getPropertyValue(PropertyIds.CMIS_CHANGE_TOKEN);
+      changeToken = getPropertyValue(PropertyIds.CHANGE_TOKEN);
     }
     finally {
       readUnlock();

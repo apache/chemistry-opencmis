@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.fit.bindings;
 
-import org.apache.chemistry.opencmis.commons.bindings.CmisBinding;
+import org.apache.chemistry.opencmis.commons.api.CmisBinding;
 import org.apache.chemistry.opencmis.fit.SessionFactory;
 
 /**

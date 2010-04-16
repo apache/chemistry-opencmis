@@ -25,20 +25,20 @@ import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyBooleanData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyDateTimeData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyDecimalData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyHtmlData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyIntegerData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyUriData;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyBooleanData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDecimalData;
+import org.apache.chemistry.opencmis.commons.api.PropertyHtmlData;
+import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.PropertyIntegerData;
+import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.PropertyUriData;
 
 /**
  * CMIS binding object factory implementation.

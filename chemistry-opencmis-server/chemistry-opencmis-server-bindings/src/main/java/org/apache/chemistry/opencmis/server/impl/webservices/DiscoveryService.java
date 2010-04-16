@@ -29,7 +29,7 @@ import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
+import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
@@ -60,7 +60,7 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
       CmisDiscoveryService service = factory.getDiscoveryService();
       CallContext context = createContext(fContext);
 
-      org.apache.chemistry.opencmis.commons.bindings.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
+      org.apache.chemistry.opencmis.commons.api.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
 
       ObjectList changesList = service.getContentChanges(context, repositoryId,
           changeLogTokenHolder, includeProperties, filter, includePolicyIds, includeAcl, maxItems,

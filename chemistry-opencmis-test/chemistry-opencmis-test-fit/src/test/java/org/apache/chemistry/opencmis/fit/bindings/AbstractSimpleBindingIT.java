@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.Test;
@@ -62,9 +62,9 @@ public abstract class AbstractSimpleBindingIT extends AbstractBindingIT {
     // set up properties
     List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
     propertyList.add(getBinding().getObjectFactory().createPropertyStringData(
-        PropertyIds.CMIS_NAME, "testdoc.txt"));
+        PropertyIds.NAME, "testdoc.txt"));
     propertyList.add(getBinding().getObjectFactory().createPropertyIdData(
-        PropertyIds.CMIS_OBJECT_TYPE_ID, DOCUMENT_TYPE));
+        PropertyIds.OBJECT_TYPE_ID, DOCUMENT_TYPE));
 
     PropertiesData properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
 

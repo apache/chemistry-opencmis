@@ -27,18 +27,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.ObjectList;
+import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.RenditionData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryCapabilities;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryCapabilities;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -127,23 +127,23 @@ public class ObjectInfoHelper
             return false;
         if (filter.equals("*"))
             return true;
-        if (!filter.contains(PropertyIds.CMIS_NAME))
+        if (!filter.contains(PropertyIds.NAME))
             return false;
-        if (!filter.contains(PropertyIds.CMIS_CREATED_BY))
+        if (!filter.contains(PropertyIds.CREATED_BY))
             return false;
-        if (!filter.contains(PropertyIds.CMIS_CREATION_DATE))
+        if (!filter.contains(PropertyIds.CREATION_DATE))
             return false;
-        if (!filter.contains(PropertyIds.CMIS_LAST_MODIFICATION_DATE))
+        if (!filter.contains(PropertyIds.LAST_MODIFICATION_DATE))
             return false;
-        if (!filter.contains(PropertyIds.CMIS_OBJECT_TYPE_ID))
+        if (!filter.contains(PropertyIds.OBJECT_TYPE_ID))
             return false;
-        if (!filter.contains(PropertyIds.CMIS_BASE_TYPE_ID))
+        if (!filter.contains(PropertyIds.BASE_TYPE_ID))
             return false;
-        if (!filter.contains(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME))
+        if (!filter.contains(PropertyIds.CONTENT_STREAM_FILE_NAME))
             return false;
-        if (!filter.contains(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE))
+        if (!filter.contains(PropertyIds.CONTENT_STREAM_MIME_TYPE))
             return false;
-        if (!filter.contains(PropertyIds.CMIS_CONTENT_STREAM_ID))
+        if (!filter.contains(PropertyIds.CONTENT_STREAM_ID))
             return false;
         return true;
         
@@ -196,20 +196,20 @@ public class ObjectInfoHelper
         ObjectInfoImpl objInfo = new ObjectInfoImpl();
        // Fill all setters:
         objInfo.setId(objData.getId());
-        objInfo.setName(getStringProperty(properties, PropertyIds.CMIS_NAME));
-        objInfo.setCreatedBy(getStringProperty(properties, PropertyIds.CMIS_CREATED_BY)); 
-        objInfo.setCreationDate(getDateProperty(properties, PropertyIds.CMIS_CREATION_DATE)); 
-        objInfo.setLastModificationDate(getDateProperty(properties, PropertyIds.CMIS_LAST_MODIFICATION_DATE));
-        objInfo.setTypeId(getStringProperty(properties, PropertyIds.CMIS_OBJECT_TYPE_ID));
-        String baseId = getStringProperty(properties, PropertyIds.CMIS_BASE_TYPE_ID);
+        objInfo.setName(getStringProperty(properties, PropertyIds.NAME));
+        objInfo.setCreatedBy(getStringProperty(properties, PropertyIds.CREATED_BY)); 
+        objInfo.setCreationDate(getDateProperty(properties, PropertyIds.CREATION_DATE)); 
+        objInfo.setLastModificationDate(getDateProperty(properties, PropertyIds.LAST_MODIFICATION_DATE));
+        objInfo.setTypeId(getStringProperty(properties, PropertyIds.OBJECT_TYPE_ID));
+        String baseId = getStringProperty(properties, PropertyIds.BASE_TYPE_ID);
         objInfo.setBaseType(BaseObjectTypeIds.fromValue(baseId));
         
-        boolean isVersioned = getStringProperty(properties, PropertyIds.CMIS_VERSION_SERIES_ID) != null;
+        boolean isVersioned = getStringProperty(properties, PropertyIds.VERSION_SERIES_ID) != null;
         // versioning information: 
         if (isVersioned) {          
-          objInfo.setIsCurrentVersion(getBooleanProperty(properties, PropertyIds.CMIS_IS_LATEST_VERSION)); 
-          objInfo.setVersionSeriesId(getStringProperty(properties, PropertyIds.CMIS_VERSION_SERIES_ID));
-          objInfo.setWorkingCopyId(getStringProperty(properties, PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID));
+          objInfo.setIsCurrentVersion(getBooleanProperty(properties, PropertyIds.IS_LATEST_VERSION)); 
+          objInfo.setVersionSeriesId(getStringProperty(properties, PropertyIds.VERSION_SERIES_ID));
+          objInfo.setWorkingCopyId(getStringProperty(properties, PropertyIds.VERSION_SERIES_CHECKED_OUT_ID));
           objInfo.setWorkingCopyOriginalId(null);
         } else { // unversioned document
           objInfo.setIsCurrentVersion (true); 
@@ -218,10 +218,10 @@ public class ObjectInfoHelper
           objInfo.setWorkingCopyOriginalId(null);
         }
         
-        String fileName = getStringProperty(properties, PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME);
-        String mimeType = getStringProperty(properties, PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE);
-        String streamId = getStringProperty(properties, PropertyIds.CMIS_CONTENT_STREAM_ID);
-        BigInteger length = getIntegerProperty(properties, PropertyIds.CMIS_CONTENT_STREAM_LENGTH);
+        String fileName = getStringProperty(properties, PropertyIds.CONTENT_STREAM_FILE_NAME);
+        String mimeType = getStringProperty(properties, PropertyIds.CONTENT_STREAM_MIME_TYPE);
+        String streamId = getStringProperty(properties, PropertyIds.CONTENT_STREAM_ID);
+        BigInteger length = getIntegerProperty(properties, PropertyIds.CONTENT_STREAM_LENGTH);
         boolean hasContent = fileName != null || mimeType != null || streamId != null || length != null;
         if (hasContent) {
           objInfo.setHasContent(hasContent);
@@ -234,7 +234,7 @@ public class ObjectInfoHelper
         }
         
         if (objInfo.getBaseType() == BaseObjectTypeIds.CMIS_FOLDER)
-            objInfo.setHasParent(getStringProperty(properties, PropertyIds.CMIS_PARENT_ID) != null);
+            objInfo.setHasParent(getStringProperty(properties, PropertyIds.PARENT_ID) != null);
         else if (objInfo.getBaseType() == BaseObjectTypeIds.CMIS_DOCUMENT) {
             if (repoCaps.isUnfilingSupported())
                 objInfo.setHasParent(documentHasParent(context, repositoryId, objData.getId()));
@@ -259,7 +259,7 @@ public class ObjectInfoHelper
         
         objInfo.setHasAcl(repoCaps.getAclCapability() != CapabilityAcl.NONE);
         
-        String baseTypeId = getStringProperty(properties, PropertyIds.CMIS_BASE_TYPE_ID);
+        String baseTypeId = getStringProperty(properties, PropertyIds.BASE_TYPE_ID);
         boolean isFolder = baseTypeId != null && baseTypeId.equals(BaseObjectTypeIds.CMIS_FOLDER.value());
         
         objInfo.setSupportsDescendants(isFolder && repoCaps.isGetDescendantsSupported());;
@@ -485,9 +485,9 @@ public class ObjectInfoHelper
         
         String objectId = objData.getId();
         for (ObjectData rel : objData.getRelationships()) {
-            String relId = getStringProperty(rel.getProperties().getProperties(), PropertyIds.CMIS_OBJECT_ID);
-            String sourceId = getStringProperty(rel.getProperties().getProperties(), PropertyIds.CMIS_SOURCE_ID);
-            String targetId = getStringProperty(rel.getProperties().getProperties(), PropertyIds.CMIS_TARGET_ID);
+            String relId = getStringProperty(rel.getProperties().getProperties(), PropertyIds.OBJECT_ID);
+            String sourceId = getStringProperty(rel.getProperties().getProperties(), PropertyIds.SOURCE_ID);
+            String targetId = getStringProperty(rel.getProperties().getProperties(), PropertyIds.TARGET_ID);
             if (objectId.equals(sourceId))
                 sourceIds.add(relId);
             if (objectId.equals(targetId))

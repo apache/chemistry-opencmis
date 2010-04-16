@@ -27,8 +27,8 @@ import java.util.TimeZone;
 import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
@@ -214,34 +214,34 @@ public class StoredObjectImpl implements StoredObject {
   public void fillProperties(Map<String, PropertyData<?>> properties,
       BindingsObjectFactory objFactory, List<String> requestedIds) {
     
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_NAME, requestedIds)) {
-      properties.put(PropertyIds.CMIS_NAME, objFactory.createPropertyStringData(PropertyIds.CMIS_NAME, getName()));
+    if (FilterParser.isContainedInFilter(PropertyIds.NAME, requestedIds)) {
+      properties.put(PropertyIds.NAME, objFactory.createPropertyStringData(PropertyIds.NAME, getName()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_OBJECT_ID, requestedIds)) {
-      properties.put(PropertyIds.CMIS_OBJECT_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_ID, getId()));
+    if (FilterParser.isContainedInFilter(PropertyIds.OBJECT_ID, requestedIds)) {
+      properties.put(PropertyIds.OBJECT_ID, objFactory.createPropertyIdData(PropertyIds.OBJECT_ID, getId()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_OBJECT_TYPE_ID, requestedIds)) {
-      properties.put(PropertyIds.CMIS_OBJECT_TYPE_ID, objFactory.createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID, getTypeId()));
+    if (FilterParser.isContainedInFilter(PropertyIds.OBJECT_TYPE_ID, requestedIds)) {
+      properties.put(PropertyIds.OBJECT_TYPE_ID, objFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, getTypeId()));
     }
     // set the base type id outside becaus it requires the type definition
 //    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_BASE_TYPE_ID, requestedIds)) {
 //      properties.add(objFactory.createPropertyIdData(PropertyIds.CMIS_BASE_TYPE_ID, getBaseTypeId()));
 //    }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CREATED_BY, requestedIds)) {
-      properties.put(PropertyIds.CMIS_CREATED_BY, objFactory.createPropertyStringData(PropertyIds.CMIS_CREATED_BY, getCreatedBy()));
+    if (FilterParser.isContainedInFilter(PropertyIds.CREATED_BY, requestedIds)) {
+      properties.put(PropertyIds.CREATED_BY, objFactory.createPropertyStringData(PropertyIds.CREATED_BY, getCreatedBy()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CREATION_DATE, requestedIds)) {
-      properties.put(PropertyIds.CMIS_CREATION_DATE, objFactory.createPropertyDateTimeData(PropertyIds.CMIS_CREATION_DATE, getCreatedAt()));
+    if (FilterParser.isContainedInFilter(PropertyIds.CREATION_DATE, requestedIds)) {
+      properties.put(PropertyIds.CREATION_DATE, objFactory.createPropertyDateTimeData(PropertyIds.CREATION_DATE, getCreatedAt()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_LAST_MODIFIED_BY, requestedIds)) {
-      properties.put(PropertyIds.CMIS_LAST_MODIFIED_BY, objFactory.createPropertyStringData(PropertyIds.CMIS_LAST_MODIFIED_BY, getModifiedBy()));
+    if (FilterParser.isContainedInFilter(PropertyIds.LAST_MODIFIED_BY, requestedIds)) {
+      properties.put(PropertyIds.LAST_MODIFIED_BY, objFactory.createPropertyStringData(PropertyIds.LAST_MODIFIED_BY, getModifiedBy()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_LAST_MODIFICATION_DATE, requestedIds)) {
-      properties.put(PropertyIds.CMIS_LAST_MODIFICATION_DATE, objFactory.createPropertyDateTimeData(PropertyIds.CMIS_LAST_MODIFICATION_DATE, getModifiedAt()));
+    if (FilterParser.isContainedInFilter(PropertyIds.LAST_MODIFICATION_DATE, requestedIds)) {
+      properties.put(PropertyIds.LAST_MODIFICATION_DATE, objFactory.createPropertyDateTimeData(PropertyIds.LAST_MODIFICATION_DATE, getModifiedAt()));
     }
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CHANGE_TOKEN, requestedIds)) {
+    if (FilterParser.isContainedInFilter(PropertyIds.CHANGE_TOKEN, requestedIds)) {
       String token = getChangeToken();
-      properties.put(PropertyIds.CMIS_CHANGE_TOKEN, objFactory.createPropertyStringData(PropertyIds.CMIS_CHANGE_TOKEN, token));
+      properties.put(PropertyIds.CHANGE_TOKEN, objFactory.createPropertyStringData(PropertyIds.CHANGE_TOKEN, token));
     }
 
     // add custom properties of type definition to the collection
@@ -282,8 +282,8 @@ public class StoredObjectImpl implements StoredObject {
     setModifiedBy(user);
     if (isCreated) {
       setCreatedBy(user);
-      setName((String) properties.get(PropertyIds.CMIS_NAME).getFirstValue());
-      setTypeId((String) properties.get(PropertyIds.CMIS_OBJECT_TYPE_ID).getFirstValue());
+      setName((String) properties.get(PropertyIds.NAME).getFirstValue());
+      setTypeId((String) properties.get(PropertyIds.OBJECT_TYPE_ID).getFirstValue());
     } else {
       setModifiedAtNow();
     }      
@@ -342,68 +342,68 @@ public class StoredObjectImpl implements StoredObject {
   */
   private void removeAllSystemProperties(Map<String, PropertyData<?>> properties) {
     // ---- base ----
-    if (properties.containsKey(PropertyIds.CMIS_NAME))
-      properties.remove(PropertyIds.CMIS_NAME);
-    if (properties.containsKey(PropertyIds.CMIS_OBJECT_ID))
-      properties.remove(PropertyIds.CMIS_OBJECT_ID);
-    if (properties.containsKey(PropertyIds.CMIS_OBJECT_TYPE_ID))
-      properties.remove(PropertyIds.CMIS_OBJECT_TYPE_ID);
-    if (properties.containsKey(PropertyIds.CMIS_BASE_TYPE_ID))
-      properties.remove(PropertyIds.CMIS_BASE_TYPE_ID);
-    if (properties.containsKey(PropertyIds.CMIS_CREATED_BY))
-      properties.remove(PropertyIds.CMIS_CREATED_BY);
-    if (properties.containsKey(PropertyIds.CMIS_CREATION_DATE))
-      properties.remove(PropertyIds.CMIS_CREATION_DATE);
-    if (properties.containsKey(PropertyIds.CMIS_LAST_MODIFIED_BY))
-      properties.remove(PropertyIds.CMIS_LAST_MODIFIED_BY);
-    if (properties.containsKey(PropertyIds.CMIS_LAST_MODIFICATION_DATE))
-      properties.remove(PropertyIds.CMIS_LAST_MODIFICATION_DATE);
-    if (properties.containsKey(PropertyIds.CMIS_CHANGE_TOKEN))
-      properties.remove(PropertyIds.CMIS_CHANGE_TOKEN);
+    if (properties.containsKey(PropertyIds.NAME))
+      properties.remove(PropertyIds.NAME);
+    if (properties.containsKey(PropertyIds.OBJECT_ID))
+      properties.remove(PropertyIds.OBJECT_ID);
+    if (properties.containsKey(PropertyIds.OBJECT_TYPE_ID))
+      properties.remove(PropertyIds.OBJECT_TYPE_ID);
+    if (properties.containsKey(PropertyIds.BASE_TYPE_ID))
+      properties.remove(PropertyIds.BASE_TYPE_ID);
+    if (properties.containsKey(PropertyIds.CREATED_BY))
+      properties.remove(PropertyIds.CREATED_BY);
+    if (properties.containsKey(PropertyIds.CREATION_DATE))
+      properties.remove(PropertyIds.CREATION_DATE);
+    if (properties.containsKey(PropertyIds.LAST_MODIFIED_BY))
+      properties.remove(PropertyIds.LAST_MODIFIED_BY);
+    if (properties.containsKey(PropertyIds.LAST_MODIFICATION_DATE))
+      properties.remove(PropertyIds.LAST_MODIFICATION_DATE);
+    if (properties.containsKey(PropertyIds.CHANGE_TOKEN))
+      properties.remove(PropertyIds.CHANGE_TOKEN);
     // ---- document ----
-    if (properties.containsKey(PropertyIds.CMIS_IS_IMMUTABLE))
-      properties.remove(PropertyIds.CMIS_IS_IMMUTABLE);
-    if (properties.containsKey(PropertyIds.CMIS_IS_LATEST_VERSION))
-      properties.remove(PropertyIds.CMIS_IS_LATEST_VERSION);
-    if (properties.containsKey(PropertyIds.CMIS_IS_MAJOR_VERSION))
-      properties.remove(PropertyIds.CMIS_IS_MAJOR_VERSION);
-    if (properties.containsKey(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION))
-      properties.remove(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION);
-    if (properties.containsKey(PropertyIds.CMIS_VERSION_LABEL))
-      properties.remove(PropertyIds.CMIS_VERSION_LABEL);
-    if (properties.containsKey(PropertyIds.CMIS_VERSION_SERIES_ID))
-      properties.remove(PropertyIds.CMIS_VERSION_SERIES_ID);
-    if (properties.containsKey(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT))
-      properties.remove(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT);
-    if (properties.containsKey(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY))
-      properties.remove(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_BY);
-    if (properties.containsKey(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID))
-      properties.remove(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID);
-    if (properties.containsKey(PropertyIds.CMIS_CHECKIN_COMMENT))
-      properties.remove(PropertyIds.CMIS_CHECKIN_COMMENT);
-    if (properties.containsKey(PropertyIds.CMIS_CONTENT_STREAM_LENGTH))
-      properties.remove(PropertyIds.CMIS_CONTENT_STREAM_LENGTH);
-    if (properties.containsKey(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE))
-      properties.remove(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE);
-    if (properties.containsKey(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME))
-      properties.remove(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME);
-    if (properties.containsKey(PropertyIds.CMIS_CONTENT_STREAM_ID))
-      properties.remove(PropertyIds.CMIS_CONTENT_STREAM_ID);
+    if (properties.containsKey(PropertyIds.IS_IMMUTABLE))
+      properties.remove(PropertyIds.IS_IMMUTABLE);
+    if (properties.containsKey(PropertyIds.IS_LATEST_VERSION))
+      properties.remove(PropertyIds.IS_LATEST_VERSION);
+    if (properties.containsKey(PropertyIds.IS_MAJOR_VERSION))
+      properties.remove(PropertyIds.IS_MAJOR_VERSION);
+    if (properties.containsKey(PropertyIds.IS_LATEST_MAJOR_VERSION))
+      properties.remove(PropertyIds.IS_LATEST_MAJOR_VERSION);
+    if (properties.containsKey(PropertyIds.VERSION_LABEL))
+      properties.remove(PropertyIds.VERSION_LABEL);
+    if (properties.containsKey(PropertyIds.VERSION_SERIES_ID))
+      properties.remove(PropertyIds.VERSION_SERIES_ID);
+    if (properties.containsKey(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT))
+      properties.remove(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
+    if (properties.containsKey(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY))
+      properties.remove(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY);
+    if (properties.containsKey(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID))
+      properties.remove(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID);
+    if (properties.containsKey(PropertyIds.CHECKIN_COMMENT))
+      properties.remove(PropertyIds.CHECKIN_COMMENT);
+    if (properties.containsKey(PropertyIds.CONTENT_STREAM_LENGTH))
+      properties.remove(PropertyIds.CONTENT_STREAM_LENGTH);
+    if (properties.containsKey(PropertyIds.CONTENT_STREAM_MIME_TYPE))
+      properties.remove(PropertyIds.CONTENT_STREAM_MIME_TYPE);
+    if (properties.containsKey(PropertyIds.CONTENT_STREAM_FILE_NAME))
+      properties.remove(PropertyIds.CONTENT_STREAM_FILE_NAME);
+    if (properties.containsKey(PropertyIds.CONTENT_STREAM_ID))
+      properties.remove(PropertyIds.CONTENT_STREAM_ID);
     // ---- folder ----     
-    if (properties.containsKey(PropertyIds.CMIS_PARENT_ID))
-      properties.remove(PropertyIds.CMIS_PARENT_ID);
-    if (properties.containsKey(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS))
-      properties.remove(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS);
-    if (properties.containsKey(PropertyIds.CMIS_PATH))
-      properties.remove(PropertyIds.CMIS_PATH);
+    if (properties.containsKey(PropertyIds.PARENT_ID))
+      properties.remove(PropertyIds.PARENT_ID);
+    if (properties.containsKey(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS))
+      properties.remove(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS);
+    if (properties.containsKey(PropertyIds.PATH))
+      properties.remove(PropertyIds.PATH);
     // ---- relationship ----
-    if (properties.containsKey(PropertyIds.CMIS_SOURCE_ID))
-      properties.remove(PropertyIds.CMIS_SOURCE_ID);
-    if (properties.containsKey(PropertyIds.CMIS_TARGET_ID))
-      properties.remove(PropertyIds.CMIS_TARGET_ID);
+    if (properties.containsKey(PropertyIds.SOURCE_ID))
+      properties.remove(PropertyIds.SOURCE_ID);
+    if (properties.containsKey(PropertyIds.TARGET_ID))
+      properties.remove(PropertyIds.TARGET_ID);
     // ---- policy ----
-    if (properties.containsKey(PropertyIds.CMIS_POLICY_TEXT))
-      properties.remove(PropertyIds.CMIS_POLICY_TEXT);
+    if (properties.containsKey(PropertyIds.POLICY_TEXT))
+      properties.remove(PropertyIds.POLICY_TEXT);
   }
 
 public void persist() {

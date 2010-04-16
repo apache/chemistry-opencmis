@@ -26,11 +26,11 @@ import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
@@ -50,7 +50,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
 
     // get object ids of the parent folders
     List<ObjectParentData> providerParents = getBinding().getNavigationService().getObjectParents(
-        getRepositoryId(), objectId, PropertyIds.CMIS_OBJECT_ID, false, IncludeRelationships.NONE,
+        getRepositoryId(), objectId, PropertyIds.OBJECT_ID, false, IncludeRelationships.NONE,
         null, false, null);
 
     List<Folder> parents = new ArrayList<Folder>();
@@ -63,7 +63,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
 
       // get id property
       PropertyData<?> idProperty = p.getObject().getProperties().getProperties().get(
-          PropertyIds.CMIS_OBJECT_ID);
+          PropertyIds.OBJECT_ID);
       if (!(idProperty instanceof PropertyIdData)) {
         // the repository sent an object without a valid object id...
         throw new CmisRuntimeException("Repository sent invalid data! No object id!");
@@ -93,7 +93,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
 
     // get object paths of the parent folders
     List<ObjectParentData> providerParents = getBinding().getNavigationService().getObjectParents(
-        getRepositoryId(), objectId, PropertyIds.CMIS_PATH, false, IncludeRelationships.NONE, null,
+        getRepositoryId(), objectId, PropertyIds.PATH, false, IncludeRelationships.NONE, null,
         true, null);
 
     List<String> paths = new ArrayList<String>();
@@ -106,7 +106,7 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
 
       // get path property
       PropertyData<?> pathProperty = p.getObject().getProperties().getProperties().get(
-          PropertyIds.CMIS_PATH);
+          PropertyIds.PATH);
       if (!(pathProperty instanceof PropertyStringData)) {
         // the repository sent a folder without a valid path...
         throw new CmisRuntimeException("Repository sent invalid data! No path property!");

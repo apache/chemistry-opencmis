@@ -20,16 +20,16 @@ package org.apache.chemistry.opencmis.inmemory.clientprovider;
 
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.bindings.AclService;
-import org.apache.chemistry.opencmis.commons.bindings.DiscoveryService;
-import org.apache.chemistry.opencmis.commons.bindings.MultiFilingService;
-import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectService;
-import org.apache.chemistry.opencmis.commons.bindings.PolicyService;
-import org.apache.chemistry.opencmis.commons.bindings.RelationshipService;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryService;
-import org.apache.chemistry.opencmis.commons.bindings.VersioningService;
+import org.apache.chemistry.opencmis.commons.api.AclService;
+import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.api.MultiFilingService;
+import org.apache.chemistry.opencmis.commons.api.NavigationService;
+import org.apache.chemistry.opencmis.commons.api.ObjectService;
+import org.apache.chemistry.opencmis.commons.api.PolicyService;
+import org.apache.chemistry.opencmis.commons.api.RelationshipService;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.api.RepositoryService;
+import org.apache.chemistry.opencmis.commons.api.VersioningService;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryDiscoveryServiceImpl;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryMultiFilingServiceImpl;

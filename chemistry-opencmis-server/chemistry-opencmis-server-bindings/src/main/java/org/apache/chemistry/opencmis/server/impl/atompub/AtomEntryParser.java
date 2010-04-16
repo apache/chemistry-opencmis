@@ -34,13 +34,13 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -115,7 +115,7 @@ public class AtomEntryParser {
       return null;
     }
 
-    PropertyData<?> property = propertiesMap.get(PropertyIds.CMIS_OBJECT_ID);
+    PropertyData<?> property = propertiesMap.get(PropertyIds.OBJECT_ID);
     if (property instanceof PropertyIdData) {
       return ((PropertyIdData) property).getFirstValue();
     }
@@ -238,7 +238,7 @@ public class AtomEntryParser {
 
     // overwrite cmis:name with Atom title
     if ((fObject != null) && (fObject.getProperties() != null) && (atomTitle != null)) {
-      PropertyStringData nameProperty = new PropertyStringDataImpl(PropertyIds.CMIS_NAME, atomTitle);
+      PropertyStringData nameProperty = new PropertyStringDataImpl(PropertyIds.NAME, atomTitle);
       ((PropertiesDataImpl) fObject.getProperties()).addProperty(nameProperty);
     }
   }

@@ -31,8 +31,8 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFee
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.PolicyService;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.PolicyService;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -149,7 +149,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
     }
 
     UrlBuilder url = new UrlBuilder(link);
-    url.addParameter(Constants.PARAM_FILTER, PropertyIds.CMIS_OBJECT_ID);
+    url.addParameter(Constants.PARAM_FILTER, PropertyIds.OBJECT_ID);
 
     // read and parse
     HttpUtils.Response resp = read(url);
@@ -198,7 +198,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
     }
 
     for (CmisProperty property : object.getProperties().getProperty()) {
-      if (PropertyIds.CMIS_OBJECT_ID.equals(property.getPropertyDefinitionId())
+      if (PropertyIds.OBJECT_ID.equals(property.getPropertyDefinitionId())
           && (property instanceof CmisPropertyId)) {
         List<String> values = ((CmisPropertyId) property).getValue();
         if (values.size() == 1) {

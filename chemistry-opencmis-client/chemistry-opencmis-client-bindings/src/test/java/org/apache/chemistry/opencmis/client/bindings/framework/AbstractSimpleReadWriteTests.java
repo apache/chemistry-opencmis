@@ -23,13 +23,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -66,8 +66,8 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     // create folder
     List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
-    propList.add(getObjectFactory().createPropertyStringData(PropertyIds.CMIS_NAME, "testfolder"));
-    propList.add(getObjectFactory().createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID,
+    propList.add(getObjectFactory().createPropertyStringData(PropertyIds.NAME, "testfolder"));
+    propList.add(getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
         getDefaultFolderType()));
 
     PropertiesData properties = getObjectFactory().createPropertiesData(propList);
@@ -91,8 +91,8 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     // create document
     List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
-    propList.add(getObjectFactory().createPropertyStringData(PropertyIds.CMIS_NAME, "testdoc.txt"));
-    propList.add(getObjectFactory().createPropertyIdData(PropertyIds.CMIS_OBJECT_TYPE_ID,
+    propList.add(getObjectFactory().createPropertyStringData(PropertyIds.NAME, "testdoc.txt"));
+    propList.add(getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID,
         getDefaultDocumentType()));
 
     PropertiesData properties = getObjectFactory().createPropertiesData(propList);
@@ -153,7 +153,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     // create a copy
     List<PropertyData<?>> propList2 = new ArrayList<PropertyData<?>>();
-    propList2.add(getObjectFactory().createPropertyStringData(PropertyIds.CMIS_NAME,
+    propList2.add(getObjectFactory().createPropertyStringData(PropertyIds.NAME,
         "testdoc.copy.txt"));
 
     PropertiesData properties2 = getObjectFactory().createPropertiesData(propList2);
@@ -265,7 +265,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     // update
     List<PropertyData<?>> updatePropList = new ArrayList<PropertyData<?>>();
-    updatePropList.add(getObjectFactory().createPropertyStringData(PropertyIds.CMIS_NAME, name2));
+    updatePropList.add(getObjectFactory().createPropertyStringData(PropertyIds.NAME, name2));
 
     PropertiesData updateProperties = getObjectFactory().createPropertiesData(updatePropList);
 
@@ -278,7 +278,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     ObjectData updatedObject = getObject(docId);
     String updatedName = (String) updatedObject.getProperties().getProperties().get(
-        PropertyIds.CMIS_NAME).getFirstValue();
+        PropertyIds.NAME).getFirstValue();
     assertNotNull(updatedName);
     assertEquals(name2, updatedName);
 
@@ -416,7 +416,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
   private boolean isCheckedOut(String docId) {
     ObjectData object = getObject(docId);
     PropertyData<?> isCheckedOut = object.getProperties().getProperties().get(
-        PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT);
+        PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
     assertNotNull(isCheckedOut);
     assertTrue(isCheckedOut.getFirstValue() instanceof Boolean);
 

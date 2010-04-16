@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.bindings.PropertyDecimalData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDecimalData;
 
 /**
  * Decimal property data implementation.

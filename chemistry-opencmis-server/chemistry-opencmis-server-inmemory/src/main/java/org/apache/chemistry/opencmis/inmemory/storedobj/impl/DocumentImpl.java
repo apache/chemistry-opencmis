@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.commons.logging.Log;
@@ -94,25 +94,25 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     // fill the version related properties (versions should override this but the spec requires some
     // properties always to be set
 
-    if (FilterParser.isContainedInFilter(PropertyIds.CMIS_IS_IMMUTABLE, requestedIds)) {
-      properties.put(PropertyIds.CMIS_IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.CMIS_IS_IMMUTABLE, false));
+    if (FilterParser.isContainedInFilter(PropertyIds.IS_IMMUTABLE, requestedIds)) {
+      properties.put(PropertyIds.IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE, false));
     }
 
     // Set the content related properties
     if (null != fContent) {
-      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, requestedIds)) {
-        properties.put(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, objFactory
-            .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, fContent
+      if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_FILE_NAME, requestedIds)) {
+        properties.put(PropertyIds.CONTENT_STREAM_FILE_NAME, objFactory
+            .createPropertyStringData(PropertyIds.CONTENT_STREAM_FILE_NAME, fContent
                 .getFileName()));
       }
       // omit: PropertyIds.CMIS_CONTENT_STREAM_ID
-      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, requestedIds)) {
-        properties.put(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, objFactory
-            .createPropertyIntegerData(PropertyIds.CMIS_CONTENT_STREAM_LENGTH, fContent.getBigLength()));
+      if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
+        properties.put(PropertyIds.CONTENT_STREAM_LENGTH, objFactory
+            .createPropertyIntegerData(PropertyIds.CONTENT_STREAM_LENGTH, fContent.getBigLength()));
       }
-      if (FilterParser.isContainedInFilter(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, requestedIds)) {
-        properties.put(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, objFactory
-            .createPropertyStringData(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
+      if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_MIME_TYPE, requestedIds)) {
+        properties.put(PropertyIds.CONTENT_STREAM_MIME_TYPE, objFactory
+            .createPropertyStringData(PropertyIds.CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
       }
     }
   }

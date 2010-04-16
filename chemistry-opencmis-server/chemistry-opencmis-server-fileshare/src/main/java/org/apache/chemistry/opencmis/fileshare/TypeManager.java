@@ -178,99 +178,99 @@ public class TypeManager {
   }
 
   private void addBasePropertyDefinitions(AbstractTypeDefinition type) {
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_BASE_TYPE_ID, "Base Type Id",
+    type.addPropertyDefinition(createPropDef(PropertyIds.BASE_TYPE_ID, "Base Type Id",
         "Base Type Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_OBJECT_ID, "Object Id", "Object Id",
+    type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_ID, "Object Id", "Object Id",
         PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_OBJECT_TYPE_ID, "Type Id", "Type Id",
+    type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_TYPE_ID, "Type Id", "Type Id",
         PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_NAME, "Name", "Name",
+    type.addPropertyDefinition(createPropDef(PropertyIds.NAME, "Name", "Name",
         PropertyType.STRING, Cardinality.SINGLE, Updatability.READWRITE, false, true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_CREATED_BY, "Created By",
+    type.addPropertyDefinition(createPropDef(PropertyIds.CREATED_BY, "Created By",
         "Created By", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_CREATION_DATE, "Creation Date",
+    type.addPropertyDefinition(createPropDef(PropertyIds.CREATION_DATE, "Creation Date",
         "Creation Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, false,
         true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_LAST_MODIFIED_BY, "Last Modified By",
+    type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFIED_BY, "Last Modified By",
         "Last Modified By", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false,
         true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_LAST_MODIFICATION_DATE,
+    type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFICATION_DATE,
         "Last Modification Date", "Last Modification Date", PropertyType.DATETIME,
         Cardinality.SINGLE, Updatability.READONLY, false, true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_CHANGE_TOKEN, "Change Token",
+    type.addPropertyDefinition(createPropDef(PropertyIds.CHANGE_TOKEN, "Change Token",
         "Change Token", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false,
         false));
   }
 
   private void addFolderPropertyDefinitions(FolderTypeDefinitionImpl type) {
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_PARENT_ID, "Parent Id", "Parent Id",
+    type.addPropertyDefinition(createPropDef(PropertyIds.PARENT_ID, "Parent Id", "Parent Id",
         PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS,
+    type.addPropertyDefinition(createPropDef(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
         "Allowed Child Object Type Ids", "Allowed Child Object Type Ids", PropertyType.ID,
         Cardinality.MULTI, Updatability.READONLY, false, false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_PATH, "Path", "Path",
+    type.addPropertyDefinition(createPropDef(PropertyIds.PATH, "Path", "Path",
         PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
   }
 
   private void addDocumentPropertyDefinitions(DocumentTypeDefinitionImpl type) {
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_IS_IMMUTABLE, "Is Immutable",
+    type.addPropertyDefinition(createPropDef(PropertyIds.IS_IMMUTABLE, "Is Immutable",
         "Is Immutable", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, false,
         false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_IS_LATEST_VERSION,
+    type.addPropertyDefinition(createPropDef(PropertyIds.IS_LATEST_VERSION,
         "Is Latest Version", "Is Latest Version", PropertyType.BOOLEAN, Cardinality.SINGLE,
         Updatability.READONLY, false, false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_IS_MAJOR_VERSION, "Is Major Version",
+    type.addPropertyDefinition(createPropDef(PropertyIds.IS_MAJOR_VERSION, "Is Major Version",
         "Is Major Version", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, false,
         false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION,
+    type.addPropertyDefinition(createPropDef(PropertyIds.IS_LATEST_MAJOR_VERSION,
         "Is Latest Major Version", "Is Latest Major Version", PropertyType.BOOLEAN,
         Cardinality.SINGLE, Updatability.READONLY, false, false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_VERSION_LABEL, "Version Label",
+    type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_LABEL, "Version Label",
         "Version Label", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false,
         true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_VERSION_SERIES_ID,
+    type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_ID,
         "Version Series Id", "Version Series Id", PropertyType.ID, Cardinality.SINGLE,
         Updatability.READONLY, false, true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_IS_VERSION_SERIES_CHECKED_OUT,
+    type.addPropertyDefinition(createPropDef(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
         "Is Verison Series Checked Out", "Is Verison Series Checked Out", PropertyType.BOOLEAN,
         Cardinality.SINGLE, Updatability.READONLY, false, true));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_VERSION_SERIES_CHECKED_OUT_ID,
+    type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
         "Version Series Checked Out Id", "Version Series Checked Out Id", PropertyType.ID,
         Cardinality.SINGLE, Updatability.READONLY, false, false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_CHECKIN_COMMENT, "Checkin Comment",
+    type.addPropertyDefinition(createPropDef(PropertyIds.CHECKIN_COMMENT, "Checkin Comment",
         "Checkin Comment", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false,
         false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_CONTENT_STREAM_LENGTH,
+    type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_LENGTH,
         "Content Stream Length", "Content Stream Length", PropertyType.INTEGER, Cardinality.SINGLE,
         Updatability.READONLY, false, false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE,
+    type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_MIME_TYPE,
         "MIME Type", "MIME Type", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY,
         false, false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, "Filename",
+    type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_FILE_NAME, "Filename",
         "Filename", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
-    type.addPropertyDefinition(createPropDef(PropertyIds.CMIS_CONTENT_STREAM_ID,
+    type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_ID,
         "Content Stream Id", "Content Stream Id", PropertyType.ID, Cardinality.SINGLE,
         Updatability.READONLY, false, false));
   }

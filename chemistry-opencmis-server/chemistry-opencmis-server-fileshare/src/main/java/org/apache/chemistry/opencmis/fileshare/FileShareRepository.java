@@ -45,29 +45,29 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.api.Holder;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.api.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.api.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
+import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.AllowableActions;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
-import org.apache.chemistry.opencmis.commons.bindings.Holder;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.bindings.PermissionDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.PermissionMapping;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyDateTimeData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
-import org.apache.chemistry.opencmis.commons.bindings.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.AllowableActionsEnum;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
@@ -407,7 +407,7 @@ public class FileShareRepository {
         .currentTimeMillis()), context.getUsername(), properties);
 
     // check the name
-    String name = getStringProperty(properties, PropertyIds.CMIS_NAME);
+    String name = getStringProperty(properties, PropertyIds.NAME);
     if (!isValidName(name)) {
       throw new CmisNameConstraintViolationException("Name is not valid!");
     }
@@ -490,7 +490,7 @@ public class FileShareRepository {
     readCustomProperties(source, sourceProperties, null, new ObjectInfoImpl());
 
     // get the type id
-    String typeId = getIdProperty(sourceProperties, PropertyIds.CMIS_OBJECT_TYPE_ID);
+    String typeId = getIdProperty(sourceProperties, PropertyIds.OBJECT_TYPE_ID);
     if (typeId == null) {
       typeId = TypeManager.DOCUMENT_TYPE_ID;
     }
@@ -498,10 +498,10 @@ public class FileShareRepository {
     // copy properties
     PropertiesDataImpl newProperties = new PropertiesDataImpl();
     for (PropertyData<?> prop : sourceProperties.getProperties().values()) {
-      if ((prop.getId().equals(PropertyIds.CMIS_OBJECT_TYPE_ID))
-          || (prop.getId().equals(PropertyIds.CMIS_CREATED_BY))
-          || (prop.getId().equals(PropertyIds.CMIS_CREATION_DATE))
-          || (prop.getId().equals(PropertyIds.CMIS_LAST_MODIFIED_BY))) {
+      if ((prop.getId().equals(PropertyIds.OBJECT_TYPE_ID))
+          || (prop.getId().equals(PropertyIds.CREATED_BY))
+          || (prop.getId().equals(PropertyIds.CREATION_DATE))
+          || (prop.getId().equals(PropertyIds.LAST_MODIFIED_BY))) {
         continue;
       }
 
@@ -511,7 +511,7 @@ public class FileShareRepository {
     // replace properties
     if (properties != null) {
       // find new name
-      String newName = getStringProperty(properties, PropertyIds.CMIS_NAME);
+      String newName = getStringProperty(properties, PropertyIds.NAME);
       if (newName != null) {
         if (!isValidName(newName)) {
           throw new CmisNameConstraintViolationException("Name is not valid!");
@@ -548,12 +548,12 @@ public class FileShareRepository {
       }
     }
 
-    addPropertyId(newProperties, typeId, null, PropertyIds.CMIS_OBJECT_TYPE_ID, typeId);
-    addPropertyString(newProperties, typeId, null, PropertyIds.CMIS_CREATED_BY, context
+    addPropertyId(newProperties, typeId, null, PropertyIds.OBJECT_TYPE_ID, typeId);
+    addPropertyString(newProperties, typeId, null, PropertyIds.CREATED_BY, context
         .getUsername());
-    addPropertyDateTime(newProperties, typeId, null, PropertyIds.CMIS_CREATION_DATE,
+    addPropertyDateTime(newProperties, typeId, null, PropertyIds.CREATION_DATE,
         millisToCalendar(System.currentTimeMillis()));
-    addPropertyString(newProperties, typeId, null, PropertyIds.CMIS_LAST_MODIFIED_BY, context
+    addPropertyString(newProperties, typeId, null, PropertyIds.LAST_MODIFIED_BY, context
         .getUsername());
 
     // check the file
@@ -619,7 +619,7 @@ public class FileShareRepository {
         .currentTimeMillis()), context.getUsername(), properties);
 
     // check the name
-    String name = getStringProperty(properties, PropertyIds.CMIS_NAME);
+    String name = getStringProperty(properties, PropertyIds.NAME);
     if (!isValidName(name)) {
       throw new CmisNameConstraintViolationException("Name is not valid.");
     }
@@ -807,7 +807,7 @@ public class FileShareRepository {
     File file = getFile(objectId.getValue());
 
     // get and check the new name
-    String newName = getStringProperty(properties, PropertyIds.CMIS_NAME);
+    String newName = getStringProperty(properties, PropertyIds.NAME);
     boolean isRename = (newName != null) && (!file.getName().equals(newName));
     if (isRename && !isValidName(newName)) {
       throw new CmisNameConstraintViolationException("Name is not valid!");
@@ -818,20 +818,20 @@ public class FileShareRepository {
     readCustomProperties(file, oldProperties, null, new ObjectInfoImpl());
 
     // get the type id
-    String typeId = getIdProperty(oldProperties, PropertyIds.CMIS_OBJECT_TYPE_ID);
+    String typeId = getIdProperty(oldProperties, PropertyIds.OBJECT_TYPE_ID);
     if (typeId == null) {
       typeId = (file.isDirectory() ? TypeManager.FOLDER_TYPE_ID : TypeManager.DOCUMENT_TYPE_ID);
     }
 
     // get the creator
-    String creator = getStringProperty(oldProperties, PropertyIds.CMIS_CREATED_BY);
+    String creator = getStringProperty(oldProperties, PropertyIds.CREATED_BY);
     if (creator == null) {
       creator = context.getUsername();
     }
 
     // get creation date
     GregorianCalendar creationDate = getDateTimeProperty(oldProperties,
-        PropertyIds.CMIS_CREATION_DATE);
+        PropertyIds.CREATION_DATE);
     if (creationDate == null) {
       creationDate = millisToCalendar(file.lastModified());
     }
@@ -1364,23 +1364,23 @@ public class FileShareRepository {
 
       // id
       String id = fileToId(file);
-      addPropertyId(result, typeId, filter, PropertyIds.CMIS_OBJECT_ID, id);
+      addPropertyId(result, typeId, filter, PropertyIds.OBJECT_ID, id);
       objectInfo.setId(id);
 
       // name
       String name = file.getName();
-      addPropertyString(result, typeId, filter, PropertyIds.CMIS_NAME, name);
+      addPropertyString(result, typeId, filter, PropertyIds.NAME, name);
       objectInfo.setName(name);
 
       // created and modified by
-      addPropertyString(result, typeId, filter, PropertyIds.CMIS_CREATED_BY, USER_UNKNOWN);
-      addPropertyString(result, typeId, filter, PropertyIds.CMIS_LAST_MODIFIED_BY, USER_UNKNOWN);
+      addPropertyString(result, typeId, filter, PropertyIds.CREATED_BY, USER_UNKNOWN);
+      addPropertyString(result, typeId, filter, PropertyIds.LAST_MODIFIED_BY, USER_UNKNOWN);
       objectInfo.setCreatedBy(USER_UNKNOWN);
 
       // creation and modification date
       GregorianCalendar lastModified = millisToCalendar(file.lastModified());
-      addPropertyDateTime(result, typeId, filter, PropertyIds.CMIS_CREATION_DATE, lastModified);
-      addPropertyDateTime(result, typeId, filter, PropertyIds.CMIS_LAST_MODIFICATION_DATE,
+      addPropertyDateTime(result, typeId, filter, PropertyIds.CREATION_DATE, lastModified);
+      addPropertyDateTime(result, typeId, filter, PropertyIds.LAST_MODIFICATION_DATE,
           lastModified);
       objectInfo.setCreationDate(lastModified);
       objectInfo.setLastModificationDate(lastModified);
@@ -1388,17 +1388,17 @@ public class FileShareRepository {
       // directory or file
       if (file.isDirectory()) {
         // base type and type name
-        addPropertyId(result, typeId, filter, PropertyIds.CMIS_BASE_TYPE_ID,
+        addPropertyId(result, typeId, filter, PropertyIds.BASE_TYPE_ID,
             BaseObjectTypeIds.CMIS_FOLDER.value());
-        addPropertyId(result, typeId, filter, PropertyIds.CMIS_OBJECT_TYPE_ID,
+        addPropertyId(result, typeId, filter, PropertyIds.OBJECT_TYPE_ID,
             TypeManager.FOLDER_TYPE_ID);
         String path = getRepositoryPath(file);
-        addPropertyString(result, typeId, filter, PropertyIds.CMIS_PATH, (path.length() == 0 ? "/"
+        addPropertyString(result, typeId, filter, PropertyIds.PATH, (path.length() == 0 ? "/"
             : path));
 
         // folder properties
         if (!fRoot.equals(file)) {
-          addPropertyId(result, typeId, filter, PropertyIds.CMIS_PARENT_ID, (fRoot.equals(file
+          addPropertyId(result, typeId, filter, PropertyIds.PARENT_ID, (fRoot.equals(file
               .getParentFile()) ? ROOT_ID : fileToId(file.getParentFile())));
           objectInfo.setHasParent(true);
         }
@@ -1408,24 +1408,24 @@ public class FileShareRepository {
       }
       else {
         // base type and type name
-        addPropertyId(result, typeId, filter, PropertyIds.CMIS_BASE_TYPE_ID,
+        addPropertyId(result, typeId, filter, PropertyIds.BASE_TYPE_ID,
             BaseObjectTypeIds.CMIS_DOCUMENT.value());
-        addPropertyId(result, typeId, filter, PropertyIds.CMIS_OBJECT_TYPE_ID,
+        addPropertyId(result, typeId, filter, PropertyIds.OBJECT_TYPE_ID,
             TypeManager.DOCUMENT_TYPE_ID);
 
         // file properties
-        addPropertyBoolean(result, typeId, filter, PropertyIds.CMIS_IS_IMMUTABLE, false);
-        addPropertyBoolean(result, typeId, filter, PropertyIds.CMIS_IS_LATEST_VERSION, true);
-        addPropertyBoolean(result, typeId, filter, PropertyIds.CMIS_IS_MAJOR_VERSION, true);
-        addPropertyBoolean(result, typeId, filter, PropertyIds.CMIS_IS_LATEST_MAJOR_VERSION, true);
-        addPropertyString(result, typeId, filter, PropertyIds.CMIS_VERSION_LABEL, file.getName());
-        addPropertyId(result, typeId, filter, PropertyIds.CMIS_VERSION_SERIES_ID, fileToId(file));
-        addPropertyString(result, typeId, filter, PropertyIds.CMIS_CHECKIN_COMMENT, "");
-        addPropertyInteger(result, typeId, filter, PropertyIds.CMIS_CONTENT_STREAM_LENGTH, file
+        addPropertyBoolean(result, typeId, filter, PropertyIds.IS_IMMUTABLE, false);
+        addPropertyBoolean(result, typeId, filter, PropertyIds.IS_LATEST_VERSION, true);
+        addPropertyBoolean(result, typeId, filter, PropertyIds.IS_MAJOR_VERSION, true);
+        addPropertyBoolean(result, typeId, filter, PropertyIds.IS_LATEST_MAJOR_VERSION, true);
+        addPropertyString(result, typeId, filter, PropertyIds.VERSION_LABEL, file.getName());
+        addPropertyId(result, typeId, filter, PropertyIds.VERSION_SERIES_ID, fileToId(file));
+        addPropertyString(result, typeId, filter, PropertyIds.CHECKIN_COMMENT, "");
+        addPropertyInteger(result, typeId, filter, PropertyIds.CONTENT_STREAM_LENGTH, file
             .length());
-        addPropertyString(result, typeId, filter, PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE,
+        addPropertyString(result, typeId, filter, PropertyIds.CONTENT_STREAM_MIME_TYPE,
             MIMETypes.getMIMEType(file));
-        addPropertyString(result, typeId, filter, PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME, file
+        addPropertyString(result, typeId, filter, PropertyIds.CONTENT_STREAM_FILE_NAME, file
             .getName());
 
         objectInfo.setContentType(MIMETypes.getMIMEType(file));
@@ -1489,29 +1489,29 @@ public class FileShareRepository {
       // overwrite object info
       if (prop instanceof PropertyStringData) {
         String firstValueStr = ((PropertyStringData) prop).getFirstValue();
-        if (PropertyIds.CMIS_NAME.equals(prop.getId())) {
+        if (PropertyIds.NAME.equals(prop.getId())) {
           objectInfo.setName(firstValueStr);
         }
-        else if (PropertyIds.CMIS_OBJECT_TYPE_ID.equals(prop.getId())) {
+        else if (PropertyIds.OBJECT_TYPE_ID.equals(prop.getId())) {
           objectInfo.setTypeId(firstValueStr);
         }
-        else if (PropertyIds.CMIS_CREATED_BY.equals(prop.getId())) {
+        else if (PropertyIds.CREATED_BY.equals(prop.getId())) {
           objectInfo.setCreatedBy(firstValueStr);
         }
-        else if (PropertyIds.CMIS_CONTENT_STREAM_MIME_TYPE.equals(prop.getId())) {
+        else if (PropertyIds.CONTENT_STREAM_MIME_TYPE.equals(prop.getId())) {
           objectInfo.setContentType(firstValueStr);
         }
-        else if (PropertyIds.CMIS_CONTENT_STREAM_FILE_NAME.equals(prop.getId())) {
+        else if (PropertyIds.CONTENT_STREAM_FILE_NAME.equals(prop.getId())) {
           objectInfo.setFileName(firstValueStr);
         }
       }
 
       if (prop instanceof PropertyDateTimeData) {
         GregorianCalendar firstValueCal = ((PropertyDateTimeData) prop).getFirstValue();
-        if (PropertyIds.CMIS_CREATION_DATE.equals(prop.getId())) {
+        if (PropertyIds.CREATION_DATE.equals(prop.getId())) {
           objectInfo.setCreationDate(firstValueCal);
         }
-        else if (PropertyIds.CMIS_LAST_MODIFICATION_DATE.equals(prop.getId())) {
+        else if (PropertyIds.LAST_MODIFICATION_DATE.equals(prop.getId())) {
           objectInfo.setLastModificationDate(firstValueCal);
         }
       }
@@ -1527,12 +1527,12 @@ public class FileShareRepository {
       }
 
       // don't overwrite id
-      if (PropertyIds.CMIS_OBJECT_ID.equals(prop.getId())) {
+      if (PropertyIds.OBJECT_ID.equals(prop.getId())) {
         continue;
       }
 
       // don't overwrite base type
-      if (PropertyIds.CMIS_BASE_TYPE_ID.equals(prop.getId())) {
+      if (PropertyIds.BASE_TYPE_ID.equals(prop.getId())) {
         continue;
       }
 
@@ -1569,7 +1569,7 @@ public class FileShareRepository {
       }
 
       // skip type id
-      if (propType.getId().equals(PropertyIds.CMIS_OBJECT_TYPE_ID)) {
+      if (propType.getId().equals(PropertyIds.OBJECT_TYPE_ID)) {
         continue;
       }
 
@@ -1598,10 +1598,10 @@ public class FileShareRepository {
       }
     }
 
-    addPropertyId(result, typeId, null, PropertyIds.CMIS_OBJECT_TYPE_ID, typeId);
-    addPropertyString(result, typeId, null, PropertyIds.CMIS_CREATED_BY, creator);
-    addPropertyDateTime(result, typeId, null, PropertyIds.CMIS_CREATION_DATE, creationDate);
-    addPropertyString(result, typeId, null, PropertyIds.CMIS_LAST_MODIFIED_BY, modifier);
+    addPropertyId(result, typeId, null, PropertyIds.OBJECT_TYPE_ID, typeId);
+    addPropertyString(result, typeId, null, PropertyIds.CREATED_BY, creator);
+    addPropertyDateTime(result, typeId, null, PropertyIds.CREATION_DATE, creationDate);
+    addPropertyString(result, typeId, null, PropertyIds.LAST_MODIFIED_BY, modifier);
 
     return result;
   }
@@ -1669,10 +1669,10 @@ public class FileShareRepository {
       }
     }
 
-    addPropertyId(result, typeId, null, PropertyIds.CMIS_OBJECT_TYPE_ID, typeId);
-    addPropertyString(result, typeId, null, PropertyIds.CMIS_CREATED_BY, creator);
-    addPropertyDateTime(result, typeId, null, PropertyIds.CMIS_CREATION_DATE, creationDate);
-    addPropertyString(result, typeId, null, PropertyIds.CMIS_LAST_MODIFIED_BY, modifier);
+    addPropertyId(result, typeId, null, PropertyIds.OBJECT_TYPE_ID, typeId);
+    addPropertyString(result, typeId, null, PropertyIds.CREATED_BY, creator);
+    addPropertyDateTime(result, typeId, null, PropertyIds.CREATION_DATE, creationDate);
+    addPropertyString(result, typeId, null, PropertyIds.LAST_MODIFIED_BY, modifier);
 
     return result;
   }
@@ -1983,9 +1983,9 @@ public class FileShareRepository {
 
     // set a few base properties
     // query name == id (for base type properties)
-    result.add(PropertyIds.CMIS_OBJECT_ID);
-    result.add(PropertyIds.CMIS_OBJECT_TYPE_ID);
-    result.add(PropertyIds.CMIS_BASE_TYPE_ID);
+    result.add(PropertyIds.OBJECT_ID);
+    result.add(PropertyIds.OBJECT_TYPE_ID);
+    result.add(PropertyIds.BASE_TYPE_ID);
 
     return result;
   }
@@ -1994,7 +1994,7 @@ public class FileShareRepository {
    * Gets the type id from a set of properties.
    */
   private String getTypeId(PropertiesData properties) {
-    PropertyData<?> typeProperty = properties.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID);
+    PropertyData<?> typeProperty = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
     if (!(typeProperty instanceof PropertyIdData)) {
       throw new CmisInvalidArgumentException("Type id must be set!");
     }

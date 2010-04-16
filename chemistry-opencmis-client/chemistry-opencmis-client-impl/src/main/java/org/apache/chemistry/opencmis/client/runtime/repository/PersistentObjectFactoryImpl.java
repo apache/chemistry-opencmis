@@ -53,29 +53,29 @@ import org.apache.chemistry.opencmis.client.runtime.objecttype.FolderTypeImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.PolicyTypeImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.RelationshipTypeImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.Acl;
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.FolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.PolicyTypeDefinition;
+import org.apache.chemistry.opencmis.commons.api.PropertiesData;
 import org.apache.chemistry.opencmis.commons.api.PropertyBooleanDefinition;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyHtmlDefinition;
+import org.apache.chemistry.opencmis.commons.api.PropertyIdData;
 import org.apache.chemistry.opencmis.commons.api.PropertyIdDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyIntegerDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.api.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.Acl;
-import org.apache.chemistry.opencmis.commons.bindings.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertiesData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyIdData;
-import org.apache.chemistry.opencmis.commons.bindings.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -257,7 +257,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
     }
 
     PropertyData<?> typeProperty = objectData.getProperties().getProperties().get(
-        PropertyIds.CMIS_OBJECT_TYPE_ID);
+        PropertyIds.OBJECT_TYPE_ID);
     if (!(typeProperty instanceof PropertyIdData)) {
       return null;
     }
@@ -378,7 +378,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     // get the type
     if (type == null) {
-      Object typeId = properties.get(PropertyIds.CMIS_OBJECT_TYPE_ID);
+      Object typeId = properties.get(PropertyIds.OBJECT_TYPE_ID);
       if (!(typeId instanceof String)) {
         throw new IllegalArgumentException("Type or type property must be set!");
       }

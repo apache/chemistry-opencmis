@@ -40,17 +40,17 @@ import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.bindings.Ace;
-import org.apache.chemistry.opencmis.commons.bindings.ContentStream;
-import org.apache.chemistry.opencmis.commons.bindings.FailedToDeleteData;
-import org.apache.chemistry.opencmis.commons.bindings.NavigationService;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.bindings.ObjectList;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyData;
-import org.apache.chemistry.opencmis.commons.bindings.PropertyStringData;
+import org.apache.chemistry.opencmis.commons.api.Ace;
+import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.api.NavigationService;
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.api.ObjectList;
+import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyStringData;
 import org.apache.chemistry.opencmis.commons.enums.BaseObjectTypeIds;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObjects;
@@ -250,7 +250,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     readLock();
     try {
-      List<String> otids = getPropertyMultivalue(PropertyIds.CMIS_ALLOWED_CHILD_OBJECT_TYPE_IDS);
+      List<String> otids = getPropertyMultivalue(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS);
       if (otids == null) {
         return result;
       }
@@ -520,19 +520,19 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     readLock();
     try {
       // get the path property
-      path = getPropertyValue(PropertyIds.CMIS_PATH);
+      path = getPropertyValue(PropertyIds.PATH);
 
       // if the path property isn't set, get it
       if (path == null) {
         String objectId = getObjectId();
         ObjectData objectData = getBinding().getObjectService().getObject(getRepositoryId(),
-            objectId, PropertyIds.CMIS_PATH, false, IncludeRelationships.NONE, "cmis:none", false,
+            objectId, PropertyIds.PATH, false, IncludeRelationships.NONE, "cmis:none", false,
             false, null);
 
         if ((objectData.getProperties() != null)
             && (objectData.getProperties().getProperties() != null)) {
           PropertyData<?> pathProperty = objectData.getProperties().getProperties().get(
-              PropertyIds.CMIS_PATH);
+              PropertyIds.PATH);
 
           if (pathProperty instanceof PropertyStringData) {
             path = ((PropertyStringData) pathProperty).getFirstValue();
@@ -546,7 +546,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     // we still don't know the path ... it's not a CMIS compliant repository
     if (path == null) {
-      throw new CmisRuntimeException("Repository didn't return " + PropertyIds.CMIS_PATH + "!");
+      throw new CmisRuntimeException("Repository didn't return " + PropertyIds.PATH + "!");
     }
 
     return path;
