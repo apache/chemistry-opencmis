@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.runtime.util;
 
 import java.util.Iterator;
 
-import org.apache.chemistry.opencmis.client.api.util.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.PagingIterable;
 
 /**
  * Base <code>PagingIterable</code> implementation.

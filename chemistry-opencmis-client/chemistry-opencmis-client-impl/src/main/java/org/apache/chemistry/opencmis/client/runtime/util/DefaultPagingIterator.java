@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.runtime.util;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.util.PagingIterator;
+import org.apache.chemistry.opencmis.client.api.PagingIterator;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageFetchResult;
 
 

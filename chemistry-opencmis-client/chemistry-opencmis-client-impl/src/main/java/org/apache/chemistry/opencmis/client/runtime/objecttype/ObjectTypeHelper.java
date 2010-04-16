@@ -21,9 +21,9 @@ package org.apache.chemistry.opencmis.client.runtime.objecttype;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.client.api.PagingList;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
-import org.apache.chemistry.opencmis.client.api.util.PagingList;
 
 /**
  * Helper for object types, containing session-related info.

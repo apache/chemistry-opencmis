@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.chemistry.opencmis.client.api.util.PagingList;
+import org.apache.chemistry.opencmis.client.api.PagingList;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.junit.Before;
 import org.junit.Test;
