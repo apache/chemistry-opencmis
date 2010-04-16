@@ -29,9 +29,9 @@ import org.apache.chemistry.opencmis.fit.SessionFactory;
  */
 public class WebServicesSampleIT extends AbstractSampleIT {
 
-  @Override
-  protected Session createSession() {
-    return SessionFactory.createWebServicesSession();
-  }
+	@Override
+	protected Session createSession() {
+		return SessionFactory.createWebServicesSession();
+	}
 
 }

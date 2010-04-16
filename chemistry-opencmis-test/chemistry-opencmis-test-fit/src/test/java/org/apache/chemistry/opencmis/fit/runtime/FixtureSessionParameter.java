@@ -27,9 +27,9 @@ public interface FixtureSessionParameter {
 	/**
 	 * CONFIG_PATH is referenced in pom.xml! If you change here then change pom.
 	 */
-	static final String CONFIG_PATH =         "org.apache.chemistry.opencmis.fit.runtime.config.path";
+	static final String CONFIG_PATH = "org.apache.chemistry.opencmis.fit.runtime.config.path";
 
-	static final String SESSION_FACTORY =     "org.apache.chemistry.opencmis.fit.runtime.session.factory";
+	static final String SESSION_FACTORY = "org.apache.chemistry.opencmis.fit.runtime.session.factory";
 	static final String TEST_ROOT_FOLDER_ID = "org.apache.chemistry.opencmis.fit.runtime.root.folder.id";
 
 }

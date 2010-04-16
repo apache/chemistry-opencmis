@@ -23,10 +23,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses( { })
+@SuiteClasses( {})
 public class SuiteWebServiceIT {
 	static {
-		// TODO SKL not working 
+		// TODO SKL not working
 		// Fixture.enableWebServices();
 	}
 }

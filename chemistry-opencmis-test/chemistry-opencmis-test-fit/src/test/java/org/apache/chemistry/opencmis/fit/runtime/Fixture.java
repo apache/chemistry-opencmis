@@ -52,8 +52,7 @@ public class Fixture {
 	/*
 	 * general
 	 */
-	public static String TEST_ROOT_FOLDER_NAME = "fit_"
-			+ UUID.randomUUID().toString();
+	public static String TEST_ROOT_FOLDER_NAME = "fit_" + UUID.randomUUID().toString();
 
 	/*
 	 * test data setup
@@ -110,8 +109,7 @@ public class Fixture {
 
 	public static void init() {
 		/* get optional path from system properties */
-		String pathname = System
-				.getProperty(FixtureSessionParameter.CONFIG_PATH);
+		String pathname = System.getProperty(FixtureSessionParameter.CONFIG_PATH);
 		pathname = (pathname != null) ? pathname.trim() : null;
 		Properties properties = null;
 		Map<String, String> sessionParameter = null;
@@ -125,8 +123,7 @@ public class Fixture {
 				properties.load(in);
 			} else {
 				// get default settings
-				InputStream in = Fixture.class
-						.getResourceAsStream(Fixture.CONNECTION_PATH);
+				InputStream in = Fixture.class.getResourceAsStream(Fixture.CONNECTION_PATH);
 				properties = new Properties();
 				properties.load(in);
 			}
@@ -143,10 +140,8 @@ public class Fixture {
 			Fixture.setParamter(sessionParameter);
 
 			/* load factory class */
-			factoryClassName = sessionParameter
-					.get(FixtureSessionParameter.SESSION_FACTORY);
-			if (factoryClassName != null
-					&& !"".equalsIgnoreCase(factoryClassName)) {
+			factoryClassName = sessionParameter.get(FixtureSessionParameter.SESSION_FACTORY);
+			if (factoryClassName != null && !"".equalsIgnoreCase(factoryClassName)) {
 				Class<?> clazz = Class.forName(factoryClassName);
 				factory = (SessionFactory) clazz.newInstance();
 			} else {
@@ -178,20 +173,14 @@ public class Fixture {
 			/*
 			 * log header only once
 			 */
-			Fixture.log
-					.info("---------------------------------------------------------------");
-			Fixture.log
-					.info("--- OpenCMIS FIT Test Suite (1) --------------------------------");
-			Fixture.log
-					.info("---------------------------------------------------------------");
-			Fixture.log.info("config path (prop): "
-					+ System.getProperty(FixtureSessionParameter.CONFIG_PATH));
-			Fixture.log.info("session factory:    "
-					+ Fixture.getSessionFactory().getClass());
+			Fixture.log.info("---------------------------------------------------------------");
+			Fixture.log.info("--- OpenCMIS FIT Test Suite (1) --------------------------------");
+			Fixture.log.info("---------------------------------------------------------------");
+			Fixture.log.info("config path (prop): " + System.getProperty(FixtureSessionParameter.CONFIG_PATH));
+			Fixture.log.info("session factory:    " + Fixture.getSessionFactory().getClass());
 			Fixture.log.info("session parameter:  " + Fixture.getParamter());
 
-			Fixture.log
-					.info("---------------------------------------------------------------");
+			Fixture.log.info("---------------------------------------------------------------");
 
 			Fixture.isLogged = true;
 		}
@@ -200,10 +189,11 @@ public class Fixture {
 	public static void enableAtomPub() {
 		Fixture.CONNECTION_PATH = Fixture.CONNECTION_ATOM_PATH;
 	}
-	
+
 	public static void enableWebServices() {
 		Fixture.CONNECTION_PATH = Fixture.CONNECTION_WS_PATH;
 	}
+
 	public static String getTestRootId() {
 		return Fixture.testData.getTestRootId();
 	}

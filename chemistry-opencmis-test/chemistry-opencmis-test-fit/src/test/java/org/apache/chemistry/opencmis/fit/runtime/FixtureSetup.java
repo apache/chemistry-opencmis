@@ -40,29 +40,24 @@ public class FixtureSetup {
 	private String repositoryId = null;
 
 	public void teardown() {
-		this.binding.getObjectService().deleteTree(this.repositoryId,
-				this.testRootFolderId, true, UnfileObject.DELETE, true, null);
+		this.binding.getObjectService().deleteTree(this.repositoryId, this.testRootFolderId, true, UnfileObject.DELETE,
+				true, null);
 	}
 
 	public void setup() {
-		this.repositoryId = Fixture.getParamter().get(
-				SessionParameter.REPOSITORY_ID);
+		this.repositoryId = Fixture.getParamter().get(SessionParameter.REPOSITORY_ID);
 		Assert.assertNotNull(this.repositoryId);
 
-		this.binding = CmisBindingFactory.newInstance().createCmisBinding(
-				Fixture.getParamter());
+		this.binding = CmisBindingFactory.newInstance().createCmisBinding(Fixture.getParamter());
 		Assert.assertNotNull(this.binding);
 
 		// root folder
-		if (Fixture.getParamter().containsKey(
-				FixtureSessionParameter.TEST_ROOT_FOLDER_ID)) {
+		if (Fixture.getParamter().containsKey(FixtureSessionParameter.TEST_ROOT_FOLDER_ID)) {
 			// test root folder
-			this.rootFolderId = Fixture.getParamter().get(
-					FixtureSessionParameter.TEST_ROOT_FOLDER_ID);
+			this.rootFolderId = Fixture.getParamter().get(FixtureSessionParameter.TEST_ROOT_FOLDER_ID);
 			Assert.assertNotNull(this.rootFolderId);
 		} else {
-			RepositoryInfo rid = this.binding.getRepositoryService()
-					.getRepositoryInfo(this.repositoryId, null);
+			RepositoryInfo rid = this.binding.getRepositoryService().getRepositoryInfo(this.repositoryId, null);
 			Assert.assertNotNull(rid);
 			this.rootFolderId = rid.getRootFolderId();
 			Assert.assertNotNull(this.rootFolderId);
@@ -76,22 +71,18 @@ public class FixtureSetup {
 
 		// create test root folder
 		List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
-		propList.add(this.binding.getObjectFactory().createPropertyStringData(
-				PropertyIds.NAME, Fixture.TEST_ROOT_FOLDER_NAME));
-		propList.add(this.binding.getObjectFactory().createPropertyIdData(
-				PropertyIds.OBJECT_TYPE_ID, folderTypeId));
+		propList.add(this.binding.getObjectFactory().createPropertyStringData(PropertyIds.NAME,
+				Fixture.TEST_ROOT_FOLDER_NAME));
+		propList.add(this.binding.getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, folderTypeId));
 
-		Properties properties = this.binding.getObjectFactory()
-				.createPropertiesData(propList);
+		Properties properties = this.binding.getObjectFactory().createPropertiesData(propList);
 
-		this.testRootFolderId = this.binding.getObjectService().createFolder(
-				this.repositoryId, properties, this.rootFolderId, null, null,
-				null, null);
+		this.testRootFolderId = this.binding.getObjectService().createFolder(this.repositoryId, properties,
+				this.rootFolderId, null, null, null, null);
 		Assert.assertNotNull(this.testRootFolderId);
 
-		ObjectGenerator og = new ObjectGenerator(binding.getObjectFactory(),
-				binding.getNavigationService(), binding.getObjectService(),
-				this.repositoryId);
+		ObjectGenerator og = new ObjectGenerator(binding.getObjectFactory(), binding.getNavigationService(), binding
+				.getObjectService(), this.repositoryId);
 
 		og.setContentSizeInKB(10);
 		og.setDocumentTypeId(documentTypeId);

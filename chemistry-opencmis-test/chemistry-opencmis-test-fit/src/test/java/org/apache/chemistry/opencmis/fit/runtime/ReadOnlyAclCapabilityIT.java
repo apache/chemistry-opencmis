@@ -33,42 +33,43 @@ import org.junit.Test;
 
 public class ReadOnlyAclCapabilityIT extends AbstractSessionTest {
 
-  private AclCapabilities aclCapabilities = null;
+	private AclCapabilities aclCapabilities = null;
 
-  @Before
-  public void setup() throws Exception {
-    RepositoryInfo r = this.session.getRepositoryInfo();
-    // capabilities
-    RepositoryCapabilities repcap = r.getCapabilities();
-    CapabilityAcl capacl = repcap.getAclCapability();
+	@Before
+	public void setup() throws Exception {
+		RepositoryInfo r = this.session.getRepositoryInfo();
+		// capabilities
+		RepositoryCapabilities repcap = r.getCapabilities();
+		CapabilityAcl capacl = repcap.getAclCapability();
 
-    if (capacl != CapabilityAcl.NONE) {
-      // acl capabilities
-      this.aclCapabilities = r.getAclCapabilities();
-    }
+		if (capacl != CapabilityAcl.NONE) {
+			// acl capabilities
+			this.aclCapabilities = r.getAclCapabilities();
+		}
 
-    Assume.assumeNotNull(this.aclCapabilities);
-  }
+		Assume.assumeNotNull(this.aclCapabilities);
+	}
 
-  @Test
-  public void repositoryCapabilitiesAclPropagation() {
-    AclPropagation aclprop = this.aclCapabilities.getAclPropagation();
-    switch (aclprop) {
-    case OBJECTONLY:
-      break;
-    case PROPAGATE:
-      break;
-    case REPOSITORYDETERMINED:
-      break;
-    default:
-      Assert.fail("enumeration not supported");
-    }
-  }
+	@Test
+	public void repositoryCapabilitiesAclPropagation() {
+		AclPropagation aclprop = this.aclCapabilities.getAclPropagation();
+		switch (aclprop) {
+		case OBJECTONLY:
+			break;
+		case PROPAGATE:
+			break;
+		case REPOSITORYDETERMINED:
+			break;
+		default:
+			Assert.fail("enumeration not supported");
+		}
+	}
 
-  @Test
-  public void repositoryCapabilitiesAclPermissionMapping() {
-    PermissionMapping apm = this.aclCapabilities.getPermissionMapping().get(PermissionMapping.CAN_ADD_POLICY_OBJECT);
-    List<String> aclps = apm.getPermissions();
-    Assert.assertNotNull(aclps);
-  }
+	@Test
+	public void repositoryCapabilitiesAclPermissionMapping() {
+		PermissionMapping apm = this.aclCapabilities.getPermissionMapping()
+				.get(PermissionMapping.CAN_ADD_POLICY_OBJECT);
+		List<String> aclps = apm.getPermissions();
+		Assert.assertNotNull(aclps);
+	}
 }

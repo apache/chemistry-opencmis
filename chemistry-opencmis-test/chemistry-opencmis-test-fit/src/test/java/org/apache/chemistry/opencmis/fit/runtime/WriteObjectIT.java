@@ -39,246 +39,196 @@ import org.junit.Test;
 
 public class WriteObjectIT extends AbstractSessionTest {
 
-    @Test
-    public void createFolder() {
-        ObjectId parentId = this.session
-                .createObjectId(Fixture.getTestRootId());
-        String folderName = UUID.randomUUID().toString();
-        String typeId = FixtureData.FOLDER_TYPE_ID.value();
+	@Test
+	public void createFolder() {
+		ObjectId parentId = this.session.createObjectId(Fixture.getTestRootId());
+		String folderName = UUID.randomUUID().toString();
+		String typeId = FixtureData.FOLDER_TYPE_ID.value();
 
+		/*
+		 * ObjectType ot = this.session.getTypeDefinition(typeId);
+		 * Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions()
+		 * .values(); List<Property<?>> properties = new
+		 * ArrayList<Property<?>>(); Property<?> prop = null;
+		 * 
+		 * for (PropertyDefinition<?> pd : pdefs) { try { CmisProperties cmisp =
+		 * CmisProperties.fromValue(pd.getId()); switch (cmisp) { case NAME:
+		 * prop = this.session.getObjectFactory().createProperty(pd,
+		 * folderName); properties.add(prop); break; case OBJECT_TYPE_ID: prop =
+		 * this.session.getObjectFactory().createProperty(pd, typeId);
+		 * properties.add(prop); break; default: break; } } catch (Exception e)
+		 * { // custom property definition }
+		 * 
+		 * }
+		 */
 
-        /*
-        ObjectType ot = this.session.getTypeDefinition(typeId);
-        Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions()
-                .values();
-        List<Property<?>> properties = new ArrayList<Property<?>>();
-        Property<?> prop = null;
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put(PropertyIds.NAME, folderName);
+		properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
 
-        for (PropertyDefinition<?> pd : pdefs) {
-            try {
-                CmisProperties cmisp = CmisProperties.fromValue(pd.getId());
-                switch (cmisp) {
-                case NAME:
-                    prop = this.session.getObjectFactory().createProperty(pd,
-                            folderName);
-                    properties.add(prop);
-                    break;
-                case OBJECT_TYPE_ID:
-                    prop = this.session.getObjectFactory().createProperty(pd,
-                            typeId);
-                    properties.add(prop);
-                    break;
-                default:
-                    break;
-                }
-            } catch (Exception e) {
-                // custom property definition
-            }
+		ObjectId id = this.session.createFolder(properties, parentId, null, null, null);
+		assertNotNull(id);
+	}
 
-        }
-        */
+	@Test
+	public void createDocument() throws IOException {
+		ObjectId parentId = this.session.createObjectId(Fixture.getTestRootId());
+		String folderName = UUID.randomUUID().toString();
+		String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(PropertyIds.NAME, folderName);
-        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+		/*
+		 * ObjectType ot = this.session.getTypeDefinition(typeId);
+		 * Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions()
+		 * .values(); List<Property<?>> properties = new
+		 * ArrayList<Property<?>>(); Property<?> prop = null;
+		 * 
+		 * for (PropertyDefinition<?> pd : pdefs) { try { CmisProperties cmisp =
+		 * CmisProperties.fromValue(pd.getId()); switch (cmisp) { case NAME:
+		 * prop = this.session.getObjectFactory().createProperty(pd,
+		 * folderName); properties.add(prop); break; case OBJECT_TYPE_ID: prop =
+		 * this.session.getObjectFactory().createProperty(pd, typeId);
+		 * properties.add(prop); break; default: break; } } catch (Exception e)
+		 * { /* custom property definition (note: document type should not have
+		 * further mandatory properties)
+		 */
+		/*
+		 * this.log .info(
+		 * "Custom property found but not supported in test case!", e); } }
+		 */
 
-        ObjectId id = this.session.createFolder(properties, parentId, null,
-                null, null);
-        assertNotNull(id);
-    }
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put(PropertyIds.NAME, folderName);
+		properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
 
-    @Test
-    public void createDocument() throws IOException {
-        ObjectId parentId = this.session
-                .createObjectId(Fixture.getTestRootId());
-        String folderName = UUID.randomUUID().toString();
-        String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
+		String filename = UUID.randomUUID().toString();
+		String mimetype = "text/html; charset=UTF-8";
+		String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
 
-        /*
-        ObjectType ot = this.session.getTypeDefinition(typeId);
-        Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions()
-                .values();
-        List<Property<?>> properties = new ArrayList<Property<?>>();
-        Property<?> prop = null;
+		byte[] buf1 = content1.getBytes("UTF-8");
+		ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
+		ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length,
+				mimetype, in1);
+		assertNotNull(contentStream);
 
-        for (PropertyDefinition<?> pd : pdefs) {
-            try {
-                CmisProperties cmisp = CmisProperties.fromValue(pd.getId());
-                switch (cmisp) {
-                case NAME:
-                    prop = this.session.getObjectFactory().createProperty(pd,
-                            folderName);
-                    properties.add(prop);
-                    break;
-                case OBJECT_TYPE_ID:
-                    prop = this.session.getObjectFactory().createProperty(pd,
-                            typeId);
-                    properties.add(prop);
-                    break;
-                default:
-                    break;
-                }
-            } catch (Exception e) {
-                /*
-                 * custom property definition (note: document type should not
-                 * have further mandatory properties)
-                 */
-/*				this.log
-                        .info(
-                                "Custom property found but not supported in test case!",
-                                e);
-            }
-        }
-*/
+		ObjectId id = this.session.createDocument(properties, parentId, contentStream, VersioningState.NONE, null,
+				null, null);
+		assertNotNull(id);
 
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(PropertyIds.NAME, folderName);
-        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+		// verify content
+		Document doc = (Document) this.session.getObject(id);
+		assertNotNull(doc);
+		// Assert.assertEquals(buf1.length, doc.getContentStreamLength());
+		// Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
+		// Assert.assertEquals(filename, doc.getContentStreamFileName());
+		String content2 = this.getContentAsString(doc.getContentStream());
+		assertEquals(content1, content2);
+	}
 
-        String filename = UUID.randomUUID().toString();
-        String mimetype = "text/html; charset=UTF-8";
-        String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
+	@Test
+	public void createDocumentFromSource() throws IOException {
+		try {
+			// verify content
+			String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
+			Document srcDocument = (Document) this.session.getObjectByPath(path);
+			assertNotNull("Document not found: " + path, srcDocument);
+			String srcContent = this.getContentAsString(srcDocument.getContentStream());
 
-        byte[] buf1 = content1.getBytes("UTF-8");
-        ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream = this.session.getObjectFactory()
-                .createContentStream(filename, buf1.length, mimetype, in1);
-        assertNotNull(contentStream);
+			ObjectId parentFolder = session.createObjectId(Fixture.getTestRootId());
+			/*
+			 * List<Property<?>> srcProperties = srcDocument.getProperties();
+			 * assertNotNull(srcProperties); List<Property<?>> dstProperties =
+			 * new ArrayList<Property<?>>();
+			 * 
+			 * for (Property<?> p : srcProperties) { if
+			 * (p.getId().equalsIgnoreCase(CmisProperties.NAME.value())) { //
+			 * change the name String name = UUID.randomUUID().toString();
+			 * Property<String> pn = this.session.getObjectFactory()
+			 * .createProperty(p.getDefinition(), name); dstProperties.add(pn);
+			 * } else { dstProperties.add(p); } }
+			 */
+			String name = UUID.randomUUID().toString();
 
-        ObjectId id = this.session.createDocument(properties, parentId,
-                contentStream, VersioningState.NONE, null, null, null);
-        assertNotNull(id);
+			Map<String, Object> properties = new HashMap<String, Object>();
+			properties.put(PropertyIds.NAME, name);
 
-        // verify content
-        Document doc = (Document) this.session.getObject(id);
-        assertNotNull(doc);
-        // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
-        // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
-        // Assert.assertEquals(filename, doc.getContentStreamFileName());
-        String content2 = this.getContentAsString(doc.getContentStream());
-        assertEquals(content1, content2);
-    }
+			ObjectId dstDocumentId = this.session.createDocumentFromSource(srcDocument, properties, parentFolder,
+					VersioningState.NONE, null, null, null);
+			assertNotNull(dstDocumentId);
+			Document dstDocument = (Document) this.session.getObject(dstDocumentId);
+			String dstContent = this.getContentAsString(dstDocument.getContentStream());
+			assertEquals(srcContent, dstContent);
 
-    @Test
-    public void createDocumentFromSource() throws IOException {
-        try {
-            // verify content
-            String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
-                    + FixtureData.DOCUMENT1_NAME;
-            Document srcDocument = (Document) this.session
-                    .getObjectByPath(path);
-            assertNotNull("Document not found: " + path, srcDocument);
-            String srcContent = this.getContentAsString(srcDocument
-                    .getContentStream());
+		} catch (CmisNotSupportedException e) {
+			// not an error
+			this.log.info(e.getMessage());
+		}
+	}
 
-            ObjectId parentFolder = session.createObjectId(Fixture
-                    .getTestRootId());
-            /*
-            List<Property<?>> srcProperties = srcDocument.getProperties();
-            assertNotNull(srcProperties);
-            List<Property<?>> dstProperties = new ArrayList<Property<?>>();
+	@Test
+	public void deleteAndCreateContent() throws IOException {
+		// verify content
 
-            for (Property<?> p : srcProperties) {
-                if (p.getId().equalsIgnoreCase(CmisProperties.NAME.value())) {
-                    // change the name
-                    String name = UUID.randomUUID().toString();
-                    Property<String> pn = this.session.getObjectFactory()
-                            .createProperty(p.getDefinition(), name);
-                    dstProperties.add(pn);
-                } else {
-                    dstProperties.add(p);
-                }
-            }
-*/
-            String name = UUID.randomUUID().toString();
+		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
+		Document document = (Document) this.session.getObjectByPath(path);
+		assertNotNull("Document not found: " + path, document);
 
-            Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put(PropertyIds.NAME, name);
+		// check default content
+		ContentStream contentStream = document.getContentStream();
+		assertNotNull(contentStream);
+		String contentString = this.getContentAsString(contentStream);
+		assertNotNull(contentString);
 
-            ObjectId dstDocumentId = this.session.createDocumentFromSource(
-                    srcDocument, properties, parentFolder,
-                    VersioningState.NONE, null, null, null);
-            assertNotNull(dstDocumentId);
-            Document dstDocument = (Document) this.session
-                    .getObject(dstDocumentId);
-            String dstContent = this.getContentAsString(dstDocument
-                    .getContentStream());
-            assertEquals(srcContent, dstContent);
+		// delete and set new content
+		// ObjectId id = (return id not supported by AtomPub)
+		document.deleteContentStream();
+		// assertNotNull(id);
 
-        } catch (CmisNotSupportedException e) {
-            // not an error
-            this.log.info(e.getMessage());
-        }
-    }
+		String filename = UUID.randomUUID().toString();
+		String mimetype = "text/html; charset=UTF-8";
+		String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
 
-    @Test
-    public void deleteAndCreateContent() throws IOException {
-        // verify content
+		byte[] buf1 = content1.getBytes("UTF-8");
+		ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
+		contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length, mimetype, in1);
+		assertNotNull(contentStream);
 
-        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
-                + FixtureData.DOCUMENT1_NAME;
-        Document document = (Document) this.session.getObjectByPath(path);
-        assertNotNull("Document not found: " + path, document);
+		document.setContentStream(contentStream, true);
 
-        // check default content
-        ContentStream contentStream = document.getContentStream();
-        assertNotNull(contentStream);
-        String contentString = this.getContentAsString(contentStream);
-        assertNotNull(contentString);
+		// check default content
+		ContentStream contentStream2 = document.getContentStream();
+		assertNotNull(contentStream2);
+		String contentString2 = this.getContentAsString(contentStream2);
+		assertNotNull(contentString2);
 
-        // delete and set new content
-        // ObjectId id = (return id not supported by AtomPub)
-            document.deleteContentStream();
-        // assertNotNull(id);
+		assertEquals(content1, contentString2);
+	}
 
-        String filename = UUID.randomUUID().toString();
-        String mimetype = "text/html; charset=UTF-8";
-        String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
+	@Test
+	public void updateProperties() {
+		// verify content
+		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
+		Document document = (Document) this.session.getObjectByPath(path);
+		assertNotNull("Document not found: " + path, document);
 
-        byte[] buf1 = content1.getBytes("UTF-8");
-        ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        contentStream = this.session.getObjectFactory().createContentStream(
-                filename, buf1.length, mimetype, in1);
-        assertNotNull(contentStream);
+		document.setProperty(PropertyIds.NAME, "Neuer Name");
+		document.updateProperties();
+		assertTrue(true);
+	}
 
-        document.setContentStream(contentStream, true);
-
-        // check default content
-        ContentStream contentStream2 = document.getContentStream();
-        assertNotNull(contentStream2);
-        String contentString2 = this.getContentAsString(contentStream2);
-        assertNotNull(contentString2);
-
-        assertEquals(content1, contentString2);
-    }
-
-    @Test
-    public void updateProperties() {
-        // verify content
-        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
-                + FixtureData.DOCUMENT1_NAME;
-        Document document = (Document) this.session.getObjectByPath(path);
-        assertNotNull("Document not found: " + path, document);
-
-        document.setProperty(PropertyIds.NAME, "Neuer Name");
-        document.updateProperties();
-        assertTrue(true);
-    }
-
-    private String getContentAsString(ContentStream stream) throws IOException {
-        assertNotNull(stream);
-        InputStream in2 = stream.getStream();
-        assertNotNull(in2);
-        StringBuffer sbuf = null;
-        sbuf = new StringBuffer(in2.available());
-        int count;
-        byte[] buf2 = new byte[100];
-        while ((count = in2.read(buf2)) != -1) {
-            for (int i = 0; i < count; i++) {
-                sbuf.append((char) buf2[i]);
-            }
-        }
-        in2.close();
-        return sbuf.toString();
-    }
+	private String getContentAsString(ContentStream stream) throws IOException {
+		assertNotNull(stream);
+		InputStream in2 = stream.getStream();
+		assertNotNull(in2);
+		StringBuffer sbuf = null;
+		sbuf = new StringBuffer(in2.available());
+		int count;
+		byte[] buf2 = new byte[100];
+		while ((count = in2.read(buf2)) != -1) {
+			for (int i = 0; i < count; i++) {
+				sbuf.append((char) buf2[i]);
+			}
+		}
+		in2.close();
+		return sbuf.toString();
+	}
 }

@@ -37,56 +37,54 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.junit.Test;
 
 /**
- * Really simple binding layer test. It just contains a few smoke tests to make sure that the
- * provider layer is working properly in the integration test environment.
+ * Really simple binding layer test. It just contains a few smoke tests to make
+ * sure that the provider layer is working properly in the integration test
+ * environment.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public abstract class AbstractSimpleBindingIT extends AbstractBindingIT {
 
-  @Test
-  public void testRepositoryInfo() {
-    RepositoryInfo ri = getBinding().getRepositoryService().getRepositoryInfo(
-        getRepositoryId(), null);
-    assertNotNull(ri);
+	@Test
+	public void testRepositoryInfo() {
+		RepositoryInfo ri = getBinding().getRepositoryService().getRepositoryInfo(getRepositoryId(), null);
+		assertNotNull(ri);
 
-    assertEquals(getRepositoryId(), ri.getId());
-    assertNotNull(ri.getProductName());
-    assertNotNull(ri.getRootFolderId());
-    assertNotNull(ri.getCapabilities());
-  }
+		assertEquals(getRepositoryId(), ri.getId());
+		assertNotNull(ri.getProductName());
+		assertNotNull(ri.getRootFolderId());
+		assertNotNull(ri.getCapabilities());
+	}
 
-  @Test
-  public void testCreateDocument() {
-    // set up properties
-    List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
-    propertyList.add(getBinding().getObjectFactory().createPropertyStringData(
-        PropertyIds.NAME, "testdoc.txt"));
-    propertyList.add(getBinding().getObjectFactory().createPropertyIdData(
-        PropertyIds.OBJECT_TYPE_ID, DOCUMENT_TYPE));
+	@Test
+	public void testCreateDocument() {
+		// set up properties
+		List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
+		propertyList.add(getBinding().getObjectFactory().createPropertyStringData(PropertyIds.NAME, "testdoc.txt"));
+		propertyList.add(getBinding().getObjectFactory()
+				.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, DOCUMENT_TYPE));
 
-    Properties properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
+		Properties properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
 
-    // set up content
-    byte[] content = "This is a test file!".getBytes();
+		// set up content
+		byte[] content = "This is a test file!".getBytes();
 
-    ContentStream contentStream = getBinding().getObjectFactory()
-        .createContentStream("test", BigInteger.valueOf(content.length), "text/plain",
-            new ByteArrayInputStream(content));
+		ContentStream contentStream = getBinding().getObjectFactory().createContentStream("test",
+				BigInteger.valueOf(content.length), "text/plain", new ByteArrayInputStream(content));
 
-    // create document
-    String docId = getBinding().getObjectService().createDocument(getRepositoryId(), properties,
-        getTestFolderId(), contentStream, VersioningState.NONE, null, null, null, null);
-    assertNotNull(docId);
+		// create document
+		String docId = getBinding().getObjectService().createDocument(getRepositoryId(), properties, getTestFolderId(),
+				contentStream, VersioningState.NONE, null, null, null, null);
+		assertNotNull(docId);
 
-    // get the document
-    ObjectData object = getBinding().getObjectService().getObject(getRepositoryId(), docId, null,
-        false, IncludeRelationships.NONE, null, false, false, null);
-    assertNotNull(object);
-    assertEquals(docId, object.getId());
+		// get the document
+		ObjectData object = getBinding().getObjectService().getObject(getRepositoryId(), docId, null, false,
+				IncludeRelationships.NONE, null, false, false, null);
+		assertNotNull(object);
+		assertEquals(docId, object.getId());
 
-    // delete the document
-    getBinding().getObjectService().deleteObject(getRepositoryId(), docId, true, null);
-  }
+		// delete the document
+		getBinding().getObjectService().deleteObject(getRepositoryId(), docId, true, null);
+	}
 }

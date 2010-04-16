@@ -22,8 +22,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.chemistry.opencmis.client.api.QueryResult;
-//import org.apache.chemistry.opencmis.client.api.util.PagingList;
+import org.apache.chemistry.opencmis.client.api.QueryResult; //import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.commons.logging.Log;
@@ -32,42 +31,42 @@ import org.junit.Test;
 
 public class ReadOnlyDiscoverIT extends AbstractSessionTest {
 
-  private static Log log = LogFactory.getLog(ReadOnlyDiscoverIT.class);
+	private static Log log = LogFactory.getLog(ReadOnlyDiscoverIT.class);
 
-  @Test
-  public void query() {
-    CapabilityQuery query = this.session.getRepositoryInfo().getCapabilities().getQueryCapability();
+	@Test
+	public void query() {
+		CapabilityQuery query = this.session.getRepositoryInfo().getCapabilities().getQueryCapability();
 
-    switch (query) {
-    case NONE:
-      ReadOnlyDiscoverIT.log.info("queries not supported");
-      break;
-    default:
-//      PagingList<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false, 2);
-//      Assert.assertNotNull(resultSet);
-//      //Assert.assertFalse(resultSet.isEmpty());
-//      for (List<QueryResult> lo : resultSet) {
-//        for (QueryResult o : lo) {
-//          Assert.assertNotNull(o);
-//        }
-//      }
+		switch (query) {
+		case NONE:
+			ReadOnlyDiscoverIT.log.info("queries not supported");
+			break;
+		default:
+			// PagingList<QueryResult> resultSet =
+			// this.session.query(FixtureData.QUERY.toString(), false, 2);
+			// Assert.assertNotNull(resultSet);
+			// //Assert.assertFalse(resultSet.isEmpty());
+			// for (List<QueryResult> lo : resultSet) {
+			// for (QueryResult o : lo) {
+			// Assert.assertNotNull(o);
+			// }
+			// }
 
-      break;
-    }
+			break;
+		}
 
-  }
+	}
 
-  @Test
-  public void changes() {
-    CapabilityChanges changes = this.session.getRepositoryInfo().getCapabilities()
-        .getChangesCapability();
+	@Test
+	public void changes() {
+		CapabilityChanges changes = this.session.getRepositoryInfo().getCapabilities().getChangesCapability();
 
-    switch (changes) {
-    case NONE:
-      ReadOnlyDiscoverIT.log.info("changes not supported");
-      break;
-    default:
-      break;
-    }
-  }
+		switch (changes) {
+		case NONE:
+			ReadOnlyDiscoverIT.log.info("changes not supported");
+			break;
+		default:
+			break;
+		}
+	}
 }

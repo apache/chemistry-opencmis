@@ -29,14 +29,14 @@ import org.apache.chemistry.opencmis.fit.SessionFactory;
  */
 public class AtomPubSimpleBindingIT extends AbstractSimpleBindingIT {
 
-  @Override
-  protected CmisBinding createBinding() {
-    return SessionFactory.createAtomPubBinding();
-  }
+	@Override
+	protected CmisBinding createBinding() {
+		return SessionFactory.createAtomPubBinding();
+	}
 
-  @Override
-  protected String getRepositoryId() {
-    return SessionFactory.getRepositoryId();
-  }
+	@Override
+	protected String getRepositoryId() {
+		return SessionFactory.getRepositoryId();
+	}
 
 }
