@@ -20,14 +20,14 @@ package org.apache.chemistry.opencmis.client.runtime.util;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.Tree;
 
-public class ContainerImpl<T> implements Container<T> {
+public class ContainerImpl<T> implements Tree<T> {
 
   private T item;
-  private List<Container<T>> children;
+  private List<Tree<T>> children;
 
-  public ContainerImpl(T item, List<Container<T>> children) {
+  public ContainerImpl(T item, List<Tree<T>> children) {
     if (item == null) {
       throw new IllegalArgumentException("Item must be set!");
     }
@@ -50,7 +50,7 @@ public class ContainerImpl<T> implements Container<T> {
    * 
    * @see org.apache.opencmis.client.api.util.Container#getChildren()
    */
-  public List<Container<T>> getChildren() {
+  public List<Tree<T>> getChildren() {
     return this.children;
   }
 }

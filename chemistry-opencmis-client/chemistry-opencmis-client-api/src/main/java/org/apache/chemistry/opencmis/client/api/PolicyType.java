@@ -16,31 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.api.objecttype;
-
-import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
+package org.apache.chemistry.opencmis.client.api;
 
 /**
- * Document Object Type.
+ * Policy Object Type.
  * 
- * See CMIS Domain Model - section 2.1.4.3.
+ * See CMIS Domain Model - section 2.1.7.1.
  */
-public interface DocumentType extends ObjectType {
-
-  /**
-   * Get the {@code isVersionable} flag.
-   * 
-   * @return {@code true} if this document type is versionable, {@code false} if documents of this
-   *         type cannot be versioned.
-   */
-  Boolean isVersionable();
-
-  /**
-   * Get the enum that describes, how content streams have to be handled with this document type.
-   * 
-   * @return the mode of content stream support ({@code notallowed}, {@code allowed}, or {@code
-   *         required}).
-   */
-  ContentStreamAllowed getContentStreamAllowed();
+public interface PolicyType extends ObjectType {
 
 }

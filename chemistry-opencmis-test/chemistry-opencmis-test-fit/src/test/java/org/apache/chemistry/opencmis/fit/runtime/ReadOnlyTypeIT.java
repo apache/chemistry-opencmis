@@ -22,12 +22,12 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.chemistry.opencmis.client.api.objecttype.DocumentType;
-import org.apache.chemistry.opencmis.client.api.objecttype.FolderType;
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.objecttype.PolicyType;
-import org.apache.chemistry.opencmis.client.api.objecttype.RelationshipType;
-import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.DocumentType;
+import org.apache.chemistry.opencmis.client.api.FolderType;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.client.api.PolicyType;
+import org.apache.chemistry.opencmis.client.api.RelationshipType;
+import org.apache.chemistry.opencmis.client.api.Tree;
 //import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.junit.Test;
@@ -122,7 +122,7 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
 		ObjectType otd = this.session
 				.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
 		Assert.assertNotNull(otd);
-		List<Container<ObjectType>> desc = this.session.getTypeDescendants(otd
+		List<Tree<ObjectType>> desc = this.session.getTypeDescendants(otd
 				.getId(), 1, true);
 		Assert.assertNotNull(desc);
 		Assert.assertFalse(desc.isEmpty());
@@ -133,7 +133,7 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
 		ObjectType otd = this.session
 				.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
 		Assert.assertNotNull(otd);
-		List<Container<ObjectType>> desc = this.session.getTypeDescendants(otd
+		List<Tree<ObjectType>> desc = this.session.getTypeDescendants(otd
 				.getId(), 1, true);
 		Assert.assertNotNull(desc);
 		desc.isEmpty();

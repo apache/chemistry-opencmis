@@ -15,29 +15,23 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */package org.apache.chemistry.opencmis.client.api.objecttype;
+ */
+package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 
 /**
- * Relationship Object Type.
- *
- * See CMIS Domain Model - section 2.1.6.1.
+ * Basic tree structure.
  */
-public interface RelationshipType extends ObjectType {
+public interface Tree<T> {
 
   /**
-   * Get the list of object types, allowed as source for relationships of this type.
-   *
-   * @return the allowed source types for this relationship type.
+   * Returns the item on this level.
    */
-  List<ObjectType> getAllowedSourceTypes();
+  T getItem();
 
   /**
-   * Get the list of object types, allowed as target for relationships of this type.
-   *
-   * @return the allowed target types for this relationship type.
+   * Returns the children.
    */
-  List<ObjectType> getAllowedTargetTypes();
-
+  List<Tree<T>> getChildren();
 }

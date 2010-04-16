@@ -16,12 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.api.objecttype;
+package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.api.util.Container;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
@@ -83,6 +82,6 @@ public interface ObjectType extends TypeDefinition {
    * @return a {@code Tree} of types which are derived from this type (direct and via their
    *         parents). @
    */
-  List<Container<ObjectType>> getDescendants(int depth);
+  List<Tree<ObjectType>> getDescendants(int depth);
 
 }

@@ -15,19 +15,29 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */
-package org.apache.chemistry.opencmis.client.api.repository;
+ */package org.apache.chemistry.opencmis.client.api;
 
-import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
+import java.util.List;
 
 /**
- * Represents a repository.
+ * Relationship Object Type.
+ *
+ * See CMIS Domain Model - section 2.1.6.1.
  */
-public interface Repository extends RepositoryInfo {
+public interface RelationshipType extends ObjectType {
 
   /**
-   * Creates a session for this repository.
+   * Get the list of object types, allowed as source for relationships of this type.
+   *
+   * @return the allowed source types for this relationship type.
    */
-  <T extends Session> T createSession();
+  List<ObjectType> getAllowedSourceTypes();
+
+  /**
+   * Get the list of object types, allowed as target for relationships of this type.
+   *
+   * @return the allowed target types for this relationship type.
+   */
+  List<ObjectType> getAllowedTargetTypes();
+
 }

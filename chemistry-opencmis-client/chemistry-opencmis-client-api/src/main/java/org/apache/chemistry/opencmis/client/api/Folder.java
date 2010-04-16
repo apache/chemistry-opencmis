@@ -21,8 +21,6 @@ package org.apache.chemistry.opencmis.client.api;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.util.Container;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
@@ -56,13 +54,13 @@ public interface Folder extends FileableCmisObject {
 
   // navigation service
 
-  List<Container<FileableCmisObject>> getFolderTree(int depth);
+  List<Tree<FileableCmisObject>> getFolderTree(int depth);
 
-  List<Container<FileableCmisObject>> getFolderTree(int depth, OperationContext context);
+  List<Tree<FileableCmisObject>> getFolderTree(int depth, OperationContext context);
 
-  List<Container<FileableCmisObject>> getDescendants(int depth);
+  List<Tree<FileableCmisObject>> getDescendants(int depth);
 
-  List<Container<FileableCmisObject>> getDescendants(int depth, OperationContext context);
+  List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context);
 
   PagingList<CmisObject> getChildren(int itemsPerPage);
 

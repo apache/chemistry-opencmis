@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.client;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.repository.Repository;
 
 /**
  * Entry point into the OpenCMIS Client API. The <code>SessionFactory</code> class implementation

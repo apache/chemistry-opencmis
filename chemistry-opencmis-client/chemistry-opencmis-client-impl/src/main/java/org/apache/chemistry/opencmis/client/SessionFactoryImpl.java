@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.repository.Repository;
 import org.apache.chemistry.opencmis.client.runtime.CmisBindingHelper;
 import org.apache.chemistry.opencmis.client.runtime.PersistentSessionImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.RepositoryImpl;

@@ -16,22 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.api.util;
-
-import java.util.List;
+package org.apache.chemistry.opencmis.client.api;
 
 /**
- * Basic tree structure.
+ * Folder Object Type.
+ * 
+ * See CMIS Domain Model - section 2.1.5.4.
  */
-public interface Container<T> {
+public interface FolderType extends ObjectType {
 
-  /**
-   * Returns the item on this level.
-   */
-  T getItem();
-
-  /**
-   * Returns the children.
-   */
-  List<Container<T>> getChildren();
 }

@@ -20,9 +20,9 @@ package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
 import java.util.List;
 
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 
 /**
@@ -80,7 +80,7 @@ public class ObjectTypeHelper {
         return session.getTypeChildren(objectType.getId(), true, itemsPerPage);
     }
 
-    public List<Container<ObjectType>> getDescendants(int depth) {
+    public List<Tree<ObjectType>> getDescendants(int depth) {
         return session.getTypeDescendants(objectType.getId(), depth, true);
     }
 }

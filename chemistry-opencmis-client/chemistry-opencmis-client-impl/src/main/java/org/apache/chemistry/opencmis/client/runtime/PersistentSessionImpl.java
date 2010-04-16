@@ -33,14 +33,14 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ExtensionHandler;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
-import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
@@ -559,7 +559,7 @@ public class PersistentSessionImpl implements Session, Serializable {
    *
    * @see org.apache.opencmis.client.api.Session#getTypeDescendants(java.lang.String, int, boolean)
    */
-  public List<Container<ObjectType>> getTypeDescendants(String typeId, int depth,
+  public List<Tree<ObjectType>> getTypeDescendants(String typeId, int depth,
       boolean includePropertyDefinitions) {
     List<TypeDefinitionContainer> descendants = getBinding().getRepositoryService()
         .getTypeDescendants(getRepositoryId(), typeId, BigInteger.valueOf(depth),
@@ -571,13 +571,13 @@ public class PersistentSessionImpl implements Session, Serializable {
   /**
    * Converts provider <code>TypeDefinitionContainer</code> to API <code>Container</code>.
    */
-  private List<Container<ObjectType>> convertTypeDescendants(
+  private List<Tree<ObjectType>> convertTypeDescendants(
       List<TypeDefinitionContainer> descendantsList) {
-    List<Container<ObjectType>> result = new ArrayList<Container<ObjectType>>();
+    List<Tree<ObjectType>> result = new ArrayList<Tree<ObjectType>>();
 
     for (TypeDefinitionContainer container : descendantsList) {
       ObjectType objectType = objectFactory.convertTypeDefinition(container.getTypeDefinition());
-      List<Container<ObjectType>> children = convertTypeDescendants(container.getChildren());
+      List<Tree<ObjectType>> children = convertTypeDescendants(container.getChildren());
 
       result.add(new ContainerImpl<ObjectType>(objectType, children));
     }

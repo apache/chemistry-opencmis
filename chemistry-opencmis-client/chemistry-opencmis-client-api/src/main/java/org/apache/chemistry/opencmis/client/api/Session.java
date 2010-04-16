@@ -23,9 +23,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
-import org.apache.chemistry.opencmis.client.api.util.Container;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
@@ -130,7 +127,7 @@ public interface Session {
   /**
    * Returns the type descendants of the given type id.
    */
-  List<Container<ObjectType>> getTypeDescendants(String typeId, int depth,
+  List<Tree<ObjectType>> getTypeDescendants(String typeId, int depth,
       boolean includePropertyDefinitions);
 
   // navigation

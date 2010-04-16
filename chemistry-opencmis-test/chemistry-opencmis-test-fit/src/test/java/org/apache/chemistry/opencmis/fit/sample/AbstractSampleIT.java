@@ -26,9 +26,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -132,12 +132,12 @@ public abstract class AbstractSampleIT {
     assertTrue(hasFolderBaseType);
 
     // get base types via getTypeDescendants
-    List<Container<ObjectType>> baseTypeDesc = getSession().getTypeDescendants(null, -1, true);
+    List<Tree<ObjectType>> baseTypeDesc = getSession().getTypeDescendants(null, -1, true);
     assertNotNull(baseTypeDesc);
 
     hasDocumentBaseType = false;
     hasFolderBaseType = false;
-    for (Container<ObjectType> cot : baseTypeDesc) {
+    for (Tree<ObjectType> cot : baseTypeDesc) {
       assertNotNull(cot);
       //checkBaseType(null, null, cot.getItem());
 

@@ -30,12 +30,12 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
-import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
@@ -392,7 +392,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    *
    * @see org.apache.opencmis.client.api.Folder#getDescendants(int)
    */
-  public List<Container<FileableCmisObject>> getDescendants(int depth) {
+  public List<Tree<FileableCmisObject>> getDescendants(int depth) {
     return getDescendants(depth, getSession().getDefaultContext());
   }
 
@@ -402,7 +402,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * @see org.apache.opencmis.client.api.Folder#getDescendants(int,
    * org.apache.opencmis.client.api.OperationContext)
    */
-  public List<Container<FileableCmisObject>> getDescendants(int depth, OperationContext context) {
+  public List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context) {
     String objectId = getObjectId();
 
     // get the descendants
@@ -420,7 +420,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    *
    * @see org.apache.opencmis.client.api.Folder#getFolderTree(int)
    */
-  public List<Container<FileableCmisObject>> getFolderTree(int depth) {
+  public List<Tree<FileableCmisObject>> getFolderTree(int depth) {
     return getFolderTree(depth, getSession().getDefaultContext());
   }
 
@@ -430,7 +430,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
    * @see org.apache.opencmis.client.api.Folder#getFolderTree(int,
    * org.apache.opencmis.client.api.OperationContext)
    */
-  public List<Container<FileableCmisObject>> getFolderTree(int depth, OperationContext context) {
+  public List<Tree<FileableCmisObject>> getFolderTree(int depth, OperationContext context) {
     String objectId = getObjectId();
 
     // get the folder tree
@@ -446,7 +446,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
   /**
    * Converts a provider container into an API container.
    */
-  private List<Container<FileableCmisObject>> convertProviderContainer(
+  private List<Tree<FileableCmisObject>> convertProviderContainer(
       List<ObjectInFolderContainer> providerContainerList, OperationContext context) {
     if (providerContainerList == null) {
       return null;
@@ -454,7 +454,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     ObjectFactory of = getSession().getObjectFactory();
 
-    List<Container<FileableCmisObject>> result = new ArrayList<Container<FileableCmisObject>>();
+    List<Tree<FileableCmisObject>> result = new ArrayList<Tree<FileableCmisObject>>();
     for (ObjectInFolderContainer oifc : providerContainerList) {
       if ((oifc.getObject() == null) || (oifc.getObject().getObject() == null)) {
         // shouldn't happen ...
@@ -469,7 +469,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
       }
 
       // convert the children
-      List<Container<FileableCmisObject>> children = convertProviderContainer(oifc.getChildren(),
+      List<Tree<FileableCmisObject>> children = convertProviderContainer(oifc.getChildren(),
           context);
 
       // add both to current container

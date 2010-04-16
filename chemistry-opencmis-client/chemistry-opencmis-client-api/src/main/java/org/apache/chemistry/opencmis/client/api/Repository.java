@@ -16,13 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.api.objecttype;
+package org.apache.chemistry.opencmis.client.api;
+
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 
 /**
- * Policy Object Type.
- * 
- * See CMIS Domain Model - section 2.1.7.1.
+ * Represents a repository.
  */
-public interface PolicyType extends ObjectType {
+public interface Repository extends RepositoryInfo {
 
+  /**
+   * Creates a session for this repository.
+   */
+  <T extends Session> T createSession();
 }

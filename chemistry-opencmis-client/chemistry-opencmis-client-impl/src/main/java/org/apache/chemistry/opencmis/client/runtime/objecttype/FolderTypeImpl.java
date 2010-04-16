@@ -20,10 +20,10 @@ package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
 import java.util.List;
 
+import org.apache.chemistry.opencmis.client.api.FolderType;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.objecttype.FolderType;
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.api.FolderTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
@@ -52,7 +52,7 @@ public class FolderTypeImpl extends FolderTypeDefinitionImpl implements
         return helper.getChildren(itemsPerPage);
     }
 
-    public List<Container<ObjectType>> getDescendants(int depth) {
+    public List<Tree<ObjectType>> getDescendants(int depth) {
         return helper.getDescendants(depth);
     }
 

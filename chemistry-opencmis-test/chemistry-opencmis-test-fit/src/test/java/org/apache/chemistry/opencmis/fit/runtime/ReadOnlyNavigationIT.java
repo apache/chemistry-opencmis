@@ -25,7 +25,7 @@ import junit.framework.Assert;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.Tree;
 // import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.junit.Test;
 
@@ -89,11 +89,11 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
 		Folder folder = (Folder) this.session.getObjectByPath(path);
 		Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Container<FileableCmisObject>> desc = folder.getDescendants(1);
+		List<Tree<FileableCmisObject>> desc = folder.getDescendants(1);
 		Assert.assertNotNull(desc);
 		Assert.assertFalse(desc.isEmpty());
 
-		for (Container<FileableCmisObject> o : desc) {
+		for (Tree<FileableCmisObject> o : desc) {
 			Assert.assertNotNull(o);
 			Assert.assertNotNull(o.getItem());
 		}
@@ -104,11 +104,11 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
 		Folder folder = (Folder) this.session.getObjectByPath(path);
 		Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Container<FileableCmisObject>> desc = folder.getDescendants(1000);
+		List<Tree<FileableCmisObject>> desc = folder.getDescendants(1000);
 		Assert.assertNotNull(desc);
 		Assert.assertFalse(desc.isEmpty());
 
-		for (Container<FileableCmisObject> o : desc) {
+		for (Tree<FileableCmisObject> o : desc) {
 			Assert.assertNotNull(o);
 			Assert.assertNotNull(o.getItem());
 		}
@@ -119,11 +119,11 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
 		Folder folder = (Folder) this.session.getObjectByPath(path);
 		Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Container<FileableCmisObject>> desc = folder.getDescendants(2);
+		List<Tree<FileableCmisObject>> desc = folder.getDescendants(2);
 		Assert.assertNotNull(desc);
 		Assert.assertFalse(desc.isEmpty());
 
-		for (Container<FileableCmisObject> o : desc) {
+		for (Tree<FileableCmisObject> o : desc) {
 			Assert.assertNotNull(o);
 			Assert.assertNotNull(o.getItem());
 		}
@@ -135,11 +135,11 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
 		Folder folder = (Folder) this.session.getObjectByPath(path);
 		Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Container<FileableCmisObject>> tree = folder.getFolderTree(2);
+		List<Tree<FileableCmisObject>> tree = folder.getFolderTree(2);
 		Assert.assertNotNull(tree);
 		Assert.assertFalse(tree.isEmpty());
 
-		for (Container<FileableCmisObject> o : tree) {
+		for (Tree<FileableCmisObject> o : tree) {
 			Assert.assertNotNull(o);
 			Assert.assertNotNull(o.getItem());
 		}
@@ -150,11 +150,11 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
 		Folder folder = (Folder) this.session.getObjectByPath(path);
 		Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Container<FileableCmisObject>> tree = folder.getFolderTree(1);
+		List<Tree<FileableCmisObject>> tree = folder.getFolderTree(1);
 		Assert.assertNotNull(tree);
 		Assert.assertFalse(tree.isEmpty());
 
-		for (Container<FileableCmisObject> o : tree) {
+		for (Tree<FileableCmisObject> o : tree) {
 			Assert.assertNotNull(o);
 			Assert.assertNotNull(o.getItem());
 		}
@@ -165,11 +165,11 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
 		Folder folder = (Folder) this.session.getObjectByPath(path);
 		Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Container<FileableCmisObject>> tree = folder.getFolderTree(1000);
+		List<Tree<FileableCmisObject>> tree = folder.getFolderTree(1000);
 		Assert.assertNotNull(tree);
 		Assert.assertFalse(tree.isEmpty());
 
-		for (Container<FileableCmisObject> o : tree) {
+		for (Tree<FileableCmisObject> o : tree) {
 			Assert.assertNotNull(o);
 			Assert.assertNotNull(o.getItem());
 		}

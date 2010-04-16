@@ -20,10 +20,10 @@ package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
 import java.util.List;
 
+import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.client.api.PolicyType;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.objecttype.PolicyType;
-import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
-import org.apache.chemistry.opencmis.client.api.util.Container;
+import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.api.PolicyTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
@@ -52,7 +52,7 @@ public class PolicyTypeImpl extends PolicyTypeDefinitionImpl implements
         return helper.getChildren(itemsPerPage);
     }
 
-    public List<Container<ObjectType>> getDescendants(int depth) {
+    public List<Tree<ObjectType>> getDescendants(int depth) {
         return helper.getDescendants(depth);
     }
 
