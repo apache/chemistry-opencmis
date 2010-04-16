@@ -20,9 +20,8 @@ package org.apache.chemistry.opencmis.fit.runtime;
 
 import java.util.Hashtable;
 
+import org.apache.chemistry.opencmis.client.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.SessionFactory;
-import org.apache.chemistry.opencmis.client.api.TransientSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.SessionType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
@@ -74,7 +73,7 @@ public class ReadOnlyCreateSessionIT {
 
     try {
       @SuppressWarnings("unused")
-      TransientSession s = factory.createSession(parameter);
+      Session s = factory.createSession(parameter);
       Assert
           .fail("CmisNotSupportedException expected, because Transient Session is not supported yet.");
     }

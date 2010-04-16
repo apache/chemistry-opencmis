@@ -46,6 +46,20 @@ public interface Session {
    */
   void clear();
 
+  /**
+   * Save all pending actions for this session. Corresponds to a <code>commit</code> if the CMIS
+   * provider supports transactions. If transactions are not supported by the CMIS provider, changes
+   * might be applied only partially.
+   */
+  void save();
+
+  /**
+   * Cancel all pending actions for this session. Corresponds to a <code>rollback</code> if the CMIS
+   * provider supports transactions. If transactions are not supported by the CMIS provider, some
+   * changes might already be applied and therefore not rolled back.
+   */
+  void cancel();
+
   // session context
 
   /**

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.repository.Repository;
 import org.apache.chemistry.opencmis.client.runtime.CmisBindingHelper;
 import org.apache.chemistry.opencmis.client.runtime.PersistentSessionImpl;

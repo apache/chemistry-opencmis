@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.fit.runtime;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.chemistry.opencmis.client.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;

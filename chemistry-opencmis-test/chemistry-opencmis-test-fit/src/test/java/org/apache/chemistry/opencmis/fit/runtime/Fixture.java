@@ -28,9 +28,9 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import org.apache.chemistry.opencmis.client.SessionFactory;
 import org.apache.chemistry.opencmis.client.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

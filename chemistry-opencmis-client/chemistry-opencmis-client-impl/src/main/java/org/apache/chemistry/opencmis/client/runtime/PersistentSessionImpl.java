@@ -35,9 +35,9 @@ import org.apache.chemistry.opencmis.client.api.ExtensionHandler;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.PersistentSession;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.objecttype.ObjectType;
 import org.apache.chemistry.opencmis.client.api.repository.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.util.Container;
@@ -71,7 +71,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Persistent model session.
  */
-public class PersistentSessionImpl implements PersistentSession, Serializable {
+public class PersistentSessionImpl implements Session, Serializable {
 
   private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false,
       true, false, IncludeRelationships.NONE, null, true, null, true);
@@ -215,6 +215,14 @@ public class PersistentSessionImpl implements PersistentSession, Serializable {
     finally {
       fLock.writeLock().unlock();
     }
+  }
+
+  public void save() {
+      // nop
+  }
+
+  public void cancel() {
+      throw new UnsupportedOperationException("cancel");
   }
 
   /*

@@ -16,11 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.api;
+package org.apache.chemistry.opencmis.client;
 
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.repository.Repository;
 
 /**
