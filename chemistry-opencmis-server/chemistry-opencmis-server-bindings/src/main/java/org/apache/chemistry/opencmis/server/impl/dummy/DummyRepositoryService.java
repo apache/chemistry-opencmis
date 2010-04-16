@@ -41,51 +41,49 @@ import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
  */
 public class DummyRepositoryService implements CmisRepositoryService {
 
-  private RepositoryInfoImpl fRepInfo;
+	private RepositoryInfoImpl fRepInfo;
 
-  public DummyRepositoryService(String id, String name) {
-    fRepInfo = new RepositoryInfoImpl();
+	public DummyRepositoryService(String id, String name) {
+		fRepInfo = new RepositoryInfoImpl();
 
-    fRepInfo.setRepositoryId(id);
-    fRepInfo.setRepositoryName(name);
-    fRepInfo.setRepositoryDescription(name);
-    fRepInfo.setCmisVersionSupported("1.0");
-    fRepInfo.setRootFolder("root");
+		fRepInfo.setRepositoryId(id);
+		fRepInfo.setRepositoryName(name);
+		fRepInfo.setRepositoryDescription(name);
+		fRepInfo.setCmisVersionSupported("1.0");
+		fRepInfo.setRootFolder("root");
 
-    fRepInfo.setVendorName("OpenCMIS");
-    fRepInfo.setProductName("OpenCMIS Server");
-    fRepInfo.setProductVersion("1.0");
-  }
+		fRepInfo.setVendorName("OpenCMIS");
+		fRepInfo.setProductName("OpenCMIS Server");
+		fRepInfo.setProductVersion("1.0");
+	}
 
-  public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId,
-      ExtensionsData extension) {
+	public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId, ExtensionsData extension) {
 
-    if (!fRepInfo.getId().equals(repositoryId)) {
-      throw new CmisObjectNotFoundException("A repository with repository id '" + repositoryId
-          + "' does not exist!");
-    }
+		if (!fRepInfo.getId().equals(repositoryId)) {
+			throw new CmisObjectNotFoundException("A repository with repository id '" + repositoryId
+					+ "' does not exist!");
+		}
 
-    return fRepInfo;
-  }
+		return fRepInfo;
+	}
 
-  public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
-    return Collections.singletonList((RepositoryInfo) fRepInfo);
-  }
+	public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
+		return Collections.singletonList((RepositoryInfo) fRepInfo);
+	}
 
-  public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId,
-      String typeId, Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount,
-      ExtensionsData extension) {
-    throw new CmisNotSupportedException();
-  }
+	public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId, String typeId,
+			Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		throw new CmisNotSupportedException();
+	}
 
-  public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
-      ExtensionsData extension) {
-    throw new CmisNotSupportedException();
-  }
+	public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
+			ExtensionsData extension) {
+		throw new CmisNotSupportedException();
+	}
 
-  public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId,
-      String typeId, BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
-    throw new CmisNotSupportedException();
-  }
+	public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId, String typeId,
+			BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
+		throw new CmisNotSupportedException();
+	}
 
 }

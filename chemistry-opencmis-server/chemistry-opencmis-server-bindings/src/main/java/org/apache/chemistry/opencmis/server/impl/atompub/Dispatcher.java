@@ -41,68 +41,64 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Dispatcher {
 
-  private static final Log LOG = LogFactory.getLog(Dispatcher.class.getName());
+	private static final Log LOG = LogFactory.getLog(Dispatcher.class.getName());
 
-  private Map<String, Method> fMethodMap = new HashMap<String, Method>();
+	private Map<String, Method> fMethodMap = new HashMap<String, Method>();
 
-  public Dispatcher() {
-  }
+	public Dispatcher() {
+	}
 
-  /**
-   * Connects a resource and HTTP method with a class and a class method.
-   */
-  public synchronized void addResource(String resource, String httpMethod, Class<?> clazz,
-      String classmethod) throws NoSuchMethodException {
+	/**
+	 * Connects a resource and HTTP method with a class and a class method.
+	 */
+	public synchronized void addResource(String resource, String httpMethod, Class<?> clazz, String classmethod)
+			throws NoSuchMethodException {
 
-    Method m = clazz.getMethod(classmethod, CallContext.class, AbstractServicesFactory.class,
-        String.class, HttpServletRequest.class, HttpServletResponse.class);
+		Method m = clazz.getMethod(classmethod, CallContext.class, AbstractServicesFactory.class, String.class,
+				HttpServletRequest.class, HttpServletResponse.class);
 
-    fMethodMap.put(getKey(resource, httpMethod), m);
-  }
+		fMethodMap.put(getKey(resource, httpMethod), m);
+	}
 
-  /**
-   * Find the appropriate method an call it.
-   * 
-   * @return <code>true</code> if the method was found, <code>false</code> otherwise.
-   */
-  public boolean dispatch(String resource, String httpMethod, CallContext context,
-      AbstractServicesFactory factory, String repositoryId, HttpServletRequest request,
-      HttpServletResponse response) {
+	/**
+	 * Find the appropriate method an call it.
+	 * 
+	 * @return <code>true</code> if the method was found, <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean dispatch(String resource, String httpMethod, CallContext context, AbstractServicesFactory factory,
+			String repositoryId, HttpServletRequest request, HttpServletResponse response) {
 
-    Method m = fMethodMap.get(getKey(resource, httpMethod));
-    if (m == null) {
-      return false;
-    }
+		Method m = fMethodMap.get(getKey(resource, httpMethod));
+		if (m == null) {
+			return false;
+		}
 
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(repositoryId + " / " + resource + ", " + httpMethod + " -> " + m.getName());
-    }
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(repositoryId + " / " + resource + ", " + httpMethod + " -> " + m.getName());
+		}
 
-    try {
-      m.invoke(null, context, factory, repositoryId, request, response);
-    }
-    catch (IllegalArgumentException e) {
-      throw e;
-    }
-    catch (IllegalAccessException e) {
-      throw new CmisRuntimeException("Internal error!", e);
-    }
-    catch (InvocationTargetException e) {
-      if (e.getCause() instanceof CmisBaseException) {
-        throw (CmisBaseException) e.getCause();
-      }
-      else {
-        throw new CmisRuntimeException(e.getMessage(), e);
-      }
-    }
+		try {
+			m.invoke(null, context, factory, repositoryId, request, response);
+		} catch (IllegalArgumentException e) {
+			throw e;
+		} catch (IllegalAccessException e) {
+			throw new CmisRuntimeException("Internal error!", e);
+		} catch (InvocationTargetException e) {
+			if (e.getCause() instanceof CmisBaseException) {
+				throw (CmisBaseException) e.getCause();
+			} else {
+				throw new CmisRuntimeException(e.getMessage(), e);
+			}
+		}
 
-    return true;
-  }
+		return true;
+	}
 
-  /**
-   * Generates a map key from a resource and an HTTP method.
-   */
-  private String getKey(String resource, String httpMethod) {
-    return resource + "/" + httpMethod;
-  }
+	/**
+	 * Generates a map key from a resource and an HTTP method.
+	 */
+	private String getKey(String resource, String httpMethod) {
+		return resource + "/" + httpMethod;
+	}
 }

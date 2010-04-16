@@ -23,22 +23,22 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoImpl;
 
 public class DocumentInfo extends ObjectInfoImpl {
 
-  public DocumentInfo() {
-    setBaseType(BaseTypeId.CMIS_DOCUMENT);
-    setHasAcl(true);
-    setHasContent(true);
-    setHasParent(true);
-    setVersionSeriesId(null);
-    setIsCurrentVersion(true);
-    setRelationshipSourceIds(null);
-    setRelationshipTargetIds(null);
-    setRenditionInfos(null);
-    setSupportsDescendants(false);
-    setSupportsFolderTree(false);
-    setSupportsPolicies(false);
-    setSupportsRelationships(false);
-    setWorkingCopyId(null);
-    setWorkingCopyOriginalId(null);
-  }
+	public DocumentInfo() {
+		setBaseType(BaseTypeId.CMIS_DOCUMENT);
+		setHasAcl(true);
+		setHasContent(true);
+		setHasParent(true);
+		setVersionSeriesId(null);
+		setIsCurrentVersion(true);
+		setRelationshipSourceIds(null);
+		setRelationshipTargetIds(null);
+		setRenditionInfos(null);
+		setSupportsDescendants(false);
+		setSupportsFolderTree(false);
+		setSupportsPolicies(false);
+		setSupportsRelationships(false);
+		setWorkingCopyId(null);
+		setWorkingCopyOriginalId(null);
+	}
 
 }

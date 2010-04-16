@@ -37,22 +37,21 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType
  */
 public class AclDocument {
 
-  /**
-   * Creates an ACL document.
-   */
-  public AclDocument() {
-  }
+	/**
+	 * Creates an ACL document.
+	 */
+	public AclDocument() {
+	}
 
-  /**
-   * Writes an object.
-   */
-  public void writeAcl(Acl acl, OutputStream out) throws XMLStreamException,
-      JAXBException {
-    CmisAccessControlListType aclJaxb = convert(acl);
-    if (aclJaxb == null) {
-      return;
-    }
+	/**
+	 * Writes an object.
+	 */
+	public void writeAcl(Acl acl, OutputStream out) throws XMLStreamException, JAXBException {
+		CmisAccessControlListType aclJaxb = convert(acl);
+		if (aclJaxb == null) {
+			return;
+		}
 
-    JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createAcl(aclJaxb), out, false);
-  }
+		JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createAcl(aclJaxb), out, false);
+	}
 }

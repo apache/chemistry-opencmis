@@ -38,85 +38,87 @@ import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
  */
 public class RepositoryService implements CmisRepositoryService {
 
-  private RepositoryMap fRepositoryMap;
+	private RepositoryMap fRepositoryMap;
 
-  /**
-   * Constructor.
-   */
-  public RepositoryService(RepositoryMap repositoryMap) {
-    fRepositoryMap = repositoryMap;
-  }
+	/**
+	 * Constructor.
+	 */
+	public RepositoryService(RepositoryMap repositoryMap) {
+		fRepositoryMap = repositoryMap;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfo(org.apache.opencmis.
-   * server.spi.CallContext , java.lang.String, org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId,
-      ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getRepositoryInfo(
-        context);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfo
+	 * (org.apache.opencmis. server.spi.CallContext , java.lang.String,
+	 * org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId, ExtensionsData extension) {
+		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getRepositoryInfo(context);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * 
-   * @seeorg.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfos(org.apache.opencmis.
-   * server.spi. CallContext, org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
-    List<RepositoryInfo> result = new ArrayList<RepositoryInfo>();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * 
+	 * 
+	 * @seeorg.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfos
+	 * (org.apache.opencmis. server.spi. CallContext,
+	 * org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
+		List<RepositoryInfo> result = new ArrayList<RepositoryInfo>();
 
-    for (FileShareRepository fsr : fRepositoryMap.getRepositories()) {
-      result.add(fsr.getRepositoryInfo(context));
-    }
+		for (FileShareRepository fsr : fRepositoryMap.getRepositories()) {
+			result.add(fsr.getRepositoryInfo(context));
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeChildren(org.apache.opencmis.server
-   * .spi.CallContext , java.lang.String, java.lang.String, java.lang.Boolean, java.math.BigInteger,
-   * java.math.BigInteger, org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId,
-      String typeId, Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount,
-      ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getTypesChildren(
-        context, typeId, includePropertyDefinitions, maxItems, skipCount);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeChildren(
+	 * org.apache.opencmis.server .spi.CallContext , java.lang.String,
+	 * java.lang.String, java.lang.Boolean, java.math.BigInteger,
+	 * java.math.BigInteger, org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId, String typeId,
+			Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getTypesChildren(context, typeId,
+				includePropertyDefinitions, maxItems, skipCount);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeDefinition(org.apache.opencmis.
-   * server.spi.CallContext , java.lang.String, java.lang.String,
-   * org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
-      ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getTypeDefinition(
-        context, typeId);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeDefinition
+	 * (org.apache.opencmis. server.spi.CallContext , java.lang.String,
+	 * java.lang.String, org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
+			ExtensionsData extension) {
+		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getTypeDefinition(context, typeId);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * 
-   * @seeorg.apache.opencmis.server.spi.CmisRepositoryService#getTypeDescendants(org.apache.opencmis.
-   * server.spi. CallContext, java.lang.String, java.lang.String, java.math.BigInteger,
-   * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId,
-      String typeId, BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
-    return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getTypesDescendants(
-        context, typeId, depth, includePropertyDefinitions);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * 
+	 * 
+	 * @seeorg.apache.opencmis.server.spi.CmisRepositoryService#getTypeDescendants
+	 * (org.apache.opencmis. server.spi. CallContext, java.lang.String,
+	 * java.lang.String, java.math.BigInteger, java.lang.Boolean,
+	 * org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId, String typeId,
+			BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
+		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getTypesDescendants(context, typeId,
+				depth, includePropertyDefinitions);
+	}
 }

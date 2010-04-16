@@ -31,219 +31,219 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
  */
 public class ObjectInfoImpl implements ObjectInfo {
 
-  private String fId;
-  private String fName;
-  private String fCreatedBy;
-  private GregorianCalendar fCreationDate;
-  private GregorianCalendar fLastModificationDate;
-  private String fTypeId;
-  private BaseTypeId fBaseObjectTypeId;
-  private boolean fIsCurrentVersion = true;
-  private String fVersionSeriesId = null;
-  private String fWorkingCopyId = null;
-  private String fWorkingCopyOriginalId = null;
-  private boolean fHasContent = true;
-  private String fContentType = null;
-  private String fFileName = null;
-  private List<RenditionInfo> fRenditionInfos = null;
-  private boolean fSupportsRelationships = false;
-  private boolean fSupportsPolicies = false;
-  private boolean fHasAcl = false;
-  private boolean fHasParent = true;
-  private boolean fSupportsDescendants = false;
-  private boolean fSupportsFolderTree = false;
-  private List<String> fRelationshipSourceIds = null;
-  private List<String> fRelationshipTargetIds = null;
+	private String fId;
+	private String fName;
+	private String fCreatedBy;
+	private GregorianCalendar fCreationDate;
+	private GregorianCalendar fLastModificationDate;
+	private String fTypeId;
+	private BaseTypeId fBaseObjectTypeId;
+	private boolean fIsCurrentVersion = true;
+	private String fVersionSeriesId = null;
+	private String fWorkingCopyId = null;
+	private String fWorkingCopyOriginalId = null;
+	private boolean fHasContent = true;
+	private String fContentType = null;
+	private String fFileName = null;
+	private List<RenditionInfo> fRenditionInfos = null;
+	private boolean fSupportsRelationships = false;
+	private boolean fSupportsPolicies = false;
+	private boolean fHasAcl = false;
+	private boolean fHasParent = true;
+	private boolean fSupportsDescendants = false;
+	private boolean fSupportsFolderTree = false;
+	private List<String> fRelationshipSourceIds = null;
+	private List<String> fRelationshipTargetIds = null;
 
-  public ObjectInfoImpl() {
-  }
+	public ObjectInfoImpl() {
+	}
 
-  public ObjectInfoImpl(String id, BaseTypeId baseObjectTypeId) {
-    fId = id;
-    fBaseObjectTypeId = baseObjectTypeId;
-  }
+	public ObjectInfoImpl(String id, BaseTypeId baseObjectTypeId) {
+		fId = id;
+		fBaseObjectTypeId = baseObjectTypeId;
+	}
 
-  public String getId() {
-    return fId;
-  }
+	public String getId() {
+		return fId;
+	}
 
-  public void setId(String id) {
-    fId = id;
-  }
+	public void setId(String id) {
+		fId = id;
+	}
 
-  public String getName() {
-    return fName;
-  }
+	public String getName() {
+		return fName;
+	}
 
-  public void setName(String name) {
-    fName = name;
-  }
+	public void setName(String name) {
+		fName = name;
+	}
 
-  public String getCreatedBy() {
-    return fCreatedBy;
-  }
+	public String getCreatedBy() {
+		return fCreatedBy;
+	}
 
-  public void setCreatedBy(String createdBy) {
-    fCreatedBy = createdBy;
-  }
+	public void setCreatedBy(String createdBy) {
+		fCreatedBy = createdBy;
+	}
 
-  public GregorianCalendar getCreationDate() {
-    return fCreationDate;
-  }
+	public GregorianCalendar getCreationDate() {
+		return fCreationDate;
+	}
 
-  public void setCreationDate(GregorianCalendar creationDate) {
-    fCreationDate = creationDate;
-  }
+	public void setCreationDate(GregorianCalendar creationDate) {
+		fCreationDate = creationDate;
+	}
 
-  public GregorianCalendar getLastModificationDate() {
-    return fLastModificationDate;
-  }
+	public GregorianCalendar getLastModificationDate() {
+		return fLastModificationDate;
+	}
 
-  public void setLastModificationDate(GregorianCalendar lastModificationDate) {
-    fLastModificationDate = lastModificationDate;
-  }
+	public void setLastModificationDate(GregorianCalendar lastModificationDate) {
+		fLastModificationDate = lastModificationDate;
+	}
 
-  public String getTypeId() {
-    return fTypeId;
-  }
+	public String getTypeId() {
+		return fTypeId;
+	}
 
-  public void setTypeId(String typeId) {
-    fTypeId = typeId;
-  }
+	public void setTypeId(String typeId) {
+		fTypeId = typeId;
+	}
 
-  public BaseTypeId getBaseType() {
-    return fBaseObjectTypeId;
-  }
+	public BaseTypeId getBaseType() {
+		return fBaseObjectTypeId;
+	}
 
-  public void setBaseType(BaseTypeId baseObjectTypeId) {
-    fBaseObjectTypeId = baseObjectTypeId;
-  }
+	public void setBaseType(BaseTypeId baseObjectTypeId) {
+		fBaseObjectTypeId = baseObjectTypeId;
+	}
 
-  public boolean isCurrentVersion() {
-    return fIsCurrentVersion;
-  }
+	public boolean isCurrentVersion() {
+		return fIsCurrentVersion;
+	}
 
-  public void setIsCurrentVersion(boolean currentVersion) {
-    fIsCurrentVersion = currentVersion;
-  }
+	public void setIsCurrentVersion(boolean currentVersion) {
+		fIsCurrentVersion = currentVersion;
+	}
 
-  public String getVersionSeriesId() {
-    return fVersionSeriesId;
-  }
+	public String getVersionSeriesId() {
+		return fVersionSeriesId;
+	}
 
-  public void setVersionSeriesId(String versionSeriesId) {
-    fVersionSeriesId = versionSeriesId;
-  }
+	public void setVersionSeriesId(String versionSeriesId) {
+		fVersionSeriesId = versionSeriesId;
+	}
 
-  public String getWorkingCopyId() {
-    return fWorkingCopyId;
-  }
+	public String getWorkingCopyId() {
+		return fWorkingCopyId;
+	}
 
-  public void setWorkingCopyId(String workingCopyId) {
-    fWorkingCopyId = workingCopyId;
-  }
+	public void setWorkingCopyId(String workingCopyId) {
+		fWorkingCopyId = workingCopyId;
+	}
 
-  public String getWorkingCopyOriginalId() {
-    return fWorkingCopyOriginalId;
-  }
+	public String getWorkingCopyOriginalId() {
+		return fWorkingCopyOriginalId;
+	}
 
-  public void setWorkingCopyOriginalId(String workingCopyOriginalId) {
-    fWorkingCopyOriginalId = workingCopyOriginalId;
-  }
+	public void setWorkingCopyOriginalId(String workingCopyOriginalId) {
+		fWorkingCopyOriginalId = workingCopyOriginalId;
+	}
 
-  public boolean hasContent() {
-    return fHasContent;
-  }
+	public boolean hasContent() {
+		return fHasContent;
+	}
 
-  public void setHasContent(boolean hasContent) {
-    fHasContent = hasContent;
-  }
+	public void setHasContent(boolean hasContent) {
+		fHasContent = hasContent;
+	}
 
-  public String getContentType() {
-    return fContentType;
-  }
+	public String getContentType() {
+		return fContentType;
+	}
 
-  public void setContentType(String contentType) {
-    fContentType = contentType;
-  }
+	public void setContentType(String contentType) {
+		fContentType = contentType;
+	}
 
-  public String getFileName() {
-    return fFileName;
-  }
+	public String getFileName() {
+		return fFileName;
+	}
 
-  public void setFileName(String fileName) {
-    fFileName = fileName;
-  }
+	public void setFileName(String fileName) {
+		fFileName = fileName;
+	}
 
-  public List<RenditionInfo> getRenditionInfos() {
-    return fRenditionInfos;
-  }
+	public List<RenditionInfo> getRenditionInfos() {
+		return fRenditionInfos;
+	}
 
-  public void setRenditionInfos(List<RenditionInfo> renditions) {
-    fRenditionInfos = renditions;
-  }
+	public void setRenditionInfos(List<RenditionInfo> renditions) {
+		fRenditionInfos = renditions;
+	}
 
-  public boolean supportsRelationships() {
-    return fSupportsRelationships;
-  }
+	public boolean supportsRelationships() {
+		return fSupportsRelationships;
+	}
 
-  public void setSupportsRelationships(boolean supportsRelationships) {
-    fSupportsRelationships = supportsRelationships;
-  }
+	public void setSupportsRelationships(boolean supportsRelationships) {
+		fSupportsRelationships = supportsRelationships;
+	}
 
-  public boolean supportsPolicies() {
-    return fSupportsPolicies;
-  }
+	public boolean supportsPolicies() {
+		return fSupportsPolicies;
+	}
 
-  public void setSupportsPolicies(boolean supportsPolicies) {
-    fSupportsPolicies = supportsPolicies;
-  }
+	public void setSupportsPolicies(boolean supportsPolicies) {
+		fSupportsPolicies = supportsPolicies;
+	}
 
-  public boolean hasAcl() {
-    return fHasAcl;
-  }
+	public boolean hasAcl() {
+		return fHasAcl;
+	}
 
-  public void setHasAcl(boolean hasAcl) {
-    fHasAcl = hasAcl;
-  }
+	public void setHasAcl(boolean hasAcl) {
+		fHasAcl = hasAcl;
+	}
 
-  public boolean hasParent() {
-    return fHasParent;
-  }
+	public boolean hasParent() {
+		return fHasParent;
+	}
 
-  public void setHasParent(boolean hasParent) {
-    fHasParent = hasParent;
-  }
+	public void setHasParent(boolean hasParent) {
+		fHasParent = hasParent;
+	}
 
-  public boolean supportsDescendants() {
-    return fSupportsDescendants;
-  }
+	public boolean supportsDescendants() {
+		return fSupportsDescendants;
+	}
 
-  public void setSupportsDescendants(boolean supportsDescendants) {
-    fSupportsDescendants = supportsDescendants;
-  }
+	public void setSupportsDescendants(boolean supportsDescendants) {
+		fSupportsDescendants = supportsDescendants;
+	}
 
-  public boolean supportsFolderTree() {
-    return fSupportsFolderTree;
-  }
+	public boolean supportsFolderTree() {
+		return fSupportsFolderTree;
+	}
 
-  public void setSupportsFolderTree(boolean supportsFolderTree) {
-    fSupportsFolderTree = supportsFolderTree;
-  }
+	public void setSupportsFolderTree(boolean supportsFolderTree) {
+		fSupportsFolderTree = supportsFolderTree;
+	}
 
-  public List<String> getRelationshipSourceIds() {
-    return fRelationshipSourceIds;
-  }
+	public List<String> getRelationshipSourceIds() {
+		return fRelationshipSourceIds;
+	}
 
-  public void setRelationshipSourceIds(List<String> relationshipSourceIds) {
-    fRelationshipSourceIds = relationshipSourceIds;
-  }
+	public void setRelationshipSourceIds(List<String> relationshipSourceIds) {
+		fRelationshipSourceIds = relationshipSourceIds;
+	}
 
-  public List<String> getRelationshipTargetIds() {
-    return fRelationshipTargetIds;
-  }
+	public List<String> getRelationshipTargetIds() {
+		return fRelationshipTargetIds;
+	}
 
-  public void setRelationshipTargetIds(List<String> relationshipTargetIds) {
-    fRelationshipTargetIds = relationshipTargetIds;
-  }
+	public void setRelationshipTargetIds(List<String> relationshipTargetIds) {
+		fRelationshipTargetIds = relationshipTargetIds;
+	}
 }

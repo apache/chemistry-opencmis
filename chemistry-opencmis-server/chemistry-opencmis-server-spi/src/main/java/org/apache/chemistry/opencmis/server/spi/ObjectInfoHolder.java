@@ -19,21 +19,21 @@
 package org.apache.chemistry.opencmis.server.spi;
 
 /**
- * This class contains information about a set of objects. This data is used to generate the
- * appropriate links in AtomPub entries and feeds.
+ * This class contains information about a set of objects. This data is used to
+ * generate the appropriate links in AtomPub entries and feeds.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public interface ObjectInfoHolder {
 
-  /**
-   * Adds an object info.
-   */
-  void addObjectInfo(ObjectInfo info);
+	/**
+	 * Adds an object info.
+	 */
+	void addObjectInfo(ObjectInfo info);
 
-  /**
-   * Retrieves an object info.
-   */
-  ObjectInfo getObjectInfo(String id);
+	/**
+	 * Retrieves an object info.
+	 */
+	ObjectInfo getObjectInfo(String id);
 }

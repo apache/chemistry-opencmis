@@ -52,143 +52,130 @@ import org.apache.chemistry.opencmis.server.spi.CmisNavigationService;
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.NavigationServicePort")
 public class NavigationService extends AbstractService implements NavigationServicePort {
-  @Resource
-  WebServiceContext fContext;
+	@Resource
+	WebServiceContext fContext;
 
-  public CmisObjectListType getCheckedOutDocs(String repositoryId, String folderId, String filter,
-      String orderBy, Boolean includeAllowableActions,
-      EnumIncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems,
-      BigInteger skipCount, CmisExtensionType extension) throws CmisException {
-    try {
-      AbstractServicesFactory factory = getServicesFactory(fContext);
-      CmisNavigationService service = factory.getNavigationService();
-      CallContext context = createContext(fContext);
+	public CmisObjectListType getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
+			Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
+			BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
+		try {
+			AbstractServicesFactory factory = getServicesFactory(fContext);
+			CmisNavigationService service = factory.getNavigationService();
+			CallContext context = createContext(fContext);
 
-      return convert(service.getCheckedOutDocs(context, repositoryId, folderId, filter, orderBy,
-          includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
-          renditionFilter, maxItems, skipCount, convert(extension), null));
-    }
-    catch (Exception e) {
-      throw convertException(e);
-    }
-  }
+			return convert(service.getCheckedOutDocs(context, repositoryId, folderId, filter, orderBy,
+					includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
+					renditionFilter, maxItems, skipCount, convert(extension), null));
+		} catch (Exception e) {
+			throw convertException(e);
+		}
+	}
 
-  public CmisObjectInFolderListType getChildren(String repositoryId, String folderId,
-      String filter, String orderBy, Boolean includeAllowableActions,
-      EnumIncludeRelationships includeRelationships, String renditionFilter,
-      Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount,
-      CmisExtensionType extension) throws CmisException {
-    try {
-      AbstractServicesFactory factory = getServicesFactory(fContext);
-      CmisNavigationService service = factory.getNavigationService();
-      CallContext context = createContext(fContext);
+	public CmisObjectInFolderListType getChildren(String repositoryId, String folderId, String filter, String orderBy,
+			Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension)
+			throws CmisException {
+		try {
+			AbstractServicesFactory factory = getServicesFactory(fContext);
+			CmisNavigationService service = factory.getNavigationService();
+			CallContext context = createContext(fContext);
 
-      return convert(service.getChildren(context, repositoryId, folderId, filter, orderBy,
-          includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
-          renditionFilter, includePathSegment, maxItems, skipCount, convert(extension), null));
-    }
-    catch (Exception e) {
-      throw convertException(e);
-    }
-  }
+			return convert(service.getChildren(context, repositoryId, folderId, filter, orderBy,
+					includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
+					renditionFilter, includePathSegment, maxItems, skipCount, convert(extension), null));
+		} catch (Exception e) {
+			throw convertException(e);
+		}
+	}
 
-  public List<CmisObjectInFolderContainerType> getDescendants(String repositoryId, String folderId,
-      BigInteger depth, String filter, Boolean includeAllowableActions,
-      EnumIncludeRelationships includeRelationships, String renditionFilter,
-      Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
-    try {
-      AbstractServicesFactory factory = getServicesFactory(fContext);
-      CmisNavigationService service = factory.getNavigationService();
-      CallContext context = createContext(fContext);
+	public List<CmisObjectInFolderContainerType> getDescendants(String repositoryId, String folderId, BigInteger depth,
+			String filter, Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships,
+			String renditionFilter, Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
+		try {
+			AbstractServicesFactory factory = getServicesFactory(fContext);
+			CmisNavigationService service = factory.getNavigationService();
+			CallContext context = createContext(fContext);
 
-      List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
+			List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
 
-      List<ObjectInFolderContainer> serviceResult = service.getDescendants(context, repositoryId,
-          folderId, depth, filter, includeAllowableActions, convert(IncludeRelationships.class,
-              includeRelationships), renditionFilter, includePathSegment, convert(extension), null);
+			List<ObjectInFolderContainer> serviceResult = service.getDescendants(context, repositoryId, folderId,
+					depth, filter, includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
+					renditionFilter, includePathSegment, convert(extension), null);
 
-      if (serviceResult != null) {
-        for (ObjectInFolderContainer container : serviceResult) {
-          result.add(convert(container));
-        }
-      }
+			if (serviceResult != null) {
+				for (ObjectInFolderContainer container : serviceResult) {
+					result.add(convert(container));
+				}
+			}
 
-      return result;
-    }
-    catch (Exception e) {
-      throw convertException(e);
-    }
-  }
+			return result;
+		} catch (Exception e) {
+			throw convertException(e);
+		}
+	}
 
-  public CmisObjectType getFolderParent(String repositoryId, String folderId, String filter,
-      CmisExtensionType extension) throws CmisException {
-    try {
-      AbstractServicesFactory factory = getServicesFactory(fContext);
-      CmisNavigationService service = factory.getNavigationService();
-      CallContext context = createContext(fContext);
+	public CmisObjectType getFolderParent(String repositoryId, String folderId, String filter,
+			CmisExtensionType extension) throws CmisException {
+		try {
+			AbstractServicesFactory factory = getServicesFactory(fContext);
+			CmisNavigationService service = factory.getNavigationService();
+			CallContext context = createContext(fContext);
 
-      return convert(service.getFolderParent(context, repositoryId, folderId, filter,
-          convert(extension), null));
-    }
-    catch (Exception e) {
-      throw convertException(e);
-    }
-  }
+			return convert(service.getFolderParent(context, repositoryId, folderId, filter, convert(extension), null));
+		} catch (Exception e) {
+			throw convertException(e);
+		}
+	}
 
-  public List<CmisObjectInFolderContainerType> getFolderTree(String repositoryId, String folderId,
-      BigInteger depth, String filter, Boolean includeAllowableActions,
-      EnumIncludeRelationships includeRelationships, String renditionFilter,
-      Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
-    try {
-      AbstractServicesFactory factory = getServicesFactory(fContext);
-      CmisNavigationService service = factory.getNavigationService();
-      CallContext context = createContext(fContext);
+	public List<CmisObjectInFolderContainerType> getFolderTree(String repositoryId, String folderId, BigInteger depth,
+			String filter, Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships,
+			String renditionFilter, Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
+		try {
+			AbstractServicesFactory factory = getServicesFactory(fContext);
+			CmisNavigationService service = factory.getNavigationService();
+			CallContext context = createContext(fContext);
 
-      List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
+			List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
 
-      List<ObjectInFolderContainer> serviceResult = service.getFolderTree(context, repositoryId,
-          folderId, depth, filter, includeAllowableActions, convert(IncludeRelationships.class,
-              includeRelationships), renditionFilter, includePathSegment, convert(extension), null);
+			List<ObjectInFolderContainer> serviceResult = service.getFolderTree(context, repositoryId, folderId, depth,
+					filter, includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
+					renditionFilter, includePathSegment, convert(extension), null);
 
-      if (serviceResult != null) {
-        for (ObjectInFolderContainer container : serviceResult) {
-          result.add(convert(container));
-        }
-      }
+			if (serviceResult != null) {
+				for (ObjectInFolderContainer container : serviceResult) {
+					result.add(convert(container));
+				}
+			}
 
-      return result;
-    }
-    catch (Exception e) {
-      throw convertException(e);
-    }
-  }
+			return result;
+		} catch (Exception e) {
+			throw convertException(e);
+		}
+	}
 
-  public List<CmisObjectParentsType> getObjectParents(String repositoryId, String objectId,
-      String filter, Boolean includeAllowableActions,
-      EnumIncludeRelationships includeRelationships, String renditionFilter,
-      Boolean includeRelativePathSegment, CmisExtensionType extension) throws CmisException {
-    try {
-      AbstractServicesFactory factory = getServicesFactory(fContext);
-      CmisNavigationService service = factory.getNavigationService();
-      CallContext context = createContext(fContext);
+	public List<CmisObjectParentsType> getObjectParents(String repositoryId, String objectId, String filter,
+			Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includeRelativePathSegment, CmisExtensionType extension) throws CmisException {
+		try {
+			AbstractServicesFactory factory = getServicesFactory(fContext);
+			CmisNavigationService service = factory.getNavigationService();
+			CallContext context = createContext(fContext);
 
-      List<CmisObjectParentsType> result = new ArrayList<CmisObjectParentsType>();
+			List<CmisObjectParentsType> result = new ArrayList<CmisObjectParentsType>();
 
-      List<ObjectParentData> serviceResult = service.getObjectParents(context, repositoryId,
-          objectId, filter, includeAllowableActions, convert(IncludeRelationships.class,
-              includeRelationships), renditionFilter, includeRelativePathSegment,
-          convert(extension), null);
+			List<ObjectParentData> serviceResult = service.getObjectParents(context, repositoryId, objectId, filter,
+					includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
+					renditionFilter, includeRelativePathSegment, convert(extension), null);
 
-      if (serviceResult != null) {
-        for (ObjectParentData parent : serviceResult) {
-          result.add(convert(parent));
-        }
-      }
+			if (serviceResult != null) {
+				for (ObjectParentData parent : serviceResult) {
+					result.add(convert(parent));
+				}
+			}
 
-      return result;
-    }
-    catch (Exception e) {
-      throw convertException(e);
-    }
-  }
+			return result;
+		} catch (Exception e) {
+			throw convertException(e);
+		}
+	}
 }

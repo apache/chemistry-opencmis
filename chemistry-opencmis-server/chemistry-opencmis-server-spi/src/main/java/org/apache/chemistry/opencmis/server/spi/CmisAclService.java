@@ -23,44 +23,42 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 
 /**
- * CMIS ACL Service interface. Please refer to the CMIS specification and the OpenCMIS documentation
- * for details.
+ * CMIS ACL Service interface. Please refer to the CMIS specification and the
+ * OpenCMIS documentation for details.
  * 
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
 public interface CmisAclService {
 
-  /**
-   * Returns the ACL of an object.
-   * 
-   * <p>
-   * Bindings: AtomPub, Web Services
-   * </p>
-   */
-  Acl getAcl(CallContext context, String repositoryId, String objectId,
-      Boolean onlyBasicPermissions, ExtensionsData extension);
+	/**
+	 * Returns the ACL of an object.
+	 * 
+	 * <p>
+	 * Bindings: AtomPub, Web Services
+	 * </p>
+	 */
+	Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
+			ExtensionsData extension);
 
-  /**
-   * Adds ACEs to and removes ACEs from the ACL of an object.
-   * 
-   * <p>
-   * Bindings: Web Services
-   * </p>
-   */
-  Acl applyAcl(CallContext context, String repositoryId, String objectId,
-      Acl addAces, Acl removeAces, AclPropagation aclPropagation,
-      ExtensionsData extension);
+	/**
+	 * Adds ACEs to and removes ACEs from the ACL of an object.
+	 * 
+	 * <p>
+	 * Bindings: Web Services
+	 * </p>
+	 */
+	Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl addAces, Acl removeAces,
+			AclPropagation aclPropagation, ExtensionsData extension);
 
-  /**
-   * Applies a new ACL to an object. Since it is not possible to transmit an "add ACL" and a
-   * "remove ACL" via AtomPub, the merging has to be done the client side. The ACEs provided here is
-   * supposed to the new complete ACL.
-   * 
-   * <p>
-   * Bindings: AtomPub
-   * </p>
-   */
-  Acl applyAcl(CallContext context, String repositoryId, String objectId,
-      Acl aces, AclPropagation aclPropagation);
+	/**
+	 * Applies a new ACL to an object. Since it is not possible to transmit an
+	 * "add ACL" and a "remove ACL" via AtomPub, the merging has to be done the
+	 * client side. The ACEs provided here is supposed to the new complete ACL.
+	 * 
+	 * <p>
+	 * Bindings: AtomPub
+	 * </p>
+	 */
+	Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl aces, AclPropagation aclPropagation);
 }

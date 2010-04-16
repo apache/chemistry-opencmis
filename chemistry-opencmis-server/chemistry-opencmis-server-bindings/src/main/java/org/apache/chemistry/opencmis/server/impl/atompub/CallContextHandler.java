@@ -32,8 +32,8 @@ import org.apache.chemistry.opencmis.server.spi.CallContext;
  */
 public interface CallContextHandler {
 
-  /**
-   * Returns key-value pairs that will be added to the {@link CallContext}.
-   */
-  Map<String, String> getCallContextMap(HttpServletRequest request);
+	/**
+	 * Returns key-value pairs that will be added to the {@link CallContext}.
+	 */
+	Map<String, String> getCallContextMap(HttpServletRequest request);
 }

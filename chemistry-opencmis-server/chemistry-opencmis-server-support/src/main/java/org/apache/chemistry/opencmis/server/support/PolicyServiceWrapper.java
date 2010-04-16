@@ -34,88 +34,84 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
  */
 public class PolicyServiceWrapper extends AbstractServiceWrapper implements CmisPolicyService {
 
-  private CmisPolicyService fService;
+	private CmisPolicyService fService;
 
-  /**
-   * Constructor.
-   * 
-   * @param service
-   *          the real service object
-   */
-  public PolicyServiceWrapper(CmisPolicyService service) {
-    if (service == null) {
-      throw new IllegalArgumentException("Service must be set!");
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param service
+	 *            the real service object
+	 */
+	public PolicyServiceWrapper(CmisPolicyService service) {
+		if (service == null) {
+			throw new IllegalArgumentException("Service must be set!");
+		}
 
-    fService = service;
-  }
+		fService = service;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisPolicyService#applyPolicy(org.apache.opencmis.server.spi
-   * .CallContext, java.lang.String, java.lang.String, java.lang.String,
-   * org.apache.opencmis.commons.api.ExtensionsData,
-   * org.apache.opencmis.server.spi.ObjectInfoHolder)
-   */
-  public ObjectData applyPolicy(CallContext context, String repositoryId, String policyId,
-      String objectId, ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    checkRepositoryId(repositoryId);
-    checkId("Policy Id", policyId);
-    checkId("Object Id", objectId);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisPolicyService#applyPolicy(org.apache
+	 * .opencmis.server.spi .CallContext, java.lang.String, java.lang.String,
+	 * java.lang.String, org.apache.opencmis.commons.api.ExtensionsData,
+	 * org.apache.opencmis.server.spi.ObjectInfoHolder)
+	 */
+	public ObjectData applyPolicy(CallContext context, String repositoryId, String policyId, String objectId,
+			ExtensionsData extension, ObjectInfoHolder objectInfos) {
+		checkRepositoryId(repositoryId);
+		checkId("Policy Id", policyId);
+		checkId("Object Id", objectId);
 
-    try {
-      return fService
-          .applyPolicy(context, repositoryId, policyId, objectId, extension, objectInfos);
-    }
-    catch (Exception e) {
-      throw createCmisException(e);
-    }
-  }
+		try {
+			return fService.applyPolicy(context, repositoryId, policyId, objectId, extension, objectInfos);
+		} catch (Exception e) {
+			throw createCmisException(e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisPolicyService#getAppliedPolicies(org.apache.opencmis.server
-   * .spi.CallContext, java.lang.String, java.lang.String, java.lang.String,
-   * org.apache.opencmis.commons.api.ExtensionsData,
-   * org.apache.opencmis.server.spi.ObjectInfoHolder)
-   */
-  public List<ObjectData> getAppliedPolicies(CallContext context, String repositoryId,
-      String objectId, String filter, ExtensionsData extension, ObjectInfoHolder objectInfos) {
-    checkRepositoryId(repositoryId);
-    checkId("Object Id", objectId);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisPolicyService#getAppliedPolicies(org
+	 * .apache.opencmis.server .spi.CallContext, java.lang.String,
+	 * java.lang.String, java.lang.String,
+	 * org.apache.opencmis.commons.api.ExtensionsData,
+	 * org.apache.opencmis.server.spi.ObjectInfoHolder)
+	 */
+	public List<ObjectData> getAppliedPolicies(CallContext context, String repositoryId, String objectId,
+			String filter, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+		checkRepositoryId(repositoryId);
+		checkId("Object Id", objectId);
 
-    try {
-      return fService.getAppliedPolicies(context, repositoryId, objectId, filter, extension,
-          objectInfos);
-    }
-    catch (Exception e) {
-      throw createCmisException(e);
-    }
-  }
+		try {
+			return fService.getAppliedPolicies(context, repositoryId, objectId, filter, extension, objectInfos);
+		} catch (Exception e) {
+			throw createCmisException(e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisPolicyService#removePolicy(org.apache.opencmis.server.spi
-   * .CallContext, java.lang.String, java.lang.String, java.lang.String,
-   * org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public void removePolicy(CallContext context, String repositoryId, String policyId,
-      String objectId, ExtensionsData extension) {
-    checkRepositoryId(repositoryId);
-    checkId("Policy Id", policyId);
-    checkId("Object Id", objectId);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisPolicyService#removePolicy(org.apache
+	 * .opencmis.server.spi .CallContext, java.lang.String, java.lang.String,
+	 * java.lang.String, org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public void removePolicy(CallContext context, String repositoryId, String policyId, String objectId,
+			ExtensionsData extension) {
+		checkRepositoryId(repositoryId);
+		checkId("Policy Id", policyId);
+		checkId("Object Id", objectId);
 
-    try {
-      fService.removePolicy(context, repositoryId, policyId, objectId, extension);
-    }
-    catch (Exception e) {
-      throw createCmisException(e);
-    }
-  }
+		try {
+			fService.removePolicy(context, repositoryId, policyId, objectId, extension);
+		} catch (Exception e) {
+			throw createCmisException(e);
+		}
+	}
 }

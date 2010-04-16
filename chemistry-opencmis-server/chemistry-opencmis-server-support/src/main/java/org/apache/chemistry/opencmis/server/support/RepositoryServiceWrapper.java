@@ -35,134 +35,129 @@ import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  * 
  */
-public class RepositoryServiceWrapper extends AbstractServiceWrapper implements
-    CmisRepositoryService {
+public class RepositoryServiceWrapper extends AbstractServiceWrapper implements CmisRepositoryService {
 
-  private CmisRepositoryService fService;
+	private CmisRepositoryService fService;
 
-  /**
-   * Constructor.
-   * 
-   * @param service
-   *          the real service object
-   * @param defaultMaxItems
-   *          default value for <code>maxItems</code> parameters
-   * @param defaultDepth
-   *          default value for <code>depth</code> parameters
-   */
-  public RepositoryServiceWrapper(CmisRepositoryService service, BigInteger defaultMaxItems,
-      BigInteger defaultDepth) {
-    if (service == null) {
-      throw new IllegalArgumentException("Service must be set!");
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param service
+	 *            the real service object
+	 * @param defaultMaxItems
+	 *            default value for <code>maxItems</code> parameters
+	 * @param defaultDepth
+	 *            default value for <code>depth</code> parameters
+	 */
+	public RepositoryServiceWrapper(CmisRepositoryService service, BigInteger defaultMaxItems, BigInteger defaultDepth) {
+		if (service == null) {
+			throw new IllegalArgumentException("Service must be set!");
+		}
 
-    fService = service;
-    setDefaultMaxItems(defaultMaxItems);
-    setDefaultDepth(defaultDepth);
-  }
+		fService = service;
+		setDefaultMaxItems(defaultMaxItems);
+		setDefaultDepth(defaultDepth);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfo(org.apache.opencmis.
-   * server.spi.CallContext, java.lang.String, org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId,
-      ExtensionsData extension) {
-    checkRepositoryId(repositoryId);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfo
+	 * (org.apache.opencmis. server.spi.CallContext, java.lang.String,
+	 * org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId, ExtensionsData extension) {
+		checkRepositoryId(repositoryId);
 
-    try {
-      return fService.getRepositoryInfo(context, repositoryId, extension);
-    }
-    catch (Exception e) {
-      throw createCmisException(e);
-    }
-  }
+		try {
+			return fService.getRepositoryInfo(context, repositoryId, extension);
+		} catch (Exception e) {
+			throw createCmisException(e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfos(org.apache.opencmis
-   * .server.spi.CallContext, org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
-    try {
-      return fService.getRepositoryInfos(context, extension);
-    }
-    catch (Exception e) {
-      throw createCmisException(e);
-    }
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisRepositoryService#getRepositoryInfos
+	 * (org.apache.opencmis .server.spi.CallContext,
+	 * org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
+		try {
+			return fService.getRepositoryInfos(context, extension);
+		} catch (Exception e) {
+			throw createCmisException(e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeChildren(org.apache.opencmis.server
-   * .spi.CallContext, java.lang.String, java.lang.String, java.lang.Boolean, java.math.BigInteger,
-   * java.math.BigInteger, org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId,
-      String typeId, Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount,
-      ExtensionsData extension) {
-    checkRepositoryId(repositoryId);
-    includePropertyDefinitions = getDefaultFalse(includePropertyDefinitions);
-    maxItems = getMaxItems(maxItems);
-    skipCount = getSkipCount(skipCount);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeChildren(
+	 * org.apache.opencmis.server .spi.CallContext, java.lang.String,
+	 * java.lang.String, java.lang.Boolean, java.math.BigInteger,
+	 * java.math.BigInteger, org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId, String typeId,
+			Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		checkRepositoryId(repositoryId);
+		includePropertyDefinitions = getDefaultFalse(includePropertyDefinitions);
+		maxItems = getMaxItems(maxItems);
+		skipCount = getSkipCount(skipCount);
 
-    try {
-      return fService.getTypeChildren(context, repositoryId, typeId, includePropertyDefinitions,
-          maxItems, skipCount, extension);
-    }
-    catch (Exception e) {
-      throw createCmisException(e);
-    }
-  }
+		try {
+			return fService.getTypeChildren(context, repositoryId, typeId, includePropertyDefinitions, maxItems,
+					skipCount, extension);
+		} catch (Exception e) {
+			throw createCmisException(e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeDefinition(org.apache.opencmis.
-   * server.spi.CallContext, java.lang.String, java.lang.String,
-   * org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
-      ExtensionsData extension) {
-    checkRepositoryId(repositoryId);
-    checkId("Type Id", typeId);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeDefinition
+	 * (org.apache.opencmis. server.spi.CallContext, java.lang.String,
+	 * java.lang.String, org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
+			ExtensionsData extension) {
+		checkRepositoryId(repositoryId);
+		checkId("Type Id", typeId);
 
-    try {
-      return fService.getTypeDefinition(context, repositoryId, typeId, extension);
-    }
-    catch (Exception e) {
-      throw createCmisException(e);
-    }
-  }
+		try {
+			return fService.getTypeDefinition(context, repositoryId, typeId, extension);
+		} catch (Exception e) {
+			throw createCmisException(e);
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeDescendants(org.apache.opencmis
-   * .server.spi.CallContext, java.lang.String, java.lang.String, java.math.BigInteger,
-   * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData)
-   */
-  public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId,
-      String typeId, BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
-    checkRepositoryId(repositoryId);
-    includePropertyDefinitions = getDefaultFalse(includePropertyDefinitions);
-    depth = getDepth(depth);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.CmisRepositoryService#getTypeDescendants
+	 * (org.apache.opencmis .server.spi.CallContext, java.lang.String,
+	 * java.lang.String, java.math.BigInteger, java.lang.Boolean,
+	 * org.apache.opencmis.commons.api.ExtensionsData)
+	 */
+	public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId, String typeId,
+			BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
+		checkRepositoryId(repositoryId);
+		includePropertyDefinitions = getDefaultFalse(includePropertyDefinitions);
+		depth = getDepth(depth);
 
-    try {
-      return fService.getTypeDescendants(context, repositoryId, typeId, depth,
-          includePropertyDefinitions, extension);
-    }
-    catch (Exception e) {
-      throw createCmisException(e);
-    }
-  }
+		try {
+			return fService.getTypeDescendants(context, repositoryId, typeId, depth, includePropertyDefinitions,
+					extension);
+		} catch (Exception e) {
+			throw createCmisException(e);
+		}
+	}
 
 }

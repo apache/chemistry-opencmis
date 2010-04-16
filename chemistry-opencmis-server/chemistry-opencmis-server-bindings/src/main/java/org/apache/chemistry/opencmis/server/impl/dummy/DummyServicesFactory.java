@@ -33,46 +33,46 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DummyServicesFactory extends AbstractServicesFactory {
 
-  private static final String REPOSITORY_ID = "repository.id";
-  private static final String REPOSITORY_ID_DEFAULT = "test-rep";
+	private static final String REPOSITORY_ID = "repository.id";
+	private static final String REPOSITORY_ID_DEFAULT = "test-rep";
 
-  private static final String REPOSITORY_NAME = "repository.name";
-  private static final String REPOSITORY_NAME_DEFAULT = "Test Repository";
+	private static final String REPOSITORY_NAME = "repository.name";
+	private static final String REPOSITORY_NAME_DEFAULT = "Test Repository";
 
-  private static final Log LOG = LogFactory.getLog(DummyServicesFactory.class.getName());
+	private static final Log LOG = LogFactory.getLog(DummyServicesFactory.class.getName());
 
-  private DummyRepositoryService fRepositoryService;
-  private String fId;
-  private String fName;
+	private DummyRepositoryService fRepositoryService;
+	private String fId;
+	private String fName;
 
-  @Override
-  public void init(Map<String, String> parameters) {
-    // get the id
-    fId = parameters.get(REPOSITORY_ID);
-    if ((fId == null) || (fId.trim().length() == 0)) {
-      fId = REPOSITORY_ID_DEFAULT;
-    }
+	@Override
+	public void init(Map<String, String> parameters) {
+		// get the id
+		fId = parameters.get(REPOSITORY_ID);
+		if ((fId == null) || (fId.trim().length() == 0)) {
+			fId = REPOSITORY_ID_DEFAULT;
+		}
 
-    // get the name
-    fName = parameters.get(REPOSITORY_NAME);
-    if ((fName == null) || (fName.trim().length() == 0)) {
-      fName = REPOSITORY_NAME_DEFAULT;
-    }
+		// get the name
+		fName = parameters.get(REPOSITORY_NAME);
+		if ((fName == null) || (fName.trim().length() == 0)) {
+			fName = REPOSITORY_NAME_DEFAULT;
+		}
 
-    // create a repository service
-    fRepositoryService = new DummyRepositoryService(fId, fName);
+		// create a repository service
+		fRepositoryService = new DummyRepositoryService(fId, fName);
 
-    LOG.info("Initialized dummy repository '" + fName + "' (" + fId + ")");
-  }
+		LOG.info("Initialized dummy repository '" + fName + "' (" + fId + ")");
+	}
 
-  @Override
-  public void destroy() {
-    LOG.info("Destroyed dummy repository '" + fName + "' (" + fId + ")");
-  }
+	@Override
+	public void destroy() {
+		LOG.info("Destroyed dummy repository '" + fName + "' (" + fId + ")");
+	}
 
-  @Override
-  public CmisRepositoryService getRepositoryService() {
-    return fRepositoryService;
-  }
+	@Override
+	public CmisRepositoryService getRepositoryService() {
+		return fRepositoryService;
+	}
 
 }

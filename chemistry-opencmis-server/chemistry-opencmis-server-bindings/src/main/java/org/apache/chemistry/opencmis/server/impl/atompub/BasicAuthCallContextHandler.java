@@ -34,48 +34,47 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class BasicAuthCallContextHandler implements CallContextHandler {
 
-  /**
-   * Constructor.
-   */
-  public BasicAuthCallContextHandler() {
-  }
+	/**
+	 * Constructor.
+	 */
+	public BasicAuthCallContextHandler() {
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @seeorg.apache.opencmis.server.impl.atompub.CallContextHandler#getCallContextMap(javax.servlet.http.
-   * HttpServletRequest)
-   */
-  public Map<String, String> getCallContextMap(HttpServletRequest request) {
-    Map<String, String> result = null;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.apache.opencmis.server.impl.atompub.CallContextHandler#
+	 * getCallContextMap(javax.servlet.http. HttpServletRequest)
+	 */
+	public Map<String, String> getCallContextMap(HttpServletRequest request) {
+		Map<String, String> result = null;
 
-    String authHeader = request.getHeader("Authorization");
-    if ((authHeader != null) && (authHeader.trim().toLowerCase().startsWith("basic "))) {
-      int x = authHeader.lastIndexOf(' ');
-      if (x == -1) {
-        return result;
-      }
+		String authHeader = request.getHeader("Authorization");
+		if ((authHeader != null) && (authHeader.trim().toLowerCase().startsWith("basic "))) {
+			int x = authHeader.lastIndexOf(' ');
+			if (x == -1) {
+				return result;
+			}
 
-      String credentials = null;
-      try {
-        credentials = new String(Base64.decodeBase64(authHeader.substring(x + 1).getBytes(
-            "ISO-8859-1")), "ISO-8859-1");
-      }
-      catch (Exception e) {
-        return result;
-      }
+			String credentials = null;
+			try {
+				credentials = new String(Base64.decodeBase64(authHeader.substring(x + 1).getBytes("ISO-8859-1")),
+						"ISO-8859-1");
+			} catch (Exception e) {
+				return result;
+			}
 
-      x = credentials.indexOf(':');
-      if (x == -1) {
-        return result;
-      }
+			x = credentials.indexOf(':');
+			if (x == -1) {
+				return result;
+			}
 
-      // extract user and password and add them to map
-      result = new HashMap<String, String>();
-      result.put(CallContext.USERNAME, credentials.substring(0, x));
-      result.put(CallContext.PASSWORD, credentials.substring(x + 1));
-    }
+			// extract user and password and add them to map
+			result = new HashMap<String, String>();
+			result.put(CallContext.USERNAME, credentials.substring(0, x));
+			result.put(CallContext.PASSWORD, credentials.substring(x + 1));
+		}
 
-    return result;
-  }
+		return result;
+	}
 }

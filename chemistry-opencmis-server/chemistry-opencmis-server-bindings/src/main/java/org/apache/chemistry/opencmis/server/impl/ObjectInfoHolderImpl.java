@@ -32,37 +32,41 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
  */
 public class ObjectInfoHolderImpl implements ObjectInfoHolder {
 
-  private Map<String, ObjectInfo> fObjectInfoMap;
+	private Map<String, ObjectInfo> fObjectInfoMap;
 
-  /**
-   * Constructor.
-   */
-  public ObjectInfoHolderImpl() {
-    fObjectInfoMap = new HashMap<String, ObjectInfo>();
-  }
+	/**
+	 * Constructor.
+	 */
+	public ObjectInfoHolderImpl() {
+		fObjectInfoMap = new HashMap<String, ObjectInfo>();
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.server.spi.ObjectInfoHolder#addObjectInfo(org.apache.opencmis.server.spi.ObjectInfo)
-   */
-  public void addObjectInfo(ObjectInfo info) {
-    if (info == null) {
-      throw new IllegalArgumentException("Object Info must not be null!");
-    }
-    if (info.getId() == null) {
-      throw new IllegalArgumentException("Object Info Id must not be null!");
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.ObjectInfoHolder#addObjectInfo(org.apache
+	 * .opencmis.server.spi.ObjectInfo)
+	 */
+	public void addObjectInfo(ObjectInfo info) {
+		if (info == null) {
+			throw new IllegalArgumentException("Object Info must not be null!");
+		}
+		if (info.getId() == null) {
+			throw new IllegalArgumentException("Object Info Id must not be null!");
+		}
 
-    fObjectInfoMap.put(info.getId(), info);
-  }
+		fObjectInfoMap.put(info.getId(), info);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.server.spi.ObjectInfoHolder#getObjectInfo(java.lang.String)
-   */
-  public ObjectInfo getObjectInfo(String id) {
-    return fObjectInfoMap.get(id);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.opencmis.server.spi.ObjectInfoHolder#getObjectInfo(java.lang
+	 * .String)
+	 */
+	public ObjectInfo getObjectInfo(String id) {
+		return fObjectInfoMap.get(id);
+	}
 }

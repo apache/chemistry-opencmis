@@ -31,69 +31,69 @@ import org.apache.chemistry.opencmis.server.spi.CallContext;
  */
 public class CallContextImpl implements CallContext {
 
-  private String fBinding;
-  private Map<String, String> fParameter = new HashMap<String, String>();
+	private String fBinding;
+	private Map<String, String> fParameter = new HashMap<String, String>();
 
-  public CallContextImpl(String binding) {
-    fBinding = binding;
-  }
+	public CallContextImpl(String binding) {
+		fBinding = binding;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.server.spi.CallContext#getBinding()
-   */
-  public String getBinding() {
-    return fBinding;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.server.spi.CallContext#getBinding()
+	 */
+	public String getBinding() {
+		return fBinding;
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.server.spi.CallContext#get(java.lang.String)
-   */
-  public String get(String key) {
-    return fParameter.get(key);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.server.spi.CallContext#get(java.lang.String)
+	 */
+	public String get(String key) {
+		return fParameter.get(key);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.server.spi.CallContext#getUsername()
-   */
-  public String getUsername() {
-    return get(USERNAME);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.server.spi.CallContext#getUsername()
+	 */
+	public String getUsername() {
+		return get(USERNAME);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.server.spi.CallContext#getPassword()
-   */
-  public String getPassword() {
-    return get(PASSWORD);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.server.spi.CallContext#getPassword()
+	 */
+	public String getPassword() {
+		return get(PASSWORD);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.opencmis.server.spi.CallContext#getLocale()
-   */
-  public String getLocale() {
-    return get(LOCALE);
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.opencmis.server.spi.CallContext#getLocale()
+	 */
+	public String getLocale() {
+		return get(LOCALE);
+	}
 
-  /**
-   * Adds a parameter.
-   */
-  public void put(String key, String value) {
-    fParameter.put(key, value);
-  }
+	/**
+	 * Adds a parameter.
+	 */
+	public void put(String key, String value) {
+		fParameter.put(key, value);
+	}
 
-  /**
-   * Removes a parameter.
-   */
-  public String remove(String key) {
-    return fParameter.remove(key);
-  }
+	/**
+	 * Removes a parameter.
+	 */
+	public String remove(String key) {
+		return fParameter.remove(key);
+	}
 }

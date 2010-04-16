@@ -26,42 +26,43 @@ package org.apache.chemistry.opencmis.server.spi;
  */
 public interface CallContext {
 
-  String BINDING_ATOMPUB = "atompub";
-  String BINDING_WEBSERVICES = "webservices";
+	String BINDING_ATOMPUB = "atompub";
+	String BINDING_WEBSERVICES = "webservices";
 
-  String USERNAME = "useranme";
-  String PASSWORD = "password";
-  String LOCALE = "locale";
-  String OFFSET = "offset";
-  String LENGTH = "length";
+	String USERNAME = "useranme";
+	String PASSWORD = "password";
+	String LOCALE = "locale";
+	String OFFSET = "offset";
+	String LENGTH = "length";
 
-  /**
-   * Returns the binding. Usually it returns {@link CallContext#BINDING_ATOMPUB} or
-   * {@link CallContext#BINDING_WEBSERVICES}.
-   */
-  String getBinding();
+	/**
+	 * Returns the binding. Usually it returns
+	 * {@link CallContext#BINDING_ATOMPUB} or
+	 * {@link CallContext#BINDING_WEBSERVICES}.
+	 */
+	String getBinding();
 
-  /**
-   * Returns context data by key.
-   * 
-   * @param key
-   *          the key
-   * @return the data if the key is valid, <code>null</code> otherwise
-   */
-  String get(String key);
+	/**
+	 * Returns context data by key.
+	 * 
+	 * @param key
+	 *            the key
+	 * @return the data if the key is valid, <code>null</code> otherwise
+	 */
+	String get(String key);
 
-  /**
-   * Returns the user name.
-   */
-  String getUsername();
+	/**
+	 * Returns the user name.
+	 */
+	String getUsername();
 
-  /**
-   * Returns the password.
-   */
-  String getPassword();
+	/**
+	 * Returns the password.
+	 */
+	String getPassword();
 
-  /**
-   * Returns the locale.
-   */
-  String getLocale();
+	/**
+	 * Returns the locale.
+	 */
+	String getLocale();
 }

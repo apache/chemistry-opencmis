@@ -37,50 +37,47 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
  */
 public class ServiceDocument extends AtomDocumentBase {
 
-  public ServiceDocument() {
-  }
+	public ServiceDocument() {
+	}
 
-  public void startServiceDocument() throws XMLStreamException {
-    XMLStreamWriter xsw = getWriter();
-    xsw.writeStartElement(Constants.NAMESPACE_APP, "service");
-    writeNamespace(Constants.NAMESPACE_APP);
-    writeNamespace(Constants.NAMESPACE_ATOM);
-    writeNamespace(Constants.NAMESPACE_CMIS);
-    writeNamespace(Constants.NAMESPACE_RESTATOM);
-  }
+	public void startServiceDocument() throws XMLStreamException {
+		XMLStreamWriter xsw = getWriter();
+		xsw.writeStartElement(Constants.NAMESPACE_APP, "service");
+		writeNamespace(Constants.NAMESPACE_APP);
+		writeNamespace(Constants.NAMESPACE_ATOM);
+		writeNamespace(Constants.NAMESPACE_CMIS);
+		writeNamespace(Constants.NAMESPACE_RESTATOM);
+	}
 
-  public void endServiceDocument() throws XMLStreamException {
-    getWriter().writeEndElement();
-  }
+	public void endServiceDocument() throws XMLStreamException {
+		getWriter().writeEndElement();
+	}
 
-  public void startWorkspace(String title) throws XMLStreamException {
-    getWriter().writeStartElement(Constants.NAMESPACE_APP, "workspace");
-    writeSimpleTag(Constants.NAMESPACE_ATOM, "title", title);
-  }
+	public void startWorkspace(String title) throws XMLStreamException {
+		getWriter().writeStartElement(Constants.NAMESPACE_APP, "workspace");
+		writeSimpleTag(Constants.NAMESPACE_ATOM, "title", title);
+	}
 
-  public void endWorkspace() throws XMLStreamException {
-    getWriter().writeEndElement();
-  }
+	public void endWorkspace() throws XMLStreamException {
+		getWriter().writeEndElement();
+	}
 
-  public void writeRepositoryInfo(RepositoryInfo repInfo) throws XMLStreamException,
-      JAXBException {
-    CmisRepositoryInfoType repInfoJaxb = convert(repInfo);
-    if (repInfoJaxb == null) {
-      return;
-    }
+	public void writeRepositoryInfo(RepositoryInfo repInfo) throws XMLStreamException, JAXBException {
+		CmisRepositoryInfoType repInfoJaxb = convert(repInfo);
+		if (repInfoJaxb == null) {
+			return;
+		}
 
-    JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createRepositoryInfo(repInfoJaxb),
-        getWriter(), true);
-  }
+		JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createRepositoryInfo(repInfoJaxb), getWriter(), true);
+	}
 
-  public void writeUriTemplate(String template, String type, String mediatype)
-      throws XMLStreamException {
-    XMLStreamWriter xsw = getWriter();
+	public void writeUriTemplate(String template, String type, String mediatype) throws XMLStreamException {
+		XMLStreamWriter xsw = getWriter();
 
-    xsw.writeStartElement(Constants.NAMESPACE_RESTATOM, "uritemplate");
-    writeSimpleTag(Constants.NAMESPACE_RESTATOM, "template", template);
-    writeSimpleTag(Constants.NAMESPACE_RESTATOM, "type", type);
-    writeSimpleTag(Constants.NAMESPACE_RESTATOM, "mediatype", mediatype);
-    xsw.writeEndElement();
-  }
+		xsw.writeStartElement(Constants.NAMESPACE_RESTATOM, "uritemplate");
+		writeSimpleTag(Constants.NAMESPACE_RESTATOM, "template", template);
+		writeSimpleTag(Constants.NAMESPACE_RESTATOM, "type", type);
+		writeSimpleTag(Constants.NAMESPACE_RESTATOM, "mediatype", mediatype);
+		xsw.writeEndElement();
+	}
 }

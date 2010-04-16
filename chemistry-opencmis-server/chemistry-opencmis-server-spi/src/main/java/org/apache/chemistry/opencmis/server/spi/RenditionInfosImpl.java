@@ -28,49 +28,49 @@ import java.math.BigInteger;
  */
 public class RenditionInfosImpl implements RenditionInfo {
 
-  private String fId;
-  private String fContentType;
-  private String fKind;
-  private String fTitle;
-  private BigInteger fLength;
+	private String fId;
+	private String fContentType;
+	private String fKind;
+	private String fTitle;
+	private BigInteger fLength;
 
-  public String getId() {
-    return fId;
-  }
+	public String getId() {
+		return fId;
+	}
 
-  public void setId(String id) {
-    fId = id;
-  }
+	public void setId(String id) {
+		fId = id;
+	}
 
-  public String getContenType() {
-    return fContentType;
-  }
+	public String getContenType() {
+		return fContentType;
+	}
 
-  public void setContentType(String contentType) {
-    fContentType = contentType;
-  }
+	public void setContentType(String contentType) {
+		fContentType = contentType;
+	}
 
-  public String getKind() {
-    return fKind;
-  }
+	public String getKind() {
+		return fKind;
+	}
 
-  public void setKind(String kind) {
-    fKind = kind;
-  }
+	public void setKind(String kind) {
+		fKind = kind;
+	}
 
-  public String getTitle() {
-    return fTitle;
-  }
+	public String getTitle() {
+		return fTitle;
+	}
 
-  public void setTitle(String title) {
-    fTitle = title;
-  }
+	public void setTitle(String title) {
+		fTitle = title;
+	}
 
-  public BigInteger getLength() {
-    return fLength;
-  }
+	public BigInteger getLength() {
+		return fLength;
+	}
 
-  public void setLength(BigInteger length) {
-    fLength = length;
-  }
+	public void setLength(BigInteger length) {
+		fLength = length;
+	}
 }

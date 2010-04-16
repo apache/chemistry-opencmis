@@ -54,86 +54,81 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
  */
 public class RelationshipService {
 
-  /**
-   * Get object relationships.
-   */
-  public static void getObjectRelationships(CallContext context, AbstractServicesFactory factory,
-      String repositoryId, HttpServletRequest request, HttpServletResponse response)
-      throws Exception {
-    CmisRelationshipService service = factory.getRelationshipService();
+	/**
+	 * Get object relationships.
+	 */
+	public static void getObjectRelationships(CallContext context, AbstractServicesFactory factory,
+			String repositoryId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		CmisRelationshipService service = factory.getRelationshipService();
 
-    // get parameters
-    String objectId = getStringParameter(request, Constants.PARAM_ID);
-    Boolean includeSubRelationshipTypes = getBooleanParameter(request,
-        Constants.PARAM_SUB_RELATIONSHIP_TYPES);
-    RelationshipDirection relationshipDirection = getEnumParameter(request,
-        Constants.PARAM_RELATIONSHIP_DIRECTION, RelationshipDirection.class);
-    String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
-    String filter = getStringParameter(request, Constants.PARAM_FILTER);
-    Boolean includeAllowableActions = getBooleanParameter(request,
-        Constants.PARAM_ALLOWABLE_ACTIONS);
-    BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
-    BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
+		// get parameters
+		String objectId = getStringParameter(request, Constants.PARAM_ID);
+		Boolean includeSubRelationshipTypes = getBooleanParameter(request, Constants.PARAM_SUB_RELATIONSHIP_TYPES);
+		RelationshipDirection relationshipDirection = getEnumParameter(request, Constants.PARAM_RELATIONSHIP_DIRECTION,
+				RelationshipDirection.class);
+		String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
+		String filter = getStringParameter(request, Constants.PARAM_FILTER);
+		Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
+		BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
+		BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
-    // execute
-    ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-    ObjectList relationships = service.getObjectRelationships(context, repositoryId, objectId,
-        includeSubRelationshipTypes, relationshipDirection, typeId, filter,
-        includeAllowableActions, maxItems, skipCount, null, objectInfoHolder);
+		// execute
+		ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
+		ObjectList relationships = service.getObjectRelationships(context, repositoryId, objectId,
+				includeSubRelationshipTypes, relationshipDirection, typeId, filter, includeAllowableActions, maxItems,
+				skipCount, null, objectInfoHolder);
 
-    if (relationships == null) {
-      throw new CmisRuntimeException("Relationships are null!");
-    }
+		if (relationships == null) {
+			throw new CmisRuntimeException("Relationships are null!");
+		}
 
-    ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(objectId);
-    if (objectInfo == null) {
-      throw new CmisRuntimeException("Object Info is missing!");
-    }
+		ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(objectId);
+		if (objectInfo == null) {
+			throw new CmisRuntimeException("Object Info is missing!");
+		}
 
-    // set headers
-    response.setStatus(HttpServletResponse.SC_OK);
-    response.setContentType(Constants.MEDIATYPE_FEED);
+		// set headers
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.setContentType(Constants.MEDIATYPE_FEED);
 
-    // write XML
-    AtomFeed feed = new AtomFeed();
-    feed.startDocument(response.getOutputStream());
-    feed.startFeed(true);
+		// write XML
+		AtomFeed feed = new AtomFeed();
+		feed.startDocument(response.getOutputStream());
+		feed.startFeed(true);
 
-    // write basic Atom feed elements
-    feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(),
-        objectInfo.getLastModificationDate(), null, relationships.getNumItems());
+		// write basic Atom feed elements
+		feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(), objectInfo
+				.getLastModificationDate(), null, relationships.getNumItems());
 
-    // write links
-    UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+		// write links
+		UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
-    feed.writeServiceLink(baseUrl.toString(), repositoryId);
+		feed.writeServiceLink(baseUrl.toString(), repositoryId);
 
-    feed.writeSelfLink(compileUrl(baseUrl, RESOURCE_RELATIONSHIPS, objectInfo.getId()), null);
+		feed.writeSelfLink(compileUrl(baseUrl, RESOURCE_RELATIONSHIPS, objectInfo.getId()), null);
 
-    UrlBuilder pagingUrl = new UrlBuilder(compileUrlBuilder(baseUrl, RESOURCE_RELATIONSHIPS,
-        objectInfo.getId()));
-    pagingUrl.addParameter(Constants.PARAM_SUB_RELATIONSHIP_TYPES, includeSubRelationshipTypes);
-    pagingUrl.addParameter(Constants.PARAM_RELATIONSHIP_DIRECTION, relationshipDirection);
-    pagingUrl.addParameter(Constants.PARAM_TYPE_ID, typeId);
-    pagingUrl.addParameter(Constants.PARAM_FILTER, filter);
-    pagingUrl.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
-    feed.writePagingLinks(pagingUrl, maxItems, skipCount, relationships.getNumItems(),
-        relationships.hasMoreItems(), AtomPubUtils.PAGE_SIZE);
+		UrlBuilder pagingUrl = new UrlBuilder(compileUrlBuilder(baseUrl, RESOURCE_RELATIONSHIPS, objectInfo.getId()));
+		pagingUrl.addParameter(Constants.PARAM_SUB_RELATIONSHIP_TYPES, includeSubRelationshipTypes);
+		pagingUrl.addParameter(Constants.PARAM_RELATIONSHIP_DIRECTION, relationshipDirection);
+		pagingUrl.addParameter(Constants.PARAM_TYPE_ID, typeId);
+		pagingUrl.addParameter(Constants.PARAM_FILTER, filter);
+		pagingUrl.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+		feed.writePagingLinks(pagingUrl, maxItems, skipCount, relationships.getNumItems(),
+				relationships.hasMoreItems(), AtomPubUtils.PAGE_SIZE);
 
-    // write entries
-    if (relationships != null) {
-      AtomEntry entry = new AtomEntry(feed.getWriter());
-      for (ObjectData object : relationships.getObjects()) {
-        if (object == null) {
-          continue;
-        }
-        writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl,
-            false);
-      }
-    }
+		// write entries
+		if (relationships != null) {
+			AtomEntry entry = new AtomEntry(feed.getWriter());
+			for (ObjectData object : relationships.getObjects()) {
+				if (object == null) {
+					continue;
+				}
+				writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, false);
+			}
+		}
 
-    // we are done
-    feed.endFeed();
-    feed.endDocument();
-  }
+		// we are done
+		feed.endFeed();
+		feed.endDocument();
+	}
 }

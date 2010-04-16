@@ -23,22 +23,22 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoImpl;
 
 public class FolderInfo extends ObjectInfoImpl {
 
-  public FolderInfo() {
-    setBaseType(BaseTypeId.CMIS_FOLDER);
-    setContentType(null);
-    setFileName(null);
-    setHasAcl(true);
-    setHasContent(false);
-    setVersionSeriesId(null);
-    setIsCurrentVersion(true);
-    setRelationshipSourceIds(null);
-    setRelationshipTargetIds(null);
-    setRenditionInfos(null);
-    setSupportsDescendants(true);
-    setSupportsFolderTree(true);
-    setSupportsPolicies(false);
-    setSupportsRelationships(false);
-    setWorkingCopyId(null);
-    setWorkingCopyOriginalId(null);
-  }
+	public FolderInfo() {
+		setBaseType(BaseTypeId.CMIS_FOLDER);
+		setContentType(null);
+		setFileName(null);
+		setHasAcl(true);
+		setHasContent(false);
+		setVersionSeriesId(null);
+		setIsCurrentVersion(true);
+		setRelationshipSourceIds(null);
+		setRelationshipTargetIds(null);
+		setRenditionInfos(null);
+		setSupportsDescendants(true);
+		setSupportsFolderTree(true);
+		setSupportsPolicies(false);
+		setSupportsRelationships(false);
+		setWorkingCopyId(null);
+		setWorkingCopyOriginalId(null);
+	}
 }

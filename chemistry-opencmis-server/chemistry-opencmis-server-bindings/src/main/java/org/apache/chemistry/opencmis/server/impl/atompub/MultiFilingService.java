@@ -45,44 +45,43 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
  */
 public class MultiFilingService {
 
-  /**
-   * Remove object from folder.
-   */
-  public static void removeObjectFromFolder(CallContext context, AbstractServicesFactory factory,
-      String repositoryId, HttpServletRequest request, HttpServletResponse response)
-      throws Exception {
-    CmisMultiFilingService service = factory.getMultiFilingService();
+	/**
+	 * Remove object from folder.
+	 */
+	public static void removeObjectFromFolder(CallContext context, AbstractServicesFactory factory,
+			String repositoryId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		CmisMultiFilingService service = factory.getMultiFilingService();
 
-    // get parameters
-    String removeFrom = getStringParameter(request, Constants.PARAM_REMOVE_FROM);
+		// get parameters
+		String removeFrom = getStringParameter(request, Constants.PARAM_REMOVE_FROM);
 
-    AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
-    String objectId = parser.getId();
+		AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
+		String objectId = parser.getId();
 
-    // execute
-    ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-    ObjectData object = service.removeObjectFromFolder(context, repositoryId, objectId, removeFrom,
-        null, objectInfoHolder);
+		// execute
+		ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
+		ObjectData object = service.removeObjectFromFolder(context, repositoryId, objectId, removeFrom, null,
+				objectInfoHolder);
 
-    if (object == null) {
-      throw new CmisRuntimeException("Object is null!");
-    }
+		if (object == null) {
+			throw new CmisRuntimeException("Object is null!");
+		}
 
-    if (object.getId() == null) {
-      throw new CmisRuntimeException("Object Id is null!");
-    }
+		if (object.getId() == null) {
+			throw new CmisRuntimeException("Object Id is null!");
+		}
 
-    // set headers
-    UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+		// set headers
+		UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
-    response.setStatus(HttpServletResponse.SC_CREATED);
-    response.setContentType(Constants.MEDIATYPE_ENTRY);
-    response.setHeader("Location", compileUrl(baseUrl, RESOURCE_ENTRY, object.getId()));
+		response.setStatus(HttpServletResponse.SC_CREATED);
+		response.setContentType(Constants.MEDIATYPE_ENTRY);
+		response.setHeader("Location", compileUrl(baseUrl, RESOURCE_ENTRY, object.getId()));
 
-    // write XML
-    AtomEntry entry = new AtomEntry();
-    entry.startDocument(response.getOutputStream());
-    writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, true);
-    entry.endDocument();
-  }
+		// write XML
+		AtomEntry entry = new AtomEntry();
+		entry.startDocument(response.getOutputStream());
+		writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, true);
+		entry.endDocument();
+	}
 }

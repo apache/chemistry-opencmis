@@ -54,91 +54,79 @@ import org.apache.chemistry.opencmis.server.spi.CallContext;
  */
 public abstract class AbstractService {
 
-  public static final String CALL_CONTEXT_MAP = "org.apache.chemistry.opencmis.callcontext";
+	public static final String CALL_CONTEXT_MAP = "org.apache.chemistry.opencmis.callcontext";
 
-  /**
-   * Returns the services factory.
-   */
-  protected AbstractServicesFactory getServicesFactory(WebServiceContext wsContext) {
-    ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
-        MessageContext.SERVLET_CONTEXT);
+	/**
+	 * Returns the services factory.
+	 */
+	protected AbstractServicesFactory getServicesFactory(WebServiceContext wsContext) {
+		ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
+				MessageContext.SERVLET_CONTEXT);
 
-    return (AbstractServicesFactory) servletContext
-        .getAttribute(CmisRepositoryContextListener.SERVICES_FACTORY);
-  }
+		return (AbstractServicesFactory) servletContext.getAttribute(CmisRepositoryContextListener.SERVICES_FACTORY);
+	}
 
-  /**
-   * Creates a CallContext object for the Web Service context.
-   */
-  @SuppressWarnings("unchecked")
-  protected CallContext createContext(WebServiceContext wsContext) {
-    CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES);
+	/**
+	 * Creates a CallContext object for the Web Service context.
+	 */
+	@SuppressWarnings("unchecked")
+	protected CallContext createContext(WebServiceContext wsContext) {
+		CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES);
 
-    MessageContext mc = wsContext.getMessageContext();
-    Map<String, String> callContextMap = (Map<String, String>) mc.get(CALL_CONTEXT_MAP);
-    if (callContextMap != null) {
-      for (Map.Entry<String, String> e : callContextMap.entrySet()) {
-        context.put(e.getKey(), e.getValue());
-      }
-    }
+		MessageContext mc = wsContext.getMessageContext();
+		Map<String, String> callContextMap = (Map<String, String>) mc.get(CALL_CONTEXT_MAP);
+		if (callContextMap != null) {
+			for (Map.Entry<String, String> e : callContextMap.entrySet()) {
+				context.put(e.getKey(), e.getValue());
+			}
+		}
 
-    return context;
-  }
+		return context;
+	}
 
-  /**
-   * Converts a CMIS exception to the appropriate Web Service exception.
-   */
-  protected CmisException convertException(Exception ex) {
-    CmisFaultType fault = new CmisFaultType();
-    fault.setMessage("Unknown exception");
-    fault.setCode(BigInteger.ZERO);
-    fault.setType(EnumServiceException.RUNTIME);
+	/**
+	 * Converts a CMIS exception to the appropriate Web Service exception.
+	 */
+	protected CmisException convertException(Exception ex) {
+		CmisFaultType fault = new CmisFaultType();
+		fault.setMessage("Unknown exception");
+		fault.setCode(BigInteger.ZERO);
+		fault.setType(EnumServiceException.RUNTIME);
 
-    if (ex != null) {
-      fault.setMessage(ex.getMessage());
+		if (ex != null) {
+			fault.setMessage(ex.getMessage());
 
-      if (ex instanceof CmisBaseException) {
-        fault.setCode(((CmisBaseException) ex).getCode());
-      }
+			if (ex instanceof CmisBaseException) {
+				fault.setCode(((CmisBaseException) ex).getCode());
+			}
 
-      if (ex instanceof CmisConstraintException) {
-        fault.setType(EnumServiceException.CONSTRAINT);
-      }
-      else if (ex instanceof CmisContentAlreadyExistsException) {
-        fault.setType(EnumServiceException.CONTENT_ALREADY_EXISTS);
-      }
-      else if (ex instanceof CmisFilterNotValidException) {
-        fault.setType(EnumServiceException.FILTER_NOT_VALID);
-      }
-      else if (ex instanceof CmisInvalidArgumentException) {
-        fault.setType(EnumServiceException.INVALID_ARGUMENT);
-      }
-      else if (ex instanceof CmisNameConstraintViolationException) {
-        fault.setType(EnumServiceException.NAME_CONSTRAINT_VIOLATION);
-      }
-      else if (ex instanceof CmisNotSupportedException) {
-        fault.setType(EnumServiceException.NOT_SUPPORTED);
-      }
-      else if (ex instanceof CmisObjectNotFoundException) {
-        fault.setType(EnumServiceException.OBJECT_NOT_FOUND);
-      }
-      else if (ex instanceof CmisPermissionDeniedException) {
-        fault.setType(EnumServiceException.PERMISSION_DENIED);
-      }
-      else if (ex instanceof CmisStorageException) {
-        fault.setType(EnumServiceException.STORAGE);
-      }
-      else if (ex instanceof CmisStreamNotSupportedException) {
-        fault.setType(EnumServiceException.STREAM_NOT_SUPPORTED);
-      }
-      else if (ex instanceof CmisUpdateConflictException) {
-        fault.setType(EnumServiceException.UPDATE_CONFLICT);
-      }
-      else if (ex instanceof CmisVersioningException) {
-        fault.setType(EnumServiceException.VERSIONING);
-      }
-    }
+			if (ex instanceof CmisConstraintException) {
+				fault.setType(EnumServiceException.CONSTRAINT);
+			} else if (ex instanceof CmisContentAlreadyExistsException) {
+				fault.setType(EnumServiceException.CONTENT_ALREADY_EXISTS);
+			} else if (ex instanceof CmisFilterNotValidException) {
+				fault.setType(EnumServiceException.FILTER_NOT_VALID);
+			} else if (ex instanceof CmisInvalidArgumentException) {
+				fault.setType(EnumServiceException.INVALID_ARGUMENT);
+			} else if (ex instanceof CmisNameConstraintViolationException) {
+				fault.setType(EnumServiceException.NAME_CONSTRAINT_VIOLATION);
+			} else if (ex instanceof CmisNotSupportedException) {
+				fault.setType(EnumServiceException.NOT_SUPPORTED);
+			} else if (ex instanceof CmisObjectNotFoundException) {
+				fault.setType(EnumServiceException.OBJECT_NOT_FOUND);
+			} else if (ex instanceof CmisPermissionDeniedException) {
+				fault.setType(EnumServiceException.PERMISSION_DENIED);
+			} else if (ex instanceof CmisStorageException) {
+				fault.setType(EnumServiceException.STORAGE);
+			} else if (ex instanceof CmisStreamNotSupportedException) {
+				fault.setType(EnumServiceException.STREAM_NOT_SUPPORTED);
+			} else if (ex instanceof CmisUpdateConflictException) {
+				fault.setType(EnumServiceException.UPDATE_CONFLICT);
+			} else if (ex instanceof CmisVersioningException) {
+				fault.setType(EnumServiceException.VERSIONING);
+			}
+		}
 
-    return new CmisException(fault.getMessage(), fault, ex);
-  }
+		return new CmisException(fault.getMessage(), fault, ex);
+	}
 }

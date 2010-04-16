@@ -42,59 +42,56 @@ import org.apache.chemistry.opencmis.server.spi.CallContext;
  */
 public class AuthHandler implements SOAPHandler<SOAPMessageContext> {
 
-  private static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
-  private static final QName WSSE_SECURITY = new QName(WSSE_NS, "Security");
-  private static final QName WSSE_USERNAME_TOKEN = new QName(WSSE_NS, "UsernameToken");
-  private static final QName WSSE_USERNAME = new QName(WSSE_NS, "Username");
-  private static final QName WSSE_PASSWORD = new QName(WSSE_NS, "Password");
+	private static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
+	private static final QName WSSE_SECURITY = new QName(WSSE_NS, "Security");
+	private static final QName WSSE_USERNAME_TOKEN = new QName(WSSE_NS, "UsernameToken");
+	private static final QName WSSE_USERNAME = new QName(WSSE_NS, "Username");
+	private static final QName WSSE_PASSWORD = new QName(WSSE_NS, "Password");
 
-  private static final Set<QName> HEADERS = new HashSet<QName>();
-  static {
-    HEADERS.add(WSSE_SECURITY);
-  }
+	private static final Set<QName> HEADERS = new HashSet<QName>();
+	static {
+		HEADERS.add(WSSE_SECURITY);
+	}
 
-  public Set<QName> getHeaders() {
-    return HEADERS;
-  }
+	public Set<QName> getHeaders() {
+		return HEADERS;
+	}
 
-  public void close(MessageContext context) {
-  }
+	public void close(MessageContext context) {
+	}
 
-  public boolean handleFault(SOAPMessageContext context) {
-    return true;
-  }
+	public boolean handleFault(SOAPMessageContext context) {
+		return true;
+	}
 
-  public boolean handleMessage(SOAPMessageContext context) {
-    Boolean outboundProperty = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-    if (outboundProperty.booleanValue()) {
-      // we are only looking at inbound messages
-      return true;
-    }
+	public boolean handleMessage(SOAPMessageContext context) {
+		Boolean outboundProperty = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+		if (outboundProperty.booleanValue()) {
+			// we are only looking at inbound messages
+			return true;
+		}
 
-    try {
-      // read the header
-      SOAPMessage msg = context.getMessage();
-      SOAPHeader sh = msg.getSOAPHeader();
-      SOAPElement securityElement = (SOAPElement) sh.getChildElements(WSSE_SECURITY).next();
-      SOAPElement tokenElement = (SOAPElement) securityElement
-          .getChildElements(WSSE_USERNAME_TOKEN).next();
-      SOAPElement userElement = (SOAPElement) tokenElement.getChildElements(WSSE_USERNAME).next();
-      SOAPElement passwordElement = (SOAPElement) tokenElement.getChildElements(WSSE_PASSWORD)
-          .next();
+		try {
+			// read the header
+			SOAPMessage msg = context.getMessage();
+			SOAPHeader sh = msg.getSOAPHeader();
+			SOAPElement securityElement = (SOAPElement) sh.getChildElements(WSSE_SECURITY).next();
+			SOAPElement tokenElement = (SOAPElement) securityElement.getChildElements(WSSE_USERNAME_TOKEN).next();
+			SOAPElement userElement = (SOAPElement) tokenElement.getChildElements(WSSE_USERNAME).next();
+			SOAPElement passwordElement = (SOAPElement) tokenElement.getChildElements(WSSE_PASSWORD).next();
 
-      // add user and password to context
-      Map<String, String> callContextMap = new HashMap<String, String>();
-      callContextMap.put(CallContext.USERNAME, userElement.getValue());
-      callContextMap.put(CallContext.PASSWORD, passwordElement.getValue());
+			// add user and password to context
+			Map<String, String> callContextMap = new HashMap<String, String>();
+			callContextMap.put(CallContext.USERNAME, userElement.getValue());
+			callContextMap.put(CallContext.PASSWORD, passwordElement.getValue());
 
-      context.put(AbstractService.CALL_CONTEXT_MAP, callContextMap);
-      context.setScope(AbstractService.CALL_CONTEXT_MAP, Scope.APPLICATION);
-    }
-    catch (Exception e) {
-      // something went wrong, e.g. a part of the SOAP header wasn't set
-      throw new RuntimeException("UsernameToken not set!", e);
-    }
+			context.put(AbstractService.CALL_CONTEXT_MAP, callContextMap);
+			context.setScope(AbstractService.CALL_CONTEXT_MAP, Scope.APPLICATION);
+		} catch (Exception e) {
+			// something went wrong, e.g. a part of the SOAP header wasn't set
+			throw new RuntimeException("UsernameToken not set!", e);
+		}
 
-    return true;
-  }
+		return true;
+	}
 }
