@@ -22,10 +22,9 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.Tree; // import org.apache.chemistry.opencmis.client.api.util.PagingList;
+import org.apache.chemistry.opencmis.client.api.Tree;
 import org.junit.Test;
 
 public class ReadOnlyNavigationIT extends AbstractSessionTest {

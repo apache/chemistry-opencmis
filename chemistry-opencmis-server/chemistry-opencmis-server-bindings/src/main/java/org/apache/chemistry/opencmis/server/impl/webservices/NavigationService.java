@@ -46,22 +46,19 @@ import org.apache.chemistry.opencmis.server.spi.CmisNavigationService;
 
 /**
  * CMIS Navigation Service.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.NavigationServicePort")
 public class NavigationService extends AbstractService implements NavigationServicePort {
 	@Resource
-	WebServiceContext fContext;
+	WebServiceContext wsContext;
 
 	public CmisObjectListType getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
 			Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
 			BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisNavigationService service = factory.getNavigationService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getCheckedOutDocs(context, repositoryId, folderId, filter, orderBy,
 					includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
@@ -76,9 +73,9 @@ public class NavigationService extends AbstractService implements NavigationServ
 			Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisNavigationService service = factory.getNavigationService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getChildren(context, repositoryId, folderId, filter, orderBy,
 					includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
@@ -92,9 +89,9 @@ public class NavigationService extends AbstractService implements NavigationServ
 			String filter, Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisNavigationService service = factory.getNavigationService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
 
@@ -117,9 +114,9 @@ public class NavigationService extends AbstractService implements NavigationServ
 	public CmisObjectType getFolderParent(String repositoryId, String folderId, String filter,
 			CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisNavigationService service = factory.getNavigationService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getFolderParent(context, repositoryId, folderId, filter, convert(extension), null));
 		} catch (Exception e) {
@@ -131,9 +128,9 @@ public class NavigationService extends AbstractService implements NavigationServ
 			String filter, Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisNavigationService service = factory.getNavigationService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
 
@@ -157,9 +154,9 @@ public class NavigationService extends AbstractService implements NavigationServ
 			Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
 			Boolean includeRelativePathSegment, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisNavigationService service = factory.getNavigationService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			List<CmisObjectParentsType> result = new ArrayList<CmisObjectParentsType>();
 

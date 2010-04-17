@@ -30,9 +30,6 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 
 /**
  * A cache for repository info objects.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RepositoryInfoCache implements Serializable {
 
@@ -40,7 +37,7 @@ public class RepositoryInfoCache implements Serializable {
 
 	private static final int CACHE_SIZE_REPOSITORIES = 10;
 
-	private Cache fCache;
+	private Cache cache;
 
 	/**
 	 * Constructor.
@@ -54,8 +51,8 @@ public class RepositoryInfoCache implements Serializable {
 			repCount = CACHE_SIZE_REPOSITORIES;
 		}
 
-		fCache = new CacheImpl("Repository Info Cache");
-		fCache.initialize(new String[] { MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "="
+		cache = new CacheImpl("Repository Info Cache");
+		cache.initialize(new String[] { MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "="
 				+ repCount });
 	}
 
@@ -70,7 +67,7 @@ public class RepositoryInfoCache implements Serializable {
 			return;
 		}
 
-		fCache.put(repositoryInfo, repositoryInfo.getId());
+		cache.put(repositoryInfo, repositoryInfo.getId());
 	}
 
 	/**
@@ -82,7 +79,7 @@ public class RepositoryInfoCache implements Serializable {
 	 *         not in the cache
 	 */
 	public RepositoryInfo get(String repositoryId) {
-		return (RepositoryInfo) fCache.get(repositoryId);
+		return (RepositoryInfo) cache.get(repositoryId);
 	}
 
 	/**
@@ -92,11 +89,11 @@ public class RepositoryInfoCache implements Serializable {
 	 *            the repository id
 	 */
 	public void remove(String repositoryId) {
-		fCache.remove(repositoryId);
+		cache.remove(repositoryId);
 	}
 
 	@Override
 	public String toString() {
-		return fCache.toString();
+		return cache.toString();
 	}
 }

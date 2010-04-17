@@ -601,9 +601,6 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 	 */
 	public Acl getAcl(boolean onlyBasicPermissions) {
 		String objectId = getObjectId();
-
-		ObjectFactory of = getObjectFactory();
-
 		return getBinding().getAclService().getAcl(getRepositoryId(), objectId, onlyBasicPermissions, null);
 	}
 

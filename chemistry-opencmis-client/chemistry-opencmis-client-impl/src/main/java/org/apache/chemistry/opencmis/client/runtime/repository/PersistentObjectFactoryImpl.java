@@ -539,7 +539,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 	 * convertQueryProperties(org.apache.opencmis
 	 * .commons.provider.PropertiesData)
 	 */
-	@SuppressWarnings("unchecked")
 	public List<PropertyData<?>> convertQueryProperties(Properties properties) {
 		// check input
 		if ((properties == null) || (properties.getProperties() == null)) {

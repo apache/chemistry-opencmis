@@ -38,22 +38,19 @@ import org.apache.chemistry.opencmis.server.spi.CmisAclService;
 
 /**
  * CMIS ACL Service.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort")
 public class AclService extends AbstractService implements ACLServicePort {
 	@Resource
-	WebServiceContext fContext;
+	WebServiceContext wsContext;
 
 	public CmisACLType applyACL(String repositoryId, String objectId, CmisAccessControlListType addAces,
 			CmisAccessControlListType removeAces, EnumACLPropagation aclPropagation, CmisExtensionType extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisAclService service = factory.getAclService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			Acl acl = service.applyAcl(context, repositoryId, objectId, convert(addAces, null), convert(removeAces,
 					null), convert(AclPropagation.class, aclPropagation), convert(extension));
@@ -75,9 +72,9 @@ public class AclService extends AbstractService implements ACLServicePort {
 	public CmisACLType getACL(String repositoryId, String objectId, Boolean onlyBasicPermissions,
 			CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisAclService service = factory.getAclService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			Acl acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions, convert(extension));
 

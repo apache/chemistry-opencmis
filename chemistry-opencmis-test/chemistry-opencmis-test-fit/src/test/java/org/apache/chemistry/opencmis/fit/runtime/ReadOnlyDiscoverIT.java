@@ -18,11 +18,6 @@
  */
 package org.apache.chemistry.opencmis.fit.runtime;
 
-import java.util.List;
-
-import junit.framework.Assert;
-
-import org.apache.chemistry.opencmis.client.api.QueryResult; //import org.apache.chemistry.opencmis.client.api.util.PagingList;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.commons.logging.Log;

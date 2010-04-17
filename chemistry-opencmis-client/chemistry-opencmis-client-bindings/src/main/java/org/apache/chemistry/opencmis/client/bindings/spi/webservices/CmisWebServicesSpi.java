@@ -90,109 +90,49 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.CMISSPI#getRepositoryService()
-	 */
 	public RepositoryService getRepositoryService() {
 		return fRepositoryService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.CMISSPI#getNavigationService()
-	 */
 	public NavigationService getNavigationService() {
 		return fNavigationService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#getObjectService()
-	 */
 	public ObjectService getObjectService() {
 		return fObjectService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.CMISSPI#getDiscoveryService()
-	 */
 	public DiscoveryService getDiscoveryService() {
 		return fDiscoveryService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.CMISSPI#getVersioningService()
-	 */
 	public VersioningService getVersioningService() {
 		return fVersioningService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.CMISSPI#getMultiFilingService()
-	 */
 	public MultiFilingService getMultiFilingService() {
 		return fMultiFilingService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.CMISSPI#getRelationshipService()
-	 */
 	public RelationshipService getRelationshipService() {
 		return fRelationshipService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#getPolicyService()
-	 */
 	public PolicyService getPolicyService() {
 		return fPolicyService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#getACLService()
-	 */
 	public AclService getAclService() {
 		return fACLService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.spi.CMISSPI#clearAllCaches()
-	 */
 	public void clearAllCaches() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.CMISSPI#clearRepositoryCache(
-	 * java.lang.String)
-	 */
 	public void clearRepositoryCache(String repositoryId) {
 	}
 
+	public void close() {
+		// no-op for Web Services
+	}
 }

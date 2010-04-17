@@ -36,28 +36,25 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
  * Repository Service implementation.
  * 
  * Passes requests to the SPI and handles caching.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RepositoryServiceImpl implements RepositoryService, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private final Session fSession;
+	private final Session session;
 
 	/**
 	 * Constructor.
 	 */
 	public RepositoryServiceImpl(Session session) {
-		fSession = session;
+		this.session = session;
 	}
 
 	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
 		RepositoryInfo result = null;
 		boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
 
-		RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(fSession);
+		RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(session);
 
 		// if extension is not set, check the cache first
 		if (!hasExtension) {
@@ -68,7 +65,7 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
 		}
 
 		// it was not in the cache -> get the SPI and fetch the repository info
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		result = spi.getRepositoryService().getRepositoryInfo(repositoryId, extension);
 
 		// put it into the cache
@@ -84,12 +81,12 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
 		boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
 
 		// get the SPI and fetch the repository infos
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		result = spi.getRepositoryService().getRepositoryInfos(extension);
 
 		// put it into the cache
 		if (!hasExtension && (result != null)) {
-			RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(fSession);
+			RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(session);
 			for (RepositoryInfo rid : result) {
 				cache.put(rid);
 			}
@@ -105,13 +102,13 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
 		boolean propDefs = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
 
 		// get the SPI and fetch the type definitions
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		result = spi.getRepositoryService().getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems,
 				skipCount, extension);
 
 		// put it into the cache
 		if (!hasExtension && propDefs && (result != null)) {
-			TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(fSession);
+			TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(session);
 
 			for (TypeDefinition tdd : result.getList()) {
 				cache.put(repositoryId, tdd);
@@ -125,7 +122,7 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
 		TypeDefinition result = null;
 		boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
 
-		TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(fSession);
+		TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(session);
 
 		// if extension is not set, check the cache first
 		if (!hasExtension) {
@@ -136,7 +133,7 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
 		}
 
 		// it was not in the cache -> get the SPI and fetch the type definition
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		result = spi.getRepositoryService().getTypeDefinition(repositoryId, typeId, extension);
 
 		// put it into the cache
@@ -154,13 +151,13 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
 		boolean propDefs = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
 
 		// get the SPI and fetch the type definitions
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		result = spi.getRepositoryService().getTypeDescendants(repositoryId, typeId, depth, includePropertyDefinitions,
 				extension);
 
 		// put it into the cache
 		if (!hasExtension && propDefs && (result != null)) {
-			TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(fSession);
+			TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(session);
 			addToTypeCache(cache, repositoryId, result);
 		}
 

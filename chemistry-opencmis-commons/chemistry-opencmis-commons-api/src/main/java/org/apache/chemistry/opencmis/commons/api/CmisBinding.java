@@ -32,9 +32,6 @@ import java.io.Serializable;
  * accessible in this session. All CMIS operations and extension points are
  * provided if they are supported by the underlying binding.
  * </p>
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public interface CmisBinding extends Serializable {
 
@@ -101,4 +98,9 @@ public interface CmisBinding extends Serializable {
 	 *            the repository id
 	 */
 	void clearRepositoryCache(String repositoryId);
+
+	/**
+	 * Releases all resources assigned to this binding instance.
+	 */
+	void close();
 }

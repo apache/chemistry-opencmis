@@ -216,7 +216,14 @@ public class CmisAtomPubServlet extends HttpServlet {
 	 * Decodes basic auth and creates a {@link CallContext} object.
 	 */
 	protected CallContext createContext(HttpServletRequest request) {
-		CallContextImpl context = new CallContextImpl(CallContext.BINDING_ATOMPUB);
+		String[] pathFragments = splitPath(request);
+
+		String repositoryId = null;
+		if (pathFragments.length > 0) {
+			repositoryId = pathFragments[0];
+		}
+
+		CallContextImpl context = new CallContextImpl(CallContext.BINDING_ATOMPUB, repositoryId, true);
 
 		// call call text handler
 		if (fCallContextHandler != null) {

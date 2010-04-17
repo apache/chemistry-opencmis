@@ -42,22 +42,19 @@ import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
 
 /**
  * CMIS Discovery Service.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.DiscoveryServicePort")
 public class DiscoveryService extends AbstractService implements DiscoveryServicePort {
 	@Resource
-	WebServiceContext fContext;
+	WebServiceContext wsContext;
 
 	public void getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
 			String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems,
 			CmisExtensionType extension, Holder<CmisObjectListType> objects) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisDiscoveryService service = factory.getDiscoveryService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			org.apache.chemistry.opencmis.commons.api.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
 
@@ -78,9 +75,9 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
 			Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
 			BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisDiscoveryService service = factory.getDiscoveryService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.query(context, repositoryId, statement, searchAllVersions, includeAllowableActions,
 					convert(IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,

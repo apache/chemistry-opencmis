@@ -38,23 +38,20 @@ import org.apache.chemistry.opencmis.server.spi.CmisRelationshipService;
 
 /**
  * CMIS Relationship Service.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipServicePort")
 public class RelationshipService extends AbstractService implements RelationshipServicePort {
 	@Resource
-	WebServiceContext fContext;
+	WebServiceContext wsContext;
 
 	public CmisObjectListType getObjectRelationships(String repositoryId, String objectId,
 			Boolean includeSubRelationshipTypes, EnumRelationshipDirection relationshipDirection, String typeId,
 			String filter, Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount,
 			CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisRelationshipService service = factory.getRelationshipService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getObjectRelationships(context, repositoryId, objectId, includeSubRelationshipTypes,
 					convert(RelationshipDirection.class, relationshipDirection), typeId, filter,

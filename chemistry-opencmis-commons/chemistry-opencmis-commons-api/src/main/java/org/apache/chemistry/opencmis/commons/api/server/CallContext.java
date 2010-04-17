@@ -42,6 +42,11 @@ public interface CallContext {
 	String getBinding();
 
 	/**
+	 * Returns if <code>true</code> object infos can improve the performance.
+	 */
+	boolean isObjectInfoRequired();
+
+	/**
 	 * Returns context data by key.
 	 * 
 	 * @param key

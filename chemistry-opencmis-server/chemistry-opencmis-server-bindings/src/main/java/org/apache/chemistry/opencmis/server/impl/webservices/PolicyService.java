@@ -42,21 +42,18 @@ import org.apache.chemistry.opencmis.server.spi.CmisPolicyService;
 
 /**
  * CMIS Policy Service.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyServicePort")
 public class PolicyService extends AbstractService implements PolicyServicePort {
 	@Resource
-	WebServiceContext fContext;
+	WebServiceContext wsContext;
 
 	public void applyPolicy(String repositoryId, String policyId, String objectId, Holder<CmisExtensionType> extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisPolicyService service = factory.getPolicyService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 
@@ -71,9 +68,9 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
 	public List<CmisObjectType> getAppliedPolicies(String repositoryId, String objectId, String filter,
 			CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisPolicyService service = factory.getPolicyService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			List<ObjectData> policies = service.getAppliedPolicies(context, repositoryId, objectId, filter,
 					convert(extension), null);
@@ -96,9 +93,9 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
 	public void removePolicy(String repositoryId, String policyId, String objectId, Holder<CmisExtensionType> extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisPolicyService service = factory.getPolicyService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 

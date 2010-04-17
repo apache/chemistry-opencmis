@@ -22,25 +22,22 @@ import java.io.Serializable;
 
 /**
  * Wrapper for transient objects in a cache.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class TransientWrapper implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private transient Object fObject = null;
+	private transient Object object = null;
 
 	public TransientWrapper(Object object) {
-		fObject = object;
+		this.object = object;
 	}
 
 	public Object getObject() {
-		return fObject;
+		return object;
 	}
 
 	@Override
 	public String toString() {
-		return (fObject == null ? "(no object)" : "(transient) " + fObject.toString());
+		return (object == null ? "(no object)" : "(transient) " + object.toString());
 	}
 }

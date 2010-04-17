@@ -30,9 +30,6 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 
 /**
  * A cache for type definition objects.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class TypeDefinitionCache implements Serializable {
 
@@ -41,7 +38,7 @@ public class TypeDefinitionCache implements Serializable {
 	private static final int CACHE_SIZE_REPOSITORIES = 10;
 	private static final int CACHE_SIZE_TYPES = 100;
 
-	private Cache fCache;
+	private Cache cache;
 
 	/**
 	 * Constructor.
@@ -60,8 +57,8 @@ public class TypeDefinitionCache implements Serializable {
 			typeCount = CACHE_SIZE_TYPES;
 		}
 
-		fCache = new CacheImpl("Type Definition Cache");
-		fCache.initialize(new String[] {
+		cache = new CacheImpl("Type Definition Cache");
+		cache.initialize(new String[] {
 				MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
 				LruCacheLevelImpl.class.getName() + " " + LruCacheLevelImpl.MAX_ENTRIES + "=" + typeCount // type
 		});
@@ -80,7 +77,7 @@ public class TypeDefinitionCache implements Serializable {
 			return;
 		}
 
-		fCache.put(typeDefinition, repositoryId, typeDefinition.getId());
+		cache.put(typeDefinition, repositoryId, typeDefinition.getId());
 	}
 
 	/**
@@ -94,7 +91,7 @@ public class TypeDefinitionCache implements Serializable {
 	 *         not in the cache
 	 */
 	public TypeDefinition get(String repositoryId, String typeId) {
-		return (TypeDefinition) fCache.get(repositoryId, typeId);
+		return (TypeDefinition) cache.get(repositoryId, typeId);
 	}
 
 	/**
@@ -106,7 +103,7 @@ public class TypeDefinitionCache implements Serializable {
 	 *            the type id
 	 */
 	public void remove(String repositoryId, String typeId) {
-		fCache.remove(repositoryId, typeId);
+		cache.remove(repositoryId, typeId);
 	}
 
 	/**
@@ -116,11 +113,11 @@ public class TypeDefinitionCache implements Serializable {
 	 *            the repository id
 	 */
 	public void remove(String repositoryId) {
-		fCache.remove(repositoryId);
+		cache.remove(repositoryId);
 	}
 
 	@Override
 	public String toString() {
-		return fCache.toString();
+		return cache.toString();
 	}
 }

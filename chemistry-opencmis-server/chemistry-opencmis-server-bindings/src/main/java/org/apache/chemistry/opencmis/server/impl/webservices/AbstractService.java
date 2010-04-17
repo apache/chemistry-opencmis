@@ -48,9 +48,6 @@ import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 
 /**
  * This class contains operations used by all services.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractService {
 
@@ -70,8 +67,8 @@ public abstract class AbstractService {
 	 * Creates a CallContext object for the Web Service context.
 	 */
 	@SuppressWarnings("unchecked")
-	protected CallContext createContext(WebServiceContext wsContext) {
-		CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES);
+	protected CallContext createContext(WebServiceContext wsContext, String repositoryId) {
+		CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES, repositoryId, false);
 
 		MessageContext mc = wsContext.getMessageContext();
 		Map<String, String> callContextMap = (Map<String, String>) mc.get(CALL_CONTEXT_MAP);

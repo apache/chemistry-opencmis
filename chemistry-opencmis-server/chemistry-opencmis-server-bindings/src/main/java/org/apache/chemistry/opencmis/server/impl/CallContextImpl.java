@@ -28,19 +28,26 @@ import org.apache.chemistry.opencmis.commons.api.server.CallContext;
  */
 public class CallContextImpl implements CallContext {
 
-	private String fBinding;
-	private Map<String, String> fParameter = new HashMap<String, String>();
+	private String binding;
+	private boolean objectInfoRequired;
+	private Map<String, String> parameter = new HashMap<String, String>();
 
-	public CallContextImpl(String binding) {
-		fBinding = binding;
+	public CallContextImpl(String binding, String repositoryId, boolean objectInfoRequired) {
+		this.binding = binding;
+		this.objectInfoRequired = objectInfoRequired;
+		put(REPOSITORY_ID, repositoryId);
 	}
 
 	public String getBinding() {
-		return fBinding;
+		return binding;
+	}
+
+	public boolean isObjectInfoRequired() {
+		return objectInfoRequired;
 	}
 
 	public String get(String key) {
-		return fParameter.get(key);
+		return parameter.get(key);
 	}
 
 	public String getRepositoryId() {
@@ -63,14 +70,14 @@ public class CallContextImpl implements CallContext {
 	 * Adds a parameter.
 	 */
 	public void put(String key, String value) {
-		fParameter.put(key, value);
+		parameter.put(key, value);
 	}
 
 	/**
 	 * Removes a parameter.
 	 */
 	public String remove(String key) {
-		return fParameter.remove(key);
+		return parameter.remove(key);
 	}
 
 }

@@ -36,21 +36,18 @@ import org.apache.chemistry.opencmis.server.spi.CmisMultiFilingService;
 
 /**
  * CMIS MultiFiling Service.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort")
 public class MultiFilingService extends AbstractService implements MultiFilingServicePort {
 	@Resource
-	WebServiceContext fContext;
+	WebServiceContext wsContext;
 
 	public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
 			Holder<CmisExtensionType> extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisMultiFilingService service = factory.getMultiFilingService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 
@@ -65,9 +62,9 @@ public class MultiFilingService extends AbstractService implements MultiFilingSe
 	public void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
 			Holder<CmisExtensionType> extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisMultiFilingService service = factory.getMultiFilingService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 

@@ -44,20 +44,17 @@ import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 
 /**
  * CMIS Repository Service.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort")
 public class RepositoryService extends AbstractService implements RepositoryServicePort {
 	@Resource
-	WebServiceContext fContext;
+	WebServiceContext wsContext;
 
 	public List<CmisRepositoryEntryType> getRepositories(CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisRepositoryService service = factory.getRepositoryService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, null);
 
 			List<RepositoryInfo> infoDataList = service.getRepositoryInfos(context, convert(extension));
 
@@ -83,9 +80,9 @@ public class RepositoryService extends AbstractService implements RepositoryServ
 	public CmisRepositoryInfoType getRepositoryInfo(String repositoryId, CmisExtensionType extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisRepositoryService service = factory.getRepositoryService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getRepositoryInfo(context, repositoryId, convert(extension)));
 		} catch (Exception e) {
@@ -97,9 +94,9 @@ public class RepositoryService extends AbstractService implements RepositoryServ
 			Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisRepositoryService service = factory.getRepositoryService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getTypeChildren(context, repositoryId, typeId, includePropertyDefinitions, maxItems,
 					skipCount, convert(extension)));
@@ -111,9 +108,9 @@ public class RepositoryService extends AbstractService implements RepositoryServ
 	public CmisTypeDefinitionType getTypeDefinition(String repositoryId, String typeId, CmisExtensionType extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisRepositoryService service = factory.getRepositoryService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getTypeDefinition(context, repositoryId, typeId, convert(extension)));
 		} catch (Exception e) {
@@ -124,9 +121,9 @@ public class RepositoryService extends AbstractService implements RepositoryServ
 	public List<CmisTypeContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
 			Boolean includePropertyDefinitions, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisRepositoryService service = factory.getRepositoryService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			List<CmisTypeContainer> result = new ArrayList<CmisTypeContainer>();
 			convertTypeContainerList(service.getTypeDescendants(context, repositoryId, typeId, depth,

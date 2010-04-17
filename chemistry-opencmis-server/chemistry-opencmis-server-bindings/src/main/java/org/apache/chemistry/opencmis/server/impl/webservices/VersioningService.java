@@ -49,21 +49,18 @@ import org.apache.chemistry.opencmis.server.spi.CmisVersioningService;
 
 /**
  * CMIS Versioning Service.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningServicePort")
 public class VersioningService extends AbstractService implements VersioningServicePort {
 	@Resource
-	WebServiceContext fContext;
+	WebServiceContext wsContext;
 
 	public void cancelCheckOut(String repositoryId, String objectId, Holder<CmisExtensionType> extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisVersioningService service = factory.getVersioningService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 
@@ -80,9 +77,9 @@ public class VersioningService extends AbstractService implements VersioningServ
 			CmisAccessControlListType addAces, CmisAccessControlListType removeAces, Holder<CmisExtensionType> extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisVersioningService service = factory.getVersioningService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
 			ExtensionsData extData = convertExtensionHolder(extension);
@@ -100,9 +97,9 @@ public class VersioningService extends AbstractService implements VersioningServ
 	public void checkOut(String repositoryId, Holder<String> objectId, Holder<CmisExtensionType> extension,
 			Holder<Boolean> contentCopied) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisVersioningService service = factory.getVersioningService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
 			org.apache.chemistry.opencmis.commons.api.Holder<Boolean> contentCopiedHolder = new org.apache.chemistry.opencmis.commons.api.Holder<Boolean>();
@@ -124,9 +121,9 @@ public class VersioningService extends AbstractService implements VersioningServ
 	public List<CmisObjectType> getAllVersions(String repositoryId, String versionSeriesId, String filter,
 			Boolean includeAllowableActions, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisVersioningService service = factory.getVersioningService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			List<ObjectData> versions = service.getAllVersions(context, repositoryId, versionSeriesId, filter,
 					includeAllowableActions, convert(extension), null);
@@ -151,9 +148,9 @@ public class VersioningService extends AbstractService implements VersioningServ
 			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisVersioningService service = factory.getVersioningService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getObjectOfLatestVersion(context, repositoryId, versionSeriesId, major, filter,
 					includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
@@ -166,9 +163,9 @@ public class VersioningService extends AbstractService implements VersioningServ
 	public CmisPropertiesType getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
 			String filter, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisVersioningService service = factory.getVersioningService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getPropertiesOfLatestVersion(context, repositoryId, versionSeriesId, major, filter,
 					convert(extension)));

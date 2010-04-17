@@ -39,17 +39,14 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFact
 
 /**
  * CMIS binding implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisBindingImpl implements CmisBinding {
 
 	private static final long serialVersionUID = 1L;
 
-	private Session fSession;
-	private BindingsObjectFactory fObjectFactory;
-	private RepositoryService fRepositoryService;
+	private Session session;
+	private BindingsObjectFactory objectFactory;
+	private RepositoryService repositoryServiceWrapper;
 
 	/**
 	 * Constructor.
@@ -67,9 +64,9 @@ public class CmisBindingImpl implements CmisBinding {
 		}
 
 		// initialize session
-		fSession = new SessionImpl();
+		session = new SessionImpl();
 		for (Map.Entry<String, String> entry : sessionParameters.entrySet()) {
-			fSession.put(entry.getKey(), entry.getValue());
+			session.put(entry.getKey(), entry.getValue());
 		}
 
 		// create authentication provider and add it session
@@ -88,104 +85,137 @@ public class CmisBindingImpl implements CmisBinding {
 						"Authentication provider does not extend AbstractAuthenticationProvider!");
 			}
 
-			fSession.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT,
+			session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT,
 					(AbstractAuthenticationProvider) authProviderObj);
-			((AbstractAuthenticationProvider) authProviderObj).setSession(fSession);
+			((AbstractAuthenticationProvider) authProviderObj).setSession(session);
 		}
 
 		// set up caches
 		clearAllCaches();
 
 		// initialize the SPI
-		CmisBindingsHelper.getSPI(fSession);
+		CmisBindingsHelper.getSPI(session);
 
 		// set up object factory
-		fObjectFactory = new BindingsObjectFactoryImpl();
+		objectFactory = new BindingsObjectFactoryImpl();
 
 		// set up repository service
-		fRepositoryService = new RepositoryServiceImpl(fSession);
+		repositoryServiceWrapper = new RepositoryServiceImpl(session);
 	}
 
 	public RepositoryService getRepositoryService() {
-		return fRepositoryService;
+		checkSession();
+		return repositoryServiceWrapper;
 	}
 
 	public NavigationService getNavigationService() {
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		checkSession();
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		return spi.getNavigationService();
 	}
 
 	public ObjectService getObjectService() {
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		checkSession();
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		return spi.getObjectService();
 	}
 
 	public DiscoveryService getDiscoveryService() {
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		checkSession();
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		return spi.getDiscoveryService();
 	}
 
 	public RelationshipService getRelationshipService() {
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		checkSession();
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		return spi.getRelationshipService();
 	}
 
 	public VersioningService getVersioningService() {
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		checkSession();
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		return spi.getVersioningService();
 	}
 
 	public AclService getAclService() {
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		checkSession();
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		return spi.getAclService();
 	}
 
 	public MultiFilingService getMultiFilingService() {
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		checkSession();
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		return spi.getMultiFilingService();
 	}
 
 	public PolicyService getPolicyService() {
-		CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		checkSession();
+		CmisSpi spi = CmisBindingsHelper.getSPI(session);
 		return spi.getPolicyService();
 	}
 
 	public BindingsObjectFactory getObjectFactory() {
-		return fObjectFactory;
+		return objectFactory;
 	}
 
 	public void clearAllCaches() {
-		fSession.writeLock();
-		try {
-			fSession.put(CmisBindingsHelper.REPOSITORY_INFO_CACHE, new RepositoryInfoCache(fSession));
-			fSession.put(CmisBindingsHelper.TYPE_DEFINTION_CACHE, new TypeDefinitionCache(fSession));
+		checkSession();
 
-			CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+		session.writeLock();
+		try {
+			session.put(CmisBindingsHelper.REPOSITORY_INFO_CACHE, new RepositoryInfoCache(session));
+			session.put(CmisBindingsHelper.TYPE_DEFINTION_CACHE, new TypeDefinitionCache(session));
+
+			CmisSpi spi = CmisBindingsHelper.getSPI(session);
 			spi.clearAllCaches();
 		} finally {
-			fSession.writeUnlock();
+			session.writeUnlock();
 		}
 	}
 
 	public void clearRepositoryCache(String repositoryId) {
+		checkSession();
+
 		if (repositoryId == null) {
 			return;
 		}
 
-		fSession.writeLock();
+		session.writeLock();
 		try {
-			RepositoryInfoCache repInfoCache = (RepositoryInfoCache) fSession
+			RepositoryInfoCache repInfoCache = (RepositoryInfoCache) session
 					.get(CmisBindingsHelper.REPOSITORY_INFO_CACHE);
 			repInfoCache.remove(repositoryId);
 
-			TypeDefinitionCache typeDefCache = (TypeDefinitionCache) fSession
+			TypeDefinitionCache typeDefCache = (TypeDefinitionCache) session
 					.get(CmisBindingsHelper.TYPE_DEFINTION_CACHE);
 			typeDefCache.remove(repositoryId);
 
-			CmisSpi spi = CmisBindingsHelper.getSPI(fSession);
+			CmisSpi spi = CmisBindingsHelper.getSPI(session);
 			spi.clearRepositoryCache(repositoryId);
 		} finally {
-			fSession.writeUnlock();
+			session.writeUnlock();
+		}
+	}
+
+	public void close() {
+		checkSession();
+
+		session.writeLock();
+		try {
+			CmisSpi spi = CmisBindingsHelper.getSPI(session);
+			spi.close();
+		} finally {
+			session.writeUnlock();
+			session = null;
+		}
+
+	}
+
+	private void checkSession() {
+		if (session == null) {
+			throw new IllegalStateException("Already closed.");
 		}
 	}
 }

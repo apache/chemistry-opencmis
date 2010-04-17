@@ -1,7 +1,9 @@
 package org.apache.chemistry.opencmis.commons.impl.server;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Acl;
@@ -31,11 +33,32 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
 public abstract class AbstractCmisService implements CmisService {
 
-	public abstract RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension);
+	private Map<String, ObjectInfo> objectInfoMap;
+
+	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+		RepositoryInfo result = null;
+
+		List<RepositoryInfo> repositories = getRepositoryInfos(extension);
+		if (repositories != null) {
+			for (RepositoryInfo ri : repositories) {
+				if (ri.getId().equals(repositoryId)) {
+					result = ri;
+					break;
+				}
+			}
+		}
+
+		if (result == null) {
+			throw new CmisObjectNotFoundException("Repository '" + repositoryId + "' does not exist!");
+		}
+
+		return result;
+	}
 
 	public abstract List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension);
 
@@ -302,7 +325,17 @@ public abstract class AbstractCmisService implements CmisService {
 	}
 
 	public ObjectInfo getObjectInfo(String objectId) {
-		return null;
+		return objectInfoMap.get(objectId);
+	}
+
+	public void addObjectInfo(ObjectInfo objectInfo) {
+		if (objectInfoMap == null) {
+			objectInfoMap = new HashMap<String, ObjectInfo>();
+		}
+
+		if (objectInfo != null && objectInfo.getId() != null) {
+			objectInfoMap.put(objectInfo.getId(), objectInfo);
+		}
 	}
 
 	public void close() {

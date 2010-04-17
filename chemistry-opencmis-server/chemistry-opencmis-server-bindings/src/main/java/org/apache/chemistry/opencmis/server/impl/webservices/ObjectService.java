@@ -59,24 +59,21 @@ import com.sun.xml.ws.developer.StreamingAttachment;
 
 /**
  * CMIS Object Service.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 @StreamingAttachment(parseEagerly = true, memoryThreshold = 4 * 1024 * 1204)
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort")
 public class ObjectService extends AbstractService implements ObjectServicePort {
 	@Resource
-	WebServiceContext fContext;
+	WebServiceContext wsContext;
 
 	public void createDocument(String repositoryId, CmisPropertiesType properties, String folderId,
 			CmisContentStreamType contentStream, EnumVersioningState versioningState, List<String> policies,
 			CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
 			Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 
@@ -99,9 +96,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 			CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
 			Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 
@@ -123,9 +120,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 			List<String> policies, CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
 			Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 
@@ -146,9 +143,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 			List<String> policies, CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
 			Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 
@@ -169,9 +166,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 			CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
 			Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 
@@ -191,9 +188,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 	public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
 			Holder<CmisExtensionType> extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
 			org.apache.chemistry.opencmis.commons.api.Holder<String> changeTokenHolder = convertHolder(changeToken);
@@ -212,9 +209,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 	public void deleteObject(String repositoryId, String objectId, Boolean allVersions,
 			Holder<CmisExtensionType> extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			ExtensionsData extData = convertExtensionHolder(extension);
 
@@ -230,9 +227,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 			EnumUnfileObject unfileObjects, Boolean continueOnFailure, CmisExtensionType extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.deleteTree(context, repositoryId, folderId, allVersions, convert(UnfileObject.class,
 					unfileObjects), continueOnFailure, convert(extension)));
@@ -244,9 +241,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 	public CmisAllowableActionsType getAllowableActions(String repositoryId, String objectId,
 			CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getAllowableActions(context, repositoryId, objectId, convert(extension)));
 		} catch (Exception e) {
@@ -257,9 +254,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 	public CmisContentStreamType getContentStream(String repositoryId, String objectId, String streamId,
 			BigInteger offset, BigInteger length, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getContentStream(context, repositoryId, objectId, streamId, offset, length,
 					convert(extension)));
@@ -272,9 +269,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 			Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
 			Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getObject(context, repositoryId, objectId, filter, includeAllowableActions, convert(
 					IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds, includeAcl,
@@ -288,9 +285,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 			Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
 			Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getObjectByPath(context, repositoryId, path, filter, includeAllowableActions,
 					convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
@@ -303,9 +300,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 	public CmisPropertiesType getProperties(String repositoryId, String objectId, String filter,
 			CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			return convert(service.getProperties(context, repositoryId, objectId, filter, convert(extension)));
 		} catch (Exception e) {
@@ -316,9 +313,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 	public List<CmisRenditionType> getRenditions(String repositoryId, String objectId, String renditionFilter,
 			BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			List<CmisRenditionType> result = new ArrayList<CmisRenditionType>();
 
@@ -340,9 +337,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 	public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
 			Holder<CmisExtensionType> extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
 			ExtensionsData extData = convertExtensionHolder(extension);
@@ -360,9 +357,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 			Holder<String> changeToken, CmisContentStreamType contentStream, Holder<CmisExtensionType> extension)
 			throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
 			org.apache.chemistry.opencmis.commons.api.Holder<String> changeTokenHolder = convertHolder(changeToken);
@@ -382,9 +379,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 	public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
 			CmisPropertiesType properties, Holder<CmisExtensionType> extension) throws CmisException {
 		try {
-			AbstractServicesFactory factory = getServicesFactory(fContext);
+			AbstractServicesFactory factory = getServicesFactory(wsContext);
 			CmisObjectService service = factory.getObjectService();
-			CallContext context = createContext(fContext);
+			CallContext context = createContext(wsContext, repositoryId);
 
 			org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
 			org.apache.chemistry.opencmis.commons.api.Holder<String> changeTokenHolder = convertHolder(changeToken);

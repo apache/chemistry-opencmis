@@ -29,9 +29,6 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 /**
  * A collection of static methods that are used in multiple places within the
  * bindings implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public final class CmisBindingsHelper {
 

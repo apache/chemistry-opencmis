@@ -94,4 +94,8 @@ public interface CmisSpi {
 	 */
 	void clearRepositoryCache(String repositoryId);
 
+	/**
+	 * Releases all resources assigned to this SPI instance.
+	 */
+	void close();
 }

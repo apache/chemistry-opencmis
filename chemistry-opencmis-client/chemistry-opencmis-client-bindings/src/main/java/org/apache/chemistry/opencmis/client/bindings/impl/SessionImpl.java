@@ -27,33 +27,30 @@ import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 
 /**
  * CMIS binding session implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class SessionImpl implements Session {
 
 	private static final long serialVersionUID = 1L;
 
-	private Map<String, Object> fData;
+	private Map<String, Object> data;
 
-	private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
+	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	/**
 	 * Constructor.
 	 */
 	public SessionImpl() {
-		fData = new HashMap<String, Object>();
+		data = new HashMap<String, Object>();
 	}
 
 	public Object get(String key) {
 		Object value = null;
 
-		fLock.readLock().lock();
+		lock.readLock().lock();
 		try {
-			value = fData.get(key);
+			value = data.get(key);
 		} finally {
-			fLock.readLock().unlock();
+			lock.readLock().unlock();
 		}
 
 		if (value instanceof TransientWrapper) {
@@ -85,11 +82,11 @@ public class SessionImpl implements Session {
 	}
 
 	public void put(String key, Serializable obj) {
-		fLock.writeLock().lock();
+		lock.writeLock().lock();
 		try {
-			fData.put(key, obj);
+			data.put(key, obj);
 		} finally {
-			fLock.writeLock().unlock();
+			lock.writeLock().unlock();
 		}
 	}
 
@@ -99,41 +96,41 @@ public class SessionImpl implements Session {
 			throw new IllegalArgumentException("Object must be serializable!");
 		}
 
-		fLock.writeLock().lock();
+		lock.writeLock().lock();
 		try {
-			fData.put(key, value);
+			data.put(key, value);
 		} finally {
-			fLock.writeLock().unlock();
+			lock.writeLock().unlock();
 		}
 	}
 
 	public void remove(String key) {
-		fLock.writeLock().lock();
+		lock.writeLock().lock();
 		try {
-			fData.remove(key);
+			data.remove(key);
 		} finally {
-			fLock.writeLock().unlock();
+			lock.writeLock().unlock();
 		}
 	}
 
 	public void readLock() {
-		fLock.readLock().lock();
+		lock.readLock().lock();
 	}
 
 	public void readUnlock() {
-		fLock.readLock().unlock();
+		lock.readLock().unlock();
 	}
 
 	public void writeLock() {
-		fLock.writeLock().lock();
+		lock.writeLock().lock();
 	}
 
 	public void writeUnlock() {
-		fLock.writeLock().unlock();
+		lock.writeLock().unlock();
 	}
 
 	@Override
 	public String toString() {
-		return fData.toString();
+		return data.toString();
 	}
 }
