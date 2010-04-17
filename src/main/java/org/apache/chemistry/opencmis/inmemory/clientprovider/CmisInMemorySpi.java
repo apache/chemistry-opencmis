@@ -176,6 +176,9 @@ public class CmisInMemorySpi extends CmisInMemoryProvider implements CmisSpi {
 	public void clearRepositoryCache(String repositoryId) {
 	}
 
+	public void close() {
+	}
+
 	/**
 	 * Returns the repository info.
 	 */

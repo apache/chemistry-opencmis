@@ -14,6 +14,10 @@ public class DummyCallContext implements CallContext {
 		fParameter.put(LOCALE, "en");
 	}
 
+	public boolean isObjectInfoRequired() {
+		return false;
+	}
+
 	public String get(String key) {
 		return fParameter.get(key);
 	}

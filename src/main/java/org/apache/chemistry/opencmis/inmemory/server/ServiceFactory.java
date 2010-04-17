@@ -171,10 +171,14 @@ public class ServiceFactory extends AbstractServicesFactory {
 				return null;
 			}
 
+			public boolean isObjectInfoRequired() {
+				return false;
+			}
+
 			public String getRepositoryId() {
 				return null;
 			}
-			
+
 			public String getLocale() {
 				return null;
 			}

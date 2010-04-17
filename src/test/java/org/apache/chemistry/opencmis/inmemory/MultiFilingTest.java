@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +39,6 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.inmemory.VersioningTest.VersionTestTypeSystemCreator;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
