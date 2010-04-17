@@ -16,24 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.inmemory.clientprovider;
+package org.apache.chemistry.opencmis.commons.api.server;
 
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
-import org.apache.chemistry.opencmis.inmemory.server.RuntimeContext;
+import java.math.BigInteger;
 
-public class AbstractService {
-	protected CallContext fDummyCallContext;
+/**
+ * This class contains information about a rendition of an object. This data is
+ * used to generate the appropriate links in AtomPub entries and feeds.
+ */
+public interface RenditionInfo {
 
-	protected AbstractService() {
-		// use an existing context if there is one, otherwise use null
-		fDummyCallContext = RuntimeContext.getCurrentContext();
-	}
+	/**
+	 * Return the id of the rendition.
+	 */
+	String getId();
 
-	public void setCallContext(CallContext ctx) {
-		fDummyCallContext = ctx;
-	}
+	/**
+	 * Return the content type of the rendition.
+	 */
+	String getContenType();
 
-	public CallContext getCallContext() {
-		return fDummyCallContext;
-	}
+	/**
+	 * Return the kind of the rendition.
+	 */
+	String getKind();
+
+	/**
+	 * Return the title of the rendition.
+	 */
+	String getTitle();
+
+	/**
+	 * Return the size of the rendition in bytes.
+	 */
+	BigInteger getLength();
 }

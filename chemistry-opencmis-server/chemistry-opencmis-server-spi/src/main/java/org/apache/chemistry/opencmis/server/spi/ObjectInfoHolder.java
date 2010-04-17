@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.spi;
 
+import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
+
 /**
  * This class contains information about a set of objects. This data is used to
  * generate the appropriate links in AtomPub entries and feeds.

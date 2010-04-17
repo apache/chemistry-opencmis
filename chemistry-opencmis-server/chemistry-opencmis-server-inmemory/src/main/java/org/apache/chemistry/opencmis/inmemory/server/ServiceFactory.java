@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.api.NavigationService;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.RepositoryService;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
@@ -38,7 +39,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
 import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
 import org.apache.chemistry.opencmis.server.spi.CmisNavigationService;
 import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
@@ -171,6 +171,10 @@ public class ServiceFactory extends AbstractServicesFactory {
 				return null;
 			}
 
+			public String getRepositoryId() {
+				return null;
+			}
+			
 			public String getLocale() {
 				return null;
 			}

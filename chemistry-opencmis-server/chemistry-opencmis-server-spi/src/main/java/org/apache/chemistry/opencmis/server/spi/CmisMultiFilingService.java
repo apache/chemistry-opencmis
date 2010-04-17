@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.spi;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 
 /**
  * CMIS MultiFiling Service interface. Please refer to the CMIS specification

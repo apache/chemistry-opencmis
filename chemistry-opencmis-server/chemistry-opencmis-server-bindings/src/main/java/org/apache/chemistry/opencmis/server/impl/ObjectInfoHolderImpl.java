@@ -21,14 +21,11 @@ package org.apache.chemistry.opencmis.server.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.server.spi.ObjectInfo;
+import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 /**
  * Implementation of the {@link ObjectInfo} interface.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class ObjectInfoHolderImpl implements ObjectInfoHolder {
 
@@ -41,13 +38,6 @@ public class ObjectInfoHolderImpl implements ObjectInfoHolder {
 		fObjectInfoMap = new HashMap<String, ObjectInfo>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.ObjectInfoHolder#addObjectInfo(org.apache
-	 * .opencmis.server.spi.ObjectInfo)
-	 */
 	public void addObjectInfo(ObjectInfo info) {
 		if (info == null) {
 			throw new IllegalArgumentException("Object Info must not be null!");
@@ -59,13 +49,6 @@ public class ObjectInfoHolderImpl implements ObjectInfoHolder {
 		fObjectInfoMap.put(info.getId(), info);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.ObjectInfoHolder#getObjectInfo(java.lang
-	 * .String)
-	 */
 	public ObjectInfo getObjectInfo(String id) {
 		return fObjectInfoMap.get(id);
 	}

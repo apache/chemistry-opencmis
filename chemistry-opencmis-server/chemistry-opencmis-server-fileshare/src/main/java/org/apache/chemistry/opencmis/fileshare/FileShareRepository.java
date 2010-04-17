@@ -68,6 +68,7 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -120,9 +121,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabili
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
-import org.apache.chemistry.opencmis.server.spi.CallContext;
+import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoImpl;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1771,58 +1771,40 @@ public class FileShareRepository {
 		boolean isFolder = file.isDirectory();
 		boolean isRoot = fRoot.equals(file);
 
-		Set<Action> aam = new HashSet<Action>();
+		Set<Action> aas = new HashSet<Action>();
 
-		// TODO XXX use enum
-		// aam.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_PARENTS, !isRoot);
-		// aam.put(AllowableActionsData.ACTION_CAN_CREATE_RELATIONSHIP, false);
-		// aam.put(AllowableActionsData.ACTION_CAN_GET_PROPERTIES, true);
-		// aam.put(AllowableActionsData.ACTION_CAN_GET_RENDITIONS, false);
-		// aam.put(AllowableActionsData.ACTION_CAN_UPDATE_PROPERTIES,
-		// !userReadOnly && !isReadOnly);
-		// aam.put(AllowableActionsData.ACTION_CAN_MOVE_OBJECT, !userReadOnly);
-		// aam.put(AllowableActionsData.ACTION_CAN_DELETE_OBJECT, !userReadOnly
-		// && !isReadOnly);
-		// aam.put(AllowableActionsData.ACTION_CAN_GET_OBJECT_RELATIONSHIPS,
-		// false);
-		// aam.put(AllowableActionsData.ACTION_CAN_APPLY_POLICY, false);
-		// aam.put(AllowableActionsData.ACTION_CAN_REMOVE_POLICY, false);
-		// aam.put(AllowableActionsData.ACTION_CAN_GET_ACL, true);
-		// aam.put(AllowableActionsData.ACTION_CAN_APPLY_ACL, false);
+		addAction(aas, Action.CAN_GET_OBJECT_PARENTS, !isRoot);
+		addAction(aas, Action.CAN_GET_PROPERTIES, true);
+		addAction(aas, Action.CAN_UPDATE_PROPERTIES, !userReadOnly && !isReadOnly);
+		addAction(aas, Action.CAN_MOVE_OBJECT, !userReadOnly);
+		addAction(aas, Action.CAN_DELETE_OBJECT, !userReadOnly && !isReadOnly);
+		addAction(aas, Action.CAN_GET_ACL, true);
 
 		if (isFolder) {
-			// aam.put(AllowableActionsData.ACTION_CAN_GET_DESCENDANTS, true);
-			// aam.put(AllowableActionsData.ACTION_CAN_GET_CHILDREN, true);
-			// aam.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_PARENT,
-			// !isRoot);
-			// aam.put(AllowableActionsData.ACTION_CAN_GET_FOLDER_TREE, true);
-			// aam.put(AllowableActionsData.ACTION_CAN_CREATE_DOCUMENT,
-			// !userReadOnly);
-			// aam.put(AllowableActionsData.ACTION_CAN_CREATE_FOLDER,
-			// !userReadOnly);
-			// aam.put(AllowableActionsData.ACTION_CAN_DELETE_TREE,
-			// !userReadOnly && !isReadOnly);
+			addAction(aas, Action.CAN_GET_DESCENDANTS, true);
+			addAction(aas, Action.CAN_GET_CHILDREN, true);
+			addAction(aas, Action.CAN_GET_FOLDER_PARENT, !isRoot);
+			addAction(aas, Action.CAN_GET_FOLDER_TREE, true);
+			addAction(aas, Action.CAN_CREATE_DOCUMENT, !userReadOnly);
+			addAction(aas, Action.CAN_CREATE_FOLDER, !userReadOnly);
+			addAction(aas, Action.CAN_DELETE_TREE, !userReadOnly && !isReadOnly);
 		} else {
-			// aam.put(AllowableActionsData.ACTION_CAN_GET_CONTENT_STREAM,
-			// true);
-			// aam.put(AllowableActionsData.ACTION_CAN_SET_CONTENT_STREAM,
-			// !userReadOnly && !isReadOnly);
-			// aam.put(AllowableActionsData.ACTION_CAN_DELETE_CONTENT_STREAM,
-			// !userReadOnly && !isReadOnly);
-			// aam.put(AllowableActionsData.ACTION_CAN_ADD_OBJECT_TO_FOLDER,
-			// false);
-			//aam.put(AllowableActionsData.ACTION_CAN_REMOVE_OBJECT_FROM_FOLDER,
-			// false);
-			// aam.put(AllowableActionsData.ACTION_CAN_CHECK_OUT, false);
-			// aam.put(AllowableActionsData.ACTION_CAN_CANCEL_CHECK_OUT, false);
-			// aam.put(AllowableActionsData.ACTION_CAN_CHECK_IN, false);
-			// aam.put(AllowableActionsData.ACTION_CAN_GET_ALL_VERSIONS, true);
+			addAction(aas, Action.CAN_GET_CONTENT_STREAM, true);
+			addAction(aas, Action.CAN_SET_CONTENT_STREAM, !userReadOnly && !isReadOnly);
+			addAction(aas, Action.CAN_DELETE_CONTENT_STREAM, !userReadOnly && !isReadOnly);
+			addAction(aas, Action.CAN_GET_ALL_VERSIONS, true);
 		}
 
 		AllowableActionsImpl result = new AllowableActionsImpl();
-		result.setAllowableActions(aam);
+		result.setAllowableActions(aas);
 
 		return result;
+	}
+
+	private void addAction(Set<Action> aas, Action action, boolean condition) {
+		if (condition) {
+			aas.add(action);
+		}
 	}
 
 	/**

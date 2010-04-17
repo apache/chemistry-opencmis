@@ -3,7 +3,7 @@ package org.apache.chemistry.opencmis.inmemory.clientprovider;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.server.spi.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 
 public class DummyCallContext implements CallContext {
 	private Map<String, String> fParameter = new HashMap<String, String>();
@@ -20,6 +20,10 @@ public class DummyCallContext implements CallContext {
 
 	public String getBinding() {
 		return BINDING_ATOMPUB;
+	}
+
+	public String getRepositoryId() {
+		return get(REPOSITORY_ID);
 	}
 
 	public String getLocale() {

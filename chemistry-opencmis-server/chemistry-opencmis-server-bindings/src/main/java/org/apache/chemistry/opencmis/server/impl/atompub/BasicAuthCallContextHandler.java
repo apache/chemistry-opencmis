@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.chemistry.opencmis.server.spi.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.commons.codec.binary.Base64;
 
 /**

@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.server.spi.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisPolicyService;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 

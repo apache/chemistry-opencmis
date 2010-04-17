@@ -21,13 +21,10 @@ package org.apache.chemistry.opencmis.server.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.server.spi.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 
 /**
  * Implementation of the {@link CallContext} interface.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CallContextImpl implements CallContext {
 
@@ -38,47 +35,26 @@ public class CallContextImpl implements CallContext {
 		fBinding = binding;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.server.spi.CallContext#getBinding()
-	 */
 	public String getBinding() {
 		return fBinding;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.server.spi.CallContext#get(java.lang.String)
-	 */
 	public String get(String key) {
 		return fParameter.get(key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.server.spi.CallContext#getUsername()
-	 */
+	public String getRepositoryId() {
+		return get(REPOSITORY_ID);
+	}
+
 	public String getUsername() {
 		return get(USERNAME);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.server.spi.CallContext#getPassword()
-	 */
 	public String getPassword() {
 		return get(PASSWORD);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.server.spi.CallContext#getLocale()
-	 */
 	public String getLocale() {
 		return get(LOCALE);
 	}
@@ -96,4 +72,5 @@ public class CallContextImpl implements CallContext {
 	public String remove(String key) {
 		return fParameter.remove(key);
 	}
+
 }

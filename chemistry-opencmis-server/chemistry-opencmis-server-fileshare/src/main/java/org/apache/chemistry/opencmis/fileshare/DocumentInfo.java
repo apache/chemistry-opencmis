@@ -19,7 +19,7 @@
 package org.apache.chemistry.opencmis.fileshare;
 
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoImpl;
+import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 
 public class DocumentInfo extends ObjectInfoImpl {
 

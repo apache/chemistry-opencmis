@@ -38,17 +38,17 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.server.spi.CallContext;
+import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
+import org.apache.chemistry.opencmis.commons.impl.server.RenditionInfosImpl;
 import org.apache.chemistry.opencmis.server.spi.CmisNavigationService;
 import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoImpl;
-import org.apache.chemistry.opencmis.server.spi.RenditionInfo;
-import org.apache.chemistry.opencmis.server.spi.RenditionInfosImpl;
 
 /**
  * A helper class used from various methods to fill the ObjectInfoHolder
@@ -102,7 +102,7 @@ public class ObjectInfoHelper {
 		fillObjectInfoHolder(context, repositoryId, objData, objectInfos);
 
 		return objData; // might be useful as return value in some service
-						// methods
+		// methods
 	}
 
 	/**

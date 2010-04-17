@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.spi;
 
 import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 
 /**

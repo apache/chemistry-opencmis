@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 
 /**
  * CMIS Policy Service interface. Please refer to the CMIS specification and the
