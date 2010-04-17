@@ -29,13 +29,13 @@ import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 

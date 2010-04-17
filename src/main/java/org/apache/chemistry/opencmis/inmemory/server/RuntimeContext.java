@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
-import org.apache.chemistry.opencmis.server.spi.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 
 /**
  * This class uses a thread local storage to store the runtime context. The

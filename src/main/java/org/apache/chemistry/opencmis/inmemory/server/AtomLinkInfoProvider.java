@@ -27,16 +27,15 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoImpl;
 
 /**
  * For the Atom binding more information might be required than the result of a

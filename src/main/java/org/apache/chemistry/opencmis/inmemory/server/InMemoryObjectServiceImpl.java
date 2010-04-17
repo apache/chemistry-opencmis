@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -68,7 +69,6 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.chemistry.opencmis.server.spi.CallContext;
 import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 import org.apache.commons.logging.Log;

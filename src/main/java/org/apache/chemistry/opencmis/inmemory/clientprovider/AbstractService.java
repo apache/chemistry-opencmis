@@ -18,8 +18,8 @@
  */
 package org.apache.chemistry.opencmis.inmemory.clientprovider;
 
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.inmemory.server.RuntimeContext;
-import org.apache.chemistry.opencmis.server.spi.CallContext;
 
 public class AbstractService {
 	protected CallContext fDummyCallContext;
