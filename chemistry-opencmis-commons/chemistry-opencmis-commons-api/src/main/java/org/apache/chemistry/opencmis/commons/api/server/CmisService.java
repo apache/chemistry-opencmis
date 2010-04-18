@@ -9,7 +9,6 @@ import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.MultiFilingService;
 import org.apache.chemistry.opencmis.commons.api.NavigationService;
-import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectService;
 import org.apache.chemistry.opencmis.commons.api.PolicyService;
 import org.apache.chemistry.opencmis.commons.api.Properties;
@@ -31,7 +30,7 @@ public interface CmisService extends RepositoryService, NavigationService, Objec
 	 * The property "cmis:objectTypeId" defines the type and implicitly the base
 	 * type.
 	 */
-	ObjectData create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
+	String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
 			VersioningState versioningState, List<String> policies, ExtensionsData extension);
 
 	/**

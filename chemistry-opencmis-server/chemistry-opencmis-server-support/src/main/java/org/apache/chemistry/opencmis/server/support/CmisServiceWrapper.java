@@ -1,4 +1,4 @@
-package org.apache.chemistry.opencmis.server.support.refactor;
+package org.apache.chemistry.opencmis.server.support;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -576,7 +576,7 @@ public class CmisServiceWrapper implements CmisService {
 
 	// --- object service ---
 
-	public ObjectData create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
+	public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
 			VersioningState versioningState, List<String> policies, ExtensionsData extension) {
 		checkRepositoryId(repositoryId);
 		checkProperties(properties);

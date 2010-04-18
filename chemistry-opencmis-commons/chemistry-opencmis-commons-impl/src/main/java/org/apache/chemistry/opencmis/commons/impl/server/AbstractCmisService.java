@@ -235,7 +235,7 @@ public abstract class AbstractCmisService implements CmisService {
 	 * <li>Object infos should contain the newly created object.</li>
 	 * </ul>
 	 */
-	public ObjectData create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
+	public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
 			VersioningState versioningState, List<String> policies, ExtensionsData extension) {
 		// check properties
 		if (properties == null || properties.getProperties() == null) {
@@ -262,9 +262,6 @@ public abstract class AbstractCmisService implements CmisService {
 		case CMIS_FOLDER:
 			newId = createFolder(repositoryId, properties, folderId, policies, null, null, extension);
 			break;
-		case CMIS_RELATIONSHIP:
-			newId = createRelationship(repositoryId, properties, policies, null, null, extension);
-			break;
 		case CMIS_POLICY:
 			newId = createPolicy(repositoryId, properties, folderId, policies, null, null, extension);
 			break;
@@ -275,9 +272,8 @@ public abstract class AbstractCmisService implements CmisService {
 			throw new CmisRuntimeException("Creation failed!");
 		}
 
-		// return the new object
-		return getObject(repositoryId, newId, null, Boolean.TRUE, IncludeRelationships.BOTH, null, Boolean.TRUE,
-				Boolean.TRUE, null);
+		// return the new object id
+		return newId;
 	}
 
 	/**
@@ -614,8 +610,8 @@ public abstract class AbstractCmisService implements CmisService {
 	 * <li>Object infos should contain the returned object.</li>
 	 * </ul>
 	 */
-	public ObjectData getObjectOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
-			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
 		throw new CmisNotSupportedException("Not supported!");
 	}
@@ -630,8 +626,8 @@ public abstract class AbstractCmisService implements CmisService {
 	 * <li>Implementation is optional.</li>
 	 * </ul>
 	 */
-	public Properties getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
-			String filter, ExtensionsData extension) {
+	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, ExtensionsData extension) {
 		throw new CmisNotSupportedException("Not supported!");
 	}
 

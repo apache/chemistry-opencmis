@@ -897,7 +897,7 @@ public class FileShareRepository {
 	/**
 	 * CMIS getACL.
 	 */
-	public Acl getAcl(CallContext context, String repositoryId, String objectId) {
+	public Acl getAcl(CallContext context, String objectId) {
 		debug("getAcl");
 		checkUser(context, false);
 

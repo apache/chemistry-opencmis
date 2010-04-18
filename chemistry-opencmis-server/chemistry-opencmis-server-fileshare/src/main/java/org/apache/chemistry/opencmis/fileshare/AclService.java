@@ -84,6 +84,6 @@ public class AclService implements CmisAclService {
 	 */
 	public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
 			ExtensionsData extension) {
-		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getAcl(context, objectId, objectId);
+		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getAcl(context, objectId);
 	}
 }

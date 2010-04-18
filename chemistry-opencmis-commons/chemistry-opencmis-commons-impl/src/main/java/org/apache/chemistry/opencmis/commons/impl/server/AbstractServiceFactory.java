@@ -6,7 +6,7 @@ import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.api.server.CmisServiceFactory;
 
-public abstract class AbstractServicesFactory implements CmisServiceFactory {
+public abstract class AbstractServiceFactory implements CmisServiceFactory {
 
 	public void init(Map<String, String> parameters) {
 	}
