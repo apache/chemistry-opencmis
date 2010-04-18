@@ -41,17 +41,13 @@ public interface VersioningService {
 			ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
 			ExtensionsData extension);
 
-	public ObjectData getObjectOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
-			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension);
 
-	public Properties getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
-			String filter, ExtensionsData extension);
+	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, ExtensionsData extension);
 
 	public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
-			Boolean includeAllowableActions, ExtensionsData extension);
-
-	@Deprecated
-	public List<ObjectData> getAllVersions(String repositoryId, String versionSeriesId, String filter,
 			Boolean includeAllowableActions, ExtensionsData extension);
 }

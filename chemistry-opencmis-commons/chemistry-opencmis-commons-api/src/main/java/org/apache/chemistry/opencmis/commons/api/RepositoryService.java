@@ -23,24 +23,49 @@ import java.util.List;
 
 /**
  * Repository Service interface. See CMIS 1.0 domain model for details.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- * @see <a
- *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
- *      CMIS Technical Committee</a>
  */
 public interface RepositoryService {
 
+	/**
+	 * Returns a list of CMIS repositories available from this CMIS service
+	 * endpoint.
+	 */
 	List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension);
 
+	/**
+	 * Returns information about the CMIS repository, the optional capabilities
+	 * it supports and its Access Control information if applicable.
+	 * 
+	 * @param repositoryId
+	 *            the identifier for the repository
+	 */
 	RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension);
 
+	/**
+	 * Returns the list of Object-Types defined for the Repository that are
+	 * children of the specified Type.
+	 * 
+	 * @param repositoryId
+	 *            the identifier for the repository
+	 * @param typeId
+	 *            optional) the typeId of an Object-Type specified in the
+	 *            repository
+	 * @param includePropertyDefinitions
+	 *            (optional) if <code>true</code>, then the Repository MUST
+	 *            return the property definitions for each object type returned
+	 */
 	TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
 			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
+	/**
+	 * Returns the set of descendant object type defined for the repository
+	 * under the specified type.
+	 */
 	List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
 			Boolean includePropertyDefinitions, ExtensionsData extension);
 
+	/**
+	 * Gets the definition of the specified object type.
+	 */
 	TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension);
 }

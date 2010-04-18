@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.commons.api.server;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
@@ -159,4 +160,9 @@ public interface ObjectInfo {
 	 * <code>null</code> is no such relationships exist.
 	 */
 	List<String> getRelationshipTargetIds();
+	
+	/**
+	 * Returns the full object. 
+	 */
+	ObjectData getObject();
 }

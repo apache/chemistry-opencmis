@@ -127,8 +127,8 @@ public class VersioningTest extends AbstractServiceTst {
 
 		Holder<Boolean> contentCopied = new Holder<Boolean>();
 		Holder<String> idHolder = new Holder<String>(verId); // or should this
-																// be version
-																// series?
+		// be version
+		// series?
 		fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
 		String pwcId = idHolder.getValue();
 		// test that object is checked out and that all properties are set
@@ -168,7 +168,7 @@ public class VersioningTest extends AbstractServiceTst {
 		assertTrue(fCreator.verifyProperty(idHolder.getValue(), VersionTestTypeSystemCreator.PROPERTY_ID,
 				PROP_VALUE_NEW));
 
-		List<ObjectData> allVersions = fVerSvc.getAllVersions(fRepositoryId, docId, "*", false, null);
+		List<ObjectData> allVersions = fVerSvc.getAllVersions(fRepositoryId, docId, docId, "*", false, null);
 		assertEquals(2, allVersions.size());
 	}
 
@@ -185,8 +185,8 @@ public class VersioningTest extends AbstractServiceTst {
 
 		Holder<Boolean> contentCopied = new Holder<Boolean>();
 		Holder<String> idHolder = new Holder<String>(verId); // or should this
-																// be version
-																// series?
+		// be version
+		// series?
 		fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
 		String pwcId = idHolder.getValue();
 
@@ -222,8 +222,8 @@ public class VersioningTest extends AbstractServiceTst {
 		assertFalse(isCheckedOut(docId));
 		Holder<Boolean> contentCopied = new Holder<Boolean>();
 		Holder<String> idHolder = new Holder<String>(verId); // or should this
-																// be version
-																// series?
+		// be version
+		// series?
 		fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
 		String pwcId = idHolder.getValue();
 
@@ -284,8 +284,8 @@ public class VersioningTest extends AbstractServiceTst {
 		assertFalse(isCheckedOut(docId));
 		Holder<Boolean> contentCopied = new Holder<Boolean>();
 		Holder<String> idHolder = new Holder<String>(verId); // or should this
-																// be version
-																// series?
+		// be version
+		// series?
 		fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
 		String pwcId = idHolder.getValue();
 
@@ -329,8 +329,8 @@ public class VersioningTest extends AbstractServiceTst {
 
 		Holder<Boolean> contentCopied = new Holder<Boolean>();
 		Holder<String> idHolder = new Holder<String>(verId); // or should this
-																// be version
-																// series?
+		// be version
+		// series?
 		fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
 		String pwcId = idHolder.getValue();
 
@@ -344,7 +344,7 @@ public class VersioningTest extends AbstractServiceTst {
 		String checkinComment = "Checkin with content and properties.";
 		fVerSvc.checkIn(fRepositoryId, idHolder, true, newProps, altContent, checkinComment, null, null, null, null);
 
-		Properties latest = fVerSvc.getPropertiesOfLatestVersion(fRepositoryId, docId, true, "*", null);
+		Properties latest = fVerSvc.getPropertiesOfLatestVersion(fRepositoryId, docId, docId, true, "*", null);
 		assertNotNull(latest);
 
 		checkVersionProperties(verId, versioningState, latest.getProperties(), checkinComment);
@@ -363,8 +363,8 @@ public class VersioningTest extends AbstractServiceTst {
 
 		Holder<Boolean> contentCopied = new Holder<Boolean>();
 		Holder<String> idHolder = new Holder<String>(verId); // or should this
-																// be version
-																// series?
+		// be version
+		// series?
 		fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
 		String pwcId = idHolder.getValue();
 
@@ -381,7 +381,7 @@ public class VersioningTest extends AbstractServiceTst {
 		// get latest major version
 		versioningState = VersioningState.MAJOR;
 		boolean isMajor = true;
-		ObjectData objData = fVerSvc.getObjectOfLatestVersion(fRepositoryId, docId, isMajor, "*", false,
+		ObjectData objData = fVerSvc.getObjectOfLatestVersion(fRepositoryId, docId, docId, isMajor, "*", false,
 				IncludeRelationships.NONE, null, false, false, null);
 		checkVersionProperties(verId, versioningState, objData.getProperties().getProperties(), checkinComment);
 		ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, objData.getId(), null, BigInteger
@@ -391,7 +391,7 @@ public class VersioningTest extends AbstractServiceTst {
 		// get latest non-major version, must be the same as before
 		versioningState = VersioningState.MAJOR;
 		isMajor = false;
-		objData = fVerSvc.getObjectOfLatestVersion(fRepositoryId, docId, isMajor, "*", false,
+		objData = fVerSvc.getObjectOfLatestVersion(fRepositoryId, docId, docId, isMajor, "*", false,
 				IncludeRelationships.NONE, null, false, false, null);
 		checkVersionProperties(verId, versioningState, objData.getProperties().getProperties(), checkinComment);
 		retrievedContent = fObjSvc.getContentStream(fRepositoryId, objData.getId(), null,
@@ -443,7 +443,7 @@ public class VersioningTest extends AbstractServiceTst {
 	@Test
 	public void testModifyOldVersions() {
 		String versionSeriesId = createVersionSeriesWithThreeVersions();
-		List<ObjectData> allVersions = fVerSvc.getAllVersions(fRepositoryId, versionSeriesId, "*", false, null);
+		List<ObjectData> allVersions = fVerSvc.getAllVersions(fRepositoryId, null, versionSeriesId, "*", false, null);
 		assertEquals(3, allVersions.size());
 
 	}
@@ -474,7 +474,7 @@ public class VersioningTest extends AbstractServiceTst {
 		String docId = getVersionSeriesId(verId, version.getProperties().getProperties());
 		assertTrue(null != docId && docId.length() > 0);
 
-		List<ObjectData> allVersions = fVerSvc.getAllVersions(fRepositoryId, docId, "*", false, null);
+		List<ObjectData> allVersions = fVerSvc.getAllVersions(fRepositoryId, docId, docId, "*", false, null);
 		assertEquals(1, allVersions.size());
 
 		checkVersionProperties(verId, versioningState, allVersions.get(0).getProperties().getProperties(), null);
@@ -513,14 +513,14 @@ public class VersioningTest extends AbstractServiceTst {
 		assertNotNull(pdb);
 		boolean bVal = pdb.getFirstValue();
 		assertEquals(versioningState != VersioningState.CHECKEDOUT, bVal); // if
-																			// checked
-																			// out
-																			// it
-																			// isn
-																			// 't
-																			// the
-																			// latest
-																			// version
+		// checked
+		// out
+		// it
+		// isn
+		// 't
+		// the
+		// latest
+		// version
 
 		pdb = (PropertyBoolean) props.get(PropertyIds.IS_MAJOR_VERSION);
 		assertNotNull(pdb);
@@ -688,7 +688,7 @@ public class VersioningTest extends AbstractServiceTst {
 
 			cmisComplexType.addCustomPropertyDefinitions(propertyDefinitions);
 			cmisComplexType.setIsVersionable(true); // make it a versionable
-													// type;
+			// type;
 
 			// add type to types collection
 			typesList.add(cmisComplexType);

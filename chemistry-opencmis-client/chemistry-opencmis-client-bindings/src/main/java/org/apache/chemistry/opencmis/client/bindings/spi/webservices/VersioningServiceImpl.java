@@ -45,9 +45,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningServicePort;
 
 /**
  * Versioning Service Web Services client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class VersioningServiceImpl extends AbstractWebServicesService implements VersioningService {
 
@@ -61,15 +58,6 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
 		fPortProvider = portProvider;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.VersioningService#checkOut(java.lang
-	 * .String, org.apache.opencmis.client.provider.Holder,
-	 * org.apache.opencmis.client.provider.ExtensionsData,
-	 * org.apache.opencmis.client.provider.Holder)
-	 */
 	public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
 			Holder<Boolean> contentCopied) {
 		VersioningServicePort port = fPortProvider.getVersioningServicePort();
@@ -91,14 +79,6 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.VersioningService#cancelCheckOut(
-	 * java.lang.String, java.lang.String,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
 	public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
 		VersioningServicePort port = fPortProvider.getVersioningServicePort();
 
@@ -115,18 +95,6 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.VersioningService#checkIn(java.lang
-	 * .String, org.apache.opencmis.client.provider.Holder, java.lang.Boolean,
-	 * org.apache.opencmis.client.provider.PropertiesData,
-	 * org.apache.opencmis.client.provider.ContentStreamData, java.lang.String,
-	 * java.util.List, org.apache.opencmis.client.provider.AccessControlList,
-	 * org.apache.opencmis.client.provider.AccessControlList,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
 	public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
 			ContentStream contentStream, String checkinComment, List<String> policies, Acl addACEs, Acl removeACEs,
 			ExtensionsData extension) {
@@ -148,28 +116,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.commons.provider.VersioningService#getAllVersions
-	 * (java.lang.String, java.lang.String, java.lang.String, java.lang.String,
-	 * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData)
-	 */
 	public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
-			Boolean includeAllowableActions, ExtensionsData extension) {
-		return getAllVersions(repositoryId, versionSeriesId, filter, includeAllowableActions, extension);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.VersioningService#getAllVersions(
-	 * java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public List<ObjectData> getAllVersions(String repositoryId, String versionSeriesId, String filter,
 			Boolean includeAllowableActions, ExtensionsData extension) {
 		VersioningServicePort port = fPortProvider.getVersioningServicePort();
 
@@ -196,18 +143,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.VersioningService#
-	 * getObjectOfLatestVersion(java.lang.String , java.lang.String,
-	 * java.lang.Boolean, java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-	 * java.lang.Boolean, java.lang.Boolean,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public ObjectData getObjectOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
-			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 		VersioningServicePort port = fPortProvider.getVersioningServicePort();
 
@@ -222,20 +159,12 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.VersioningService#
-	 * getPropertiesOfLatestVersion(java.lang .String, java.lang.String,
-	 * java.lang.Boolean, java.lang.String,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public Properties getPropertiesOfLatestVersion(String repositoryId, String VersionSeriesId, Boolean major,
-			String filter, ExtensionsData extension) {
+	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, ExtensionsData extension) {
 		VersioningServicePort port = fPortProvider.getVersioningServicePort();
 
 		try {
-			return convert(port.getPropertiesOfLatestVersion(repositoryId, VersionSeriesId, major, filter,
+			return convert(port.getPropertiesOfLatestVersion(repositoryId, versionSeriesId, major, filter,
 					convert(extension)));
 		} catch (CmisException e) {
 			throw convertException(e);

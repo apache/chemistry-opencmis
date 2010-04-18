@@ -495,12 +495,12 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
 
 		// check latest version
 		ObjectData latestVersionObject = getBinding().getVersioningService().getObjectOfLatestVersion(
-				getTestRepositoryId(), versionSeriesId, Boolean.FALSE, "*", Boolean.TRUE, IncludeRelationships.BOTH,
-				null, Boolean.TRUE, Boolean.TRUE, null);
+				getTestRepositoryId(), objectId, versionSeriesId, Boolean.FALSE, "*", Boolean.TRUE,
+				IncludeRelationships.BOTH, null, Boolean.TRUE, Boolean.TRUE, null);
 		assertNotNull(latestVersionObject);
 
 		Properties latestVersionProperties = getBinding().getVersioningService().getPropertiesOfLatestVersion(
-				getTestRepositoryId(), versionSeriesId, Boolean.FALSE, "*", null);
+				getTestRepositoryId(), objectId, versionSeriesId, Boolean.FALSE, "*", null);
 		assertNotNull(latestVersionProperties);
 
 		assertEquals(latestVersionObject.getProperties(), latestVersionProperties);

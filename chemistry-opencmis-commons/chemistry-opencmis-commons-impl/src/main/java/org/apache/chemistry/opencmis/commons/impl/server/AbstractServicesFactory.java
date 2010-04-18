@@ -8,15 +8,9 @@ import org.apache.chemistry.opencmis.commons.api.server.CmisServiceFactory;
 
 public abstract class AbstractServicesFactory implements CmisServiceFactory {
 
-	/**
-	 * Initializes the factory instance.
-	 */
 	public void init(Map<String, String> parameters) {
 	}
 
-	/**
-	 * Cleans up the the factory instance.
-	 */
 	public void destroy() {
 	}
 

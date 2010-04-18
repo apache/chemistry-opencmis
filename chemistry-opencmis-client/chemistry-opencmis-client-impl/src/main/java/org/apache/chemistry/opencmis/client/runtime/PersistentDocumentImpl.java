@@ -266,13 +266,23 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 	 * org.apache.opencmis.client.api.OperationContext)
 	 */
 	public Document getObjectOfLatestVersion(boolean major, OperationContext context) {
-		String versionSeriesId = getVersionSeriesId();
+		String objectId;
+		String versionSeriesId;
+
+		readLock();
+		try {
+			objectId = getObjectId();
+			versionSeriesId = getVersionSeriesId();
+		} finally {
+			readUnlock();
+		}
+
 		if (versionSeriesId == null) {
 			throw new CmisRuntimeException("Version series id is unknown!");
 		}
 
 		ObjectData objectData = getBinding().getVersioningService().getObjectOfLatestVersion(getRepositoryId(),
-				versionSeriesId, major, context.getFilterString(), context.isIncludeAllowableActions(),
+				objectId, versionSeriesId, major, context.getFilterString(), context.isIncludeAllowableActions(),
 				context.getIncludeRelationships(), context.getRenditionFilterString(), context.isIncludePolicies(),
 				context.isIncludeAcls(), null);
 

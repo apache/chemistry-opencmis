@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.server;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -53,6 +54,7 @@ public class ObjectInfoImpl implements ObjectInfo {
 	private boolean supportsFolderTree = false;
 	private List<String> relationshipSourceIds = null;
 	private List<String> relationshipTargetIds = null;
+	private ObjectData object = null;
 
 	public ObjectInfoImpl() {
 	}
@@ -244,5 +246,13 @@ public class ObjectInfoImpl implements ObjectInfo {
 
 	public void setRelationshipTargetIds(List<String> relationshipTargetIds) {
 		this.relationshipTargetIds = relationshipTargetIds;
+	}
+
+	public ObjectData getObject() {
+		return object;
+	}
+
+	public void setObject(ObjectData object) {
+		this.object = object;
 	}
 }

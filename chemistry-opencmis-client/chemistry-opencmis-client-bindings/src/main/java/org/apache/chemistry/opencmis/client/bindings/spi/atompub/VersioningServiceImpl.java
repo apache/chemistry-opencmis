@@ -41,7 +41,6 @@ import org.apache.chemistry.opencmis.commons.api.VersioningService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
@@ -51,9 +50,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
 
 /**
  * Versioning Service AtomPub client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class VersioningServiceImpl extends AbstractAtomPubService implements VersioningService {
 
@@ -64,15 +60,6 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 		setSession(session);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.VersioningService#checkOut(java.lang
-	 * .String, org.apache.opencmis.client.provider.Holder,
-	 * org.apache.opencmis.client.provider.ExtensionsData,
-	 * org.apache.opencmis.client.provider.Holder)
-	 */
 	public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
 			Holder<Boolean> contentCopied) {
 		if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
@@ -123,14 +110,6 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.VersioningService#cancelCheckOut(
-	 * java.lang.String, java.lang.String,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
 	public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
 		// find the link
 		String link = loadLink(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
@@ -142,18 +121,6 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 		delete(new UrlBuilder(link));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.VersioningService#checkIn(java.lang
-	 * .String, org.apache.opencmis.client.provider.Holder, java.lang.Boolean,
-	 * org.apache.opencmis.client.provider.PropertiesData,
-	 * org.apache.opencmis.client.provider.ContentStreamData, java.lang.String,
-	 * java.util.List, org.apache.opencmis.client.provider.AccessControlList,
-	 * org.apache.opencmis.client.provider.AccessControlList,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
 	public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
 			ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
 			ExtensionsData extension) {
@@ -242,29 +209,6 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.commons.provider.VersioningService#getAllVersions
-	 * (java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.commons.api.ExtensionsData)
-	 */
-	public List<ObjectData> getAllVersions(String repositoryId, String versionSeriesId, String filter,
-			Boolean includeAllowableActions, ExtensionsData extension) {
-		throw new CmisNotSupportedException("Not supported by Atom binding! "
-				+ "Use 'getAllVersions(String repositoryId, String objectId, String versionSeriesId, "
-				+ "String filter, Boolean includeAllowableActions, ExtensionsData extension)' instead!'");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.VersioningService#getAllVersions(
-	 * java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
 	public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
 			Boolean includeAllowableActions, ExtensionsData extension) {
 		List<ObjectData> result = new ArrayList<ObjectData>();
@@ -315,18 +259,8 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.VersioningService#
-	 * getObjectOfLatestVersion(java.lang.String , java.lang.String,
-	 * java.lang.Boolean, java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-	 * java.lang.Boolean, java.lang.Boolean,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public ObjectData getObjectOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
-			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
 		ReturnVersion returnVersion = ReturnVersion.LATEST;
@@ -334,27 +268,19 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 			returnVersion = ReturnVersion.LASTESTMAJOR;
 		}
 
-		return getObjectInternal(repositoryId, IdentifierType.ID, versionSeriesId, returnVersion, filter,
+		return getObjectInternal(repositoryId, IdentifierType.ID, objectId, returnVersion, filter,
 				includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeACL, extension);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.VersioningService#
-	 * getPropertiesOfLatestVersion(java.lang .String, java.lang.String,
-	 * java.lang.Boolean, java.lang.String,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public Properties getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
-			String filter, ExtensionsData extension) {
+	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, ExtensionsData extension) {
 
 		ReturnVersion returnVersion = ReturnVersion.LATEST;
 		if ((major != null) && (major.booleanValue())) {
 			returnVersion = ReturnVersion.LASTESTMAJOR;
 		}
 
-		ObjectData object = getObjectInternal(repositoryId, IdentifierType.ID, versionSeriesId, returnVersion, filter,
+		ObjectData object = getObjectInternal(repositoryId, IdentifierType.ID, objectId, returnVersion, filter,
 				Boolean.FALSE, IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, extension);
 
 		return object.getProperties();
