@@ -70,8 +70,8 @@ public class VersioningServiceImpl extends AbstractService implements Versioning
 				includeAllowableActions, extension, null);
 	}
 
-	public ObjectData getObjectOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
-			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
 
 		return fVersioningSvc.getObjectOfLatestVersion(fDummyCallContext, repositoryId, versionSeriesId, major, filter,
@@ -79,8 +79,8 @@ public class VersioningServiceImpl extends AbstractService implements Versioning
 				extension, null);
 	}
 
-	public Properties getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
-			String filter, ExtensionsData extension) {
+	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+			Boolean major, String filter, ExtensionsData extension) {
 
 		return fVersioningSvc.getPropertiesOfLatestVersion(fDummyCallContext, repositoryId, versionSeriesId, major,
 				filter, extension);
