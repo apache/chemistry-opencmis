@@ -1,6 +1,8 @@
 package org.apache.chemistry.opencmis.commons.impl.server;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,15 +20,24 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.api.Properties;
+import org.apache.chemistry.opencmis.commons.api.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
+import org.apache.chemistry.opencmis.commons.api.PropertyDateTime;
+import org.apache.chemistry.opencmis.commons.api.PropertyId;
+import org.apache.chemistry.opencmis.commons.api.PropertyInteger;
+import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
+import org.apache.chemistry.opencmis.commons.api.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
+import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -39,6 +50,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 public abstract class AbstractCmisService implements CmisService {
 
 	private Map<String, ObjectInfo> objectInfoMap;
+	private boolean addObjectInfos = true;
 
 	// --- repository service ---
 
@@ -828,27 +840,266 @@ public abstract class AbstractCmisService implements CmisService {
 
 	// --- server specific ---
 
-	public ObjectInfo getObjectInfo(String objectId) {
+	/**
+	 * Returns the object info map.
+	 */
+	private Map<String, ObjectInfo> getObjectInfoMap() {
 		if (objectInfoMap == null) {
-			return null;
+			objectInfoMap = new HashMap<String, ObjectInfo>();
 		}
 
-		return objectInfoMap.get(objectId);
+		return objectInfoMap;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * <p>
+	 * <b>Implementation Hints:</b>
+	 * <ul>
+	 * <li>Bindings: AtomPub</li>
+	 * <li>If the object info is not found, the object info will be assembled.
+	 * To do that the repository info, the object, the object parent, the object
+	 * history and the base type definitions will be fetched. If you want to
+	 * change this behavior, override this method.</li>
+	 * </ul>
+	 */
+	public ObjectInfo getObjectInfo(String repositoryId, String objectId) {
+		objectInfoMap = getObjectInfoMap();
+
+		ObjectInfo info = objectInfoMap.get(objectId);
+		if (info == null) {
+			// object info has not been found -> create one
+			ObjectInfoImpl infoImpl = new ObjectInfoImpl();
+
+			try {
+				// switch off object info collection to avoid side effects
+				addObjectInfos = false;
+
+				// get the object
+				ObjectData object = getObject(repositoryId, objectId, null, Boolean.TRUE, IncludeRelationships.BOTH,
+						"*", Boolean.TRUE, Boolean.FALSE, null);
+
+				// if the object has no properties, stop here
+				if (object.getProperties() == null || object.getProperties().getProperties() == null) {
+					throw new Exception("No properties!");
+				}
+
+				// get the repository info
+				RepositoryInfo repositoryInfo = getRepositoryInfo(repositoryId, null);
+
+				// general properties
+				infoImpl.setObject(object);
+				infoImpl.setId(object.getId());
+				infoImpl.setName(getStringProperty(object, PropertyIds.NAME));
+				infoImpl.setCreatedBy(getStringProperty(object, PropertyIds.CREATED_BY));
+				infoImpl.setCreationDate(getDateTimeProperty(object, PropertyIds.CREATED_BY));
+				infoImpl.setLastModificationDate(getDateTimeProperty(object, PropertyIds.LAST_MODIFICATION_DATE));
+				infoImpl.setTypeId(getIdProperty(object, PropertyIds.OBJECT_TYPE_ID));
+				infoImpl.setBaseType(object.getBaseTypeId());
+
+				// versioning
+				infoImpl.setIsCurrentVersion(object.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT);
+				infoImpl.setWorkingCopyId(null);
+				infoImpl.setWorkingCopyOriginalId(null);
+
+				infoImpl.setVersionSeriesId(getStringProperty(object, PropertyIds.VERSION_SERIES_ID));
+				if (infoImpl.getVersionSeriesId() != null) {
+					Boolean isLatest = getBooleanProperty(object, PropertyIds.IS_LATEST_VERSION);
+					infoImpl.setIsCurrentVersion(isLatest == null ? true : isLatest.booleanValue());
+
+					Boolean isCheckedOut = getBooleanProperty(object, PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
+					if (isCheckedOut != null && isCheckedOut.booleanValue()) {
+						infoImpl.setWorkingCopyId(getIdProperty(object, PropertyIds.VERSION_SERIES_CHECKED_OUT_ID));
+
+						// get latest version
+						List<ObjectData> versions = getAllVersions(repositoryId, objectId, infoImpl
+								.getVersionSeriesId(), PropertyIds.OBJECT_ID, Boolean.FALSE, null);
+						if (versions != null && versions.size() > 0) {
+							infoImpl.setWorkingCopyOriginalId(versions.get(0).getId());
+						}
+					}
+				}
+
+				// content
+				String fileName = getStringProperty(object, PropertyIds.CONTENT_STREAM_FILE_NAME);
+				String mimeType = getStringProperty(object, PropertyIds.CONTENT_STREAM_MIME_TYPE);
+				String streamId = getStringProperty(object, PropertyIds.CONTENT_STREAM_ID);
+				BigInteger length = getIntegerProperty(object, PropertyIds.CONTENT_STREAM_LENGTH);
+				boolean hasContent = fileName != null || mimeType != null || streamId != null || length != null;
+				if (hasContent) {
+					infoImpl.setHasContent(hasContent);
+					infoImpl.setContentType(mimeType);
+					infoImpl.setFileName(fileName);
+				} else {
+					infoImpl.setHasContent(false);
+					infoImpl.setContentType(null);
+					infoImpl.setFileName(null);
+				}
+
+				// parent
+				List<ObjectParentData> parents = getObjectParents(repositoryId, objectId, PropertyIds.OBJECT_ID,
+						Boolean.FALSE, IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, null);
+				infoImpl.setHasParent(parents.size() > 0);
+
+				// policies and relationships
+				infoImpl.setSupportsRelationships(false);
+				infoImpl.setSupportsPolicies(false);
+
+				TypeDefinitionList baseTypesList = getTypeChildren(repositoryId, null, Boolean.FALSE, BigInteger
+						.valueOf(4), BigInteger.ZERO, null);
+				for (TypeDefinition type : baseTypesList.getList()) {
+					if (BaseTypeId.CMIS_RELATIONSHIP.value().equals(type.getId())) {
+						infoImpl.setSupportsRelationships(true);
+					} else if (BaseTypeId.CMIS_POLICY.value().equals(type.getId())) {
+						infoImpl.setSupportsPolicies(true);
+					}
+				}
+
+				// renditions
+				infoImpl.setRenditionInfos(null);
+
+				List<RenditionData> renditions = object.getRenditions();
+				if (renditions != null && renditions.size() > 0) {
+					List<RenditionInfo> renditionInfos = new ArrayList<RenditionInfo>();
+
+					for (RenditionData rendition : renditions) {
+						RenditionInfoImpl renditionInfo = new RenditionInfoImpl();
+						renditionInfo.setId(rendition.getStreamId());
+						renditionInfo.setKind(rendition.getKind());
+						renditionInfo.setContentType(rendition.getMimeType());
+						renditionInfo.setTitle(rendition.getTitle());
+						renditionInfo.setLength(rendition.getBigLength());
+
+						renditionInfos.add(renditionInfo);
+					}
+
+					infoImpl.setRenditionInfos(renditionInfos);
+				}
+
+				// relationships
+				infoImpl.setRelationshipSourceIds(null);
+				infoImpl.setRelationshipTargetIds(null);
+
+				List<ObjectData> relationships = object.getRelationships();
+				if (relationships != null && relationships.size() > 0) {
+					List<String> sourceIds = new ArrayList<String>();
+					List<String> targetIds = new ArrayList<String>();
+
+					for (ObjectData relationship : relationships) {
+						String sourceId = getIdProperty(relationship, PropertyIds.SOURCE_ID);
+						String targetId = getIdProperty(relationship, PropertyIds.TARGET_ID);
+
+						if (object.getId().equals(sourceId)) {
+							sourceIds.add(relationship.getId());
+						}
+						if (object.getId().equals(targetId)) {
+							targetIds.add(relationship.getId());
+						}
+					}
+
+					if (sourceIds.size() > 0) {
+						infoImpl.setRelationshipSourceIds(sourceIds);
+					}
+					if (targetIds.size() > 0) {
+						infoImpl.setRelationshipTargetIds(targetIds);
+					}
+				}
+
+				// global settings
+				infoImpl.setHasAcl(false);
+				infoImpl.setSupportsDescendants(false);
+				infoImpl.setSupportsFolderTree(false);
+
+				RepositoryCapabilities capabilities = repositoryInfo.getCapabilities();
+				if (capabilities != null) {
+					infoImpl.setHasAcl(capabilities.getAclCapability() == CapabilityAcl.DISCOVER
+							|| capabilities.getAclCapability() == CapabilityAcl.MANAGE);
+					if (object.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
+						infoImpl.setSupportsDescendants(Boolean.TRUE.equals(capabilities.isGetDescendantsSupported()));
+						infoImpl.setSupportsFolderTree(Boolean.TRUE.equals(capabilities.isGetFolderTreeSupported()));
+					}
+				}
+
+				// switch on object info collection
+				addObjectInfos = true;
+
+				// add object info
+				addObjectInfo(infoImpl);
+				info = infoImpl;
+			} catch (Exception e) {
+				info = null;
+			} finally {
+				addObjectInfos = true;
+			}
+		}
+
+		return info;
 	}
 
 	/**
 	 * Adds an object info.
 	 */
 	public void addObjectInfo(ObjectInfo objectInfo) {
-		if (objectInfoMap == null) {
-			objectInfoMap = new HashMap<String, ObjectInfo>();
+		if (!addObjectInfos) {
+			return;
 		}
 
 		if (objectInfo != null && objectInfo.getId() != null) {
-			objectInfoMap.put(objectInfo.getId(), objectInfo);
+			getObjectInfoMap().put(objectInfo.getId(), objectInfo);
 		}
 	}
 
+	/**
+	 * Clears the object info map.
+	 */
+	public void clearObjectInfos() {
+		objectInfoMap = null;
+	}
+
 	public void close() {
+		clearObjectInfos();
+	}
+
+	// --- helpers ---
+
+	private String getStringProperty(ObjectData object, String name) {
+		PropertyData<?> property = object.getProperties().getProperties().get(name);
+		if (property instanceof PropertyString) {
+			return ((PropertyString) property).getFirstValue();
+		}
+		return null;
+	}
+
+	private String getIdProperty(ObjectData object, String name) {
+		PropertyData<?> property = object.getProperties().getProperties().get(name);
+		if (property instanceof PropertyId) {
+			return ((PropertyId) property).getFirstValue();
+		}
+		return null;
+	}
+
+	private GregorianCalendar getDateTimeProperty(ObjectData object, String name) {
+		PropertyData<?> property = object.getProperties().getProperties().get(name);
+		if (property instanceof PropertyDateTime) {
+			return ((PropertyDateTime) property).getFirstValue();
+		}
+		return null;
+	}
+
+	private Boolean getBooleanProperty(ObjectData object, String name) {
+		PropertyData<?> property = object.getProperties().getProperties().get(name);
+		if (property instanceof PropertyBoolean) {
+			return ((PropertyBoolean) property).getFirstValue();
+		}
+		return null;
+	}
+
+	private BigInteger getIntegerProperty(ObjectData object, String name) {
+		PropertyData<?> property = object.getProperties().getProperties().get(name);
+		if (property instanceof PropertyInteger) {
+			return ((PropertyInteger) property).getFirstValue();
+		}
+		return null;
 	}
 }

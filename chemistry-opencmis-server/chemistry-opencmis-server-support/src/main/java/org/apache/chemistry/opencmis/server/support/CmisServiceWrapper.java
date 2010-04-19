@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Service wrapper.
  */
-public class CmisServiceWrapper implements CmisService {
+public class CmisServiceWrapper<T extends CmisService> implements CmisService {
 
 	public static final BigInteger MINUS_ONE = BigInteger.valueOf(-1);
 
@@ -48,12 +48,12 @@ public class CmisServiceWrapper implements CmisService {
 	private BigInteger defaultMaxItems = null;
 	private BigInteger defaultDepth = MINUS_ONE;
 
-	private CmisService service;
+	private T service;
 
 	/**
 	 * Constructor.
 	 */
-	public CmisServiceWrapper(CmisService service, BigInteger defaultTypesMaxItems, BigInteger defaultTypesDepth,
+	public CmisServiceWrapper(T service, BigInteger defaultTypesMaxItems, BigInteger defaultTypesDepth,
 			BigInteger defaultMaxItems, BigInteger defaultDepth) {
 		if (service == null) {
 			throw new IllegalArgumentException("Service must be set!");
@@ -400,8 +400,12 @@ public class CmisServiceWrapper implements CmisService {
 
 	// --- service operations ---
 
-	public ObjectInfo getObjectInfo(String objectId) {
-		return service.getObjectInfo(objectId);
+	public T getWrappedService() {
+		return service;
+	}
+
+	public ObjectInfo getObjectInfo(String repositoryId, String objectId) {
+		return service.getObjectInfo(repositoryId, objectId);
 	}
 
 	public void close() {

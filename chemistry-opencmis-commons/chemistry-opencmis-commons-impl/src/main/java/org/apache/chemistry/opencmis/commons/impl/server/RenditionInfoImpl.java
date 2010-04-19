@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
 /**
  * Implementation of the {@link RenditionInfo} interface.
  */
-public class RenditionInfosImpl implements RenditionInfo {
+public class RenditionInfoImpl implements RenditionInfo {
 
 	private String id;
 	private String contentType;

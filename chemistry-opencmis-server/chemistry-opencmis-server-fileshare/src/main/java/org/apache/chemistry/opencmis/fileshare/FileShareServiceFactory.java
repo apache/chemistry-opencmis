@@ -40,8 +40,7 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
 	private RepositoryMap repositoryMap;
 	private TypeManager typeManager;
 
-	private FileShareService fileShareService;
-	private CmisService wrapperService;
+	private ThreadLocal<CmisServiceWrapper<FileShareService>> threadLocalService = new ThreadLocal<CmisServiceWrapper<FileShareService>>();
 
 	public FileShareServiceFactory() {
 	}
@@ -52,17 +51,25 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
 		typeManager = new TypeManager();
 
 		readConfiguration(parameters);
+	}
 
-		// create service object and wrapper
-		fileShareService = new FileShareService(repositoryMap);
-		wrapperService = new CmisServiceWrapper(fileShareService, DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES,
-				DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+	@Override
+	public void destroy() {
+		threadLocalService = null;
 	}
 
 	@Override
 	public CmisService getService(CallContext context) {
 		repositoryMap.getAuthenticatedRepository(context, context.getRepositoryId());
-		fileShareService.setThreadCallContext(context);
+
+		CmisServiceWrapper<FileShareService> wrapperService = threadLocalService.get();
+		if (wrapperService == null) {
+			wrapperService = new CmisServiceWrapper<FileShareService>(new FileShareService(repositoryMap),
+					DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+			threadLocalService.set(wrapperService);
+		}
+
+		wrapperService.getWrappedService().setCallContext(context);
 
 		return wrapperService;
 	}

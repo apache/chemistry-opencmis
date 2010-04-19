@@ -34,8 +34,8 @@ import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
  */
 public class FileShareService extends AbstractCmisService {
 
-	private ThreadLocal<CallContext> threadLocalCallContext = new ThreadLocal<CallContext>();
 	private RepositoryMap repositoryMap;
+	private CallContext context;
 
 	/**
 	 * Constructor.
@@ -44,36 +44,25 @@ public class FileShareService extends AbstractCmisService {
 		this.repositoryMap = repositoryMap;
 	}
 
-	// --- thread locals ---
+	// --- context ---
 
-	public void setThreadCallContext(CallContext context) {
-		threadLocalCallContext.set(context);
+	public void setCallContext(CallContext context) {
+		this.context = context;
 	}
 
-	public CallContext getThreadCallContext() {
-		return threadLocalCallContext.get();
-	}
-
-	public void removeThreadCallContext() {
-		threadLocalCallContext.remove();
+	public CallContext getCallContext() {
+		return context;
 	}
 
 	public FileShareRepository getRepository() {
-		return repositoryMap.getRepository(getThreadCallContext().getRepositoryId());
-	}
-
-	// --- life cycle ---
-
-	@Override
-	public void close() {
-		removeThreadCallContext();
+		return repositoryMap.getRepository(getCallContext().getRepositoryId());
 	}
 
 	// --- repository service ---
 
 	@Override
 	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-		return getRepository().getRepositoryInfo(getThreadCallContext());
+		return getRepository().getRepositoryInfo(getCallContext());
 	}
 
 	@Override
@@ -81,7 +70,7 @@ public class FileShareService extends AbstractCmisService {
 		List<RepositoryInfo> result = new ArrayList<RepositoryInfo>();
 
 		for (FileShareRepository fsr : repositoryMap.getRepositories()) {
-			result.add(fsr.getRepositoryInfo(getThreadCallContext()));
+			result.add(fsr.getRepositoryInfo(getCallContext()));
 		}
 
 		return result;
@@ -90,19 +79,19 @@ public class FileShareService extends AbstractCmisService {
 	@Override
 	public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
 			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		return getRepository().getTypesChildren(getThreadCallContext(), typeId, includePropertyDefinitions, maxItems,
+		return getRepository().getTypesChildren(getCallContext(), typeId, includePropertyDefinitions, maxItems,
 				skipCount);
 	}
 
 	@Override
 	public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
-		return getRepository().getTypeDefinition(getThreadCallContext(), typeId);
+		return getRepository().getTypeDefinition(getCallContext(), typeId);
 	}
 
 	@Override
 	public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
 			Boolean includePropertyDefinitions, ExtensionsData extension) {
-		return getRepository().getTypesDescendants(getThreadCallContext(), typeId, depth, includePropertyDefinitions);
+		return getRepository().getTypesDescendants(getCallContext(), typeId, depth, includePropertyDefinitions);
 	}
 
 	// --- navigation service ---
@@ -111,7 +100,7 @@ public class FileShareService extends AbstractCmisService {
 	public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
 			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
 			Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		return getRepository().getChildren(getThreadCallContext(), folderId, filter, includeAllowableActions,
+		return getRepository().getChildren(getCallContext(), folderId, filter, includeAllowableActions,
 				includePathSegment, maxItems, skipCount, null);
 	}
 
@@ -119,20 +108,20 @@ public class FileShareService extends AbstractCmisService {
 	public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
 			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-		return getRepository().getDescendants(getThreadCallContext(), folderId, depth, filter, includeAllowableActions,
+		return getRepository().getDescendants(getCallContext(), folderId, depth, filter, includeAllowableActions,
 				includePathSegment, null, false);
 	}
 
 	@Override
 	public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
-		return getRepository().getFolderParent(getThreadCallContext(), folderId, filter, null);
+		return getRepository().getFolderParent(getCallContext(), folderId, filter, null);
 	}
 
 	@Override
 	public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
 			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-		return getRepository().getDescendants(getThreadCallContext(), folderId, depth, filter, includeAllowableActions,
+		return getRepository().getDescendants(getCallContext(), folderId, depth, filter, includeAllowableActions,
 				includePathSegment, null, true);
 	}
 
@@ -140,7 +129,7 @@ public class FileShareService extends AbstractCmisService {
 	public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
 			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
 			Boolean includeRelativePathSegment, ExtensionsData extension) {
-		return getRepository().getObjectParents(getThreadCallContext(), objectId, filter, includeAllowableActions,
+		return getRepository().getObjectParents(getCallContext(), objectId, filter, includeAllowableActions,
 				includeRelativePathSegment, null);
 	}
 
@@ -162,7 +151,7 @@ public class FileShareService extends AbstractCmisService {
 	@Override
 	public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
 			VersioningState versioningState, List<String> policies, ExtensionsData extension) {
-		ObjectData object = getRepository().create(getThreadCallContext(), properties, folderId, contentStream,
+		ObjectData object = getRepository().create(getCallContext(), properties, folderId, contentStream,
 				versioningState, null);
 
 		return object.getId();
@@ -172,72 +161,70 @@ public class FileShareService extends AbstractCmisService {
 	public String createDocument(String repositoryId, Properties properties, String folderId,
 			ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
 			Acl removeAces, ExtensionsData extension) {
-		return getRepository().createDocument(getThreadCallContext(), properties, folderId, contentStream,
-				versioningState);
+		return getRepository().createDocument(getCallContext(), properties, folderId, contentStream, versioningState);
 	}
 
 	@Override
 	public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
 			String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
 			ExtensionsData extension) {
-		return getRepository().createDocumentFromSource(getThreadCallContext(), sourceId, properties, folderId,
+		return getRepository().createDocumentFromSource(getCallContext(), sourceId, properties, folderId,
 				versioningState);
 	}
 
 	@Override
 	public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
 			Acl addAces, Acl removeAces, ExtensionsData extension) {
-		return getRepository().createFolder(getThreadCallContext(), properties, folderId);
+		return getRepository().createFolder(getCallContext(), properties, folderId);
 	}
 
 	@Override
 	public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
 			ExtensionsData extension) {
-		getRepository().setContentStream(getThreadCallContext(), objectId, true, null);
+		getRepository().setContentStream(getCallContext(), objectId, true, null);
 	}
 
 	@Override
 	public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
 			ExtensionsData extension) {
-		getRepository().deleteObject(getThreadCallContext(), objectId);
+		getRepository().deleteObject(getCallContext(), objectId);
 	}
 
 	@Override
 	public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
 			UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
-		return getRepository().deleteTree(getThreadCallContext(), folderId, continueOnFailure);
+		return getRepository().deleteTree(getCallContext(), folderId, continueOnFailure);
 	}
 
 	@Override
 	public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
-		return getRepository().getAllowableActions(getThreadCallContext(), objectId);
+		return getRepository().getAllowableActions(getCallContext(), objectId);
 	}
 
 	@Override
 	public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
 			BigInteger length, ExtensionsData extension) {
-		return getRepository().getContentStream(getThreadCallContext(), objectId, offset, length);
+		return getRepository().getContentStream(getCallContext(), objectId, offset, length);
 	}
 
 	@Override
 	public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
 			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
 			Boolean includeAcl, ExtensionsData extension) {
-		return getRepository().getObject(getThreadCallContext(), objectId, filter, includeAllowableActions, includeAcl,
-				null);
+		return getRepository().getObject(getCallContext(), objectId, filter, includeAllowableActions, includeAcl, null);
 	}
 
 	@Override
 	public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
 			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
 			Boolean includeAcl, ExtensionsData extension) {
-		return getRepository().getObjectByPath(getThreadCallContext(), path, filter, includeAllowableActions,
-				includeAcl, null);
+		return getRepository().getObjectByPath(getCallContext(), path, filter, includeAllowableActions, includeAcl,
+				null);
 	}
 
 	@Override
 	public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
-		ObjectData object = getRepository().getObject(getThreadCallContext(), objectId, filter, false, false, null);
+		ObjectData object = getRepository().getObject(getCallContext(), objectId, filter, false, false, null);
 		return object.getProperties();
 	}
 
@@ -250,19 +237,19 @@ public class FileShareService extends AbstractCmisService {
 	@Override
 	public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
 			ExtensionsData extension) {
-		getRepository().moveObject(getThreadCallContext(), objectId, targetFolderId, null);
+		getRepository().moveObject(getCallContext(), objectId, targetFolderId, null);
 	}
 
 	@Override
 	public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
 			Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
-		getRepository().setContentStream(getThreadCallContext(), objectId, overwriteFlag, contentStream);
+		getRepository().setContentStream(getCallContext(), objectId, overwriteFlag, contentStream);
 	}
 
 	@Override
 	public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
 			Properties properties, ExtensionsData extension) {
-		getRepository().updateProperties(getThreadCallContext(), objectId, properties, null);
+		getRepository().updateProperties(getCallContext(), objectId, properties, null);
 	}
 
 	// --- versioning service ---
@@ -270,7 +257,7 @@ public class FileShareService extends AbstractCmisService {
 	@Override
 	public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
 			Boolean includeAllowableActions, ExtensionsData extension) {
-		ObjectData theVersion = getRepository().getObject(getThreadCallContext(), versionSeriesId, filter,
+		ObjectData theVersion = getRepository().getObject(getCallContext(), versionSeriesId, filter,
 				includeAllowableActions, false, null);
 
 		return Collections.singletonList(theVersion);
@@ -280,15 +267,14 @@ public class FileShareService extends AbstractCmisService {
 	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
 			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
-		return getRepository().getObject(getThreadCallContext(), versionSeriesId, filter, includeAllowableActions,
+		return getRepository().getObject(getCallContext(), versionSeriesId, filter, includeAllowableActions,
 				includeAcl, null);
 	}
 
 	@Override
 	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
 			Boolean major, String filter, ExtensionsData extension) {
-		ObjectData object = getRepository().getObject(getThreadCallContext(), versionSeriesId, filter, false, false,
-				null);
+		ObjectData object = getRepository().getObject(getCallContext(), versionSeriesId, filter, false, false, null);
 
 		return object.getProperties();
 	}
@@ -297,6 +283,6 @@ public class FileShareService extends AbstractCmisService {
 
 	@Override
 	public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
-		return getRepository().getAcl(getThreadCallContext(), objectId);
+		return getRepository().getAcl(getCallContext(), objectId);
 	}
 }

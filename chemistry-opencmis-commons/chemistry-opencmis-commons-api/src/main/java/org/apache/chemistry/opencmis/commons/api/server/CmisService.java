@@ -59,7 +59,7 @@ public interface CmisService extends RepositoryService, NavigationService, Objec
 	 * 
 	 * Only AtomPub requests will require object infos.
 	 */
-	ObjectInfo getObjectInfo(String objectId);
+	ObjectInfo getObjectInfo(String repositoryId, String objectId);
 
 	/**
 	 * Signals that this object will not be used anymore and resources can

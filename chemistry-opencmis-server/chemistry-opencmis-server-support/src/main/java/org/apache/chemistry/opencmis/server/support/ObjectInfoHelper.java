@@ -44,7 +44,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
-import org.apache.chemistry.opencmis.commons.impl.server.RenditionInfosImpl;
+import org.apache.chemistry.opencmis.commons.impl.server.RenditionInfoImpl;
 import org.apache.chemistry.opencmis.server.spi.CmisNavigationService;
 import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
@@ -444,7 +444,7 @@ public class ObjectInfoHelper {
 			return null;
 
 		List<RenditionInfo> rendInfos = new ArrayList<RenditionInfo>(renditions.size());
-		RenditionInfosImpl ri = new RenditionInfosImpl();
+		RenditionInfoImpl ri = new RenditionInfoImpl();
 		for (RenditionData rd : renditions) {
 			ri.setContentType(rd.getMimeType());
 			ri.setId(rd.getStreamId());
