@@ -38,6 +38,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CmisAtomPubSpi implements CmisSpiFactory, CmisSpi {
 
+	private static final long serialVersionUID = 1L;
+
 	private static Log log = LogFactory.getLog(CmisAtomPubSpi.class);
 
 	private Session session;

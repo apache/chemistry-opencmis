@@ -76,7 +76,7 @@ public class RepositoryMap {
 		}
 
 		// get repository object
-		return getRepository(repositoryId);
+		return repositoryId == null ? null : getRepository(repositoryId);
 	}
 
 	/**

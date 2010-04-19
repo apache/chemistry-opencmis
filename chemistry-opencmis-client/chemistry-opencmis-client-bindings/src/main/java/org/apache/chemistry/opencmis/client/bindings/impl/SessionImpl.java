@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.bindings.impl;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -41,6 +42,10 @@ public class SessionImpl implements Session {
 	 */
 	public SessionImpl() {
 		data = new HashMap<String, Object>();
+	}
+
+	public Collection<String> getKeys() {
+		return data.keySet();
 	}
 
 	public Object get(String key) {

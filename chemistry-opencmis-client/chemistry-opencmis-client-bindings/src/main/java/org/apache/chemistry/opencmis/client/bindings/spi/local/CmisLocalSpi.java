@@ -1,5 +1,8 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpiFactory;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
@@ -23,10 +26,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
 
+	private static final long serialVersionUID = 1L;
+
 	private static Log log = LogFactory.getLog(CmisLocalSpi.class);
 
-	private Session session;
-	private CmisServiceFactory serviceFactory;
+	private CmisServiceFactory factory;
 
 	private RepositoryService repositoryService;
 	private NavigationService navigationService;
@@ -49,18 +53,37 @@ public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
 			log.debug("Initializing local SPI...");
 		}
 
-		this.session = session;
-
+		// get the service factory class name
 		String serviceFactoryClassname = (String) session.get(SessionParameter.LOCAL_FACTORY);
 		if (serviceFactoryClassname == null) {
 			throw new CmisConnectionException("Factory class not set!");
 		}
 
 		try {
-			serviceFactory = (CmisServiceFactory) Class.forName(serviceFactoryClassname).newInstance();
+			// gather parameters from session
+			Map<String, String> parameters = new HashMap<String, String>();
+			for (String key : session.getKeys()) {
+				Object value = session.get(key);
+				if (value instanceof String) {
+					parameters.put(key, (String) value);
+				}
+			}
+
+			// create and initialize factory
+			factory = (CmisServiceFactory) Class.forName(serviceFactoryClassname).newInstance();
+			factory.init(parameters);
 		} catch (Exception e) {
 			throw new CmisConnectionException("Factory cannot be created!", e);
 		}
+
+		repositoryService = new RepositoryServiceImpl(session, factory);
+		navigationService = new NavigationServiceImpl(session, factory);
+		objectService = new ObjectServiceImpl(session, factory);
+		versioningService = new VersioningServiceImpl(session, factory);
+		discoveryService = new DiscoveryServiceImpl(session, factory);
+		multiFilingService = new MultiFilingServiceImpl(session, factory);
+		relationshipService = new RelationshipServiceImpl(session, factory);
+		policyService = new PolicyServiceImpl(session, factory);
 
 		return this;
 	}
@@ -108,6 +131,6 @@ public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
 	}
 
 	public void close() {
-		serviceFactory.destroy();
+		factory.destroy();
 	}
 }

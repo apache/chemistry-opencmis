@@ -19,11 +19,17 @@
 package org.apache.chemistry.opencmis.client.bindings.spi;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * CMIS provider session interface.
  */
 public interface Session extends Serializable {
+
+	/**
+	 * Returns all keys.
+	 */
+	Collection<String> getKeys();
 
 	/**
 	 * Gets a session value.

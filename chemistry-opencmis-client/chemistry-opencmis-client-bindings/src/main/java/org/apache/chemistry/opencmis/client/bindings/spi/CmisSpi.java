@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi;
 
+import java.io.Serializable;
+
 import org.apache.chemistry.opencmis.commons.api.AclService;
 import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.api.MultiFilingService;
@@ -31,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.api.VersioningService;
 /**
  * CMIS SPI interface.
  */
-public interface CmisSpi {
+public interface CmisSpi extends Serializable {
 	/**
 	 * Gets a Repository Service interface object.
 	 */
