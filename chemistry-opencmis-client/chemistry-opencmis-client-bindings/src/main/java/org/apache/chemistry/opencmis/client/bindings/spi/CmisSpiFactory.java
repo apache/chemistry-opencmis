@@ -24,9 +24,6 @@ package org.apache.chemistry.opencmis.client.bindings.spi;
  * <p>
  * A class implementing this interface MUST provide a default constructor.
  * </p>
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public interface CmisSpiFactory {
 

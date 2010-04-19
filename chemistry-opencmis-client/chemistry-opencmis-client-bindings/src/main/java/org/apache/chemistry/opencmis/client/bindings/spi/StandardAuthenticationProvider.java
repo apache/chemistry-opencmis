@@ -39,9 +39,6 @@ import org.w3c.dom.Element;
  * 
  * Adds a basic authentication HTTP header and a WS-Security UsernameToken SOAP
  * header.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class StandardAuthenticationProvider extends AbstractAuthenticationProvider {
 

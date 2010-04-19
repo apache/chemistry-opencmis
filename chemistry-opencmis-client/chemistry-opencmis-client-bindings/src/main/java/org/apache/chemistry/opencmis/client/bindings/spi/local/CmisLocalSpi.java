@@ -3,6 +3,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpiFactory;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.AclService;
 import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.api.MultiFilingService;
@@ -12,14 +13,30 @@ import org.apache.chemistry.opencmis.commons.api.PolicyService;
 import org.apache.chemistry.opencmis.commons.api.RelationshipService;
 import org.apache.chemistry.opencmis.commons.api.RepositoryService;
 import org.apache.chemistry.opencmis.commons.api.VersioningService;
+import org.apache.chemistry.opencmis.commons.api.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * * CMIS local SPI implementation.
+ */
 public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
 
 	private static Log log = LogFactory.getLog(CmisLocalSpi.class);
 
 	private Session session;
+	private CmisServiceFactory serviceFactory;
+
+	private RepositoryService repositoryService;
+	private NavigationService navigationService;
+	private ObjectService objectService;
+	private VersioningService versioningService;
+	private DiscoveryService discoveryService;
+	private MultiFilingService multiFilingService;
+	private RelationshipService relationshipService;
+	private PolicyService policyService;
+	private AclService aclService;
 
 	/**
 	 * Constructor.
@@ -34,63 +51,63 @@ public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
 
 		this.session = session;
 
+		String serviceFactoryClassname = (String) session.get(SessionParameter.LOCAL_FACTORY);
+		if (serviceFactoryClassname == null) {
+			throw new CmisConnectionException("Factory class not set!");
+		}
+
+		try {
+			serviceFactory = (CmisServiceFactory) Class.forName(serviceFactoryClassname).newInstance();
+		} catch (Exception e) {
+			throw new CmisConnectionException("Factory cannot be created!", e);
+		}
+
 		return this;
 	}
 
-	public AclService getAclService() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public DiscoveryService getDiscoveryService() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public MultiFilingService getMultiFilingService() {
-		// TODO Auto-generated method stub
-		return null;
+	public RepositoryService getRepositoryService() {
+		return repositoryService;
 	}
 
 	public NavigationService getNavigationService() {
-		// TODO Auto-generated method stub
-		return null;
+		return navigationService;
 	}
 
 	public ObjectService getObjectService() {
-		// TODO Auto-generated method stub
-		return null;
+		return objectService;
 	}
 
-	public PolicyService getPolicyService() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public RelationshipService getRelationshipService() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public RepositoryService getRepositoryService() {
-		// TODO Auto-generated method stub
-		return null;
+	public DiscoveryService getDiscoveryService() {
+		return discoveryService;
 	}
 
 	public VersioningService getVersioningService() {
-		// TODO Auto-generated method stub
-		return null;
+		return versioningService;
+	}
+
+	public MultiFilingService getMultiFilingService() {
+		return multiFilingService;
+	}
+
+	public RelationshipService getRelationshipService() {
+		return relationshipService;
+	}
+
+	public PolicyService getPolicyService() {
+		return policyService;
+	}
+
+	public AclService getAclService() {
+		return aclService;
 	}
 
 	public void clearAllCaches() {
-		// TODO Auto-generated method stub
 	}
 
 	public void clearRepositoryCache(String repositoryId) {
-		// TODO Auto-generated method stub
 	}
 
 	public void close() {
-		// TODO Auto-generated method stub
+		serviceFactory.destroy();
 	}
 }

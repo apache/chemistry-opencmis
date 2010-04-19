@@ -22,9 +22,6 @@ import java.io.Serializable;
 
 /**
  * CMIS provider session interface.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public interface Session extends Serializable {
 

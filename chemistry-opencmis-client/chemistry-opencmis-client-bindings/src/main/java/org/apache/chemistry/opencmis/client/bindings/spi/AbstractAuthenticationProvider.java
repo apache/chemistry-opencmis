@@ -27,9 +27,6 @@ import org.w3c.dom.Element;
 
 /**
  * Authentication provider class.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractAuthenticationProvider implements Serializable {
 

@@ -20,9 +20,6 @@ package org.apache.chemistry.opencmis.commons;
 
 /**
  * Collection of session parameters.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public final class SessionParameter {
 
@@ -36,41 +33,46 @@ public final class SessionParameter {
 
 	// ---- provider parameter ----
 	/** Predefined binding types (see {@code BindingType}) */
-	public static final String BINDING_TYPE = "org.apache.chemistry.opencmis.provider.binding.type";
+	public static final String BINDING_TYPE = "org.apache.chemistry.opencmis.binding.spi.type";
 
 	/** Class name of the binding class. */
-	public static final String BINDING_SPI_CLASS = "org.apache.chemistry.opencmis.provider.binding.classname";
+	public static final String BINDING_SPI_CLASS = "org.apache.chemistry.opencmis.binding.spi.classname";
 
 	/** URL of the AtomPub service document. */
-	public static final String ATOMPUB_URL = "org.apache.chemistry.opencmis.provider.atompub.url";
+	public static final String ATOMPUB_URL = "org.apache.chemistry.opencmis.binding.atompub.url";
 
-	public static final String WEBSERVICES_REPOSITORY_SERVICE = "org.apache.chemistry.opencmis.provider.webservices.RepositoryService";
-	public static final String WEBSERVICES_NAVIGATION_SERVICE = "org.apache.chemistry.opencmis.provider.webservices.NavigationService";
-	public static final String WEBSERVICES_OBJECT_SERVICE = "org.apache.chemistry.opencmis.provider.webservices.ObjectService";
-	public static final String WEBSERVICES_VERSIONING_SERVICE = "org.apache.chemistry.opencmis.provider.webservices.VersioningService";
-	public static final String WEBSERVICES_DISCOVERY_SERVICE = "org.apache.chemistry.opencmis.provider.webservices.DiscoveryService";
-	public static final String WEBSERVICES_RELATIONSHIP_SERVICE = "org.apache.chemistry.opencmis.provider.webservices.RelationshipService";
-	public static final String WEBSERVICES_MULTIFILING_SERVICE = "org.apache.chemistry.opencmis.provider.webservices.MultiFilingService";
-	public static final String WEBSERVICES_POLICY_SERVICE = "org.apache.chemistry.opencmis.provider.webservices.PolicyService";
-	public static final String WEBSERVICES_ACL_SERVICE = "org.apache.chemistry.opencmis.provider.webservices.ACLService";
+	/** WSDL URLs for Web Services. */
+	public static final String WEBSERVICES_REPOSITORY_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.RepositoryService";
+	public static final String WEBSERVICES_NAVIGATION_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.NavigationService";
+	public static final String WEBSERVICES_OBJECT_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.ObjectService";
+	public static final String WEBSERVICES_VERSIONING_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.VersioningService";
+	public static final String WEBSERVICES_DISCOVERY_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.DiscoveryService";
+	public static final String WEBSERVICES_RELATIONSHIP_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.RelationshipService";
+	public static final String WEBSERVICES_MULTIFILING_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.MultiFilingService";
+	public static final String WEBSERVICES_POLICY_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.PolicyService";
+	public static final String WEBSERVICES_ACL_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.ACLService";
 
+	/** Factory class name for the local binding. */
+	public static final String LOCAL_FACTORY = "org.apache.chemistry.opencmis.binding.local.classname";
+	
 	/** Class name of the authentication provider. */
-	public static final String AUTHENTICATION_PROVIDER_CLASS = "org.apache.chemistry.opencmis.provider.auth.classname";
+	public static final String AUTHENTICATION_PROVIDER_CLASS = "org.apache.chemistry.opencmis.binding.auth.classname";
 
 	/**
 	 * Toggle for HTTP basic authentication. Evaluated by the standard
 	 * authentication provider.
 	 */
-	public static final String AUTH_HTTP_BASIC = "org.apache.chemistry.opencmis.provider.auth.http.basic";
+	public static final String AUTH_HTTP_BASIC = "org.apache.chemistry.opencmis.binding.auth.http.basic";
+	
 	/**
 	 * Toggle for WS-Security UsernameToken authentication. Evaluated by the
 	 * standard authentication provider.
 	 */
-	public static final String AUTH_SOAP_USERNAMETOKEN = "org.apache.chemistry.opencmis.provider.auth.soap.usernametoken";
+	public static final String AUTH_SOAP_USERNAMETOKEN = "org.apache.chemistry.opencmis.binding.auth.soap.usernametoken";
 
-	public static final String CACHE_SIZE_REPOSITORIES = "org.apache.chemistry.opencmis.provider.cache.repositories.size";
-	public static final String CACHE_SIZE_TYPES = "org.apache.chemistry.opencmis.provider.cache.types.size";
-	public static final String CACHE_SIZE_OBJECTS = "org.apache.chemistry.opencmis.provider.cache.objects.size";
+	public static final String CACHE_SIZE_REPOSITORIES = "org.apache.chemistry.opencmis.binding.cache.repositories.size";
+	public static final String CACHE_SIZE_TYPES = "org.apache.chemistry.opencmis.binding.cache.types.size";
+	public static final String CACHE_SIZE_OBJECTS = "org.apache.chemistry.opencmis.binding.cache.objects.size";
 
 	// --- session control ---
 

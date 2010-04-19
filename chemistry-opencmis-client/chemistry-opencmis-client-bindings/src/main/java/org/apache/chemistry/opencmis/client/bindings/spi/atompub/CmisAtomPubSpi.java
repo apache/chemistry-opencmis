@@ -34,24 +34,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * CMIS AtomPub SPI implementation.
  */
 public class CmisAtomPubSpi implements CmisSpiFactory, CmisSpi {
 
 	private static Log log = LogFactory.getLog(CmisAtomPubSpi.class);
 
-	private Session fSession;
+	private Session session;
 
-	private RepositoryService fRepositoryService;
-	private NavigationService fNavigationService;
-	private ObjectService fObjectService;
-	private VersioningService fVersioningService;
-	private DiscoveryService fDiscoveryService;
-	private MultiFilingService fMultiFilingService;
-	private RelationshipService fRelationshipService;
-	private PolicyService fPolicyService;
-	private AclService fACLService;
+	private RepositoryService repositoryService;
+	private NavigationService navigationService;
+	private ObjectService objectService;
+	private VersioningService versioningService;
+	private DiscoveryService discoveryService;
+	private MultiFilingService multiFilingService;
+	private RelationshipService relationshipService;
+	private PolicyService policyService;
+	private AclService aclService;
 
 	/**
 	 * Constructor.
@@ -64,63 +63,63 @@ public class CmisAtomPubSpi implements CmisSpiFactory, CmisSpi {
 			log.debug("Initializing AtomPub SPI...");
 		}
 
-		fSession = session;
+		this.session = session;
 
-		fRepositoryService = new RepositoryServiceImpl(fSession);
-		fNavigationService = new NavigationServiceImpl(fSession);
-		fObjectService = new ObjectServiceImpl(fSession);
-		fVersioningService = new VersioningServiceImpl(fSession);
-		fDiscoveryService = new DiscoveryServiceImpl(fSession);
-		fMultiFilingService = new MultiFilingServiceImpl(fSession);
-		fRelationshipService = new RelationshipServiceImpl(fSession);
-		fPolicyService = new PolicyServiceImpl(fSession);
-		fACLService = new AclServiceImpl(fSession);
+		repositoryService = new RepositoryServiceImpl(session);
+		navigationService = new NavigationServiceImpl(session);
+		objectService = new ObjectServiceImpl(session);
+		versioningService = new VersioningServiceImpl(session);
+		discoveryService = new DiscoveryServiceImpl(session);
+		multiFilingService = new MultiFilingServiceImpl(session);
+		relationshipService = new RelationshipServiceImpl(session);
+		policyService = new PolicyServiceImpl(session);
+		aclService = new AclServiceImpl(session);
 
 		return this;
 	}
 
 	public RepositoryService getRepositoryService() {
-		return fRepositoryService;
+		return repositoryService;
 	}
 
 	public NavigationService getNavigationService() {
-		return fNavigationService;
+		return navigationService;
 	}
 
 	public ObjectService getObjectService() {
-		return fObjectService;
+		return objectService;
 	}
 
 	public DiscoveryService getDiscoveryService() {
-		return fDiscoveryService;
+		return discoveryService;
 	}
 
 	public VersioningService getVersioningService() {
-		return fVersioningService;
+		return versioningService;
 	}
 
 	public MultiFilingService getMultiFilingService() {
-		return fMultiFilingService;
+		return multiFilingService;
 	}
 
 	public RelationshipService getRelationshipService() {
-		return fRelationshipService;
+		return relationshipService;
 	}
 
 	public PolicyService getPolicyService() {
-		return fPolicyService;
+		return policyService;
 	}
 
 	public AclService getAclService() {
-		return fACLService;
+		return aclService;
 	}
 
 	public void clearAllCaches() {
-		fSession.remove(SpiSessionParameter.LINK_CACHE);
+		session.remove(SpiSessionParameter.LINK_CACHE);
 	}
 
 	public void clearRepositoryCache(String repositoryId) {
-		LinkCache linkCache = (LinkCache) fSession.get(SpiSessionParameter.LINK_CACHE);
+		LinkCache linkCache = (LinkCache) session.get(SpiSessionParameter.LINK_CACHE);
 		if (linkCache != null) {
 			linkCache.clearRepository(repositoryId);
 		}

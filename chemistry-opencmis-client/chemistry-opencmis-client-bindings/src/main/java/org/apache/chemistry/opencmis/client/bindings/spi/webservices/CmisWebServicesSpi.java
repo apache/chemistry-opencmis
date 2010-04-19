@@ -35,26 +35,20 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * CMIS Web Services SPI implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
 
 	private static Log log = LogFactory.getLog(CmisWebServicesSpi.class);
 
-	private Session fSession;
-	private PortProvider fPortProvider;
-
-	private RepositoryService fRepositoryService;
-	private NavigationService fNavigationService;
-	private ObjectService fObjectService;
-	private VersioningService fVersioningService;
-	private DiscoveryService fDiscoveryService;
-	private MultiFilingService fMultiFilingService;
-	private RelationshipService fRelationshipService;
-	private PolicyService fPolicyService;
-	private AclService fACLService;
+	private RepositoryService repositoryService;
+	private NavigationService navigationService;
+	private ObjectService objectService;
+	private VersioningService versioningService;
+	private DiscoveryService discoveryService;
+	private MultiFilingService multiFilingService;
+	private RelationshipService relationshipService;
+	private PolicyService policyService;
+	private AclService aclService;
 
 	/**
 	 * Constructor.
@@ -62,68 +56,60 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
 	public CmisWebServicesSpi() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.CMISSPIFactory#getSPIInstance
-	 * (org.apache.opencmis.client .provider .spi.Session)
-	 */
 	public CmisSpi getSpiInstance(Session session) {
 		if (log.isDebugEnabled()) {
 			log.debug("Initializing Web Services SPI...");
 		}
 
-		fSession = session;
-		fPortProvider = new PortProvider(fSession);
+		PortProvider portProvider = new PortProvider(session);
 
-		fRepositoryService = new RepositoryServiceImpl(fSession, fPortProvider);
-		fNavigationService = new NavigationServiceImpl(fSession, fPortProvider);
-		fObjectService = new ObjectServiceImpl(fSession, fPortProvider);
-		fVersioningService = new VersioningServiceImpl(fSession, fPortProvider);
-		fDiscoveryService = new DiscoveryServiceImpl(fSession, fPortProvider);
-		fMultiFilingService = new MultiFilingServiceImpl(fSession, fPortProvider);
-		fRelationshipService = new RelationshipServiceImpl(fSession, fPortProvider);
-		fPolicyService = new PolicyServiceImpl(fSession, fPortProvider);
-		fACLService = new AclServiceImpl(fSession, fPortProvider);
+		repositoryService = new RepositoryServiceImpl(session, portProvider);
+		navigationService = new NavigationServiceImpl(session, portProvider);
+		objectService = new ObjectServiceImpl(session, portProvider);
+		versioningService = new VersioningServiceImpl(session, portProvider);
+		discoveryService = new DiscoveryServiceImpl(session, portProvider);
+		multiFilingService = new MultiFilingServiceImpl(session, portProvider);
+		relationshipService = new RelationshipServiceImpl(session, portProvider);
+		policyService = new PolicyServiceImpl(session, portProvider);
+		aclService = new AclServiceImpl(session, portProvider);
 
 		return this;
 	}
 
 	public RepositoryService getRepositoryService() {
-		return fRepositoryService;
+		return repositoryService;
 	}
 
 	public NavigationService getNavigationService() {
-		return fNavigationService;
+		return navigationService;
 	}
 
 	public ObjectService getObjectService() {
-		return fObjectService;
+		return objectService;
 	}
 
 	public DiscoveryService getDiscoveryService() {
-		return fDiscoveryService;
+		return discoveryService;
 	}
 
 	public VersioningService getVersioningService() {
-		return fVersioningService;
+		return versioningService;
 	}
 
 	public MultiFilingService getMultiFilingService() {
-		return fMultiFilingService;
+		return multiFilingService;
 	}
 
 	public RelationshipService getRelationshipService() {
-		return fRelationshipService;
+		return relationshipService;
 	}
 
 	public PolicyService getPolicyService() {
-		return fPolicyService;
+		return policyService;
 	}
 
 	public AclService getAclService() {
-		return fACLService;
+		return aclService;
 	}
 
 	public void clearAllCaches() {

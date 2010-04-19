@@ -134,6 +134,20 @@ public final class CmisBindingFactory {
 		return new CmisBindingImpl(sessionParameters);
 	}
 
+	/**
+	 * Creates a default CMIS local binding instance.
+	 */
+	public CmisBinding createCmisLocalBinding(Map<String, String> sessionParameters) {
+		checkSessionParameters(sessionParameters, false);
+
+		sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_LOCAL);
+		addDefaultParameters(sessionParameters);
+
+		check(sessionParameters, SessionParameter.LOCAL_FACTORY);
+
+		return new CmisBindingImpl(sessionParameters);
+	}
+
 	// ---- internal ----
 
 	/**

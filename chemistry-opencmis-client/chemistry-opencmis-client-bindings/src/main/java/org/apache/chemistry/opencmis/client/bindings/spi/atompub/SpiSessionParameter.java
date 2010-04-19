@@ -24,7 +24,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
  */
 public final class SpiSessionParameter {
 
-	public static final String LINK_CACHE = "org.apache.chemistry.opencmis.provider.atompub.linkcache";
+	public static final String LINK_CACHE = "org.apache.chemistry.opencmis.binding.atompub.linkcache";
 
 	private SpiSessionParameter() {
 	}

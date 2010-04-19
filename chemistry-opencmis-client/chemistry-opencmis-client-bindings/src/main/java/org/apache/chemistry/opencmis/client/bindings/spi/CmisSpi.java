@@ -30,9 +30,6 @@ import org.apache.chemistry.opencmis.commons.api.VersioningService;
 
 /**
  * CMIS SPI interface.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public interface CmisSpi {
 	/**
