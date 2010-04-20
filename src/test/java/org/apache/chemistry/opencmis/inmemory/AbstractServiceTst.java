@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.inmemory.RepositoryServiceTest.UnitTestRepo
 import org.apache.chemistry.opencmis.inmemory.clientprovider.CmisInMemoryProvider;
 import org.apache.chemistry.opencmis.inmemory.clientprovider.DummyCallContext;
 import org.apache.chemistry.opencmis.inmemory.server.RuntimeContext;
+import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceFactoryImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,18 +57,17 @@ public class AbstractServiceTst /* extends TestCase */{
 	protected MultiFilingService fMultiSvc;
 	protected DummyCallContext fTestCallContext;
 	private String fTypeCreatorClassName;
-	private boolean fUseClientProviderInterface;
+	protected boolean fUseClientProviderInterface;
 
 	public AbstractServiceTst() {
-		// The in-memory server unit tests can either be run directly against
-		// the
-		// service implementation or against a client provider interface. The
-		// client
-		// provider interfaces offers some benefits like type system caching etc
+		// The in-memory server unit tests can either be run directly against the
+		// service implementation or against a clocal binding interface. The local
+		// binding interfaces offers some benefits like type system caching etc.
 		// The default is using the direct implementation. Subclasses may
-		// override
-		// this behavior
-		fUseClientProviderInterface = false;
+		// override this behavior.
+		
+		fUseClientProviderInterface = true;
+		
 		// Init with default types, can be overridden by subclasses:
 		fTypeCreatorClassName = UnitTestTypeSystemCreator.class.getName();
 	}
@@ -81,16 +81,14 @@ public class AbstractServiceTst /* extends TestCase */{
 		// super.setUp();
 		LOG.debug("Initializing InMemory Test with type creator class: " + fTypeCreatorClassName);
 		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put(SessionParameter.BINDING_SPI_CLASS, CmisBindingFactory.BINDING_SPI_INMEMORY);
-		// attach TypeSystem to the session
-
+		
 		// attach repository info to the session:
 		parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, fTypeCreatorClassName);
 		parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
 
 		// attach repository info to the session:
 		parameters.put(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS, UnitTestRepositoryInfo.class.getName());
-
+		
 		// give subclasses a chance to provide additional parameters for special
 		// tests
 		addParameters(parameters);
@@ -101,7 +99,7 @@ public class AbstractServiceTst /* extends TestCase */{
 		RuntimeContext.attachCfg(fTestCallContext);
 
 		if (fUseClientProviderInterface)
-			initializeUsingClientProvider(parameters);
+			initializeUsingLocalBinding(parameters);
 		else
 			initializeDirect(parameters);
 
@@ -334,6 +332,8 @@ public class AbstractServiceTst /* extends TestCase */{
 	 *            in-memory provider
 	 */
 	private void initializeDirect(Map<String, String> parameters) {
+		LOG.info("Initialize unit test using directly the InMemory-classes.");
+
 		CmisInMemoryProvider inMemSpi = new CmisInMemoryProvider(parameters);
 		fRepSvc = inMemSpi.getRepositoryService();
 		fObjSvc = inMemSpi.getObjectService();
@@ -349,19 +349,26 @@ public class AbstractServiceTst /* extends TestCase */{
 	 *            configuration parameters for client provider interface and
 	 *            in-memory provider
 	 */
-	private void initializeUsingClientProvider(Map<String, String> parameters) {
-		CmisBinding provider;
+	private void initializeUsingLocalBinding(Map<String, String> parameters) {
 
-		// get factory and create provider
-		CmisBindingFactory factory = CmisBindingFactory.newInstance();
-		provider = factory.createCmisBinding(parameters);
-		assertNotNull(provider);
-		fFactory = provider.getObjectFactory();
-		fRepSvc = provider.getRepositoryService();
-		fObjSvc = provider.getObjectService();
-		fNavSvc = provider.getNavigationService();
-		fVerSvc = provider.getVersioningService();
-		fMultiSvc = provider.getMultiFilingService();
+		LOG.info("Initialize unit test using the local binding interface.");
+		
+		// add parameters for local binding:
+		parameters.put(SessionParameter.BINDING_SPI_CLASS, SessionParameter.LOCAL_FACTORY);
+		parameters.put(SessionParameter.LOCAL_FACTORY, InMemoryServiceFactoryImpl.class.getName());
+		parameters.put(ConfigConstants.OVERRIDE_CALL_CONTEXT, "true");
+		InMemoryServiceFactoryImpl.setOverrideCallContext(fTestCallContext);
+
+		// get factory and create binding
+		CmisBindingFactory factory = CmisBindingFactory.newInstance();		
+		CmisBinding binding = factory.createCmisLocalBinding(parameters);
+		assertNotNull(binding);
+		fFactory = binding.getObjectFactory();
+		fRepSvc = binding.getRepositoryService();
+		fObjSvc = binding.getObjectService();
+		fNavSvc = binding.getNavigationService();
+		fVerSvc = binding.getVersioningService();
+		fMultiSvc = binding.getMultiFilingService();
 	}
 
 	protected String getStringProperty(ObjectData objData, String propertyKey) {

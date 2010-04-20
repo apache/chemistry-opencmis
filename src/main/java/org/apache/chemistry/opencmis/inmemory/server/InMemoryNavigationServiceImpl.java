@@ -57,11 +57,12 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.spi.CmisNavigationService;
+import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implements CmisNavigationService {
+public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl implements CmisNavigationService {
 
 	private static Log LOG = LogFactory.getLog(InMemoryNavigationServiceImpl.class);
 
@@ -77,51 +78,43 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 			String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension,
 			ObjectInfoHolder objectInfos) {
 
-		try {
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
+		ObjectListImpl res = new ObjectListImpl();
+		List<ObjectData> odList = new ArrayList<ObjectData>();
 
-			ObjectListImpl res = new ObjectListImpl();
-			List<ObjectData> odList = new ArrayList<ObjectData>();
+		LOG.debug("start getCheckedOutDocs()");
+		if (null != folderId)
+			checkStandardParameters(repositoryId, folderId);
+		else
+			checkRepositoryId(repositoryId);
 
-			LOG.debug("start getCheckedOutDocs()");
-			if (null != folderId)
-				checkStandardParameters(repositoryId, folderId);
-			else
-				checkRepositoryId(repositoryId);
-
-			if (null == folderId) {
-				List<VersionedDocument> checkedOuts = fStoreManager.getObjectStore(repositoryId)
-						.getCheckedOutDocuments(orderBy);
-				for (VersionedDocument checkedOut : checkedOuts) {
-					ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, checkedOut, filter,
-							includeAllowableActions, includeRelationships, renditionFilter, false, false, extension);
-					fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, checkedOut, objectInfos);
-					odList.add(od);
-				}
-			} else {
-				ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
-						includeAllowableActions, includeRelationships, renditionFilter, false, -1, -1, false,
-						objectInfos);
-				for (ObjectInFolderData child : children.getObjects()) {
-					ObjectData obj = child.getObject();
-					StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(obj.getId());
-					LOG.info("Checked out: children:" + obj.getId());
-					if (so instanceof DocumentVersion && ((DocumentVersion) so).getParentDocument().isCheckedOut()) {
-						odList.add(obj);
-						fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-					}
+		if (null == folderId) {
+			List<VersionedDocument> checkedOuts = fStoreManager.getObjectStore(repositoryId)
+			.getCheckedOutDocuments(orderBy);
+			for (VersionedDocument checkedOut : checkedOuts) {
+				ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, checkedOut, filter,
+						includeAllowableActions, includeRelationships, renditionFilter, false, false, extension);
+				fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, checkedOut, objectInfos);
+				odList.add(od);
+			}
+		} else {
+			ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
+					includeAllowableActions, includeRelationships, renditionFilter, false, -1, -1, false,
+					objectInfos);
+			for (ObjectInFolderData child : children.getObjects()) {
+				ObjectData obj = child.getObject();
+				StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(obj.getId());
+				LOG.info("Checked out: children:" + obj.getId());
+				if (so instanceof DocumentVersion && ((DocumentVersion) so).getParentDocument().isCheckedOut()) {
+					odList.add(obj);
+					fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 				}
 			}
-			res.setObjects(odList);
-			res.setNumItems(BigInteger.valueOf(odList.size()));
-
-			LOG.debug("end getCheckedOutDocs()");
-			return res;
-		} finally {
-			RuntimeContext.remove();
 		}
+		res.setObjects(odList);
+		res.setNumItems(BigInteger.valueOf(odList.size()));
+
+		LOG.debug("end getCheckedOutDocs()");
+		return res;
 	}
 
 	public ObjectInFolderList getChildren(CallContext context, String repositoryId, String folderId, String filter,
@@ -129,25 +122,17 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 			String renditionFilter, Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount,
 			ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-		try {
-			LOG.debug("start getChildren()");
+		LOG.debug("start getChildren()");
 
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
+		checkStandardParameters(repositoryId, folderId);
 
-			checkStandardParameters(repositoryId, folderId);
-
-			int maxItemsInt = maxItems == null ? -1 : maxItems.intValue();
-			int skipCountInt = skipCount == null ? -1 : skipCount.intValue();
-			ObjectInFolderList res = getChildrenIntern(repositoryId, folderId, filter, orderBy,
-					includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItemsInt,
-					skipCountInt, false, objectInfos);
-			LOG.debug("stop getChildren()");
-			return res;
-		} finally {
-			RuntimeContext.remove();
-		}
+		int maxItemsInt = maxItems == null ? -1 : maxItems.intValue();
+		int skipCountInt = skipCount == null ? -1 : skipCount.intValue();
+		ObjectInFolderList res = getChildrenIntern(repositoryId, folderId, filter, orderBy,
+				includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItemsInt,
+				skipCountInt, false, objectInfos);
+		LOG.debug("stop getChildren()");
+		return res;
 	}
 
 	public List<ObjectInFolderContainer> getDescendants(CallContext context, String repositoryId, String folderId,
@@ -155,66 +140,50 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePathSegment,
 			ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-		try {
-			LOG.debug("start getDescendants()");
+		LOG.debug("start getDescendants()");
 
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
+		checkStandardParameters(repositoryId, folderId);
 
-			checkStandardParameters(repositoryId, folderId);
+		int levels;
+		if (depth == null)
+			levels = 2; // one of the recommended defaults (should it be
+		// -1?)
+		else if (depth.intValue() == 0)
+			throw new CmisInvalidArgumentException("A zero depth is not allowed for getDescendants().");
+		else
+			levels = depth.intValue();
 
-			int levels;
-			if (depth == null)
-				levels = 2; // one of the recommended defaults (should it be
-							// -1?)
-			else if (depth.intValue() == 0)
-				throw new CmisInvalidArgumentException("A zero depth is not allowed for getDescendants().");
-			else
-				levels = depth.intValue();
+		int level = 0;
+		List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
+				includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, level, levels,
+				false, objectInfos);
 
-			int level = 0;
-			List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
-					includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, level, levels,
-					false, objectInfos);
-
-			LOG.debug("stop getDescendants()");
-			return result;
-		} finally {
-			RuntimeContext.remove();
-		}
+		LOG.debug("stop getDescendants()");
+		return result;
 	}
 
 	public ObjectData getFolderParent(CallContext context, String repositoryId, String folderId, String filter,
 			ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-		try {
-			LOG.debug("start getFolderParent()");
+		LOG.debug("start getFolderParent()");
 
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
+		StoredObject so = checkStandardParameters(repositoryId, folderId);
 
-			StoredObject so = checkStandardParameters(repositoryId, folderId);
+		Folder folder = null;
+		if (so instanceof Folder)
+			folder = (Folder) so;
+		else
+			throw new CmisInvalidArgumentException("Can't get folder parent, id does not refer to a folder: "
+					+ folderId);
 
-			Folder folder = null;
-			if (so instanceof Folder)
-				folder = (Folder) so;
-			else
-				throw new CmisInvalidArgumentException("Can't get folder parent, id does not refer to a folder: "
-						+ folderId);
+		ObjectData res = getFolderParentIntern(repositoryId, folder, filter, objectInfos);
 
-			ObjectData res = getFolderParentIntern(repositoryId, folder, filter, objectInfos);
+		// To be able to provide all Atom links in the response we need
+		// additional information:
+		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-			// To be able to provide all Atom links in the response we need
-			// additional information:
-			fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-
-			LOG.debug("stop getFolderParent()");
-			return res;
-		} finally {
-			RuntimeContext.remove();
-		}
+		LOG.debug("stop getFolderParent()");
+		return res;
 	}
 
 	public List<ObjectInFolderContainer> getFolderTree(CallContext context, String repositoryId, String folderId,
@@ -222,29 +191,21 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePathSegment,
 			ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-		try {
-			LOG.debug("start getFolderTree()");
+		LOG.debug("start getFolderTree()");
 
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
+		checkStandardParameters(repositoryId, folderId);
 
-			checkStandardParameters(repositoryId, folderId);
+		if (depth != null && depth.intValue() == 0)
+			throw new CmisInvalidArgumentException("A zero depth is not allowed for getFolderTree().");
 
-			if (depth != null && depth.intValue() == 0)
-				throw new CmisInvalidArgumentException("A zero depth is not allowed for getFolderTree().");
+		int levels = depth == null ? 2 : depth.intValue();
+		int level = 0;
+		List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
+				includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, level, levels,
+				true, objectInfos);
 
-			int levels = depth == null ? 2 : depth.intValue();
-			int level = 0;
-			List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
-					includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, level, levels,
-					true, objectInfos);
-
-			LOG.debug("stop getFolderTree()");
-			return result;
-		} finally {
-			RuntimeContext.remove();
-		}
+		LOG.debug("stop getFolderTree()");
+		return result;
 	}
 
 	public List<ObjectParentData> getObjectParents(CallContext context, String repositoryId, String objectId,
@@ -252,38 +213,30 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 			String renditionFilter, Boolean includeRelativePathSegment, ExtensionsData extension,
 			ObjectInfoHolder objectInfos) {
 
-		try {
-			LOG.debug("start getObjectParents()");
+		LOG.debug("start getObjectParents()");
 
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
+		StoredObject so = checkStandardParameters(repositoryId, objectId);
 
-			StoredObject so = checkStandardParameters(repositoryId, objectId);
+		// for now we have only folders that have a parent and the in-memory
+		// provider only has one
+		// parent for each object (no multi-filing)
+		List<ObjectParentData> result = null;
 
-			// for now we have only folders that have a parent and the in-memory
-			// provider only has one
-			// parent for each object (no multi-filing)
-			List<ObjectParentData> result = null;
+		Filing spo = null;
+		if (so instanceof Filing)
+			spo = (Filing) so;
+		else
+			throw new CmisInvalidArgumentException(
+					"Can't get object parent, id does not refer to a folder or document: " + objectId);
 
-			Filing spo = null;
-			if (so instanceof Filing)
-				spo = (Filing) so;
-			else
-				throw new CmisInvalidArgumentException(
-						"Can't get object parent, id does not refer to a folder or document: " + objectId);
+		result = getObjectParentsIntern(repositoryId, spo, filter, objectInfos);
 
-			result = getObjectParentsIntern(repositoryId, spo, filter, objectInfos);
+		// To be able to provide all Atom links in the response we need
+		// additional information:
+		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-			// To be able to provide all Atom links in the response we need
-			// additional information:
-			fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-
-			LOG.debug("stop getObjectParents()");
-			return result;
-		} finally {
-			RuntimeContext.remove();
-		}
+		LOG.debug("stop getObjectParents()");
+		return result;
 	}
 
 	// private helpers
@@ -325,9 +278,9 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 			}
 			if (renditionFilter != null && renditionFilter.length() > 0) {
 				objectData.setRelationships(null /*
-												 * f.getRenditions(renditionFilter
-												 * )
-												 */);
+				 * f.getRenditions(renditionFilter
+				 * )
+				 */);
 			}
 
 			Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, spo, fStoreManager,
@@ -390,11 +343,11 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 				parentData.setObject(parent);
 				String path = ((SingleFiling) sop).getPath();
 				int beginIndex = path.lastIndexOf(Filing.PATH_SEPARATOR) + 1; // Note
-																				// :
-																				// if
-																				// /
-																				// not
-																				// found
+				// :
+				// if
+				// /
+				// not
+				// found
 				// results in 0
 				String relPathSeg = path.substring(beginIndex, path.length());
 				parentData.setRelativePathSegment(relPathSeg);
@@ -442,7 +395,7 @@ public class InMemoryNavigationServiceImpl extends AbstractServiceImpl implement
 	void copyFilteredProperties(String repositoryId, StoredObject so, String filter, ObjectDataImpl objData) {
 		List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
 		Properties props = PropertyCreationHelper
-				.getPropertiesFromObject(repositoryId, so, fStoreManager, requestedIds);
+		.getPropertiesFromObject(repositoryId, so, fStoreManager, requestedIds);
 		objData.setProperties(props);
 	}
 

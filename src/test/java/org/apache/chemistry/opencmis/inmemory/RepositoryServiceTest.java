@@ -18,6 +18,12 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,8 +58,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
-import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
-import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
@@ -62,8 +66,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Jens
@@ -473,13 +475,13 @@ public class RepositoryServiceTest extends AbstractServiceTst {
 		return repository.getId();
 	}
 
-	private boolean containsTypeById(String typeId, List<TypeDefinitionContainer> types) {
-		for (TypeDefinitionContainer type : types) {
-			if (type.getTypeDefinition().getId().equals(typeId))
-				return true;
-		}
-		return false;
-	}
+//	private boolean containsTypeById(String typeId, List<TypeDefinitionContainer> types) {
+//		for (TypeDefinitionContainer type : types) {
+//			if (type.getTypeDefinition().getId().equals(typeId))
+//				return true;
+//		}
+//		return false;
+//	}
 
 	private boolean containsTypeByIdRecursive(String typeId, List<TypeDefinitionContainer> types) {
 		for (TypeDefinitionContainer type : types) {

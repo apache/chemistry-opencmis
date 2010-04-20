@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
+import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
@@ -60,11 +61,6 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
 			BigInteger maxItems, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 		// dummy implementation using hard coded values
 
-		try {
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
-
 			RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
 			String rootFolderId = rep.getRootFolderId();
 
@@ -85,9 +81,6 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
 			// additional information:
 			fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, null, objectInfos, objList);
 			return objList;
-		} finally {
-			RuntimeContext.remove();
-		}
 	}
 
 	private void convertList(List<ObjectData> lod, ObjectInFolderContainer obj) {
@@ -111,11 +104,6 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
 			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 		// dummy implementation using hard coded values
 
-		try {
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
-
 			// use descendants of root folder as result
 			RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
 			String rootFolderId = rep.getRootFolderId();
@@ -133,9 +121,6 @@ public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {
 			objList.setNumItems(BigInteger.valueOf(lod.size()));
 
 			return objList;
-		} finally {
-			RuntimeContext.remove();
-		}
 	}
 
 }
