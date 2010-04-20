@@ -36,17 +36,13 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionList
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 
-public class InMemoryRepositoryServiceImpl extends AbstractServiceImpl implements CmisRepositoryService {
+public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl  implements CmisRepositoryService  {
 
 	public InMemoryRepositoryServiceImpl(StoreManager storeManager) {
 		super(storeManager);
 	}
 
 	public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId, ExtensionsData extension) {
-
-		// Attach the CallContext to a thread local context that can be accessed
-		// from everywhere
-		RuntimeContext.attachCfg(context);
 
 		RepositoryInfo repoInfo = getRepositoryInfoFromStoreManager(repositoryId);
 
@@ -55,118 +51,90 @@ public class InMemoryRepositoryServiceImpl extends AbstractServiceImpl implement
 
 	public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
 
-		try {
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
 
-			List<RepositoryInfo> res = new ArrayList<RepositoryInfo>();
-			List<String> repIds = fStoreManager.getAllRepositoryIds();
-			for (String repId : repIds) {
-				res.add(fStoreManager.getRepositoryInfo(repId));
-			}
-			return res;
-		} finally {
-			RuntimeContext.remove();
+		List<RepositoryInfo> res = new ArrayList<RepositoryInfo>();
+		List<String> repIds = fStoreManager.getAllRepositoryIds();
+		for (String repId : repIds) {
+			res.add(fStoreManager.getRepositoryInfo(repId));
 		}
+		return res;
 	}
 
 	public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId, String typeId,
 			Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
-		try {
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
 
-			getRepositoryInfoFromStoreManager(repositoryId); // just to check if
-																// repository
-																// exists
+		getRepositoryInfoFromStoreManager(repositoryId); // just to check if
+		// repository
+		// exists
 
-			int skip = skipCount == null ? 0 : skipCount.intValue();
-			int max = maxItems == null ? -1 : maxItems.intValue();
+		int skip = skipCount == null ? 0 : skipCount.intValue();
+		int max = maxItems == null ? -1 : maxItems.intValue();
 
-			TypeDefinitionListImpl result = new TypeDefinitionListImpl();
-			List<TypeDefinitionContainer> children;
-			if (typeId == null) {
-				// spec says that base types must be returned in this case
-				children = fStoreManager.getRootTypes(repositoryId);
-			} else {
-				children = getTypeDescendants(context, repositoryId, typeId, BigInteger.valueOf(1),
-						includePropertyDefinitions, null);
-			}
-			result.setNumItems(BigInteger.valueOf(children.size()));
-			result.setHasMoreItems(children.size() > max - skip);
-			List<TypeDefinition> childrenTypes = new ArrayList<TypeDefinition>();
-			ListIterator<TypeDefinitionContainer> it = children.listIterator(skip);
-			if (max < 0)
-				max = children.size();
-			for (int i = skip; i < max + skip && it.hasNext(); i++)
-				childrenTypes.add(it.next().getTypeDefinition());
-
-			result.setList(childrenTypes);
-			return result;
-		} finally {
-			RuntimeContext.remove();
+		TypeDefinitionListImpl result = new TypeDefinitionListImpl();
+		List<TypeDefinitionContainer> children;
+		if (typeId == null) {
+			// spec says that base types must be returned in this case
+			children = fStoreManager.getRootTypes(repositoryId);
+		} else {
+			children = getTypeDescendants(context, repositoryId, typeId, BigInteger.valueOf(1),
+					includePropertyDefinitions, null);
 		}
+		result.setNumItems(BigInteger.valueOf(children.size()));
+		result.setHasMoreItems(children.size() > max - skip);
+		List<TypeDefinition> childrenTypes = new ArrayList<TypeDefinition>();
+		ListIterator<TypeDefinitionContainer> it = children.listIterator(skip);
+		if (max < 0)
+			max = children.size();
+		for (int i = skip; i < max + skip && it.hasNext(); i++)
+			childrenTypes.add(it.next().getTypeDefinition());
+
+		result.setList(childrenTypes);
+		return result;
 	}
 
 	public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
 			ExtensionsData extension) {
 
-		try {
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
 
-			getRepositoryInfoFromStoreManager(repositoryId); // just to check if
-																// repository
-																// exists
+		getRepositoryInfoFromStoreManager(repositoryId); // just to check if
+		// repository
+		// exists
 
-			TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId);
-			if (tc != null) {
-				return tc.getTypeDefinition();
-			} else
-				throw new CmisObjectNotFoundException("unknown type id: " + typeId);
-		} finally {
-			RuntimeContext.remove();
-		}
+		TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId);
+		if (tc != null) {
+			return tc.getTypeDefinition();
+		} else
+			throw new CmisObjectNotFoundException("unknown type id: " + typeId);
 	}
 
 	public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId, String typeId,
 			BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
 
-		try {
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			RuntimeContext.attachCfg(context);
 
-			getRepositoryInfoFromStoreManager(repositoryId); // just to check if
-																// repository
-																// exists
+		getRepositoryInfoFromStoreManager(repositoryId); // just to check if
+		// repository
+		// exists
 
-			if (depth != null && depth.intValue() == 0)
-				throw new CmisInvalidArgumentException("depth == 0 is illegal in getTypeDescendants");
+		if (depth != null && depth.intValue() == 0)
+			throw new CmisInvalidArgumentException("depth == 0 is illegal in getTypeDescendants");
 
-			List<TypeDefinitionContainer> result = null;
-			if (typeId == null) {
-				// spec says that depth must be ignored in this case
-				Collection<TypeDefinitionContainer> tmp = fStoreManager.getTypeDefinitionList(repositoryId,
-						includePropertyDefinitions);
-				result = new ArrayList<TypeDefinitionContainer>(tmp);
-			} else {
-				TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId,
-						includePropertyDefinitions, depth == null ? -1 : depth.intValue());
-				if (tc == null)
-					throw new CmisInvalidArgumentException("unknown type id: " + typeId);
-				else
-					result = tc.getChildren();
-			}
-
-			return result;
-		} finally {
-			RuntimeContext.remove();
+		List<TypeDefinitionContainer> result = null;
+		if (typeId == null) {
+			// spec says that depth must be ignored in this case
+			Collection<TypeDefinitionContainer> tmp = fStoreManager.getTypeDefinitionList(repositoryId,
+					includePropertyDefinitions);
+			result = new ArrayList<TypeDefinitionContainer>(tmp);
+		} else {
+			TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId,
+					includePropertyDefinitions, depth == null ? -1 : depth.intValue());
+			if (tc == null)
+				throw new CmisInvalidArgumentException("unknown type id: " + typeId);
+			else
+				result = tc.getChildren();
 		}
+
+		return result;
 	}
 
 	private RepositoryInfo getRepositoryInfoFromStoreManager(String repositoryId) {
