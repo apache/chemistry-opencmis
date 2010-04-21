@@ -93,8 +93,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		// Attach the CallContext to a thread local context that can be
 		// accessed from everywhere
 
+		String user = context.getUsername();
 		StoredObject so = createDocumentIntern(repositoryId, properties, folderId, contentStream, versioningState,
-				policies, addAces, removeAces, extension);
+				policies, addAces, removeAces, extension, user);
 		LOG.debug("stop createDocument()");
 		return so.getId();
 	}
@@ -139,8 +140,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 			List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 		LOG.debug("start createFolder()");
 
-		Folder folder = createFolderIntern(repositoryId, properties, folderId, policies, addAces, removeAces,
-				extension);
+		String user = context.getUsername();
+		Folder folder = createFolderIntern(repositoryId, properties, folderId, policies, addAces, removeAces, extension, user);
 		LOG.debug("stop createFolder()");
 		return folder.getId();
 	}
@@ -163,8 +164,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		// TODO to be completed if relationships are implemented
 		LOG.debug("start createRelationship()");
 		checkRepositoryId(repositoryId);
-		StoredObject so = createRelationshipIntern(repositoryId, properties, policies, addAces, removeAces,
-				extension);
+		StoredObject so = createRelationshipIntern(repositoryId, properties, policies, addAces, removeAces, extension);
 		LOG.debug("stop createRelationship()");
 		return so == null ? null : so.getId();
 	}
@@ -191,7 +191,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 			ContentStream contentStream, VersioningState versioningState, List<String> policies,
 			ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-
 		if (null == properties || null == properties.getProperties())
 			throw new RuntimeException("Cannot create object, without properties.");
 
@@ -200,7 +199,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		String typeId = pd == null ? null : pd.getFirstValue();
 		if (null == typeId)
 			throw new RuntimeException(
-			"Cannot create object, without a type (no property with id CMIS_OBJECT_TYPE_ID).");
+					"Cannot create object, without a type (no property with id CMIS_OBJECT_TYPE_ID).");
 
 		TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
 		if (typeDefC == null)
@@ -209,11 +208,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		// check if the given type is a document type
 		BaseTypeId typeBaseId = typeDefC.getTypeDefinition().getBaseTypeId();
 		StoredObject so = null;
+		String user = context.getUsername();
 		if (typeBaseId.equals(InMemoryDocumentTypeDefinition.getRootDocumentType().getBaseTypeId())) {
-			so = createDocumentIntern(repositoryId, properties, folderId, contentStream, versioningState, null,
-					null, null, null);
+			so = createDocumentIntern(repositoryId, properties, folderId, contentStream, versioningState, null, null,
+					null, null, user);
 		} else if (typeBaseId.equals(InMemoryFolderTypeDefinition.getRootFolderType().getBaseTypeId())) {
-			so = createFolderIntern(repositoryId, properties, folderId, null, null, null, null);
+			so = createFolderIntern(repositoryId, properties, folderId, null, null, null, null, user);
 		} else if (typeBaseId.equals(InMemoryPolicyTypeDefinition.getRootPolicyType().getBaseTypeId())) {
 			so = createPolicyIntern(repositoryId, properties, folderId, null, null, null, null);
 		} else if (typeBaseId.equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType().getBaseTypeId())) {
@@ -223,7 +223,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 
 		// Make a call to getObject to convert the resulting id into an
 		// ObjectData
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
+		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
 				IncludeRelationships.NONE, null, false, false, extension);
 
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
@@ -312,7 +312,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		if (so == null)
 			throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
-		AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so);
+		String user = context.getUsername();
+		AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so, user);
 		LOG.debug("stop getAllowableActions()");
 		return allowableActions;
 	}
@@ -346,7 +347,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		if (so == null)
 			throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, includeAllowableActions,
+		String user = context.getUsername();
+		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, user, includeAllowableActions,
 				includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
 
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
@@ -368,7 +370,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		if (so == null)
 			throw new CmisObjectNotFoundException("Unknown path: " + path);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, includeAllowableActions,
+		String user = context.getUsername();
+		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, user, includeAllowableActions,
 				includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
 
 		LOG.debug("stop getObjectByPath()");
@@ -391,8 +394,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 
 		// build properties collection
 		List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-		Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, so, fStoreManager,
-				requestedIds);
+		Properties props = PropertyCreationHelper
+				.getPropertiesFromObject(repositoryId, so, fStoreManager, requestedIds);
 		LOG.debug("stop getProperties()");
 		return props;
 	}
@@ -439,8 +442,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		else if (soSource instanceof Folder)
 			sourceFolder = (Folder) soSource;
 		else
-			throw new CmisNotSupportedException("Source " + sourceFolderId
-					+ " of a move operation must be a folder");
+			throw new CmisNotSupportedException("Source " + sourceFolderId + " of a move operation must be a folder");
 
 		boolean foundOldParent = false;
 		for (Folder parent : spo.getParents()) {
@@ -465,7 +467,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		// additional information:
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
+		String user = context.getUsername();
+		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
 				IncludeRelationships.NONE, null, false, false, extension);
 
 		return od;
@@ -490,7 +493,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		else if (so instanceof DocumentVersion) {
 			// something that is versionable check the proper status of the
 			// object
-			String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+			String user = context.getUsername();
 			testHasProperCheckedOutStatus(so, user);
 			content = (DocumentVersion) so;
 		} else
@@ -516,7 +519,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 
 		// if the object is a versionable object it must be checked-out
 		if (so instanceof VersionedDocument || so instanceof DocumentVersion) {
-			String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+			String user = context.getUsername();
 			// VersionedDocument verDoc =
 			// testIsNotCheckedOutBySomeoneElse(so, user);
 			testHasProperCheckedOutStatus(so, user);
@@ -548,18 +551,18 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 				if (propDef.isRequired())
 					throw new CmisConstraintException(
 							"updateProperties failed, following property can't be deleted, because it is required: "
-							+ key);
+									+ key);
 				oldProperties.remove(key);
 				hasUpdatedOtherProps = true;
 			} else {
 				if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT) && !isCheckedOut)
 					throw new CmisConstraintException(
 							"updateProperties failed, following property can't be updated, because it is not checked-out: "
-							+ key);
+									+ key);
 				else if (!propDef.getUpdatability().equals(Updatability.READWRITE))
 					throw new CmisConstraintException(
 							"updateProperties failed, following property can't be updated, because it is not writable: "
-							+ key);
+									+ key);
 				oldProperties.put(key, value);
 				hasUpdatedOtherProps = true;
 			}
@@ -577,7 +580,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 			for (Folder parent : parents) {
 				if (parent.hasChild(newName))
 					throw new CmisConstraintException(
-					"updateProperties failed, cannot rename because path already exists.");
+							"updateProperties failed, cannot rename because path already exists.");
 			}
 			so.rename((String) pd.getFirstValue()); // note: this does
 			// persist
@@ -586,7 +589,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 
 		if (hasUpdatedOtherProps) {
 			// set user, creation date, etc.
-			String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+			String user = context.getUsername();
 
 			if (user == null)
 				user = "unknown";
@@ -616,7 +619,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		// additional information:
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
+		String user = context.getUsername();
+		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
 				IncludeRelationships.NONE, null, false, false, extension);
 
 		LOG.debug("stop updateProperties()");
@@ -629,7 +633,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 
 	private StoredObject createDocumentIntern(String repositoryId, Properties properties, String folderId,
 			ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addACEs,
-			Acl removeACEs, ExtensionsData extension) {
+			Acl removeACEs, ExtensionsData extension, String user) {
 		checkRepositoryId(repositoryId);
 
 		ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
@@ -670,7 +674,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 		TypeValidator.validateProperties(typeDef, properties, true);
 
 		// set user, creation date, etc.
-		String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
 		if (user == null)
 			user = "unknown";
 
@@ -712,7 +715,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 	}
 
 	private Folder createFolderIntern(String repositoryId, Properties properties, String folderId,
-			List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
+			List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension, String user) {
 
 		// Attach the CallContext to a thread local context that can be accessed
 		// from everywhere
@@ -759,7 +762,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 			ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 			Folder newFolder = objStore.createFolder(folderName);
 			// set default system attributes
-			String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
 			if (user == null)
 				user = "unknown";
 			newFolder.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);

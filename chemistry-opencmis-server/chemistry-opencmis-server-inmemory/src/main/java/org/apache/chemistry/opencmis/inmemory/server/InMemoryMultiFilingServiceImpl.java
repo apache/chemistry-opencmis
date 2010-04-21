@@ -66,7 +66,8 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
+		String user = context.getUsername();
+		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
 				IncludeRelationships.NONE, null, false, false, extension);
 
 		LOG.debug("End addObjectToFolder()");
@@ -92,7 +93,8 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false,
+		String user = context.getUsername();
+		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
 				IncludeRelationships.NONE, null, false, false, extension);
 
 		LOG.debug("End removeObjectFromFolder()");

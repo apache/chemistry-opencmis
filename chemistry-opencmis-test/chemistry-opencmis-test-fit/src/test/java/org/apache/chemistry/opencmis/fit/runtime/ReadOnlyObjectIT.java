@@ -67,9 +67,9 @@ public class ReadOnlyObjectIT extends AbstractSessionTest {
 		Assert.assertEquals(ObjectType.FOLDER_BASETYPE_ID, folder.getBaseType().getId());
 
 		Assert.assertNotNull(folder.getCreatedBy());
-//		Assert.assertEquals(Fixture.getParamter().get(SessionParameter.USER), folder.getCreatedBy());
+		Assert.assertEquals(Fixture.getParamter().get(SessionParameter.USER), folder.getCreatedBy());
 		Assert.assertNotNull(folder.getLastModifiedBy());
-//		Assert.assertEquals(Fixture.getParamter().get(SessionParameter.USER), folder.getLastModifiedBy());
+		Assert.assertEquals(Fixture.getParamter().get(SessionParameter.USER), folder.getLastModifiedBy());
 		Assert.assertNotNull(folder.getLastModificationDate());
 		Assert.assertNotNull(folder.getCreationDate());
 

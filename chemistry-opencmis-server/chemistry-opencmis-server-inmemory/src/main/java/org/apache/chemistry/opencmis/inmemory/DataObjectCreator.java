@@ -50,7 +50,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class DataObjectCreator {
 
-	public static AllowableActions fillAllowableActions(ObjectStore objStore, StoredObject so) {
+	public static AllowableActions fillAllowableActions(ObjectStore objStore, StoredObject so, String user) {
 
 		boolean isFolder = so instanceof Folder;
 		boolean isDocument = so instanceof Content;
@@ -60,7 +60,6 @@ public class DataObjectCreator {
 		boolean isVersioned = so instanceof Version || so instanceof VersionedDocument;
 		boolean hasContent = so instanceof Content && ((Content) so).hasContent();
 
-		String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
 		if (so instanceof Version) {
 			isCheckedOut = ((Version) so).isPwc();
 			canCheckIn = isCheckedOut && ((Version) so).getParentDocument().getCheckedOutBy().equals(user);

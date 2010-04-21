@@ -261,7 +261,7 @@ public class ServiceFactory extends AbstractServicesFactory {
 		// Simulate a runtime context with configuration parameters
 		// Attach the CallContext to a thread local context that can be accessed
 		// from everywhere
-		RuntimeContext.attachCfg(new DummyCallContext());
+//		RuntimeContext.attachCfg(new DummyCallContext());
 
 		// Build the tree
 		RepositoryInfo rep = repSvc.getRepositoryInfo(repositoryId, null);

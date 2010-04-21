@@ -73,7 +73,8 @@ public class InMemoryService  extends AbstractCmisService {
 
 	private static final Log LOG = LogFactory.getLog(InMemoryService.class.getName());
 
-	private StoreManager fStoreManager; // singleton root of everything
+	private StoreManager storeManager; // singleton root of everything
+	private CallContext context;
 
 	private InMemoryRepositoryServiceImpl fRepSvc;
 	private InMemoryObjectServiceImpl fObjSvc;
@@ -83,7 +84,7 @@ public class InMemoryService  extends AbstractCmisService {
 	private InMemoryMultiFilingServiceImpl fMultiSvc;
 
 	public StoreManager getStoreManager() {
-		return fStoreManager;
+		return storeManager;
 	}
 
 	public InMemoryService(Map<String, String> parameters) {
@@ -93,16 +94,16 @@ public class InMemoryService  extends AbstractCmisService {
 		if (null == repositoryClassName)
 			repositoryClassName = StoreManagerImpl.class.getName();
 
-		if (null == fStoreManager)
-			fStoreManager = StoreManagerFactory.createInstance(repositoryClassName);
+		if (null == storeManager)
+			storeManager = StoreManagerFactory.createInstance(repositoryClassName);
 
 		String repositoryId = parameters.get(ConfigConstants.REPOSITORY_ID);
 
-		List<String> allAvailableRepositories = fStoreManager.getAllRepositoryIds();
+		List<String> allAvailableRepositories = storeManager.getAllRepositoryIds();
 
 		// init existing repositories
 		for (String existingRepId : allAvailableRepositories)
-			fStoreManager.initRepository(existingRepId);
+			storeManager.initRepository(existingRepId);
 
 		// create repository if configured as a startup parameter
 		if (null != repositoryId) {
@@ -110,7 +111,7 @@ public class InMemoryService  extends AbstractCmisService {
 				LOG.warn("Repostory " + repositoryId + " already exists and will not be created.");
 			else {
 				String typeCreatorClassName = parameters.get(ConfigConstants.TYPE_CREATOR_CLASS);
-				fStoreManager.createAndInitRepository(repositoryId, typeCreatorClassName);
+				storeManager.createAndInitRepository(repositoryId, typeCreatorClassName);
 			}
 		}
 
@@ -121,39 +122,46 @@ public class InMemoryService  extends AbstractCmisService {
 			fillRepositoryIfConfigured(parameters, repositoryId);
 
 		
-		fRepSvc = new InMemoryRepositoryServiceImpl(fStoreManager);
-		fNavSvc = new InMemoryNavigationServiceImpl(fStoreManager);
-		fObjSvc = new InMemoryObjectServiceImpl(fStoreManager);
-		fVerSvc = new InMemoryVersioningServiceImpl(fStoreManager, fObjSvc);
-		fDisSvc = new InMemoryDiscoveryServiceImpl(fStoreManager, fRepSvc, fNavSvc);
-	    fMultiSvc = new InMemoryMultiFilingServiceImpl(fStoreManager);
+		fRepSvc = new InMemoryRepositoryServiceImpl(storeManager);
+		fNavSvc = new InMemoryNavigationServiceImpl(storeManager);
+		fObjSvc = new InMemoryObjectServiceImpl(storeManager);
+		fVerSvc = new InMemoryVersioningServiceImpl(storeManager, fObjSvc);
+		fDisSvc = new InMemoryDiscoveryServiceImpl(storeManager, fRepSvc, fNavSvc);
+	    fMultiSvc = new InMemoryMultiFilingServiceImpl(storeManager);
 
 	}
 	
+	public CallContext getCallContext() {
+		return context;
+	}
+
+	public void setCallContext(CallContext context) {
+		this.context = context;
+	}
 
 	// --- repository service ---
 
 	@Override
 	public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-		return fRepSvc.getRepositoryInfos(null, extension);
+		return fRepSvc.getRepositoryInfos(getCallContext(), extension);
 	}
 
 	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-		return fRepSvc.getRepositoryInfo(null, repositoryId, extension);
+		return fRepSvc.getRepositoryInfo(getCallContext(), repositoryId, extension);
 	}
 
 	public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
 			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		return fRepSvc.getTypeChildren(null, repositoryId, typeId, includePropertyDefinitions, maxItems, skipCount, extension);
+		return fRepSvc.getTypeChildren(getCallContext(), repositoryId, typeId, includePropertyDefinitions, maxItems, skipCount, extension);
 	}
 
 	public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
-		return fRepSvc.getTypeDefinition(null, repositoryId, typeId, extension);
+		return fRepSvc.getTypeDefinition(getCallContext(), repositoryId, typeId, extension);
 	}
 
 	public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
 			Boolean includePropertyDefinitions, ExtensionsData extension) {
-		return fRepSvc.getTypeDescendants(null, repositoryId, typeId, depth, includePropertyDefinitions, extension);
+		return fRepSvc.getTypeDescendants(getCallContext(), repositoryId, typeId, depth, includePropertyDefinitions, extension);
 	}
 
 	// --- navigation service ---
@@ -161,49 +169,42 @@ public class InMemoryService  extends AbstractCmisService {
 	public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
 			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
 			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		return fNavSvc.getCheckedOutDocs(null, repositoryId, folderId, filter, orderBy, includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension, null);
+		return fNavSvc.getCheckedOutDocs(getCallContext(), repositoryId, folderId, filter, orderBy, includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension, null);
 	}
 
 	public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
 			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
 			Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		return fNavSvc.getChildren(null, repositoryId, folderId, filter, orderBy, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItems, skipCount, extension, null);
+		return fNavSvc.getChildren(getCallContext(), repositoryId, folderId, filter, orderBy, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItems, skipCount, extension, null);
 	}
 
 	public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
 			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-//		List<ObjectInFolderContainer> res =  super.getDescendants(repositoryId, folderId, depth, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension);
-		return fNavSvc.getDescendants(null, repositoryId, folderId, depth, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension, null);
-//		return res;
+		return fNavSvc.getDescendants(getCallContext(), repositoryId, folderId, depth, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension, null);
 	}
 
 	public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
-//		ObjectData res =  super.getFolderParent(repositoryId, folderId, filter, extension);
-		return fNavSvc.getFolderParent(null, repositoryId, folderId, filter, extension, null);
-//		return res;
+		return fNavSvc.getFolderParent(getCallContext(), repositoryId, folderId, filter, extension, null);
 	}
 
 	public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
 			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-//		List<ObjectInFolderContainer> res = super.getFolderTree(repositoryId, folderId, depth, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension);
-		return fNavSvc.getFolderTree(null, repositoryId, folderId, depth, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension, null);
-//		return res;
+		return fNavSvc.getFolderTree(getCallContext(), repositoryId, folderId, depth, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension, null);
 	}
 
 	public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
 			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
 			Boolean includeRelativePathSegment, ExtensionsData extension) {
-		return fNavSvc.getObjectParents(null, repositoryId, objectId, filter, includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment, extension, null);
+		return fNavSvc.getObjectParents(getCallContext(), repositoryId, objectId, filter, includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment, extension, null);
 	}
 
 	// --- object service ---
 
 	public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
 			VersioningState versioningState, List<String> policies, ExtensionsData extension) {
-//		super.create(repositoryId, properties, folderId, contentStream, versioningState, policies, extension);
-		ObjectData od = fObjSvc.create(null, repositoryId, properties, folderId, contentStream, versioningState, policies, extension, null);
+		ObjectData od = fObjSvc.create(getCallContext(), repositoryId, properties, folderId, contentStream, versioningState, policies, extension, null);
 		return od.getId();
 
 	}
@@ -211,148 +212,125 @@ public class InMemoryService  extends AbstractCmisService {
 	public String createDocument(String repositoryId, Properties properties, String folderId,
 			ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
 			Acl removeAces, ExtensionsData extension) {
-//		super.createDocument(repositoryId, properties, folderId, contentStream, versioningState, policies, addAces, removeAces, extension);
-		return fObjSvc.createDocument(null, repositoryId, properties, folderId, contentStream, versioningState, policies, addAces, removeAces, extension);
+		return fObjSvc.createDocument(getCallContext(), repositoryId, properties, folderId, contentStream, versioningState, policies, addAces, removeAces, extension);
 	}
 
 	public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
 			String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
 			ExtensionsData extension) {
-//		super.createDocumentFromSource(repositoryId, sourceId, properties, folderId, versioningState, policies, addAces, removeAces, extension);
-		return fObjSvc.createDocumentFromSource(null, repositoryId, sourceId, properties, folderId, versioningState, policies, addAces, removeAces, extension);
+		return fObjSvc.createDocumentFromSource(getCallContext(), repositoryId, sourceId, properties, folderId, versioningState, policies, addAces, removeAces, extension);
 	}
 
 	public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
 			Acl addAces, Acl removeAces, ExtensionsData extension) {
-//		super.createFolder(repositoryId, properties, folderId, policies, addAces, removeAces, extension);
-		return fObjSvc.createFolder(null, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+		return fObjSvc.createFolder(getCallContext(), repositoryId, properties, folderId, policies, addAces, removeAces, extension);
 	}
 
 	public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
 			Acl addAces, Acl removeAces, ExtensionsData extension) {
-//		super.createPolicy(repositoryId, properties, folderId, policies, addAces, removeAces, extension);
-		return fObjSvc.createPolicy(null, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+		return fObjSvc.createPolicy(getCallContext(), repositoryId, properties, folderId, policies, addAces, removeAces, extension);
 	}
 
 	public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
 			Acl removeAces, ExtensionsData extension) {
-//		super.createRelationship(repositoryId, properties, policies, addAces, removeAces, extension);
-		return fObjSvc.createRelationship(null, repositoryId, properties, policies, addAces, removeAces, extension);
+		return fObjSvc.createRelationship(getCallContext(), repositoryId, properties, policies, addAces, removeAces, extension);
 	}
 
 	public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
 			ExtensionsData extension) {
-//		super.deleteContentStream(repositoryId, objectId, changeToken, extension);
-		fObjSvc.deleteContentStream(null, repositoryId, objectId, changeToken, extension);
+		fObjSvc.deleteContentStream(getCallContext(), repositoryId, objectId, changeToken, extension);
 	}
 
 	public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
-//		super.deleteObject(repositoryId, objectId, allVersions, extension);
-		fObjSvc.deleteObjectOrCancelCheckOut(null, repositoryId, objectId, allVersions, extension);
+		fObjSvc.deleteObjectOrCancelCheckOut(getCallContext(), repositoryId, objectId, allVersions, extension);
 	}
 
 	public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
 			ExtensionsData extension) {
-//		super.deleteObjectOrCancelCheckOut(repositoryId, objectId, allVersions, extension);
-		fObjSvc.deleteObjectOrCancelCheckOut(null, repositoryId, objectId, allVersions, extension);
+		fObjSvc.deleteObjectOrCancelCheckOut(getCallContext(), repositoryId, objectId, allVersions, extension);
 	}
 
 	public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
 			UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
-//		super.deleteTree(repositoryId, folderId, allVersions, unfileObjects, continueOnFailure, extension);
-		return fObjSvc.deleteTree(null, repositoryId, folderId, allVersions, unfileObjects, continueOnFailure, extension);
+		return fObjSvc.deleteTree(getCallContext(), repositoryId, folderId, allVersions, unfileObjects, continueOnFailure, extension);
 	}
 
 	public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
-//		super.getAllowableActions(repositoryId, objectId, extension);
-		return fObjSvc.getAllowableActions(null, repositoryId, objectId, extension);
+		return fObjSvc.getAllowableActions(getCallContext(), repositoryId, objectId, extension);
 	}
 
 	public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
 			BigInteger length, ExtensionsData extension) {
-//		super.getContentStream(repositoryId, objectId, streamId, offset, length, extension);
-		return fObjSvc.getContentStream(null, repositoryId, objectId, streamId, offset, length, extension);
+		return fObjSvc.getContentStream(getCallContext(), repositoryId, objectId, streamId, offset, length, extension);
 	}
 
 	public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
 			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
 			Boolean includeAcl, ExtensionsData extension) {
-		return fObjSvc.getObject(null, repositoryId, objectId, filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, null);
+		return fObjSvc.getObject(getCallContext(), repositoryId, objectId, filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, null);
 	}
 
 	public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
 			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
 			Boolean includeAcl, ExtensionsData extension) {
-//		super.getObjectByPath(repositoryId, path, filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
-		return fObjSvc.getObjectByPath(null, repositoryId, path, filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, null);
+		return fObjSvc.getObjectByPath(getCallContext(), repositoryId, path, filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, null);
 	}
 
 	public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
-//		super.getProperties(repositoryId, objectId, filter, extension);
-		return fObjSvc.getProperties(null, repositoryId, objectId, filter, extension);
+		return fObjSvc.getProperties(getCallContext(), repositoryId, objectId, filter, extension);
 	}
 
 	public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
 			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-//		super.getRenditions(repositoryId, objectId, renditionFilter, maxItems, skipCount, extension);
-		return fObjSvc.getRenditions(null, repositoryId, objectId, renditionFilter, maxItems, skipCount, extension);		
+		return fObjSvc.getRenditions(getCallContext(), repositoryId, objectId, renditionFilter, maxItems, skipCount, extension);		
 	}
 
 	public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
 			ExtensionsData extension) {
-//		super.moveObject(repositoryId, objectId, targetFolderId, sourceFolderId, extension);
-		fObjSvc.moveObject(null, repositoryId, objectId, targetFolderId, sourceFolderId, extension, null);
+		fObjSvc.moveObject(getCallContext(), repositoryId, objectId, targetFolderId, sourceFolderId, extension, null);
 	}
 
 	public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
 			Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
-//		super.setContentStream(repositoryId, objectId, overwriteFlag, changeToken, contentStream, extension);
-		fObjSvc.setContentStream(null, repositoryId, objectId, overwriteFlag, changeToken, contentStream, extension);
+		fObjSvc.setContentStream(getCallContext(), repositoryId, objectId, overwriteFlag, changeToken, contentStream, extension);
 	}
 
 	public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
 			Properties properties, ExtensionsData extension) {
-//		super.updateProperties(repositoryId, objectId, changeToken, properties, extension);
-		fObjSvc.updateProperties(null, repositoryId, objectId, changeToken, properties, null, extension, null);
+		fObjSvc.updateProperties(getCallContext(), repositoryId, objectId, changeToken, properties, null, extension, null);
 	}
 
 	// --- versioning service ---
 
 	public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
-//		super.cancelCheckOut(repositoryId, objectId, extension);
-		fVerSvc.cancelCheckOut(null, repositoryId, objectId, extension);
+		fVerSvc.cancelCheckOut(getCallContext(), repositoryId, objectId, extension);
 	}
 
 	public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
 			ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
 			ExtensionsData extension) {
-//		super.checkIn(repositoryId, objectId, major, properties, contentStream, checkinComment, policies, addAces, removeAces, extension);
-		fVerSvc.checkIn(null, repositoryId, objectId, major, properties, contentStream, checkinComment, policies, addAces, removeAces, extension, null);
+		fVerSvc.checkIn(getCallContext(), repositoryId, objectId, major, properties, contentStream, checkinComment, policies, addAces, removeAces, extension, null);
 	}
 
 	public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
 			Holder<Boolean> contentCopied) {
-//		super.checkOut(repositoryId, objectId, extension, contentCopied);
-		fVerSvc.checkOut(null, repositoryId, objectId, extension, contentCopied, null);
+		fVerSvc.checkOut(getCallContext(), repositoryId, objectId, extension, contentCopied, null);
 	}
 
 	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
 			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
 			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
-//		super.getObjectOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
-		return fVerSvc.getObjectOfLatestVersion(null, repositoryId, versionSeriesId, major, filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, null);
+		return fVerSvc.getObjectOfLatestVersion(getCallContext(), repositoryId, versionSeriesId, major, filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, null);
 	}
 
 	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
 			Boolean major, String filter, ExtensionsData extension) {
-//		super.getPropertiesOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter, extension);
-		return fVerSvc.getPropertiesOfLatestVersion(null, repositoryId, versionSeriesId, major, filter, extension);
+		return fVerSvc.getPropertiesOfLatestVersion(getCallContext(), repositoryId, versionSeriesId, major, filter, extension);
 	}
 
 	public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
 			Boolean includeAllowableActions, ExtensionsData extension) {
-//		super.getAllVersions(repositoryId, objectId, versionSeriesId, filter, includeAllowableActions, extension);
-		return fVerSvc.getAllVersions(null, repositoryId, versionSeriesId, filter, includeAllowableActions, extension, null);
+		return fVerSvc.getAllVersions(getCallContext(), repositoryId, versionSeriesId, filter, includeAllowableActions, extension, null);
 	}
 
 	// --- discovery service ---
@@ -372,13 +350,11 @@ public class InMemoryService  extends AbstractCmisService {
 
 	public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
 			ExtensionsData extension) {
-//		super.addObjectToFolder(repositoryId, objectId, folderId, allVersions, extension);
-		fMultiSvc.addObjectToFolder(null, repositoryId, objectId, folderId, allVersions, extension, null);
+		fMultiSvc.addObjectToFolder(getCallContext(), repositoryId, objectId, folderId, allVersions, extension, null);
 	}
 
 	public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
-//		super.removeObjectFromFolder(repositoryId, objectId, folderId, extension);
-		fMultiSvc.removeObjectFromFolder(null, repositoryId, objectId, folderId, extension, null);
+		fMultiSvc.removeObjectFromFolder(getCallContext(), repositoryId, objectId, folderId, extension, null);
 	}
 
 	// --- relationship service ---
@@ -522,7 +498,7 @@ public class InMemoryService  extends AbstractCmisService {
 		// Simulate a runtime context with configuration parameters
 		// Attach the CallContext to a thread local context that can be accessed
 		// from everywhere
-		RuntimeContext.attachCfg(new DummyCallContext());
+//		RuntimeContext.attachCfg(new DummyCallContext());
 
 		// Build the tree
 		RepositoryInfo rep = repSvc.getRepositoryInfo(repositoryId, null);

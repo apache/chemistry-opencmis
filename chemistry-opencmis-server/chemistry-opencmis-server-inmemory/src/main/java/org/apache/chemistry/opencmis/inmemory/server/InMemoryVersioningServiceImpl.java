@@ -63,7 +63,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
 	public void cancelCheckOut(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
 
 		StoredObject so = checkStandardParameters(repositoryId, objectId);
-		String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+		String user = context.getUsername();
 		VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
 		verDoc.cancelCheckOut(user);
@@ -74,7 +74,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
 			Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
 		StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
-		String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+		String user = context.getUsername();
 		VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
 		DocumentVersion pwc = verDoc.getPwc();
@@ -91,8 +91,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
 		// additional information:
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false, IncludeRelationships.NONE,
-				null, false, false, extension);
+		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+				IncludeRelationships.NONE, null, false, false, extension);
 
 		return od;
 	}
@@ -123,7 +123,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
 		if (verDoc.isCheckedOut())
 			throw new CmisUpdateConflictException("Document " + objectId.getValue() + " is already checked out.");
 
-		String user = RuntimeContext.getRuntimeConfigValue(CallContext.USERNAME);
+		String user = context.getUsername();
 		checkHasUser(user);
 
 		DocumentVersion pwc = verDoc.checkOut(content, user);
@@ -133,8 +133,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
 		// additional information:
 		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, false, IncludeRelationships.NONE,
-				null, false, false, extension);
+		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+				IncludeRelationships.NONE, null, false, false, extension);
 
 		return od;
 	}

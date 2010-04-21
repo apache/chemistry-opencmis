@@ -96,7 +96,7 @@ public class AbstractServiceTst /* extends TestCase */{
 		fTestCallContext = new DummyCallContext();
 		// Attach a standatrd CallContext to a thread before the services are
 		// initialized.
-		RuntimeContext.attachCfg(fTestCallContext);
+//		RuntimeContext.attachCfg(fTestCallContext);
 
 		if (fUseClientProviderInterface)
 			initializeUsingLocalBinding(parameters);

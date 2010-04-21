@@ -39,7 +39,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 	private static CallContext OVERRIDE_CTX;
 
 	private InMemoryService inMemoryService;
-	private CmisService wrapperService;
+//	private CmisServiceWrapper<InMemoryService> wrapperService;
+	private ThreadLocal<CmisServiceWrapper<InMemoryService>> threadLocalService = new ThreadLocal<CmisServiceWrapper<InMemoryService>>();
 	private boolean fUseOverrideCtx = false;
 	
 	@Override
@@ -48,8 +49,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
 
 		inMemoryService = new InMemoryService(parameters);
-		wrapperService = new CmisServiceWrapper(inMemoryService, DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES,
-				DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+//		wrapperService = new CmisServiceWrapper<InMemoryService>(inMemoryService, DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES,
+//				DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
 		String overrideCtx = parameters.get(ConfigConstants.OVERRIDE_CALL_CONTEXT);
 		if (null != overrideCtx)
 			fUseOverrideCtx = true;
@@ -63,23 +64,34 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 	
 	@Override
 	public CmisService getService(CallContext context) {
-		try {
-			LOG.debug("start getService()");
+		LOG.debug("start getService()");
 
-			// Attach the CallContext to a thread local context that can be
-			// accessed from everywhere
-			// Some unit tests set their own context. So if we find one then we use
-			// this one and ignore the provided one. Otherwise we set a new context.
-			if (fUseOverrideCtx && null != OVERRIDE_CTX) {
-				RuntimeContext.attachCfg(OVERRIDE_CTX);
-			} else {
-				RuntimeContext.attachCfg(context);				
-			}
-			LOG.debug("stop getService()");
-			return inMemoryService; //wrapperService;
-			
-		} finally {
-//			RuntimeContext.remove();
+		// Attach the CallContext to a thread local context that can be
+		// accessed from everywhere
+		// Some unit tests set their own context. So if we find one then we use
+		// this one and ignore the provided one. Otherwise we set a new context.
+		if (fUseOverrideCtx && null != OVERRIDE_CTX) {
+			context = OVERRIDE_CTX;
 		}
+		
+		CmisServiceWrapper<InMemoryService> wrapperService = threadLocalService.get();
+		if (wrapperService == null) {
+			wrapperService = new CmisServiceWrapper<InMemoryService>(inMemoryService, DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES,
+					DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+			threadLocalService.set(wrapperService);
+		}
+
+		wrapperService.getWrappedService().setCallContext(context);
+
+		LOG.debug("stop getService()");
+		return inMemoryService; //wrapperService;
+			
 	}
+	
+	@Override
+	public void destroy() {
+		threadLocalService = null;
+//		RuntimeContext.remove();
+	}
+	
 }
