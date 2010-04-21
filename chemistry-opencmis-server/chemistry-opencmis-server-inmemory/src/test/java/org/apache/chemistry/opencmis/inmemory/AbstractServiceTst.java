@@ -38,7 +38,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFact
 import org.apache.chemistry.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo;
 import org.apache.chemistry.opencmis.inmemory.clientprovider.CmisInMemoryProvider;
 import org.apache.chemistry.opencmis.inmemory.clientprovider.DummyCallContext;
-import org.apache.chemistry.opencmis.inmemory.server.RuntimeContext;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceFactoryImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.commons.logging.Log;
