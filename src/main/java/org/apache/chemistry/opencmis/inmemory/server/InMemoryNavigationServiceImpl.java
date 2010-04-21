@@ -87,19 +87,20 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 		else
 			checkRepositoryId(repositoryId);
 
+		String user = context.getUsername();
 		if (null == folderId) {
-			List<VersionedDocument> checkedOuts = fStoreManager.getObjectStore(repositoryId)
-			.getCheckedOutDocuments(orderBy);
+			List<VersionedDocument> checkedOuts = fStoreManager.getObjectStore(repositoryId).getCheckedOutDocuments(
+					orderBy);
 			for (VersionedDocument checkedOut : checkedOuts) {
-				ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, checkedOut, filter,
+				ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, checkedOut, filter, user,
 						includeAllowableActions, includeRelationships, renditionFilter, false, false, extension);
 				fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, checkedOut, objectInfos);
 				odList.add(od);
 			}
 		} else {
 			ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
-					includeAllowableActions, includeRelationships, renditionFilter, false, -1, -1, false,
-					objectInfos);
+					includeAllowableActions, includeRelationships, renditionFilter, false, -1, -1, false, objectInfos,
+					user);
 			for (ObjectInFolderData child : children.getObjects()) {
 				ObjectData obj = child.getObject();
 				StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(obj.getId());
@@ -128,9 +129,10 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 
 		int maxItemsInt = maxItems == null ? -1 : maxItems.intValue();
 		int skipCountInt = skipCount == null ? -1 : skipCount.intValue();
-		ObjectInFolderList res = getChildrenIntern(repositoryId, folderId, filter, orderBy,
-				includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItemsInt,
-				skipCountInt, false, objectInfos);
+		String user = context.getUsername();
+		ObjectInFolderList res = getChildrenIntern(repositoryId, folderId, filter, orderBy, includeAllowableActions,
+				includeRelationships, renditionFilter, includePathSegment, maxItemsInt, skipCountInt, false,
+				objectInfos, user);
 		LOG.debug("stop getChildren()");
 		return res;
 	}
@@ -154,9 +156,10 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 			levels = depth.intValue();
 
 		int level = 0;
+		String user = context.getUsername();
 		List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
 				includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, level, levels,
-				false, objectInfos);
+				false, objectInfos, user);
 
 		LOG.debug("stop getDescendants()");
 		return result;
@@ -200,9 +203,10 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 
 		int levels = depth == null ? 2 : depth.intValue();
 		int level = 0;
+		String user = context.getUsername();
 		List<ObjectInFolderContainer> result = getDescendantsIntern(repositoryId, folderId, filter,
 				includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, level, levels,
-				true, objectInfos);
+				true, objectInfos, user);
 
 		LOG.debug("stop getFolderTree()");
 		return result;
@@ -243,7 +247,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 
 	private ObjectInFolderList getChildrenIntern(String repositoryId, String folderId, String filter, String orderBy,
 			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			Boolean includePathSegments, int maxItems, int skipCount, boolean folderOnly, ObjectInfoHolder objectInfos) {
+			Boolean includePathSegments, int maxItems, int skipCount, boolean folderOnly, ObjectInfoHolder objectInfos,
+			String user) {
 
 		ObjectInFolderListImpl result = new ObjectInFolderListImpl();
 		List<ObjectInFolderData> folderList = new ArrayList<ObjectInFolderData>();
@@ -270,7 +275,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 			if (includePathSegments != null && includePathSegments)
 				oifd.setPathSegment(spo.getName());
 			if (includeAllowableActions != null && includeAllowableActions) {
-				AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(fs, spo);
+				AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(fs, spo, user);
 				objectData.setAllowableActions(allowableActions);
 			}
 			if (includeRelationships != null && includeRelationships != IncludeRelationships.NONE) {
@@ -278,9 +283,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 			}
 			if (renditionFilter != null && renditionFilter.length() > 0) {
 				objectData.setRelationships(null /*
-				 * f.getRenditions(renditionFilter
-				 * )
-				 */);
+												 * f.getRenditions(renditionFilter
+												 * )
+												 */);
 			}
 
 			Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, spo, fStoreManager,
@@ -300,7 +305,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 
 	private List<ObjectInFolderContainer> getDescendantsIntern(String repositoryId, String folderId, String filter,
 			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			Boolean includePathSegments, int level, int maxLevels, boolean folderOnly, ObjectInfoHolder objectInfos) {
+			Boolean includePathSegments, int level, int maxLevels, boolean folderOnly, ObjectInfoHolder objectInfos,
+			String user) {
 
 		// log.info("getDescendantsIntern: " + folderId + ", in level " + level
 		// + ", max levels " + maxLevels);
@@ -310,7 +316,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 			String orderBy = PropertyIds.NAME;
 			ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
 					includeAllowableActions, includeRelationships, renditionFilter, includePathSegments, 1000, 0,
-					folderOnly, objectInfos);
+					folderOnly, objectInfos, user);
 
 			childrenOfFolderId = new ArrayList<ObjectInFolderContainer>();
 			if (null != children) {
@@ -320,7 +326,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 					String childId = child.getObject().getId();
 					List<ObjectInFolderContainer> subChildren = getDescendantsIntern(repositoryId, childId, filter,
 							includeAllowableActions, includeRelationships, renditionFilter, includePathSegments,
-							level + 1, maxLevels, folderOnly, objectInfos);
+							level + 1, maxLevels, folderOnly, objectInfos, user);
 
 					oifc.setObject(child);
 					if (null != subChildren)
@@ -395,7 +401,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
 	void copyFilteredProperties(String repositoryId, StoredObject so, String filter, ObjectDataImpl objData) {
 		List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
 		Properties props = PropertyCreationHelper
-		.getPropertiesFromObject(repositoryId, so, fStoreManager, requestedIds);
+				.getPropertiesFromObject(repositoryId, so, fStoreManager, requestedIds);
 		objData.setProperties(props);
 	}
 

@@ -231,7 +231,7 @@ public class PropertyCreationHelper {
 		return props;
 	}
 
-	public static ObjectData getObjectData(StoreManager sm, StoredObject so, String filter,
+	public static ObjectData getObjectData(StoreManager sm, StoredObject so, String filter, String user,
 			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
 			Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
@@ -247,7 +247,7 @@ public class PropertyCreationHelper {
 		// fill output object
 		if (null != includeAllowableActions && includeAllowableActions) {
 			ObjectStore objectStore = sm.getObjectStore(so.getRepositoryId());
-			AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so);
+			AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so, user);
 			od.setAllowableActions(allowableActions);
 		}
 		if (null != includeACL && includeACL)
