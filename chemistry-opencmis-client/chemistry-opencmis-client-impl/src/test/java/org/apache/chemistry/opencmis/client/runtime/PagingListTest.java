@@ -55,12 +55,15 @@ public class PagingListTest {
                     hasMoreItems = Boolean.FALSE;
                 }
 
+                //. simulate rolling total number of items (for repositories that don't necessarily know up front)
+                int totalItems = (to == data.length) ? to : to + 1;
+                
                 for (int i = from; i < to; i++) {
                     page.add(data[i]);
                 }
 
                 PageFetchResult<String> result = new AbstractPageFetch.PageFetchResult<String>(page, BigInteger
-                        .valueOf(data.length), hasMoreItems);
+                        .valueOf(totalItems), hasMoreItems);
 
                 return result;
             }
@@ -113,20 +116,28 @@ public class PagingListTest {
         this.loopSkip(this.data0, 0, 5);
     }
 
+    @Test
+    public void totalNumItems() {
+        int pageSize = 5;
+        PagingIterable<String> p = this.getIterable(this.data10, pageSize);
+        assertNotNull(p);
+        PagingIterator<String> i = (PagingIterator<String>) p.iterator();
+        assertNotNull(i);
+        assertEquals(pageSize + 1, i.getTotalNumItems());
+        for (int idx = 0; i.hasNext() && idx < (pageSize + 1); idx++) {
+            i.next();
+        }
+        assertEquals(pageSize + 1, i.getPosition());
+        assertEquals(this.data10.length, i.getTotalNumItems());
+    }
+    
     private void loopSkip(String[] data, int skipCount, int pageSize) {
         System.out.println("\nloopSkip (" + skipCount + ", " + pageSize + ")");
 
         PagingIterable<String> p = this.getIterable(data, pageSize);
         assertNotNull(p);
-        PagingIterator<String> i = (PagingIterator<String>) p.iterator();
-        assertNotNull(i);
-        assertEquals(data.length, i.getTotalNumItems());
-
         PagingIterable<String> pp = p.skipTo(skipCount);
         assertNotNull(pp);
-        PagingIterator<String> ii = (PagingIterator<String>) pp.iterator();
-        assertNotNull(ii);
-        assertEquals(data.length, ii.getTotalNumItems());
 
         int count = 0;
         for (String s : pp) {
@@ -144,9 +155,6 @@ public class PagingListTest {
 
         PagingIterable<String> p = this.getIterable(data, pageSize);
         assertNotNull(p);
-        PagingIterator<String> i = (PagingIterator<String>) p.iterator();
-        assertNotNull(i);
-        assertEquals(data.length, i.getTotalNumItems());
 
         int count = 0;
         for (String s : p) {
