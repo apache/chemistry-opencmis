@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.PagingList;
+import org.apache.chemistry.opencmis.client.api.PagingIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -45,8 +45,9 @@ import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
+import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
 import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
+import org.apache.chemistry.opencmis.client.runtime.util.DefaultPagingIterable;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
@@ -54,6 +55,8 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.api.NavigationService;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.RepositoryService;
@@ -73,8 +76,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PersistentSessionImpl implements Session, Serializable {
 
-	private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false, true, false,
-			IncludeRelationships.NONE, null, true, null, true);
+	private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(
+			null, false, true, false, IncludeRelationships.NONE, null, true,
+			null, true);
 
 	private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
 	static {
@@ -120,7 +124,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 	/*
 	 * helper factory (non serializable)
 	 */
-	private final ObjectFactory objectFactory = PersistentObjectFactoryImpl.newInstance(this);
+	private final ObjectFactory objectFactory = PersistentObjectFactoryImpl
+			.newInstance(this);
 
 	/**
 	 * required for serialization
@@ -135,7 +140,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 		PersistentSessionImpl.log.info("Session Parameters: " + parameters);
 
 		this.locale = this.determineLocale(parameters);
-		PersistentSessionImpl.log.info("Session Locale: " + this.locale.toString());
+		PersistentSessionImpl.log.info("Session Locale: "
+				+ this.locale.toString());
 
 		int cacheSize = this.determineCacheSize(parameters);
 
@@ -144,7 +150,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 		} else {
 			this.cache = CacheImpl.newInstance(cacheSize);
 		}
-		PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
+		PersistentSessionImpl.log.info("Session Cache Size: "
+				+ this.cache.getCacheSize());
 	}
 
 	private int determineCacheSize(Map<String, String> parameters) {
@@ -162,8 +169,10 @@ public class PersistentSessionImpl implements Session, Serializable {
 	private Locale determineLocale(Map<String, String> parameters) {
 		Locale locale = null;
 
-		String language = parameters.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
-		String country = parameters.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
+		String language = parameters
+				.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
+		String country = parameters
+				.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
 		String variant = parameters.get(SessionParameter.LOCALE_VARIANT);
 
 		if (variant != null) {
@@ -200,7 +209,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 			} else {
 				this.cache = CacheImpl.newInstance(cacheSize);
 			}
-			PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
+			PersistentSessionImpl.log.info("Session Cache Size: "
+					+ this.cache.getCacheSize());
 
 			/*
 			 * clear provider cache
@@ -233,7 +243,7 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * 
 	 * @see org.apache.opencmis.client.api.Session#getCheckedOutDocs(int)
 	 */
-	public PagingList<Document> getCheckedOutDocs(int itemsPerPage) {
+	public PagingIterable<Document> getCheckedOutDocs(int itemsPerPage) {
 		return getCheckedOutDocs(getDefaultContext(), itemsPerPage);
 	}
 
@@ -243,49 +253,57 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * @seeorg.apache.opencmis.client.api.Session#getCheckedOutDocs(org.apache.
 	 * opencmis.client.api. OperationContext, int)
 	 */
-	public PagingList<Document> getCheckedOutDocs(OperationContext context, final int itemsPerPage) {
+	public PagingIterable<Document> getCheckedOutDocs(OperationContext context,
+			final int itemsPerPage) {
 		if (itemsPerPage < 1) {
 			throw new IllegalArgumentException("itemsPerPage must be > 0!");
 		}
 
-		final NavigationService nagivationService = getBinding().getNavigationService();
+		final NavigationService navigationService = getBinding()
+				.getNavigationService();
 		final ObjectFactory objectFactory = getObjectFactory();
 		final OperationContext ctxt = new OperationContextImpl(context);
 
-		return new AbstractPagingList<Document>() {
+		return new DefaultPagingIterable<Document>(
+				new AbstractPageFetch<Document>() {
 
-			@Override
-			protected FetchResult fetchPage(int pageNumber) {
-				int skipCount = pageNumber * getMaxItemsPerPage();
+					@Override
+					protected AbstractPageFetch.PageFetchResult<Document> fetchPage(
+							long skipCount) {
 
-				// get all checked out documents
-				ObjectList checkedOutDocs = nagivationService.getCheckedOutDocs(getRepositoryId(), null, ctxt
-						.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-						.getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger
-						.valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
+						// get all checked out documents
+						ObjectList checkedOutDocs = navigationService
+								.getCheckedOutDocs(getRepositoryId(), null,
+										ctxt.getFilterString(), ctxt
+												.getOrderBy(), ctxt
+												.isIncludeAllowableActions(),
+										ctxt.getIncludeRelationships(), ctxt
+												.getRenditionFilterString(),
+										BigInteger.valueOf(itemsPerPage),
+										BigInteger.valueOf(skipCount), null);
 
-				// convert objects
-				List<Document> page = new ArrayList<Document>();
-				if (checkedOutDocs.getObjects() != null) {
-					for (ObjectData objectData : checkedOutDocs.getObjects()) {
-						CmisObject doc = objectFactory.convertObject(objectData, ctxt);
-						if (!(doc instanceof Document)) {
-							// should not happen...
-							continue;
+						// convert objects
+						List<Document> page = new ArrayList<Document>();
+						if (checkedOutDocs.getObjects() != null) {
+							for (ObjectData objectData : checkedOutDocs
+									.getObjects()) {
+								CmisObject doc = objectFactory.convertObject(
+										objectData, ctxt);
+								if (!(doc instanceof Document)) {
+									// should not happen...
+									continue;
+								}
+
+								page.add((Document) doc);
+							}
 						}
 
-						page.add((Document) doc);
+						return new AbstractPageFetch.PageFetchResult<Document>(
+								page, checkedOutDocs.getNumItems(),
+								checkedOutDocs.hasMoreItems()) {
+						};
 					}
-				}
-
-				return new FetchResult(page, checkedOutDocs.getNumItems(), checkedOutDocs.hasMoreItems());
-			}
-
-			@Override
-			public int getMaxItemsPerPage() {
-				return itemsPerPage;
-			}
-		};
+				});
 	}
 
 	/*
@@ -295,7 +313,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * org.apache.opencmis.client.api.Session#getContentChanges(java.lang.String
 	 * , int)
 	 */
-	public PagingList<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage) {
+	public PagingIterable<ChangeEvent> getContentChanges(String changeLogToken,
+			int itemsPerPage) {
 		throw new CmisRuntimeException("not implemented");
 	}
 
@@ -337,11 +356,14 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.util.Set,
 	 * boolean, java.lang.String, boolean)
 	 */
-	public OperationContext createOperationContext(Set<String> filter, boolean includeAcls,
-			boolean includeAllowableActions, boolean includePolicies, IncludeRelationships includeRelationships,
-			Set<String> renditionFilter, boolean includePathSegments, String orderBy, boolean cacheEnabled) {
-		return new OperationContextImpl(filter, includeAcls, includeAllowableActions, includePolicies,
-				includeRelationships, renditionFilter, includePathSegments, orderBy, cacheEnabled);
+	public OperationContext createOperationContext(Set<String> filter,
+			boolean includeAcls, boolean includeAllowableActions,
+			boolean includePolicies, IncludeRelationships includeRelationships,
+			Set<String> renditionFilter, boolean includePathSegments,
+			String orderBy, boolean cacheEnabled) {
+		return new OperationContextImpl(filter, includeAcls,
+				includeAllowableActions, includePolicies, includeRelationships,
+				renditionFilter, includePathSegments, orderBy, cacheEnabled);
 	}
 
 	/*
@@ -385,16 +407,20 @@ public class PersistentSessionImpl implements Session, Serializable {
 
 		// ask the cache first
 		if (context.isCacheEnabled()) {
-			result = this.cache.getById(objectId.getId(), context.getCacheKey());
+			result = this.cache
+					.getById(objectId.getId(), context.getCacheKey());
 			if (result != null) {
 				return result;
 			}
 		}
 
 		// get the object
-		ObjectData objectData = this.binding.getObjectService().getObject(getRepositoryId(), objectId.getId(),
-				context.getFilterString(), context.isIncludeAllowableActions(), context.getIncludeRelationships(),
-				context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(), null);
+		ObjectData objectData = this.binding.getObjectService().getObject(
+				getRepositoryId(), objectId.getId(), context.getFilterString(),
+				context.isIncludeAllowableActions(),
+				context.getIncludeRelationships(),
+				context.getRenditionFilterString(),
+				context.isIncludePolicies(), context.isIncludeAcls(), null);
 
 		result = getObjectFactory().convertObject(objectData, context);
 
@@ -442,9 +468,14 @@ public class PersistentSessionImpl implements Session, Serializable {
 		}
 
 		// get the object
-		ObjectData objectData = this.binding.getObjectService().getObjectByPath(getRepositoryId(), path,
-				context.getFilterString(), context.isIncludeAllowableActions(), context.getIncludeRelationships(),
-				context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(), null);
+		ObjectData objectData = this.binding.getObjectService()
+				.getObjectByPath(getRepositoryId(), path,
+						context.getFilterString(),
+						context.isIncludeAllowableActions(),
+						context.getIncludeRelationships(),
+						context.getRenditionFilterString(),
+						context.isIncludePolicies(), context.isIncludeAcls(),
+						null);
 
 		result = getObjectFactory().convertObject(objectData, context);
 
@@ -483,6 +514,11 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * (non-Javadoc)
 	 * 
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @seeorg.apache.opencmis.client.api.Session#getRootFolder(org.apache.opencmis
 	 * .client.api. OperationContext)
 	 */
@@ -491,7 +527,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 
 		CmisObject rootFolder = getObject(createObjectId(rootFolderId), context);
 		if (!(rootFolder instanceof Folder)) {
-			throw new CmisRuntimeException("Root folder object is not a folder!");
+			throw new CmisRuntimeException(
+					"Root folder object is not a folder!");
 		}
 
 		return (Folder) rootFolder;
@@ -504,41 +541,45 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * org.apache.opencmis.client.api.Session#getTypeChildren(java.lang.String,
 	 * boolean, int)
 	 */
-	public PagingList<ObjectType> getTypeChildren(final String typeId, final boolean includePropertyDefinitions,
-			final int itemsPerPage) {
+	public PagingIterable<ObjectType> getTypeChildren(final String typeId,
+			final boolean includePropertyDefinitions, final int itemsPerPage) {
 		if (itemsPerPage < 1) {
 			throw new IllegalArgumentException("itemsPerPage must be > 0!");
 		}
 
-		final String repositoryId = getRepositoryId();
-		final RepositoryService repositoryService = getBinding().getRepositoryService();
+		final RepositoryService repositoryService = getBinding()
+				.getRepositoryService();
+		final ObjectFactory objectFactory = this.getObjectFactory();
+		final OperationContext ctxt = new OperationContextImpl(context);
 
-		// set up PagingList object
-		return new AbstractPagingList<ObjectType>() {
+		return new DefaultPagingIterable<ObjectType>(
+				new AbstractPageFetch<ObjectType>() {
 
-			@Override
-			protected FetchResult fetchPage(int pageNumber) {
-				int skipCount = pageNumber * getMaxItemsPerPage();
+					@Override
+					protected AbstractPageFetch.PageFetchResult<ObjectType> fetchPage(
+							long skipCount) {
 
-				// fetch the data
-				TypeDefinitionList tdl = repositoryService.getTypeChildren(repositoryId, typeId,
-						includePropertyDefinitions, BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
-								.valueOf(skipCount), null);
+						// fetch the data
+						TypeDefinitionList tdl = repositoryService
+								.getTypeChildren(PersistentSessionImpl.this
+										.getRepositoryId(), typeId,
+										includePropertyDefinitions, BigInteger
+												.valueOf(itemsPerPage),
+										BigInteger.valueOf(skipCount), null);
 
-				// convert type definitions
-				List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
-				for (TypeDefinition typeDefinition : tdl.getList()) {
-					page.add(objectFactory.convertTypeDefinition(typeDefinition));
-				}
+						// convert type definitions
+						List<ObjectType> page = new ArrayList<ObjectType>(tdl
+								.getList().size());
+						for (TypeDefinition typeDefinition : tdl.getList()) {
+							page.add(objectFactory
+									.convertTypeDefinition(typeDefinition));
+						}
 
-				return new FetchResult(page, tdl.getNumItems(), tdl.hasMoreItems());
-			}
-
-			@Override
-			public int getMaxItemsPerPage() {
-				return itemsPerPage;
-			}
-		};
+						return new AbstractPageFetch.PageFetchResult<ObjectType>(
+								page, tdl.getNumItems(), tdl.hasMoreItems()) {
+						};
+					}
+				});
 	}
 
 	/*
@@ -549,8 +590,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * )
 	 */
 	public ObjectType getTypeDefinition(String typeId) {
-		TypeDefinition typeDefinition = getBinding().getRepositoryService().getTypeDefinition(getRepositoryId(),
-				typeId, null);
+		TypeDefinition typeDefinition = getBinding().getRepositoryService()
+				.getTypeDefinition(getRepositoryId(), typeId, null);
 		return objectFactory.convertTypeDefinition(typeDefinition);
 	}
 
@@ -561,9 +602,12 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * org.apache.opencmis.client.api.Session#getTypeDescendants(java.lang.String
 	 * , int, boolean)
 	 */
-	public List<Tree<ObjectType>> getTypeDescendants(String typeId, int depth, boolean includePropertyDefinitions) {
-		List<TypeDefinitionContainer> descendants = getBinding().getRepositoryService().getTypeDescendants(
-				getRepositoryId(), typeId, BigInteger.valueOf(depth), includePropertyDefinitions, null);
+	public List<Tree<ObjectType>> getTypeDescendants(String typeId, int depth,
+			boolean includePropertyDefinitions) {
+		List<TypeDefinitionContainer> descendants = getBinding()
+				.getRepositoryService().getTypeDescendants(getRepositoryId(),
+						typeId, BigInteger.valueOf(depth),
+						includePropertyDefinitions, null);
 
 		return convertTypeDescendants(descendants);
 	}
@@ -572,12 +616,15 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * Converts provider <code>TypeDefinitionContainer</code> to API
 	 * <code>Container</code>.
 	 */
-	private List<Tree<ObjectType>> convertTypeDescendants(List<TypeDefinitionContainer> descendantsList) {
+	private List<Tree<ObjectType>> convertTypeDescendants(
+			List<TypeDefinitionContainer> descendantsList) {
 		List<Tree<ObjectType>> result = new ArrayList<Tree<ObjectType>>();
 
 		for (TypeDefinitionContainer container : descendantsList) {
-			ObjectType objectType = objectFactory.convertTypeDefinition(container.getTypeDefinition());
-			List<Tree<ObjectType>> children = convertTypeDescendants(container.getChildren());
+			ObjectType objectType = objectFactory
+					.convertTypeDefinition(container.getTypeDefinition());
+			List<Tree<ObjectType>> children = convertTypeDescendants(container
+					.getChildren());
 
 			result.add(new ContainerImpl<ObjectType>(objectType, children));
 		}
@@ -591,8 +638,10 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * @see org.apache.opencmis.client.api.Session#query(java.lang.String,
 	 * boolean, int)
 	 */
-	public PagingList<QueryResult> query(final String statement, final boolean searchAllVersions, final int itemsPerPage) {
-		return query(statement, searchAllVersions, getDefaultContext(), itemsPerPage);
+	public PagingIterable<QueryResult> query(final String statement,
+			final boolean searchAllVersions, final int itemsPerPage) {
+		return query(statement, searchAllVersions, getDefaultContext(),
+				itemsPerPage);
 	}
 
 	/*
@@ -601,52 +650,64 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * @see org.apache.opencmis.client.api.Session#query(java.lang.String,
 	 * boolean, org.apache.opencmis.client.api.OperationContext, int)
 	 */
-	public PagingList<QueryResult> query(final String statement, final boolean searchAllVersions,
-			OperationContext context, final int itemsPerPage) {
+	public PagingIterable<QueryResult> query(final String statement,
+			final boolean searchAllVersions, OperationContext context,
+			final int itemsPerPage) {
 
-		final DiscoveryService discoveryService = getBinding().getDiscoveryService();
-		final ObjectFactory of = getObjectFactory();
+		if (itemsPerPage < 1) {
+			throw new IllegalArgumentException("itemsPerPage must be > 0!");
+		}
+
+		final DiscoveryService discoveryService = getBinding()
+				.getDiscoveryService();
+		final ObjectFactory objectFactory = this.getObjectFactory();
 		final OperationContext ctxt = new OperationContextImpl(context);
 
-		// set up PagingList object
-		return new AbstractPagingList<QueryResult>() {
+		return new DefaultPagingIterable<QueryResult>(
+				new AbstractPageFetch<QueryResult>() {
 
-			@Override
-			protected FetchResult fetchPage(int pageNumber) {
-				int skipCount = pageNumber * getMaxItemsPerPage();
+					@Override
+					protected AbstractPageFetch.PageFetchResult<QueryResult> fetchPage(
+							long skipCount) {
 
-				// fetch the data
-				ObjectList resultList = discoveryService.query(getRepositoryId(), statement, searchAllVersions, ctxt
-						.isIncludeAllowableActions(), ctxt.getIncludeRelationships(), ctxt.getRenditionFilterString(),
-						BigInteger.valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
+						// fetch the data
+						ObjectList resultList = discoveryService.query(
+								getRepositoryId(), statement,
+								searchAllVersions, ctxt
+										.isIncludeAllowableActions(), ctxt
+										.getIncludeRelationships(), ctxt
+										.getRenditionFilterString(), BigInteger
+										.valueOf(itemsPerPage), BigInteger
+										.valueOf(skipCount), null);
 
-				// convert type definitions
-				List<QueryResult> page = new ArrayList<QueryResult>();
-				if (resultList.getObjects() != null) {
-					for (ObjectData objectData : resultList.getObjects()) {
-						if (objectData == null) {
-							continue;
+						// convert type definitions
+						List<QueryResult> page = new ArrayList<QueryResult>();
+						if (resultList.getObjects() != null) {
+							for (ObjectData objectData : resultList
+									.getObjects()) {
+								if (objectData == null) {
+									continue;
+								}
+
+								page.add(objectFactory
+										.convertQueryResult(objectData));
+							}
 						}
 
-						page.add(of.convertQueryResult(objectData));
+						return new AbstractPageFetch.PageFetchResult<QueryResult>(
+								page, resultList.getNumItems(), resultList.hasMoreItems()) {
+						};
 					}
-				}
+				});
 
-				return new FetchResult(page, resultList.getNumItems(), resultList.hasMoreItems());
-			}
-
-			@Override
-			public int getMaxItemsPerPage() {
-				return itemsPerPage;
-			}
-		};
 	}
 
 	public String setExtensionContext(String context) {
 		throw new CmisRuntimeException("not implemented");
 	}
 
-	public ExtensionHandler setExtensionHandler(String context, ExtensionHandler extensionHandler) {
+	public ExtensionHandler setExtensionHandler(String context,
+			ExtensionHandler extensionHandler) {
 		throw new CmisRuntimeException("not implemented");
 	}
 
@@ -668,7 +729,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 				throw new IllegalStateException("Repository Id is not set!");
 			}
 
-			repositoryInfo = getBinding().getRepositoryService().getRepositoryInfo(repositoryId, null);
+			repositoryInfo = getBinding().getRepositoryService()
+					.getRepositoryInfo(repositoryId, null);
 		} finally {
 			fLock.writeLock().unlock();
 		}
@@ -715,16 +777,22 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
 	 * java.util.List, java.util.List)
 	 */
-	public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
-			VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+	public ObjectId createDocument(Map<String, ?> properties,
+			ObjectId folderId, ContentStream contentStream,
+			VersioningState versioningState, List<Policy> policies,
+			List<Ace> addAces, List<Ace> removeAces) {
 		if ((folderId != null) && (folderId.getId() == null)) {
 			throw new IllegalArgumentException("Folder Id must be set!");
 		}
 
-		String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
-				objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
-				(folderId == null ? null : folderId.getId()), objectFactory.convertContentStream(contentStream),
-				versioningState, objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+		String newId = getBinding().getObjectService().createDocument(
+				getRepositoryId(),
+				objectFactory.convertProperties(properties, null,
+						CREATE_UPDATABILITY),
+				(folderId == null ? null : folderId.getId()),
+				objectFactory.convertContentStream(contentStream),
+				versioningState, objectFactory.convertPolicies(policies),
+				objectFactory.convertAces(addAces),
 				objectFactory.convertAces(removeAces), null);
 
 		if (newId == null) {
@@ -744,8 +812,10 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
 	 * java.util.List, java.util.List)
 	 */
-	public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
-			VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+	public ObjectId createDocumentFromSource(ObjectId source,
+			Map<String, ?> properties, ObjectId folderId,
+			VersioningState versioningState, List<Policy> policies,
+			List<Ace> addAces, List<Ace> removeAces) {
 		if ((folderId != null) && (folderId.getId() == null)) {
 			throw new IllegalArgumentException("Folder Id must be set!");
 		}
@@ -760,13 +830,21 @@ public class PersistentSessionImpl implements Session, Serializable {
 		}
 
 		if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
-			throw new IllegalArgumentException("Source object must be a document!");
+			throw new IllegalArgumentException(
+					"Source object must be a document!");
 		}
 
-		String newId = getBinding().getObjectService().createDocumentFromSource(getRepositoryId(), source.getId(),
-				objectFactory.convertProperties(properties, type, CREATE_UPDATABILITY),
-				(folderId == null ? null : folderId.getId()), versioningState, objectFactory.convertPolicies(policies),
-				objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
+		String newId = getBinding().getObjectService()
+				.createDocumentFromSource(
+						getRepositoryId(),
+						source.getId(),
+						objectFactory.convertProperties(properties, type,
+								CREATE_UPDATABILITY),
+						(folderId == null ? null : folderId.getId()),
+						versioningState,
+						objectFactory.convertPolicies(policies),
+						objectFactory.convertAces(addAces),
+						objectFactory.convertAces(removeAces), null);
 
 		if (newId == null) {
 			return null;
@@ -782,16 +860,20 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * org.apache.opencmis.client.api.ObjectId, java.util.List, java.util.List,
 	 * java.util.List)
 	 */
-	public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
-			List<Ace> addAces, List<Ace> removeAces) {
+	public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId,
+			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
 		if ((folderId != null) && (folderId.getId() == null)) {
 			throw new IllegalArgumentException("Folder Id must be set!");
 		}
 
-		String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
-				objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
-				(folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
-				objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
+		String newId = getBinding().getObjectService().createFolder(
+				getRepositoryId(),
+				objectFactory.convertProperties(properties, null,
+						CREATE_UPDATABILITY),
+				(folderId == null ? null : folderId.getId()),
+				objectFactory.convertPolicies(policies),
+				objectFactory.convertAces(addAces),
+				objectFactory.convertAces(removeAces), null);
 
 		if (newId == null) {
 			return null;
@@ -807,16 +889,20 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * org.apache.opencmis.client.api.ObjectId, java.util.List, java.util.List,
 	 * java.util.List)
 	 */
-	public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
-			List<Ace> addAces, List<Ace> removeAces) {
+	public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId,
+			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
 		if ((folderId != null) && (folderId.getId() == null)) {
 			throw new IllegalArgumentException("Folder Id must be set!");
 		}
 
-		String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
-				objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
-				(folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
-				objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
+		String newId = getBinding().getObjectService().createPolicy(
+				getRepositoryId(),
+				objectFactory.convertProperties(properties, null,
+						CREATE_UPDATABILITY),
+				(folderId == null ? null : folderId.getId()),
+				objectFactory.convertPolicies(policies),
+				objectFactory.convertAces(addAces),
+				objectFactory.convertAces(removeAces), null);
 
 		if (newId == null) {
 			return null;
@@ -832,11 +918,14 @@ public class PersistentSessionImpl implements Session, Serializable {
 	 * org.apache.opencmis.client.api.Session#createRelationship(java.util.Map,
 	 * java.util.List, java.util.List, java.util.List)
 	 */
-	public ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
-			List<Ace> removeAces) {
-		String newId = getBinding().getObjectService().createRelationship(getRepositoryId(),
-				objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
-				objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+	public ObjectId createRelationship(Map<String, ?> properties,
+			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+		String newId = getBinding().getObjectService().createRelationship(
+				getRepositoryId(),
+				objectFactory.convertProperties(properties, null,
+						CREATE_UPDATABILITY),
+				objectFactory.convertPolicies(policies),
+				objectFactory.convertAces(addAces),
 				objectFactory.convertAces(removeAces), null);
 
 		if (newId == null) {

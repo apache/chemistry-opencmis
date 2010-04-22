@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.api.PagingList;
+import org.apache.chemistry.opencmis.client.api.PagingIterable;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
@@ -95,7 +95,8 @@ public abstract class AbstractSampleIT {
 		String folderBaseId = "cmis:folder";
 
 		// check document type definition
-		ObjectType documentType = getSession().getTypeDefinition(documentBaseId);
+		ObjectType documentType = getSession()
+				.getTypeDefinition(documentBaseId);
 		checkBaseType(documentBaseId, BaseTypeId.CMIS_DOCUMENT, documentType);
 
 		// check folder type definition
@@ -103,20 +104,13 @@ public abstract class AbstractSampleIT {
 		checkBaseType(folderBaseId, BaseTypeId.CMIS_FOLDER, folderType);
 
 		// get base types via getTypesChildren
-		PagingList<ObjectType> baseTypes = getSession().getTypeChildren(null, true, 10);
+		PagingIterable<ObjectType> baseTypes = getSession().getTypeChildren(
+				null, true, 10);
 		assertNotNull(baseTypes);
-
-		List<ObjectType> baseTypePage = baseTypes.get(0);
-		assertNotNull(baseTypePage);
-		assertTrue(baseTypePage.size() >= 2);
-		assertTrue(baseTypePage.size() <= 4);
-
-		assertEquals(1, baseTypes.size());
-		assertEquals(baseTypePage.size(), baseTypes.getNumItems());
 
 		boolean hasDocumentBaseType = false;
 		boolean hasFolderBaseType = false;
-		for (ObjectType ot : baseTypePage) {
+		for (ObjectType ot : baseTypes) {
 			checkBaseType(null, null, ot);
 
 			if (ot.getId().equals(documentBaseId)) {
@@ -132,7 +126,8 @@ public abstract class AbstractSampleIT {
 		assertTrue(hasFolderBaseType);
 
 		// get base types via getTypeDescendants
-		List<Tree<ObjectType>> baseTypeDesc = getSession().getTypeDescendants(null, -1, true);
+		List<Tree<ObjectType>> baseTypeDesc = getSession().getTypeDescendants(
+				null, -1, true);
 		assertNotNull(baseTypeDesc);
 
 		hasDocumentBaseType = false;
@@ -157,7 +152,8 @@ public abstract class AbstractSampleIT {
 	/**
 	 * Checks a base type.
 	 */
-	private void checkBaseType(String id, BaseTypeId baseType, ObjectType objectType) {
+	private void checkBaseType(String id, BaseTypeId baseType,
+			ObjectType objectType) {
 		assertNotNull(objectType);
 		if (id != null) {
 			assertEquals(id, objectType.getId());

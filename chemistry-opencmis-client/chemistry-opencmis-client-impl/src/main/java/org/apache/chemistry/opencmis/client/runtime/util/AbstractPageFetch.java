@@ -43,7 +43,8 @@ public abstract class AbstractPageFetch<T> {
 		private BigInteger totalItems;
 		private Boolean hasMoreItems;
 
-		public PageFetchResult(List<T> page, BigInteger totalItems, Boolean hasMoreItems) {
+		public PageFetchResult(List<T> page, BigInteger totalItems,
+				Boolean hasMoreItems) {
 			this.page = page;
 			this.totalItems = totalItems;
 			this.hasMoreItems = hasMoreItems;

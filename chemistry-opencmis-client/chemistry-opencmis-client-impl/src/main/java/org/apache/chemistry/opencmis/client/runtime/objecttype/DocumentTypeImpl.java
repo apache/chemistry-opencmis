@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.api.PagingList;
+import org.apache.chemistry.opencmis.client.api.PagingIterable;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
@@ -46,7 +46,7 @@ public class DocumentTypeImpl extends DocumentTypeDefinitionImpl implements Docu
 		return helper.getBaseType();
 	}
 
-	public PagingList<ObjectType> getChildren(int itemsPerPage) {
+	public PagingIterable<ObjectType> getChildren(int itemsPerPage) {
 		return helper.getChildren(itemsPerPage);
 	}
 

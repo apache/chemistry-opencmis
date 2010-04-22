@@ -72,7 +72,7 @@ public interface ObjectType extends TypeDefinition {
 	 * @return a {@code List} of types which are directly derived from this
 	 *         type. @
 	 */
-	PagingList<ObjectType> getChildren(int itemsPerPage);
+	PagingIterable<ObjectType> getChildren(int itemsPerPage);
 
 	/**
 	 * Get the list of all types somehow derived from this type.

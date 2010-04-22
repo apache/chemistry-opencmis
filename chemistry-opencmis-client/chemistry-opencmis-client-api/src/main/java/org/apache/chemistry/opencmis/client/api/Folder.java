@@ -59,9 +59,9 @@ public interface Folder extends FileableCmisObject {
 
 	List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context);
 
-	PagingList<CmisObject> getChildren(int itemsPerPage);
+	PagingIterable<CmisObject> getChildren(int itemsPerPage);
 
-	PagingList<CmisObject> getChildren(OperationContext context, int itemsPerPage);
+	PagingIterable<CmisObject> getChildren(OperationContext context, int itemsPerPage);
 
 	boolean isRootFolder();
 
@@ -72,9 +72,9 @@ public interface Folder extends FileableCmisObject {
 	/**
 	 * Returns all checked out documents of this folder.
 	 */
-	PagingList<Document> getCheckedOutDocs(int itemsPerPage);
+	PagingIterable<Document> getCheckedOutDocs(int itemsPerPage);
 
-	PagingList<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage);
+	PagingIterable<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage);
 
 	// folder specific properties
 

@@ -98,7 +98,7 @@ public class DefaultPagingIterator<T> implements PagingIterator<T> {
 			return true;
 		}
 
-		return (skipCount + skipOffset) < totalItems - 1;
+		return (skipCount + skipOffset) < totalItems;
 	}
 
 	/*
@@ -108,7 +108,7 @@ public class DefaultPagingIterator<T> implements PagingIterator<T> {
 	 */
 	public T next() {
 		PageFetchResult<T> currentPage = getPage();
-		skipOffset++;
+//		skipOffset++;
 
 		List<T> items = currentPage.getPage();
 		if (items == null || items.isEmpty()) {
@@ -129,7 +129,7 @@ public class DefaultPagingIterator<T> implements PagingIterator<T> {
 			return null;
 		}
 
-		return items.get(skipOffset);
+		return items.get(skipOffset++);
 	}
 
 	/*
@@ -145,6 +145,9 @@ public class DefaultPagingIterator<T> implements PagingIterator<T> {
 		PageFetchResult<T> page = getPage();
 		if (page == null) {
 			return false;
+		}
+		if (skipOffset < page.getPage().size()) {
+			return true;
 		}
 		if (page.getHasMoreItems() != null) {
 			return page.getHasMoreItems().booleanValue();

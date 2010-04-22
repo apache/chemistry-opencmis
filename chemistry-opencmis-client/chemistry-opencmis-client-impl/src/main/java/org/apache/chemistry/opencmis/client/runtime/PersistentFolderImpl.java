@@ -34,11 +34,12 @@ import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.PagingList;
+import org.apache.chemistry.opencmis.client.api.PagingIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Tree;
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
+import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
 import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
+import org.apache.chemistry.opencmis.client.runtime.util.DefaultPagingIterable;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
@@ -48,7 +49,6 @@ import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -58,7 +58,8 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
-public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject implements Folder {
+public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject
+		implements Folder {
 
 	private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
 	static {
@@ -69,7 +70,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	/**
 	 * Constructor.
 	 */
-	public PersistentFolderImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
+	public PersistentFolderImpl(PersistentSessionImpl session,
+			ObjectType objectType, ObjectData objectData,
 			OperationContext context) {
 		initialize(session, objectType, objectData, context);
 	}
@@ -83,16 +85,19 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * java.util.List, java.util.List,
 	 * org.apache.opencmis.client.api.OperationContext)
 	 */
-	public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
-			VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+	public Document createDocument(Map<String, ?> properties,
+			ContentStream contentStream, VersioningState versioningState,
+			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
 			OperationContext context) {
 		String objectId = getObjectId();
 
 		ObjectFactory of = getObjectFactory();
 
-		String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
-				of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId,
-				of.convertContentStream(contentStream), versioningState, of.convertPolicies(policies),
+		String newId = getBinding().getObjectService().createDocument(
+				getRepositoryId(),
+				of.convertProperties(properties, null, CREATE_UPDATABILITY),
+				objectId, of.convertContentStream(contentStream),
+				versioningState, of.convertPolicies(policies),
 				of.convertAces(addAces), of.convertAces(removeAces), null);
 
 		// if no context is provided the object will not be fetched
@@ -101,9 +106,11 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 		}
 
 		// get the new object
-		CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+		CmisObject object = getSession().getObject(
+				getSession().createObjectId(newId), context);
 		if (!(object instanceof Document)) {
-			throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
+			throw new CmisRuntimeException(
+					"Newly created object is not a document! New id: " + newId);
 		}
 
 		return (Document) object;
@@ -119,8 +126,9 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * java.util.List, java.util.List,
 	 * org.apache.opencmis.client.api.OperationContext)
 	 */
-	public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties,
-			VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+	public Document createDocumentFromSource(ObjectId source,
+			Map<String, ?> properties, VersioningState versioningState,
+			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
 			OperationContext context) {
 		if ((source == null) || (source.getId() == null)) {
 			throw new IllegalArgumentException("Source must be set!");
@@ -138,7 +146,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 		}
 
 		if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
-			throw new IllegalArgumentException("Source object must be a document!");
+			throw new IllegalArgumentException(
+					"Source object must be a document!");
 		}
 
 		ObjectFactory of = getObjectFactory();
@@ -146,9 +155,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 		Set<Updatability> updatebility = new HashSet<Updatability>();
 		updatebility.add(Updatability.READWRITE);
 
-		String newId = getBinding().getObjectService().createDocumentFromSource(getRepositoryId(), source.getId(),
-				of.convertProperties(properties, type, updatebility), objectId, versioningState,
-				of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
+		String newId = getBinding().getObjectService()
+				.createDocumentFromSource(getRepositoryId(), source.getId(),
+						of.convertProperties(properties, type, updatebility),
+						objectId, versioningState,
+						of.convertPolicies(policies), of.convertAces(addAces),
+						of.convertAces(removeAces), null);
 
 		// if no context is provided the object will not be fetched
 		if ((context == null) || (newId == null)) {
@@ -156,9 +168,11 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 		}
 
 		// get the new object
-		CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+		CmisObject object = getSession().getObject(
+				getSession().createObjectId(newId), context);
 		if (!(object instanceof Document)) {
-			throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
+			throw new CmisRuntimeException(
+					"Newly created object is not a document! New id: " + newId);
 		}
 
 		return (Document) object;
@@ -171,14 +185,17 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * java.util.List, java.util.List, java.util.List,
 	 * org.apache.opencmis.client.api.OperationContext)
 	 */
-	public Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
-			List<Ace> removeAces, OperationContext context) {
+	public Folder createFolder(Map<String, ?> properties,
+			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+			OperationContext context) {
 		String objectId = getObjectId();
 
 		ObjectFactory of = getObjectFactory();
 
-		String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
-				of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId, of.convertPolicies(policies),
+		String newId = getBinding().getObjectService().createFolder(
+				getRepositoryId(),
+				of.convertProperties(properties, null, CREATE_UPDATABILITY),
+				objectId, of.convertPolicies(policies),
 				of.convertAces(addAces), of.convertAces(removeAces), null);
 
 		// if no context is provided the object will not be fetched
@@ -187,9 +204,11 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 		}
 
 		// get the new object
-		CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+		CmisObject object = getSession().getObject(
+				getSession().createObjectId(newId), context);
 		if (!(object instanceof Folder)) {
-			throw new CmisRuntimeException("Newly created object is not a folder! New id: " + newId);
+			throw new CmisRuntimeException(
+					"Newly created object is not a folder! New id: " + newId);
 		}
 
 		return (Folder) object;
@@ -202,14 +221,17 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * java.util.List, java.util.List, java.util.List,
 	 * org.apache.opencmis.client.api.OperationContext)
 	 */
-	public Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
-			List<Ace> removeAces, OperationContext context) {
+	public Policy createPolicy(Map<String, ?> properties,
+			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+			OperationContext context) {
 		String objectId = getObjectId();
 
 		ObjectFactory of = getObjectFactory();
 
-		String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
-				of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId, of.convertPolicies(policies),
+		String newId = getBinding().getObjectService().createPolicy(
+				getRepositoryId(),
+				of.convertProperties(properties, null, CREATE_UPDATABILITY),
+				objectId, of.convertPolicies(policies),
 				of.convertAces(addAces), of.convertAces(removeAces), null);
 
 		// if no context is provided the object will not be fetched
@@ -218,9 +240,11 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 		}
 
 		// get the new object
-		CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+		CmisObject object = getSession().getObject(
+				getSession().createObjectId(newId), context);
 		if (!(object instanceof Policy)) {
-			throw new CmisRuntimeException("Newly created object is not a policy! New id: " + newId);
+			throw new CmisRuntimeException(
+					"Newly created object is not a policy! New id: " + newId);
 		}
 
 		return (Policy) object;
@@ -232,12 +256,14 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * @see org.apache.opencmis.client.api.Folder#deleteTree(boolean,
 	 * org.apache.opencmis.commons.enums.UnfileObjects, boolean)
 	 */
-	public List<String> deleteTree(boolean allVersions, UnfileObject unfile, boolean continueOnFailure) {
+	public List<String> deleteTree(boolean allVersions, UnfileObject unfile,
+			boolean continueOnFailure) {
 		String repositoryId = getRepositoryId();
 		String objectId = getObjectId();
 
-		FailedToDeleteData failed = getBinding().getObjectService().deleteTree(repositoryId, objectId, allVersions,
-				unfile, continueOnFailure, null);
+		FailedToDeleteData failed = getBinding().getObjectService().deleteTree(
+				repositoryId, objectId, allVersions, unfile, continueOnFailure,
+				null);
 
 		return failed.getIds();
 	}
@@ -272,7 +298,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * 
 	 * @see org.apache.opencmis.client.api.Folder#getCheckedOutDocs(int)
 	 */
-	public PagingList<Document> getCheckedOutDocs(int itemsPerPage) {
+	public PagingIterable<Document> getCheckedOutDocs(int itemsPerPage) {
 		return getCheckedOutDocs(getSession().getDefaultContext(), itemsPerPage);
 	}
 
@@ -282,50 +308,57 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * @seeorg.apache.opencmis.client.api.Folder#getCheckedOutDocs(org.apache.
 	 * opencmis.client.api. OperationContext, int)
 	 */
-	public PagingList<Document> getCheckedOutDocs(OperationContext context, final int itemsPerPage) {
-		if (itemsPerPage < 1) {
-			throw new IllegalArgumentException("itemsPerPage must be > 0!");
-		}
-
-		final String objectId = getObjectId();
-		final NavigationService nagivationService = getBinding().getNavigationService();
-		final ObjectFactory objectFactory = getSession().getObjectFactory();
-		final OperationContext ctxt = new OperationContextImpl(context);
-
-		return new AbstractPagingList<Document>() {
-
-			@Override
-			protected FetchResult fetchPage(int pageNumber) {
-				int skipCount = pageNumber * getMaxItemsPerPage();
-
-				// get checked out documents for this folder
-				ObjectList checkedOutDocs = nagivationService.getCheckedOutDocs(getRepositoryId(), objectId, ctxt
-						.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-						.getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger
-						.valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
-
-				// convert objects
-				List<Document> page = new ArrayList<Document>();
-				if (checkedOutDocs.getObjects() != null) {
-					for (ObjectData objectData : checkedOutDocs.getObjects()) {
-						CmisObject doc = objectFactory.convertObject(objectData, ctxt);
-						if (!(doc instanceof Document)) {
-							// should not happen...
-							continue;
-						}
-
-						page.add((Document) doc);
-					}
-				}
-
-				return new FetchResult(page, checkedOutDocs.getNumItems(), checkedOutDocs.hasMoreItems());
-			}
-
-			@Override
-			public int getMaxItemsPerPage() {
-				return itemsPerPage;
-			}
-		};
+	public PagingIterable<Document> getCheckedOutDocs(OperationContext context,
+			final int itemsPerPage) {
+		// if (itemsPerPage < 1) {
+		// throw new IllegalArgumentException("itemsPerPage must be > 0!");
+		// }
+		//
+		// final String objectId = getObjectId();
+		// final NavigationService nagivationService =
+		// getBinding().getNavigationService();
+		// final ObjectFactory objectFactory = getSession().getObjectFactory();
+		// final OperationContext ctxt = new OperationContextImpl(context);
+		//
+		// return new AbstractPagingList<Document>() {
+		//
+		// @Override
+		// protected FetchResult fetchPage(int pageNumber) {
+		// int skipCount = pageNumber * getMaxItemsPerPage();
+		//
+		// // get checked out documents for this folder
+		// ObjectList checkedOutDocs =
+		// nagivationService.getCheckedOutDocs(getRepositoryId(), objectId, ctxt
+		// .getFilterString(), ctxt.getOrderBy(),
+		// ctxt.isIncludeAllowableActions(), ctxt
+		// .getIncludeRelationships(), ctxt.getRenditionFilterString(),
+		// BigInteger
+		// .valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
+		//
+		// // convert objects
+		// List<Document> page = new ArrayList<Document>();
+		// if (checkedOutDocs.getObjects() != null) {
+		// for (ObjectData objectData : checkedOutDocs.getObjects()) {
+		// CmisObject doc = objectFactory.convertObject(objectData, ctxt);
+		// if (!(doc instanceof Document)) {
+		// // should not happen...
+		// continue;
+		// }
+		//
+		// page.add((Document) doc);
+		// }
+		// }
+		//
+		// return new FetchResult(page, checkedOutDocs.getNumItems(),
+		// checkedOutDocs.hasMoreItems());
+		// }
+		//
+		// @Override
+		// public int getMaxItemsPerPage() {
+		// return itemsPerPage;
+		// }
+		// };
+		return null;
 	}
 
 	/*
@@ -333,7 +366,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * 
 	 * @see org.apache.opencmis.client.api.Folder#getChildren(int)
 	 */
-	public PagingList<CmisObject> getChildren(int itemsPerPage) {
+	public PagingIterable<CmisObject> getChildren(int itemsPerPage) {
 		return getChildren(getSession().getDefaultContext(), itemsPerPage);
 	}
 
@@ -344,47 +377,55 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * org.apache.opencmis.client.api.Folder#getChildren(org.apache.opencmis
 	 * .client.api.OperationContext , int)
 	 */
-	public PagingList<CmisObject> getChildren(OperationContext context, final int itemsPerPage) {
+	public PagingIterable<CmisObject> getChildren(OperationContext context,
+			final int itemsPerPage) {
+
 		if (itemsPerPage < 1) {
 			throw new IllegalArgumentException("itemsPerPage must be > 0!");
 		}
 
 		final String objectId = getObjectId();
-		final NavigationService navigationService = getBinding().getNavigationService();
+		final NavigationService navigationService = getBinding()
+				.getNavigationService();
 		final ObjectFactory objectFactory = getSession().getObjectFactory();
 		final OperationContext ctxt = new OperationContextImpl(context);
 
-		return new AbstractPagingList<CmisObject>() {
+		return new DefaultPagingIterable<CmisObject>(
+				new AbstractPageFetch<CmisObject>() {
 
-			@Override
-			protected FetchResult fetchPage(int pageNumber) {
-				int skipCount = pageNumber * getMaxItemsPerPage();
+					@Override
+					protected AbstractPageFetch.PageFetchResult<CmisObject> fetchPage(
+							long skipCount) {
 
-				// get the children
-				ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId, ctxt
-						.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-						.getIncludeRelationships(), ctxt.getRenditionFilterString(), ctxt.isIncludePathSegments(),
-						BigInteger.valueOf(getMaxItemsPerPage()), BigInteger.valueOf(skipCount), null);
+						// get the children
+						ObjectInFolderList children = navigationService
+								.getChildren(getRepositoryId(), objectId, ctxt
+										.getFilterString(), ctxt.getOrderBy(),
+										ctxt.isIncludeAllowableActions(), ctxt
+												.getIncludeRelationships(),
+										ctxt.getRenditionFilterString(), ctxt
+												.isIncludePathSegments(),
+										BigInteger.valueOf(itemsPerPage),
+										BigInteger.valueOf(skipCount), null);
 
-				// convert objects
-				List<CmisObject> page = new ArrayList<CmisObject>();
-				List<ObjectInFolderData> childObjects = children.getObjects();
-				if (childObjects != null) {
-					for (ObjectInFolderData objectData : childObjects) {
-						if (objectData.getObject() != null) {
-							page.add(objectFactory.convertObject(objectData.getObject(), ctxt));
+						// convert objects
+						List<CmisObject> page = new ArrayList<CmisObject>();
+						List<ObjectInFolderData> childObjects = children
+								.getObjects();
+						if (childObjects != null) {
+							for (ObjectInFolderData objectData : childObjects) {
+								if (objectData.getObject() != null) {
+									page.add(objectFactory.convertObject(
+											objectData.getObject(), ctxt));
+								}
+							}
 						}
+
+						return new AbstractPageFetch.PageFetchResult<CmisObject>(
+								page, children.getNumItems(), children.hasMoreItems()) {
+						};
 					}
-				}
-
-				return new FetchResult(page, children.getNumItems(), children.hasMoreItems());
-			}
-
-			@Override
-			public int getMaxItemsPerPage() {
-				return itemsPerPage;
-			}
-		};
+				});
 	}
 
 	/*
@@ -402,14 +443,19 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * @see org.apache.opencmis.client.api.Folder#getDescendants(int,
 	 * org.apache.opencmis.client.api.OperationContext)
 	 */
-	public List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context) {
+	public List<Tree<FileableCmisObject>> getDescendants(int depth,
+			OperationContext context) {
 		String objectId = getObjectId();
 
 		// get the descendants
-		List<ObjectInFolderContainer> providerContainerList = getBinding().getNavigationService().getDescendants(
-				getRepositoryId(), objectId, BigInteger.valueOf(depth), context.getFilterString(),
-				context.isIncludeAllowableActions(), context.getIncludeRelationships(),
-				context.getRenditionFilterString(), context.isIncludePathSegments(), null);
+		List<ObjectInFolderContainer> providerContainerList = getBinding()
+				.getNavigationService().getDescendants(getRepositoryId(),
+						objectId, BigInteger.valueOf(depth),
+						context.getFilterString(),
+						context.isIncludeAllowableActions(),
+						context.getIncludeRelationships(),
+						context.getRenditionFilterString(),
+						context.isIncludePathSegments(), null);
 
 		return convertProviderContainer(providerContainerList, context);
 	}
@@ -429,14 +475,19 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * @see org.apache.opencmis.client.api.Folder#getFolderTree(int,
 	 * org.apache.opencmis.client.api.OperationContext)
 	 */
-	public List<Tree<FileableCmisObject>> getFolderTree(int depth, OperationContext context) {
+	public List<Tree<FileableCmisObject>> getFolderTree(int depth,
+			OperationContext context) {
 		String objectId = getObjectId();
 
 		// get the folder tree
-		List<ObjectInFolderContainer> providerContainerList = getBinding().getNavigationService().getFolderTree(
-				getRepositoryId(), objectId, BigInteger.valueOf(depth), context.getFilterString(),
-				context.isIncludeAllowableActions(), context.getIncludeRelationships(),
-				context.getRenditionFilterString(), context.isIncludePathSegments(), null);
+		List<ObjectInFolderContainer> providerContainerList = getBinding()
+				.getNavigationService().getFolderTree(getRepositoryId(),
+						objectId, BigInteger.valueOf(depth),
+						context.getFilterString(),
+						context.isIncludeAllowableActions(),
+						context.getIncludeRelationships(),
+						context.getRenditionFilterString(),
+						context.isIncludePathSegments(), null);
 
 		return convertProviderContainer(providerContainerList, context);
 	}
@@ -445,7 +496,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 * Converts a provider container into an API container.
 	 */
 	private List<Tree<FileableCmisObject>> convertProviderContainer(
-			List<ObjectInFolderContainer> providerContainerList, OperationContext context) {
+			List<ObjectInFolderContainer> providerContainerList,
+			OperationContext context) {
 		if (providerContainerList == null) {
 			return null;
 		}
@@ -454,13 +506,15 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
 		List<Tree<FileableCmisObject>> result = new ArrayList<Tree<FileableCmisObject>>();
 		for (ObjectInFolderContainer oifc : providerContainerList) {
-			if ((oifc.getObject() == null) || (oifc.getObject().getObject() == null)) {
+			if ((oifc.getObject() == null)
+					|| (oifc.getObject().getObject() == null)) {
 				// shouldn't happen ...
 				continue;
 			}
 
 			// convert the object
-			CmisObject object = of.convertObject(oifc.getObject().getObject(), context);
+			CmisObject object = of.convertObject(oifc.getObject().getObject(),
+					context);
 			if (!(object instanceof FileableCmisObject)) {
 				// the repository must not return objects that are not fileable,
 				// but you never know...
@@ -468,10 +522,12 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 			}
 
 			// convert the children
-			List<Tree<FileableCmisObject>> children = convertProviderContainer(oifc.getChildren(), context);
+			List<Tree<FileableCmisObject>> children = convertProviderContainer(
+					oifc.getChildren(), context);
 
 			// add both to current container
-			result.add(new ContainerImpl<FileableCmisObject>((FileableCmisObject) object, children));
+			result.add(new ContainerImpl<FileableCmisObject>(
+					(FileableCmisObject) object, children));
 		}
 
 		return result;
@@ -484,7 +540,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 	 */
 	public boolean isRootFolder() {
 		String objectId = getObjectId();
-		String rootFolderId = getSession().getRepositoryInfo().getRootFolderId();
+		String rootFolderId = getSession().getRepositoryInfo()
+				.getRootFolderId();
 
 		return objectId.equals(rootFolderId);
 	}
@@ -523,11 +580,16 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 			// if the path property isn't set, get it
 			if (path == null) {
 				String objectId = getObjectId();
-				ObjectData objectData = getBinding().getObjectService().getObject(getRepositoryId(), objectId,
-						PropertyIds.PATH, false, IncludeRelationships.NONE, "cmis:none", false, false, null);
+				ObjectData objectData = getBinding().getObjectService()
+						.getObject(getRepositoryId(), objectId,
+								PropertyIds.PATH, false,
+								IncludeRelationships.NONE, "cmis:none", false,
+								false, null);
 
-				if ((objectData.getProperties() != null) && (objectData.getProperties().getProperties() != null)) {
-					PropertyData<?> pathProperty = objectData.getProperties().getProperties().get(PropertyIds.PATH);
+				if ((objectData.getProperties() != null)
+						&& (objectData.getProperties().getProperties() != null)) {
+					PropertyData<?> pathProperty = objectData.getProperties()
+							.getProperties().get(PropertyIds.PATH);
 
 					if (pathProperty instanceof PropertyString) {
 						path = ((PropertyString) pathProperty).getFirstValue();
@@ -540,7 +602,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
 		// we still don't know the path ... it's not a CMIS compliant repository
 		if (path == null) {
-			throw new CmisRuntimeException("Repository didn't return " + PropertyIds.PATH + "!");
+			throw new CmisRuntimeException("Repository didn't return "
+					+ PropertyIds.PATH + "!");
 		}
 
 		return path;

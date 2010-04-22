@@ -123,7 +123,7 @@ public interface Session {
 	/**
 	 * Returns the type children of the given type id.
 	 */
-	PagingList<ObjectType> getTypeChildren(String typeId, boolean includePropertyDefinitions, int itemsPerPage);
+	PagingIterable<ObjectType> getTypeChildren(String typeId, boolean includePropertyDefinitions, int itemsPerPage);
 
 	/**
 	 * Returns the type descendants of the given type id.
@@ -144,9 +144,9 @@ public interface Session {
 	 * 
 	 * @see Folder#getCheckedOutDocs(int)
 	 */
-	PagingList<Document> getCheckedOutDocs(int itemsPerPage);
+	PagingIterable<Document> getCheckedOutDocs(int itemsPerPage);
 
-	PagingList<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage);
+	PagingIterable<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage);
 
 	/**
 	 * Object service <code>getObject</code>.
@@ -167,15 +167,15 @@ public interface Session {
 	/**
 	 * Discovery service <code>query</code>.
 	 */
-	PagingList<QueryResult> query(String statement, boolean searchAllVersions, int itemsPerPage);
+	PagingIterable<QueryResult> query(String statement, boolean searchAllVersions, int itemsPerPage);
 
-	PagingList<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context,
+	PagingIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context,
 			int itemsPerPage);
 
 	/**
 	 * Discovery service <code>getContentChanges</code>.
 	 */
-	PagingList<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage);
+	PagingIterable<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage);
 
 	// create
 

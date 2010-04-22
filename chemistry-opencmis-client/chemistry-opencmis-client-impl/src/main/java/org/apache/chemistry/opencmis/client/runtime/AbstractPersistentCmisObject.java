@@ -34,12 +34,11 @@ import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.PagingList;
+import org.apache.chemistry.opencmis.client.api.PagingIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.Acl;
@@ -47,9 +46,7 @@ import org.apache.chemistry.opencmis.commons.api.AllowableActions;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.api.RelationshipService;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -725,51 +722,52 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 	 * org.apache.opencmis.client.api.objecttype.ObjectType,
 	 * org.apache.opencmis.client.api.OperationContext, int)
 	 */
-	public PagingList<Relationship> getRelationships(final boolean includeSubRelationshipTypes,
+	public PagingIterable<Relationship> getRelationships(final boolean includeSubRelationshipTypes,
 			final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context,
 			final int itemsPerPage) {
-		if (itemsPerPage < 1) {
-			throw new IllegalArgumentException("itemsPerPage must be > 0!");
-		}
-
-		final String objectId = getObjectId();
-		final String typeId = (type == null ? null : type.getId());
-		final RelationshipService relationshipService = getBinding().getRelationshipService();
-		final OperationContext ctxt = (context != null ? context : new OperationContextImpl(getSession()
-				.getDefaultContext()));
-
-		return new AbstractPagingList<Relationship>() {
-
-			@Override
-			protected FetchResult fetchPage(int pageNumber) {
-				int skipCount = pageNumber * getMaxItemsPerPage();
-
-				// fetch the relationships
-				ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(), objectId,
-						includeSubRelationshipTypes, relationshipDirection, typeId, ctxt.getFilterString(), ctxt
-								.isIncludeAllowableActions(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
-								.valueOf(skipCount), null);
-
-				// convert relationship objects
-				List<Relationship> page = new ArrayList<Relationship>();
-				if (relList.getObjects() != null) {
-					for (ObjectData rod : relList.getObjects()) {
-						Relationship relationship = new PersistentRelationshipImpl(getSession(), getObjectFactory()
-								.getTypeFromObjectData(rod), rod, ctxt);
-
-						page.add(relationship);
-					}
-				}
-
-				return new FetchResult(page, relList.getNumItems(), relList.hasMoreItems());
-			}
-
-			@Override
-			public int getMaxItemsPerPage() {
-				return itemsPerPage;
-			}
-		};
-	}
+//		if (itemsPerPage < 1) {
+//			throw new IllegalArgumentException("itemsPerPage must be > 0!");
+//		}
+//
+//		final String objectId = getObjectId();
+//		final String typeId = (type == null ? null : type.getId());
+//		final RelationshipService relationshipService = getBinding().getRelationshipService();
+//		final OperationContext ctxt = (context != null ? context : new OperationContextImpl(getSession()
+//				.getDefaultContext()));
+//
+//		return new AbstractPagingList<Relationship>() {
+//
+//			@Override
+//			protected FetchResult fetchPage(int pageNumber) {
+//				int skipCount = pageNumber * getMaxItemsPerPage();
+//
+//				// fetch the relationships
+//				ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(), objectId,
+//						includeSubRelationshipTypes, relationshipDirection, typeId, ctxt.getFilterString(), ctxt
+//								.isIncludeAllowableActions(), BigInteger.valueOf(getMaxItemsPerPage()), BigInteger
+//								.valueOf(skipCount), null);
+//
+//				// convert relationship objects
+//				List<Relationship> page = new ArrayList<Relationship>();
+//				if (relList.getObjects() != null) {
+//					for (ObjectData rod : relList.getObjects()) {
+//						Relationship relationship = new PersistentRelationshipImpl(getSession(), getObjectFactory()
+//								.getTypeFromObjectData(rod), rod, ctxt);
+//
+//						page.add(relationship);
+//					}
+//				}
+//
+//				return new FetchResult(page, relList.getNumItems(), relList.hasMoreItems());
+//			}
+//
+//			@Override
+//			public int getMaxItemsPerPage() {
+//				return itemsPerPage;
+//			}
+//		};
+			return null;
+}
 
 	// --- other ---
 

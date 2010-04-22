@@ -18,10 +18,13 @@
  */
 package org.apache.chemistry.opencmis.fit.runtime;
 
+import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ReadOnlyDiscoverIT extends AbstractSessionTest {
@@ -30,22 +33,21 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
 
 	@Test
 	public void query() {
-		CapabilityQuery query = this.session.getRepositoryInfo().getCapabilities().getQueryCapability();
+		CapabilityQuery query = this.session.getRepositoryInfo()
+				.getCapabilities().getQueryCapability();
 
 		switch (query) {
 		case NONE:
 			ReadOnlyDiscoverIT.log.info("queries not supported");
 			break;
 		default:
-			// PagingList<QueryResult> resultSet =
-			// this.session.query(FixtureData.QUERY.toString(), false, 2);
-			// Assert.assertNotNull(resultSet);
-			// //Assert.assertFalse(resultSet.isEmpty());
-			// for (List<QueryResult> lo : resultSet) {
-			// for (QueryResult o : lo) {
-			// Assert.assertNotNull(o);
-			// }
-			// }
+			PagingIterable<QueryResult> resultSet = this.session.query(
+					FixtureData.QUERY.toString(), false, 2);
+			Assert.assertNotNull(resultSet);
+			// Assert.assertFalse(resultSet.isEmpty());
+			for (QueryResult o : resultSet) {
+				Assert.assertNotNull(o);
+			}
 
 			break;
 		}
@@ -54,7 +56,8 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
 
 	@Test
 	public void changes() {
-		CapabilityChanges changes = this.session.getRepositoryInfo().getCapabilities().getChangesCapability();
+		CapabilityChanges changes = this.session.getRepositoryInfo()
+				.getCapabilities().getChangesCapability();
 
 		switch (changes) {
 		case NONE:

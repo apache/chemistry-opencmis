@@ -20,188 +20,148 @@ package org.apache.chemistry.opencmis.client.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import org.apache.chemistry.opencmis.client.api.PagingList;
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPagingList;
-import org.junit.Before;
+import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.PagingIterator;
+import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
+import org.apache.chemistry.opencmis.client.runtime.util.DefaultPagingIterable;
 import org.junit.Test;
 
 public class PagingListTest {
 
-	private static final int ITEMS = 201;
-	private static final int MAX_ITEMS_PER_PAGE = 20;
+	private String[] data10 = { "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7",
+			"A8", "A9" };
+	private String[] data1 = { "A0" };
+	private String[] data0 = { };
 
-	private static final String PREFIX_1 = "1$";
-	private static final String PREFIX_2 = "2$";
+	private PagingIterable<String> getIterable(final String[] data, final long pageSize) {
+		return new DefaultPagingIterable<String>(
+				new AbstractPageFetch<String>() {
 
-	private String[] sourceData;
-	private PagingList<String> testList;
-	private PagingList<String> testCacheList;
+					@Override
+					protected PageFetchResult<String> fetchPage(long skipCount) {
+						Boolean hasMoreItems = Boolean.TRUE;
+						List<String> page = new ArrayList<String>();
 
-	@Before
-	public void setUp() throws Exception {
-		sourceData = new String[ITEMS];
-		for (int i = 0; i < sourceData.length; i++) {
-			sourceData[i] = PREFIX_1 + i;
-		}
+						System.out.print("(" + skipCount + "|" + pageSize
+								+ ") ");
 
-		testList = new TestPagingList(0);
-		testCacheList = new TestPagingList(2);
+						int from = (int) skipCount;
+						int to = (int) (skipCount + pageSize);
+
+						if (to >= data.length) {
+							to = data.length;
+							hasMoreItems = Boolean.FALSE;
+						}
+
+						for (int i = from; i < to; i++) {
+							page.add(data[i]);
+						}
+
+						PageFetchResult<String> result = new AbstractPageFetch.PageFetchResult<String>(
+								page,
+								BigInteger
+										.valueOf(data.length),
+								hasMoreItems);
+
+						return result;
+					}
+				});
 	}
 
 	@Test
-	public void testPagingList() {
-		// test setup
-		assertNotNull(testList);
+	public void loopAll() {
+		this.loopAll(this.data10, 100); // tolerate out of bound
+		this.loopAll(this.data10, 10);
+		this.loopAll(this.data10, 9);
+		this.loopAll(this.data10, 8);
 
-		// test number of items per pages
-		assertEquals(MAX_ITEMS_PER_PAGE, testList.getMaxItemsPerPage());
+		this.loopAll(this.data10, 2);
+		this.loopAll(this.data10, 1);
+		// this.loopAll(0); pageSize must be > 0
 
-		// we haven't fetched data yet -> number of item should be unknown
-		assertEquals(-1, testList.getNumItems());
+		this.loopAll(this.data1, 1);
+		this.loopAll(this.data1, 5);
 
-		// fetch first page and check it
-		List<String> page = testList.get(0);
-		assertPage(page, 0, MAX_ITEMS_PER_PAGE, PREFIX_1);
-
-		// number of item should be known now
-		assertEquals(sourceData.length, testList.getNumItems());
-
-		// number of pages should be known too
-		assertEquals(11, testList.size());
-
-		// check all pages
-		for (int i = 0; i < testList.size(); i++) {
-			page = testList.get(i);
-
-			int pageSize = (i == testList.size() - 1 ? ITEMS % MAX_ITEMS_PER_PAGE : MAX_ITEMS_PER_PAGE);
-			assertPage(page, i, pageSize, PREFIX_1);
-		}
-	}
+		this.loopAll(this.data0, 1);
+		this.loopAll(this.data0, 5);
+}
 
 	@Test
-	public void testPagingListIterator() {
-		// test setup
-		assertNotNull(testList);
+	public void loopSkip() {
+		this.loopSkip(this.data10, 0, 5);
+		this.loopSkip(this.data10, 1, 5);
+		this.loopSkip(this.data10, 2, 5);
+		this.loopSkip(this.data10, 3, 5);
 
-		// test iterator
-		int pageNumber = 0;
-		for (List<String> page : testList) {
-			assertTrue(pageNumber < testList.size());
+		this.loopSkip(this.data10, 8, 5);
+		this.loopSkip(this.data10, 9, 5);
+		this.loopSkip(this.data10, 10, 5);
+//		this.loopSkip(100, 5); skip out of bound
 
-			int pageSize = (pageNumber == testList.size() - 1 ? ITEMS % MAX_ITEMS_PER_PAGE : MAX_ITEMS_PER_PAGE);
+//		this.loopSkip(0, 0);
+		this.loopSkip(this.data10, 0, 1);
+		this.loopSkip(this.data10, 0, 10);
+		this.loopSkip(this.data10, 0, 100);
 
-			assertPage(page, pageNumber, pageSize, PREFIX_1);
+//		this.loopSkip(0, 0);
+		this.loopSkip(this.data10, 10, 1);
+		this.loopSkip(this.data10, 10, 10);
+		this.loopSkip(this.data10, 10, 100);
 
-			pageNumber++;
+		this.loopSkip(this.data1, 0, 5);
+		this.loopSkip(this.data1, 1, 5);
+
+		this.loopSkip(this.data0, 0, 5);
+}
+
+	private void loopSkip(String [] data, int skipCount, int pageSize) {
+		System.out.println("\nloopSkip (" + skipCount + ", " + pageSize + ")");
+
+		PagingIterable<String> p = this.getIterable(data, pageSize);
+		assertNotNull(p);
+		PagingIterator<String> i = (PagingIterator<String>) p.iterator();
+		assertNotNull(i);
+		assertEquals(data.length, i.getTotalNumItems());
+
+		PagingIterable<String> pp = p.skipTo(skipCount);
+		assertNotNull(pp);
+		PagingIterator<String> ii = (PagingIterator<String>) pp.iterator();
+		assertNotNull(ii);
+		assertEquals(data.length, ii.getTotalNumItems());
+
+		int count = 0;
+		for (String s : pp) {
+			assertNotNull(s);
+			assertEquals("A" + (count + skipCount), s);
+			System.out.print(s + " ");
+			count++;
 		}
+		System.out.print("\n");
+		assertEquals(data.length - skipCount, count);
 	}
 
-	@Test
-	public void testPagingListExceptions() {
-		// test setup
-		assertNotNull(testList);
+	private void loopAll(String [] data, int pageSize) {
+		System.out.println("\nloopAll (" + pageSize + ")");
 
-		// check negative page numbers
-		try {
-			testList.get(-1);
-			fail("Should throw a IllegalArgumentException!");
-		} catch (IllegalArgumentException e) {
-		}
+		PagingIterable<String> p = this.getIterable(data, pageSize);
+		assertNotNull(p);
+		PagingIterator<String> i = (PagingIterator<String>) p.iterator();
+		assertNotNull(i);
+		assertEquals(data.length, i.getTotalNumItems());
 
-		// check page numbers greater than the last page
-		try {
-			testList.get(12);
-			fail("Should throw a NoSuchElementException!");
-		} catch (NoSuchElementException e) {
+		int count = 0;
+		for (String s : p) {
+			assertNotNull(s);
+			System.out.print(s + " ");
+			count++;
 		}
+		System.out.print("\n");
+		assertEquals(data.length, count);
 	}
 
-	@Test
-	public void testPagingCache() {
-		// test setup
-		assertNotNull(testList);
-
-		// read first page, should be cached now
-		List<String> firstPage = testCacheList.get(0);
-		assertPage(firstPage, 0, MAX_ITEMS_PER_PAGE, PREFIX_1);
-
-		// change original data
-		for (int i = 0; i < sourceData.length; i++) {
-			sourceData[i] = PREFIX_2 + i;
-		}
-
-		// get second page with new content
-		List<String> secondPage = testCacheList.get(1);
-		assertPage(secondPage, 1, MAX_ITEMS_PER_PAGE, PREFIX_2);
-
-		// fetch first page again, should have the old values since it is cached
-		firstPage = testCacheList.get(0);
-		assertPage(firstPage, 0, MAX_ITEMS_PER_PAGE, PREFIX_1);
-
-		// read a few more pages
-		testCacheList.get(2);
-		testCacheList.get(3);
-
-		// fetch first page again, should have the new values since it is not
-		// cached anymore
-		firstPage = testCacheList.get(0);
-		assertPage(firstPage, 0, MAX_ITEMS_PER_PAGE, PREFIX_2);
-	}
-
-	void assertPage(List<String> page, int pageNumber, int size, String prefix) {
-		assertNotNull(page);
-
-		// the first page should be full
-		assertEquals(size, page.size());
-
-		// check page content
-		int counter = 0;
-		for (String s : page) {
-			assertEquals(prefix + ((pageNumber * MAX_ITEMS_PER_PAGE) + counter), s);
-			counter++;
-		}
-	}
-
-	// --- Test PagingList ---
-
-	class TestPagingList extends AbstractPagingList<String> {
-
-		public TestPagingList(int cacheSize) {
-			setCacheSize(cacheSize);
-		}
-
-		@Override
-		protected FetchResult fetchPage(int pageNumber) {
-			int skipCount = pageNumber * getMaxItemsPerPage();
-			int lastIndex = skipCount + getMaxItemsPerPage() - 1;
-			if (lastIndex >= sourceData.length) {
-				lastIndex = sourceData.length - 1;
-			}
-
-			if (skipCount >= sourceData.length) {
-				throw new NoSuchElementException();
-			}
-
-			List<String> page = new ArrayList<String>();
-			for (int i = skipCount; i <= lastIndex; i++) {
-				page.add(sourceData[i]);
-			}
-
-			return new FetchResult(page, BigInteger.valueOf(sourceData.length),
-					skipCount + getMaxItemsPerPage() < sourceData.length);
-		}
-
-		@Override
-		public int getMaxItemsPerPage() {
-			return MAX_ITEMS_PER_PAGE;
-		}
-	}
 }

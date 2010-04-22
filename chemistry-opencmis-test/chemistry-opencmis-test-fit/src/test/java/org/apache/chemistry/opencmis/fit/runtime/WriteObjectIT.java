@@ -41,7 +41,8 @@ public class WriteObjectIT extends AbstractSessionTest {
 
 	@Test
 	public void createFolder() {
-		ObjectId parentId = this.session.createObjectId(Fixture.getTestRootId());
+		ObjectId parentId = this.session
+				.createObjectId(Fixture.getTestRootId());
 		String folderName = UUID.randomUUID().toString();
 		String typeId = FixtureData.FOLDER_TYPE_ID.value();
 
@@ -66,13 +67,15 @@ public class WriteObjectIT extends AbstractSessionTest {
 		properties.put(PropertyIds.NAME, folderName);
 		properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
 
-		ObjectId id = this.session.createFolder(properties, parentId, null, null, null);
+		ObjectId id = this.session.createFolder(properties, parentId, null,
+				null, null);
 		assertNotNull(id);
 	}
 
 	@Test
 	public void createDocument() throws IOException {
-		ObjectId parentId = this.session.createObjectId(Fixture.getTestRootId());
+		ObjectId parentId = this.session
+				.createObjectId(Fixture.getTestRootId());
 		String folderName = UUID.randomUUID().toString();
 		String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
@@ -106,12 +109,12 @@ public class WriteObjectIT extends AbstractSessionTest {
 
 		byte[] buf1 = content1.getBytes("UTF-8");
 		ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-		ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length,
-				mimetype, in1);
+		ContentStream contentStream = this.session.getObjectFactory()
+				.createContentStream(filename, buf1.length, mimetype, in1);
 		assertNotNull(contentStream);
 
-		ObjectId id = this.session.createDocument(properties, parentId, contentStream, VersioningState.NONE, null,
-				null, null);
+		ObjectId id = this.session.createDocument(properties, parentId,
+				contentStream, VersioningState.NONE, null, null, null);
 		assertNotNull(id);
 
 		// verify content
@@ -128,12 +131,16 @@ public class WriteObjectIT extends AbstractSessionTest {
 	public void createDocumentFromSource() throws IOException {
 		try {
 			// verify content
-			String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
-			Document srcDocument = (Document) this.session.getObjectByPath(path);
+			String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
+					+ FixtureData.DOCUMENT1_NAME;
+			Document srcDocument = (Document) this.session
+					.getObjectByPath(path);
 			assertNotNull("Document not found: " + path, srcDocument);
-			String srcContent = this.getContentAsString(srcDocument.getContentStream());
+			String srcContent = this.getContentAsString(srcDocument
+					.getContentStream());
 
-			ObjectId parentFolder = session.createObjectId(Fixture.getTestRootId());
+			ObjectId parentFolder = session.createObjectId(Fixture
+					.getTestRootId());
 			/*
 			 * List<Property<?>> srcProperties = srcDocument.getProperties();
 			 * assertNotNull(srcProperties); List<Property<?>> dstProperties =
@@ -151,11 +158,14 @@ public class WriteObjectIT extends AbstractSessionTest {
 			Map<String, Object> properties = new HashMap<String, Object>();
 			properties.put(PropertyIds.NAME, name);
 
-			ObjectId dstDocumentId = this.session.createDocumentFromSource(srcDocument, properties, parentFolder,
+			ObjectId dstDocumentId = this.session.createDocumentFromSource(
+					srcDocument, properties, parentFolder,
 					VersioningState.NONE, null, null, null);
 			assertNotNull(dstDocumentId);
-			Document dstDocument = (Document) this.session.getObject(dstDocumentId);
-			String dstContent = this.getContentAsString(dstDocument.getContentStream());
+			Document dstDocument = (Document) this.session
+					.getObject(dstDocumentId);
+			String dstContent = this.getContentAsString(dstDocument
+					.getContentStream());
 			assertEquals(srcContent, dstContent);
 
 		} catch (CmisNotSupportedException e) {
@@ -168,7 +178,8 @@ public class WriteObjectIT extends AbstractSessionTest {
 	public void deleteAndCreateContent() throws IOException {
 		// verify content
 
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
+		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
+				+ FixtureData.DOCUMENT1_NAME;
 		Document document = (Document) this.session.getObjectByPath(path);
 		assertNotNull("Document not found: " + path, document);
 
@@ -189,7 +200,8 @@ public class WriteObjectIT extends AbstractSessionTest {
 
 		byte[] buf1 = content1.getBytes("UTF-8");
 		ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-		contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length, mimetype, in1);
+		contentStream = this.session.getObjectFactory().createContentStream(
+				filename, buf1.length, mimetype, in1);
 		assertNotNull(contentStream);
 
 		document.setContentStream(contentStream, true);
@@ -206,7 +218,8 @@ public class WriteObjectIT extends AbstractSessionTest {
 	@Test
 	public void updateProperties() {
 		// verify content
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
+		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
+				+ FixtureData.DOCUMENT1_NAME;
 		Document document = (Document) this.session.getObjectByPath(path);
 		assertNotNull("Document not found: " + path, document);
 

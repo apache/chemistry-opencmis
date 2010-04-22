@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.client.runtime.objecttype;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.api.PagingList;
+import org.apache.chemistry.opencmis.client.api.PagingIterable;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 
@@ -75,7 +75,7 @@ public class ObjectTypeHelper {
 		return parentType;
 	}
 
-	public PagingList<ObjectType> getChildren(int itemsPerPage) {
+	public PagingIterable<ObjectType> getChildren(int itemsPerPage) {
 		return session.getTypeChildren(objectType.getId(), true, itemsPerPage);
 	}
 
