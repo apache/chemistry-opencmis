@@ -25,34 +25,34 @@ import java.util.List;
  */
 public interface FileableCmisObject extends CmisObject {
 
-	// object service
+    // object service
 
-	/**
-	 * Moves the object.
-	 */
-	FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId);
+    /**
+     * Moves the object.
+     */
+    FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId);
 
-	// navigation service
+    // navigation service
 
-	/**
-	 * Returns the parents of this object.
-	 */
-	List<Folder> getParents();
+    /**
+     * Returns the parents of this object.
+     */
+    List<Folder> getParents();
 
-	/**
-	 * Returns the paths of this object.
-	 */
-	List<String> getPaths();
+    /**
+     * Returns the paths of this object.
+     */
+    List<String> getPaths();
 
-	// multifiling service
+    // multifiling service
 
-	/**
-	 * Adds this object to a folder.
-	 */
-	void addToFolder(ObjectId folderId, boolean allVersions);
+    /**
+     * Adds this object to a folder.
+     */
+    void addToFolder(ObjectId folderId, boolean allVersions);
 
-	/**
-	 * Removes this object from a folder.
-	 */
-	void removeFromFolder(ObjectId folderId);
+    /**
+     * Removes this object from a folder.
+     */
+    void removeFromFolder(ObjectId folderId);
 }

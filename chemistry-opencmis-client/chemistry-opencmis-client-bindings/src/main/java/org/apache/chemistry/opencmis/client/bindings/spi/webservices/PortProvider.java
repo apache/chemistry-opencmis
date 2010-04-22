@@ -71,230 +71,230 @@ import com.sun.xml.ws.developer.WSBindingProvider;
  */
 public class PortProvider {
 
-	private static Log log = LogFactory.getLog(PortProvider.class);
+    private static Log log = LogFactory.getLog(PortProvider.class);
 
-	public static final String CMIS_NAMESPACE = "http://docs.oasis-open.org/ns/cmis/ws/200908/";
+    public static final String CMIS_NAMESPACE = "http://docs.oasis-open.org/ns/cmis/ws/200908/";
 
-	public static final String REPOSITORY_SERVICE = "RepositoryService";
-	public static final String OBJECT_SERVICE = "ObjectService";
-	public static final String DISCOVERY_SERVICE = "DiscoveryService";
-	public static final String NAVIGATION_SERVICE = "NavigationService";
-	public static final String MULTIFILING_SERVICE = "MulifilingService";
-	public static final String VERSIONING_SERVICE = "VersioningService";
-	public static final String RELATIONSHIP_SERVICE = "RelationshipService";
-	public static final String POLICY_SERVICE = "PolicyService";
-	public static final String ACL_SERVICE = "ACLService";
+    public static final String REPOSITORY_SERVICE = "RepositoryService";
+    public static final String OBJECT_SERVICE = "ObjectService";
+    public static final String DISCOVERY_SERVICE = "DiscoveryService";
+    public static final String NAVIGATION_SERVICE = "NavigationService";
+    public static final String MULTIFILING_SERVICE = "MulifilingService";
+    public static final String VERSIONING_SERVICE = "VersioningService";
+    public static final String RELATIONSHIP_SERVICE = "RelationshipService";
+    public static final String POLICY_SERVICE = "PolicyService";
+    public static final String ACL_SERVICE = "ACLService";
 
-	private static final int CHUNK_SIZE = 64 * 1024;
+    private static final int CHUNK_SIZE = 64 * 1024;
 
-	private final Session fSession;
+    private final Session fSession;
 
-	/**
-	 * Constructor.
-	 */
-	public PortProvider(Session session) {
-		fSession = session;
-	}
+    /**
+     * Constructor.
+     */
+    public PortProvider(Session session) {
+        fSession = session;
+    }
 
-	/**
-	 * Return the Repository Service port object.
-	 */
-	public RepositoryServicePort getRepositoryServicePort() {
-		return (RepositoryServicePort) getPortObject(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE);
-	}
+    /**
+     * Return the Repository Service port object.
+     */
+    public RepositoryServicePort getRepositoryServicePort() {
+        return (RepositoryServicePort) getPortObject(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE);
+    }
 
-	/**
-	 * Return the Navigation Service port object.
-	 */
-	public NavigationServicePort getNavigationServicePort() {
-		return (NavigationServicePort) getPortObject(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE);
-	}
+    /**
+     * Return the Navigation Service port object.
+     */
+    public NavigationServicePort getNavigationServicePort() {
+        return (NavigationServicePort) getPortObject(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE);
+    }
 
-	/**
-	 * Return the Object Service port object.
-	 */
-	public ObjectServicePort getObjectServicePort() {
-		return (ObjectServicePort) getPortObject(SessionParameter.WEBSERVICES_OBJECT_SERVICE);
-	}
+    /**
+     * Return the Object Service port object.
+     */
+    public ObjectServicePort getObjectServicePort() {
+        return (ObjectServicePort) getPortObject(SessionParameter.WEBSERVICES_OBJECT_SERVICE);
+    }
 
-	/**
-	 * Return the Versioning Service port object.
-	 */
-	public VersioningServicePort getVersioningServicePort() {
-		return (VersioningServicePort) getPortObject(SessionParameter.WEBSERVICES_VERSIONING_SERVICE);
-	}
+    /**
+     * Return the Versioning Service port object.
+     */
+    public VersioningServicePort getVersioningServicePort() {
+        return (VersioningServicePort) getPortObject(SessionParameter.WEBSERVICES_VERSIONING_SERVICE);
+    }
 
-	/**
-	 * Return the Discovery Service port object.
-	 */
-	public DiscoveryServicePort getDiscoveryServicePort() {
-		return (DiscoveryServicePort) getPortObject(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE);
-	}
+    /**
+     * Return the Discovery Service port object.
+     */
+    public DiscoveryServicePort getDiscoveryServicePort() {
+        return (DiscoveryServicePort) getPortObject(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE);
+    }
 
-	/**
-	 * Return the MultiFiling Service port object.
-	 */
-	public MultiFilingServicePort getMultiFilingServicePort() {
-		return (MultiFilingServicePort) getPortObject(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE);
-	}
+    /**
+     * Return the MultiFiling Service port object.
+     */
+    public MultiFilingServicePort getMultiFilingServicePort() {
+        return (MultiFilingServicePort) getPortObject(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE);
+    }
 
-	/**
-	 * Return the Relationship Service port object.
-	 */
-	public RelationshipServicePort getRelationshipServicePort() {
-		return (RelationshipServicePort) getPortObject(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE);
-	}
+    /**
+     * Return the Relationship Service port object.
+     */
+    public RelationshipServicePort getRelationshipServicePort() {
+        return (RelationshipServicePort) getPortObject(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE);
+    }
 
-	/**
-	 * Return the Policy Service port object.
-	 */
-	public PolicyServicePort getPolicyServicePort() {
-		return (PolicyServicePort) getPortObject(SessionParameter.WEBSERVICES_POLICY_SERVICE);
-	}
+    /**
+     * Return the Policy Service port object.
+     */
+    public PolicyServicePort getPolicyServicePort() {
+        return (PolicyServicePort) getPortObject(SessionParameter.WEBSERVICES_POLICY_SERVICE);
+    }
 
-	/**
-	 * Return the ACL Service port object.
-	 */
-	public ACLServicePort getACLServicePort() {
-		return (ACLServicePort) getPortObject(SessionParameter.WEBSERVICES_ACL_SERVICE);
-	}
+    /**
+     * Return the ACL Service port object.
+     */
+    public ACLServicePort getACLServicePort() {
+        return (ACLServicePort) getPortObject(SessionParameter.WEBSERVICES_ACL_SERVICE);
+    }
 
-	// ---- internal ----
+    // ---- internal ----
 
-	/**
-	 * Gets a port object from the session or (re-)initializes the port objects.
-	 */
-	@SuppressWarnings("unchecked")
-	private Object getPortObject(String portKey) {
-		Map<String, Object> portMap = (Map<String, Object>) fSession.get(SpiSessionParameter.PORTS);
+    /**
+     * Gets a port object from the session or (re-)initializes the port objects.
+     */
+    @SuppressWarnings("unchecked")
+    private Object getPortObject(String portKey) {
+        Map<String, Object> portMap = (Map<String, Object>) fSession.get(SpiSessionParameter.PORTS);
 
-		// does the port map exist?
-		if (portMap == null) {
-			fSession.writeLock();
-			try {
-				// try again
-				portMap = (Map<String, Object>) fSession.get(SpiSessionParameter.PORTS);
-				if (portMap == null) {
-					portMap = Collections.synchronizedMap(new HashMap<String, Object>());
-					fSession.put(SpiSessionParameter.PORTS, portMap, true);
-				}
+        // does the port map exist?
+        if (portMap == null) {
+            fSession.writeLock();
+            try {
+                // try again
+                portMap = (Map<String, Object>) fSession.get(SpiSessionParameter.PORTS);
+                if (portMap == null) {
+                    portMap = Collections.synchronizedMap(new HashMap<String, Object>());
+                    fSession.put(SpiSessionParameter.PORTS, portMap, true);
+                }
 
-				if (portMap.containsKey(portKey)) {
-					return portMap.get(portKey);
-				}
+                if (portMap.containsKey(portKey)) {
+                    return portMap.get(portKey);
+                }
 
-				// create object
-				Object portObject = initPortObject(portKey);
-				portMap.put(portKey, portObject);
+                // create object
+                Object portObject = initPortObject(portKey);
+                portMap.put(portKey, portObject);
 
-				return portObject;
-			} finally {
-				fSession.writeUnlock();
-			}
-		}
+                return portObject;
+            } finally {
+                fSession.writeUnlock();
+            }
+        }
 
-		// is the port in the port map?
-		if (!portMap.containsKey(portKey)) {
-			fSession.writeLock();
-			try {
-				// try again
-				if (portMap.containsKey(portKey)) {
-					return portMap.get(portKey);
-				}
+        // is the port in the port map?
+        if (!portMap.containsKey(portKey)) {
+            fSession.writeLock();
+            try {
+                // try again
+                if (portMap.containsKey(portKey)) {
+                    return portMap.get(portKey);
+                }
 
-				// create object
-				Object portObject = initPortObject(portKey);
-				portMap.put(portKey, portObject);
+                // create object
+                Object portObject = initPortObject(portKey);
+                portMap.put(portKey, portObject);
 
-				return portObject;
-			} finally {
-				fSession.writeUnlock();
-			}
-		}
+                return portObject;
+            } finally {
+                fSession.writeUnlock();
+            }
+        }
 
-		return portMap.get(portKey);
-	}
+        return portMap.get(portKey);
+    }
 
-	/**
-	 * Creates a port object.
-	 */
-	private Object initPortObject(String portKey) {
-		Object portObject = null;
+    /**
+     * Creates a port object.
+     */
+    private Object initPortObject(String portKey) {
+        Object portObject = null;
 
-		if (log.isDebugEnabled()) {
-			log.debug("Initializing Web Service " + portKey + "...");
-		}
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing Web Service " + portKey + "...");
+        }
 
-		try {
-			// get WSDL URL
-			URL wsdlUrl = new URL((String) fSession.get(portKey));
+        try {
+            // get WSDL URL
+            URL wsdlUrl = new URL((String) fSession.get(portKey));
 
-			// build the requested port object
-			if (SessionParameter.WEBSERVICES_REPOSITORY_SERVICE.equals(portKey)) {
-				RepositoryService service = new RepositoryService(wsdlUrl,
-						new QName(CMIS_NAMESPACE, REPOSITORY_SERVICE));
-				portObject = service.getRepositoryServicePort(new MTOMFeature());
-			} else if (SessionParameter.WEBSERVICES_NAVIGATION_SERVICE.equals(portKey)) {
-				NavigationService service = new NavigationService(wsdlUrl,
-						new QName(CMIS_NAMESPACE, NAVIGATION_SERVICE));
-				portObject = service.getNavigationServicePort(new MTOMFeature());
-			} else if (SessionParameter.WEBSERVICES_OBJECT_SERVICE.equals(portKey)) {
-				ObjectService service = new ObjectService(wsdlUrl, new QName(CMIS_NAMESPACE, OBJECT_SERVICE));
-				portObject = service.getObjectServicePort(new MTOMFeature(), new StreamingAttachmentFeature(null, true,
-						4 * 1024 * 1024));
-				((BindingProvider) portObject).getRequestContext().put(
-						JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
-			} else if (SessionParameter.WEBSERVICES_VERSIONING_SERVICE.equals(portKey)) {
-				VersioningService service = new VersioningService(wsdlUrl,
-						new QName(CMIS_NAMESPACE, VERSIONING_SERVICE));
-				portObject = service.getVersioningServicePort(new MTOMFeature());
-			} else if (SessionParameter.WEBSERVICES_DISCOVERY_SERVICE.equals(portKey)) {
-				DiscoveryService service = new DiscoveryService(wsdlUrl, new QName(CMIS_NAMESPACE, DISCOVERY_SERVICE));
-				portObject = service.getDiscoveryServicePort(new MTOMFeature());
-			} else if (SessionParameter.WEBSERVICES_MULTIFILING_SERVICE.equals(portKey)) {
-				MultiFilingService service = new MultiFilingService(wsdlUrl, new QName(CMIS_NAMESPACE,
-						MULTIFILING_SERVICE));
-				portObject = service.getMultiFilingServicePort(new MTOMFeature());
-			} else if (SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE.equals(portKey)) {
-				RelationshipService service = new RelationshipService(wsdlUrl, new QName(CMIS_NAMESPACE,
-						RELATIONSHIP_SERVICE));
-				portObject = service.getRelationshipServicePort(new MTOMFeature());
-			} else if (SessionParameter.WEBSERVICES_POLICY_SERVICE.equals(portKey)) {
-				PolicyService service = new PolicyService(wsdlUrl, new QName(CMIS_NAMESPACE, POLICY_SERVICE));
-				portObject = service.getPolicyServicePort(new MTOMFeature());
-			} else if (SessionParameter.WEBSERVICES_ACL_SERVICE.equals(portKey)) {
-				ACLService service = new ACLService(wsdlUrl, new QName(CMIS_NAMESPACE, ACL_SERVICE));
-				portObject = service.getACLServicePort(new MTOMFeature());
-			}
+            // build the requested port object
+            if (SessionParameter.WEBSERVICES_REPOSITORY_SERVICE.equals(portKey)) {
+                RepositoryService service = new RepositoryService(wsdlUrl,
+                        new QName(CMIS_NAMESPACE, REPOSITORY_SERVICE));
+                portObject = service.getRepositoryServicePort(new MTOMFeature());
+            } else if (SessionParameter.WEBSERVICES_NAVIGATION_SERVICE.equals(portKey)) {
+                NavigationService service = new NavigationService(wsdlUrl,
+                        new QName(CMIS_NAMESPACE, NAVIGATION_SERVICE));
+                portObject = service.getNavigationServicePort(new MTOMFeature());
+            } else if (SessionParameter.WEBSERVICES_OBJECT_SERVICE.equals(portKey)) {
+                ObjectService service = new ObjectService(wsdlUrl, new QName(CMIS_NAMESPACE, OBJECT_SERVICE));
+                portObject = service.getObjectServicePort(new MTOMFeature(), new StreamingAttachmentFeature(null, true,
+                        4 * 1024 * 1024));
+                ((BindingProvider) portObject).getRequestContext().put(
+                        JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
+            } else if (SessionParameter.WEBSERVICES_VERSIONING_SERVICE.equals(portKey)) {
+                VersioningService service = new VersioningService(wsdlUrl,
+                        new QName(CMIS_NAMESPACE, VERSIONING_SERVICE));
+                portObject = service.getVersioningServicePort(new MTOMFeature());
+            } else if (SessionParameter.WEBSERVICES_DISCOVERY_SERVICE.equals(portKey)) {
+                DiscoveryService service = new DiscoveryService(wsdlUrl, new QName(CMIS_NAMESPACE, DISCOVERY_SERVICE));
+                portObject = service.getDiscoveryServicePort(new MTOMFeature());
+            } else if (SessionParameter.WEBSERVICES_MULTIFILING_SERVICE.equals(portKey)) {
+                MultiFilingService service = new MultiFilingService(wsdlUrl, new QName(CMIS_NAMESPACE,
+                        MULTIFILING_SERVICE));
+                portObject = service.getMultiFilingServicePort(new MTOMFeature());
+            } else if (SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE.equals(portKey)) {
+                RelationshipService service = new RelationshipService(wsdlUrl, new QName(CMIS_NAMESPACE,
+                        RELATIONSHIP_SERVICE));
+                portObject = service.getRelationshipServicePort(new MTOMFeature());
+            } else if (SessionParameter.WEBSERVICES_POLICY_SERVICE.equals(portKey)) {
+                PolicyService service = new PolicyService(wsdlUrl, new QName(CMIS_NAMESPACE, POLICY_SERVICE));
+                portObject = service.getPolicyServicePort(new MTOMFeature());
+            } else if (SessionParameter.WEBSERVICES_ACL_SERVICE.equals(portKey)) {
+                ACLService service = new ACLService(wsdlUrl, new QName(CMIS_NAMESPACE, ACL_SERVICE));
+                portObject = service.getACLServicePort(new MTOMFeature());
+            }
 
-			// add SOAP and HTTP authentication headers
-			AbstractAuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(fSession);
-			if (authProvider != null) {
-				// SOAP header
-				Element soapHeader = authProvider.getSOAPHeaders(portObject);
-				if (soapHeader != null) {
-					((WSBindingProvider) portObject).setOutboundHeaders(Headers.create(soapHeader));
-				}
+            // add SOAP and HTTP authentication headers
+            AbstractAuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(fSession);
+            if (authProvider != null) {
+                // SOAP header
+                Element soapHeader = authProvider.getSOAPHeaders(portObject);
+                if (soapHeader != null) {
+                    ((WSBindingProvider) portObject).setOutboundHeaders(Headers.create(soapHeader));
+                }
 
-				// HTTP header
-				Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(wsdlUrl.toString());
-				if (httpHeaders != null) {
-					((BindingProvider) portObject).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
-							httpHeaders);
-				}
-			}
-		} catch (CmisBaseException ce) {
-			throw ce;
-		} catch (Exception e) {
-			throw new CmisConnectionException("Cannot initalize Web Services port object [" + portKey + "]: "
-					+ e.getMessage(), e);
-		}
+                // HTTP header
+                Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(wsdlUrl.toString());
+                if (httpHeaders != null) {
+                    ((BindingProvider) portObject).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
+                            httpHeaders);
+                }
+            }
+        } catch (CmisBaseException ce) {
+            throw ce;
+        } catch (Exception e) {
+            throw new CmisConnectionException("Cannot initalize Web Services port object [" + portKey + "]: "
+                    + e.getMessage(), e);
+        }
 
-		// we have no object ... strange ...
-		if (portObject == null) {
-			throw new CmisRuntimeException("Cannot find Web Services port object [" + portKey + "]!");
-		}
+        // we have no object ... strange ...
+        if (portObject == null) {
+            throw new CmisRuntimeException("Cannot find Web Services port object [" + portKey + "]!");
+        }
 
-		return portObject;
-	}
+        return portObject;
+    }
 }

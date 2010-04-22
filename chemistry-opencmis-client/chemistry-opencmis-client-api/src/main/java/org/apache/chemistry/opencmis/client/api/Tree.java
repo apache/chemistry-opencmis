@@ -25,13 +25,13 @@ import java.util.List;
  */
 public interface Tree<T> {
 
-	/**
-	 * Returns the item on this level.
-	 */
-	T getItem();
+    /**
+     * Returns the item on this level.
+     */
+    T getItem();
 
-	/**
-	 * Returns the children.
-	 */
-	List<Tree<T>> getChildren();
+    /**
+     * Returns the children.
+     */
+    List<Tree<T>> getChildren();
 }

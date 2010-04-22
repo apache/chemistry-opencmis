@@ -29,27 +29,27 @@ import java.util.Map;
  */
 public class MapCacheLevelImpl extends AbstractMapCacheLevel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public final static String CAPACITY = "capacity";
-	public final static String LOAD_FACTOR = "loadFactor";
-	public final static String SINGLE_VALUE = "singleValue";
+    public final static String CAPACITY = "capacity";
+    public final static String LOAD_FACTOR = "loadFactor";
+    public final static String SINGLE_VALUE = "singleValue";
 
-	/**
-	 * Constructor.
-	 */
-	public MapCacheLevelImpl() {
-	}
+    /**
+     * Constructor.
+     */
+    public MapCacheLevelImpl() {
+    }
 
-	public void initialize(Map<String, String> parameters) {
-		int initialCapacity = getIntParameter(parameters, CAPACITY, 32);
-		float loadFactor = getFloatParameter(parameters, LOAD_FACTOR, 0.75f);
-		boolean singleValue = getBooleanParameter(parameters, SINGLE_VALUE, false);
+    public void initialize(Map<String, String> parameters) {
+        int initialCapacity = getIntParameter(parameters, CAPACITY, 32);
+        float loadFactor = getFloatParameter(parameters, LOAD_FACTOR, 0.75f);
+        boolean singleValue = getBooleanParameter(parameters, SINGLE_VALUE, false);
 
-		setMap(new HashMap<String, Object>(initialCapacity, loadFactor));
-		disableKeyFallback();
-		if (singleValue) {
-			enableSingeValueFallback();
-		}
-	}
+        setMap(new HashMap<String, Object>(initialCapacity, loadFactor));
+        disableKeyFallback();
+        if (singleValue) {
+            enableSingeValueFallback();
+        }
+    }
 }

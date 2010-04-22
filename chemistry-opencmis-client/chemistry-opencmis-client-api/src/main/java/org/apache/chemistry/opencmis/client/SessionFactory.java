@@ -60,23 +60,23 @@ import org.apache.chemistry.opencmis.client.api.Session;
  */
 public interface SessionFactory {
 
-	/**
-	 * Obtain a new session using parameter configuration.
-	 * 
-	 * @param T
-	 *            A from the {@code Session} interface derived sub type
-	 * @param parameters
-	 *            a {@code Map} of name/value pairs with parameters for the
-	 *            session. See class {@code SessionParameter}.
-	 * @return a {@code session} to the CMIS repository specified by the {@code
-	 *         parameters}.
-	 */
-	<T extends Session> T createSession(Map<String, String> parameters);
+    /**
+     * Obtain a new session using parameter configuration.
+     * 
+     * @param T
+     *            A from the {@code Session} interface derived sub type
+     * @param parameters
+     *            a {@code Map} of name/value pairs with parameters for the
+     *            session. See class {@code SessionParameter}.
+     * @return a {@code session} to the CMIS repository specified by the {@code
+     *         parameters}.
+     */
+    <T extends Session> T createSession(Map<String, String> parameters);
 
-	/**
-	 * Returns all repositories that are available at the endpoint. See
-	 * {@link #createSession(Map)} for parameter details. The parameter {@code
-	 * SessionParameter.REPOSITORY_ID} should not be set.
-	 */
-	List<Repository> getRepositories(Map<String, String> parameters);
+    /**
+     * Returns all repositories that are available at the endpoint. See
+     * {@link #createSession(Map)} for parameter details. The parameter {@code
+     * SessionParameter.REPOSITORY_ID} should not be set.
+     */
+    List<Repository> getRepositories(Map<String, String> parameters);
 }

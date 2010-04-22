@@ -27,23 +27,23 @@ import java.util.Iterator;
  */
 public interface PagingIterator<T> extends Iterator<T> {
 
-	/**
-	 * Returns the current position within the iterator.
-	 * 
-	 * @return iterator position
-	 */
-	long getPosition();
+    /**
+     * Returns the current position within the iterator.
+     * 
+     * @return iterator position
+     */
+    long getPosition();
 
-	/**
-	 * Returns the total number of items. If the repository knows the total
-	 * number of items in a result set, the repository SHOULD include the number
-	 * here. If the repository does not know the number of items in a result
-	 * set, this parameter SHOULD not be set. The value in the parameter MAY NOT
-	 * be accurate the next time the client retrieves the result set or the next
-	 * page in the result set.
-	 * 
-	 * @return total number of items or (-1)
-	 */
-	long getTotalNumItems();
+    /**
+     * Returns the total number of items. If the repository knows the total
+     * number of items in a result set, the repository SHOULD include the number
+     * here. If the repository does not know the number of items in a result
+     * set, this parameter SHOULD not be set. The value in the parameter MAY NOT
+     * be accurate the next time the client retrieves the result set or the next
+     * page in the result set.
+     * 
+     * @return total number of items or (-1)
+     */
+    long getTotalNumItems();
 
 }

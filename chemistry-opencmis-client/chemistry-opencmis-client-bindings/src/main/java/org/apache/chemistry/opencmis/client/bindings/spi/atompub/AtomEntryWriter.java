@@ -45,133 +45,133 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class AtomEntryWriter implements CmisAtomPubConstants {
 
-	private static final String PREFIX_ATOM = "atom";
-	private static final String PREFIX_CMIS = "cmis";
-	private static final String PREFIX_RESTATOM = "cmisra";
+    private static final String PREFIX_ATOM = "atom";
+    private static final String PREFIX_CMIS = "cmis";
+    private static final String PREFIX_RESTATOM = "cmisra";
 
-	private static final int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 4096;
 
-	private CmisObjectType fObject;
-	private InputStream fStream;
-	private String fMediaType;
+    private CmisObjectType fObject;
+    private InputStream fStream;
+    private String fMediaType;
 
-	/**
-	 * Constructor.
-	 */
-	public AtomEntryWriter(CmisObjectType object) {
-		this(object, null, null);
-	}
+    /**
+     * Constructor.
+     */
+    public AtomEntryWriter(CmisObjectType object) {
+        this(object, null, null);
+    }
 
-	/**
-	 * Constructor.
-	 */
-	public AtomEntryWriter(CmisObjectType object, String mediaType, InputStream stream) {
-		if ((object == null) || (object.getProperties() == null)) {
-			throw new CmisInvalidArgumentException("Object and properties must not be null!");
-		}
+    /**
+     * Constructor.
+     */
+    public AtomEntryWriter(CmisObjectType object, String mediaType, InputStream stream) {
+        if ((object == null) || (object.getProperties() == null)) {
+            throw new CmisInvalidArgumentException("Object and properties must not be null!");
+        }
 
-		if ((stream != null) && (mediaType == null)) {
-			throw new CmisInvalidArgumentException("Media type must be set if a stream is present!");
-		}
+        if ((stream != null) && (mediaType == null)) {
+            throw new CmisInvalidArgumentException("Media type must be set if a stream is present!");
+        }
 
-		fObject = object;
-		fMediaType = mediaType;
-		fStream = stream;
-	}
+        fObject = object;
+        fMediaType = mediaType;
+        fStream = stream;
+    }
 
-	/**
-	 * Writes the entry to an output stream.
-	 */
-	public void write(OutputStream out) throws Exception {
-		XMLOutputFactory factory = XMLOutputFactory.newInstance();
-		XMLStreamWriter writer = factory.createXMLStreamWriter(out, "UTF-8");
+    /**
+     * Writes the entry to an output stream.
+     */
+    public void write(OutputStream out) throws Exception {
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        XMLStreamWriter writer = factory.createXMLStreamWriter(out, "UTF-8");
 
-		writer.setPrefix(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
-		writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
-		writer.setPrefix(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
+        writer.setPrefix(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
+        writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
+        writer.setPrefix(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
 
-		// start doc
-		writer.writeStartDocument();
+        // start doc
+        writer.writeStartDocument();
 
-		// start entry
-		writer.writeStartElement(Constants.NAMESPACE_ATOM, TAG_ENTRY);
-		writer.writeNamespace(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
-		writer.writeNamespace(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
-		writer.writeNamespace(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
+        // start entry
+        writer.writeStartElement(Constants.NAMESPACE_ATOM, TAG_ENTRY);
+        writer.writeNamespace(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
+        writer.writeNamespace(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
+        writer.writeNamespace(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
 
-		// atom:id
-		writer.writeStartElement(Constants.NAMESPACE_ATOM, TAG_ATOM_ID);
-		writer.writeCharacters("urn:uuid:00000000-0000-0000-0000-00000000000");
-		writer.writeEndElement();
+        // atom:id
+        writer.writeStartElement(Constants.NAMESPACE_ATOM, TAG_ATOM_ID);
+        writer.writeCharacters("urn:uuid:00000000-0000-0000-0000-00000000000");
+        writer.writeEndElement();
 
-		// atom:title
-		writer.writeStartElement(Constants.NAMESPACE_ATOM, TAG_ATOM_TITLE);
-		writer.writeCharacters(getTitle());
-		writer.writeEndElement();
+        // atom:title
+        writer.writeStartElement(Constants.NAMESPACE_ATOM, TAG_ATOM_TITLE);
+        writer.writeCharacters(getTitle());
+        writer.writeEndElement();
 
-		// atom:updated
-		writer.writeStartElement(Constants.NAMESPACE_ATOM, TAG_ATOM_UPDATED);
-		writer.writeCharacters(getUpdated());
-		writer.writeEndElement();
+        // atom:updated
+        writer.writeStartElement(Constants.NAMESPACE_ATOM, TAG_ATOM_UPDATED);
+        writer.writeCharacters(getUpdated());
+        writer.writeEndElement();
 
-		// content
-		if (fStream != null) {
-			writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT);
+        // content
+        if (fStream != null) {
+            writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT);
 
-			writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_MEDIATYPE);
-			writer.writeCharacters(fMediaType);
-			writer.writeEndElement();
+            writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_MEDIATYPE);
+            writer.writeCharacters(fMediaType);
+            writer.writeEndElement();
 
-			writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
-			writer.writeCharacters(getContent());
-			writer.writeEndElement();
+            writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
+            writer.writeCharacters(getContent());
+            writer.writeEndElement();
 
-			writer.writeEndElement();
-		}
+            writer.writeEndElement();
+        }
 
-		// object
-		JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(fObject), writer, true);
+        // object
+        JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(fObject), writer, true);
 
-		// end entry
-		writer.writeEndElement();
+        // end entry
+        writer.writeEndElement();
 
-		// end document
-		writer.writeEndDocument();
+        // end document
+        writer.writeEndDocument();
 
-		writer.flush();
-	}
+        writer.flush();
+    }
 
-	// ---- internal ----
+    // ---- internal ----
 
-	private String getTitle() {
-		String result = "";
+    private String getTitle() {
+        String result = "";
 
-		for (CmisProperty property : fObject.getProperties().getProperty()) {
-			if (PropertyIds.NAME.equals(property.getPropertyDefinitionId()) && (property instanceof CmisPropertyString)) {
-				List<String> values = ((CmisPropertyString) property).getValue();
-				if (!values.isEmpty()) {
-					return values.get(0);
-				}
-			}
-		}
+        for (CmisProperty property : fObject.getProperties().getProperty()) {
+            if (PropertyIds.NAME.equals(property.getPropertyDefinitionId()) && (property instanceof CmisPropertyString)) {
+                List<String> values = ((CmisPropertyString) property).getValue();
+                if (!values.isEmpty()) {
+                    return values.get(0);
+                }
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	private String getUpdated() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		return sdf.format(new Date());
-	}
+    private String getUpdated() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        return sdf.format(new Date());
+    }
 
-	private String getContent() throws Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private String getContent() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		byte[] buffer = new byte[BUFFER_SIZE];
-		int b;
-		while ((b = fStream.read(buffer)) > -1) {
-			baos.write(buffer, 0, b);
-		}
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int b;
+        while ((b = fStream.read(buffer)) > -1) {
+            baos.write(buffer, 0, b);
+        }
 
-		return new String(Base64.encodeBase64Chunked(baos.toByteArray()), "UTF-8");
-	}
+        return new String(Base64.encodeBase64Chunked(baos.toByteArray()), "UTF-8");
+    }
 }

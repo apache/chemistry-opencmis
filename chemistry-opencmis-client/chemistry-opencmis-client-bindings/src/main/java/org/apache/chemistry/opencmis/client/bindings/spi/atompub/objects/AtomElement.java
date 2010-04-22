@@ -28,26 +28,26 @@ import javax.xml.namespace.QName;
  */
 public class AtomElement implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private QName fName;
-	private Object fObject;
+    private QName fName;
+    private Object fObject;
 
-	public AtomElement(QName name, Object object) {
-		fName = name;
-		fObject = object;
-	}
+    public AtomElement(QName name, Object object) {
+        fName = name;
+        fObject = object;
+    }
 
-	public QName getName() {
-		return fName;
-	}
+    public QName getName() {
+        return fName;
+    }
 
-	public Object getObject() {
-		return fObject;
-	}
+    public Object getObject() {
+        return fObject;
+    }
 
-	@Override
-	public String toString() {
-		return fName + ": " + fObject;
-	}
+    @Override
+    public String toString() {
+        return fName + ": " + fObject;
+    }
 }

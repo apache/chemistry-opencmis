@@ -18,65 +18,65 @@ import org.apache.chemistry.opencmis.commons.api.server.CmisServiceFactory;
  */
 public class RepositoryServiceImpl extends AbstractLocalService implements RepositoryService {
 
-	/**
-	 * Constructor.
-	 */
-	public RepositoryServiceImpl(Session session, CmisServiceFactory factory) {
-		setSession(session);
-		setServiceFactory(factory);
-	}
+    /**
+     * Constructor.
+     */
+    public RepositoryServiceImpl(Session session, CmisServiceFactory factory) {
+        setSession(session);
+        setServiceFactory(factory);
+    }
 
-	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			return service.getRepositoryInfo(repositoryId, extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            return service.getRepositoryInfo(repositoryId, extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-		CmisService service = getService(null);
+    public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
+        CmisService service = getService(null);
 
-		try {
-			return service.getRepositoryInfos(extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            return service.getRepositoryInfos(extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			return service.getTypeDefinition(repositoryId, typeId, extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            return service.getTypeDefinition(repositoryId, typeId, extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
-			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
+            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			return service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems, skipCount,
-					extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            return service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems, skipCount,
+                    extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
-			Boolean includePropertyDefinitions, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
+            Boolean includePropertyDefinitions, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			return service.getTypeDescendants(repositoryId, typeId, depth, includePropertyDefinitions, extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            return service.getTypeDescendants(repositoryId, typeId, depth, includePropertyDefinitions, extension);
+        } finally {
+            service.close();
+        }
+    }
 
 }

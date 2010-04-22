@@ -31,52 +31,52 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public interface Folder extends FileableCmisObject {
 
-	// object service
-	Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState,
-			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
+    // object service
+    Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState,
+            List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
 
-	Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState,
-			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
+    Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState,
+            List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
 
-	Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
-			OperationContext context);
+    Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+            OperationContext context);
 
-	Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
-			OperationContext context);
+    Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+            OperationContext context);
 
-	/**
-	 * @return list of object ids which failed to be deleted
-	 */
-	List<String> deleteTree(boolean allversions, UnfileObject unfile, boolean continueOnFailure);
+    /**
+     * @return list of object ids which failed to be deleted
+     */
+    List<String> deleteTree(boolean allversions, UnfileObject unfile, boolean continueOnFailure);
 
-	// navigation service
+    // navigation service
 
-	List<Tree<FileableCmisObject>> getFolderTree(int depth);
+    List<Tree<FileableCmisObject>> getFolderTree(int depth);
 
-	List<Tree<FileableCmisObject>> getFolderTree(int depth, OperationContext context);
+    List<Tree<FileableCmisObject>> getFolderTree(int depth, OperationContext context);
 
-	List<Tree<FileableCmisObject>> getDescendants(int depth);
+    List<Tree<FileableCmisObject>> getDescendants(int depth);
 
-	List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context);
+    List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context);
 
-	PagingIterable<CmisObject> getChildren(int itemsPerPage);
+    PagingIterable<CmisObject> getChildren(int itemsPerPage);
 
-	PagingIterable<CmisObject> getChildren(OperationContext context, int itemsPerPage);
+    PagingIterable<CmisObject> getChildren(OperationContext context, int itemsPerPage);
 
-	boolean isRootFolder();
+    boolean isRootFolder();
 
-	Folder getFolderParent();
+    Folder getFolderParent();
 
-	String getPath();
+    String getPath();
 
-	/**
-	 * Returns all checked out documents of this folder.
-	 */
-	PagingIterable<Document> getCheckedOutDocs(int itemsPerPage);
+    /**
+     * Returns all checked out documents of this folder.
+     */
+    PagingIterable<Document> getCheckedOutDocs(int itemsPerPage);
 
-	PagingIterable<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage);
+    PagingIterable<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage);
 
-	// folder specific properties
+    // folder specific properties
 
-	List<ObjectType> getAllowedChildObjectTypes(); // cmis:allowedChildObjectTypeIds
+    List<ObjectType> getAllowedChildObjectTypes(); // cmis:allowedChildObjectTypeIds
 }

@@ -32,65 +32,65 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDa
  */
 public class PersistentPropertyImpl<T> extends AbstractPropertyData<T> implements Property<T>, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private PropertyDefinition<T> propertyDefinition;
+    private static final long serialVersionUID = 1L;
+    private PropertyDefinition<T> propertyDefinition;
 
-	protected void initialize(PropertyDefinition<?> pd) {
-		setId(pd.getId());
-		setDisplayName(pd.getDisplayName());
-		setLocalName(pd.getLocalName());
-		setQueryName(pd.getQueryName());
-	}
+    protected void initialize(PropertyDefinition<?> pd) {
+        setId(pd.getId());
+        setDisplayName(pd.getDisplayName());
+        setLocalName(pd.getLocalName());
+        setQueryName(pd.getQueryName());
+    }
 
-	/**
-	 * Constructs a single-value property.
-	 */
-	@SuppressWarnings("unchecked")
-	public PersistentPropertyImpl(PropertyDefinition<?> pd, T value) {
-		if (pd == null) {
-			throw new IllegalArgumentException("Type must be set!");
-		}
-		if (value == null) {
-			throw new IllegalArgumentException("Value must be set!");
-		}
-		propertyDefinition = (PropertyDefinition<T>) pd;
-		initialize(pd);
-		setValue(value);
-	}
+    /**
+     * Constructs a single-value property.
+     */
+    @SuppressWarnings("unchecked")
+    public PersistentPropertyImpl(PropertyDefinition<?> pd, T value) {
+        if (pd == null) {
+            throw new IllegalArgumentException("Type must be set!");
+        }
+        if (value == null) {
+            throw new IllegalArgumentException("Value must be set!");
+        }
+        propertyDefinition = (PropertyDefinition<T>) pd;
+        initialize(pd);
+        setValue(value);
+    }
 
-	/**
-	 * Constructs a multi-value property.
-	 */
-	@SuppressWarnings("unchecked")
-	public PersistentPropertyImpl(PropertyDefinition<?> pd, List<T> values) {
-		if (pd == null) {
-			throw new IllegalArgumentException("Type must be set!");
-		}
-		propertyDefinition = (PropertyDefinition<T>) pd;
-		initialize(pd);
-		setValues(values);
-	}
+    /**
+     * Constructs a multi-value property.
+     */
+    @SuppressWarnings("unchecked")
+    public PersistentPropertyImpl(PropertyDefinition<?> pd, List<T> values) {
+        if (pd == null) {
+            throw new IllegalArgumentException("Type must be set!");
+        }
+        propertyDefinition = (PropertyDefinition<T>) pd;
+        initialize(pd);
+        setValues(values);
+    }
 
-	public PropertyDefinition<T> getDefinition() {
-		return propertyDefinition;
-	}
+    public PropertyDefinition<T> getDefinition() {
+        return propertyDefinition;
+    }
 
-	public PropertyType getType() {
-		return propertyDefinition.getPropertyType();
-	}
+    public PropertyType getType() {
+        return propertyDefinition.getPropertyType();
+    }
 
-	public String getValueAsString() {
-		List<T> values = getValues();
-		if (values.size() == 0) {
-			return null;
-		}
-		switch (propertyDefinition.getPropertyType()) {
-		default:
-			return values.get(0).toString();
-		}
-	}
+    public String getValueAsString() {
+        List<T> values = getValues();
+        if (values.size() == 0) {
+            return null;
+        }
+        switch (propertyDefinition.getPropertyType()) {
+        default:
+            return values.get(0).toString();
+        }
+    }
 
-	public boolean isMultiValued() {
-		return propertyDefinition.getCardinality() == Cardinality.MULTI;
-	}
+    public boolean isMultiValued() {
+        return propertyDefinition.getCardinality() == Cardinality.MULTI;
+    }
 }

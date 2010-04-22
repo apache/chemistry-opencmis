@@ -24,35 +24,35 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects;
  */
 public class RepositoryWorkspace extends AtomBase {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String fId;
+    private String fId;
 
-	public RepositoryWorkspace() {
-	}
+    public RepositoryWorkspace() {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType
-	 * ()
-	 */
-	@Override
-	public String getType() {
-		return "Repository Workspace";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType
+     * ()
+     */
+    @Override
+    public String getType() {
+        return "Repository Workspace";
+    }
 
-	public String getId() {
-		return fId;
-	}
+    public String getId() {
+        return fId;
+    }
 
-	public void setId(String id) {
-		fId = id;
-	}
+    public void setId(String id) {
+        fId = id;
+    }
 
-	@Override
-	public String toString() {
-		return "Workspace \"" + fId + "\": " + getElements();
-	}
+    @Override
+    public String toString() {
+        return "Workspace \"" + fId + "\": " + getElements();
+    }
 }

@@ -31,18 +31,18 @@ import org.apache.chemistry.opencmis.commons.api.CmisBinding;
  */
 public class AtomPubTestBindingFactory {
 
-	public static CmisBinding createBinding(String atomPubUrl, String user, String password) {
-		// gather parameters
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put(SessionParameter.USER, user);
-		parameters.put(SessionParameter.PASSWORD, password);
+    public static CmisBinding createBinding(String atomPubUrl, String user, String password) {
+        // gather parameters
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put(SessionParameter.USER, user);
+        parameters.put(SessionParameter.PASSWORD, password);
 
-		parameters.put(SessionParameter.ATOMPUB_URL, atomPubUrl);
+        parameters.put(SessionParameter.ATOMPUB_URL, atomPubUrl);
 
-		// get factory and create provider
-		CmisBindingFactory factory = CmisBindingFactory.newInstance();
-		CmisBinding binding = factory.createCmisAtomPubBinding(parameters);
+        // get factory and create provider
+        CmisBindingFactory factory = CmisBindingFactory.newInstance();
+        CmisBinding binding = factory.createCmisAtomPubBinding(parameters);
 
-		return binding;
-	}
+        return binding;
+    }
 }

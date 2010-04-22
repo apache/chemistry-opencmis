@@ -27,37 +27,37 @@ import java.util.List;
  */
 public class AtomFeed extends AtomBase {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private List<AtomEntry> fEntries = new ArrayList<AtomEntry>();
+    private List<AtomEntry> fEntries = new ArrayList<AtomEntry>();
 
-	public AtomFeed() {
-	}
+    public AtomFeed() {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType
-	 * ()
-	 */
-	@Override
-	public String getType() {
-		return "Atom Feed";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType
+     * ()
+     */
+    @Override
+    public String getType() {
+        return "Atom Feed";
+    }
 
-	public List<AtomEntry> getEntries() {
-		return fEntries;
-	}
+    public List<AtomEntry> getEntries() {
+        return fEntries;
+    }
 
-	public void addEntry(AtomEntry entry) {
-		if (entry != null) {
-			fEntries.add(entry);
-		}
-	}
+    public void addEntry(AtomEntry entry) {
+        if (entry != null) {
+            fEntries.add(entry);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "Feed : " + getElements() + " " + fEntries;
-	}
+    @Override
+    public String toString() {
+        return "Feed : " + getElements() + " " + fEntries;
+    }
 }

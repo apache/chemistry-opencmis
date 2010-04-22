@@ -11,42 +11,42 @@ import org.apache.chemistry.opencmis.commons.api.server.CmisServiceFactory;
 
 public class PolicyServiceImpl extends AbstractLocalService implements PolicyService {
 
-	/**
-	 * Constructor.
-	 */
-	public PolicyServiceImpl(Session session, CmisServiceFactory factory) {
-		setSession(session);
-		setServiceFactory(factory);
-	}
+    /**
+     * Constructor.
+     */
+    public PolicyServiceImpl(Session session, CmisServiceFactory factory) {
+        setSession(session);
+        setServiceFactory(factory);
+    }
 
-	public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			service.applyPolicy(repositoryId, policyId, objectId, extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            service.applyPolicy(repositoryId, policyId, objectId, extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
-			ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
+            ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			return service.getAppliedPolicies(repositoryId, objectId, filter, extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            return service.getAppliedPolicies(repositoryId, objectId, filter, extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			service.removePolicy(repositoryId, policyId, objectId, extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            service.removePolicy(repositoryId, policyId, objectId, extension);
+        } finally {
+            service.close();
+        }
+    }
 }

@@ -48,168 +48,168 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyId;
  */
 public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyService {
 
-	/**
-	 * Constructor.
-	 */
-	public PolicyServiceImpl(Session session) {
-		setSession(session);
-	}
+    /**
+     * Constructor.
+     */
+    public PolicyServiceImpl(Session session) {
+        setSession(session);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.PolicyService#applyPolicy(java.lang
-	 * .String, java.lang.String, java.lang.String,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-		// find the link
-		String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.PolicyService#applyPolicy(java.lang
+     * .String, java.lang.String, java.lang.String,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
+        // find the link
+        String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
 
-		if (link == null) {
-			throwLinkException(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
-		}
+        if (link == null) {
+            throwLinkException(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
+        UrlBuilder url = new UrlBuilder(link);
 
-		// set up object and writer
-		final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
+        // set up object and writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
 
-		// post applyPolicy request
-		post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
-			public void write(OutputStream out) throws Exception {
-				entryWriter.write(out);
-			}
-		});
-	}
+        // post applyPolicy request
+        post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.PolicyService#getAppliedPolicies(
-	 * java.lang.String, java.lang.String, java.lang.String,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
-			ExtensionsData extension) {
-		List<ObjectData> result = new ArrayList<ObjectData>();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.PolicyService#getAppliedPolicies(
+     * java.lang.String, java.lang.String, java.lang.String,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
+            ExtensionsData extension) {
+        List<ObjectData> result = new ArrayList<ObjectData>();
 
-		// find the link
-		String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
+        // find the link
+        String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
 
-		if (link == null) {
-			throwLinkException(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
-		}
+        if (link == null) {
+            throwLinkException(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
-		url.addParameter(Constants.PARAM_FILTER, filter);
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_FILTER, filter);
 
-		// read and parse
-		HttpUtils.Response resp = read(url);
-		AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
-		// get the policies
-		if (!feed.getEntries().isEmpty()) {
-			for (AtomEntry entry : feed.getEntries()) {
-				ObjectData policy = null;
+        // get the policies
+        if (!feed.getEntries().isEmpty()) {
+            for (AtomEntry entry : feed.getEntries()) {
+                ObjectData policy = null;
 
-				// walk through the entry
-				for (AtomElement element : entry.getElements()) {
-					if (element.getObject() instanceof CmisObjectType) {
-						policy = convert((CmisObjectType) element.getObject());
-					}
-				}
+                // walk through the entry
+                for (AtomElement element : entry.getElements()) {
+                    if (element.getObject() instanceof CmisObjectType) {
+                        policy = convert((CmisObjectType) element.getObject());
+                    }
+                }
 
-				if (policy != null) {
-					result.add(policy);
-				}
-			}
-		}
+                if (policy != null) {
+                    result.add(policy);
+                }
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.PolicyService#removePolicy(java.lang
-	 * .String, java.lang.String, java.lang.String,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-		// we need a policy id
-		if (policyId == null) {
-			throw new CmisInvalidArgumentException("Policy id must be set!");
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.PolicyService#removePolicy(java.lang
+     * .String, java.lang.String, java.lang.String,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
+        // we need a policy id
+        if (policyId == null) {
+            throw new CmisInvalidArgumentException("Policy id must be set!");
+        }
 
-		// find the link
-		String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
+        // find the link
+        String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
 
-		if (link == null) {
-			throwLinkException(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
-		}
+        if (link == null) {
+            throwLinkException(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
-		url.addParameter(Constants.PARAM_FILTER, PropertyIds.OBJECT_ID);
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_FILTER, PropertyIds.OBJECT_ID);
 
-		// read and parse
-		HttpUtils.Response resp = read(url);
-		AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
-		// find the policy
-		String policyLink = null;
-		boolean found = false;
+        // find the policy
+        String policyLink = null;
+        boolean found = false;
 
-		if (!feed.getEntries().isEmpty()) {
-			for (AtomEntry entry : feed.getEntries()) {
-				// walk through the entry
-				for (AtomElement element : entry.getElements()) {
-					if (element.getObject() instanceof AtomLink) {
-						AtomLink atomLink = (AtomLink) element.getObject();
-						if (Constants.REL_SELF.equals(atomLink.getRel())) {
-							policyLink = atomLink.getHref();
-						}
-					} else if (element.getObject() instanceof CmisObjectType) {
-						String id = findIdProperty((CmisObjectType) element.getObject());
-						if (policyId.equals(id)) {
-							found = true;
-						}
-					}
-				}
+        if (!feed.getEntries().isEmpty()) {
+            for (AtomEntry entry : feed.getEntries()) {
+                // walk through the entry
+                for (AtomElement element : entry.getElements()) {
+                    if (element.getObject() instanceof AtomLink) {
+                        AtomLink atomLink = (AtomLink) element.getObject();
+                        if (Constants.REL_SELF.equals(atomLink.getRel())) {
+                            policyLink = atomLink.getHref();
+                        }
+                    } else if (element.getObject() instanceof CmisObjectType) {
+                        String id = findIdProperty((CmisObjectType) element.getObject());
+                        if (policyId.equals(id)) {
+                            found = true;
+                        }
+                    }
+                }
 
-				if (found) {
-					break;
-				}
-			}
-		}
+                if (found) {
+                    break;
+                }
+            }
+        }
 
-		// if found, delete it
-		if (found && (policyLink != null)) {
-			delete(new UrlBuilder(policyLink));
-		}
-	}
+        // if found, delete it
+        if (found && (policyLink != null)) {
+            delete(new UrlBuilder(policyLink));
+        }
+    }
 
-	/**
-	 * Finds the id property within a CMIS object.
-	 */
-	private String findIdProperty(CmisObjectType object) {
-		if ((object == null) || (object.getProperties() == null)) {
-			return null;
-		}
+    /**
+     * Finds the id property within a CMIS object.
+     */
+    private String findIdProperty(CmisObjectType object) {
+        if ((object == null) || (object.getProperties() == null)) {
+            return null;
+        }
 
-		for (CmisProperty property : object.getProperties().getProperty()) {
-			if (PropertyIds.OBJECT_ID.equals(property.getPropertyDefinitionId())
-					&& (property instanceof CmisPropertyId)) {
-				List<String> values = ((CmisPropertyId) property).getValue();
-				if (values.size() == 1) {
-					return values.get(0);
-				}
-			}
-		}
+        for (CmisProperty property : object.getProperties().getProperty()) {
+            if (PropertyIds.OBJECT_ID.equals(property.getPropertyDefinitionId())
+                    && (property instanceof CmisPropertyId)) {
+                List<String> values = ((CmisPropertyId) property).getValue();
+                if (values.size() == 1) {
+                    return values.get(0);
+                }
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

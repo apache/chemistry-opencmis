@@ -52,153 +52,153 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
  */
 public class DiscoveryServiceImpl extends AbstractAtomPubService implements DiscoveryService {
 
-	/**
-	 * Constructor.
-	 */
-	public DiscoveryServiceImpl(Session session) {
-		setSession(session);
-	}
+    /**
+     * Constructor.
+     */
+    public DiscoveryServiceImpl(Session session) {
+        setSession(session);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.DiscoveryService#getContentChanges
-	 * (java.lang.String, org.apache.opencmis.client.provider.Holder,
-	 * java.lang.Boolean, java.lang.String, java.lang.Boolean,
-	 * java.lang.Boolean, java.math.BigInteger,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
-			String filter, Boolean includePolicyIds, Boolean includeACL, BigInteger maxItems, ExtensionsData extension) {
-		ObjectListImpl result = new ObjectListImpl();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.DiscoveryService#getContentChanges
+     * (java.lang.String, org.apache.opencmis.client.provider.Holder,
+     * java.lang.Boolean, java.lang.String, java.lang.Boolean,
+     * java.lang.Boolean, java.math.BigInteger,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
+            String filter, Boolean includePolicyIds, Boolean includeACL, BigInteger maxItems, ExtensionsData extension) {
+        ObjectListImpl result = new ObjectListImpl();
 
-		// find the link
-		String link = loadRepositoryLink(repositoryId, Constants.REP_REL_CHANGES);
+        // find the link
+        String link = loadRepositoryLink(repositoryId, Constants.REP_REL_CHANGES);
 
-		if (link == null) {
-			throw new CmisObjectNotFoundException("Unknown repository or content changes not supported!");
-		}
+        if (link == null) {
+            throw new CmisObjectNotFoundException("Unknown repository or content changes not supported!");
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
-		url.addParameter(Constants.PARAM_CHANGE_LOG_TOKEN, (changeLogToken == null ? null : changeLogToken.getValue()));
-		url.addParameter(Constants.PARAM_PROPERTIES, includeProperties);
-		url.addParameter(Constants.PARAM_FILTER, filter);
-		url.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
-		url.addParameter(Constants.PARAM_ACL, includeACL);
-		url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_CHANGE_LOG_TOKEN, (changeLogToken == null ? null : changeLogToken.getValue()));
+        url.addParameter(Constants.PARAM_PROPERTIES, includeProperties);
+        url.addParameter(Constants.PARAM_FILTER, filter);
+        url.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
+        url.addParameter(Constants.PARAM_ACL, includeACL);
+        url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
 
-		// read and parse
-		HttpUtils.Response resp = read(url);
-		AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
-		// handle top level
-		for (AtomElement element : feed.getElements()) {
-			if (element.getObject() instanceof AtomLink) {
-				if (isNextLink(element)) {
-					result.setHasMoreItems(Boolean.TRUE);
-				}
-			} else if (isInt(NAME_NUM_ITEMS, element)) {
-				result.setNumItems((BigInteger) element.getObject());
-			}
-		}
+        // handle top level
+        for (AtomElement element : feed.getElements()) {
+            if (element.getObject() instanceof AtomLink) {
+                if (isNextLink(element)) {
+                    result.setHasMoreItems(Boolean.TRUE);
+                }
+            } else if (isInt(NAME_NUM_ITEMS, element)) {
+                result.setNumItems((BigInteger) element.getObject());
+            }
+        }
 
-		// get the changes
-		if (!feed.getEntries().isEmpty()) {
-			result.setObjects(new ArrayList<ObjectData>(feed.getEntries().size()));
+        // get the changes
+        if (!feed.getEntries().isEmpty()) {
+            result.setObjects(new ArrayList<ObjectData>(feed.getEntries().size()));
 
-			for (AtomEntry entry : feed.getEntries()) {
-				ObjectData hit = null;
+            for (AtomEntry entry : feed.getEntries()) {
+                ObjectData hit = null;
 
-				// walk through the entry
-				for (AtomElement element : entry.getElements()) {
-					if (element.getObject() instanceof CmisObjectType) {
-						hit = convert((CmisObjectType) element.getObject());
-					}
-				}
+                // walk through the entry
+                for (AtomElement element : entry.getElements()) {
+                    if (element.getObject() instanceof CmisObjectType) {
+                        hit = convert((CmisObjectType) element.getObject());
+                    }
+                }
 
-				if (hit != null) {
-					result.getObjects().add(hit);
-				}
-			}
-		}
+                if (hit != null) {
+                    result.getObjects().add(hit);
+                }
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.DiscoveryService#query(java.lang.
-	 * String, java.lang.String, java.lang.Boolean, java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-	 * java.math.BigInteger, java.math.BigInteger,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
-			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		ObjectListImpl result = new ObjectListImpl();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.DiscoveryService#query(java.lang.
+     * String, java.lang.String, java.lang.Boolean, java.lang.Boolean,
+     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+     * java.math.BigInteger, java.math.BigInteger,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+        ObjectListImpl result = new ObjectListImpl();
 
-		// find the link
-		String link = loadCollection(repositoryId, Constants.COLLECTION_QUERY);
+        // find the link
+        String link = loadCollection(repositoryId, Constants.COLLECTION_QUERY);
 
-		if (link == null) {
-			throw new CmisObjectNotFoundException("Unknown repository or query not supported!");
-		}
+        if (link == null) {
+            throw new CmisObjectNotFoundException("Unknown repository or query not supported!");
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
+        UrlBuilder url = new UrlBuilder(link);
 
-		// compile query request
-		final CmisQueryType query = new CmisQueryType();
-		query.setStatement(statement);
-		query.setSearchAllVersions(searchAllVersions);
-		query.setIncludeAllowableActions(includeAllowableActions);
-		query.setIncludeRelationships(convert(EnumIncludeRelationships.class, includeRelationships));
-		query.setRenditionFilter(renditionFilter);
-		query.setMaxItems(maxItems);
-		query.setSkipCount(skipCount);
+        // compile query request
+        final CmisQueryType query = new CmisQueryType();
+        query.setStatement(statement);
+        query.setSearchAllVersions(searchAllVersions);
+        query.setIncludeAllowableActions(includeAllowableActions);
+        query.setIncludeRelationships(convert(EnumIncludeRelationships.class, includeRelationships));
+        query.setRenditionFilter(renditionFilter);
+        query.setMaxItems(maxItems);
+        query.setSkipCount(skipCount);
 
-		// post the query and parse results
-		HttpUtils.Response resp = post(url, Constants.MEDIATYPE_QUERY, new HttpUtils.Output() {
-			public void write(OutputStream out) throws Exception {
-				JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createQuery(query), out, false);
-			}
-		});
-		AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+        // post the query and parse results
+        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_QUERY, new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createQuery(query), out, false);
+            }
+        });
+        AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
-		// handle top level
-		for (AtomElement element : feed.getElements()) {
-			if (element.getObject() instanceof AtomLink) {
-				if (isNextLink(element)) {
-					result.setHasMoreItems(Boolean.TRUE);
-				}
-			} else if (isInt(NAME_NUM_ITEMS, element)) {
-				result.setNumItems((BigInteger) element.getObject());
-			}
-		}
+        // handle top level
+        for (AtomElement element : feed.getElements()) {
+            if (element.getObject() instanceof AtomLink) {
+                if (isNextLink(element)) {
+                    result.setHasMoreItems(Boolean.TRUE);
+                }
+            } else if (isInt(NAME_NUM_ITEMS, element)) {
+                result.setNumItems((BigInteger) element.getObject());
+            }
+        }
 
-		// get the result set
-		if (!feed.getEntries().isEmpty()) {
-			result.setObjects(new ArrayList<ObjectData>(feed.getEntries().size()));
+        // get the result set
+        if (!feed.getEntries().isEmpty()) {
+            result.setObjects(new ArrayList<ObjectData>(feed.getEntries().size()));
 
-			for (AtomEntry entry : feed.getEntries()) {
-				ObjectData hit = null;
+            for (AtomEntry entry : feed.getEntries()) {
+                ObjectData hit = null;
 
-				// walk through the entry
-				for (AtomElement element : entry.getElements()) {
-					if (element.getObject() instanceof CmisObjectType) {
-						hit = convert((CmisObjectType) element.getObject());
-					}
-				}
+                // walk through the entry
+                for (AtomElement element : entry.getElements()) {
+                    if (element.getObject() instanceof CmisObjectType) {
+                        hit = convert((CmisObjectType) element.getObject());
+                    }
+                }
 
-				if (hit != null) {
-					result.getObjects().add(hit);
-				}
-			}
-		}
+                if (hit != null) {
+                    result.getObjects().add(hit);
+                }
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

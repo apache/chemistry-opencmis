@@ -53,236 +53,236 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
  */
 public class VersioningServiceImpl extends AbstractAtomPubService implements VersioningService {
 
-	/**
-	 * Constructor.
-	 */
-	public VersioningServiceImpl(Session session) {
-		setSession(session);
-	}
+    /**
+     * Constructor.
+     */
+    public VersioningServiceImpl(Session session) {
+        setSession(session);
+    }
 
-	public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
-			Holder<Boolean> contentCopied) {
-		if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
-			throw new CmisInvalidArgumentException("Object id must be set!");
-		}
+    public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
+            Holder<Boolean> contentCopied) {
+        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
-		// find the link
-		String link = loadCollection(repositoryId, Constants.COLLECTION_CHECKEDOUT);
+        // find the link
+        String link = loadCollection(repositoryId, Constants.COLLECTION_CHECKEDOUT);
 
-		if (link == null) {
-			throw new CmisObjectNotFoundException("Unknown repository or checkedout collection not supported!");
-		}
+        if (link == null) {
+            throw new CmisObjectNotFoundException("Unknown repository or checkedout collection not supported!");
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
+        UrlBuilder url = new UrlBuilder(link);
 
-		// set up object and writer
-		final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()));
+        // set up object and writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()));
 
-		// post move request
-		HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
-			public void write(OutputStream out) throws Exception {
-				entryWriter.write(out);
-			}
-		});
+        // post move request
+        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
 
-		// parse the response
-		AtomEntry entry = parse(resp.getStream(), AtomEntry.class);
+        // parse the response
+        AtomEntry entry = parse(resp.getStream(), AtomEntry.class);
 
-		objectId.setValue(entry.getId());
+        objectId.setValue(entry.getId());
 
-		lockLinks();
-		try {
-			// clean up cache
-			removeLinks(repositoryId, entry.getId());
+        lockLinks();
+        try {
+            // clean up cache
+            removeLinks(repositoryId, entry.getId());
 
-			// walk through the entry
-			for (AtomElement element : entry.getElements()) {
-				if (element.getObject() instanceof AtomLink) {
-					addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-				}
-			}
-		} finally {
-			unlockLinks();
-		}
+            // walk through the entry
+            for (AtomElement element : entry.getElements()) {
+                if (element.getObject() instanceof AtomLink) {
+                    addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+                }
+            }
+        } finally {
+            unlockLinks();
+        }
 
-		if (contentCopied != null) {
-			contentCopied.setValue(null);
-		}
-	}
+        if (contentCopied != null) {
+            contentCopied.setValue(null);
+        }
+    }
 
-	public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
-		// find the link
-		String link = loadLink(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
+    public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
+        // find the link
+        String link = loadLink(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
 
-		if (link == null) {
-			throwLinkException(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
-		}
+        if (link == null) {
+            throwLinkException(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
+        }
 
-		delete(new UrlBuilder(link));
-	}
+        delete(new UrlBuilder(link));
+    }
 
-	public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
-			ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
-			ExtensionsData extension) {
-		// we need an object id
-		if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
-			throw new CmisInvalidArgumentException("Object id must be set!");
-		}
+    public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
+            ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
+            ExtensionsData extension) {
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
-		// find the link
-		String link = loadLink(repositoryId, objectId.getValue(), Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
+        // find the link
+        String link = loadLink(repositoryId, objectId.getValue(), Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
 
-		if (link == null) {
-			throwLinkException(repositoryId, objectId.getValue(), Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
-		}
+        if (link == null) {
+            throwLinkException(repositoryId, objectId.getValue(), Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
-		url.addParameter(Constants.PARAM_CHECKIN_COMMENT, checkinComment);
-		url.addParameter(Constants.PARAM_MAJOR, major);
-		url.addParameter(Constants.PARAM_CHECK_IN, "true");
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_CHECKIN_COMMENT, checkinComment);
+        url.addParameter(Constants.PARAM_MAJOR, major);
+        url.addParameter(Constants.PARAM_CHECK_IN, "true");
 
-		// set up object and writer
-		CmisObjectType object = new CmisObjectType();
-		object.setProperties(convert(properties));
-		object.setPolicyIds(convertPolicyIds(policies));
+        // set up object and writer
+        CmisObjectType object = new CmisObjectType();
+        object.setProperties(convert(properties));
+        object.setPolicyIds(convertPolicyIds(policies));
 
-		if (object.getProperties() == null) {
-			object.setProperties(new CmisPropertiesType());
-		}
+        if (object.getProperties() == null) {
+            object.setProperties(new CmisPropertiesType());
+        }
 
-		String mediaType = null;
-		InputStream stream = null;
+        String mediaType = null;
+        InputStream stream = null;
 
-		if (contentStream != null) {
-			mediaType = contentStream.getMimeType();
-			stream = contentStream.getStream();
-		}
+        if (contentStream != null) {
+            mediaType = contentStream.getMimeType();
+            stream = contentStream.getStream();
+        }
 
-		final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, stream);
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, stream);
 
-		// update
-		HttpUtils.Response resp = put(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
-			public void write(OutputStream out) throws Exception {
-				entryWriter.write(out);
-			}
-		});
+        // update
+        HttpUtils.Response resp = put(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
 
-		// parse new entry
-		AtomEntry entry = parse(resp.getStream(), AtomEntry.class);
+        // parse new entry
+        AtomEntry entry = parse(resp.getStream(), AtomEntry.class);
 
-		// we expect a CMIS entry
-		if (entry.getId() == null) {
-			throw new CmisConnectionException("Received Atom entry is not a CMIS entry!");
-		}
+        // we expect a CMIS entry
+        if (entry.getId() == null) {
+            throw new CmisConnectionException("Received Atom entry is not a CMIS entry!");
+        }
 
-		// set object id
-		objectId.setValue(entry.getId());
+        // set object id
+        objectId.setValue(entry.getId());
 
-		Acl originalAces = null;
+        Acl originalAces = null;
 
-		lockLinks();
-		try {
-			// clean up cache
-			removeLinks(repositoryId, entry.getId());
+        lockLinks();
+        try {
+            // clean up cache
+            removeLinks(repositoryId, entry.getId());
 
-			// walk through the entry
-			for (AtomElement element : entry.getElements()) {
-				if (element.getObject() instanceof AtomLink) {
-					addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-				} else if (element.getObject() instanceof CmisObjectType) {
-					// extract current ACL
-					object = (CmisObjectType) element.getObject();
-					originalAces = convert(object.getAcl(), object.isExactACL());
-				}
-			}
-		} finally {
-			unlockLinks();
-		}
+            // walk through the entry
+            for (AtomElement element : entry.getElements()) {
+                if (element.getObject() instanceof AtomLink) {
+                    addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+                } else if (element.getObject() instanceof CmisObjectType) {
+                    // extract current ACL
+                    object = (CmisObjectType) element.getObject();
+                    originalAces = convert(object.getAcl(), object.isExactACL());
+                }
+            }
+        } finally {
+            unlockLinks();
+        }
 
-		// handle ACL modifications
-		if ((originalAces != null) && (isAclMergeRequired(addAces, removeAces))) {
-			// merge and update ACL
-			Acl newACL = mergeAcls(originalAces, addAces, removeAces);
-			if (newACL != null) {
-				updateAcl(repositoryId, entry.getId(), newACL, null);
-			}
-		}
-	}
+        // handle ACL modifications
+        if ((originalAces != null) && (isAclMergeRequired(addAces, removeAces))) {
+            // merge and update ACL
+            Acl newACL = mergeAcls(originalAces, addAces, removeAces);
+            if (newACL != null) {
+                updateAcl(repositoryId, entry.getId(), newACL, null);
+            }
+        }
+    }
 
-	public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
-			Boolean includeAllowableActions, ExtensionsData extension) {
-		List<ObjectData> result = new ArrayList<ObjectData>();
+    public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
+            Boolean includeAllowableActions, ExtensionsData extension) {
+        List<ObjectData> result = new ArrayList<ObjectData>();
 
-		// find the link
-		String link = loadLink(repositoryId, objectId, Constants.REL_VERSIONHISTORY, Constants.MEDIATYPE_FEED);
+        // find the link
+        String link = loadLink(repositoryId, objectId, Constants.REL_VERSIONHISTORY, Constants.MEDIATYPE_FEED);
 
-		if (link == null) {
-			throwLinkException(repositoryId, objectId, Constants.REL_VERSIONHISTORY, Constants.MEDIATYPE_FEED);
-		}
+        if (link == null) {
+            throwLinkException(repositoryId, objectId, Constants.REL_VERSIONHISTORY, Constants.MEDIATYPE_FEED);
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
-		url.addParameter(Constants.PARAM_FILTER, filter);
-		url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_FILTER, filter);
+        url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
 
-		// read and parse
-		HttpUtils.Response resp = read(url);
-		AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
-		// get the versions
-		if (!feed.getEntries().isEmpty()) {
-			for (AtomEntry entry : feed.getEntries()) {
-				ObjectData version = null;
+        // get the versions
+        if (!feed.getEntries().isEmpty()) {
+            for (AtomEntry entry : feed.getEntries()) {
+                ObjectData version = null;
 
-				lockLinks();
-				try {
-					// clean up cache
-					removeLinks(repositoryId, entry.getId());
+                lockLinks();
+                try {
+                    // clean up cache
+                    removeLinks(repositoryId, entry.getId());
 
-					// walk through the entry
-					for (AtomElement element : entry.getElements()) {
-						if (element.getObject() instanceof AtomLink) {
-							addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-						} else if (element.getObject() instanceof CmisObjectType) {
-							version = convert((CmisObjectType) element.getObject());
-						}
-					}
-				} finally {
-					unlockLinks();
-				}
+                    // walk through the entry
+                    for (AtomElement element : entry.getElements()) {
+                        if (element.getObject() instanceof AtomLink) {
+                            addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+                        } else if (element.getObject() instanceof CmisObjectType) {
+                            version = convert((CmisObjectType) element.getObject());
+                        }
+                    }
+                } finally {
+                    unlockLinks();
+                }
 
-				if (version != null) {
-					result.add(version);
-				}
-			}
-		}
+                if (version != null) {
+                    result.add(version);
+                }
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-			String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
+    public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+            Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
-		ReturnVersion returnVersion = ReturnVersion.LATEST;
-		if ((major != null) && (major.booleanValue())) {
-			returnVersion = ReturnVersion.LASTESTMAJOR;
-		}
+        ReturnVersion returnVersion = ReturnVersion.LATEST;
+        if ((major != null) && (major.booleanValue())) {
+            returnVersion = ReturnVersion.LASTESTMAJOR;
+        }
 
-		return getObjectInternal(repositoryId, IdentifierType.ID, objectId, returnVersion, filter,
-				includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeACL, extension);
-	}
+        return getObjectInternal(repositoryId, IdentifierType.ID, objectId, returnVersion, filter,
+                includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeACL, extension);
+    }
 
-	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-			Boolean major, String filter, ExtensionsData extension) {
+    public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+            Boolean major, String filter, ExtensionsData extension) {
 
-		ReturnVersion returnVersion = ReturnVersion.LATEST;
-		if ((major != null) && (major.booleanValue())) {
-			returnVersion = ReturnVersion.LASTESTMAJOR;
-		}
+        ReturnVersion returnVersion = ReturnVersion.LATEST;
+        if ((major != null) && (major.booleanValue())) {
+            returnVersion = ReturnVersion.LASTESTMAJOR;
+        }
 
-		ObjectData object = getObjectInternal(repositoryId, IdentifierType.ID, objectId, returnVersion, filter,
-				Boolean.FALSE, IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, extension);
+        ObjectData object = getObjectInternal(repositoryId, IdentifierType.ID, objectId, returnVersion, filter,
+                Boolean.FALSE, IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, extension);
 
-		return object.getProperties();
-	}
+        return object.getProperties();
+    }
 }

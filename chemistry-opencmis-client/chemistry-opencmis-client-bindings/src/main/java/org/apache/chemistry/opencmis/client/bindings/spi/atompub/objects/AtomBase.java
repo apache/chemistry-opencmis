@@ -28,22 +28,22 @@ import java.util.List;
  */
 public abstract class AtomBase implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private List<AtomElement> fElements = new ArrayList<AtomElement>();
+    private List<AtomElement> fElements = new ArrayList<AtomElement>();
 
-	public AtomBase() {
-	}
+    public AtomBase() {
+    }
 
-	public abstract String getType();
+    public abstract String getType();
 
-	public List<AtomElement> getElements() {
-		return fElements;
-	}
+    public List<AtomElement> getElements() {
+        return fElements;
+    }
 
-	public void addElement(AtomElement element) {
-		if (element != null) {
-			fElements.add(element);
-		}
-	}
+    public void addElement(AtomElement element) {
+        if (element != null) {
+            fElements.add(element);
+        }
+    }
 }

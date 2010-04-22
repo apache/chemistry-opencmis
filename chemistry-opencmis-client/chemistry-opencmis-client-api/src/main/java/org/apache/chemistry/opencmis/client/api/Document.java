@@ -30,74 +30,74 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public interface Document extends FileableCmisObject {
 
-	// object service
+    // object service
 
-	void deleteAllVersions();
+    void deleteAllVersions();
 
-	ContentStream getContentStream();
+    ContentStream getContentStream();
 
-	ObjectId setContentStream(ContentStream contentStream, boolean overwrite);
+    ObjectId setContentStream(ContentStream contentStream, boolean overwrite);
 
-	ObjectId deleteContentStream();
+    ObjectId deleteContentStream();
 
-	// versioning service
+    // versioning service
 
-	ObjectId checkOut(); // returns the PWC id
+    ObjectId checkOut(); // returns the PWC id
 
-	void cancelCheckOut();
+    void cancelCheckOut();
 
-	ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment,
-			List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
+    ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment,
+            List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
 
-	Document getObjectOfLatestVersion(boolean major);
+    Document getObjectOfLatestVersion(boolean major);
 
-	Document getObjectOfLatestVersion(boolean major, OperationContext context);
+    Document getObjectOfLatestVersion(boolean major, OperationContext context);
 
-	List<Document> getAllVersions();
+    List<Document> getAllVersions();
 
-	List<Document> getAllVersions(OperationContext context);
+    List<Document> getAllVersions(OperationContext context);
 
-	// document specific properties
+    // document specific properties
 
-	Boolean isImmutable(); // cmis:isImmutable
+    Boolean isImmutable(); // cmis:isImmutable
 
-	Boolean isLatestVersion(); // cmis:isLatestVersion
+    Boolean isLatestVersion(); // cmis:isLatestVersion
 
-	Boolean isMajorVersion(); // cmis:isMajorVersion
+    Boolean isMajorVersion(); // cmis:isMajorVersion
 
-	Boolean isLatestMajorVersion(); // cmis:isLatestMajorVersion
+    Boolean isLatestMajorVersion(); // cmis:isLatestMajorVersion
 
-	String getVersionLabel(); // cmis:versionLabel
+    String getVersionLabel(); // cmis:versionLabel
 
-	String getVersionSeriesId(); // cmis:versionSeriesId
+    String getVersionSeriesId(); // cmis:versionSeriesId
 
-	Boolean isVersionSeriesCheckedOut(); // cmis:isVersionSeriesCheckedOut
+    Boolean isVersionSeriesCheckedOut(); // cmis:isVersionSeriesCheckedOut
 
-	String getVersionSeriesCheckedOutBy(); // cmis:versionSeriesCheckedOutBy
+    String getVersionSeriesCheckedOutBy(); // cmis:versionSeriesCheckedOutBy
 
-	String getVersionSeriesCheckedOutId(); // cmis:versionSeriesCheckedOutId
+    String getVersionSeriesCheckedOutId(); // cmis:versionSeriesCheckedOutId
 
-	String getCheckinComment(); // cmis:checkinComment
+    String getCheckinComment(); // cmis:checkinComment
 
-	long getContentStreamLength(); // cmis:contentStreamLength
+    long getContentStreamLength(); // cmis:contentStreamLength
 
-	String getContentStreamMimeType(); // cmis:contentStreamMimeType
+    String getContentStreamMimeType(); // cmis:contentStreamMimeType
 
-	String getContentStreamFileName(); // cmis:contentStreamFileName
+    String getContentStreamFileName(); // cmis:contentStreamFileName
 
-	String getContentStreamId(); // cmis:contentStreamId
+    String getContentStreamId(); // cmis:contentStreamId
 
-	/**
-	 * Shortcut for ObjectFactory.createDocumentFromSource(this, ...).
-	 * 
-	 * @param properties
-	 * @param versioningState
-	 * @param policies
-	 * @param addACEs
-	 * @param removeACEs
-	 * @return
-	 */
-	Document copy(List<Property<?>> properties, VersioningState versioningState, List<Policy> policies,
-			List<Ace> addACEs, List<Ace> removeACEs);
+    /**
+     * Shortcut for ObjectFactory.createDocumentFromSource(this, ...).
+     * 
+     * @param properties
+     * @param versioningState
+     * @param policies
+     * @param addACEs
+     * @param removeACEs
+     * @return
+     */
+    Document copy(List<Property<?>> properties, VersioningState versioningState, List<Policy> policies,
+            List<Ace> addACEs, List<Ace> removeACEs);
 
 }

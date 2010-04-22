@@ -30,26 +30,26 @@ import org.apache.chemistry.opencmis.commons.api.CmisBinding;
  */
 public class SimpleReadOnlyTests extends AbstractSimpleReadOnlyTests {
 
-	private Set<String> fTests;
+    private Set<String> fTests;
 
-	public SimpleReadOnlyTests() {
-		fTests = new HashSet<String>();
-		fTests.add(TEST_REPOSITORY_INFO);
-		fTests.add(TEST_TYPES);
-		fTests.add(TEST_NAVIGATION);
-		fTests.add(TEST_CONTENT_STREAM);
-		fTests.add(TEST_QUERY);
-		fTests.add(TEST_CHECKEDOUT);
-		fTests.add(TEST_CONTENT_CHANGES);
-	}
+    public SimpleReadOnlyTests() {
+        fTests = new HashSet<String>();
+        fTests.add(TEST_REPOSITORY_INFO);
+        fTests.add(TEST_TYPES);
+        fTests.add(TEST_NAVIGATION);
+        fTests.add(TEST_CONTENT_STREAM);
+        fTests.add(TEST_QUERY);
+        fTests.add(TEST_CHECKEDOUT);
+        fTests.add(TEST_CONTENT_CHANGES);
+    }
 
-	@Override
-	protected CmisBinding createBinding() {
-		return WebServicesTestBindingFactory.createBinding(getWebServicesURL(), getUsername(), getPassword());
-	}
+    @Override
+    protected CmisBinding createBinding() {
+        return WebServicesTestBindingFactory.createBinding(getWebServicesURL(), getUsername(), getPassword());
+    }
 
-	@Override
-	protected Set<String> getEnabledTests() {
-		return fTests;
-	}
+    @Override
+    protected Set<String> getEnabledTests() {
+        return fTests;
+    }
 }

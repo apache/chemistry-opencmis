@@ -25,8 +25,8 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
  */
 public interface Repository extends RepositoryInfo {
 
-	/**
-	 * Creates a session for this repository.
-	 */
-	<T extends Session> T createSession();
+    /**
+     * Creates a session for this repository.
+     */
+    <T extends Session> T createSession();
 }

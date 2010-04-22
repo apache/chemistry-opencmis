@@ -22,6 +22,6 @@ package org.apache.chemistry.opencmis.client.api;
  */
 public interface ExtensionHandler {
 
-	void handleExtension(String context);
+    void handleExtension(String context);
 
 }

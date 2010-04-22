@@ -16,83 +16,83 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
 public class VersioningServiceImpl extends AbstractLocalService implements VersioningService {
 
-	/**
-	 * Constructor.
-	 */
-	public VersioningServiceImpl(Session session, CmisServiceFactory factory) {
-		setSession(session);
-		setServiceFactory(factory);
-	}
+    /**
+     * Constructor.
+     */
+    public VersioningServiceImpl(Session session, CmisServiceFactory factory) {
+        setSession(session);
+        setServiceFactory(factory);
+    }
 
-	public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			service.cancelCheckOut(repositoryId, objectId, extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            service.cancelCheckOut(repositoryId, objectId, extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
-			ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
-			ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
+            ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
+            ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			service.checkIn(repositoryId, objectId, major, properties, contentStream, checkinComment, policies,
-					addAces, removeAces, extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            service.checkIn(repositoryId, objectId, major, properties, contentStream, checkinComment, policies,
+                    addAces, removeAces, extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
-			Holder<Boolean> contentCopied) {
-		CmisService service = getService(repositoryId);
+    public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
+            Holder<Boolean> contentCopied) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			service.checkOut(repositoryId, objectId, extension, contentCopied);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            service.checkOut(repositoryId, objectId, extension, contentCopied);
+        } finally {
+            service.close();
+        }
+    }
 
-	public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
-			Boolean includeAllowableActions, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
+            Boolean includeAllowableActions, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			return service.getAllVersions(repositoryId, objectId, versionSeriesId, filter, includeAllowableActions,
-					extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            return service.getAllVersions(repositoryId, objectId, versionSeriesId, filter, includeAllowableActions,
+                    extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+            Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			return service.getObjectOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter,
-					includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl,
-					extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            return service.getObjectOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter,
+                    includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl,
+                    extension);
+        } finally {
+            service.close();
+        }
+    }
 
-	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-			Boolean major, String filter, ExtensionsData extension) {
-		CmisService service = getService(repositoryId);
+    public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+            Boolean major, String filter, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
 
-		try {
-			return service.getPropertiesOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter,
-					extension);
-		} finally {
-			service.close();
-		}
-	}
+        try {
+            return service.getPropertiesOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter,
+                    extension);
+        } finally {
+            service.close();
+        }
+    }
 }

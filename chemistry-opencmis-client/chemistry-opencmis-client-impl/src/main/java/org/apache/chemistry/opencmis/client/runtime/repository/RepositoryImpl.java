@@ -30,30 +30,30 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl
 
 public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final Map<String, String> parameters;
-	private final SessionFactory sessionFactory;
+    private final Map<String, String> parameters;
+    private final SessionFactory sessionFactory;
 
-	/**
-	 * Constructor.
-	 */
-	public RepositoryImpl(RepositoryInfo data, Map<String, String> parameters, SessionFactory sessionFactory) {
-		super(data);
+    /**
+     * Constructor.
+     */
+    public RepositoryImpl(RepositoryInfo data, Map<String, String> parameters, SessionFactory sessionFactory) {
+        super(data);
 
-		this.parameters = new HashMap<String, String>(parameters);
-		this.parameters.put(SessionParameter.REPOSITORY_ID, getId());
+        this.parameters = new HashMap<String, String>(parameters);
+        this.parameters.put(SessionParameter.REPOSITORY_ID, getId());
 
-		this.sessionFactory = sessionFactory;
-	}
+        this.sessionFactory = sessionFactory;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.api.repository.Repository#createSession()
-	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Session> T createSession() {
-		return (T) sessionFactory.createSession(parameters);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.api.repository.Repository#createSession()
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Session> T createSession() {
+        return (T) sessionFactory.createSession(parameters);
+    }
 }

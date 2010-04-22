@@ -37,71 +37,71 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
  */
 public class AclServiceImpl extends AbstractAtomPubService implements AclService {
 
-	/**
-	 * Constructor.
-	 */
-	public AclServiceImpl(Session session) {
-		setSession(session);
-	}
+    /**
+     * Constructor.
+     */
+    public AclServiceImpl(Session session) {
+        setSession(session);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.ACLService#applyACL(java.lang.String,
-	 * java.lang.String, org.apache.opencmis.client.provider.AccessControlList,
-	 * org.apache.opencmis.client.provider.AccessControlList,
-	 * org.apache.opencmis.commons.enums.ACLPropagation,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
-			AclPropagation aclPropagation, ExtensionsData extension) {
-		Acl result = null;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.ACLService#applyACL(java.lang.String,
+     * java.lang.String, org.apache.opencmis.client.provider.AccessControlList,
+     * org.apache.opencmis.client.provider.AccessControlList,
+     * org.apache.opencmis.commons.enums.ACLPropagation,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
+            AclPropagation aclPropagation, ExtensionsData extension) {
+        Acl result = null;
 
-		// fetch the current ACL
-		Acl originalAces = getAcl(repositoryId, objectId, false, null);
+        // fetch the current ACL
+        Acl originalAces = getAcl(repositoryId, objectId, false, null);
 
-		// if no changes required, just return the ACL
-		if (!isAclMergeRequired(addAces, removeAces)) {
-			return originalAces;
-		}
+        // if no changes required, just return the ACL
+        if (!isAclMergeRequired(addAces, removeAces)) {
+            return originalAces;
+        }
 
-		// merge ACLs
-		Acl newACL = mergeAcls(originalAces, addAces, removeAces);
+        // merge ACLs
+        Acl newACL = mergeAcls(originalAces, addAces, removeAces);
 
-		// update ACL
-		AtomAcl acl = updateAcl(repositoryId, objectId, newACL, aclPropagation);
-		result = convert(acl.getACL(), null);
+        // update ACL
+        AtomAcl acl = updateAcl(repositoryId, objectId, newACL, aclPropagation);
+        result = convert(acl.getACL(), null);
 
-		return result;
-	}
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.ACLService#getACL(java.lang.String,
-	 * java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public org.apache.chemistry.opencmis.commons.api.Acl getAcl(String repositoryId, String objectId,
-			Boolean onlyBasicPermissions, ExtensionsData extension) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.ACLService#getACL(java.lang.String,
+     * java.lang.String, java.lang.Boolean,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public org.apache.chemistry.opencmis.commons.api.Acl getAcl(String repositoryId, String objectId,
+            Boolean onlyBasicPermissions, ExtensionsData extension) {
 
-		// find the link
-		String link = loadLink(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
+        // find the link
+        String link = loadLink(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
 
-		if (link == null) {
-			throwLinkException(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
-		}
+        if (link == null) {
+            throwLinkException(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
-		url.addParameter(Constants.PARAM_ONLY_BASIC_PERMISSIONS, onlyBasicPermissions);
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_ONLY_BASIC_PERMISSIONS, onlyBasicPermissions);
 
-		// read and parse
-		HttpUtils.Response resp = read(url);
-		AtomAcl acl = parse(resp.getStream(), AtomAcl.class);
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        AtomAcl acl = parse(resp.getStream(), AtomAcl.class);
 
-		return convert(acl.getACL(), null);
-	}
+        return convert(acl.getACL(), null);
+    }
 
 }

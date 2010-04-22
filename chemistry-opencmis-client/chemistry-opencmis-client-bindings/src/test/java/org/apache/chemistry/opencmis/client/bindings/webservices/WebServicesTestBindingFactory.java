@@ -31,53 +31,53 @@ import org.apache.chemistry.opencmis.commons.api.CmisBinding;
  */
 public class WebServicesTestBindingFactory {
 
-	public static CmisBinding createBinding(String url, String username, String password) {
-		boolean isPrefix = true;
-		String urlLower = url.toLowerCase();
+    public static CmisBinding createBinding(String url, String username, String password) {
+        boolean isPrefix = true;
+        String urlLower = url.toLowerCase();
 
-		if (urlLower.endsWith("?wsdl")) {
-			isPrefix = false;
-		} else if (urlLower.endsWith(".wsdl")) {
-			isPrefix = false;
-		} else if (urlLower.endsWith(".xml")) {
-			isPrefix = false;
-		}
+        if (urlLower.endsWith("?wsdl")) {
+            isPrefix = false;
+        } else if (urlLower.endsWith(".wsdl")) {
+            isPrefix = false;
+        } else if (urlLower.endsWith(".xml")) {
+            isPrefix = false;
+        }
 
-		return createBinding(url, isPrefix, username, password);
-	}
+        return createBinding(url, isPrefix, username, password);
+    }
 
-	public static CmisBinding createBinding(String url, boolean isPrefix, String username, String password) {
-		// gather parameters
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put(SessionParameter.USER, username);
-		parameters.put(SessionParameter.PASSWORD, password);
+    public static CmisBinding createBinding(String url, boolean isPrefix, String username, String password) {
+        // gather parameters
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put(SessionParameter.USER, username);
+        parameters.put(SessionParameter.PASSWORD, password);
 
-		if (!isPrefix) {
-			parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url);
-			parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url);
-			parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url);
-			parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, url);
-			parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, url);
-			parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url);
-			parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, url);
-			parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url);
-			parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url);
-		} else {
-			parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url + "RepositoryService?wsdl");
-			parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url + "NavigationService?wsdl");
-			parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url + "ObjectService?wsdl");
-			parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, url + "VersioningService?wsdl");
-			parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, url + "DiscoveryService?wsdl");
-			parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url + "RelationshipService?wsdl");
-			parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, url + "MultiFilingService?wsdl");
-			parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url + "PolicyService?wsdl");
-			parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url + "ACLService?wsdl");
-		}
+        if (!isPrefix) {
+            parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url);
+        } else {
+            parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url + "RepositoryService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url + "NavigationService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url + "ObjectService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, url + "VersioningService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, url + "DiscoveryService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url + "RelationshipService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, url + "MultiFilingService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url + "PolicyService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url + "ACLService?wsdl");
+        }
 
-		// get factory and create provider
-		CmisBindingFactory factory = CmisBindingFactory.newInstance();
-		CmisBinding binding = factory.createCmisWebServicesBinding(parameters);
+        // get factory and create provider
+        CmisBindingFactory factory = CmisBindingFactory.newInstance();
+        CmisBinding binding = factory.createCmisWebServicesBinding(parameters);
 
-		return binding;
-	}
+        return binding;
+    }
 }

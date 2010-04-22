@@ -36,79 +36,79 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
  */
 public class MultiFilingServiceImpl extends AbstractAtomPubService implements MultiFilingService {
 
-	/**
-	 * Constructor.
-	 */
-	public MultiFilingServiceImpl(Session session) {
-		setSession(session);
-	}
+    /**
+     * Constructor.
+     */
+    public MultiFilingServiceImpl(Session session) {
+        setSession(session);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.MultiFilingService#addObjectToFolder
-	 * (java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
-			ExtensionsData extension) {
-		if (objectId == null) {
-			throw new CmisInvalidArgumentException("Object id must be set!");
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.MultiFilingService#addObjectToFolder
+     * (java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
+            ExtensionsData extension) {
+        if (objectId == null) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
-		// find the link
-		String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+        // find the link
+        String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
 
-		if (link == null) {
-			throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
-		}
+        if (link == null) {
+            throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
-		url.addParameter(Constants.PARAM_ALL_VERSIONS, allVersions);
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_ALL_VERSIONS, allVersions);
 
-		// set up object and writer
-		final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
+        // set up object and writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
 
-		// post addObjectToFolder request
-		post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
-			public void write(OutputStream out) throws Exception {
-				entryWriter.write(out);
-			}
-		});
-	}
+        // post addObjectToFolder request
+        post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.MultiFilingService#removeObjectFromFolder
-	 * (java.lang.String, java.lang.String, java.lang.String,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
-		if (objectId == null) {
-			throw new CmisInvalidArgumentException("Object id must be set!");
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.MultiFilingService#removeObjectFromFolder
+     * (java.lang.String, java.lang.String, java.lang.String,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
+        if (objectId == null) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
-		// find the link
-		String link = loadCollection(repositoryId, Constants.COLLECTION_UNFILED);
+        // find the link
+        String link = loadCollection(repositoryId, Constants.COLLECTION_UNFILED);
 
-		if (link == null) {
-			throw new CmisObjectNotFoundException("Unknown repository or unfiling not supported!");
-		}
+        if (link == null) {
+            throw new CmisObjectNotFoundException("Unknown repository or unfiling not supported!");
+        }
 
-		UrlBuilder url = new UrlBuilder(link);
-		url.addParameter(Constants.PARAM_REMOVE_FROM, folderId);
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_REMOVE_FROM, folderId);
 
-		// set up object and writer
-		final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
+        // set up object and writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
 
-		// post removeObjectFromFolder request
-		post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
-			public void write(OutputStream out) throws Exception {
-				entryWriter.write(out);
-			}
-		});
-	}
+        // post removeObjectFromFolder request
+        post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
+    }
 }

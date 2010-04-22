@@ -45,62 +45,62 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
  */
 public abstract class AbstractWebServicesService {
 
-	private Session fSession;
+    private Session fSession;
 
-	/**
-	 * Sets the current session.
-	 */
-	protected void setSession(Session session) {
-		fSession = session;
-	}
+    /**
+     * Sets the current session.
+     */
+    protected void setSession(Session session) {
+        fSession = session;
+    }
 
-	/**
-	 * Gets the current session.
-	 */
-	protected Session getSession() {
-		return fSession;
-	}
+    /**
+     * Gets the current session.
+     */
+    protected Session getSession() {
+        return fSession;
+    }
 
-	/**
-	 * Converts a Web Services Exception into a CMIS Client exception.
-	 */
-	protected CmisBaseException convertException(CmisException ex) {
-		if ((ex == null) || (ex.getFaultInfo() == null)) {
-			return new CmisRuntimeException("CmisException has no fault!");
-		}
+    /**
+     * Converts a Web Services Exception into a CMIS Client exception.
+     */
+    protected CmisBaseException convertException(CmisException ex) {
+        if ((ex == null) || (ex.getFaultInfo() == null)) {
+            return new CmisRuntimeException("CmisException has no fault!");
+        }
 
-		String msg = ex.getFaultInfo().getMessage();
-		BigInteger code = ex.getFaultInfo().getCode();
+        String msg = ex.getFaultInfo().getMessage();
+        BigInteger code = ex.getFaultInfo().getCode();
 
-		switch (ex.getFaultInfo().getType()) {
-		case CONSTRAINT:
-			return new CmisConstraintException(msg, code);
-		case CONTENT_ALREADY_EXISTS:
-			return new CmisContentAlreadyExistsException(msg, code);
-		case FILTER_NOT_VALID:
-			return new CmisFilterNotValidException(msg, code);
-		case INVALID_ARGUMENT:
-			return new CmisInvalidArgumentException(msg, code);
-		case NAME_CONSTRAINT_VIOLATION:
-			return new CmisNameConstraintViolationException(msg, code);
-		case NOT_SUPPORTED:
-			return new CmisNotSupportedException(msg, code);
-		case OBJECT_NOT_FOUND:
-			return new CmisObjectNotFoundException(msg, code);
-		case PERMISSION_DENIED:
-			return new CmisPermissionDeniedException(msg, code);
-		case RUNTIME:
-			return new CmisRuntimeException(msg, code);
-		case STORAGE:
-			return new CmisStorageException(msg, code);
-		case STREAM_NOT_SUPPORTED:
-			return new CmisStreamNotSupportedException(msg, code);
-		case UPDATE_CONFLICT:
-			return new CmisUpdateConflictException(msg, code);
-		case VERSIONING:
-			return new CmisVersioningException(msg, code);
-		}
+        switch (ex.getFaultInfo().getType()) {
+        case CONSTRAINT:
+            return new CmisConstraintException(msg, code);
+        case CONTENT_ALREADY_EXISTS:
+            return new CmisContentAlreadyExistsException(msg, code);
+        case FILTER_NOT_VALID:
+            return new CmisFilterNotValidException(msg, code);
+        case INVALID_ARGUMENT:
+            return new CmisInvalidArgumentException(msg, code);
+        case NAME_CONSTRAINT_VIOLATION:
+            return new CmisNameConstraintViolationException(msg, code);
+        case NOT_SUPPORTED:
+            return new CmisNotSupportedException(msg, code);
+        case OBJECT_NOT_FOUND:
+            return new CmisObjectNotFoundException(msg, code);
+        case PERMISSION_DENIED:
+            return new CmisPermissionDeniedException(msg, code);
+        case RUNTIME:
+            return new CmisRuntimeException(msg, code);
+        case STORAGE:
+            return new CmisStorageException(msg, code);
+        case STREAM_NOT_SUPPORTED:
+            return new CmisStreamNotSupportedException(msg, code);
+        case UPDATE_CONFLICT:
+            return new CmisUpdateConflictException(msg, code);
+        case VERSIONING:
+            return new CmisVersioningException(msg, code);
+        }
 
-		return new CmisRuntimeException("Unknown exception[" + ex.getFaultInfo().getType().value() + "]: " + msg);
-	}
+        return new CmisRuntimeException("Unknown exception[" + ex.getFaultInfo().getType().value() + "]: " + msg);
+    }
 }

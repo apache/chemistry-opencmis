@@ -25,19 +25,19 @@ import java.io.Serializable;
  */
 public class TransientWrapper implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private transient Object object = null;
+    private static final long serialVersionUID = 1L;
+    private transient Object object = null;
 
-	public TransientWrapper(Object object) {
-		this.object = object;
-	}
+    public TransientWrapper(Object object) {
+        this.object = object;
+    }
 
-	public Object getObject() {
-		return object;
-	}
+    public Object getObject() {
+        return object;
+    }
 
-	@Override
-	public String toString() {
-		return (object == null ? "(no object)" : "(transient) " + object.toString());
-	}
+    @Override
+    public String toString() {
+        return (object == null ? "(no object)" : "(transient) " + object.toString());
+    }
 }

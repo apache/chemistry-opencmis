@@ -28,39 +28,38 @@ import java.util.List;
  */
 public abstract class AbstractPageFetch<T> {
 
-	/**
-	 * Fetches the given page from the server.
-	 * 
-	 * @param pageNumber
-	 *            number of the page (>= 0).
-	 */
-	protected abstract PageFetchResult<T> fetchPage(long skipCount);
+    /**
+     * Fetches the given page from the server.
+     * 
+     * @param pageNumber
+     *            number of the page (>= 0).
+     */
+    protected abstract PageFetchResult<T> fetchPage(long skipCount);
 
-	// --- fetch result class ---
+    // --- fetch result class ---
 
-	protected static class PageFetchResult<T> {
-		private List<T> page;
-		private BigInteger totalItems;
-		private Boolean hasMoreItems;
+    protected static class PageFetchResult<T> {
+        private List<T> page;
+        private BigInteger totalItems;
+        private Boolean hasMoreItems;
 
-		public PageFetchResult(List<T> page, BigInteger totalItems,
-				Boolean hasMoreItems) {
-			this.page = page;
-			this.totalItems = totalItems;
-			this.hasMoreItems = hasMoreItems;
-		}
+        public PageFetchResult(List<T> page, BigInteger totalItems, Boolean hasMoreItems) {
+            this.page = page;
+            this.totalItems = totalItems;
+            this.hasMoreItems = hasMoreItems;
+        }
 
-		public List<T> getPage() {
-			return page;
-		}
+        public List<T> getPage() {
+            return page;
+        }
 
-		public BigInteger getTotalItems() {
-			return totalItems;
-		}
+        public BigInteger getTotalItems() {
+            return totalItems;
+        }
 
-		public Boolean getHasMoreItems() {
-			return hasMoreItems;
-		}
-	}
+        public Boolean getHasMoreItems() {
+            return hasMoreItems;
+        }
+    }
 
 }

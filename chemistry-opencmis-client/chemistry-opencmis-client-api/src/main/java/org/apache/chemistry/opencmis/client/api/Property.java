@@ -32,12 +32,12 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
  */
 public interface Property<T> extends PropertyData<T> {
 
-	boolean isMultiValued();
+    boolean isMultiValued();
 
-	PropertyType getType();
+    PropertyType getType();
 
-	PropertyDefinition<T> getDefinition();
+    PropertyDefinition<T> getDefinition();
 
-	String getValueAsString();
+    String getValueAsString();
 
 }

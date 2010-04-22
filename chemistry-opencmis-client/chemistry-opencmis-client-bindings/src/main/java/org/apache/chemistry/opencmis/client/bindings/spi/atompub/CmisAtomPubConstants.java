@@ -24,46 +24,46 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
  */
 public interface CmisAtomPubConstants {
 
-	// service doc
-	String TAG_SERVICE = "service";
-	String TAG_WORKSPACE = "workspace";
-	String TAG_REPOSITORY_INFO = "repositoryInfo";
-	String TAG_COLLECTION = "collection";
-	String TAG_COLLECTION_TYPE = "collectionType";
-	String TAG_URI_TEMPLATE = "uritemplate";
-	String TAG_TEMPLATE_TEMPLATE = "template";
-	String TAG_TEMPLATE_TYPE = "type";
-	String TAG_LINK = "link";
+    // service doc
+    String TAG_SERVICE = "service";
+    String TAG_WORKSPACE = "workspace";
+    String TAG_REPOSITORY_INFO = "repositoryInfo";
+    String TAG_COLLECTION = "collection";
+    String TAG_COLLECTION_TYPE = "collectionType";
+    String TAG_URI_TEMPLATE = "uritemplate";
+    String TAG_TEMPLATE_TEMPLATE = "template";
+    String TAG_TEMPLATE_TYPE = "type";
+    String TAG_LINK = "link";
 
-	// atom
-	String TAG_ATOM_ID = "id";
-	String TAG_ATOM_TITLE = "title";
-	String TAG_ATOM_UPDATED = "updated";
+    // atom
+    String TAG_ATOM_ID = "id";
+    String TAG_ATOM_TITLE = "title";
+    String TAG_ATOM_UPDATED = "updated";
 
-	// feed
-	String TAG_FEED = "feed";
+    // feed
+    String TAG_FEED = "feed";
 
-	// entry
-	String TAG_ENTRY = "entry";
-	String TAG_OBJECT = "object";
-	String TAG_NUM_ITEMS = "numItems";
-	String TAG_PATH_SEGMENT = "pathSegment";
-	String TAG_RELATIVE_PATH_SEGMENT = "relativePathSegment";
-	String TAG_TYPE = "type";
-	String TAG_CHILDREN = "children";
-	String TAG_CONTENT = "content";
-	String TAG_CONTENT_MEDIATYPE = "mediatype";
-	String TAG_CONTENT_BASE64 = "base64";
+    // entry
+    String TAG_ENTRY = "entry";
+    String TAG_OBJECT = "object";
+    String TAG_NUM_ITEMS = "numItems";
+    String TAG_PATH_SEGMENT = "pathSegment";
+    String TAG_RELATIVE_PATH_SEGMENT = "relativePathSegment";
+    String TAG_TYPE = "type";
+    String TAG_CHILDREN = "children";
+    String TAG_CONTENT = "content";
+    String TAG_CONTENT_MEDIATYPE = "mediatype";
+    String TAG_CONTENT_BASE64 = "base64";
 
-	// allowable actions
-	String TAG_ALLOWABLEACTIONS = "allowableActions";
+    // allowable actions
+    String TAG_ALLOWABLEACTIONS = "allowableActions";
 
-	// ACL
-	String TAG_ACL = "acl";
+    // ACL
+    String TAG_ACL = "acl";
 
-	// links
-	String LINK_REL = "rel";
-	String LINK_HREF = "href";
-	String LINK_TYPE = "type";
-	String CONTENT_SRC = "src";
+    // links
+    String LINK_REL = "rel";
+    String LINK_HREF = "href";
+    String LINK_TYPE = "type";
+    String CONTENT_SRC = "src";
 }

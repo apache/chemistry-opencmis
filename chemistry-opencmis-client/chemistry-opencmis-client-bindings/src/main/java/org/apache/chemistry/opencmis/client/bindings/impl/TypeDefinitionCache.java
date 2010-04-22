@@ -33,91 +33,91 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
  */
 public class TypeDefinitionCache implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final int CACHE_SIZE_REPOSITORIES = 10;
-	private static final int CACHE_SIZE_TYPES = 100;
+    private static final int CACHE_SIZE_REPOSITORIES = 10;
+    private static final int CACHE_SIZE_TYPES = 100;
 
-	private Cache cache;
+    private Cache cache;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param session
-	 *            the session object
-	 */
-	public TypeDefinitionCache(Session session) {
-		int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES, CACHE_SIZE_REPOSITORIES);
-		if (repCount < 1) {
-			repCount = CACHE_SIZE_REPOSITORIES;
-		}
+    /**
+     * Constructor.
+     * 
+     * @param session
+     *            the session object
+     */
+    public TypeDefinitionCache(Session session) {
+        int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES, CACHE_SIZE_REPOSITORIES);
+        if (repCount < 1) {
+            repCount = CACHE_SIZE_REPOSITORIES;
+        }
 
-		int typeCount = session.get(SessionParameter.CACHE_SIZE_TYPES, CACHE_SIZE_TYPES);
-		if (typeCount < 1) {
-			typeCount = CACHE_SIZE_TYPES;
-		}
+        int typeCount = session.get(SessionParameter.CACHE_SIZE_TYPES, CACHE_SIZE_TYPES);
+        if (typeCount < 1) {
+            typeCount = CACHE_SIZE_TYPES;
+        }
 
-		cache = new CacheImpl("Type Definition Cache");
-		cache.initialize(new String[] {
-				MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
-				LruCacheLevelImpl.class.getName() + " " + LruCacheLevelImpl.MAX_ENTRIES + "=" + typeCount // type
-		});
-	}
+        cache = new CacheImpl("Type Definition Cache");
+        cache.initialize(new String[] {
+                MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
+                LruCacheLevelImpl.class.getName() + " " + LruCacheLevelImpl.MAX_ENTRIES + "=" + typeCount // type
+        });
+    }
 
-	/**
-	 * Adds a type definition object to the cache.
-	 * 
-	 * @param repositoryId
-	 *            the repository id
-	 * @param typeDefinition
-	 *            the type definition object
-	 */
-	public void put(String repositoryId, TypeDefinition typeDefinition) {
-		if ((typeDefinition == null) || (typeDefinition.getId() == null)) {
-			return;
-		}
+    /**
+     * Adds a type definition object to the cache.
+     * 
+     * @param repositoryId
+     *            the repository id
+     * @param typeDefinition
+     *            the type definition object
+     */
+    public void put(String repositoryId, TypeDefinition typeDefinition) {
+        if ((typeDefinition == null) || (typeDefinition.getId() == null)) {
+            return;
+        }
 
-		cache.put(typeDefinition, repositoryId, typeDefinition.getId());
-	}
+        cache.put(typeDefinition, repositoryId, typeDefinition.getId());
+    }
 
-	/**
-	 * Retrieves a type definition object from the cache.
-	 * 
-	 * @param repositoryId
-	 *            the repository id
-	 * @param typeId
-	 *            the type id
-	 * @return the type definition object or <code>null</code> if the object is
-	 *         not in the cache
-	 */
-	public TypeDefinition get(String repositoryId, String typeId) {
-		return (TypeDefinition) cache.get(repositoryId, typeId);
-	}
+    /**
+     * Retrieves a type definition object from the cache.
+     * 
+     * @param repositoryId
+     *            the repository id
+     * @param typeId
+     *            the type id
+     * @return the type definition object or <code>null</code> if the object is
+     *         not in the cache
+     */
+    public TypeDefinition get(String repositoryId, String typeId) {
+        return (TypeDefinition) cache.get(repositoryId, typeId);
+    }
 
-	/**
-	 * Removes a type definition object from the cache.
-	 * 
-	 * @param repositoryId
-	 *            the repository id
-	 * @param typeId
-	 *            the type id
-	 */
-	public void remove(String repositoryId, String typeId) {
-		cache.remove(repositoryId, typeId);
-	}
+    /**
+     * Removes a type definition object from the cache.
+     * 
+     * @param repositoryId
+     *            the repository id
+     * @param typeId
+     *            the type id
+     */
+    public void remove(String repositoryId, String typeId) {
+        cache.remove(repositoryId, typeId);
+    }
 
-	/**
-	 * Removes all type definition objects of a repository from the cache.
-	 * 
-	 * @param repositoryId
-	 *            the repository id
-	 */
-	public void remove(String repositoryId) {
-		cache.remove(repositoryId);
-	}
+    /**
+     * Removes all type definition objects of a repository from the cache.
+     * 
+     * @param repositoryId
+     *            the repository id
+     */
+    public void remove(String repositoryId) {
+        cache.remove(repositoryId);
+    }
 
-	@Override
-	public String toString() {
-		return cache.toString();
-	}
+    @Override
+    public String toString() {
+        return cache.toString();
+    }
 }

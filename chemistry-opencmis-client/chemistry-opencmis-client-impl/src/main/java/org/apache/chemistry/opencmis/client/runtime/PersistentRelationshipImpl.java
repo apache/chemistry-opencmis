@@ -27,68 +27,68 @@ import org.apache.chemistry.opencmis.commons.api.ObjectData;
 
 public class PersistentRelationshipImpl extends AbstractPersistentCmisObject implements Relationship {
 
-	/**
-	 * Constructor.
-	 */
-	public PersistentRelationshipImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
-			OperationContext context) {
-		initialize(session, objectType, objectData, context);
-	}
+    /**
+     * Constructor.
+     */
+    public PersistentRelationshipImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
+            OperationContext context) {
+        initialize(session, objectType, objectData, context);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.api.Relationship#getSource()
-	 */
-	public CmisObject getSource() {
-		return getSource(getSession().getDefaultContext());
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.api.Relationship#getSource()
+     */
+    public CmisObject getSource() {
+        return getSource(getSession().getDefaultContext());
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.api.Relationship#getSource()
-	 */
-	public CmisObject getSource(OperationContext context) {
-		readLock();
-		try {
-			String sourceId = getPropertyValue(PropertyIds.SOURCE_ID);
-			if (sourceId == null) {
-				return null;
-			}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.api.Relationship#getSource()
+     */
+    public CmisObject getSource(OperationContext context) {
+        readLock();
+        try {
+            String sourceId = getPropertyValue(PropertyIds.SOURCE_ID);
+            if (sourceId == null) {
+                return null;
+            }
 
-			return getSession().getObject(getSession().createObjectId(sourceId), context);
-		} finally {
-			readUnlock();
-		}
-	}
+            return getSession().getObject(getSession().createObjectId(sourceId), context);
+        } finally {
+            readUnlock();
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.api.Relationship#getTarget()
-	 */
-	public CmisObject getTarget() {
-		return getTarget(getSession().getDefaultContext());
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.api.Relationship#getTarget()
+     */
+    public CmisObject getTarget() {
+        return getTarget(getSession().getDefaultContext());
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.api.Relationship#getTarget()
-	 */
-	public CmisObject getTarget(OperationContext context) {
-		readLock();
-		try {
-			String targetId = getPropertyValue(PropertyIds.TARGET_ID);
-			if (targetId == null) {
-				return null;
-			}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.api.Relationship#getTarget()
+     */
+    public CmisObject getTarget(OperationContext context) {
+        readLock();
+        try {
+            String targetId = getPropertyValue(PropertyIds.TARGET_ID);
+            if (targetId == null) {
+                return null;
+            }
 
-			return getSession().getObject(getSession().createObjectId(targetId), context);
-		} finally {
-			readUnlock();
-		}
-	}
+            return getSession().getObject(getSession().createObjectId(targetId), context);
+        } finally {
+            readUnlock();
+        }
+    }
 
 }

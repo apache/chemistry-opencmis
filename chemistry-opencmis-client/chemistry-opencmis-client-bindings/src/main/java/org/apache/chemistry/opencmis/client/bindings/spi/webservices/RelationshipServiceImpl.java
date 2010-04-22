@@ -40,41 +40,41 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipServicePort;
  */
 public class RelationshipServiceImpl extends AbstractWebServicesService implements RelationshipService {
 
-	private final PortProvider fPortProvider;
+    private final PortProvider fPortProvider;
 
-	/**
-	 * Constructor.
-	 */
-	public RelationshipServiceImpl(Session session, PortProvider portProvider) {
-		setSession(session);
-		fPortProvider = portProvider;
-	}
+    /**
+     * Constructor.
+     */
+    public RelationshipServiceImpl(Session session, PortProvider portProvider) {
+        setSession(session);
+        fPortProvider = portProvider;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.RelationshipService#
-	 * getObjectRelationships(java.lang.String, java.lang.String,
-	 * java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.RelationshipDirection,
-	 * java.lang.String, java.lang.String, java.lang.Boolean,
-	 * java.math.BigInteger, java.math.BigInteger,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
-			RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
-			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		RelationshipServicePort port = fPortProvider.getRelationshipServicePort();
+    /*
+     * (non-Javadoc)
+     * 
+     * @seeorg.apache.opencmis.client.provider.RelationshipService#
+     * getObjectRelationships(java.lang.String, java.lang.String,
+     * java.lang.Boolean,
+     * org.apache.opencmis.commons.enums.RelationshipDirection,
+     * java.lang.String, java.lang.String, java.lang.Boolean,
+     * java.math.BigInteger, java.math.BigInteger,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
+            RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
+            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+        RelationshipServicePort port = fPortProvider.getRelationshipServicePort();
 
-		try {
-			return convert(port.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes, convert(
-					EnumRelationshipDirection.class, relationshipDirection), typeId, filter, includeAllowableActions,
-					maxItems, skipCount, convert(extension)));
-		} catch (CmisException e) {
-			throw convertException(e);
-		} catch (Exception e) {
-			throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-		}
-	}
+        try {
+            return convert(port.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes, convert(
+                    EnumRelationshipDirection.class, relationshipDirection), typeId, filter, includeAllowableActions,
+                    maxItems, skipCount, convert(extension)));
+        } catch (CmisException e) {
+            throw convertException(e);
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        }
+    }
 
 }

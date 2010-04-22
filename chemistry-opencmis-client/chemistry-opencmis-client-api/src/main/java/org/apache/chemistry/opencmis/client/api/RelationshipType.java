@@ -26,20 +26,20 @@ import java.util.List;
  */
 public interface RelationshipType extends ObjectType {
 
-	/**
-	 * Get the list of object types, allowed as source for relationships of this
-	 * type.
-	 * 
-	 * @return the allowed source types for this relationship type.
-	 */
-	List<ObjectType> getAllowedSourceTypes();
+    /**
+     * Get the list of object types, allowed as source for relationships of this
+     * type.
+     * 
+     * @return the allowed source types for this relationship type.
+     */
+    List<ObjectType> getAllowedSourceTypes();
 
-	/**
-	 * Get the list of object types, allowed as target for relationships of this
-	 * type.
-	 * 
-	 * @return the allowed target types for this relationship type.
-	 */
-	List<ObjectType> getAllowedTargetTypes();
+    /**
+     * Get the list of object types, allowed as target for relationships of this
+     * type.
+     * 
+     * @return the allowed target types for this relationship type.
+     */
+    List<ObjectType> getAllowedTargetTypes();
 
 }

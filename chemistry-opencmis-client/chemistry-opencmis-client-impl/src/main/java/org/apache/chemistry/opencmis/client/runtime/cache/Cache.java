@@ -30,21 +30,21 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
  */
 public interface Cache {
 
-	boolean containsId(String objectId, String cacheKey);
+    boolean containsId(String objectId, String cacheKey);
 
-	boolean containsPath(String path, String cacheKey);
+    boolean containsPath(String path, String cacheKey);
 
-	void put(CmisObject object, String cacheKey);
+    void put(CmisObject object, String cacheKey);
 
-	void putPath(String path, CmisObject object, String cacheKey);
+    void putPath(String path, CmisObject object, String cacheKey);
 
-	CmisObject getById(String objectId, String cacheKey);
+    CmisObject getById(String objectId, String cacheKey);
 
-	CmisObject getByPath(String path, String cacheKey);
+    CmisObject getByPath(String path, String cacheKey);
 
-	void clear();
+    void clear();
 
-	void resetPathCache();
+    void resetPathCache();
 
-	int getCacheSize();
+    int getCacheSize();
 }

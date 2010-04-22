@@ -30,111 +30,111 @@ import java.util.TreeMap;
  */
 public class ContentTypeCacheLevelImpl extends MapCacheLevelImpl {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Constructor.
-	 */
-	public ContentTypeCacheLevelImpl() {
-		enableKeyFallback(null);
-	}
+    /**
+     * Constructor.
+     */
+    public ContentTypeCacheLevelImpl() {
+        enableKeyFallback(null);
+    }
 
-	@Override
-	public Object get(String key) {
-		return super.get(normalize(key));
-	}
+    @Override
+    public Object get(String key) {
+        return super.get(normalize(key));
+    }
 
-	@Override
-	public void put(Object value, String key) {
-		super.put(value, normalize(key));
-	}
+    @Override
+    public void put(Object value, String key) {
+        super.put(value, normalize(key));
+    }
 
-	@Override
-	public void remove(String key) {
-		super.remove(normalize(key));
-	}
+    @Override
+    public void remove(String key) {
+        super.remove(normalize(key));
+    }
 
-	/**
-	 * Normalizes the key which should be a content type. It's quite simple at
-	 * the moment but should cover most cases.
-	 */
-	private String normalize(String key) {
-		if (key == null) {
-			return null;
-		}
+    /**
+     * Normalizes the key which should be a content type. It's quite simple at
+     * the moment but should cover most cases.
+     */
+    private String normalize(String key) {
+        if (key == null) {
+            return null;
+        }
 
-		StringBuilder sb = new StringBuilder();
-		int parameterStart = 0;
+        StringBuilder sb = new StringBuilder();
+        int parameterStart = 0;
 
-		// first, get the MIME type
-		for (int i = 0; i < key.length(); i++) {
-			char c = key.charAt(i);
+        // first, get the MIME type
+        for (int i = 0; i < key.length(); i++) {
+            char c = key.charAt(i);
 
-			if (Character.isWhitespace(c)) {
-				continue;
-			} else if (c == ';') {
-				parameterStart = i;
-				break;
-			}
+            if (Character.isWhitespace(c)) {
+                continue;
+            } else if (c == ';') {
+                parameterStart = i;
+                break;
+            }
 
-			sb.append(Character.toLowerCase(c));
-		}
+            sb.append(Character.toLowerCase(c));
+        }
 
-		// if parameters have been found, gather them
-		if (parameterStart > 0) {
-			SortedMap<String, String> parameter = new TreeMap<String, String>();
-			StringBuilder ksb = new StringBuilder();
-			StringBuilder vsb = new StringBuilder();
-			boolean isKey = true;
+        // if parameters have been found, gather them
+        if (parameterStart > 0) {
+            SortedMap<String, String> parameter = new TreeMap<String, String>();
+            StringBuilder ksb = new StringBuilder();
+            StringBuilder vsb = new StringBuilder();
+            boolean isKey = true;
 
-			for (int i = parameterStart + 1; i < key.length(); i++) {
-				char c = key.charAt(i);
-				if (Character.isWhitespace(c)) {
-					continue;
-				}
+            for (int i = parameterStart + 1; i < key.length(); i++) {
+                char c = key.charAt(i);
+                if (Character.isWhitespace(c)) {
+                    continue;
+                }
 
-				if (isKey) {
-					if (c == '=') {
-						// value start
-						isKey = false;
-						continue;
-					}
+                if (isKey) {
+                    if (c == '=') {
+                        // value start
+                        isKey = false;
+                        continue;
+                    }
 
-					ksb.append(Character.toLowerCase(c));
-				} else {
-					if (c == ';') {
-						// next key
-						isKey = true;
+                    ksb.append(Character.toLowerCase(c));
+                } else {
+                    if (c == ';') {
+                        // next key
+                        isKey = true;
 
-						parameter.put(ksb.toString(), vsb.toString());
+                        parameter.put(ksb.toString(), vsb.toString());
 
-						ksb = new StringBuilder();
-						vsb = new StringBuilder();
+                        ksb = new StringBuilder();
+                        vsb = new StringBuilder();
 
-						continue;
-					} else if (c == '"') {
-						// filter quotes
-						continue;
-					}
+                        continue;
+                    } else if (c == '"') {
+                        // filter quotes
+                        continue;
+                    }
 
-					vsb.append(Character.toLowerCase(c));
-				}
-			}
+                    vsb.append(Character.toLowerCase(c));
+                }
+            }
 
-			// add last parameter
-			if (ksb.length() > 0) {
-				parameter.put(ksb.toString(), vsb.toString());
-			}
+            // add last parameter
+            if (ksb.length() > 0) {
+                parameter.put(ksb.toString(), vsb.toString());
+            }
 
-			// write parameters sorted by key
-			for (Map.Entry<String, String> entry : parameter.entrySet()) {
-				sb.append(";");
-				sb.append(entry.getKey());
-				sb.append("=");
-				sb.append(entry.getValue());
-			}
-		}
+            // write parameters sorted by key
+            for (Map.Entry<String, String> entry : parameter.entrySet()) {
+                sb.append(";");
+                sb.append(entry.getKey());
+                sb.append("=");
+                sb.append(entry.getValue());
+            }
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

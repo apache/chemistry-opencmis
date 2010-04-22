@@ -30,59 +30,59 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
  * Helper methods for binding handling.
  */
 public class CmisBindingHelper {
-	/**
-	 * Creates a {@link CmisProvider} object.
-	 */
-	public static CmisBinding createProvider(Map<String, String> parameters) {
-		if (parameters == null || parameters.isEmpty()) {
-			throw new CmisRuntimeException("Session parameter not set!");
-		}
+    /**
+     * Creates a {@link CmisProvider} object.
+     */
+    public static CmisBinding createProvider(Map<String, String> parameters) {
+        if (parameters == null || parameters.isEmpty()) {
+            throw new CmisRuntimeException("Session parameter not set!");
+        }
 
-		if (!parameters.containsKey(SessionParameter.BINDING_TYPE)) {
-			parameters.put(SessionParameter.BINDING_TYPE, BindingType.CUSTOM.value());
-		}
+        if (!parameters.containsKey(SessionParameter.BINDING_TYPE)) {
+            parameters.put(SessionParameter.BINDING_TYPE, BindingType.CUSTOM.value());
+        }
 
-		BindingType bt = BindingType.fromValue(parameters.get(SessionParameter.BINDING_TYPE));
+        BindingType bt = BindingType.fromValue(parameters.get(SessionParameter.BINDING_TYPE));
 
-		switch (bt) {
-		case ATOMPUB:
-			return createAtomPubBinding(parameters);
-		case WEBSERVICES:
-			return createWebServiceBinding(parameters);
-		case CUSTOM:
-			return createCustomBinding(parameters);
-		default:
-			throw new CmisRuntimeException("Ambiguous session parameter: " + parameters);
-		}
-	}
+        switch (bt) {
+        case ATOMPUB:
+            return createAtomPubBinding(parameters);
+        case WEBSERVICES:
+            return createWebServiceBinding(parameters);
+        case CUSTOM:
+            return createCustomBinding(parameters);
+        default:
+            throw new CmisRuntimeException("Ambiguous session parameter: " + parameters);
+        }
+    }
 
-	/**
-	 * Creates a provider with custom parameters.
-	 */
-	private static CmisBinding createCustomBinding(Map<String, String> parameters) {
-		CmisBindingFactory factory = CmisBindingFactory.newInstance();
-		CmisBinding binding = factory.createCmisBinding(parameters);
+    /**
+     * Creates a provider with custom parameters.
+     */
+    private static CmisBinding createCustomBinding(Map<String, String> parameters) {
+        CmisBindingFactory factory = CmisBindingFactory.newInstance();
+        CmisBinding binding = factory.createCmisBinding(parameters);
 
-		return binding;
-	}
+        return binding;
+    }
 
-	/**
-	 * Creates a Web Services provider.
-	 */
-	private static CmisBinding createWebServiceBinding(Map<String, String> parameters) {
-		CmisBindingFactory factory = CmisBindingFactory.newInstance();
-		CmisBinding binding = factory.createCmisWebServicesBinding(parameters);
+    /**
+     * Creates a Web Services provider.
+     */
+    private static CmisBinding createWebServiceBinding(Map<String, String> parameters) {
+        CmisBindingFactory factory = CmisBindingFactory.newInstance();
+        CmisBinding binding = factory.createCmisWebServicesBinding(parameters);
 
-		return binding;
-	}
+        return binding;
+    }
 
-	/**
-	 * Creates an AtomPub provider.
-	 */
-	private static CmisBinding createAtomPubBinding(Map<String, String> parameters) {
-		CmisBindingFactory factory = CmisBindingFactory.newInstance();
-		CmisBinding binding = factory.createCmisAtomPubBinding(parameters);
+    /**
+     * Creates an AtomPub provider.
+     */
+    private static CmisBinding createAtomPubBinding(Map<String, String> parameters) {
+        CmisBindingFactory factory = CmisBindingFactory.newInstance();
+        CmisBinding binding = factory.createCmisAtomPubBinding(parameters);
 
-		return binding;
-	}
+        return binding;
+    }
 }

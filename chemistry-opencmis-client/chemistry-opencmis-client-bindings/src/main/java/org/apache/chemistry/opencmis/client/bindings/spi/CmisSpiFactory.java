@@ -27,6 +27,6 @@ package org.apache.chemistry.opencmis.client.bindings.spi;
  */
 public interface CmisSpiFactory {
 
-	CmisSpi getSpiInstance(Session session);
+    CmisSpi getSpiInstance(Session session);
 
 }

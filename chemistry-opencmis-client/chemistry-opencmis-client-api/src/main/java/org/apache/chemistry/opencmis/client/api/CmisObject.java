@@ -36,149 +36,149 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
  */
 public interface CmisObject extends ObjectId {
 
-	// common properties
+    // common properties
 
-	/**
-	 * Get the name of this object. {@code Property<String> 'cmis:name'}
-	 */
-	String getName();
+    /**
+     * Get the name of this object. {@code Property<String> 'cmis:name'}
+     */
+    String getName();
 
-	/**
-	 * Set the name of this object. {@code Property<String> 'cmis:name'}
-	 */
-	void setName(String name);
+    /**
+     * Set the name of this object. {@code Property<String> 'cmis:name'}
+     */
+    void setName(String name);
 
-	/**
-	 * Get the id of the user who created the object (maintained by the
-	 * repository). {@code Property<String> 'cmis:createdBy'}
-	 */
-	String getCreatedBy();
+    /**
+     * Get the id of the user who created the object (maintained by the
+     * repository). {@code Property<String> 'cmis:createdBy'}
+     */
+    String getCreatedBy();
 
-	/**
-	 * Get the timestamp when the object was created (maintained by the
-	 * repository). {@code Property<GregorianCalendar> 'cmis:creationDate'}
-	 */
-	GregorianCalendar getCreationDate();
+    /**
+     * Get the timestamp when the object was created (maintained by the
+     * repository). {@code Property<GregorianCalendar> 'cmis:creationDate'}
+     */
+    GregorianCalendar getCreationDate();
 
-	/**
-	 * Get the id of the user who changed the object (maintained by the
-	 * repository). {@code Property<String> 'cmis:lastModifiedBy'}
-	 */
-	String getLastModifiedBy();
+    /**
+     * Get the id of the user who changed the object (maintained by the
+     * repository). {@code Property<String> 'cmis:lastModifiedBy'}
+     */
+    String getLastModifiedBy();
 
-	/**
-	 * Get the timestamp when the object was changed (maintained by the
-	 * repository). {@code Property<GregorianCalendar>
-	 * 'cmis:lastModificationDate'}
-	 */
-	GregorianCalendar getLastModificationDate();
+    /**
+     * Get the timestamp when the object was changed (maintained by the
+     * repository). {@code Property<GregorianCalendar>
+     * 'cmis:lastModificationDate'}
+     */
+    GregorianCalendar getLastModificationDate();
 
-	/**
-	 * Get the object's base type (maintained by the repository). {@code
-	 * Property<String> 'cmis:baseTypeId'}
-	 */
-	ObjectType getBaseType();
+    /**
+     * Get the object's base type (maintained by the repository). {@code
+     * Property<String> 'cmis:baseTypeId'}
+     */
+    ObjectType getBaseType();
 
-	/**
-	 * Get the object's type. {@code Property<String> 'cmis:objectTypeId'}
-	 */
-	ObjectType getType();
+    /**
+     * Get the object's type. {@code Property<String> 'cmis:objectTypeId'}
+     */
+    ObjectType getType();
 
-	/**
-	 * Get the type's base type id.
-	 * 
-	 * @return
-	 */
-	BaseTypeId getBaseTypeId();
+    /**
+     * Get the type's base type id.
+     * 
+     * @return
+     */
+    BaseTypeId getBaseTypeId();
 
-	/**
-	 * Get the change token for this object (maintained by the repository).
-	 * {@code Property<String> 'cmis:changeToken'}
-	 */
-	String getChangeToken();
+    /**
+     * Get the change token for this object (maintained by the repository).
+     * {@code Property<String> 'cmis:changeToken'}
+     */
+    String getChangeToken();
 
-	// object
+    // object
 
-	List<Property<?>> getProperties();
+    List<Property<?>> getProperties();
 
-	<T> Property<T> getProperty(String id);
+    <T> Property<T> getProperty(String id);
 
-	<T> T getPropertyValue(String id);
+    <T> T getPropertyValue(String id);
 
-	<T> List<T> getPropertyMultivalue(String id);
+    <T> List<T> getPropertyMultivalue(String id);
 
-	AllowableActions getAllowableActions();
+    AllowableActions getAllowableActions();
 
-	List<Relationship> getRelationships();
+    List<Relationship> getRelationships();
 
-	Acl getAcl();
+    Acl getAcl();
 
-	// object service
+    // object service
 
-	void delete(boolean allVersions);
+    void delete(boolean allVersions);
 
-	ObjectId updateProperties();
+    ObjectId updateProperties();
 
-	ObjectId updateProperties(Map<String, ?> properties);
+    ObjectId updateProperties(Map<String, ?> properties);
 
-	// relationship service
+    // relationship service
 
-	PagingIterable<Relationship> getRelationships(boolean includeSubRelationshipTypes,
-			RelationshipDirection relationshipDirection, ObjectType type, OperationContext context, int itemsPerPage);
+    PagingIterable<Relationship> getRelationships(boolean includeSubRelationshipTypes,
+            RelationshipDirection relationshipDirection, ObjectType type, OperationContext context, int itemsPerPage);
 
-	// renditions
+    // renditions
 
-	List<Rendition> getRenditions();
+    List<Rendition> getRenditions();
 
-	// policy service
+    // policy service
 
-	void applyPolicy(ObjectId policyId);
+    void applyPolicy(ObjectId policyId);
 
-	void removePolicy(ObjectId policyId);
+    void removePolicy(ObjectId policyId);
 
-	List<Policy> getPolicies();
+    List<Policy> getPolicies();
 
-	// ACL service
+    // ACL service
 
-	Acl getAcl(boolean onlyBasicPermissions);
+    Acl getAcl(boolean onlyBasicPermissions);
 
-	Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
+    Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
 
-	void addAcl(List<Ace> addAces, AclPropagation aclPropagation);
+    void addAcl(List<Ace> addAces, AclPropagation aclPropagation);
 
-	void removeAcl(List<Ace> removeAces, AclPropagation aclPropagation);
+    void removeAcl(List<Ace> removeAces, AclPropagation aclPropagation);
 
-	// buffered stuff
+    // buffered stuff
 
-	<T> void setProperty(String id, T value);
+    <T> void setProperty(String id, T value);
 
-	<T> void setPropertyMultivalue(String id, List<T> value);
+    <T> void setPropertyMultivalue(String id, List<T> value);
 
-	// void saveProperties(); // flush buffered ...Propert...-calls
+    // void saveProperties(); // flush buffered ...Propert...-calls
 
-	// void saveAcl(); // flush buffered ...Acl...-calls
+    // void saveAcl(); // flush buffered ...Acl...-calls
 
-	// session handling
+    // session handling
 
-	/**
-	 * Returns true, if this object has pending changes which are not synced
-	 * with the backend.
-	 */
-	boolean isChanged();
+    /**
+     * Returns true, if this object has pending changes which are not synced
+     * with the backend.
+     */
+    boolean isChanged();
 
-	/**
-	 * Returns the timestamp (in milliseconds) of the last refresh.
-	 */
-	long getRefreshTimestamp();
+    /**
+     * Returns the timestamp (in milliseconds) of the last refresh.
+     */
+    long getRefreshTimestamp();
 
-	/**
-	 * Reloads the data from the repository.
-	 */
-	void refresh();
+    /**
+     * Reloads the data from the repository.
+     */
+    void refresh();
 
-	/**
-	 * Reloads the data from the repository if the last refresh did not occur
-	 * within <code>durationInMillis</code>.
-	 */
-	void refreshIfOld(long durationInMillis);
+    /**
+     * Reloads the data from the repository if the last refresh did not occur
+     * within <code>durationInMillis</code>.
+     */
+    void refreshIfOld(long durationInMillis);
 }
