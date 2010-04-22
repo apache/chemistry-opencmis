@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 public interface PermissionDefinition extends Serializable, ExtensionsData {
 
-	String getId();
+    String getId();
 
-	String getDescription();
+    String getDescription();
 }

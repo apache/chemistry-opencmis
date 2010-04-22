@@ -35,72 +35,72 @@ import java.io.Serializable;
  */
 public interface CmisBinding extends Serializable {
 
-	/**
-	 * Gets a Repository Service interface object.
-	 */
-	RepositoryService getRepositoryService();
+    /**
+     * Gets a Repository Service interface object.
+     */
+    RepositoryService getRepositoryService();
 
-	/**
-	 * Gets a Navigation Service interface object.
-	 */
-	NavigationService getNavigationService();
+    /**
+     * Gets a Navigation Service interface object.
+     */
+    NavigationService getNavigationService();
 
-	/**
-	 * Gets an Object Service interface object.
-	 */
-	ObjectService getObjectService();
+    /**
+     * Gets an Object Service interface object.
+     */
+    ObjectService getObjectService();
 
-	/**
-	 * Gets a Versioning Service interface object.
-	 */
-	VersioningService getVersioningService();
+    /**
+     * Gets a Versioning Service interface object.
+     */
+    VersioningService getVersioningService();
 
-	/**
-	 * Gets a Relationship Service interface object.
-	 */
-	RelationshipService getRelationshipService();
+    /**
+     * Gets a Relationship Service interface object.
+     */
+    RelationshipService getRelationshipService();
 
-	/**
-	 * Gets a Discovery Service interface object.
-	 */
-	DiscoveryService getDiscoveryService();
+    /**
+     * Gets a Discovery Service interface object.
+     */
+    DiscoveryService getDiscoveryService();
 
-	/**
-	 * Gets a Multifiling Service interface object.
-	 */
-	MultiFilingService getMultiFilingService();
+    /**
+     * Gets a Multifiling Service interface object.
+     */
+    MultiFilingService getMultiFilingService();
 
-	/**
-	 * Gets an ACL Service interface object.
-	 */
-	AclService getAclService();
+    /**
+     * Gets an ACL Service interface object.
+     */
+    AclService getAclService();
 
-	/**
-	 * Gets a Policy Service interface object.
-	 */
-	PolicyService getPolicyService();
+    /**
+     * Gets a Policy Service interface object.
+     */
+    PolicyService getPolicyService();
 
-	/**
-	 * Gets a factory for CMIS provider specific objects.
-	 */
-	BindingsObjectFactory getObjectFactory();
+    /**
+     * Gets a factory for CMIS provider specific objects.
+     */
+    BindingsObjectFactory getObjectFactory();
 
-	/**
-	 * Clears all caches of the current CMIS binding session.
-	 */
-	void clearAllCaches();
+    /**
+     * Clears all caches of the current CMIS binding session.
+     */
+    void clearAllCaches();
 
-	/**
-	 * Clears all caches of the current CMIS binding session that are related to
-	 * the given repository.
-	 * 
-	 * @param repositoryId
-	 *            the repository id
-	 */
-	void clearRepositoryCache(String repositoryId);
+    /**
+     * Clears all caches of the current CMIS binding session that are related to
+     * the given repository.
+     * 
+     * @param repositoryId
+     *            the repository id
+     */
+    void clearRepositoryCache(String repositoryId);
 
-	/**
-	 * Releases all resources assigned to this binding instance.
-	 */
-	void close();
+    /**
+     * Releases all resources assigned to this binding instance.
+     */
+    void close();
 }

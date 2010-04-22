@@ -30,36 +30,36 @@ import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
  */
 public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition implements RelationshipTypeDefinition {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private List<String> fAllowedSourceTypes;
-	private List<String> fAllowedTargetTypes;
+    private List<String> fAllowedSourceTypes;
+    private List<String> fAllowedTargetTypes;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.RelationshipTypeDefinitionData#
-	 * getAllowedSourceTypes()
-	 */
-	public List<String> getAllowedSourceTypeIds() {
-		return fAllowedSourceTypes;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @seeorg.apache.opencmis.client.provider.RelationshipTypeDefinitionData#
+     * getAllowedSourceTypes()
+     */
+    public List<String> getAllowedSourceTypeIds() {
+        return fAllowedSourceTypes;
+    }
 
-	public void setAllowedSourceTypes(List<String> allowedSourceTypes) {
-		fAllowedSourceTypes = allowedSourceTypes;
-	}
+    public void setAllowedSourceTypes(List<String> allowedSourceTypes) {
+        fAllowedSourceTypes = allowedSourceTypes;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.RelationshipTypeDefinitionData#
-	 * getAllowedTargetTypes()
-	 */
-	public List<String> getAllowedTargetTypeIds() {
-		return fAllowedTargetTypes;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @seeorg.apache.opencmis.client.provider.RelationshipTypeDefinitionData#
+     * getAllowedTargetTypes()
+     */
+    public List<String> getAllowedTargetTypeIds() {
+        return fAllowedTargetTypes;
+    }
 
-	public void setAllowedTargetTypes(List<String> allowedTargetTypes) {
-		fAllowedTargetTypes = allowedTargetTypes;
-	}
+    public void setAllowedTargetTypes(List<String> allowedTargetTypes) {
+        fAllowedTargetTypes = allowedTargetTypes;
+    }
 }

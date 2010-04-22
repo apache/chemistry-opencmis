@@ -23,52 +23,52 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
  * 
  */
 public class PermissionDefinitionDataImpl extends AbstractExtensionData implements
-		org.apache.chemistry.opencmis.commons.api.PermissionDefinition {
+        org.apache.chemistry.opencmis.commons.api.PermissionDefinition {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String fPermission;
-	private String fDescription;
+    private String fPermission;
+    private String fDescription;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.PermissionDefinitionData#getPermission
-	 * ()
-	 */
-	public String getId() {
-		return fPermission;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.PermissionDefinitionData#getPermission
+     * ()
+     */
+    public String getId() {
+        return fPermission;
+    }
 
-	public void setPermission(String permission) {
-		fPermission = permission;
-	}
+    public void setPermission(String permission) {
+        fPermission = permission;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.PermissionDefinitionData#getDescription
-	 * ()
-	 */
-	public String getDescription() {
-		return fDescription;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.PermissionDefinitionData#getDescription
+     * ()
+     */
+    public String getDescription() {
+        return fDescription;
+    }
 
-	public void setDescription(String description) {
-		fDescription = description;
-	}
+    public void setDescription(String description) {
+        fDescription = description;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Permission Definition [permission=" + fPermission + ", description=" + fDescription + "]"
-				+ super.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Permission Definition [permission=" + fPermission + ", description=" + fDescription + "]"
+                + super.toString();
+    }
 
 }

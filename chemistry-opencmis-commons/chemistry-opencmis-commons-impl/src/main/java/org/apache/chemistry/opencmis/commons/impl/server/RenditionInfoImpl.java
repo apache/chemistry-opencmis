@@ -27,49 +27,49 @@ import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
  */
 public class RenditionInfoImpl implements RenditionInfo {
 
-	private String id;
-	private String contentType;
-	private String kind;
-	private String title;
-	private BigInteger length;
+    private String id;
+    private String contentType;
+    private String kind;
+    private String title;
+    private BigInteger length;
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getContenType() {
-		return contentType;
-	}
+    public String getContenType() {
+        return contentType;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
-	public String getKind() {
-		return kind;
-	}
+    public String getKind() {
+        return kind;
+    }
 
-	public void setKind(String kind) {
-		this.kind = kind;
-	}
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public BigInteger getLength() {
-		return length;
-	}
+    public BigInteger getLength() {
+        return length;
+    }
 
-	public void setLength(BigInteger length) {
-		this.length = length;
-	}
+    public void setLength(BigInteger length) {
+        this.length = length;
+    }
 }

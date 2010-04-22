@@ -26,25 +26,25 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum PropertyType {
 
-	BOOLEAN("boolean"), ID("id"), INTEGER("integer"), DATETIME("datetime"), DECIMAL("decimal"), HTML("html"), STRING(
-			"string"), URI("uri");
-	private final String value;
+    BOOLEAN("boolean"), ID("id"), INTEGER("integer"), DATETIME("datetime"), DECIMAL("decimal"), HTML("html"), STRING(
+            "string"), URI("uri");
+    private final String value;
 
-	PropertyType(String v) {
-		value = v;
-	}
+    PropertyType(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static PropertyType fromValue(String v) {
-		for (PropertyType c : PropertyType.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static PropertyType fromValue(String v) {
+        for (PropertyType c : PropertyType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

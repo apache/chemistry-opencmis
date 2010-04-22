@@ -28,33 +28,33 @@ import java.math.BigInteger;
  */
 public class CmisInvalidArgumentException extends CmisBaseException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public CmisInvalidArgumentException() {
-		super();
-	}
+    public CmisInvalidArgumentException() {
+        super();
+    }
 
-	public CmisInvalidArgumentException(String message, BigInteger code, Throwable cause) {
-		super(message, code, cause);
-	}
+    public CmisInvalidArgumentException(String message, BigInteger code, Throwable cause) {
+        super(message, code, cause);
+    }
 
-	public CmisInvalidArgumentException(String message, String errorContent) {
-		super(message, errorContent);
-	}
+    public CmisInvalidArgumentException(String message, String errorContent) {
+        super(message, errorContent);
+    }
 
-	public CmisInvalidArgumentException(String message, BigInteger code) {
-		super(message, code);
-	}
+    public CmisInvalidArgumentException(String message, BigInteger code) {
+        super(message, code);
+    }
 
-	public CmisInvalidArgumentException(String message, String errorContent, Throwable cause) {
-		super(message, errorContent, cause);
-	}
+    public CmisInvalidArgumentException(String message, String errorContent, Throwable cause) {
+        super(message, errorContent, cause);
+    }
 
-	public CmisInvalidArgumentException(String message, Throwable cause) {
-		super(message, (BigInteger) null, cause);
-	}
+    public CmisInvalidArgumentException(String message, Throwable cause) {
+        super(message, (BigInteger) null, cause);
+    }
 
-	public CmisInvalidArgumentException(String message) {
-		super(message, (BigInteger) null);
-	}
+    public CmisInvalidArgumentException(String message) {
+        super(message, (BigInteger) null);
+    }
 }

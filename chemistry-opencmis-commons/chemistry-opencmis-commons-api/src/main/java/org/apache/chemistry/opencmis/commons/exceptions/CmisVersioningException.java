@@ -28,33 +28,33 @@ import java.math.BigInteger;
  */
 public class CmisVersioningException extends CmisBaseException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public CmisVersioningException() {
-		super();
-	}
+    public CmisVersioningException() {
+        super();
+    }
 
-	public CmisVersioningException(String message, BigInteger code, Throwable cause) {
-		super(message, code, cause);
-	}
+    public CmisVersioningException(String message, BigInteger code, Throwable cause) {
+        super(message, code, cause);
+    }
 
-	public CmisVersioningException(String message, String errorContent) {
-		super(message, errorContent);
-	}
+    public CmisVersioningException(String message, String errorContent) {
+        super(message, errorContent);
+    }
 
-	public CmisVersioningException(String message, BigInteger code) {
-		super(message, code);
-	}
+    public CmisVersioningException(String message, BigInteger code) {
+        super(message, code);
+    }
 
-	public CmisVersioningException(String message, String errorContent, Throwable cause) {
-		super(message, errorContent, cause);
-	}
+    public CmisVersioningException(String message, String errorContent, Throwable cause) {
+        super(message, errorContent, cause);
+    }
 
-	public CmisVersioningException(String message, Throwable cause) {
-		super(message, (BigInteger) null, cause);
-	}
+    public CmisVersioningException(String message, Throwable cause) {
+        super(message, (BigInteger) null, cause);
+    }
 
-	public CmisVersioningException(String message) {
-		super(message, (BigInteger) null);
-	}
+    public CmisVersioningException(String message) {
+        super(message, (BigInteger) null);
+    }
 }

@@ -29,34 +29,34 @@ import org.apache.chemistry.opencmis.commons.enums.ChangeType;
  */
 public class ChangeEventInfoDataImpl extends AbstractExtensionData implements ChangeEventInfo {
 
-	private GregorianCalendar fChangeTime;
-	private ChangeType fTypeOfChanges;
+    private GregorianCalendar fChangeTime;
+    private ChangeType fTypeOfChanges;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.ChangeEventInfoData#getChangeTime()
-	 */
-	public GregorianCalendar getChangeTime() {
-		return fChangeTime;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.ChangeEventInfoData#getChangeTime()
+     */
+    public GregorianCalendar getChangeTime() {
+        return fChangeTime;
+    }
 
-	public void setChangeTime(GregorianCalendar changeTime) {
-		fChangeTime = changeTime;
-	}
+    public void setChangeTime(GregorianCalendar changeTime) {
+        fChangeTime = changeTime;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.ChangeEventInfoData#getChangeType()
-	 */
-	public ChangeType getChangeType() {
-		return fTypeOfChanges;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.ChangeEventInfoData#getChangeType()
+     */
+    public ChangeType getChangeType() {
+        return fTypeOfChanges;
+    }
 
-	public void setChangeType(ChangeType changeType) {
-		fTypeOfChanges = changeType;
-	}
+    public void setChangeType(ChangeType changeType) {
+        fTypeOfChanges = changeType;
+    }
 }

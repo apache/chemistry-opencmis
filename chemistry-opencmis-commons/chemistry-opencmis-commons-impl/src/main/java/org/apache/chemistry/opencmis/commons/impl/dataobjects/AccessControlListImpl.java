@@ -31,55 +31,55 @@ import org.apache.chemistry.opencmis.commons.api.Acl;
  */
 public class AccessControlListImpl extends AbstractExtensionData implements Acl {
 
-	private List<Ace> fAces;
-	private Boolean fIsExact;
+    private List<Ace> fAces;
+    private Boolean fIsExact;
 
-	/**
-	 * Constructor.
-	 */
-	public AccessControlListImpl() {
-	}
+    /**
+     * Constructor.
+     */
+    public AccessControlListImpl() {
+    }
 
-	/**
-	 * Constructor.
-	 */
-	public AccessControlListImpl(List<Ace> aces) {
-		setAces(aces);
-	}
+    /**
+     * Constructor.
+     */
+    public AccessControlListImpl(List<Ace> aces) {
+        setAces(aces);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.AccessControlList#getACEs()
-	 */
-	public List<Ace> getAces() {
-		return fAces;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.AccessControlList#getACEs()
+     */
+    public List<Ace> getAces() {
+        return fAces;
+    }
 
-	public void setAces(List<Ace> aces) {
-		fAces = aces;
-	}
+    public void setAces(List<Ace> aces) {
+        fAces = aces;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.AccessControlList#isExact()
-	 */
-	public Boolean isExact() {
-		return fIsExact;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.AccessControlList#isExact()
+     */
+    public Boolean isExact() {
+        return fIsExact;
+    }
 
-	public void setExact(Boolean isExact) {
-		fIsExact = isExact;
-	}
+    public void setExact(Boolean isExact) {
+        fIsExact = isExact;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Access Control List [ACEs=" + fAces + ", is exact=" + fIsExact + "]" + super.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Access Control List [ACEs=" + fAces + ", is exact=" + fIsExact + "]" + super.toString();
+    }
 }

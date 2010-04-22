@@ -25,24 +25,24 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum SessionType {
 
-	PERSISTENT("persistent"), TRANSIENT("transient");
-	private final String value;
+    PERSISTENT("persistent"), TRANSIENT("transient");
+    private final String value;
 
-	SessionType(String v) {
-		value = v;
-	}
+    SessionType(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static SessionType fromValue(String v) {
-		for (SessionType c : SessionType.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static SessionType fromValue(String v) {
+        for (SessionType c : SessionType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

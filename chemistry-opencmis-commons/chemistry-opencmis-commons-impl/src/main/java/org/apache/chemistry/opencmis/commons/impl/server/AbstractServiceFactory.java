@@ -8,11 +8,11 @@ import org.apache.chemistry.opencmis.commons.api.server.CmisServiceFactory;
 
 public abstract class AbstractServiceFactory implements CmisServiceFactory {
 
-	public void init(Map<String, String> parameters) {
-	}
+    public void init(Map<String, String> parameters) {
+    }
 
-	public void destroy() {
-	}
+    public void destroy() {
+    }
 
-	public abstract CmisService getService(CallContext context);
+    public abstract CmisService getService(CallContext context);
 }

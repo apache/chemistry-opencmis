@@ -28,5 +28,5 @@ import org.apache.chemistry.opencmis.commons.api.PropertyIdDefinition;
  */
 public class PropertyIdDefinitionImpl extends AbstractPropertyDefinition<String> implements PropertyIdDefinition {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 }

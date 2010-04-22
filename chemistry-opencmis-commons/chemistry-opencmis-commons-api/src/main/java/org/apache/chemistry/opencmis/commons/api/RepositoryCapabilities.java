@@ -29,44 +29,44 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 
 public interface RepositoryCapabilities extends Serializable, ExtensionsData {
 
-	// Object
+    // Object
 
-	CapabilityContentStreamUpdates getContentStreamUpdatesCapability();
+    CapabilityContentStreamUpdates getContentStreamUpdatesCapability();
 
-	CapabilityChanges getChangesCapability();
+    CapabilityChanges getChangesCapability();
 
-	CapabilityRenditions getRenditionsCapability();
+    CapabilityRenditions getRenditionsCapability();
 
-	// Navigation
+    // Navigation
 
-	Boolean isGetDescendantsSupported();
+    Boolean isGetDescendantsSupported();
 
-	Boolean isGetFolderTreeSupported();
+    Boolean isGetFolderTreeSupported();
 
-	// Filing
+    // Filing
 
-	Boolean isMultifilingSupported();
+    Boolean isMultifilingSupported();
 
-	Boolean isUnfilingSupported();
+    Boolean isUnfilingSupported();
 
-	Boolean isVersionSpecificFilingSupported();
+    Boolean isVersionSpecificFilingSupported();
 
-	// Versioning
+    // Versioning
 
-	Boolean isPwcSearchableSupported();
+    Boolean isPwcSearchableSupported();
 
-	Boolean isPwcUpdatableSupported();
+    Boolean isPwcUpdatableSupported();
 
-	Boolean isAllVersionsSearchableSupported();
+    Boolean isAllVersionsSearchableSupported();
 
-	// Query
+    // Query
 
-	CapabilityQuery getQueryCapability();
+    CapabilityQuery getQueryCapability();
 
-	CapabilityJoin getJoinCapability();
+    CapabilityJoin getJoinCapability();
 
-	// ACLs
+    // ACLs
 
-	CapabilityAcl getAclCapability();
+    CapabilityAcl getAclCapability();
 
 }

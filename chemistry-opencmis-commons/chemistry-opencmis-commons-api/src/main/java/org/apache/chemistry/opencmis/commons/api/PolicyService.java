@@ -31,11 +31,11 @@ import java.util.List;
  */
 public interface PolicyService {
 
-	public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
+    public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
 
-	public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
+    public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
 
-	public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
-			ExtensionsData extension);
+    public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
+            ExtensionsData extension);
 
 }

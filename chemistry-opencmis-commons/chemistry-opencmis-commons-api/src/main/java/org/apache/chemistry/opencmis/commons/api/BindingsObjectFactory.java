@@ -32,43 +32,43 @@ import java.util.List;
  */
 public interface BindingsObjectFactory {
 
-	Ace createAccessControlEntry(String principal, List<String> permissions);
+    Ace createAccessControlEntry(String principal, List<String> permissions);
 
-	Acl createAccessControlList(List<Ace> aces);
+    Acl createAccessControlList(List<Ace> aces);
 
-	PropertyBoolean createPropertyBooleanData(String id, List<Boolean> values);
+    PropertyBoolean createPropertyBooleanData(String id, List<Boolean> values);
 
-	PropertyBoolean createPropertyBooleanData(String id, Boolean value);
+    PropertyBoolean createPropertyBooleanData(String id, Boolean value);
 
-	PropertyId createPropertyIdData(String id, List<String> values);
+    PropertyId createPropertyIdData(String id, List<String> values);
 
-	PropertyId createPropertyIdData(String id, String value);
+    PropertyId createPropertyIdData(String id, String value);
 
-	PropertyInteger createPropertyIntegerData(String id, List<BigInteger> values);
+    PropertyInteger createPropertyIntegerData(String id, List<BigInteger> values);
 
-	PropertyInteger createPropertyIntegerData(String id, BigInteger value);
+    PropertyInteger createPropertyIntegerData(String id, BigInteger value);
 
-	PropertyDateTime createPropertyDateTimeData(String id, List<GregorianCalendar> values);
+    PropertyDateTime createPropertyDateTimeData(String id, List<GregorianCalendar> values);
 
-	PropertyDateTime createPropertyDateTimeData(String id, GregorianCalendar value);
+    PropertyDateTime createPropertyDateTimeData(String id, GregorianCalendar value);
 
-	PropertyDecimal createPropertyDecimalData(String id, List<BigDecimal> values);
+    PropertyDecimal createPropertyDecimalData(String id, List<BigDecimal> values);
 
-	PropertyDecimal createPropertyDecimalData(String id, BigDecimal value);
+    PropertyDecimal createPropertyDecimalData(String id, BigDecimal value);
 
-	PropertyHtml createPropertyHtmlData(String id, List<String> values);
+    PropertyHtml createPropertyHtmlData(String id, List<String> values);
 
-	PropertyHtml createPropertyHtmlData(String id, String value);
+    PropertyHtml createPropertyHtmlData(String id, String value);
 
-	PropertyString createPropertyStringData(String id, List<String> values);
+    PropertyString createPropertyStringData(String id, List<String> values);
 
-	PropertyString createPropertyStringData(String id, String value);
+    PropertyString createPropertyStringData(String id, String value);
 
-	PropertyUri createPropertyUriData(String id, List<String> values);
+    PropertyUri createPropertyUriData(String id, List<String> values);
 
-	PropertyUri createPropertyUriData(String id, String value);
+    PropertyUri createPropertyUriData(String id, String value);
 
-	Properties createPropertiesData(List<PropertyData<?>> properties);
+    Properties createPropertiesData(List<PropertyData<?>> properties);
 
-	ContentStream createContentStream(String filename, BigInteger length, String mimetype, InputStream stream);
+    ContentStream createContentStream(String filename, BigInteger length, String mimetype, InputStream stream);
 }

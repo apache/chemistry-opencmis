@@ -22,5 +22,5 @@ import java.util.Map;
 
 public interface Properties extends ExtensionsData {
 
-	Map<String, PropertyData<?>> getProperties();
+    Map<String, PropertyData<?>> getProperties();
 }

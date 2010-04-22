@@ -26,24 +26,24 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum CapabilityJoin {
 
-	NONE("none"), INNERONLY("inneronly"), INNERANDOUTER("innerandouter");
-	private final String value;
+    NONE("none"), INNERONLY("inneronly"), INNERANDOUTER("innerandouter");
+    private final String value;
 
-	CapabilityJoin(String v) {
-		value = v;
-	}
+    CapabilityJoin(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static CapabilityJoin fromValue(String v) {
-		for (CapabilityJoin c : CapabilityJoin.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static CapabilityJoin fromValue(String v) {
+        for (CapabilityJoin c : CapabilityJoin.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

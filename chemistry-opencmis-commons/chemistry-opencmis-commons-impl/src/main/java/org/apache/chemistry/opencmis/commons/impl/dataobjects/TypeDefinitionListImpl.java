@@ -30,57 +30,57 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
  */
 public class TypeDefinitionListImpl extends AbstractExtensionData implements TypeDefinitionList {
 
-	private List<TypeDefinition> fList;
-	private Boolean fHasMoreItems = Boolean.FALSE;
-	private BigInteger fNumItems;
+    private List<TypeDefinition> fList;
+    private Boolean fHasMoreItems = Boolean.FALSE;
+    private BigInteger fNumItems;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.TypeDefintionList#getList()
-	 */
-	public List<TypeDefinition> getList() {
-		return fList;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.TypeDefintionList#getList()
+     */
+    public List<TypeDefinition> getList() {
+        return fList;
+    }
 
-	public void setList(List<TypeDefinition> list) {
-		fList = list;
-	}
+    public void setList(List<TypeDefinition> list) {
+        fList = list;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.TypeDefintionList#hasMoreItems()
-	 */
-	public Boolean hasMoreItems() {
-		return fHasMoreItems;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.TypeDefintionList#hasMoreItems()
+     */
+    public Boolean hasMoreItems() {
+        return fHasMoreItems;
+    }
 
-	public void setHasMoreItems(Boolean hasMoreItems) {
-		fHasMoreItems = hasMoreItems;
-	}
+    public void setHasMoreItems(Boolean hasMoreItems) {
+        fHasMoreItems = hasMoreItems;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.TypeDefintionList#getNumItems()
-	 */
-	public BigInteger getNumItems() {
-		return fNumItems;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.TypeDefintionList#getNumItems()
+     */
+    public BigInteger getNumItems() {
+        return fNumItems;
+    }
 
-	public void setNumItems(BigInteger numItems) {
-		fNumItems = numItems;
-	}
+    public void setNumItems(BigInteger numItems) {
+        fNumItems = numItems;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Type Definition List [list=" + fList + ", has more items=" + fHasMoreItems + ", num items=" + fNumItems
-				+ "]" + super.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Type Definition List [list=" + fList + ", has more items=" + fHasMoreItems + ", num items=" + fNumItems
+                + "]" + super.toString();
+    }
 }

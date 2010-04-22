@@ -22,9 +22,9 @@ import java.util.List;
 
 public interface Choice<T> {
 
-	String getDisplayName();
+    String getDisplayName();
 
-	List<T> getValue();
+    List<T> getValue();
 
-	List<Choice<T>> getChoice();
+    List<Choice<T>> getChoice();
 }

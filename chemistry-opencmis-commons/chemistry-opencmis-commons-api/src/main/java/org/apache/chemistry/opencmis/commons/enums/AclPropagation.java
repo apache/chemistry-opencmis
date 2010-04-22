@@ -26,24 +26,24 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum AclPropagation {
 
-	REPOSITORYDETERMINED("repositorydetermined"), OBJECTONLY("objectonly"), PROPAGATE("propagate");
-	private final String value;
+    REPOSITORYDETERMINED("repositorydetermined"), OBJECTONLY("objectonly"), PROPAGATE("propagate");
+    private final String value;
 
-	AclPropagation(String v) {
-		value = v;
-	}
+    AclPropagation(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static AclPropagation fromValue(String v) {
-		for (AclPropagation c : AclPropagation.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static AclPropagation fromValue(String v) {
+        for (AclPropagation c : AclPropagation.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

@@ -26,11 +26,11 @@ import java.util.List;
  */
 public interface Ace extends ExtensionsData {
 
-	Principal getPrincipal();
+    Principal getPrincipal();
 
-	String getPrincipalId();
+    String getPrincipalId();
 
-	List<String> getPermissions();
+    List<String> getPermissions();
 
-	boolean isDirect();
+    boolean isDirect();
 }

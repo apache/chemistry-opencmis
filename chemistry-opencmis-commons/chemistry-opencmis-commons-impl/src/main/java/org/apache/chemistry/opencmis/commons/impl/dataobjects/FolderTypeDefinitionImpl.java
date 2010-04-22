@@ -28,6 +28,6 @@ import org.apache.chemistry.opencmis.commons.api.FolderTypeDefinition;
  */
 public class FolderTypeDefinitionImpl extends AbstractTypeDefinition implements FolderTypeDefinition {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

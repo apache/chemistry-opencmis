@@ -28,25 +28,25 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
  */
 public interface NavigationService {
 
-	ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
-			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
+    ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
-	List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth, String filter,
-			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			Boolean includePathSegment, ExtensionsData extension);
+    List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth, String filter,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            Boolean includePathSegment, ExtensionsData extension);
 
-	List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth, String filter,
-			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			Boolean includePathSegment, ExtensionsData extension);
+    List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth, String filter,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            Boolean includePathSegment, ExtensionsData extension);
 
-	List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
-			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			Boolean includeRelativePathSegment, ExtensionsData extension);
+    List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            Boolean includeRelativePathSegment, ExtensionsData extension);
 
-	ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension);
+    ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension);
 
-	ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
-			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
+    ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 }

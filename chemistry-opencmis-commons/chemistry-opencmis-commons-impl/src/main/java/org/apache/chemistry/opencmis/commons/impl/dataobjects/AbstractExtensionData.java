@@ -30,30 +30,30 @@ import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
  */
 public abstract class AbstractExtensionData implements ExtensionsData {
 
-	private List<Object> fExtensions;
+    private List<Object> fExtensions;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.ExtensionsData#getExtensions()
-	 */
-	public List<Object> getExtensions() {
-		return fExtensions;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.ExtensionsData#getExtensions()
+     */
+    public List<Object> getExtensions() {
+        return fExtensions;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.ExtensionsData#setExtensions(java
-	 * .util.List)
-	 */
-	public void setExtensions(List<Object> extensions) {
-		fExtensions = extensions;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.ExtensionsData#setExtensions(java
+     * .util.List)
+     */
+    public void setExtensions(List<Object> extensions) {
+        fExtensions = extensions;
+    }
 
-	@Override
-	public String toString() {
-		return "[extensions=" + fExtensions + "]";
-	}
+    @Override
+    public String toString() {
+        return "[extensions=" + fExtensions + "]";
+    }
 }

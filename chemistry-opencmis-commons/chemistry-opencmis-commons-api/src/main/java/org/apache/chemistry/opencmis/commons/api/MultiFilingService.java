@@ -29,9 +29,9 @@ package org.apache.chemistry.opencmis.commons.api;
  */
 public interface MultiFilingService {
 
-	void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
-			ExtensionsData extension);
+    void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
+            ExtensionsData extension);
 
-	void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension);
+    void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension);
 
 }

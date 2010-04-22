@@ -20,25 +20,25 @@ package org.apache.chemistry.opencmis.commons.api;
 
 public final class Holder<T> {
 
-	private T fValue;
+    private T fValue;
 
-	public Holder() {
-	}
+    public Holder() {
+    }
 
-	public Holder(T value) {
-		fValue = value;
-	}
+    public Holder(T value) {
+        fValue = value;
+    }
 
-	public T getValue() {
-		return fValue;
-	}
+    public T getValue() {
+        return fValue;
+    }
 
-	public void setValue(T value) {
-		fValue = value;
-	}
+    public void setValue(T value) {
+        fValue = value;
+    }
 
-	@Override
-	public String toString() {
-		return "Holder(" + fValue + ")";
-	}
+    @Override
+    public String toString() {
+        return "Holder(" + fValue + ")";
+    }
 }

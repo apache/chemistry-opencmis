@@ -24,6 +24,6 @@ package org.apache.chemistry.opencmis.commons.api;
  */
 public interface Principal extends ExtensionsData {
 
-	String getId();
+    String getId();
 
 }

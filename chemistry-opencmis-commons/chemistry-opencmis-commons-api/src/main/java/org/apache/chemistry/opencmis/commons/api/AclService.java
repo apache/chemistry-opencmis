@@ -31,8 +31,8 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
  */
 public interface AclService {
 
-	Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension);
+    Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension);
 
-	Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces, AclPropagation aclPropagation,
-			ExtensionsData extension);
+    Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces, AclPropagation aclPropagation,
+            ExtensionsData extension);
 }

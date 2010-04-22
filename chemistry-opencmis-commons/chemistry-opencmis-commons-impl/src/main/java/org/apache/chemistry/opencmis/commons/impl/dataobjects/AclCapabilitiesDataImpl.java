@@ -33,79 +33,79 @@ import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
  */
 public class AclCapabilitiesDataImpl extends AbstractExtensionData implements AclCapabilities {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private SupportedPermissions fSupportedPermissions;
-	private AclPropagation fACLPropagation;
-	private Map<String, PermissionMapping> permissionMapping;
-	private List<PermissionDefinition> fPermissionDefinitionList;
+    private SupportedPermissions fSupportedPermissions;
+    private AclPropagation fACLPropagation;
+    private Map<String, PermissionMapping> permissionMapping;
+    private List<PermissionDefinition> fPermissionDefinitionList;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.ACLCapabilitiesData#getACLPropagation
-	 * ()
-	 */
-	public SupportedPermissions getSupportedPermissions() {
-		return fSupportedPermissions;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.ACLCapabilitiesData#getACLPropagation
+     * ()
+     */
+    public SupportedPermissions getSupportedPermissions() {
+        return fSupportedPermissions;
+    }
 
-	public void setSupportedPermissions(SupportedPermissions supportedPermissions) {
-		fSupportedPermissions = supportedPermissions;
-	}
+    public void setSupportedPermissions(SupportedPermissions supportedPermissions) {
+        fSupportedPermissions = supportedPermissions;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.ACLCapabilitiesData#getACLPropagation
-	 * ()
-	 */
-	public AclPropagation getAclPropagation() {
-		return fACLPropagation;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.ACLCapabilitiesData#getACLPropagation
+     * ()
+     */
+    public AclPropagation getAclPropagation() {
+        return fACLPropagation;
+    }
 
-	public void setAclPropagation(AclPropagation aclPropagation) {
-		fACLPropagation = aclPropagation;
-	}
+    public void setAclPropagation(AclPropagation aclPropagation) {
+        fACLPropagation = aclPropagation;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.ACLCapabilitiesData#
-	 * getPermissionMappingData()
-	 */
-	public Map<String, PermissionMapping> getPermissionMapping() {
-		return permissionMapping;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @seeorg.apache.opencmis.client.provider.ACLCapabilitiesData#
+     * getPermissionMappingData()
+     */
+    public Map<String, PermissionMapping> getPermissionMapping() {
+        return permissionMapping;
+    }
 
-	public void setPermissionMappingData(Map<String, PermissionMapping> permissionMapping) {
-		this.permissionMapping = permissionMapping;
-	}
+    public void setPermissionMappingData(Map<String, PermissionMapping> permissionMapping) {
+        this.permissionMapping = permissionMapping;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.ACLCapabilitiesData#
-	 * getPermissionDefinitionData()
-	 */
-	public List<PermissionDefinition> getPermissions() {
-		return fPermissionDefinitionList;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @seeorg.apache.opencmis.client.provider.ACLCapabilitiesData#
+     * getPermissionDefinitionData()
+     */
+    public List<PermissionDefinition> getPermissions() {
+        return fPermissionDefinitionList;
+    }
 
-	public void setPermissionDefinitionData(List<PermissionDefinition> permissionDefinitionList) {
-		fPermissionDefinitionList = permissionDefinitionList;
-	}
+    public void setPermissionDefinitionData(List<PermissionDefinition> permissionDefinitionList) {
+        fPermissionDefinitionList = permissionDefinitionList;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "ACL Capabilities [ACL propagation=" + fACLPropagation + ", permission definition list="
-				+ fPermissionDefinitionList + ", permission mappings=" + permissionMapping + "]" + super.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ACL Capabilities [ACL propagation=" + fACLPropagation + ", permission definition list="
+                + fPermissionDefinitionList + ", permission mappings=" + permissionMapping + "]" + super.toString();
+    }
 }

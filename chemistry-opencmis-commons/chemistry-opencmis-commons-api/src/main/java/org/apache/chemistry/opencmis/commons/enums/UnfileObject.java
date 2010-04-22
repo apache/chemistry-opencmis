@@ -26,26 +26,26 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum UnfileObject {
 
-	UNFILE("unfile"), //
-	DELETESINGLEFILED("deletesinglefiled"), //
-	DELETE("delete");
-	private final String value;
+    UNFILE("unfile"), //
+    DELETESINGLEFILED("deletesinglefiled"), //
+    DELETE("delete");
+    private final String value;
 
-	UnfileObject(String v) {
-		value = v;
-	}
+    UnfileObject(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static UnfileObject fromValue(String v) {
-		for (UnfileObject c : UnfileObject.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static UnfileObject fromValue(String v) {
+        for (UnfileObject c : UnfileObject.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

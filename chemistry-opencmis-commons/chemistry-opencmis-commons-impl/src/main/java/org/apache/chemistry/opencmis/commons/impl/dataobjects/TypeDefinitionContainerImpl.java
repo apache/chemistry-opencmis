@@ -30,53 +30,53 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
  */
 public class TypeDefinitionContainerImpl extends AbstractExtensionData implements TypeDefinitionContainer {
 
-	private TypeDefinition fType;
-	private List<TypeDefinitionContainer> fChildren;
+    private TypeDefinition fType;
+    private List<TypeDefinitionContainer> fChildren;
 
-	public TypeDefinitionContainerImpl() {
-	}
+    public TypeDefinitionContainerImpl() {
+    }
 
-	public TypeDefinitionContainerImpl(TypeDefinition typeDef) {
-		setTypeDefinition(typeDef);
-		fChildren = new ArrayList<TypeDefinitionContainer>();
-	}
+    public TypeDefinitionContainerImpl(TypeDefinition typeDef) {
+        setTypeDefinition(typeDef);
+        fChildren = new ArrayList<TypeDefinitionContainer>();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.TypeDefinitionContainer#getTypeDefinition
-	 * ()
-	 */
-	public TypeDefinition getTypeDefinition() {
-		return fType;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.TypeDefinitionContainer#getTypeDefinition
+     * ()
+     */
+    public TypeDefinition getTypeDefinition() {
+        return fType;
+    }
 
-	public void setTypeDefinition(TypeDefinition type) {
-		fType = type;
-	}
+    public void setTypeDefinition(TypeDefinition type) {
+        fType = type;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.TypeDefinitionContainer#getChildren()
-	 */
-	public List<TypeDefinitionContainer> getChildren() {
-		return fChildren;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.TypeDefinitionContainer#getChildren()
+     */
+    public List<TypeDefinitionContainer> getChildren() {
+        return fChildren;
+    }
 
-	public void setChildren(List<TypeDefinitionContainer> children) {
-		fChildren = children;
-	}
+    public void setChildren(List<TypeDefinitionContainer> children) {
+        fChildren = children;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Type Definition Container [type=" + fType + " ,children=" + fChildren + "]" + super.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Type Definition Container [type=" + fType + " ,children=" + fChildren + "]" + super.toString();
+    }
 }

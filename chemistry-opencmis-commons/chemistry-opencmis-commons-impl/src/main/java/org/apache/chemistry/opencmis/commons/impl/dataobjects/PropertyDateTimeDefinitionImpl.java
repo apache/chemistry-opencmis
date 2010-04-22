@@ -30,23 +30,23 @@ import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
  * 
  */
 public class PropertyDateTimeDefinitionImpl extends AbstractPropertyDefinition<GregorianCalendar> implements
-		PropertyDateTimeDefinition {
+        PropertyDateTimeDefinition {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private DateTimeResolution fDateTimeResolution;
+    private DateTimeResolution fDateTimeResolution;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.PropertyDateTimeDefinitionData#
-	 * getDateTimeResolution()
-	 */
-	public DateTimeResolution getDateTimeResolution() {
-		return fDateTimeResolution;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @seeorg.apache.opencmis.client.provider.PropertyDateTimeDefinitionData#
+     * getDateTimeResolution()
+     */
+    public DateTimeResolution getDateTimeResolution() {
+        return fDateTimeResolution;
+    }
 
-	public void setDateTimeResolution(DateTimeResolution dateTimeResolution) {
-		fDateTimeResolution = dateTimeResolution;
-	}
+    public void setDateTimeResolution(DateTimeResolution dateTimeResolution) {
+        fDateTimeResolution = dateTimeResolution;
+    }
 }

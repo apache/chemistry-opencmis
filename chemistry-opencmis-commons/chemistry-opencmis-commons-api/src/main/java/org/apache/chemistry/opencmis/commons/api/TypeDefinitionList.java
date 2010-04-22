@@ -23,9 +23,9 @@ import java.util.List;
 
 public interface TypeDefinitionList extends ExtensionsData {
 
-	List<TypeDefinition> getList();
+    List<TypeDefinition> getList();
 
-	Boolean hasMoreItems();
+    Boolean hasMoreItems();
 
-	BigInteger getNumItems();
+    BigInteger getNumItems();
 }

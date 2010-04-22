@@ -28,118 +28,118 @@ import java.math.BigInteger;
  */
 public abstract class CmisBaseException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Error code used by the Web Services binding. */
-	private BigInteger fCode;
+    /** Error code used by the Web Services binding. */
+    private BigInteger fCode;
 
-	/** Content the of the error page returned by the AtomPub server. */
-	private String fErrorContent;
+    /** Content the of the error page returned by the AtomPub server. */
+    private String fErrorContent;
 
-	/**
-	 * Default constructor.
-	 */
-	public CmisBaseException() {
-		super();
-	}
+    /**
+     * Default constructor.
+     */
+    public CmisBaseException() {
+        super();
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            error message
-	 * @param code
-	 *            error code
-	 * @param cause
-	 *            the cause
-	 */
-	public CmisBaseException(String message, BigInteger code, Throwable cause) {
-		super(message, cause);
-		fCode = code;
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param cause
+     *            the cause
+     */
+    public CmisBaseException(String message, BigInteger code, Throwable cause) {
+        super(message, cause);
+        fCode = code;
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            error message
-	 * @param errorContent
-	 *            error page content
-	 * @param cause
-	 *            the cause
-	 */
-	public CmisBaseException(String message, String errorContent, Throwable cause) {
-		super(message, cause);
-		fErrorContent = errorContent;
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     * @param cause
+     *            the cause
+     */
+    public CmisBaseException(String message, String errorContent, Throwable cause) {
+        super(message, cause);
+        fErrorContent = errorContent;
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            error message
-	 * @param code
-	 *            error code
-	 */
-	public CmisBaseException(String message, BigInteger code) {
-		super(message);
-		fCode = code;
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     */
+    public CmisBaseException(String message, BigInteger code) {
+        super(message);
+        fCode = code;
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            error message
-	 * @param errorContent
-	 *            error page content
-	 */
-	public CmisBaseException(String message, String errorContent) {
-		super(message);
-		fErrorContent = errorContent;
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     */
+    public CmisBaseException(String message, String errorContent) {
+        super(message);
+        fErrorContent = errorContent;
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            error message
-	 * @param cause
-	 *            the cause
-	 */
-	public CmisBaseException(String message, Throwable cause) {
-		this(message, (BigInteger) null, cause);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param cause
+     *            the cause
+     */
+    public CmisBaseException(String message, Throwable cause) {
+        this(message, (BigInteger) null, cause);
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            error message
-	 */
-	public CmisBaseException(String message) {
-		this(message, (BigInteger) null);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     */
+    public CmisBaseException(String message) {
+        this(message, (BigInteger) null);
+    }
 
-	/**
-	 * Returns the error code sent by the CMIS repository (Web Services binding
-	 * only).
-	 * 
-	 * @return error code or <code>null</code> if the CMIS repository didn't
-	 *         send an error code or the binding doesn't support error codes.
-	 */
-	public BigInteger getCode() {
-		return fCode;
-	}
+    /**
+     * Returns the error code sent by the CMIS repository (Web Services binding
+     * only).
+     * 
+     * @return error code or <code>null</code> if the CMIS repository didn't
+     *         send an error code or the binding doesn't support error codes.
+     */
+    public BigInteger getCode() {
+        return fCode;
+    }
 
-	/**
-	 * Returns the content of the error page sent by the web server (AtomPub
-	 * binding only).
-	 * 
-	 * @return the content of the error page or <code>null</code> if the server
-	 *         didn't send text content.
-	 */
-	public String getErrorContent() {
-		return fErrorContent;
-	}
+    /**
+     * Returns the content of the error page sent by the web server (AtomPub
+     * binding only).
+     * 
+     * @return the content of the error page or <code>null</code> if the server
+     *         didn't send text content.
+     */
+    public String getErrorContent() {
+        return fErrorContent;
+    }
 }

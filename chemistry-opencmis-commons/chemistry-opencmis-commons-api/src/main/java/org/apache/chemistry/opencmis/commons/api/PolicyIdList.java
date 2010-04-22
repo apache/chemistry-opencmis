@@ -22,5 +22,5 @@ import java.util.List;
 
 public interface PolicyIdList extends ExtensionsData {
 
-	List<String> getPolicyIds();
+    List<String> getPolicyIds();
 }

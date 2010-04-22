@@ -22,19 +22,19 @@ import java.math.BigInteger;
 
 public interface RenditionData extends ExtensionsData {
 
-	String getStreamId();
+    String getStreamId();
 
-	String getMimeType();
+    String getMimeType();
 
-	BigInteger getBigLength();
+    BigInteger getBigLength();
 
-	String getKind();
+    String getKind();
 
-	String getTitle();
+    String getTitle();
 
-	BigInteger getBigHeight();
+    BigInteger getBigHeight();
 
-	BigInteger getBigWidth();
+    BigInteger getBigWidth();
 
-	String getRenditionDocumentId();
+    String getRenditionDocumentId();
 }

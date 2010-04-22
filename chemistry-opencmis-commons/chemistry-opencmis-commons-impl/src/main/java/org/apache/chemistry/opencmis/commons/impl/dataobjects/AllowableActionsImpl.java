@@ -30,30 +30,30 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
  */
 public class AllowableActionsImpl extends AbstractExtensionData implements AllowableActions {
 
-	private Set<Action> allowableActions = new HashSet<Action>();
+    private Set<Action> allowableActions = new HashSet<Action>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.AllowableActionsData#getAllowableActions
-	 * ()
-	 */
-	public Set<Action> getAllowableActions() {
-		return allowableActions;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.AllowableActionsData#getAllowableActions
+     * ()
+     */
+    public Set<Action> getAllowableActions() {
+        return allowableActions;
+    }
 
-	public void setAllowableActions(Set<Action> allowableActions) {
-		this.allowableActions = allowableActions;
-	}
+    public void setAllowableActions(Set<Action> allowableActions) {
+        this.allowableActions = allowableActions;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Allowable Actions [allowable actions=" + allowableActions + "]" + super.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Allowable Actions [allowable actions=" + allowableActions + "]" + super.toString();
+    }
 }

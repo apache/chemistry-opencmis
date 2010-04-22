@@ -23,25 +23,25 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum BindingType {
 
-	WEBSERVICES("webservices"), ATOMPUB("atompub"), CUSTOM("custom");
+    WEBSERVICES("webservices"), ATOMPUB("atompub"), CUSTOM("custom");
 
-	private final String value;
+    private final String value;
 
-	BindingType(String v) {
-		value = v;
-	}
+    BindingType(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static BindingType fromValue(String v) {
-		for (BindingType c : BindingType.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static BindingType fromValue(String v) {
+        for (BindingType c : BindingType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

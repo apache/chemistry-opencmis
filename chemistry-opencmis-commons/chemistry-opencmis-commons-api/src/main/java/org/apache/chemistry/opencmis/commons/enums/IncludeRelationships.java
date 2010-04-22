@@ -26,24 +26,24 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum IncludeRelationships {
 
-	NONE("none"), SOURCE("source"), TARGET("target"), BOTH("both");
-	private final String value;
+    NONE("none"), SOURCE("source"), TARGET("target"), BOTH("both");
+    private final String value;
 
-	IncludeRelationships(String v) {
-		value = v;
-	}
+    IncludeRelationships(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static IncludeRelationships fromValue(String v) {
-		for (IncludeRelationships c : IncludeRelationships.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static IncludeRelationships fromValue(String v) {
+        for (IncludeRelationships c : IncludeRelationships.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

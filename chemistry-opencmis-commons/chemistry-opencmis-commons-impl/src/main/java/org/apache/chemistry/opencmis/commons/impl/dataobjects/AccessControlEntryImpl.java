@@ -31,77 +31,77 @@ import org.apache.chemistry.opencmis.commons.api.Principal;
  */
 public class AccessControlEntryImpl extends AbstractExtensionData implements Ace {
 
-	private List<String> fPermissions;
-	private Principal fPrincipal;
-	private boolean fIsDirect = true;
+    private List<String> fPermissions;
+    private Principal fPrincipal;
+    private boolean fIsDirect = true;
 
-	/**
-	 * Constructor.
-	 */
-	public AccessControlEntryImpl() {
-	}
+    /**
+     * Constructor.
+     */
+    public AccessControlEntryImpl() {
+    }
 
-	/**
-	 * Constructor.
-	 */
-	public AccessControlEntryImpl(Principal principal, List<String> permissions) {
-		setPrincipal(principal);
-		setPermissions(permissions);
-	}
+    /**
+     * Constructor.
+     */
+    public AccessControlEntryImpl(Principal principal, List<String> permissions) {
+        setPrincipal(principal);
+        setPermissions(permissions);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.AccessControlEntry#getPrincipal()
-	 */
-	public Principal getPrincipal() {
-		return fPrincipal;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.AccessControlEntry#getPrincipal()
+     */
+    public Principal getPrincipal() {
+        return fPrincipal;
+    }
 
-	public String getPrincipalId() {
-		return fPrincipal == null ? null : fPrincipal.getId();
-	}
+    public String getPrincipalId() {
+        return fPrincipal == null ? null : fPrincipal.getId();
+    }
 
-	public void setPrincipal(Principal principal) {
-		fPrincipal = principal;
-	}
+    public void setPrincipal(Principal principal) {
+        fPrincipal = principal;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.AccessControlEntry#getPermissions()
-	 */
-	public List<String> getPermissions() {
-		return fPermissions;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.AccessControlEntry#getPermissions()
+     */
+    public List<String> getPermissions() {
+        return fPermissions;
+    }
 
-	public void setPermissions(List<String> permissions) {
-		fPermissions = permissions;
-	}
+    public void setPermissions(List<String> permissions) {
+        fPermissions = permissions;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.AccessControlEntry#isDirect()
-	 */
-	public boolean isDirect() {
-		return fIsDirect;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.AccessControlEntry#isDirect()
+     */
+    public boolean isDirect() {
+        return fIsDirect;
+    }
 
-	public void setDirect(boolean direct) {
-		fIsDirect = direct;
-	}
+    public void setDirect(boolean direct) {
+        fIsDirect = direct;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Access Control Entry [principal=" + fPrincipal + ", permissions=" + fPermissions + ", is direct="
-				+ fIsDirect + "]" + super.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Access Control Entry [principal=" + fPrincipal + ", permissions=" + fPermissions + ", is direct="
+                + fIsDirect + "]" + super.toString();
+    }
 }

@@ -28,24 +28,24 @@ import java.math.BigInteger;
  */
 public enum DecimalPrecision {
 
-	BITS32(BigInteger.valueOf(32)), BITS64(BigInteger.valueOf(64));
-	private final BigInteger value;
+    BITS32(BigInteger.valueOf(32)), BITS64(BigInteger.valueOf(64));
+    private final BigInteger value;
 
-	DecimalPrecision(BigInteger v) {
-		value = v;
-	}
+    DecimalPrecision(BigInteger v) {
+        value = v;
+    }
 
-	public BigInteger value() {
-		return value;
-	}
+    public BigInteger value() {
+        return value;
+    }
 
-	public static DecimalPrecision fromValue(BigInteger v) {
-		for (DecimalPrecision c : DecimalPrecision.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v.toString());
-	}
+    public static DecimalPrecision fromValue(BigInteger v) {
+        for (DecimalPrecision c : DecimalPrecision.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v.toString());
+    }
 
 }

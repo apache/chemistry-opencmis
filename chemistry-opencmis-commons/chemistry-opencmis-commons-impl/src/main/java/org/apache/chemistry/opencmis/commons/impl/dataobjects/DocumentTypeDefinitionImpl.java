@@ -29,37 +29,37 @@ import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
  */
 public class DocumentTypeDefinitionImpl extends AbstractTypeDefinition implements DocumentTypeDefinition {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ContentStreamAllowed fContentStreamAllowed;
-	private Boolean fIsVersionable;
+    private ContentStreamAllowed fContentStreamAllowed;
+    private Boolean fIsVersionable;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.apache.opencmis.client.provider.DocumentTypeDefinitionData#
-	 * getContentStreamAllowed()
-	 */
-	public ContentStreamAllowed getContentStreamAllowed() {
-		return fContentStreamAllowed;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @seeorg.apache.opencmis.client.provider.DocumentTypeDefinitionData#
+     * getContentStreamAllowed()
+     */
+    public ContentStreamAllowed getContentStreamAllowed() {
+        return fContentStreamAllowed;
+    }
 
-	public void setContentStreamAllowed(ContentStreamAllowed contentStreamAllowed) {
-		fContentStreamAllowed = contentStreamAllowed;
-	}
+    public void setContentStreamAllowed(ContentStreamAllowed contentStreamAllowed) {
+        fContentStreamAllowed = contentStreamAllowed;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.DocumentTypeDefinitionData#isVersionable
-	 * ()
-	 */
-	public Boolean isVersionable() {
-		return fIsVersionable;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.DocumentTypeDefinitionData#isVersionable
+     * ()
+     */
+    public Boolean isVersionable() {
+        return fIsVersionable;
+    }
 
-	public void setIsVersionable(Boolean isVersionable) {
-		fIsVersionable = isVersionable;
-	}
+    public void setIsVersionable(Boolean isVersionable) {
+        fIsVersionable = isVersionable;
+    }
 }

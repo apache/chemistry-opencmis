@@ -32,107 +32,107 @@ import org.apache.chemistry.opencmis.commons.api.PropertyData;
  */
 public abstract class AbstractPropertyData<T> extends AbstractExtensionData implements PropertyData<T> {
 
-	private String fId;
-	private String fDisplayName;
-	private String fLocalName;
-	private String fQueryName;
+    private String fId;
+    private String fDisplayName;
+    private String fLocalName;
+    private String fQueryName;
 
-	private List<T> fValues;
+    private List<T> fValues;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.PropertyData#getId()
-	 */
-	public String getId() {
-		return fId;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.PropertyData#getId()
+     */
+    public String getId() {
+        return fId;
+    }
 
-	public void setId(String id) {
-		fId = id;
-	}
+    public void setId(String id) {
+        fId = id;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.PropertyData#getDisplayName()
-	 */
-	public String getDisplayName() {
-		return fDisplayName;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.PropertyData#getDisplayName()
+     */
+    public String getDisplayName() {
+        return fDisplayName;
+    }
 
-	public void setDisplayName(String displayName) {
-		fDisplayName = displayName;
-	}
+    public void setDisplayName(String displayName) {
+        fDisplayName = displayName;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.PropertyData#getLocalName()
-	 */
-	public String getLocalName() {
-		return fLocalName;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.PropertyData#getLocalName()
+     */
+    public String getLocalName() {
+        return fLocalName;
+    }
 
-	public void setLocalName(String localName) {
-		fLocalName = localName;
-	}
+    public void setLocalName(String localName) {
+        fLocalName = localName;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.PropertyData#getQueryName()
-	 */
-	public String getQueryName() {
-		return fQueryName;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.PropertyData#getQueryName()
+     */
+    public String getQueryName() {
+        return fQueryName;
+    }
 
-	public void setQueryName(String queryName) {
-		fQueryName = queryName;
-	}
+    public void setQueryName(String queryName) {
+        fQueryName = queryName;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.PropertyData#getValues()
-	 */
-	public List<T> getValues() {
-		return fValues;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.PropertyData#getValues()
+     */
+    public List<T> getValues() {
+        return fValues;
+    }
 
-	public void setValues(List<T> values) {
-		if (values == null) {
-			fValues = Collections.emptyList();
-		} else {
-			fValues = values;
-		}
-	}
+    public void setValues(List<T> values) {
+        if (values == null) {
+            fValues = Collections.emptyList();
+        } else {
+            fValues = values;
+        }
+    }
 
-	public void setValue(T value) {
-		if (value == null) {
-			fValues = Collections.emptyList();
-		} else {
-			fValues = new ArrayList<T>(1);
-			fValues.add(value);
-		}
-	}
+    public void setValue(T value) {
+        if (value == null) {
+            fValues = Collections.emptyList();
+        } else {
+            fValues = new ArrayList<T>(1);
+            fValues.add(value);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.PropertyData#getFirstValue()
-	 */
-	public T getFirstValue() {
-		if ((fValues != null) && (!fValues.isEmpty())) {
-			return fValues.get(0);
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.PropertyData#getFirstValue()
+     */
+    public T getFirstValue() {
+        if ((fValues != null) && (!fValues.isEmpty())) {
+            return fValues.get(0);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public String toString() {
-		return "Property [id=" + fId + ", display Name=" + fDisplayName + ", local name=" + fLocalName
-				+ ", query name=" + fQueryName + ", values=" + fValues + "]" + super.toString();
-	}
+    @Override
+    public String toString() {
+        return "Property [id=" + fId + ", display Name=" + fDisplayName + ", local name=" + fLocalName
+                + ", query name=" + fQueryName + ", values=" + fValues + "]" + super.toString();
+    }
 }

@@ -26,25 +26,25 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum CapabilityQuery {
 
-	NONE("none"), METADATAONLY("metadataonly"), FULLTEXTONLY("fulltextonly"), BOTHSEPARATE("bothseparate"), BOTHCOMBINED(
-			"bothcombined");
-	private final String value;
+    NONE("none"), METADATAONLY("metadataonly"), FULLTEXTONLY("fulltextonly"), BOTHSEPARATE("bothseparate"), BOTHCOMBINED(
+            "bothcombined");
+    private final String value;
 
-	CapabilityQuery(String v) {
-		value = v;
-	}
+    CapabilityQuery(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static CapabilityQuery fromValue(String v) {
-		for (CapabilityQuery c : CapabilityQuery.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static CapabilityQuery fromValue(String v) {
+        for (CapabilityQuery c : CapabilityQuery.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

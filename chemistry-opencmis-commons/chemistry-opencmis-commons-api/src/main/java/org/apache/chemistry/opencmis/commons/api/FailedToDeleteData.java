@@ -22,5 +22,5 @@ import java.util.List;
 
 public interface FailedToDeleteData extends ExtensionsData {
 
-	List<String> getIds();
+    List<String> getIds();
 }

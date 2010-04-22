@@ -23,13 +23,13 @@ import java.math.BigInteger;
 
 public interface ContentStream extends ExtensionsData {
 
-	long getLength();
+    long getLength();
 
-	BigInteger getBigLength();
+    BigInteger getBigLength();
 
-	String getMimeType();
+    String getMimeType();
 
-	String getFileName();
+    String getFileName();
 
-	InputStream getStream();
+    InputStream getStream();
 }

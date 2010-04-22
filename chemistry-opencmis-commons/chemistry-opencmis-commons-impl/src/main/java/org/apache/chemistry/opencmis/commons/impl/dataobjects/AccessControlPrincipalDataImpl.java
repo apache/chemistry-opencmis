@@ -26,43 +26,43 @@ import org.apache.chemistry.opencmis.commons.api.Principal;
  */
 public class AccessControlPrincipalDataImpl extends AbstractExtensionData implements Principal {
 
-	private String fPrincipalId;
+    private String fPrincipalId;
 
-	/**
-	 * Constructor.
-	 */
-	public AccessControlPrincipalDataImpl() {
-	}
+    /**
+     * Constructor.
+     */
+    public AccessControlPrincipalDataImpl() {
+    }
 
-	/**
-	 * Constructor with principal id.
-	 */
-	public AccessControlPrincipalDataImpl(String principalId) {
-		setPrincipalId(principalId);
-	}
+    /**
+     * Constructor with principal id.
+     */
+    public AccessControlPrincipalDataImpl(String principalId) {
+        setPrincipalId(principalId);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.AccessControlPrincipalData#getPrincipalId
-	 * ()
-	 */
-	public String getId() {
-		return fPrincipalId;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.AccessControlPrincipalData#getPrincipalId
+     * ()
+     */
+    public String getId() {
+        return fPrincipalId;
+    }
 
-	public void setPrincipalId(String principalId) {
-		fPrincipalId = principalId;
-	}
+    public void setPrincipalId(String principalId) {
+        fPrincipalId = principalId;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Access Control Principal [principalId=" + fPrincipalId + "]" + super.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Access Control Principal [principalId=" + fPrincipalId + "]" + super.toString();
+    }
 }

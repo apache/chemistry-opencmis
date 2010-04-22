@@ -48,88 +48,88 @@ import org.apache.chemistry.opencmis.commons.api.PropertyUri;
  */
 public class BindingsObjectFactoryImpl implements BindingsObjectFactory, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public BindingsObjectFactoryImpl() {
-	}
+    public BindingsObjectFactoryImpl() {
+    }
 
-	public Ace createAccessControlEntry(String principal, List<String> permissions) {
-		return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principal), permissions);
-	}
+    public Ace createAccessControlEntry(String principal, List<String> permissions) {
+        return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principal), permissions);
+    }
 
-	public Acl createAccessControlList(List<Ace> aces) {
-		return new AccessControlListImpl(aces);
-	}
+    public Acl createAccessControlList(List<Ace> aces) {
+        return new AccessControlListImpl(aces);
+    }
 
-	public ContentStream createContentStream(String filename, BigInteger length, String mimetype, InputStream stream) {
-		return new ContentStreamImpl(filename, length, mimetype, stream);
-	}
+    public ContentStream createContentStream(String filename, BigInteger length, String mimetype, InputStream stream) {
+        return new ContentStreamImpl(filename, length, mimetype, stream);
+    }
 
-	public Properties createPropertiesData(List<PropertyData<?>> properties) {
-		return new PropertiesImpl(properties);
-	}
+    public Properties createPropertiesData(List<PropertyData<?>> properties) {
+        return new PropertiesImpl(properties);
+    }
 
-	public PropertyBoolean createPropertyBooleanData(String id, List<Boolean> values) {
-		return new PropertyBooleanImpl(id, values);
-	}
+    public PropertyBoolean createPropertyBooleanData(String id, List<Boolean> values) {
+        return new PropertyBooleanImpl(id, values);
+    }
 
-	public PropertyBoolean createPropertyBooleanData(String id, Boolean value) {
-		return new PropertyBooleanImpl(id, value);
-	}
+    public PropertyBoolean createPropertyBooleanData(String id, Boolean value) {
+        return new PropertyBooleanImpl(id, value);
+    }
 
-	public PropertyDateTime createPropertyDateTimeData(String id, List<GregorianCalendar> values) {
-		return new PropertyDateTimeImpl(id, values);
-	}
+    public PropertyDateTime createPropertyDateTimeData(String id, List<GregorianCalendar> values) {
+        return new PropertyDateTimeImpl(id, values);
+    }
 
-	public PropertyDateTime createPropertyDateTimeData(String id, GregorianCalendar value) {
-		return new PropertyDateTimeImpl(id, value);
-	}
+    public PropertyDateTime createPropertyDateTimeData(String id, GregorianCalendar value) {
+        return new PropertyDateTimeImpl(id, value);
+    }
 
-	public PropertyDecimal createPropertyDecimalData(String id, List<BigDecimal> values) {
-		return new PropertyDecimalImpl(id, values);
-	}
+    public PropertyDecimal createPropertyDecimalData(String id, List<BigDecimal> values) {
+        return new PropertyDecimalImpl(id, values);
+    }
 
-	public PropertyDecimal createPropertyDecimalData(String id, BigDecimal value) {
-		return new PropertyDecimalImpl(id, value);
-	}
+    public PropertyDecimal createPropertyDecimalData(String id, BigDecimal value) {
+        return new PropertyDecimalImpl(id, value);
+    }
 
-	public PropertyHtml createPropertyHtmlData(String id, List<String> values) {
-		return new PropertyHtmlImpl(id, values);
-	}
+    public PropertyHtml createPropertyHtmlData(String id, List<String> values) {
+        return new PropertyHtmlImpl(id, values);
+    }
 
-	public PropertyHtml createPropertyHtmlData(String id, String value) {
-		return new PropertyHtmlImpl(id, value);
-	}
+    public PropertyHtml createPropertyHtmlData(String id, String value) {
+        return new PropertyHtmlImpl(id, value);
+    }
 
-	public PropertyId createPropertyIdData(String id, List<String> values) {
-		return new PropertyIdImpl(id, values);
-	}
+    public PropertyId createPropertyIdData(String id, List<String> values) {
+        return new PropertyIdImpl(id, values);
+    }
 
-	public PropertyId createPropertyIdData(String id, String value) {
-		return new PropertyIdImpl(id, value);
-	}
+    public PropertyId createPropertyIdData(String id, String value) {
+        return new PropertyIdImpl(id, value);
+    }
 
-	public PropertyInteger createPropertyIntegerData(String id, List<BigInteger> values) {
-		return new PropertyIntegerImpl(id, values);
-	}
+    public PropertyInteger createPropertyIntegerData(String id, List<BigInteger> values) {
+        return new PropertyIntegerImpl(id, values);
+    }
 
-	public PropertyInteger createPropertyIntegerData(String id, BigInteger value) {
-		return new PropertyIntegerImpl(id, value);
-	}
+    public PropertyInteger createPropertyIntegerData(String id, BigInteger value) {
+        return new PropertyIntegerImpl(id, value);
+    }
 
-	public PropertyString createPropertyStringData(String id, List<String> values) {
-		return new PropertyStringImpl(id, values);
-	}
+    public PropertyString createPropertyStringData(String id, List<String> values) {
+        return new PropertyStringImpl(id, values);
+    }
 
-	public PropertyString createPropertyStringData(String id, String value) {
-		return new PropertyStringImpl(id, value);
-	}
+    public PropertyString createPropertyStringData(String id, String value) {
+        return new PropertyStringImpl(id, value);
+    }
 
-	public PropertyUri createPropertyUriData(String id, List<String> values) {
-		return new PropertyUriImpl(id, values);
-	}
+    public PropertyUri createPropertyUriData(String id, List<String> values) {
+        return new PropertyUriImpl(id, values);
+    }
 
-	public PropertyUri createPropertyUriData(String id, String value) {
-		return new PropertyUriImpl(id, value);
-	}
+    public PropertyUri createPropertyUriData(String id, String value) {
+        return new PropertyUriImpl(id, value);
+    }
 }

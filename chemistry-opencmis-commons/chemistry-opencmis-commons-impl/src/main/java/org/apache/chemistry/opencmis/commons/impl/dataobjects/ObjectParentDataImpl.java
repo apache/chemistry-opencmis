@@ -27,57 +27,57 @@ import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
  */
 public class ObjectParentDataImpl extends AbstractExtensionData implements ObjectParentData {
 
-	private ObjectData fObject;
-	private String fRelativePathSegment;
+    private ObjectData fObject;
+    private String fRelativePathSegment;
 
-	/**
-	 * Constructor.
-	 */
-	public ObjectParentDataImpl() {
-	}
+    /**
+     * Constructor.
+     */
+    public ObjectParentDataImpl() {
+    }
 
-	/**
-	 * Constructor.
-	 */
-	public ObjectParentDataImpl(ObjectData object) {
-		setObject(object);
-	}
+    /**
+     * Constructor.
+     */
+    public ObjectParentDataImpl(ObjectData object) {
+        setObject(object);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.ObjectInFolderData#getObject()
-	 */
-	public ObjectData getObject() {
-		return fObject;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.ObjectInFolderData#getObject()
+     */
+    public ObjectData getObject() {
+        return fObject;
+    }
 
-	public void setObject(ObjectData object) {
-		fObject = object;
-	}
+    public void setObject(ObjectData object) {
+        fObject = object;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.ObjectInFolderData#getPathSegment()
-	 */
-	public String getRelativePathSegment() {
-		return fRelativePathSegment;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.ObjectInFolderData#getPathSegment()
+     */
+    public String getRelativePathSegment() {
+        return fRelativePathSegment;
+    }
 
-	public void setRelativePathSegment(String relativePathSegment) {
-		fRelativePathSegment = relativePathSegment;
-	}
+    public void setRelativePathSegment(String relativePathSegment) {
+        fRelativePathSegment = relativePathSegment;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Object Parent [object=" + fObject + ", relative path segment=" + fRelativePathSegment + "]"
-				+ super.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Object Parent [object=" + fObject + ", relative path segment=" + fRelativePathSegment + "]"
+                + super.toString();
+    }
 }

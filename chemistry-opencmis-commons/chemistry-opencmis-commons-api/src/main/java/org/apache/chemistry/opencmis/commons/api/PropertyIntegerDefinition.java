@@ -22,7 +22,7 @@ import java.math.BigInteger;
 
 public interface PropertyIntegerDefinition extends PropertyDefinition<BigInteger> {
 
-	BigInteger getMinValue();
+    BigInteger getMinValue();
 
-	BigInteger getMaxValue();
+    BigInteger getMaxValue();
 }

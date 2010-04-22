@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.api.PropertyBooleanDefinition;
  * 
  */
 public class PropertyBooleanDefinitionImpl extends AbstractPropertyDefinition<Boolean> implements
-		PropertyBooleanDefinition {
+        PropertyBooleanDefinition {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 }

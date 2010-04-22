@@ -28,19 +28,19 @@ import org.apache.chemistry.opencmis.commons.api.PolicyIdList;
  */
 public class PolicyIdListImpl extends AbstractExtensionData implements PolicyIdList {
 
-	private List<String> fPolicyIds;
+    private List<String> fPolicyIds;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.client.provider.PolicyIdListData#getPolicyIds()
-	 */
-	public List<String> getPolicyIds() {
-		return fPolicyIds;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.client.provider.PolicyIdListData#getPolicyIds()
+     */
+    public List<String> getPolicyIds() {
+        return fPolicyIds;
+    }
 
-	public void setPolicyIds(List<String> policyIds) {
-		fPolicyIds = policyIds;
-	}
+    public void setPolicyIds(List<String> policyIds) {
+        fPolicyIds = policyIds;
+    }
 
 }

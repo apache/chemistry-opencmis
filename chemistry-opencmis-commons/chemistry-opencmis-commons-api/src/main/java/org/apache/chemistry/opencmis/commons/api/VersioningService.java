@@ -32,22 +32,22 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
  *      CMIS Technical Committee</a>
  */
 public interface VersioningService {
-	public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
-			Holder<Boolean> contentCopied);
+    public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
+            Holder<Boolean> contentCopied);
 
-	public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension);
+    public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension);
 
-	public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
-			ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
-			ExtensionsData extension);
+    public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
+            ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
+            ExtensionsData extension);
 
-	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension);
+    public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+            Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension);
 
-	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-			Boolean major, String filter, ExtensionsData extension);
+    public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+            Boolean major, String filter, ExtensionsData extension);
 
-	public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
-			Boolean includeAllowableActions, ExtensionsData extension);
+    public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
+            Boolean includeAllowableActions, ExtensionsData extension);
 }

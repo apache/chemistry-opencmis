@@ -30,31 +30,31 @@ import junit.framework.TestCase;
  */
 public class MiscTest extends TestCase {
 
-	public void testUrlBuilder() {
-		assertEquals("http://host/test", (new UrlBuilder("http://host/test")).toString());
-		assertEquals("http://host/test?query=value", (new UrlBuilder("http://host/test?query=value")).toString());
-		assertEquals("http://host/test", (new UrlBuilder("http://host/test?")).toString());
+    public void testUrlBuilder() {
+        assertEquals("http://host/test", (new UrlBuilder("http://host/test")).toString());
+        assertEquals("http://host/test?query=value", (new UrlBuilder("http://host/test?query=value")).toString());
+        assertEquals("http://host/test", (new UrlBuilder("http://host/test?")).toString());
 
-		UrlBuilder urlBuilder;
+        UrlBuilder urlBuilder;
 
-		urlBuilder = new UrlBuilder("http://host/test");
-		urlBuilder.addParameter("query", "value");
-		assertEquals("http://host/test?query=value", urlBuilder.toString());
+        urlBuilder = new UrlBuilder("http://host/test");
+        urlBuilder.addParameter("query", "value");
+        assertEquals("http://host/test?query=value", urlBuilder.toString());
 
-		urlBuilder = new UrlBuilder("http://host/test");
-		urlBuilder.addPath("path");
-		assertEquals("http://host/test/path", urlBuilder.toString());
+        urlBuilder = new UrlBuilder("http://host/test");
+        urlBuilder.addPath("path");
+        assertEquals("http://host/test/path", urlBuilder.toString());
 
-		urlBuilder = new UrlBuilder("http://host/test/");
-		urlBuilder.addPath("path");
-		assertEquals("http://host/test/path", urlBuilder.toString());
+        urlBuilder = new UrlBuilder("http://host/test/");
+        urlBuilder.addPath("path");
+        assertEquals("http://host/test/path", urlBuilder.toString());
 
-		urlBuilder = new UrlBuilder("http://host/test");
-		urlBuilder.addPath("/path");
-		assertEquals("http://host/test/path", urlBuilder.toString());
+        urlBuilder = new UrlBuilder("http://host/test");
+        urlBuilder.addPath("/path");
+        assertEquals("http://host/test/path", urlBuilder.toString());
 
-		urlBuilder = new UrlBuilder("http://host/test/");
-		urlBuilder.addPath("/path");
-		assertEquals("http://host/test/path", urlBuilder.toString());
-	}
+        urlBuilder = new UrlBuilder("http://host/test/");
+        urlBuilder.addPath("/path");
+        assertEquals("http://host/test/path", urlBuilder.toString());
+    }
 }

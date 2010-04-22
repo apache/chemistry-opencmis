@@ -29,24 +29,24 @@ import org.apache.chemistry.opencmis.commons.api.PropertyStringDefinition;
  * 
  */
 public class PropertyStringDefinitionImpl extends AbstractPropertyDefinition<String> implements
-		PropertyStringDefinition {
+        PropertyStringDefinition {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private BigInteger fMaxLength;
+    private BigInteger fMaxLength;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.PropertyStringDefinitionData#getMaxLength
-	 * ()
-	 */
-	public BigInteger getMaxLength() {
-		return fMaxLength;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.PropertyStringDefinitionData#getMaxLength
+     * ()
+     */
+    public BigInteger getMaxLength() {
+        return fMaxLength;
+    }
 
-	public void setMaxLength(BigInteger maxLength) {
-		fMaxLength = maxLength;
-	}
+    public void setMaxLength(BigInteger maxLength) {
+        fMaxLength = maxLength;
+    }
 }

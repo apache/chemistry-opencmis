@@ -26,23 +26,23 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum DateTimeResolution {
 
-	YEAR("year"), DATE("date"), TIME("time");
-	private final String value;
+    YEAR("year"), DATE("date"), TIME("time");
+    private final String value;
 
-	DateTimeResolution(String v) {
-		value = v;
-	}
+    DateTimeResolution(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static DateTimeResolution fromValue(String v) {
-		for (DateTimeResolution c : DateTimeResolution.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static DateTimeResolution fromValue(String v) {
+        for (DateTimeResolution c : DateTimeResolution.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 }

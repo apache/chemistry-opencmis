@@ -31,228 +31,228 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
  */
 public class ObjectInfoImpl implements ObjectInfo {
 
-	private String id;
-	private String name;
-	private String createdBy;
-	private GregorianCalendar creationDate;
-	private GregorianCalendar lastModificationDate;
-	private String typeId;
-	private BaseTypeId baseTypeId;
-	private boolean isCurrentVersion = true;
-	private String versionSeriesId = null;
-	private String workingCopyId = null;
-	private String workingCopyOriginalId = null;
-	private boolean hasContent = true;
-	private String contentType = null;
-	private String fileName = null;
-	private List<RenditionInfo> renditionInfos = null;
-	private boolean supportsRelationships = false;
-	private boolean supportsPolicies = false;
-	private boolean hasAcl = false;
-	private boolean hasParent = true;
-	private boolean supportsDescendants = false;
-	private boolean supportsFolderTree = false;
-	private List<String> relationshipSourceIds = null;
-	private List<String> relationshipTargetIds = null;
-	private ObjectData object = null;
+    private String id;
+    private String name;
+    private String createdBy;
+    private GregorianCalendar creationDate;
+    private GregorianCalendar lastModificationDate;
+    private String typeId;
+    private BaseTypeId baseTypeId;
+    private boolean isCurrentVersion = true;
+    private String versionSeriesId = null;
+    private String workingCopyId = null;
+    private String workingCopyOriginalId = null;
+    private boolean hasContent = true;
+    private String contentType = null;
+    private String fileName = null;
+    private List<RenditionInfo> renditionInfos = null;
+    private boolean supportsRelationships = false;
+    private boolean supportsPolicies = false;
+    private boolean hasAcl = false;
+    private boolean hasParent = true;
+    private boolean supportsDescendants = false;
+    private boolean supportsFolderTree = false;
+    private List<String> relationshipSourceIds = null;
+    private List<String> relationshipTargetIds = null;
+    private ObjectData object = null;
 
-	public ObjectInfoImpl() {
-	}
+    public ObjectInfoImpl() {
+    }
 
-	public ObjectInfoImpl(String id, BaseTypeId baseObjectTypeId) {
-		this.id = id;
-		baseTypeId = baseObjectTypeId;
-	}
+    public ObjectInfoImpl(String id, BaseTypeId baseObjectTypeId) {
+        this.id = id;
+        baseTypeId = baseObjectTypeId;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getCreatedBy() {
-		return createdBy;
-	}
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-	public GregorianCalendar getCreationDate() {
-		return creationDate;
-	}
+    public GregorianCalendar getCreationDate() {
+        return creationDate;
+    }
 
-	public void setCreationDate(GregorianCalendar creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setCreationDate(GregorianCalendar creationDate) {
+        this.creationDate = creationDate;
+    }
 
-	public GregorianCalendar getLastModificationDate() {
-		return lastModificationDate;
-	}
+    public GregorianCalendar getLastModificationDate() {
+        return lastModificationDate;
+    }
 
-	public void setLastModificationDate(GregorianCalendar lastModificationDate) {
-		this.lastModificationDate = lastModificationDate;
-	}
+    public void setLastModificationDate(GregorianCalendar lastModificationDate) {
+        this.lastModificationDate = lastModificationDate;
+    }
 
-	public String getTypeId() {
-		return typeId;
-	}
+    public String getTypeId() {
+        return typeId;
+    }
 
-	public void setTypeId(String typeId) {
-		this.typeId = typeId;
-	}
+    public void setTypeId(String typeId) {
+        this.typeId = typeId;
+    }
 
-	public BaseTypeId getBaseType() {
-		return baseTypeId;
-	}
+    public BaseTypeId getBaseType() {
+        return baseTypeId;
+    }
 
-	public void setBaseType(BaseTypeId baseObjectTypeId) {
-		this.baseTypeId = baseObjectTypeId;
-	}
+    public void setBaseType(BaseTypeId baseObjectTypeId) {
+        this.baseTypeId = baseObjectTypeId;
+    }
 
-	public boolean isCurrentVersion() {
-		return isCurrentVersion;
-	}
+    public boolean isCurrentVersion() {
+        return isCurrentVersion;
+    }
 
-	public void setIsCurrentVersion(boolean currentVersion) {
-		this.isCurrentVersion = currentVersion;
-	}
+    public void setIsCurrentVersion(boolean currentVersion) {
+        this.isCurrentVersion = currentVersion;
+    }
 
-	public String getVersionSeriesId() {
-		return versionSeriesId;
-	}
+    public String getVersionSeriesId() {
+        return versionSeriesId;
+    }
 
-	public void setVersionSeriesId(String versionSeriesId) {
-		this.versionSeriesId = versionSeriesId;
-	}
+    public void setVersionSeriesId(String versionSeriesId) {
+        this.versionSeriesId = versionSeriesId;
+    }
 
-	public String getWorkingCopyId() {
-		return workingCopyId;
-	}
+    public String getWorkingCopyId() {
+        return workingCopyId;
+    }
 
-	public void setWorkingCopyId(String workingCopyId) {
-		this.workingCopyId = workingCopyId;
-	}
+    public void setWorkingCopyId(String workingCopyId) {
+        this.workingCopyId = workingCopyId;
+    }
 
-	public String getWorkingCopyOriginalId() {
-		return workingCopyOriginalId;
-	}
+    public String getWorkingCopyOriginalId() {
+        return workingCopyOriginalId;
+    }
 
-	public void setWorkingCopyOriginalId(String workingCopyOriginalId) {
-		this.workingCopyOriginalId = workingCopyOriginalId;
-	}
+    public void setWorkingCopyOriginalId(String workingCopyOriginalId) {
+        this.workingCopyOriginalId = workingCopyOriginalId;
+    }
 
-	public boolean hasContent() {
-		return hasContent;
-	}
+    public boolean hasContent() {
+        return hasContent;
+    }
 
-	public void setHasContent(boolean hasContent) {
-		this.hasContent = hasContent;
-	}
+    public void setHasContent(boolean hasContent) {
+        this.hasContent = hasContent;
+    }
 
-	public String getContentType() {
-		return contentType;
-	}
+    public String getContentType() {
+        return contentType;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public String getFileName() {
+        return fileName;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
-	public List<RenditionInfo> getRenditionInfos() {
-		return renditionInfos;
-	}
+    public List<RenditionInfo> getRenditionInfos() {
+        return renditionInfos;
+    }
 
-	public void setRenditionInfos(List<RenditionInfo> renditions) {
-		this.renditionInfos = renditions;
-	}
+    public void setRenditionInfos(List<RenditionInfo> renditions) {
+        this.renditionInfos = renditions;
+    }
 
-	public boolean supportsRelationships() {
-		return supportsRelationships;
-	}
+    public boolean supportsRelationships() {
+        return supportsRelationships;
+    }
 
-	public void setSupportsRelationships(boolean supportsRelationships) {
-		this.supportsRelationships = supportsRelationships;
-	}
+    public void setSupportsRelationships(boolean supportsRelationships) {
+        this.supportsRelationships = supportsRelationships;
+    }
 
-	public boolean supportsPolicies() {
-		return supportsPolicies;
-	}
+    public boolean supportsPolicies() {
+        return supportsPolicies;
+    }
 
-	public void setSupportsPolicies(boolean supportsPolicies) {
-		this.supportsPolicies = supportsPolicies;
-	}
+    public void setSupportsPolicies(boolean supportsPolicies) {
+        this.supportsPolicies = supportsPolicies;
+    }
 
-	public boolean hasAcl() {
-		return hasAcl;
-	}
+    public boolean hasAcl() {
+        return hasAcl;
+    }
 
-	public void setHasAcl(boolean hasAcl) {
-		this.hasAcl = hasAcl;
-	}
+    public void setHasAcl(boolean hasAcl) {
+        this.hasAcl = hasAcl;
+    }
 
-	public boolean hasParent() {
-		return hasParent;
-	}
+    public boolean hasParent() {
+        return hasParent;
+    }
 
-	public void setHasParent(boolean hasParent) {
-		this.hasParent = hasParent;
-	}
+    public void setHasParent(boolean hasParent) {
+        this.hasParent = hasParent;
+    }
 
-	public boolean supportsDescendants() {
-		return supportsDescendants;
-	}
+    public boolean supportsDescendants() {
+        return supportsDescendants;
+    }
 
-	public void setSupportsDescendants(boolean supportsDescendants) {
-		this.supportsDescendants = supportsDescendants;
-	}
+    public void setSupportsDescendants(boolean supportsDescendants) {
+        this.supportsDescendants = supportsDescendants;
+    }
 
-	public boolean supportsFolderTree() {
-		return supportsFolderTree;
-	}
+    public boolean supportsFolderTree() {
+        return supportsFolderTree;
+    }
 
-	public void setSupportsFolderTree(boolean supportsFolderTree) {
-		this.supportsFolderTree = supportsFolderTree;
-	}
+    public void setSupportsFolderTree(boolean supportsFolderTree) {
+        this.supportsFolderTree = supportsFolderTree;
+    }
 
-	public List<String> getRelationshipSourceIds() {
-		return relationshipSourceIds;
-	}
+    public List<String> getRelationshipSourceIds() {
+        return relationshipSourceIds;
+    }
 
-	public void setRelationshipSourceIds(List<String> relationshipSourceIds) {
-		this.relationshipSourceIds = relationshipSourceIds;
-	}
+    public void setRelationshipSourceIds(List<String> relationshipSourceIds) {
+        this.relationshipSourceIds = relationshipSourceIds;
+    }
 
-	public List<String> getRelationshipTargetIds() {
-		return relationshipTargetIds;
-	}
+    public List<String> getRelationshipTargetIds() {
+        return relationshipTargetIds;
+    }
 
-	public void setRelationshipTargetIds(List<String> relationshipTargetIds) {
-		this.relationshipTargetIds = relationshipTargetIds;
-	}
+    public void setRelationshipTargetIds(List<String> relationshipTargetIds) {
+        this.relationshipTargetIds = relationshipTargetIds;
+    }
 
-	public ObjectData getObject() {
-		return object;
-	}
+    public ObjectData getObject() {
+        return object;
+    }
 
-	public void setObject(ObjectData object) {
-		this.object = object;
-	}
+    public void setObject(ObjectData object) {
+        this.object = object;
+    }
 }
