@@ -119,6 +119,7 @@ public class DefaultPagingIterator<T> implements PagingIterator<T> {
             skipCount += skipOffset;
             skipOffset = 0;
             this.page = pageFetch.fetchPage(skipCount);
+            this.totalItems = null;
             currentPage = this.page;
             if (currentPage != null) {
                 items = currentPage.getPage();
