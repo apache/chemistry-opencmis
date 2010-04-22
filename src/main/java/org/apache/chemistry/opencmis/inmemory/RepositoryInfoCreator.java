@@ -30,5 +30,5 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
  * 
  */
 public interface RepositoryInfoCreator {
-	RepositoryInfo createRepositoryInfo();
+    RepositoryInfo createRepositoryInfo();
 }

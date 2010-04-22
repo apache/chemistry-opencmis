@@ -32,58 +32,58 @@ import org.apache.chemistry.opencmis.inmemory.server.InMemoryVersioningServiceIm
 
 public class VersioningServiceImpl extends AbstractService implements VersioningService {
 
-	private InMemoryVersioningServiceImpl fVersioningSvc;
+    private InMemoryVersioningServiceImpl fVersioningSvc;
 
-	public VersioningServiceImpl(InMemoryVersioningServiceImpl verSvc) {
-		fVersioningSvc = verSvc;
-	}
+    public VersioningServiceImpl(InMemoryVersioningServiceImpl verSvc) {
+        fVersioningSvc = verSvc;
+    }
 
-	public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
+    public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
 
-		fVersioningSvc.cancelCheckOut(fDummyCallContext, repositoryId, objectId, extension);
-	}
+        fVersioningSvc.cancelCheckOut(fDummyCallContext, repositoryId, objectId, extension);
+    }
 
-	public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
-			ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
-			ExtensionsData extension) {
+    public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
+            ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
+            ExtensionsData extension) {
 
-		fVersioningSvc.checkIn(fDummyCallContext, repositoryId, objectId, major, properties, contentStream,
-				checkinComment, policies, addAces, removeAces, extension, null);
-	}
+        fVersioningSvc.checkIn(fDummyCallContext, repositoryId, objectId, major, properties, contentStream,
+                checkinComment, policies, addAces, removeAces, extension, null);
+    }
 
-	public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
-			Holder<Boolean> contentCopied) {
+    public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
+            Holder<Boolean> contentCopied) {
 
-		fVersioningSvc.checkOut(fDummyCallContext, repositoryId, objectId, extension, contentCopied, null);
-	}
+        fVersioningSvc.checkOut(fDummyCallContext, repositoryId, objectId, extension, contentCopied, null);
+    }
 
-	public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
-			Boolean includeAllowableActions, ExtensionsData extension) {
+    public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
+            Boolean includeAllowableActions, ExtensionsData extension) {
 
-		return getAllVersions(repositoryId, versionSeriesId, filter, includeAllowableActions, extension);
-	}
+        return getAllVersions(repositoryId, versionSeriesId, filter, includeAllowableActions, extension);
+    }
 
-	public List<ObjectData> getAllVersions(String repositoryId, String versionSeriesId, String filter,
-			Boolean includeAllowableActions, ExtensionsData extension) {
+    public List<ObjectData> getAllVersions(String repositoryId, String versionSeriesId, String filter,
+            Boolean includeAllowableActions, ExtensionsData extension) {
 
-		return fVersioningSvc.getAllVersions(fDummyCallContext, repositoryId, versionSeriesId, filter,
-				includeAllowableActions, extension, null);
-	}
+        return fVersioningSvc.getAllVersions(fDummyCallContext, repositoryId, versionSeriesId, filter,
+                includeAllowableActions, extension, null);
+    }
 
-	public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
+    public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+            Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
 
-		return fVersioningSvc.getObjectOfLatestVersion(fDummyCallContext, repositoryId, versionSeriesId, major, filter,
-				includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl,
-				extension, null);
-	}
+        return fVersioningSvc.getObjectOfLatestVersion(fDummyCallContext, repositoryId, versionSeriesId, major, filter,
+                includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl,
+                extension, null);
+    }
 
-	public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-			Boolean major, String filter, ExtensionsData extension) {
+    public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
+            Boolean major, String filter, ExtensionsData extension) {
 
-		return fVersioningSvc.getPropertiesOfLatestVersion(fDummyCallContext, repositoryId, versionSeriesId, major,
-				filter, extension);
-	}
+        return fVersioningSvc.getPropertiesOfLatestVersion(fDummyCallContext, repositoryId, versionSeriesId, major,
+                filter, extension);
+    }
 
 }

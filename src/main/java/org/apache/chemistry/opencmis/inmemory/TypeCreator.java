@@ -33,5 +33,5 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
  */
 public interface TypeCreator {
 
-	List<TypeDefinition> createTypesList();
+    List<TypeDefinition> createTypesList();
 }

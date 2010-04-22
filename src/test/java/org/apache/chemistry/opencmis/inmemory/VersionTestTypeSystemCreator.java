@@ -31,57 +31,57 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefiniti
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 
 public class VersionTestTypeSystemCreator implements TypeCreator {
-	static public String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
-	static public String PROPERTY_ID = "StringProp";
-	static public List<TypeDefinition> singletonTypes = buildTypesList();
+    static public String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
+    static public String PROPERTY_ID = "StringProp";
+    static public List<TypeDefinition> singletonTypes = buildTypesList();
 
-	/**
-	 * in the public interface of this class we return the singleton containing
-	 * the required types for testing
-	 */
-	public List<TypeDefinition> createTypesList() {
-		return singletonTypes;
-	}
+    /**
+     * in the public interface of this class we return the singleton containing
+     * the required types for testing
+     */
+    public List<TypeDefinition> createTypesList() {
+        return singletonTypes;
+    }
 
-	public static List<TypeDefinition> getTypesList() {
-		return singletonTypes;
-	}
+    public static List<TypeDefinition> getTypesList() {
+        return singletonTypes;
+    }
 
-	static public TypeDefinition getTypeById(String typeId) {
-		for (TypeDefinition typeDef : singletonTypes)
-			if (typeDef.getId().equals(typeId))
-				return typeDef;
-		return null;
-	}
+    static public TypeDefinition getTypeById(String typeId) {
+        for (TypeDefinition typeDef : singletonTypes)
+            if (typeDef.getId().equals(typeId))
+                return typeDef;
+        return null;
+    }
 
-	/**
-	 * create root types and a collection of sample types
-	 * 
-	 * @return typesMap map filled with created types
-	 */
-	private static List<TypeDefinition> buildTypesList() {
-		// always add CMIS default types
-		List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
+    /**
+     * create root types and a collection of sample types
+     * 
+     * @return typesMap map filled with created types
+     */
+    private static List<TypeDefinition> buildTypesList() {
+        // always add CMIS default types
+        List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
 
-		// create a complex type with properties
-		InMemoryDocumentTypeDefinition cmisComplexType = new InMemoryDocumentTypeDefinition(
-				VERSION_TEST_DOCUMENT_TYPE_ID, "VersionedType", InMemoryDocumentTypeDefinition.getRootDocumentType());
+        // create a complex type with properties
+        InMemoryDocumentTypeDefinition cmisComplexType = new InMemoryDocumentTypeDefinition(
+                VERSION_TEST_DOCUMENT_TYPE_ID, "VersionedType", InMemoryDocumentTypeDefinition.getRootDocumentType());
 
-		// create a boolean property definition
+        // create a boolean property definition
 
-		Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
 
-		PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(PROPERTY_ID,
-				"Sample String Property");
-		propertyDefinitions.put(prop1.getId(), prop1);
+        PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(PROPERTY_ID,
+                "Sample String Property");
+        propertyDefinitions.put(prop1.getId(), prop1);
 
-		cmisComplexType.addCustomPropertyDefinitions(propertyDefinitions);
-		cmisComplexType.setIsVersionable(true); // make it a versionable type;
+        cmisComplexType.addCustomPropertyDefinitions(propertyDefinitions);
+        cmisComplexType.setIsVersionable(true); // make it a versionable type;
 
-		// add type to types collection
-		typesList.add(cmisComplexType);
+        // add type to types collection
+        typesList.add(cmisComplexType);
 
-		return typesList;
-	}
+        return typesList;
+    }
 
 }

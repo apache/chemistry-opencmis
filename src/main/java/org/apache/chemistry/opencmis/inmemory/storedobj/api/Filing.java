@@ -31,27 +31,27 @@ import java.util.List;
  */
 public interface Filing {
 
-	/**
-	 * character indicating how folders are separated within a path string. This
-	 * char must not be a valid character of an object name.
-	 */
-	public static final String PATH_SEPARATOR = "/";
+    /**
+     * character indicating how folders are separated within a path string. This
+     * char must not be a valid character of an object name.
+     */
+    public static final String PATH_SEPARATOR = "/";
 
-	/**
-	 * return a list of parents. for single parent object this list must contain
-	 * only one element. returns an empty list if this is an unfiled document.
-	 * 
-	 * @return list of parent folders
-	 */
-	List<Folder> getParents();
+    /**
+     * return a list of parents. for single parent object this list must contain
+     * only one element. returns an empty list if this is an unfiled document.
+     * 
+     * @return list of parent folders
+     */
+    List<Folder> getParents();
 
-	/**
-	 * Move an object to a different folder. Source and target object are
-	 * persisted in this call as part of a transactional step.
-	 * 
-	 * @param newParent
-	 *            new parent folder for the object
-	 */
-	public void move(Folder oldParent, Folder newParent);
+    /**
+     * Move an object to a different folder. Source and target object are
+     * persisted in this call as part of a transactional step.
+     * 
+     * @param newParent
+     *            new parent folder for the object
+     */
+    public void move(Folder oldParent, Folder newParent);
 
 }

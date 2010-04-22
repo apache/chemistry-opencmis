@@ -29,26 +29,26 @@ import java.util.List;
  */
 public interface MultiFiling extends Filing {
 
-	/**
-	 * retrieve the path segment of this folder
-	 * 
-	 * @return
-	 */
-	String getPathSegment();
+    /**
+     * retrieve the path segment of this folder
+     * 
+     * @return
+     */
+    String getPathSegment();
 
-	/**
-	 * Add this document to a new parent folder as child object
-	 * 
-	 * @param parent
-	 *            new parent folder of the document.
-	 */
-	void addParent(Folder parent);
+    /**
+     * Add this document to a new parent folder as child object
+     * 
+     * @param parent
+     *            new parent folder of the document.
+     */
+    void addParent(Folder parent);
 
-	/**
-	 * Remove this object from the children of parent
-	 * 
-	 * @param parent
-	 *            parent folder of the document
-	 */
-	void removeParent(Folder parent);
+    /**
+     * Remove this object from the children of parent
+     * 
+     * @param parent
+     *            parent folder of the document
+     */
+    void removeParent(Folder parent);
 }

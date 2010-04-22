@@ -36,113 +36,109 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionList
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 
-public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl  implements CmisRepositoryService  {
+public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl implements CmisRepositoryService {
 
-	public InMemoryRepositoryServiceImpl(StoreManager storeManager) {
-		super(storeManager);
-	}
+    public InMemoryRepositoryServiceImpl(StoreManager storeManager) {
+        super(storeManager);
+    }
 
-	public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId, ExtensionsData extension) {
+    public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId, ExtensionsData extension) {
 
-		RepositoryInfo repoInfo = getRepositoryInfoFromStoreManager(repositoryId);
+        RepositoryInfo repoInfo = getRepositoryInfoFromStoreManager(repositoryId);
 
-		return repoInfo;
-	}
+        return repoInfo;
+    }
 
-	public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
+    public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
 
+        List<RepositoryInfo> res = new ArrayList<RepositoryInfo>();
+        List<String> repIds = fStoreManager.getAllRepositoryIds();
+        for (String repId : repIds) {
+            res.add(fStoreManager.getRepositoryInfo(repId));
+        }
+        return res;
+    }
 
-		List<RepositoryInfo> res = new ArrayList<RepositoryInfo>();
-		List<String> repIds = fStoreManager.getAllRepositoryIds();
-		for (String repId : repIds) {
-			res.add(fStoreManager.getRepositoryInfo(repId));
-		}
-		return res;
-	}
+    public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId, String typeId,
+            Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
-	public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId, String typeId,
-			Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+        getRepositoryInfoFromStoreManager(repositoryId); // just to check if
+        // repository
+        // exists
 
+        int skip = skipCount == null ? 0 : skipCount.intValue();
+        int max = maxItems == null ? -1 : maxItems.intValue();
 
-		getRepositoryInfoFromStoreManager(repositoryId); // just to check if
-		// repository
-		// exists
+        TypeDefinitionListImpl result = new TypeDefinitionListImpl();
+        List<TypeDefinitionContainer> children;
+        if (typeId == null) {
+            // spec says that base types must be returned in this case
+            children = fStoreManager.getRootTypes(repositoryId);
+        } else {
+            children = getTypeDescendants(context, repositoryId, typeId, BigInteger.valueOf(1),
+                    includePropertyDefinitions, null);
+        }
+        result.setNumItems(BigInteger.valueOf(children.size()));
+        result.setHasMoreItems(children.size() > max - skip);
+        List<TypeDefinition> childrenTypes = new ArrayList<TypeDefinition>();
+        ListIterator<TypeDefinitionContainer> it = children.listIterator(skip);
+        if (max < 0)
+            max = children.size();
+        for (int i = skip; i < max + skip && it.hasNext(); i++)
+            childrenTypes.add(it.next().getTypeDefinition());
 
-		int skip = skipCount == null ? 0 : skipCount.intValue();
-		int max = maxItems == null ? -1 : maxItems.intValue();
+        result.setList(childrenTypes);
+        return result;
+    }
 
-		TypeDefinitionListImpl result = new TypeDefinitionListImpl();
-		List<TypeDefinitionContainer> children;
-		if (typeId == null) {
-			// spec says that base types must be returned in this case
-			children = fStoreManager.getRootTypes(repositoryId);
-		} else {
-			children = getTypeDescendants(context, repositoryId, typeId, BigInteger.valueOf(1),
-					includePropertyDefinitions, null);
-		}
-		result.setNumItems(BigInteger.valueOf(children.size()));
-		result.setHasMoreItems(children.size() > max - skip);
-		List<TypeDefinition> childrenTypes = new ArrayList<TypeDefinition>();
-		ListIterator<TypeDefinitionContainer> it = children.listIterator(skip);
-		if (max < 0)
-			max = children.size();
-		for (int i = skip; i < max + skip && it.hasNext(); i++)
-			childrenTypes.add(it.next().getTypeDefinition());
+    public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
+            ExtensionsData extension) {
 
-		result.setList(childrenTypes);
-		return result;
-	}
+        getRepositoryInfoFromStoreManager(repositoryId); // just to check if
+        // repository
+        // exists
 
-	public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
-			ExtensionsData extension) {
+        TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId);
+        if (tc != null) {
+            return tc.getTypeDefinition();
+        } else
+            throw new CmisObjectNotFoundException("unknown type id: " + typeId);
+    }
 
+    public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId, String typeId,
+            BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
 
-		getRepositoryInfoFromStoreManager(repositoryId); // just to check if
-		// repository
-		// exists
+        getRepositoryInfoFromStoreManager(repositoryId); // just to check if
+        // repository
+        // exists
 
-		TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId);
-		if (tc != null) {
-			return tc.getTypeDefinition();
-		} else
-			throw new CmisObjectNotFoundException("unknown type id: " + typeId);
-	}
+        if (depth != null && depth.intValue() == 0)
+            throw new CmisInvalidArgumentException("depth == 0 is illegal in getTypeDescendants");
 
-	public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId, String typeId,
-			BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
+        List<TypeDefinitionContainer> result = null;
+        if (typeId == null) {
+            // spec says that depth must be ignored in this case
+            Collection<TypeDefinitionContainer> tmp = fStoreManager.getTypeDefinitionList(repositoryId,
+                    includePropertyDefinitions);
+            result = new ArrayList<TypeDefinitionContainer>(tmp);
+        } else {
+            TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId, includePropertyDefinitions,
+                    depth == null ? -1 : depth.intValue());
+            if (tc == null)
+                throw new CmisInvalidArgumentException("unknown type id: " + typeId);
+            else
+                result = tc.getChildren();
+        }
 
+        return result;
+    }
 
-		getRepositoryInfoFromStoreManager(repositoryId); // just to check if
-		// repository
-		// exists
-
-		if (depth != null && depth.intValue() == 0)
-			throw new CmisInvalidArgumentException("depth == 0 is illegal in getTypeDescendants");
-
-		List<TypeDefinitionContainer> result = null;
-		if (typeId == null) {
-			// spec says that depth must be ignored in this case
-			Collection<TypeDefinitionContainer> tmp = fStoreManager.getTypeDefinitionList(repositoryId,
-					includePropertyDefinitions);
-			result = new ArrayList<TypeDefinitionContainer>(tmp);
-		} else {
-			TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId,
-					includePropertyDefinitions, depth == null ? -1 : depth.intValue());
-			if (tc == null)
-				throw new CmisInvalidArgumentException("unknown type id: " + typeId);
-			else
-				result = tc.getChildren();
-		}
-
-		return result;
-	}
-
-	private RepositoryInfo getRepositoryInfoFromStoreManager(String repositoryId) {
-		RepositoryInfo repoInfo = fStoreManager.getRepositoryInfo(repositoryId);
-		if (null == repoInfo || !repoInfo.getId().equals(repositoryId)) {
-			throw new CmisInvalidArgumentException("Unknown repository: " + repositoryId);
-		}
-		return repoInfo;
-	}
+    private RepositoryInfo getRepositoryInfoFromStoreManager(String repositoryId) {
+        RepositoryInfo repoInfo = fStoreManager.getRepositoryInfo(repositoryId);
+        if (null == repoInfo || !repoInfo.getId().equals(repositoryId)) {
+            throw new CmisInvalidArgumentException("Unknown repository: " + repositoryId);
+        }
+        return repoInfo;
+    }
 
 }
