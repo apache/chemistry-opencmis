@@ -20,16 +20,16 @@ package org.apache.chemistry.opencmis.fit.runtime;
 
 public interface FixtureSessionParameter {
 
-	/*
-	 * session parameter
-	 */
+    /*
+     * session parameter
+     */
 
-	/**
-	 * CONFIG_PATH is referenced in pom.xml! If you change here then change pom.
-	 */
-	static final String CONFIG_PATH = "org.apache.chemistry.opencmis.fit.runtime.config.path";
+    /**
+     * CONFIG_PATH is referenced in pom.xml! If you change here then change pom.
+     */
+    static final String CONFIG_PATH = "org.apache.chemistry.opencmis.fit.runtime.config.path";
 
-	static final String SESSION_FACTORY = "org.apache.chemistry.opencmis.fit.runtime.session.factory";
-	static final String TEST_ROOT_FOLDER_ID = "org.apache.chemistry.opencmis.fit.runtime.root.folder.id";
+    static final String SESSION_FACTORY = "org.apache.chemistry.opencmis.fit.runtime.session.factory";
+    static final String TEST_ROOT_FOLDER_ID = "org.apache.chemistry.opencmis.fit.runtime.root.folder.id";
 
 }

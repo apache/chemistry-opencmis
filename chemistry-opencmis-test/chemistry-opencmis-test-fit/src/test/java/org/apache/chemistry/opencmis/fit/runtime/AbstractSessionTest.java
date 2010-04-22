@@ -39,54 +39,54 @@ import org.junit.runners.model.FrameworkMethod;
  */
 public abstract class AbstractSessionTest {
 
-	protected Log log = LogFactory.getLog(this.getClass());
+    protected Log log = LogFactory.getLog(this.getClass());
 
-	/**
-	 * trace each junit error
-	 */
-	@Rule
-	public MethodRule watch = new TestWatchman() {
-		@Override
-		public void failed(Throwable e, FrameworkMethod method) {
-			super.failed(e, method);
-			AbstractSessionTest.this.log.error(method.getName(), e);
-		}
-	};
+    /**
+     * trace each junit error
+     */
+    @Rule
+    public MethodRule watch = new TestWatchman() {
+        @Override
+        public void failed(Throwable e, FrameworkMethod method) {
+            super.failed(e, method);
+            AbstractSessionTest.this.log.error(method.getName(), e);
+        }
+    };
 
-	@BeforeClass
-	public static void classSetup() {
-		AbstractSessionTest.initializeLogging();
-		Fixture.logHeader();
-	}
+    @BeforeClass
+    public static void classSetup() {
+        AbstractSessionTest.initializeLogging();
+        Fixture.logHeader();
+    }
 
-	/**
-	 * Initialize logging support.
-	 */
-	private static void initializeLogging() {
-		Properties p = new Properties();
-		try {
-			p.load(AbstractSessionTest.class.getResourceAsStream("/log4j.properties"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		PropertyConfigurator.configure(p);
-	}
+    /**
+     * Initialize logging support.
+     */
+    private static void initializeLogging() {
+        Properties p = new Properties();
+        try {
+            p.load(AbstractSessionTest.class.getResourceAsStream("/log4j.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        PropertyConfigurator.configure(p);
+    }
 
-	/**
-	 * test session
-	 */
-	protected Session session = null;
+    /**
+     * test session
+     */
+    protected Session session = null;
 
-	@Before
-	public void setUp() throws Exception {
-		SessionFactory factory = Fixture.getSessionFactory();
-		this.session = factory.createSession(Fixture.getParamter());
-		Fixture.setUpTestData(this.session);
-	}
+    @Before
+    public void setUp() throws Exception {
+        SessionFactory factory = Fixture.getSessionFactory();
+        this.session = factory.createSession(Fixture.getParamter());
+        Fixture.setUpTestData(this.session);
+    }
 
-	@After
-	public void tearDown() throws Exception {
-		Fixture.teardownTestData(this.session);
-	}
+    @After
+    public void tearDown() throws Exception {
+        Fixture.teardownTestData(this.session);
+    }
 
 }

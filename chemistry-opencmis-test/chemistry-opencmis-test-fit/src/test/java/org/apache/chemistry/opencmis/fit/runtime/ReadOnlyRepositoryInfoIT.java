@@ -35,223 +35,223 @@ import org.junit.Test;
  */
 public class ReadOnlyRepositoryInfoIT extends AbstractSessionTest {
 
-	@Test
-	public void changesIncomplete() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getChangesIncomplete());
-	}
+    @Test
+    public void changesIncomplete() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getChangesIncomplete());
+    }
 
-	@Test
-	public void changesOnType() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getChangesOnType());
-	}
+    @Test
+    public void changesOnType() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getChangesOnType());
+    }
 
-	@Test
-	public void cmisVersionSupported() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getCmisVersionSupported());
-		this.log.info("getCmisVersionSupported = " + r.getCmisVersionSupported());
-	}
+    @Test
+    public void cmisVersionSupported() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getCmisVersionSupported());
+        this.log.info("getCmisVersionSupported = " + r.getCmisVersionSupported());
+    }
 
-	@Test
-	public void description() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getDescription());
-		this.log.info("getDescription = " + r.getDescription());
-	}
+    @Test
+    public void description() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getDescription());
+        this.log.info("getDescription = " + r.getDescription());
+    }
 
-	@Test
-	public void id() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getId());
-		this.log.info("getId = " + r.getId());
-	}
+    @Test
+    public void id() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getId());
+        this.log.info("getId = " + r.getId());
+    }
 
-	@Test
-	public void name() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getName());
-		this.log.info("getName = " + r.getName());
-	}
+    @Test
+    public void name() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getName());
+        this.log.info("getName = " + r.getName());
+    }
 
-	@Test
-	public void principalIdAnonymous() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getPrincipalIdAnonymous());
-		this.log.info("getPrincipalIdAnonymous = " + r.getPrincipalIdAnonymous());
-	}
+    @Test
+    public void principalIdAnonymous() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getPrincipalIdAnonymous());
+        this.log.info("getPrincipalIdAnonymous = " + r.getPrincipalIdAnonymous());
+    }
 
-	@Test
-	public void principalIdAnyone() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getPrincipalIdAnyone());
-		this.log.info("getPrincipalIdAnyone = " + r.getPrincipalIdAnyone());
-	}
+    @Test
+    public void principalIdAnyone() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getPrincipalIdAnyone());
+        this.log.info("getPrincipalIdAnyone = " + r.getPrincipalIdAnyone());
+    }
 
-	@Test
-	public void productName() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getProductName());
-		this.log.info("getProductName = " + r.getProductName());
-	}
+    @Test
+    public void productName() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getProductName());
+        this.log.info("getProductName = " + r.getProductName());
+    }
 
-	@Test
-	public void thinClientUri() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		String uri = r.getThinClientUri();
-		this.log.info("getThinClientUri = " + uri);
-	}
+    @Test
+    public void thinClientUri() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        String uri = r.getThinClientUri();
+        this.log.info("getThinClientUri = " + uri);
+    }
 
-	@Test
-	public void vendorName() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
-		Assert.assertNotNull(r.getVendorName());
-		this.log.info("getVendorName = " + r.getVendorName());
-	}
+    @Test
+    public void vendorName() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
+        Assert.assertNotNull(r.getVendorName());
+        this.log.info("getVendorName = " + r.getVendorName());
+    }
 
-	@Test
-	public void repositoryCapabilitiesAclSupport() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
+    @Test
+    public void repositoryCapabilitiesAclSupport() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
 
-		// capabilities
-		RepositoryCapabilities repcap = r.getCapabilities();
-		Assert.assertNotNull(repcap);
+        // capabilities
+        RepositoryCapabilities repcap = r.getCapabilities();
+        Assert.assertNotNull(repcap);
 
-		CapabilityAcl capacl = repcap.getAclCapability();
-		Assert.assertNotNull(capacl);
-		switch (capacl) {
-		case DISCOVER:
-		case MANAGE:
-		case NONE:
-			break;
-		default:
-			Assert.fail("enumeration not supported: " + capacl);
-		}
-		this.log.info("CapabilityAcl = " + capacl);
-	}
+        CapabilityAcl capacl = repcap.getAclCapability();
+        Assert.assertNotNull(capacl);
+        switch (capacl) {
+        case DISCOVER:
+        case MANAGE:
+        case NONE:
+            break;
+        default:
+            Assert.fail("enumeration not supported: " + capacl);
+        }
+        this.log.info("CapabilityAcl = " + capacl);
+    }
 
-	@Test
-	public void repositoryCapabilitiesChangesSupport() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
+    @Test
+    public void repositoryCapabilitiesChangesSupport() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
 
-		// capabilities
-		RepositoryCapabilities repcap = r.getCapabilities();
-		Assert.assertNotNull(repcap);
-		CapabilityChanges capch = repcap.getChangesCapability();
-		Assert.assertNotNull(capch);
-		switch (capch) {
-		case ALL:
-		case OBJECTIDSONLY:
-		case PROPERTIES:
-		case NONE:
-			break;
-		default:
-			Assert.fail("enumeration not supported: " + capch);
-		}
-		this.log.info("CapabilityChanges = " + capch);
-	}
+        // capabilities
+        RepositoryCapabilities repcap = r.getCapabilities();
+        Assert.assertNotNull(repcap);
+        CapabilityChanges capch = repcap.getChangesCapability();
+        Assert.assertNotNull(capch);
+        switch (capch) {
+        case ALL:
+        case OBJECTIDSONLY:
+        case PROPERTIES:
+        case NONE:
+            break;
+        default:
+            Assert.fail("enumeration not supported: " + capch);
+        }
+        this.log.info("CapabilityChanges = " + capch);
+    }
 
-	@Test
-	public void repositoryCapabilitiesContentStreamUpdateabilitySupport() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
+    @Test
+    public void repositoryCapabilitiesContentStreamUpdateabilitySupport() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
 
-		// capabilities
-		RepositoryCapabilities repcap = r.getCapabilities();
-		Assert.assertNotNull(repcap);
-		CapabilityContentStreamUpdates ccsu = repcap.getContentStreamUpdatesCapability();
-		Assert.assertNotNull(ccsu);
-		switch (ccsu) {
-		case ANYTIME:
-		case NONE:
-		case PWCONLY:
-			break;
-		default:
-			Assert.fail("enumeration not supported: " + ccsu);
-		}
-		this.log.info("CapabilityContentStreamUpdates = " + ccsu);
-	}
+        // capabilities
+        RepositoryCapabilities repcap = r.getCapabilities();
+        Assert.assertNotNull(repcap);
+        CapabilityContentStreamUpdates ccsu = repcap.getContentStreamUpdatesCapability();
+        Assert.assertNotNull(ccsu);
+        switch (ccsu) {
+        case ANYTIME:
+        case NONE:
+        case PWCONLY:
+            break;
+        default:
+            Assert.fail("enumeration not supported: " + ccsu);
+        }
+        this.log.info("CapabilityContentStreamUpdates = " + ccsu);
+    }
 
-	@Test
-	public void repositoryCapabilitiesJointSupport() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
+    @Test
+    public void repositoryCapabilitiesJointSupport() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
 
-		// capabilities
-		RepositoryCapabilities repcap = r.getCapabilities();
-		Assert.assertNotNull(repcap);
+        // capabilities
+        RepositoryCapabilities repcap = r.getCapabilities();
+        Assert.assertNotNull(repcap);
 
-		CapabilityJoin capj = repcap.getJoinCapability();
-		Assert.assertNotNull(capj);
+        CapabilityJoin capj = repcap.getJoinCapability();
+        Assert.assertNotNull(capj);
 
-		switch (capj) {
-		case INNERANDOUTER:
-		case INNERONLY:
-		case NONE:
-			break;
-		default:
-			Assert.fail("enumeration not supported: " + capj);
-		}
-		this.log.info("CapabilityJoin = " + capj);
-	}
+        switch (capj) {
+        case INNERANDOUTER:
+        case INNERONLY:
+        case NONE:
+            break;
+        default:
+            Assert.fail("enumeration not supported: " + capj);
+        }
+        this.log.info("CapabilityJoin = " + capj);
+    }
 
-	@Test
-	public void repositoryCapabilitiesQuerySupport() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
+    @Test
+    public void repositoryCapabilitiesQuerySupport() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
 
-		// capabilities
-		RepositoryCapabilities repcap = r.getCapabilities();
-		Assert.assertNotNull(repcap);
+        // capabilities
+        RepositoryCapabilities repcap = r.getCapabilities();
+        Assert.assertNotNull(repcap);
 
-		CapabilityQuery capq = repcap.getQueryCapability();
-		Assert.assertNotNull(capq);
-		switch (capq) {
-		case BOTHCOMBINED:
-		case BOTHSEPARATE:
-		case FULLTEXTONLY:
-		case METADATAONLY:
-		case NONE:
-			break;
-		default:
-			Assert.fail("enumeration not supported: " + capq);
-		}
-		this.log.info("CapabilityQuery = " + capq);
-	}
+        CapabilityQuery capq = repcap.getQueryCapability();
+        Assert.assertNotNull(capq);
+        switch (capq) {
+        case BOTHCOMBINED:
+        case BOTHSEPARATE:
+        case FULLTEXTONLY:
+        case METADATAONLY:
+        case NONE:
+            break;
+        default:
+            Assert.fail("enumeration not supported: " + capq);
+        }
+        this.log.info("CapabilityQuery = " + capq);
+    }
 
-	@Test
-	public void repositoryCapabilitiesRenditionSupport() {
-		RepositoryInfo r = this.session.getRepositoryInfo();
-		Assert.assertNotNull(r);
+    @Test
+    public void repositoryCapabilitiesRenditionSupport() {
+        RepositoryInfo r = this.session.getRepositoryInfo();
+        Assert.assertNotNull(r);
 
-		// capabilities
-		RepositoryCapabilities repcap = r.getCapabilities();
-		Assert.assertNotNull(repcap);
+        // capabilities
+        RepositoryCapabilities repcap = r.getCapabilities();
+        Assert.assertNotNull(repcap);
 
-		CapabilityRenditions caprend = repcap.getRenditionsCapability();
-		Assert.assertNotNull(caprend);
-		switch (caprend) {
-		case NONE:
-		case READ:
-			break;
-		default:
-			Assert.fail("enumeration not supported: " + caprend);
-		}
-		this.log.info("CapabilityRendition = " + caprend);
-	}
+        CapabilityRenditions caprend = repcap.getRenditionsCapability();
+        Assert.assertNotNull(caprend);
+        switch (caprend) {
+        case NONE:
+        case READ:
+            break;
+        default:
+            Assert.fail("enumeration not supported: " + caprend);
+        }
+        this.log.info("CapabilityRendition = " + caprend);
+    }
 
 }

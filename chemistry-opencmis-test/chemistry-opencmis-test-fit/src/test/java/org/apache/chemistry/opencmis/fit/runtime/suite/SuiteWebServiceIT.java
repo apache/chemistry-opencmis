@@ -25,8 +25,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses( {})
 public class SuiteWebServiceIT {
-	static {
-		// TODO SKL not working
-		// Fixture.enableWebServices();
-	}
+    static {
+        // TODO SKL not working
+        // Fixture.enableWebServices();
+    }
 }

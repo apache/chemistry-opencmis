@@ -36,47 +36,47 @@ import org.junit.Test;
  */
 public class ReadOnlyCreateSessionIT {
 
-	protected Log log = LogFactory.getLog(this.getClass());
+    protected Log log = LogFactory.getLog(this.getClass());
 
-	@Before
-	public void setup() {
-	}
+    @Before
+    public void setup() {
+    }
 
-	@Test
-	public void createDefaultSession() {
-		SessionFactory factory = Fixture.getSessionFactory();
+    @Test
+    public void createDefaultSession() {
+        SessionFactory factory = Fixture.getSessionFactory();
 
-		Hashtable<String, String> parameter = new Hashtable<String, String>(Fixture.getParamter());
-		parameter.remove(SessionParameter.SESSION_TYPE);
+        Hashtable<String, String> parameter = new Hashtable<String, String>(Fixture.getParamter());
+        parameter.remove(SessionParameter.SESSION_TYPE);
 
-		Session s = factory.createSession(parameter);
-		Assert.assertNotNull(s);
-	}
+        Session s = factory.createSession(parameter);
+        Assert.assertNotNull(s);
+    }
 
-	@Test
-	public void createPersistentSession() {
-		SessionFactory factory = Fixture.getSessionFactory();
+    @Test
+    public void createPersistentSession() {
+        SessionFactory factory = Fixture.getSessionFactory();
 
-		Hashtable<String, String> parameter = new Hashtable<String, String>(Fixture.getParamter());
-		parameter.put(SessionParameter.SESSION_TYPE, SessionType.PERSISTENT.value());
+        Hashtable<String, String> parameter = new Hashtable<String, String>(Fixture.getParamter());
+        parameter.put(SessionParameter.SESSION_TYPE, SessionType.PERSISTENT.value());
 
-		Session s = factory.createSession(parameter);
-		Assert.assertNotNull(s);
-	}
+        Session s = factory.createSession(parameter);
+        Assert.assertNotNull(s);
+    }
 
-	@Test
-	public void createTransientSession() {
-		SessionFactory factory = Fixture.getSessionFactory();
+    @Test
+    public void createTransientSession() {
+        SessionFactory factory = Fixture.getSessionFactory();
 
-		Hashtable<String, String> parameter = new Hashtable<String, String>(Fixture.getParamter());
-		parameter.put(SessionParameter.SESSION_TYPE, SessionType.TRANSIENT.value());
+        Hashtable<String, String> parameter = new Hashtable<String, String>(Fixture.getParamter());
+        parameter.put(SessionParameter.SESSION_TYPE, SessionType.TRANSIENT.value());
 
-		try {
-			@SuppressWarnings("unused")
-			Session s = factory.createSession(parameter);
-			Assert.fail("CmisNotSupportedException expected, because Transient Session is not supported yet.");
-		} catch (CmisNotSupportedException e) {
+        try {
+            @SuppressWarnings("unused")
+            Session s = factory.createSession(parameter);
+            Assert.fail("CmisNotSupportedException expected, because Transient Session is not supported yet.");
+        } catch (CmisNotSupportedException e) {
 
-		}
-	}
+        }
+    }
 }

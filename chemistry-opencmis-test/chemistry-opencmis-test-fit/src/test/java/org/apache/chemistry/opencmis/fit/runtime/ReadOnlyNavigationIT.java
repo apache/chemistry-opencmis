@@ -31,154 +31,154 @@ import org.junit.Test;
 
 public class ReadOnlyNavigationIT extends AbstractSessionTest {
 
-	@Test
-	public void navigateChildrenMin() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigateChildrenMin() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		PagingIterable<CmisObject> pl = folder.getChildren(1);
-		Assert.assertNotNull(pl);
+        PagingIterable<CmisObject> pl = folder.getChildren(1);
+        Assert.assertNotNull(pl);
 
-		for (CmisObject o : pl) {
-			Assert.assertNotNull(o);
-		}
-	}
+        for (CmisObject o : pl) {
+            Assert.assertNotNull(o);
+        }
+    }
 
-	@Test
-	public void navigateChildrenMax() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigateChildrenMax() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		PagingIterable<CmisObject> pl = folder.getChildren(1000);
-		Assert.assertNotNull(pl);
+        PagingIterable<CmisObject> pl = folder.getChildren(1000);
+        Assert.assertNotNull(pl);
 
-		for (CmisObject o : pl) {
-			Assert.assertNotNull(o);
-		}
-	}
+        for (CmisObject o : pl) {
+            Assert.assertNotNull(o);
+        }
+    }
 
-	@Test
-	public void navigateChildrenMed() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigateChildrenMed() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		PagingIterable<CmisObject> pl = folder.getChildren(2);
-		Assert.assertNotNull(pl);
+        PagingIterable<CmisObject> pl = folder.getChildren(2);
+        Assert.assertNotNull(pl);
 
-		for (CmisObject o : pl) {
-			Assert.assertNotNull(o);
-		}
-	}
+        for (CmisObject o : pl) {
+            Assert.assertNotNull(o);
+        }
+    }
 
-	@Test
-	public void navigateDescendantsMin() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigateDescendantsMin() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Tree<FileableCmisObject>> desc = folder.getDescendants(1);
-		Assert.assertNotNull(desc);
-		Assert.assertFalse(desc.isEmpty());
+        List<Tree<FileableCmisObject>> desc = folder.getDescendants(1);
+        Assert.assertNotNull(desc);
+        Assert.assertFalse(desc.isEmpty());
 
-		for (Tree<FileableCmisObject> o : desc) {
-			Assert.assertNotNull(o);
-			Assert.assertNotNull(o.getItem());
-		}
-	}
+        for (Tree<FileableCmisObject> o : desc) {
+            Assert.assertNotNull(o);
+            Assert.assertNotNull(o.getItem());
+        }
+    }
 
-	@Test
-	public void navigateDescendantsMax() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigateDescendantsMax() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Tree<FileableCmisObject>> desc = folder.getDescendants(1000);
-		Assert.assertNotNull(desc);
-		Assert.assertFalse(desc.isEmpty());
+        List<Tree<FileableCmisObject>> desc = folder.getDescendants(1000);
+        Assert.assertNotNull(desc);
+        Assert.assertFalse(desc.isEmpty());
 
-		for (Tree<FileableCmisObject> o : desc) {
-			Assert.assertNotNull(o);
-			Assert.assertNotNull(o.getItem());
-		}
-	}
+        for (Tree<FileableCmisObject> o : desc) {
+            Assert.assertNotNull(o);
+            Assert.assertNotNull(o.getItem());
+        }
+    }
 
-	@Test
-	public void navigateDescendantsMed() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigateDescendantsMed() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Tree<FileableCmisObject>> desc = folder.getDescendants(2);
-		Assert.assertNotNull(desc);
-		Assert.assertFalse(desc.isEmpty());
+        List<Tree<FileableCmisObject>> desc = folder.getDescendants(2);
+        Assert.assertNotNull(desc);
+        Assert.assertFalse(desc.isEmpty());
 
-		for (Tree<FileableCmisObject> o : desc) {
-			Assert.assertNotNull(o);
-			Assert.assertNotNull(o.getItem());
-		}
-	}
+        for (Tree<FileableCmisObject> o : desc) {
+            Assert.assertNotNull(o);
+            Assert.assertNotNull(o.getItem());
+        }
+    }
 
-	@Test
-	public void navigateTreeMed() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigateTreeMed() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Tree<FileableCmisObject>> tree = folder.getFolderTree(2);
-		Assert.assertNotNull(tree);
-		Assert.assertFalse(tree.isEmpty());
+        List<Tree<FileableCmisObject>> tree = folder.getFolderTree(2);
+        Assert.assertNotNull(tree);
+        Assert.assertFalse(tree.isEmpty());
 
-		for (Tree<FileableCmisObject> o : tree) {
-			Assert.assertNotNull(o);
-			Assert.assertNotNull(o.getItem());
-		}
-	}
+        for (Tree<FileableCmisObject> o : tree) {
+            Assert.assertNotNull(o);
+            Assert.assertNotNull(o.getItem());
+        }
+    }
 
-	@Test
-	public void navigateTreeMin() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigateTreeMin() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Tree<FileableCmisObject>> tree = folder.getFolderTree(1);
-		Assert.assertNotNull(tree);
-		Assert.assertFalse(tree.isEmpty());
+        List<Tree<FileableCmisObject>> tree = folder.getFolderTree(1);
+        Assert.assertNotNull(tree);
+        Assert.assertFalse(tree.isEmpty());
 
-		for (Tree<FileableCmisObject> o : tree) {
-			Assert.assertNotNull(o);
-			Assert.assertNotNull(o.getItem());
-		}
-	}
+        for (Tree<FileableCmisObject> o : tree) {
+            Assert.assertNotNull(o);
+            Assert.assertNotNull(o.getItem());
+        }
+    }
 
-	@Test
-	public void navigateTreeMax() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigateTreeMax() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		List<Tree<FileableCmisObject>> tree = folder.getFolderTree(1000);
-		Assert.assertNotNull(tree);
-		Assert.assertFalse(tree.isEmpty());
+        List<Tree<FileableCmisObject>> tree = folder.getFolderTree(1000);
+        Assert.assertNotNull(tree);
+        Assert.assertFalse(tree.isEmpty());
 
-		for (Tree<FileableCmisObject> o : tree) {
-			Assert.assertNotNull(o);
-			Assert.assertNotNull(o.getItem());
-		}
-	}
+        for (Tree<FileableCmisObject> o : tree) {
+            Assert.assertNotNull(o);
+            Assert.assertNotNull(o.getItem());
+        }
+    }
 
-	@Test
-	public void navigatePagingRandom() {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
-		Folder folder = (Folder) this.session.getObjectByPath(path);
-		Assert.assertNotNull("folder not found: " + path, folder);
+    @Test
+    public void navigatePagingRandom() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
 
-		PagingIterable<CmisObject> pl = folder.getChildren(2);
-		Assert.assertNotNull(pl);
+        PagingIterable<CmisObject> pl = folder.getChildren(2);
+        Assert.assertNotNull(pl);
 
-		CmisObject firstObject = pl.iterator().next();
-		Assert.assertNotNull(firstObject);
-	}
+        CmisObject firstObject = pl.iterator().next();
+        Assert.assertNotNull(firstObject);
+    }
 }

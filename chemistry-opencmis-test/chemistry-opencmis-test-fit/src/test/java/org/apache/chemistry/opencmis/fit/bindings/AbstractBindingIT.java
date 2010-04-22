@@ -41,97 +41,97 @@ import org.junit.BeforeClass;
  * 
  */
 public abstract class AbstractBindingIT {
-	public static String FOLDER_TYPE = "cmis:folder";
-	public static String DOCUMENT_TYPE = "cmis:document";
+    public static String FOLDER_TYPE = "cmis:folder";
+    public static String DOCUMENT_TYPE = "cmis:document";
 
-	private static CmisBinding binding;
-	private static String fRepositoryId;
-	private static String fTestFolderId;
+    private static CmisBinding binding;
+    private static String fRepositoryId;
+    private static String fTestFolderId;
 
-	/**
-	 * Returns the id of test folder. Tests should only use this folder.
-	 */
-	protected String getTestFolderId() {
-		return fTestFolderId;
-	}
+    /**
+     * Returns the id of test folder. Tests should only use this folder.
+     */
+    protected String getTestFolderId() {
+        return fTestFolderId;
+    }
 
-	/**
-	 * Returns the current binding object.
-	 */
-	protected static CmisBinding getBinding() {
-		return binding;
-	}
+    /**
+     * Returns the current binding object.
+     */
+    protected static CmisBinding getBinding() {
+        return binding;
+    }
 
-	/**
-	 * Returns a new binding object.
-	 */
-	protected abstract CmisBinding createBinding();
+    /**
+     * Returns a new binding object.
+     */
+    protected abstract CmisBinding createBinding();
 
-	/**
-	 * Returns the repository id of the test repository.
-	 */
-	protected abstract String getRepositoryId();
+    /**
+     * Returns the repository id of the test repository.
+     */
+    protected abstract String getRepositoryId();
 
-	@BeforeClass
-	public static void setUpClass() {
-		binding = null;
-	}
+    @BeforeClass
+    public static void setUpClass() {
+        binding = null;
+    }
 
-	@Before
-	public void setUpTest() {
-		// only the first test creates the test environment
-		if (binding == null) {
-			System.out.println("Creating provider...");
+    @Before
+    public void setUpTest() {
+        // only the first test creates the test environment
+        if (binding == null) {
+            System.out.println("Creating provider...");
 
-			binding = createBinding();
-			fRepositoryId = getRepositoryId();
-			createTestFolder();
-		}
-	}
+            binding = createBinding();
+            fRepositoryId = getRepositoryId();
+            createTestFolder();
+        }
+    }
 
-	@AfterClass
-	public static void tearDownClass() {
-		deleteTestFolder();
-		binding = null;
-	}
+    @AfterClass
+    public static void tearDownClass() {
+        deleteTestFolder();
+        binding = null;
+    }
 
-	/**
-	 * Creates a folder that will be used by all read-write tests.
-	 */
-	private void createTestFolder() {
-		System.out.println("Creating test folder...");
+    /**
+     * Creates a folder that will be used by all read-write tests.
+     */
+    private void createTestFolder() {
+        System.out.println("Creating test folder...");
 
-		// get root folder id
-		RepositoryInfo ri = getBinding().getRepositoryService().getRepositoryInfo(fRepositoryId, null);
-		assertNotNull(ri);
-		assertNotNull(ri.getRootFolderId());
+        // get root folder id
+        RepositoryInfo ri = getBinding().getRepositoryService().getRepositoryInfo(fRepositoryId, null);
+        assertNotNull(ri);
+        assertNotNull(ri.getRootFolderId());
 
-		String rootFolderId = ri.getRootFolderId();
+        String rootFolderId = ri.getRootFolderId();
 
-		// set up properties
-		List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
-		propertyList.add(getBinding().getObjectFactory().createPropertyStringData(PropertyIds.NAME,
-				"provider-tests-" + System.currentTimeMillis()));
-		propertyList.add(getBinding().getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, FOLDER_TYPE));
+        // set up properties
+        List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
+        propertyList.add(getBinding().getObjectFactory().createPropertyStringData(PropertyIds.NAME,
+                "provider-tests-" + System.currentTimeMillis()));
+        propertyList.add(getBinding().getObjectFactory().createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, FOLDER_TYPE));
 
-		Properties properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
+        Properties properties = getBinding().getObjectFactory().createPropertiesData(propertyList);
 
-		// create the folder
-		fTestFolderId = getBinding().getObjectService().createFolder(fRepositoryId, properties, rootFolderId, null,
-				null, null, null);
-	}
+        // create the folder
+        fTestFolderId = getBinding().getObjectService().createFolder(fRepositoryId, properties, rootFolderId, null,
+                null, null, null);
+    }
 
-	/**
-	 * Deletes the test folder.
-	 */
-	private static void deleteTestFolder() {
-		if (fTestFolderId == null) {
-			return;
-		}
+    /**
+     * Deletes the test folder.
+     */
+    private static void deleteTestFolder() {
+        if (fTestFolderId == null) {
+            return;
+        }
 
-		System.out.println("Deleting test folder...");
+        System.out.println("Deleting test folder...");
 
-		// delete the whole tree
-		getBinding().getObjectService().deleteTree(fRepositoryId, fTestFolderId, true, UnfileObject.DELETE, true, null);
-	}
+        // delete the whole tree
+        getBinding().getObjectService().deleteTree(fRepositoryId, fTestFolderId, true, UnfileObject.DELETE, true, null);
+    }
 }

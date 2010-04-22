@@ -30,228 +30,228 @@ import org.apache.commons.logging.LogFactory;
  * 
  */
 public class TimeLogger {
-	private static Log LOG = LogFactory.getLog(TimeLogger.class);
+    private static Log LOG = LogFactory.getLog(TimeLogger.class);
 
-	private static class TimeRecord {
-		public long fStart;
-		public long fStop;
-	};
+    private static class TimeRecord {
+        public long fStart;
+        public long fStop;
+    };
 
-	private String fAction;
-	private LinkedList<TimeRecord> fTimeRecs = new LinkedList<TimeRecord>();
-	private final int maxSize = 2500;
-	TimeRecord fCurrentRec;
+    private String fAction;
+    private LinkedList<TimeRecord> fTimeRecs = new LinkedList<TimeRecord>();
+    private final int maxSize = 2500;
+    TimeRecord fCurrentRec;
 
-	public TimeLogger() {
-		fAction = "";
-		fTimeRecs = new LinkedList<TimeRecord>();
-	}
+    public TimeLogger() {
+        fAction = "";
+        fTimeRecs = new LinkedList<TimeRecord>();
+    }
 
-	public TimeLogger(String action) {
-		fAction = action;
-	}
+    public TimeLogger(String action) {
+        fAction = action;
+    }
 
-	public void start() {
-		createAndAddNewRecord();
-		fCurrentRec.fStart = System.currentTimeMillis();
-	}
+    public void start() {
+        createAndAddNewRecord();
+        fCurrentRec.fStart = System.currentTimeMillis();
+    }
 
-	public void stop() {
-		fCurrentRec.fStop = System.currentTimeMillis();
-	}
+    public void stop() {
+        fCurrentRec.fStop = System.currentTimeMillis();
+    }
 
-	public void reset() {
-		fTimeRecs.clear();
-	}
+    public void reset() {
+        fTimeRecs.clear();
+    }
 
-	public void logTimes() {
-		long size = fTimeRecs.size();
-		if (size == 0)
-			LOG.info("No samples for " + fAction + " available. ");
-		else if (size == 1)
-			LOG.info("Time elapsed for " + fAction + ": " + getLastTime());
-		else {
-			LOG.info("Timings for " + size + " samples for action " + fAction + ": ");
-			LOG.info("  Average: " + getAverageTime() + "ms");
-			LOG.info("  Min    : " + getMinTime() + "ms");
-			LOG.info("  Max    : " + getMaxTime() + "ms");
-			LOG.info("  Total  : " + getTotalTime() + "ms");
-		}
-	}
+    public void logTimes() {
+        long size = fTimeRecs.size();
+        if (size == 0)
+            LOG.info("No samples for " + fAction + " available. ");
+        else if (size == 1)
+            LOG.info("Time elapsed for " + fAction + ": " + getLastTime());
+        else {
+            LOG.info("Timings for " + size + " samples for action " + fAction + ": ");
+            LOG.info("  Average: " + getAverageTime() + "ms");
+            LOG.info("  Min    : " + getMinTime() + "ms");
+            LOG.info("  Max    : " + getMaxTime() + "ms");
+            LOG.info("  Total  : " + getTotalTime() + "ms");
+        }
+    }
 
-	public void printTimes() {
-		long size = fTimeRecs.size();
-		if (size == 0)
-			System.out.println("No samples for " + fAction + " available. ");
-		else if (size == 1)
-			System.out.println("Time elapsed for " + fAction + ": " + getLastTime());
-		else {
-			System.out.println("Timings for " + size + " samples for action " + fAction + ": ");
-			System.out.println("  Average: " + getAverageTime() + "ms");
-			System.out.println("  Min    : " + getMinTime() + "ms");
-			System.out.println("  Max    : " + getMaxTime() + "ms");
-			System.out.println("  Total  : " + getTotalTime() + "ms");
-		}
-	}
+    public void printTimes() {
+        long size = fTimeRecs.size();
+        if (size == 0)
+            System.out.println("No samples for " + fAction + " available. ");
+        else if (size == 1)
+            System.out.println("Time elapsed for " + fAction + ": " + getLastTime());
+        else {
+            System.out.println("Timings for " + size + " samples for action " + fAction + ": ");
+            System.out.println("  Average: " + getAverageTime() + "ms");
+            System.out.println("  Min    : " + getMinTime() + "ms");
+            System.out.println("  Max    : " + getMaxTime() + "ms");
+            System.out.println("  Total  : " + getTotalTime() + "ms");
+        }
+    }
 
-	public long getLastTime() {
-		TimeRecord lastRec = fTimeRecs.getLast();
-		if (null != lastRec)
-			return lastRec.fStop - lastRec.fStart;
-		else
-			return 0;
-	}
+    public long getLastTime() {
+        TimeRecord lastRec = fTimeRecs.getLast();
+        if (null != lastRec)
+            return lastRec.fStop - lastRec.fStart;
+        else
+            return 0;
+    }
 
-	private void createAndAddNewRecord() {
-		if (fTimeRecs.size() < maxSize) {
-			fCurrentRec = new TimeRecord();
-			fTimeRecs.add(fCurrentRec);
-		}
-	}
+    private void createAndAddNewRecord() {
+        if (fTimeRecs.size() < maxSize) {
+            fCurrentRec = new TimeRecord();
+            fTimeRecs.add(fCurrentRec);
+        }
+    }
 
-	private long getAverageTime() {
-		long sum = 0;
-		long size = fTimeRecs.size();
+    private long getAverageTime() {
+        long sum = 0;
+        long size = fTimeRecs.size();
 
-		if (0 == fTimeRecs.size())
-			return 0;
+        if (0 == fTimeRecs.size())
+            return 0;
 
-		for (TimeRecord tm : fTimeRecs) {
-			sum += tm.fStop - tm.fStart;
-		}
-		return (sum + size / 2) / size;
-	}
+        for (TimeRecord tm : fTimeRecs) {
+            sum += tm.fStop - tm.fStart;
+        }
+        return (sum + size / 2) / size;
+    }
 
-	private long getMinTime() {
-		long min = Long.MAX_VALUE;
+    private long getMinTime() {
+        long min = Long.MAX_VALUE;
 
-		if (0 == fTimeRecs.size())
-			return 0;
+        if (0 == fTimeRecs.size())
+            return 0;
 
-		for (TimeRecord tm : fTimeRecs) {
-			long val = tm.fStop - tm.fStart;
-			if (val < min)
-				min = val;
-		}
-		return min;
+        for (TimeRecord tm : fTimeRecs) {
+            long val = tm.fStop - tm.fStart;
+            if (val < min)
+                min = val;
+        }
+        return min;
 
-	}
+    }
 
-	private long getMaxTime() {
-		long max = Long.MIN_VALUE;
+    private long getMaxTime() {
+        long max = Long.MIN_VALUE;
 
-		if (0 == fTimeRecs.size())
-			return 0;
+        if (0 == fTimeRecs.size())
+            return 0;
 
-		for (TimeRecord tm : fTimeRecs) {
-			long val = tm.fStop - tm.fStart;
-			if (val > max)
-				max = val;
-		}
-		return max;
-	}
+        for (TimeRecord tm : fTimeRecs) {
+            long val = tm.fStop - tm.fStart;
+            if (val > max)
+                max = val;
+        }
+        return max;
+    }
 
-	private long getTotalTime() {
-		long sum = 0;
+    private long getTotalTime() {
+        long sum = 0;
 
-		for (TimeRecord tm : fTimeRecs) {
-			sum += tm.fStop - tm.fStart;
-		}
-		return sum;
-	}
+        for (TimeRecord tm : fTimeRecs) {
+            sum += tm.fStop - tm.fStart;
+        }
+        return sum;
+    }
 
-	////////////////////////////////////////////////////////////////////////////
-	// ////////
-	//
-	// Same methods used for multithreaded logging
+    // //////////////////////////////////////////////////////////////////////////
+    // ////////
+    //
+    // Same methods used for multithreaded logging
 
-	public static void logTimes(TimeLogger[] loggers) {
-		long size = 0;
-		if (null == loggers)
-			return;
+    public static void logTimes(TimeLogger[] loggers) {
+        long size = 0;
+        if (null == loggers)
+            return;
 
-		for (int i = 0; i < loggers.length; i++)
-			size += loggers[i].fTimeRecs.size();
+        for (int i = 0; i < loggers.length; i++)
+            size += loggers[i].fTimeRecs.size();
 
-		LOG.info("Timings for " + size + " samples for action " + loggers[0].fAction + ": ");
-		LOG.info("  Average: " + getAverageTime(loggers) + "ms");
-		LOG.info("  Min    : " + getMinTime(loggers) + "ms");
-		LOG.info("  Max    : " + getMaxTime(loggers) + "ms");
-		LOG.info("  Total  : " + getTotalTime(loggers) + "ms");
-	}
+        LOG.info("Timings for " + size + " samples for action " + loggers[0].fAction + ": ");
+        LOG.info("  Average: " + getAverageTime(loggers) + "ms");
+        LOG.info("  Min    : " + getMinTime(loggers) + "ms");
+        LOG.info("  Max    : " + getMaxTime(loggers) + "ms");
+        LOG.info("  Total  : " + getTotalTime(loggers) + "ms");
+    }
 
-	public static void printTimes(TimeLogger[] loggers) {
-		long size = 0;
-		if (null == loggers)
-			return;
+    public static void printTimes(TimeLogger[] loggers) {
+        long size = 0;
+        if (null == loggers)
+            return;
 
-		for (int i = 0; i < loggers.length; i++)
-			size += loggers[i].fTimeRecs.size();
+        for (int i = 0; i < loggers.length; i++)
+            size += loggers[i].fTimeRecs.size();
 
-		System.out.println("Timings for " + size + " samples for action " + loggers[0].fAction + ": ");
-		System.out.println("  Average: " + getAverageTime(loggers) + "ms");
-		System.out.println("  Min    : " + getMinTime(loggers) + "ms");
-		System.out.println("  Max    : " + getMaxTime(loggers) + "ms");
-		System.out.println("  Total  : " + getTotalTime(loggers) + "ms");
+        System.out.println("Timings for " + size + " samples for action " + loggers[0].fAction + ": ");
+        System.out.println("  Average: " + getAverageTime(loggers) + "ms");
+        System.out.println("  Min    : " + getMinTime(loggers) + "ms");
+        System.out.println("  Max    : " + getMaxTime(loggers) + "ms");
+        System.out.println("  Total  : " + getTotalTime(loggers) + "ms");
 
-	}
+    }
 
-	static private long getAverageTime(TimeLogger[] loggers) {
-		long sum = 0;
-		long size = 0;
+    static private long getAverageTime(TimeLogger[] loggers) {
+        long sum = 0;
+        long size = 0;
 
-		for (int i = 0; i < loggers.length; i++)
-			size += loggers[i].fTimeRecs.size();
+        for (int i = 0; i < loggers.length; i++)
+            size += loggers[i].fTimeRecs.size();
 
-		if (size == 0)
-			return 0;
+        if (size == 0)
+            return 0;
 
-		for (int i = 0; i < loggers.length; i++) {
-			if (0 == loggers[i].fTimeRecs.size())
-				continue;
+        for (int i = 0; i < loggers.length; i++) {
+            if (0 == loggers[i].fTimeRecs.size())
+                continue;
 
-			for (TimeRecord tm : loggers[i].fTimeRecs) {
-				sum += tm.fStop - tm.fStart;
-			}
-		}
+            for (TimeRecord tm : loggers[i].fTimeRecs) {
+                sum += tm.fStop - tm.fStart;
+            }
+        }
 
-		return (sum + size / 2) / size;
-	}
+        return (sum + size / 2) / size;
+    }
 
-	static private long getMaxTime(TimeLogger[] loggers) {
-		long max = Long.MIN_VALUE;
+    static private long getMaxTime(TimeLogger[] loggers) {
+        long max = Long.MIN_VALUE;
 
-		for (int i = 0; i < loggers.length; i++) {
-			long val = loggers[i].getMaxTime();
-			if (val > max)
-				max = val;
-		}
+        for (int i = 0; i < loggers.length; i++) {
+            long val = loggers[i].getMaxTime();
+            if (val > max)
+                max = val;
+        }
 
-		return max;
-	}
+        return max;
+    }
 
-	static private long getMinTime(TimeLogger[] loggers) {
-		long min = Long.MAX_VALUE;
+    static private long getMinTime(TimeLogger[] loggers) {
+        long min = Long.MAX_VALUE;
 
-		for (int i = 0; i < loggers.length; i++) {
-			long val = loggers[i].getMinTime();
-			if (val < min)
-				min = val;
-		}
+        for (int i = 0; i < loggers.length; i++) {
+            long val = loggers[i].getMinTime();
+            if (val < min)
+                min = val;
+        }
 
-		return min;
-	}
+        return min;
+    }
 
-	static private long getTotalTime(TimeLogger[] loggers) {
-		long totalTime = Long.MIN_VALUE;
+    static private long getTotalTime(TimeLogger[] loggers) {
+        long totalTime = Long.MIN_VALUE;
 
-		for (int i = 0; i < loggers.length; i++) {
-			long val = loggers[i].getTotalTime();
-			if (val > totalTime)
-				totalTime = val;
-		}
+        for (int i = 0; i < loggers.length; i++) {
+            long val = loggers[i].getTotalTime();
+            if (val > totalTime)
+                totalTime = val;
+        }
 
-		return totalTime;
-	}
+        return totalTime;
+    }
 
 }

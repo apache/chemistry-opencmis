@@ -43,159 +43,159 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Fixture {
 
-	private static String CONNECTION_PATH = Fixture.CONNECTION_ATOM_PATH;
-	private static final String CONNECTION_ATOM_PATH = "/inmemory.atom.properties";
-	private static final String CONNECTION_WS_PATH = "/inmemory.ws.properties";
+    private static String CONNECTION_PATH = Fixture.CONNECTION_ATOM_PATH;
+    private static final String CONNECTION_ATOM_PATH = "/inmemory.atom.properties";
+    private static final String CONNECTION_WS_PATH = "/inmemory.ws.properties";
 
-	private static Log log = LogFactory.getLog(Fixture.class);
+    private static Log log = LogFactory.getLog(Fixture.class);
 
-	/*
-	 * general
-	 */
-	public static String TEST_ROOT_FOLDER_NAME = "fit_" + UUID.randomUUID().toString();
+    /*
+     * general
+     */
+    public static String TEST_ROOT_FOLDER_NAME = "fit_" + UUID.randomUUID().toString();
 
-	/*
-	 * test data setup
-	 */
-	private static FixtureSetup testData = new FixtureSetup();
+    /*
+     * test data setup
+     */
+    private static FixtureSetup testData = new FixtureSetup();
 
-	/**
-	 * @return session parameter
-	 */
-	public static Map<String, String> getParamter() {
-		return parameter;
-	}
+    /**
+     * @return session parameter
+     */
+    public static Map<String, String> getParamter() {
+        return parameter;
+    }
 
-	/**
-	 * Overwriting default session parameter.
-	 * 
-	 * @param paramter
-	 */
-	public static void setParamter(Map<String, String> paramter) {
-		FixtureData.changeValues(paramter);
-		Fixture.parameter = paramter;
-	}
+    /**
+     * Overwriting default session parameter.
+     * 
+     * @param paramter
+     */
+    public static void setParamter(Map<String, String> paramter) {
+        FixtureData.changeValues(paramter);
+        Fixture.parameter = paramter;
+    }
 
-	/**
-	 * session parameter.
-	 */
-	private static Map<String, String> parameter = null;
+    /**
+     * session parameter.
+     */
+    private static Map<String, String> parameter = null;
 
-	/**
-	 * Overwriting default session factory.
-	 * 
-	 * @param factory
-	 */
-	public static void setSessionFactory(SessionFactory factory) {
-		Fixture.factory = factory;
-	}
+    /**
+     * Overwriting default session factory.
+     * 
+     * @param factory
+     */
+    public static void setSessionFactory(SessionFactory factory) {
+        Fixture.factory = factory;
+    }
 
-	/**
-	 * @return factory
-	 */
-	public static SessionFactory getSessionFactory() {
-		return Fixture.factory;
-	}
+    /**
+     * @return factory
+     */
+    public static SessionFactory getSessionFactory() {
+        return Fixture.factory;
+    }
 
-	/**
-	 * factory
-	 */
-	private static SessionFactory factory = null;
+    /**
+     * factory
+     */
+    private static SessionFactory factory = null;
 
-	static {
-		// Mock as default
-		Fixture.init();
-	}
+    static {
+        // Mock as default
+        Fixture.init();
+    }
 
-	public static void init() {
-		/* get optional path from system properties */
-		String pathname = System.getProperty(FixtureSessionParameter.CONFIG_PATH);
-		pathname = (pathname != null) ? pathname.trim() : null;
-		Properties properties = null;
-		Map<String, String> sessionParameter = null;
-		SessionFactory factory = null;
-		String factoryClassName = null;
-		try {
-			if (pathname != null && !"".equalsIgnoreCase(pathname)) {
-				// read from file
-				properties = new Properties();
-				FileInputStream in = new FileInputStream(new File(pathname));
-				properties.load(in);
-			} else {
-				// get default settings
-				InputStream in = Fixture.class.getResourceAsStream(Fixture.CONNECTION_PATH);
-				properties = new Properties();
-				properties.load(in);
-			}
+    public static void init() {
+        /* get optional path from system properties */
+        String pathname = System.getProperty(FixtureSessionParameter.CONFIG_PATH);
+        pathname = (pathname != null) ? pathname.trim() : null;
+        Properties properties = null;
+        Map<String, String> sessionParameter = null;
+        SessionFactory factory = null;
+        String factoryClassName = null;
+        try {
+            if (pathname != null && !"".equalsIgnoreCase(pathname)) {
+                // read from file
+                properties = new Properties();
+                FileInputStream in = new FileInputStream(new File(pathname));
+                properties.load(in);
+            } else {
+                // get default settings
+                InputStream in = Fixture.class.getResourceAsStream(Fixture.CONNECTION_PATH);
+                properties = new Properties();
+                properties.load(in);
+            }
 
-			/* convert to map, filter empty values */
-			sessionParameter = new Hashtable<String, String>();
-			for (Entry<Object, Object> se : properties.entrySet()) {
-				String key = (String) se.getKey();
-				String value = ((String) se.getValue()).trim();
-				if (value != null && !"".equalsIgnoreCase(value)) {
-					sessionParameter.put(key, value);
-				}
-			}
-			Fixture.setParamter(sessionParameter);
+            /* convert to map, filter empty values */
+            sessionParameter = new Hashtable<String, String>();
+            for (Entry<Object, Object> se : properties.entrySet()) {
+                String key = (String) se.getKey();
+                String value = ((String) se.getValue()).trim();
+                if (value != null && !"".equalsIgnoreCase(value)) {
+                    sessionParameter.put(key, value);
+                }
+            }
+            Fixture.setParamter(sessionParameter);
 
-			/* load factory class */
-			factoryClassName = sessionParameter.get(FixtureSessionParameter.SESSION_FACTORY);
-			if (factoryClassName != null && !"".equalsIgnoreCase(factoryClassName)) {
-				Class<?> clazz = Class.forName(factoryClassName);
-				factory = (SessionFactory) clazz.newInstance();
-			} else {
-				/* default */
-				factory = SessionFactoryImpl.newInstance();
-			}
-			Fixture.setSessionFactory(factory);
-		} catch (IOException e) {
-			Fixture.log.error(pathname, e);
-			throw new CmisRuntimeException(pathname, e);
-		} catch (Exception e) {
-			Fixture.log.error(factoryClassName, e);
-			throw new CmisRuntimeException(factoryClassName, e);
-		}
-	}
+            /* load factory class */
+            factoryClassName = sessionParameter.get(FixtureSessionParameter.SESSION_FACTORY);
+            if (factoryClassName != null && !"".equalsIgnoreCase(factoryClassName)) {
+                Class<?> clazz = Class.forName(factoryClassName);
+                factory = (SessionFactory) clazz.newInstance();
+            } else {
+                /* default */
+                factory = SessionFactoryImpl.newInstance();
+            }
+            Fixture.setSessionFactory(factory);
+        } catch (IOException e) {
+            Fixture.log.error(pathname, e);
+            throw new CmisRuntimeException(pathname, e);
+        } catch (Exception e) {
+            Fixture.log.error(factoryClassName, e);
+            throw new CmisRuntimeException(factoryClassName, e);
+        }
+    }
 
-	public static void setUpTestData(Session session) {
-		Fixture.testData.setup();
-	}
+    public static void setUpTestData(Session session) {
+        Fixture.testData.setup();
+    }
 
-	public static void teardownTestData(Session session) {
-		Fixture.testData.teardown();
-	}
+    public static void teardownTestData(Session session) {
+        Fixture.testData.teardown();
+    }
 
-	private static boolean isLogged = false;
+    private static boolean isLogged = false;
 
-	public static void logHeader() {
-		if (!Fixture.isLogged) {
-			/*
-			 * log header only once
-			 */
-			Fixture.log.info("---------------------------------------------------------------");
-			Fixture.log.info("--- OpenCMIS FIT Test Suite (1) --------------------------------");
-			Fixture.log.info("---------------------------------------------------------------");
-			Fixture.log.info("config path (prop): " + System.getProperty(FixtureSessionParameter.CONFIG_PATH));
-			Fixture.log.info("session factory:    " + Fixture.getSessionFactory().getClass());
-			Fixture.log.info("session parameter:  " + Fixture.getParamter());
+    public static void logHeader() {
+        if (!Fixture.isLogged) {
+            /*
+             * log header only once
+             */
+            Fixture.log.info("---------------------------------------------------------------");
+            Fixture.log.info("--- OpenCMIS FIT Test Suite (1) --------------------------------");
+            Fixture.log.info("---------------------------------------------------------------");
+            Fixture.log.info("config path (prop): " + System.getProperty(FixtureSessionParameter.CONFIG_PATH));
+            Fixture.log.info("session factory:    " + Fixture.getSessionFactory().getClass());
+            Fixture.log.info("session parameter:  " + Fixture.getParamter());
 
-			Fixture.log.info("---------------------------------------------------------------");
+            Fixture.log.info("---------------------------------------------------------------");
 
-			Fixture.isLogged = true;
-		}
-	}
+            Fixture.isLogged = true;
+        }
+    }
 
-	public static void enableAtomPub() {
-		Fixture.CONNECTION_PATH = Fixture.CONNECTION_ATOM_PATH;
-	}
+    public static void enableAtomPub() {
+        Fixture.CONNECTION_PATH = Fixture.CONNECTION_ATOM_PATH;
+    }
 
-	public static void enableWebServices() {
-		Fixture.CONNECTION_PATH = Fixture.CONNECTION_WS_PATH;
-	}
+    public static void enableWebServices() {
+        Fixture.CONNECTION_PATH = Fixture.CONNECTION_WS_PATH;
+    }
 
-	public static String getTestRootId() {
-		return Fixture.testData.getTestRootId();
-	}
+    public static String getTestRootId() {
+        return Fixture.testData.getTestRootId();
+    }
 
 }

@@ -45,126 +45,122 @@ import org.junit.Test;
  */
 public abstract class AbstractSampleIT {
 
-	private static Session fSession;
+    private static Session fSession;
 
-	/**
-	 * Returns the current Session object.
-	 */
-	protected Session getSession() {
-		return fSession;
-	}
+    /**
+     * Returns the current Session object.
+     */
+    protected Session getSession() {
+        return fSession;
+    }
 
-	/**
-	 * Returns a new Session object.
-	 */
-	protected abstract Session createSession();
+    /**
+     * Returns a new Session object.
+     */
+    protected abstract Session createSession();
 
-	@BeforeClass
-	public static void setUpClass() {
-		fSession = null;
-	}
+    @BeforeClass
+    public static void setUpClass() {
+        fSession = null;
+    }
 
-	@Before
-	public void setUp() {
-		if (fSession == null) {
-			fSession = createSession();
-		}
-	}
+    @Before
+    public void setUp() {
+        if (fSession == null) {
+            fSession = createSession();
+        }
+    }
 
-	/**
-	 * Simple repository info test.
-	 */
-	@Test
-	public void testRepositoryInfo() {
-		RepositoryInfo ri = getSession().getRepositoryInfo();
-		assertNotNull(ri);
-		assertEquals(SessionFactory.getRepositoryId(), ri.getId());
-		assertNotNull(ri.getName());
-		assertNotNull(ri.getRootFolderId());
-		assertNotNull(ri.getCmisVersionSupported());
-		assertNotNull(ri.getCapabilities());
-		// assertNotNull(ri.getAclCapabilities());
-	}
+    /**
+     * Simple repository info test.
+     */
+    @Test
+    public void testRepositoryInfo() {
+        RepositoryInfo ri = getSession().getRepositoryInfo();
+        assertNotNull(ri);
+        assertEquals(SessionFactory.getRepositoryId(), ri.getId());
+        assertNotNull(ri.getName());
+        assertNotNull(ri.getRootFolderId());
+        assertNotNull(ri.getCmisVersionSupported());
+        assertNotNull(ri.getCapabilities());
+        // assertNotNull(ri.getAclCapabilities());
+    }
 
-	/**
-	 * Simple types test.
-	 */
-	@Test
-	public void testTypes() {
-		String documentBaseId = "cmis:document";
-		String folderBaseId = "cmis:folder";
+    /**
+     * Simple types test.
+     */
+    @Test
+    public void testTypes() {
+        String documentBaseId = "cmis:document";
+        String folderBaseId = "cmis:folder";
 
-		// check document type definition
-		ObjectType documentType = getSession()
-				.getTypeDefinition(documentBaseId);
-		checkBaseType(documentBaseId, BaseTypeId.CMIS_DOCUMENT, documentType);
+        // check document type definition
+        ObjectType documentType = getSession().getTypeDefinition(documentBaseId);
+        checkBaseType(documentBaseId, BaseTypeId.CMIS_DOCUMENT, documentType);
 
-		// check folder type definition
-		ObjectType folderType = getSession().getTypeDefinition(folderBaseId);
-		checkBaseType(folderBaseId, BaseTypeId.CMIS_FOLDER, folderType);
+        // check folder type definition
+        ObjectType folderType = getSession().getTypeDefinition(folderBaseId);
+        checkBaseType(folderBaseId, BaseTypeId.CMIS_FOLDER, folderType);
 
-		// get base types via getTypesChildren
-		PagingIterable<ObjectType> baseTypes = getSession().getTypeChildren(
-				null, true, 10);
-		assertNotNull(baseTypes);
+        // get base types via getTypesChildren
+        PagingIterable<ObjectType> baseTypes = getSession().getTypeChildren(null, true, 10);
+        assertNotNull(baseTypes);
 
-		boolean hasDocumentBaseType = false;
-		boolean hasFolderBaseType = false;
-		for (ObjectType ot : baseTypes) {
-			checkBaseType(null, null, ot);
+        boolean hasDocumentBaseType = false;
+        boolean hasFolderBaseType = false;
+        for (ObjectType ot : baseTypes) {
+            checkBaseType(null, null, ot);
 
-			if (ot.getId().equals(documentBaseId)) {
-				hasDocumentBaseType = true;
-			}
+            if (ot.getId().equals(documentBaseId)) {
+                hasDocumentBaseType = true;
+            }
 
-			if (ot.getId().equals(folderBaseId)) {
-				hasFolderBaseType = true;
-			}
-		}
+            if (ot.getId().equals(folderBaseId)) {
+                hasFolderBaseType = true;
+            }
+        }
 
-		assertTrue(hasDocumentBaseType);
-		assertTrue(hasFolderBaseType);
+        assertTrue(hasDocumentBaseType);
+        assertTrue(hasFolderBaseType);
 
-		// get base types via getTypeDescendants
-		List<Tree<ObjectType>> baseTypeDesc = getSession().getTypeDescendants(
-				null, -1, true);
-		assertNotNull(baseTypeDesc);
+        // get base types via getTypeDescendants
+        List<Tree<ObjectType>> baseTypeDesc = getSession().getTypeDescendants(null, -1, true);
+        assertNotNull(baseTypeDesc);
 
-		hasDocumentBaseType = false;
-		hasFolderBaseType = false;
-		for (Tree<ObjectType> cot : baseTypeDesc) {
-			assertNotNull(cot);
-			// checkBaseType(null, null, cot.getItem());
+        hasDocumentBaseType = false;
+        hasFolderBaseType = false;
+        for (Tree<ObjectType> cot : baseTypeDesc) {
+            assertNotNull(cot);
+            // checkBaseType(null, null, cot.getItem());
 
-			if (cot.getItem().getId().equals(documentBaseId)) {
-				hasDocumentBaseType = true;
-			}
+            if (cot.getItem().getId().equals(documentBaseId)) {
+                hasDocumentBaseType = true;
+            }
 
-			if (cot.getItem().getId().equals(folderBaseId)) {
-				hasFolderBaseType = true;
-			}
-		}
+            if (cot.getItem().getId().equals(folderBaseId)) {
+                hasFolderBaseType = true;
+            }
+        }
 
-		assertTrue(hasDocumentBaseType);
-		assertTrue(hasFolderBaseType);
-	}
+        assertTrue(hasDocumentBaseType);
+        assertTrue(hasFolderBaseType);
+    }
 
-	/**
-	 * Checks a base type.
-	 */
-	private void checkBaseType(String id, BaseTypeId baseType,
-			ObjectType objectType) {
-		assertNotNull(objectType);
-		if (id != null) {
-			assertEquals(id, objectType.getId());
-		}
-		if (baseType != null) {
-			assertEquals(baseType, objectType.getBaseTypeId());
-		}
-		assertTrue(objectType.isBaseType());
-		assertNull(objectType.getBaseType());
-		assertNull(objectType.getParentType());
-		assertNotNull(objectType.getPropertyDefinitions());
-		assertFalse(objectType.getPropertyDefinitions().isEmpty());
-	}
+    /**
+     * Checks a base type.
+     */
+    private void checkBaseType(String id, BaseTypeId baseType, ObjectType objectType) {
+        assertNotNull(objectType);
+        if (id != null) {
+            assertEquals(id, objectType.getId());
+        }
+        if (baseType != null) {
+            assertEquals(baseType, objectType.getBaseTypeId());
+        }
+        assertTrue(objectType.isBaseType());
+        assertNull(objectType.getBaseType());
+        assertNull(objectType.getParentType());
+        assertNotNull(objectType.getPropertyDefinitions());
+        assertFalse(objectType.getPropertyDefinitions().isEmpty());
+    }
 }

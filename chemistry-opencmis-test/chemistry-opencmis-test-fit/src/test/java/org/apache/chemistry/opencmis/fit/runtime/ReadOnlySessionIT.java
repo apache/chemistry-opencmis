@@ -28,25 +28,25 @@ import org.junit.Test;
  */
 public class ReadOnlySessionIT extends AbstractSessionTest {
 
-	@Test
-	public void testSession() {
-		Assert.assertNotNull(this.session.getDefaultContext());
-		Assert.assertNotNull(this.session.getLocale());
-		Assert.assertNotNull(this.session.getObjectFactory());
-		Assert.assertNotNull(this.session.getRepositoryInfo());
-	}
+    @Test
+    public void testSession() {
+        Assert.assertNotNull(this.session.getDefaultContext());
+        Assert.assertNotNull(this.session.getLocale());
+        Assert.assertNotNull(this.session.getObjectFactory());
+        Assert.assertNotNull(this.session.getRepositoryInfo());
+    }
 
-	@Test
-	public void testSessionObjectAccess() {
-		Folder root = this.session.getRootFolder();
-		Assert.assertNotNull(root);
-		String id = root.getId();
-		Assert.assertNotNull(id);
-	}
+    @Test
+    public void testSessionObjectAccess() {
+        Folder root = this.session.getRootFolder();
+        Assert.assertNotNull(root);
+        String id = root.getId();
+        Assert.assertNotNull(id);
+    }
 
-	@Test
-	public void testSessionClear() {
-		this.session.clear();
-	}
+    @Test
+    public void testSessionClear() {
+        this.session.clear();
+    }
 
 }

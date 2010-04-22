@@ -30,18 +30,18 @@ import org.apache.chemistry.opencmis.commons.api.CmisBinding;
  */
 public interface Command {
 
-	/**
-	 * Returns the command name.
-	 */
-	String getCommandName();
+    /**
+     * Returns the command name.
+     */
+    String getCommandName();
 
-	/**
-	 * Returns the usage hint.
-	 */
-	String getUsage();
+    /**
+     * Returns the usage hint.
+     */
+    String getUsage();
 
-	/**
-	 * Executes the command.
-	 */
-	void execute(CmisBinding binding, String[] args, PrintWriter output);
+    /**
+     * Executes the command.
+     */
+    void execute(CmisBinding binding, String[] args, PrintWriter output);
 }

@@ -29,14 +29,14 @@ import org.apache.chemistry.opencmis.fit.SessionFactory;
  */
 public class WebServicesSimpleBindingIT extends AbstractSimpleBindingIT {
 
-	@Override
-	protected CmisBinding createBinding() {
-		return SessionFactory.createWebServicesBinding();
-	}
+    @Override
+    protected CmisBinding createBinding() {
+        return SessionFactory.createWebServicesBinding();
+    }
 
-	@Override
-	protected String getRepositoryId() {
-		return SessionFactory.getRepositoryId();
-	}
+    @Override
+    protected String getRepositoryId() {
+        return SessionFactory.getRepositoryId();
+    }
 
 }

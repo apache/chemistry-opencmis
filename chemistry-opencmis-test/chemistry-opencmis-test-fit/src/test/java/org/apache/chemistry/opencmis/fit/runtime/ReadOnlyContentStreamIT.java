@@ -30,27 +30,27 @@ import org.junit.Test;
 
 public class ReadOnlyContentStreamIT extends AbstractSessionTest {
 
-	@Test
-	public void readContentStream() throws IOException {
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME.toString();
-		Document document = (Document) this.session.getObjectByPath(path);
-		Assert.assertNotNull("document not found: " + path, document);
+    @Test
+    public void readContentStream() throws IOException {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME.toString();
+        Document document = (Document) this.session.getObjectByPath(path);
+        Assert.assertNotNull("document not found: " + path, document);
 
-		ContentStream s = document.getContentStream();
+        ContentStream s = document.getContentStream();
 
-		Assert.assertNotNull(s.getMimeType());
-		s.getLength();
-		s.getFileName();
+        Assert.assertNotNull(s.getMimeType());
+        s.getLength();
+        s.getFileName();
 
-		InputStream is = s.getStream();
-		Assert.assertNotNull(is);
+        InputStream is = s.getStream();
+        Assert.assertNotNull(is);
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		baos.write(is.read());
-		byte[] b = baos.toByteArray();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(is.read());
+        byte[] b = baos.toByteArray();
 
-		Assert.assertNotNull(b);
-		Assert.assertTrue(b.length > 0);
-	}
+        Assert.assertNotNull(b);
+        Assert.assertTrue(b.length > 0);
+    }
 
 }

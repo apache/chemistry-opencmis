@@ -29,9 +29,9 @@ import org.apache.chemistry.opencmis.fit.SessionFactory;
  */
 public class AtomPubSampleIT extends AbstractSampleIT {
 
-	@Override
-	protected Session createSession() {
-		return SessionFactory.createAtomPubSession();
-	}
+    @Override
+    protected Session createSession() {
+        return SessionFactory.createAtomPubSession();
+    }
 
 }

@@ -34,105 +34,92 @@ import org.junit.Test;
 
 public class ReadOnlyTypeIT extends AbstractSessionTest {
 
-	@Test
-	public void readOptionalBaseTypePolicy() {
-		try {
-			ObjectType otd = this.session
-					.getTypeDefinition(ObjectType.POLICY_BASETYPE_ID);
-			Assert.assertTrue(otd instanceof PolicyType);
-			Assert.assertEquals(ObjectType.POLICY_BASETYPE_ID, otd.getId());
-			Assert.assertEquals(null, otd.getBaseType());
-		} catch (CmisObjectNotFoundException e) {
-			// policies not supported
-		}
-	}
+    @Test
+    public void readOptionalBaseTypePolicy() {
+        try {
+            ObjectType otd = this.session.getTypeDefinition(ObjectType.POLICY_BASETYPE_ID);
+            Assert.assertTrue(otd instanceof PolicyType);
+            Assert.assertEquals(ObjectType.POLICY_BASETYPE_ID, otd.getId());
+            Assert.assertEquals(null, otd.getBaseType());
+        } catch (CmisObjectNotFoundException e) {
+            // policies not supported
+        }
+    }
 
-	@Test
-	public void readOptionalBaseTypeRelation() {
-		try {
-			ObjectType otd = this.session
-					.getTypeDefinition(ObjectType.RELATIONSHIP_BASETYPE_ID);
-			Assert.assertNotNull(otd);
-			Assert.assertTrue(otd instanceof RelationshipType);
-			Assert.assertEquals(ObjectType.RELATIONSHIP_BASETYPE_ID, otd
-					.getId());
-			Assert.assertEquals(null, otd.getBaseType());
-		} catch (CmisObjectNotFoundException e) {
-			// policies not supported
-		}
-	}
+    @Test
+    public void readOptionalBaseTypeRelation() {
+        try {
+            ObjectType otd = this.session.getTypeDefinition(ObjectType.RELATIONSHIP_BASETYPE_ID);
+            Assert.assertNotNull(otd);
+            Assert.assertTrue(otd instanceof RelationshipType);
+            Assert.assertEquals(ObjectType.RELATIONSHIP_BASETYPE_ID, otd.getId());
+            Assert.assertEquals(null, otd.getBaseType());
+        } catch (CmisObjectNotFoundException e) {
+            // policies not supported
+        }
+    }
 
-	@Test
-	public void readBaseTypeDocument() {
-		ObjectType otd = this.session
-				.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
-		Assert.assertNotNull(otd);
-		Assert.assertTrue(otd instanceof DocumentType);
-		Assert.assertEquals(ObjectType.DOCUMENT_BASETYPE_ID, otd.getId());
-		Assert.assertEquals(null, otd.getBaseType());
+    @Test
+    public void readBaseTypeDocument() {
+        ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
+        Assert.assertNotNull(otd);
+        Assert.assertTrue(otd instanceof DocumentType);
+        Assert.assertEquals(ObjectType.DOCUMENT_BASETYPE_ID, otd.getId());
+        Assert.assertEquals(null, otd.getBaseType());
 
-	}
+    }
 
-	@Test
-	public void readBaseTypeFolder() {
-		ObjectType otf = this.session
-				.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
-		Assert.assertNotNull(otf);
-		Assert.assertTrue(otf instanceof FolderType);
-		Assert.assertEquals(ObjectType.FOLDER_BASETYPE_ID, otf.getId());
-		Assert.assertEquals(null, otf.getBaseType());
-	}
+    @Test
+    public void readBaseTypeFolder() {
+        ObjectType otf = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
+        Assert.assertNotNull(otf);
+        Assert.assertTrue(otf instanceof FolderType);
+        Assert.assertEquals(ObjectType.FOLDER_BASETYPE_ID, otf.getId());
+        Assert.assertEquals(null, otf.getBaseType());
+    }
 
-	@Test
-	public void readTypeChildrenDocument() {
-		ObjectType otd = this.session
-				.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
-		Assert.assertNotNull(otd);
-		PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd
-				.getId(), true, 2);
-		Assert.assertNotNull(pc);
+    @Test
+    public void readTypeChildrenDocument() {
+        ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
+        Assert.assertNotNull(otd);
+        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true, 2);
+        Assert.assertNotNull(pc);
 
-		for (ObjectType ot1 : pc) {
-			ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
-			Assert.assertEquals(ot1.getId(), ot2.getId());
-		}
-	}
+        for (ObjectType ot1 : pc) {
+            ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
+            Assert.assertEquals(ot1.getId(), ot2.getId());
+        }
+    }
 
-	@Test
-	public void readTypeChildrenFolder() {
-		ObjectType otd = this.session
-				.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
-		Assert.assertNotNull(otd);
-		PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd
-				.getId(), true, 2);
-		Assert.assertNotNull(pc);
+    @Test
+    public void readTypeChildrenFolder() {
+        ObjectType otd = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
+        Assert.assertNotNull(otd);
+        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true, 2);
+        Assert.assertNotNull(pc);
 
-		for (ObjectType ot1 : pc) {
-			ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
-			Assert.assertEquals(ot1, ot2);
-		}
-	}
+        for (ObjectType ot1 : pc) {
+            ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
+            Assert.assertEquals(ot1, ot2);
+        }
+    }
 
-	@Test
-	public void readTypeDescandantsDocument() {
-		ObjectType otd = this.session
-				.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
-		Assert.assertNotNull(otd);
-		List<Tree<ObjectType>> desc = this.session.getTypeDescendants(otd
-				.getId(), 1, true);
-		Assert.assertNotNull(desc);
-		Assert.assertFalse(desc.isEmpty());
-	}
+    @Test
+    public void readTypeDescandantsDocument() {
+        ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
+        Assert.assertNotNull(otd);
+        List<Tree<ObjectType>> desc = this.session.getTypeDescendants(otd.getId(), 1, true);
+        Assert.assertNotNull(desc);
+        Assert.assertFalse(desc.isEmpty());
+    }
 
-	@Test
-	public void readTypeDescandantsFolder() {
-		ObjectType otd = this.session
-				.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
-		Assert.assertNotNull(otd);
-		List<Tree<ObjectType>> desc = this.session.getTypeDescendants(otd
-				.getId(), 1, true);
-		Assert.assertNotNull(desc);
-		desc.isEmpty();
-	}
+    @Test
+    public void readTypeDescandantsFolder() {
+        ObjectType otd = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
+        Assert.assertNotNull(otd);
+        List<Tree<ObjectType>> desc = this.session.getTypeDescendants(otd.getId(), 1, true);
+        Assert.assertNotNull(desc);
+        desc.isEmpty();
+    }
 
 }

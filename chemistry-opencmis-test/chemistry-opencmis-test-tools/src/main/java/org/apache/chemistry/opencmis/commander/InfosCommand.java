@@ -26,40 +26,40 @@ import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 
 public class InfosCommand implements Command {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.commander.Command#getCommandName()
-	 */
-	public String getCommandName() {
-		return "infos";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.commander.Command#getCommandName()
+     */
+    public String getCommandName() {
+        return "infos";
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.opencmis.commander.Command#getUsage()
-	 */
-	public String getUsage() {
-		return "INFOS";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.opencmis.commander.Command#getUsage()
+     */
+    public String getUsage() {
+        return "INFOS";
+    }
 
-	public void execute(CmisBinding binding, String[] args, PrintWriter output) {
-		List<RepositoryInfo> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(null);
+    public void execute(CmisBinding binding, String[] args, PrintWriter output) {
+        List<RepositoryInfo> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(null);
 
-		for (RepositoryInfo repositoryInfo : repositoryInfos) {
-			printRepositoryInfo(repositoryInfo, output);
-		}
-	}
+        for (RepositoryInfo repositoryInfo : repositoryInfos) {
+            printRepositoryInfo(repositoryInfo, output);
+        }
+    }
 
-	private void printRepositoryInfo(RepositoryInfo repositoryInfo, PrintWriter output) {
-		output.println("Id:           " + repositoryInfo.getId());
-		output.println("Name:         " + repositoryInfo.getProductName());
-		output.println("Description:  " + repositoryInfo.getDescription());
-		output.println("Vendor:       " + repositoryInfo.getVendorName());
-		output.println("Product:      " + repositoryInfo.getProductName() + " " + repositoryInfo.getProductVersion());
-		output.println("Root Folder:  " + repositoryInfo.getRootFolderId());
-		output.println("Capabilities: " + repositoryInfo.getCapabilities());
-		output.println("------------------------------------------------------");
-	}
+    private void printRepositoryInfo(RepositoryInfo repositoryInfo, PrintWriter output) {
+        output.println("Id:           " + repositoryInfo.getId());
+        output.println("Name:         " + repositoryInfo.getProductName());
+        output.println("Description:  " + repositoryInfo.getDescription());
+        output.println("Vendor:       " + repositoryInfo.getVendorName());
+        output.println("Product:      " + repositoryInfo.getProductName() + " " + repositoryInfo.getProductVersion());
+        output.println("Root Folder:  " + repositoryInfo.getRootFolderId());
+        output.println("Capabilities: " + repositoryInfo.getCapabilities());
+        output.println("------------------------------------------------------");
+    }
 }

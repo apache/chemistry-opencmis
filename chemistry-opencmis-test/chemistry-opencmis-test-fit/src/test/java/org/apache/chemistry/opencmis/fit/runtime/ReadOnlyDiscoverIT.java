@@ -29,42 +29,39 @@ import org.junit.Test;
 
 public class ReadOnlyDiscoverIT extends AbstractSessionTest {
 
-	private static Log log = LogFactory.getLog(ReadOnlyDiscoverIT.class);
+    private static Log log = LogFactory.getLog(ReadOnlyDiscoverIT.class);
 
-	@Test
-	public void query() {
-		CapabilityQuery query = this.session.getRepositoryInfo()
-				.getCapabilities().getQueryCapability();
+    @Test
+    public void query() {
+        CapabilityQuery query = this.session.getRepositoryInfo().getCapabilities().getQueryCapability();
 
-		switch (query) {
-		case NONE:
-			ReadOnlyDiscoverIT.log.info("queries not supported");
-			break;
-		default:
-			PagingIterable<QueryResult> resultSet = this.session.query(
-					FixtureData.QUERY.toString(), false, 2);
-			Assert.assertNotNull(resultSet);
-			// Assert.assertFalse(resultSet.isEmpty());
-			for (QueryResult o : resultSet) {
-				Assert.assertNotNull(o);
-			}
+        switch (query) {
+        case NONE:
+            ReadOnlyDiscoverIT.log.info("queries not supported");
+            break;
+        default:
+            PagingIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false, 2);
+            Assert.assertNotNull(resultSet);
+            // Assert.assertFalse(resultSet.isEmpty());
+            for (QueryResult o : resultSet) {
+                Assert.assertNotNull(o);
+            }
 
-			break;
-		}
+            break;
+        }
 
-	}
+    }
 
-	@Test
-	public void changes() {
-		CapabilityChanges changes = this.session.getRepositoryInfo()
-				.getCapabilities().getChangesCapability();
+    @Test
+    public void changes() {
+        CapabilityChanges changes = this.session.getRepositoryInfo().getCapabilities().getChangesCapability();
 
-		switch (changes) {
-		case NONE:
-			ReadOnlyDiscoverIT.log.info("changes not supported");
-			break;
-		default:
-			break;
-		}
-	}
+        switch (changes) {
+        case NONE:
+            ReadOnlyDiscoverIT.log.info("changes not supported");
+            break;
+        default:
+            break;
+        }
+    }
 }
