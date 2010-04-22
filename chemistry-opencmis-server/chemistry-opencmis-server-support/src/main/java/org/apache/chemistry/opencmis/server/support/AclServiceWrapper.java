@@ -32,87 +32,87 @@ import org.apache.chemistry.opencmis.server.spi.CmisAclService;
  */
 public class AclServiceWrapper extends AbstractServiceWrapper implements CmisAclService {
 
-	private CmisAclService fService;
+    private CmisAclService fService;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param service
-	 *            the real service object
-	 */
-	public AclServiceWrapper(CmisAclService service) {
-		if (service == null) {
-			throw new IllegalArgumentException("Service must be set!");
-		}
+    /**
+     * Constructor.
+     * 
+     * @param service
+     *            the real service object
+     */
+    public AclServiceWrapper(CmisAclService service) {
+        if (service == null) {
+            throw new IllegalArgumentException("Service must be set!");
+        }
 
-		fService = service;
-	}
+        fService = service;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisAclService#applyAcl(org.apache.opencmis
-	 * .server.spi.CallContext , java.lang.String, java.lang.String,
-	 * org.apache.opencmis.commons.provider.AccessControlList,
-	 * org.apache.opencmis.commons.enums.AclPropagation)
-	 */
-	public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl aces,
-			AclPropagation aclPropagation) {
-		checkRepositoryId(repositoryId);
-		checkId("Object Id", objectId);
-		aclPropagation = getDefault(aclPropagation);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisAclService#applyAcl(org.apache.opencmis
+     * .server.spi.CallContext , java.lang.String, java.lang.String,
+     * org.apache.opencmis.commons.provider.AccessControlList,
+     * org.apache.opencmis.commons.enums.AclPropagation)
+     */
+    public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl aces,
+            AclPropagation aclPropagation) {
+        checkRepositoryId(repositoryId);
+        checkId("Object Id", objectId);
+        aclPropagation = getDefault(aclPropagation);
 
-		try {
-			return fService.applyAcl(context, repositoryId, objectId, aces, aclPropagation);
-		} catch (Exception e) {
-			throw createCmisException(e);
-		}
-	}
+        try {
+            return fService.applyAcl(context, repositoryId, objectId, aces, aclPropagation);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisAclService#applyAcl(org.apache.opencmis
-	 * .server.spi.CallContext , java.lang.String, java.lang.String,
-	 * org.apache.opencmis.commons.provider.AccessControlList,
-	 * org.apache.opencmis.commons.provider.AccessControlList,
-	 * org.apache.opencmis.commons.enums.AclPropagation,
-	 * org.apache.opencmis.commons.api.ExtensionsData)
-	 */
-	public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl addAces, Acl removeAces,
-			AclPropagation aclPropagation, ExtensionsData extension) {
-		checkRepositoryId(repositoryId);
-		checkId("Object Id", objectId);
-		aclPropagation = getDefault(aclPropagation);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisAclService#applyAcl(org.apache.opencmis
+     * .server.spi.CallContext , java.lang.String, java.lang.String,
+     * org.apache.opencmis.commons.provider.AccessControlList,
+     * org.apache.opencmis.commons.provider.AccessControlList,
+     * org.apache.opencmis.commons.enums.AclPropagation,
+     * org.apache.opencmis.commons.api.ExtensionsData)
+     */
+    public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl addAces, Acl removeAces,
+            AclPropagation aclPropagation, ExtensionsData extension) {
+        checkRepositoryId(repositoryId);
+        checkId("Object Id", objectId);
+        aclPropagation = getDefault(aclPropagation);
 
-		try {
-			return fService.applyAcl(context, repositoryId, objectId, addAces, removeAces, aclPropagation, extension);
-		} catch (Exception e) {
-			throw createCmisException(e);
-		}
-	}
+        try {
+            return fService.applyAcl(context, repositoryId, objectId, addAces, removeAces, aclPropagation, extension);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisAclService#getAcl(org.apache.opencmis
-	 * .server.spi.CallContext , java.lang.String, java.lang.String,
-	 * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData)
-	 */
-	public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
-			ExtensionsData extension) {
-		checkRepositoryId(repositoryId);
-		checkId("Object Id", objectId);
-		onlyBasicPermissions = getDefaultTrue(onlyBasicPermissions);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisAclService#getAcl(org.apache.opencmis
+     * .server.spi.CallContext , java.lang.String, java.lang.String,
+     * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData)
+     */
+    public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
+            ExtensionsData extension) {
+        checkRepositoryId(repositoryId);
+        checkId("Object Id", objectId);
+        onlyBasicPermissions = getDefaultTrue(onlyBasicPermissions);
 
-		try {
-			return fService.getAcl(context, repositoryId, objectId, onlyBasicPermissions, extension);
-		} catch (Exception e) {
-			throw createCmisException(e);
-		}
-	}
+        try {
+            return fService.getAcl(context, repositoryId, objectId, onlyBasicPermissions, extension);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
 
 }

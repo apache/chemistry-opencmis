@@ -33,57 +33,57 @@ import org.apache.chemistry.opencmis.server.spi.CmisAclService;
  */
 public class AclService implements CmisAclService {
 
-	private RepositoryMap fRepositoryMap;
+    private RepositoryMap fRepositoryMap;
 
-	/**
-	 * Constructor.
-	 */
-	public AclService(RepositoryMap repositoryMap) {
-		fRepositoryMap = repositoryMap;
-	}
+    /**
+     * Constructor.
+     */
+    public AclService(RepositoryMap repositoryMap) {
+        fRepositoryMap = repositoryMap;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisAclService#applyAcl(org.apache.opencmis
-	 * .server.spi.CallContext , java.lang.String, java.lang.String,
-	 * org.apache.opencmis.commons.provider.AccessControlList,
-	 * org.apache.opencmis.commons.enums.AclPropagation)
-	 */
-	public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl aces,
-			AclPropagation aclPropagation) {
-		fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
-		throw new CmisNotSupportedException("applyAcl not supported!");
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisAclService#applyAcl(org.apache.opencmis
+     * .server.spi.CallContext , java.lang.String, java.lang.String,
+     * org.apache.opencmis.commons.provider.AccessControlList,
+     * org.apache.opencmis.commons.enums.AclPropagation)
+     */
+    public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl aces,
+            AclPropagation aclPropagation) {
+        fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
+        throw new CmisNotSupportedException("applyAcl not supported!");
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisAclService#applyAcl(org.apache.opencmis
-	 * .server.spi.CallContext , java.lang.String, java.lang.String,
-	 * org.apache.opencmis.commons.provider.AccessControlList,
-	 * org.apache.opencmis.commons.provider.AccessControlList,
-	 * org.apache.opencmis.commons.enums.AclPropagation,
-	 * org.apache.opencmis.commons.api.ExtensionsData)
-	 */
-	public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl addAces, Acl removeAces,
-			AclPropagation aclPropagation, ExtensionsData extension) {
-		fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
-		throw new CmisNotSupportedException("applyAcl not supported!");
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisAclService#applyAcl(org.apache.opencmis
+     * .server.spi.CallContext , java.lang.String, java.lang.String,
+     * org.apache.opencmis.commons.provider.AccessControlList,
+     * org.apache.opencmis.commons.provider.AccessControlList,
+     * org.apache.opencmis.commons.enums.AclPropagation,
+     * org.apache.opencmis.commons.api.ExtensionsData)
+     */
+    public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl addAces, Acl removeAces,
+            AclPropagation aclPropagation, ExtensionsData extension) {
+        fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
+        throw new CmisNotSupportedException("applyAcl not supported!");
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisAclService#getAcl(org.apache.opencmis
-	 * .server.spi.CallContext , java.lang.String, java.lang.String,
-	 * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData)
-	 */
-	public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
-			ExtensionsData extension) {
-		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getAcl(context, objectId);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisAclService#getAcl(org.apache.opencmis
+     * .server.spi.CallContext , java.lang.String, java.lang.String,
+     * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData)
+     */
+    public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
+            ExtensionsData extension) {
+        return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getAcl(context, objectId);
+    }
 }

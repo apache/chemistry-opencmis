@@ -34,78 +34,78 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedExce
  */
 public class RepositoryMap {
 
-	private Map<String, FileShareRepository> fMap;
-	private Map<String, String> fLogins;
+    private Map<String, FileShareRepository> fMap;
+    private Map<String, String> fLogins;
 
-	public RepositoryMap() {
-		fMap = new HashMap<String, FileShareRepository>();
-		fLogins = new HashMap<String, String>();
-	}
+    public RepositoryMap() {
+        fMap = new HashMap<String, FileShareRepository>();
+        fLogins = new HashMap<String, String>();
+    }
 
-	/**
-	 * Adds a repository object.
-	 */
-	public void addRepository(FileShareRepository fsr) {
-		if ((fsr == null) || (fsr.getRepositoryId() == null)) {
-			return;
-		}
+    /**
+     * Adds a repository object.
+     */
+    public void addRepository(FileShareRepository fsr) {
+        if ((fsr == null) || (fsr.getRepositoryId() == null)) {
+            return;
+        }
 
-		fMap.put(fsr.getRepositoryId(), fsr);
-	}
+        fMap.put(fsr.getRepositoryId(), fsr);
+    }
 
-	/**
-	 * Gets a repository object by id.
-	 */
-	public FileShareRepository getRepository(String repositoryId) {
-		// get repository object
-		FileShareRepository result = fMap.get(repositoryId);
-		if (result == null) {
-			throw new CmisObjectNotFoundException("Unknown repository '" + repositoryId + "'!");
-		}
+    /**
+     * Gets a repository object by id.
+     */
+    public FileShareRepository getRepository(String repositoryId) {
+        // get repository object
+        FileShareRepository result = fMap.get(repositoryId);
+        if (result == null) {
+            throw new CmisObjectNotFoundException("Unknown repository '" + repositoryId + "'!");
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * Gets a repository object by id.
-	 */
-	public FileShareRepository getAuthenticatedRepository(CallContext context, String repositoryId) {
-		// check user and password first
-		if (!authenticate(context.getUsername(), context.getPassword())) {
-			throw new CmisPermissionDeniedException();
-		}
+    /**
+     * Gets a repository object by id.
+     */
+    public FileShareRepository getAuthenticatedRepository(CallContext context, String repositoryId) {
+        // check user and password first
+        if (!authenticate(context.getUsername(), context.getPassword())) {
+            throw new CmisPermissionDeniedException();
+        }
 
-		// get repository object
-		return repositoryId == null ? null : getRepository(repositoryId);
-	}
+        // get repository object
+        return repositoryId == null ? null : getRepository(repositoryId);
+    }
 
-	/**
-	 * Returns all repository objects.
-	 */
-	public Collection<FileShareRepository> getRepositories() {
-		return fMap.values();
-	}
+    /**
+     * Returns all repository objects.
+     */
+    public Collection<FileShareRepository> getRepositories() {
+        return fMap.values();
+    }
 
-	/**
-	 * Adds a login.
-	 */
-	public void addLogin(String username, String password) {
-		if ((username == null) || (password == null)) {
-			return;
-		}
+    /**
+     * Adds a login.
+     */
+    public void addLogin(String username, String password) {
+        if ((username == null) || (password == null)) {
+            return;
+        }
 
-		fLogins.put(username.trim(), password);
-	}
+        fLogins.put(username.trim(), password);
+    }
 
-	/**
-	 * Authenticates a user against the configured logins.
-	 */
-	private boolean authenticate(String username, String password) {
-		String pwd = fLogins.get(username);
-		if (pwd == null) {
-			return false;
-		}
+    /**
+     * Authenticates a user against the configured logins.
+     */
+    private boolean authenticate(String username, String password) {
+        String pwd = fLogins.get(username);
+        if (pwd == null) {
+            return false;
+        }
 
-		return pwd.equals(password);
-	}
+        return pwd.equals(password);
+    }
 }

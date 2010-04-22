@@ -35,25 +35,25 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
  */
 public interface CmisDiscoveryService {
 
-	/**
-	 * Queries the repository.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	public ObjectList query(CallContext context, String repositoryId, String statement, Boolean searchAllVersions,
-			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
+    /**
+     * Queries the repository.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    public ObjectList query(CallContext context, String repositoryId, String statement, Boolean searchAllVersions,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
-	/**
-	 * Retrieves the content changes.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	public ObjectList getContentChanges(CallContext context, String repositoryId, Holder<String> changeLogToken,
-			Boolean includeProperties, String filter, Boolean includePolicyIds, Boolean includeAcl,
-			BigInteger maxItems, ExtensionsData extension, ObjectInfoHolder objectInfos);
+    /**
+     * Retrieves the content changes.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    public ObjectList getContentChanges(CallContext context, String repositoryId, Holder<String> changeLogToken,
+            Boolean includeProperties, String filter, Boolean includePolicyIds, Boolean includeAcl,
+            BigInteger maxItems, ExtensionsData extension, ObjectInfoHolder objectInfos);
 }

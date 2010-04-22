@@ -31,11 +31,11 @@ import java.util.List;
 
 public interface Folder extends Children, SingleFiling, StoredObject {
 
-	/**
-	 * return a list of allowed types of children in this folder
-	 * 
-	 * @return
-	 */
-	List<String> getAllowedChildObjectTypeIds();
+    /**
+     * return a list of allowed types of children in this folder
+     * 
+     * @return
+     */
+    List<String> getAllowedChildObjectTypeIds();
 
 }

@@ -48,170 +48,170 @@ import org.apache.commons.logging.LogFactory;
 
 public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl implements CmisVersioningService {
 
-	private static final Log LOG = LogFactory.getLog(InMemoryVersioningServiceImpl.class.getName());
+    private static final Log LOG = LogFactory.getLog(InMemoryVersioningServiceImpl.class.getName());
 
-	InMemoryObjectServiceImpl fObjectService; // real implementation of the
-	// service
-	AtomLinkInfoProvider fAtomLinkProvider;
+    InMemoryObjectServiceImpl fObjectService; // real implementation of the
+    // service
+    AtomLinkInfoProvider fAtomLinkProvider;
 
-	public InMemoryVersioningServiceImpl(StoreManager storeManager, InMemoryObjectServiceImpl objectService) {
-		super(storeManager);
-		fObjectService = objectService;
-		fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
-	}
+    public InMemoryVersioningServiceImpl(StoreManager storeManager, InMemoryObjectServiceImpl objectService) {
+        super(storeManager);
+        fObjectService = objectService;
+        fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
+    }
 
-	public void cancelCheckOut(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
+    public void cancelCheckOut(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
 
-		StoredObject so = checkStandardParameters(repositoryId, objectId);
-		String user = context.getUsername();
-		VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
+        StoredObject so = checkStandardParameters(repositoryId, objectId);
+        String user = context.getUsername();
+        VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
-		verDoc.cancelCheckOut(user);
-	}
+        verDoc.cancelCheckOut(user);
+    }
 
-	public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId, Boolean major,
-			Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
-			Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+    public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId, Boolean major,
+            Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-		StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
-		String user = context.getUsername();
-		VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
+        StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
+        String user = context.getUsername();
+        VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
-		DocumentVersion pwc = verDoc.getPwc();
+        DocumentVersion pwc = verDoc.getPwc();
 
-		if (null != contentStream)
-			pwc.setContent(contentStream, false);
+        if (null != contentStream)
+            pwc.setContent(contentStream, false);
 
-		if (null != properties && null != properties.getProperties())
-			pwc.setCustomProperties(properties.getProperties());
+        if (null != properties && null != properties.getProperties())
+            pwc.setCustomProperties(properties.getProperties());
 
-		verDoc.checkIn(major, checkinComment, user);
+        verDoc.checkIn(major, checkinComment, user);
 
-		// To be able to provide all Atom links in the response we need
-		// additional information:
-		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        // To be able to provide all Atom links in the response we need
+        // additional information:
+        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
-				IncludeRelationships.NONE, null, false, false, extension);
+        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+                IncludeRelationships.NONE, null, false, false, extension);
 
-		return od;
-	}
+        return od;
+    }
 
-	public ObjectData checkOut(CallContext context, String repositoryId, Holder<String> objectId,
-			ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHolder objectInfos) {
+    public ObjectData checkOut(CallContext context, String repositoryId, Holder<String> objectId,
+            ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHolder objectInfos) {
 
-		StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
-		TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
-		if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT))
-			throw new CmisNotSupportedException("Only documents can be checked-out.");
-		else if (!((DocumentTypeDefinition) typeDef).isVersionable())
-			throw new CmisNotSupportedException("Object can't be checked-out, type is not versionable.");
+        StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
+        TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
+        if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT))
+            throw new CmisNotSupportedException("Only documents can be checked-out.");
+        else if (!((DocumentTypeDefinition) typeDef).isVersionable())
+            throw new CmisNotSupportedException("Object can't be checked-out, type is not versionable.");
 
-		checkIsVersionableObject(so);
+        checkIsVersionableObject(so);
 
-		VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
+        VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
 
-		ContentStream content = null;
+        ContentStream content = null;
 
-		if (so instanceof DocumentVersion) {
-			// get document the version is contained in to c
-			content = ((DocumentVersion) so).getContent(0, -1);
-		} else {
-			content = ((VersionedDocument) so).getLatestVersion(false).getContent(0, -1);
-		}
+        if (so instanceof DocumentVersion) {
+            // get document the version is contained in to c
+            content = ((DocumentVersion) so).getContent(0, -1);
+        } else {
+            content = ((VersionedDocument) so).getLatestVersion(false).getContent(0, -1);
+        }
 
-		if (verDoc.isCheckedOut())
-			throw new CmisUpdateConflictException("Document " + objectId.getValue() + " is already checked out.");
+        if (verDoc.isCheckedOut())
+            throw new CmisUpdateConflictException("Document " + objectId.getValue() + " is already checked out.");
 
-		String user = context.getUsername();
-		checkHasUser(user);
+        String user = context.getUsername();
+        checkHasUser(user);
 
-		DocumentVersion pwc = verDoc.checkOut(content, user);
-		objectId.setValue(pwc.getId()); // return the id of the created pwc
+        DocumentVersion pwc = verDoc.checkOut(content, user);
+        objectId.setValue(pwc.getId()); // return the id of the created pwc
 
-		// To be able to provide all Atom links in the response we need
-		// additional information:
-		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        // To be able to provide all Atom links in the response we need
+        // additional information:
+        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
-				IncludeRelationships.NONE, null, false, false, extension);
+        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+                IncludeRelationships.NONE, null, false, false, extension);
 
-		return od;
-	}
+        return od;
+    }
 
-	public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String versionSeriesId,
-			String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+    public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String versionSeriesId,
+            String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-		StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
+        StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
 
-		if (!(so instanceof VersionedDocument))
-			throw new RuntimeException("Object is not instance of a VersionedDocument (version series)");
+        if (!(so instanceof VersionedDocument))
+            throw new RuntimeException("Object is not instance of a VersionedDocument (version series)");
 
-		VersionedDocument verDoc = (VersionedDocument) so;
-		List<ObjectData> res = new ArrayList<ObjectData>();
-		List<DocumentVersion> versions = verDoc.getAllVersions();
-		for (DocumentVersion version : versions) {
-			ObjectData objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
-					extension, objectInfos);
-			res.add(objData);
-		}
+        VersionedDocument verDoc = (VersionedDocument) so;
+        List<ObjectData> res = new ArrayList<ObjectData>();
+        List<DocumentVersion> versions = verDoc.getAllVersions();
+        for (DocumentVersion version : versions) {
+            ObjectData objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
+                    extension, objectInfos);
+            res.add(objData);
+        }
 
-		// provide information for Atom links for version series:
-		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        // provide information for Atom links for version series:
+        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-		return res;
-	}
+        return res;
+    }
 
-	public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
-			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension,
-			ObjectInfoHolder objectInfos) {
+    public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
+            Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension,
+            ObjectInfoHolder objectInfos) {
 
-		StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
-		ObjectData objData = null;
+        StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
+        ObjectData objData = null;
 
-		if (so instanceof VersionedDocument) {
-			VersionedDocument verDoc = (VersionedDocument) so;
-			DocumentVersion latestVersion = verDoc.getLatestVersion(major);
-			objData = getObject(context, repositoryId, latestVersion.getId(), filter, includeAllowableActions,
-					extension, objectInfos);
-		} else if (so instanceof Document) {
-			objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions, extension,
-					objectInfos);
-		} else
-			throw new RuntimeException("Object is not instance of a document (version series)");
+        if (so instanceof VersionedDocument) {
+            VersionedDocument verDoc = (VersionedDocument) so;
+            DocumentVersion latestVersion = verDoc.getLatestVersion(major);
+            objData = getObject(context, repositoryId, latestVersion.getId(), filter, includeAllowableActions,
+                    extension, objectInfos);
+        } else if (so instanceof Document) {
+            objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions, extension,
+                    objectInfos);
+        } else
+            throw new RuntimeException("Object is not instance of a document (version series)");
 
-		// provide information for Atom links for version series:
-		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        // provide information for Atom links for version series:
+        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
 
-		return objData;
-	}
+        return objData;
+    }
 
-	public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
-			Boolean major, String filter, ExtensionsData extension) {
+    public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
+            Boolean major, String filter, ExtensionsData extension) {
 
-		StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
-		StoredObject latestVersionObject = null;
+        StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
+        StoredObject latestVersionObject = null;
 
-		if (so instanceof VersionedDocument) {
-			VersionedDocument verDoc = (VersionedDocument) so;
-			latestVersionObject = verDoc.getLatestVersion(major);
-		} else if (so instanceof Document) {
-			latestVersionObject = so;
-		} else
-			throw new RuntimeException("Object is not instance of a document (version series)");
+        if (so instanceof VersionedDocument) {
+            VersionedDocument verDoc = (VersionedDocument) so;
+            latestVersionObject = verDoc.getLatestVersion(major);
+        } else if (so instanceof Document) {
+            latestVersionObject = so;
+        } else
+            throw new RuntimeException("Object is not instance of a document (version series)");
 
-		List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-		Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, latestVersionObject,
-				fStoreManager, requestedIds);
+        List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, latestVersionObject,
+                fStoreManager, requestedIds);
 
-		return props;
-	}
+        return props;
+    }
 
-	private ObjectData getObject(CallContext context, String repositoryId, String objectId, String filter,
-			Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+    private ObjectData getObject(CallContext context, String repositoryId, String objectId, String filter,
+            Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-		return fObjectService.getObject(context, repositoryId, objectId, filter, includeAllowableActions,
-				IncludeRelationships.NONE, null, false, includeAllowableActions, extension, objectInfos);
-	}
+        return fObjectService.getObject(context, repositoryId, objectId, filter, includeAllowableActions,
+                IncludeRelationships.NONE, null, false, includeAllowableActions, extension, objectInfos);
+    }
 }

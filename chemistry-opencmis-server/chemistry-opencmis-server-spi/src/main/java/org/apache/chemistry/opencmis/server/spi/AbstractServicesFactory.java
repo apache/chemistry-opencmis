@@ -30,78 +30,78 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
  */
 public abstract class AbstractServicesFactory {
 
-	/**
-	 * Initializes the factory instance.
-	 */
-	public void init(Map<String, String> parameters) {
-	}
+    /**
+     * Initializes the factory instance.
+     */
+    public void init(Map<String, String> parameters) {
+    }
 
-	/**
-	 * Cleans up the the factory instance.
-	 */
-	public void destroy() {
-	}
+    /**
+     * Cleans up the the factory instance.
+     */
+    public void destroy() {
+    }
 
-	/**
-	 * Returns the CMIS Repository Service object.
-	 */
-	public CmisRepositoryService getRepositoryService() {
-		throw new CmisNotSupportedException("Repository Service not supported!");
-	}
+    /**
+     * Returns the CMIS Repository Service object.
+     */
+    public CmisRepositoryService getRepositoryService() {
+        throw new CmisNotSupportedException("Repository Service not supported!");
+    }
 
-	/**
-	 * Returns the CMIS Navigation Service object.
-	 */
-	public CmisNavigationService getNavigationService() {
-		throw new CmisNotSupportedException("Navigation Service not supported!");
-	}
+    /**
+     * Returns the CMIS Navigation Service object.
+     */
+    public CmisNavigationService getNavigationService() {
+        throw new CmisNotSupportedException("Navigation Service not supported!");
+    }
 
-	/**
-	 * Returns the CMIS Object Service object.
-	 */
-	public CmisObjectService getObjectService() {
-		throw new CmisNotSupportedException("Object Service not supported!");
-	}
+    /**
+     * Returns the CMIS Object Service object.
+     */
+    public CmisObjectService getObjectService() {
+        throw new CmisNotSupportedException("Object Service not supported!");
+    }
 
-	/**
-	 * Returns the CMIS Versioning Service object.
-	 */
-	public CmisVersioningService getVersioningService() {
-		throw new CmisNotSupportedException("Versioning Service not supported!");
-	}
+    /**
+     * Returns the CMIS Versioning Service object.
+     */
+    public CmisVersioningService getVersioningService() {
+        throw new CmisNotSupportedException("Versioning Service not supported!");
+    }
 
-	/**
-	 * Returns the CMIS Relationship Service object.
-	 */
-	public CmisRelationshipService getRelationshipService() {
-		throw new CmisNotSupportedException("Releationship Service not supported!");
-	}
+    /**
+     * Returns the CMIS Relationship Service object.
+     */
+    public CmisRelationshipService getRelationshipService() {
+        throw new CmisNotSupportedException("Releationship Service not supported!");
+    }
 
-	/**
-	 * Returns the CMIS Discovery Service object.
-	 */
-	public CmisDiscoveryService getDiscoveryService() {
-		throw new CmisNotSupportedException("Discovery Service not supported!");
-	}
+    /**
+     * Returns the CMIS Discovery Service object.
+     */
+    public CmisDiscoveryService getDiscoveryService() {
+        throw new CmisNotSupportedException("Discovery Service not supported!");
+    }
 
-	/**
-	 * Returns the CMIS MultiFiling Service object.
-	 */
-	public CmisMultiFilingService getMultiFilingService() {
-		throw new CmisNotSupportedException("MultiFiling Service not supported!");
-	}
+    /**
+     * Returns the CMIS MultiFiling Service object.
+     */
+    public CmisMultiFilingService getMultiFilingService() {
+        throw new CmisNotSupportedException("MultiFiling Service not supported!");
+    }
 
-	/**
-	 * Returns the CMIS ACL Service object.
-	 */
-	public CmisAclService getAclService() {
-		throw new CmisNotSupportedException("ACL Service not supported!");
-	}
+    /**
+     * Returns the CMIS ACL Service object.
+     */
+    public CmisAclService getAclService() {
+        throw new CmisNotSupportedException("ACL Service not supported!");
+    }
 
-	/**
-	 * Returns the CMIS Policy Service object.
-	 */
-	public CmisPolicyService getPolicyService() {
-		throw new CmisNotSupportedException("Policy Service not supported!");
-	}
+    /**
+     * Returns the CMIS Policy Service object.
+     */
+    public CmisPolicyService getPolicyService() {
+        throw new CmisNotSupportedException("Policy Service not supported!");
+    }
 }

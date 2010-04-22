@@ -27,20 +27,20 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
  */
 public interface Version {
 
-	boolean isMajor();
+    boolean isMajor();
 
-	boolean isPwc();
+    boolean isPwc();
 
-	/**
-	 * make the private working copy an official version.
-	 */
-	void commit(boolean isMajor);
+    /**
+     * make the private working copy an official version.
+     */
+    void commit(boolean isMajor);
 
-	void setCheckinComment(String comment);
+    void setCheckinComment(String comment);
 
-	String getCheckinComment();
+    String getCheckinComment();
 
-	String getVersionLabel();
+    String getVersionLabel();
 
-	VersionedDocument getParentDocument();
+    VersionedDocument getParentDocument();
 }

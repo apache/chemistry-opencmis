@@ -34,33 +34,33 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public interface VersionedDocument extends MultiFiling, StoredObject {
 
-	DocumentVersion addVersion(ContentStream content, VersioningState verState, String user);
+    DocumentVersion addVersion(ContentStream content, VersioningState verState, String user);
 
-	/**
-	 * delete a version from this object, throw exception if document is checked
-	 * out or document does not contain this version
-	 * 
-	 * @param version
-	 *            version to be removed
-	 * @return true if version could be removed, and other versions exist, false
-	 *         if the deleted version was the last version in this document
-	 */
-	boolean deleteVersion(DocumentVersion version);
+    /**
+     * delete a version from this object, throw exception if document is checked
+     * out or document does not contain this version
+     * 
+     * @param version
+     *            version to be removed
+     * @return true if version could be removed, and other versions exist, false
+     *         if the deleted version was the last version in this document
+     */
+    boolean deleteVersion(DocumentVersion version);
 
-	boolean isCheckedOut();
+    boolean isCheckedOut();
 
-	void cancelCheckOut(String user);
+    void cancelCheckOut(String user);
 
-	DocumentVersion checkOut(ContentStream content, String user);
+    DocumentVersion checkOut(ContentStream content, String user);
 
-	void checkIn(boolean isMajor, String checkinComment, String user);
+    void checkIn(boolean isMajor, String checkinComment, String user);
 
-	List<DocumentVersion> getAllVersions();
+    List<DocumentVersion> getAllVersions();
 
-	DocumentVersion getLatestVersion(boolean major);
+    DocumentVersion getLatestVersion(boolean major);
 
-	String getCheckedOutBy();
+    String getCheckedOutBy();
 
-	DocumentVersion getPwc();
+    DocumentVersion getPwc();
 
 }

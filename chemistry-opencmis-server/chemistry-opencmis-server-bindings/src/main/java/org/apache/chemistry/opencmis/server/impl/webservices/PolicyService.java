@@ -45,66 +45,66 @@ import org.apache.chemistry.opencmis.server.spi.CmisPolicyService;
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyServicePort")
 public class PolicyService extends AbstractService implements PolicyServicePort {
-	@Resource
-	WebServiceContext wsContext;
+    @Resource
+    WebServiceContext wsContext;
 
-	public void applyPolicy(String repositoryId, String policyId, String objectId, Holder<CmisExtensionType> extension)
-			throws CmisException {
-		try {
-			AbstractServicesFactory factory = getServicesFactory(wsContext);
-			CmisPolicyService service = factory.getPolicyService();
-			CallContext context = createContext(wsContext, repositoryId);
+    public void applyPolicy(String repositoryId, String policyId, String objectId, Holder<CmisExtensionType> extension)
+            throws CmisException {
+        try {
+            AbstractServicesFactory factory = getServicesFactory(wsContext);
+            CmisPolicyService service = factory.getPolicyService();
+            CallContext context = createContext(wsContext, repositoryId);
 
-			ExtensionsData extData = convertExtensionHolder(extension);
+            ExtensionsData extData = convertExtensionHolder(extension);
 
-			service.applyPolicy(context, repositoryId, policyId, objectId, extData, null);
+            service.applyPolicy(context, repositoryId, policyId, objectId, extData, null);
 
-			setExtensionValues(extData, extension);
-		} catch (Exception e) {
-			throw convertException(e);
-		}
-	}
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        }
+    }
 
-	public List<CmisObjectType> getAppliedPolicies(String repositoryId, String objectId, String filter,
-			CmisExtensionType extension) throws CmisException {
-		try {
-			AbstractServicesFactory factory = getServicesFactory(wsContext);
-			CmisPolicyService service = factory.getPolicyService();
-			CallContext context = createContext(wsContext, repositoryId);
+    public List<CmisObjectType> getAppliedPolicies(String repositoryId, String objectId, String filter,
+            CmisExtensionType extension) throws CmisException {
+        try {
+            AbstractServicesFactory factory = getServicesFactory(wsContext);
+            CmisPolicyService service = factory.getPolicyService();
+            CallContext context = createContext(wsContext, repositoryId);
 
-			List<ObjectData> policies = service.getAppliedPolicies(context, repositoryId, objectId, filter,
-					convert(extension), null);
+            List<ObjectData> policies = service.getAppliedPolicies(context, repositoryId, objectId, filter,
+                    convert(extension), null);
 
-			if (policies == null) {
-				return null;
-			}
+            if (policies == null) {
+                return null;
+            }
 
-			List<CmisObjectType> result = new ArrayList<CmisObjectType>();
-			for (ObjectData object : policies) {
-				result.add(convert(object));
-			}
+            List<CmisObjectType> result = new ArrayList<CmisObjectType>();
+            for (ObjectData object : policies) {
+                result.add(convert(object));
+            }
 
-			return result;
-		} catch (Exception e) {
-			throw convertException(e);
-		}
-	}
+            return result;
+        } catch (Exception e) {
+            throw convertException(e);
+        }
+    }
 
-	public void removePolicy(String repositoryId, String policyId, String objectId, Holder<CmisExtensionType> extension)
-			throws CmisException {
-		try {
-			AbstractServicesFactory factory = getServicesFactory(wsContext);
-			CmisPolicyService service = factory.getPolicyService();
-			CallContext context = createContext(wsContext, repositoryId);
+    public void removePolicy(String repositoryId, String policyId, String objectId, Holder<CmisExtensionType> extension)
+            throws CmisException {
+        try {
+            AbstractServicesFactory factory = getServicesFactory(wsContext);
+            CmisPolicyService service = factory.getPolicyService();
+            CallContext context = createContext(wsContext, repositoryId);
 
-			ExtensionsData extData = convertExtensionHolder(extension);
+            ExtensionsData extData = convertExtensionHolder(extension);
 
-			service.removePolicy(context, repositoryId, policyId, objectId, extData);
+            service.removePolicy(context, repositoryId, policyId, objectId, extData);
 
-			setExtensionValues(extData, extension);
-		} catch (Exception e) {
-			throw convertException(e);
-		}
-	}
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        }
+    }
 
 }

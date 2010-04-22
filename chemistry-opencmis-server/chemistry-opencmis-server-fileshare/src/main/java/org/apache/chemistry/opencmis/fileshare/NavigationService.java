@@ -42,135 +42,135 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
  */
 public class NavigationService implements CmisNavigationService {
 
-	private RepositoryMap fRepositoryMap;
+    private RepositoryMap fRepositoryMap;
 
-	/**
-	 * Constructor.
-	 */
-	public NavigationService(RepositoryMap repositoryMap) {
-		fRepositoryMap = repositoryMap;
-	}
+    /**
+     * Constructor.
+     */
+    public NavigationService(RepositoryMap repositoryMap) {
+        fRepositoryMap = repositoryMap;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisNavigationService#getCheckedOutDocs
-	 * (org.apache.opencmis. server.spi.CallContext , java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-	 * java.math.BigInteger, java.math.BigInteger,
-	 * org.apache.opencmis.commons.api.ExtensionsData,
-	 * org.apache.opencmis.server.spi.ObjectInfoHolder)
-	 */
-	public ObjectList getCheckedOutDocs(CallContext context, String repositoryId, String folderId, String filter,
-			String orderBy, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-			String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension,
-			ObjectInfoHolder objectInfos) {
-		fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisNavigationService#getCheckedOutDocs
+     * (org.apache.opencmis. server.spi.CallContext , java.lang.String,
+     * java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
+     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+     * java.math.BigInteger, java.math.BigInteger,
+     * org.apache.opencmis.commons.api.ExtensionsData,
+     * org.apache.opencmis.server.spi.ObjectInfoHolder)
+     */
+    public ObjectList getCheckedOutDocs(CallContext context, String repositoryId, String folderId, String filter,
+            String orderBy, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension,
+            ObjectInfoHolder objectInfos) {
+        fRepositoryMap.getAuthenticatedRepository(context, repositoryId);
 
-		ObjectListImpl result = new ObjectListImpl();
-		result.setHasMoreItems(false);
-		result.setNumItems(BigInteger.ZERO);
-		List<ObjectData> emptyList = Collections.emptyList();
-		result.setObjects(emptyList);
+        ObjectListImpl result = new ObjectListImpl();
+        result.setHasMoreItems(false);
+        result.setNumItems(BigInteger.ZERO);
+        List<ObjectData> emptyList = Collections.emptyList();
+        result.setObjects(emptyList);
 
-		return result;
-	}
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisNavigationService#getChildren(org.
-	 * apache.opencmis.server .spi.CallContext, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-	 * java.lang.Boolean, java.math.BigInteger, java.math.BigInteger,
-	 * org.apache.opencmis.commons.api.ExtensionsData,
-	 * org.apache.opencmis.server.spi.ObjectInfoHolder)
-	 */
-	public ObjectInFolderList getChildren(CallContext context, String repositoryId, String folderId, String filter,
-			String orderBy, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-			String renditionFilter, Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount,
-			ExtensionsData extension, ObjectInfoHolder objectInfos) {
-		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getChildren(context, folderId, filter,
-				includeAllowableActions, includePathSegment, maxItems, skipCount, objectInfos);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisNavigationService#getChildren(org.
+     * apache.opencmis.server .spi.CallContext, java.lang.String,
+     * java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
+     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+     * java.lang.Boolean, java.math.BigInteger, java.math.BigInteger,
+     * org.apache.opencmis.commons.api.ExtensionsData,
+     * org.apache.opencmis.server.spi.ObjectInfoHolder)
+     */
+    public ObjectInFolderList getChildren(CallContext context, String repositoryId, String folderId, String filter,
+            String orderBy, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount,
+            ExtensionsData extension, ObjectInfoHolder objectInfos) {
+        return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getChildren(context, folderId, filter,
+                includeAllowableActions, includePathSegment, maxItems, skipCount, objectInfos);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisNavigationService#getDescendants(org
-	 * .apache.opencmis.server .spi.CallContext , java.lang.String,
-	 * java.lang.String, java.math.BigInteger, java.lang.String,
-	 * java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-	 * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData,
-	 * org.apache.opencmis.server.spi.ObjectInfoHolder)
-	 */
-	public List<ObjectInFolderContainer> getDescendants(CallContext context, String repositoryId, String folderId,
-			BigInteger depth, String filter, Boolean includeAllowableActions,
-			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePathSegment,
-			ExtensionsData extension, ObjectInfoHolder objectInfos) {
-		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getDescendants(context, folderId,
-				depth, filter, includeAllowableActions, includePathSegment, objectInfos, false);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisNavigationService#getDescendants(org
+     * .apache.opencmis.server .spi.CallContext , java.lang.String,
+     * java.lang.String, java.math.BigInteger, java.lang.String,
+     * java.lang.Boolean,
+     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+     * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData,
+     * org.apache.opencmis.server.spi.ObjectInfoHolder)
+     */
+    public List<ObjectInFolderContainer> getDescendants(CallContext context, String repositoryId, String folderId,
+            BigInteger depth, String filter, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter, Boolean includePathSegment,
+            ExtensionsData extension, ObjectInfoHolder objectInfos) {
+        return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getDescendants(context, folderId,
+                depth, filter, includeAllowableActions, includePathSegment, objectInfos, false);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisNavigationService#getFolderParent(
-	 * org.apache.opencmis.server .spi.CallContext , java.lang.String,
-	 * java.lang.String, java.lang.String,
-	 * org.apache.opencmis.commons.api.ExtensionsData,
-	 * org.apache.opencmis.server.spi.ObjectInfoHolder)
-	 */
-	public ObjectData getFolderParent(CallContext context, String repositoryId, String folderId, String filter,
-			ExtensionsData extension, ObjectInfoHolder objectInfos) {
-		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getFolderParent(context, folderId,
-				filter, objectInfos);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisNavigationService#getFolderParent(
+     * org.apache.opencmis.server .spi.CallContext , java.lang.String,
+     * java.lang.String, java.lang.String,
+     * org.apache.opencmis.commons.api.ExtensionsData,
+     * org.apache.opencmis.server.spi.ObjectInfoHolder)
+     */
+    public ObjectData getFolderParent(CallContext context, String repositoryId, String folderId, String filter,
+            ExtensionsData extension, ObjectInfoHolder objectInfos) {
+        return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getFolderParent(context, folderId,
+                filter, objectInfos);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisNavigationService#getFolderTree(org
-	 * .apache.opencmis.server .spi.CallContext , java.lang.String,
-	 * java.lang.String, java.math.BigInteger, java.lang.String,
-	 * java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-	 * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData,
-	 * org.apache.opencmis.server.spi.ObjectInfoHolder)
-	 */
-	public List<ObjectInFolderContainer> getFolderTree(CallContext context, String repositoryId, String folderId,
-			BigInteger depth, String filter, Boolean includeAllowableActions,
-			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePathSegment,
-			ExtensionsData extension, ObjectInfoHolder objectInfos) {
-		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getDescendants(context, folderId,
-				depth, filter, includeAllowableActions, includePathSegment, objectInfos, true);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisNavigationService#getFolderTree(org
+     * .apache.opencmis.server .spi.CallContext , java.lang.String,
+     * java.lang.String, java.math.BigInteger, java.lang.String,
+     * java.lang.Boolean,
+     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+     * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData,
+     * org.apache.opencmis.server.spi.ObjectInfoHolder)
+     */
+    public List<ObjectInFolderContainer> getFolderTree(CallContext context, String repositoryId, String folderId,
+            BigInteger depth, String filter, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter, Boolean includePathSegment,
+            ExtensionsData extension, ObjectInfoHolder objectInfos) {
+        return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getDescendants(context, folderId,
+                depth, filter, includeAllowableActions, includePathSegment, objectInfos, true);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisNavigationService#getObjectParents
-	 * (org.apache.opencmis.server .spi.CallContext , java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-	 * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData,
-	 * org.apache.opencmis.server.spi.ObjectInfoHolder)
-	 */
-	public List<ObjectParentData> getObjectParents(CallContext context, String repositoryId, String objectId,
-			String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-			String renditionFilter, Boolean includeRelativePathSegment, ExtensionsData extension,
-			ObjectInfoHolder objectInfos) {
-		return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getObjectParents(context, objectId,
-				filter, includeAllowableActions, includeRelativePathSegment, objectInfos);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisNavigationService#getObjectParents
+     * (org.apache.opencmis.server .spi.CallContext , java.lang.String,
+     * java.lang.String, java.lang.String, java.lang.Boolean,
+     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
+     * java.lang.Boolean, org.apache.opencmis.commons.api.ExtensionsData,
+     * org.apache.opencmis.server.spi.ObjectInfoHolder)
+     */
+    public List<ObjectParentData> getObjectParents(CallContext context, String repositoryId, String objectId,
+            String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, Boolean includeRelativePathSegment, ExtensionsData extension,
+            ObjectInfoHolder objectInfos) {
+        return fRepositoryMap.getAuthenticatedRepository(context, repositoryId).getObjectParents(context, objectId,
+                filter, includeAllowableActions, includeRelativePathSegment, objectInfos);
+    }
 
 }

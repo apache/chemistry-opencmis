@@ -34,76 +34,76 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implements MultiFiling {
 
-	protected List<Folder> fParents = new ArrayList<Folder>(1);
+    protected List<Folder> fParents = new ArrayList<Folder>(1);
 
-	AbstractMultiFilingImpl(ObjectStoreImpl objStore) {
-		super(objStore);
-	}
+    AbstractMultiFilingImpl(ObjectStoreImpl objStore) {
+        super(objStore);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#addParent(
-	 * org.apache.opencmis.inmemory.storedobj.api.Folder)
-	 */
-	public void addParent(Folder parent) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#addParent(
+     * org.apache.opencmis.inmemory.storedobj.api.Folder)
+     */
+    public void addParent(Folder parent) {
 
-		if (parent.hasChild(getName()))
-			throw new IllegalArgumentException(
-					"Cannot assign new parent folder, this name already exists in target folder.");
+        if (parent.hasChild(getName()))
+            throw new IllegalArgumentException(
+                    "Cannot assign new parent folder, this name already exists in target folder.");
 
-		if (null == fParents)
-			fParents = new ArrayList<Folder>();
+        if (null == fParents)
+            fParents = new ArrayList<Folder>();
 
-		fParents.add(parent);
-	}
+        fParents.add(parent);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#removeParent
-	 * (org.apache.opencmis.inmemory.storedobj.api.Folder)
-	 */
-	public void removeParent(Folder parent) {
-		fParents.remove(parent);
-		if (fParents.isEmpty())
-			fParents = null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#removeParent
+     * (org.apache.opencmis.inmemory.storedobj.api.Folder)
+     */
+    public void removeParent(Folder parent) {
+        fParents.remove(parent);
+        if (fParents.isEmpty())
+            fParents = null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#getParents()
-	 */
-	public List<Folder> getParents() {
-		return fParents;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#getParents()
+     */
+    public List<Folder> getParents() {
+        return fParents;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#getPathSegment
-	 * ()
-	 */
-	public String getPathSegment() {
-		return getName();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#getPathSegment
+     * ()
+     */
+    public String getPathSegment() {
+        return getName();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.inmemory.storedobj.api.Path#move(org.apache.opencmis
-	 * .inmemory.storedobj.api.Folder,
-	 * org.apache.opencmis.inmemory.storedobj.api.Folder)
-	 */
-	public void move(Folder oldParent, Folder newParent) {
-		addParent(newParent);
-		removeParent(oldParent);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.inmemory.storedobj.api.Path#move(org.apache.opencmis
+     * .inmemory.storedobj.api.Folder,
+     * org.apache.opencmis.inmemory.storedobj.api.Folder)
+     */
+    public void move(Folder oldParent, Folder newParent) {
+        addParent(newParent);
+        removeParent(oldParent);
+    }
 
 }

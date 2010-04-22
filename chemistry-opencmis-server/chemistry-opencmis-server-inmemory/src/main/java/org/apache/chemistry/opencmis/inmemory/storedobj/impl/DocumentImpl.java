@@ -40,86 +40,86 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
-	private ContentStreamDataImpl fContent;
+    private ContentStreamDataImpl fContent;
 
-	private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
+    private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
 
-	DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package
-		super(objStore);
-	}
+    DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package
+        super(objStore);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opencmis.client.provider.spi.inmemory.IDocument#getContent()
-	 */
-	public ContentStream getContent(long offset, long length) {
-		if (null == fContent)
-			return null;
-		else if (offset <= 0 && length < 0)
-			return fContent;
-		else
-			return fContent.getCloneWithLimits(offset, length);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opencmis.client.provider.spi.inmemory.IDocument#getContent()
+     */
+    public ContentStream getContent(long offset, long length) {
+        if (null == fContent)
+            return null;
+        else if (offset <= 0 && length < 0)
+            return fContent;
+        else
+            return fContent.getCloneWithLimits(offset, length);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opencmis.client.provider.spi.inmemory.IDocument#setContent(org.opencmis
-	 * .client.provider .ContentStreamData)
-	 */
-	public void setContent(ContentStream content, boolean mustPersist) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opencmis.client.provider.spi.inmemory.IDocument#setContent(org.opencmis
+     * .client.provider .ContentStreamData)
+     */
+    public void setContent(ContentStream content, boolean mustPersist) {
 
-		if (null == content) {
-			fContent = null;
-		} else {
-			fContent = new ContentStreamDataImpl();
-			fContent.setFileName(content.getFileName());
-			fContent.setMimeType(content.getMimeType());
-			try {
-				fContent.setContent(content.getStream());
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new RuntimeException("Failed to get content from InputStream", e);
-			}
-		}
-	}
+        if (null == content) {
+            fContent = null;
+        } else {
+            fContent = new ContentStreamDataImpl();
+            fContent.setFileName(content.getFileName());
+            fContent.setMimeType(content.getMimeType());
+            try {
+                fContent.setContent(content.getStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Failed to get content from InputStream", e);
+            }
+        }
+    }
 
-	public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
-			List<String> requestedIds) {
+    public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
+            List<String> requestedIds) {
 
-		super.fillProperties(properties, objFactory, requestedIds);
+        super.fillProperties(properties, objFactory, requestedIds);
 
-		// fill the version related properties (versions should override this
-		// but the spec requires some
-		// properties always to be set
+        // fill the version related properties (versions should override this
+        // but the spec requires some
+        // properties always to be set
 
-		if (FilterParser.isContainedInFilter(PropertyIds.IS_IMMUTABLE, requestedIds)) {
-			properties.put(PropertyIds.IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE,
-					false));
-		}
+        if (FilterParser.isContainedInFilter(PropertyIds.IS_IMMUTABLE, requestedIds)) {
+            properties.put(PropertyIds.IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE,
+                    false));
+        }
 
-		// Set the content related properties
-		if (null != fContent) {
-			if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_FILE_NAME, requestedIds)) {
-				properties.put(PropertyIds.CONTENT_STREAM_FILE_NAME, objFactory.createPropertyStringData(
-						PropertyIds.CONTENT_STREAM_FILE_NAME, fContent.getFileName()));
-			}
-			// omit: PropertyIds.CMIS_CONTENT_STREAM_ID
-			if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
-				properties.put(PropertyIds.CONTENT_STREAM_LENGTH, objFactory.createPropertyIntegerData(
-						PropertyIds.CONTENT_STREAM_LENGTH, fContent.getBigLength()));
-			}
-			if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_MIME_TYPE, requestedIds)) {
-				properties.put(PropertyIds.CONTENT_STREAM_MIME_TYPE, objFactory.createPropertyStringData(
-						PropertyIds.CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
-			}
-		}
-	}
+        // Set the content related properties
+        if (null != fContent) {
+            if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_FILE_NAME, requestedIds)) {
+                properties.put(PropertyIds.CONTENT_STREAM_FILE_NAME, objFactory.createPropertyStringData(
+                        PropertyIds.CONTENT_STREAM_FILE_NAME, fContent.getFileName()));
+            }
+            // omit: PropertyIds.CMIS_CONTENT_STREAM_ID
+            if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
+                properties.put(PropertyIds.CONTENT_STREAM_LENGTH, objFactory.createPropertyIntegerData(
+                        PropertyIds.CONTENT_STREAM_LENGTH, fContent.getBigLength()));
+            }
+            if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_MIME_TYPE, requestedIds)) {
+                properties.put(PropertyIds.CONTENT_STREAM_MIME_TYPE, objFactory.createPropertyStringData(
+                        PropertyIds.CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
+            }
+        }
+    }
 
-	public boolean hasContent() {
-		return null != fContent;
-	}
+    public boolean hasContent() {
+        return null != fContent;
+    }
 
 }

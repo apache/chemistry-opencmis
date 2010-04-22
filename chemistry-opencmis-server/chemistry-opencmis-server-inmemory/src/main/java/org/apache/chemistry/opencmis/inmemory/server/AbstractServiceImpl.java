@@ -38,134 +38,134 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class AbstractServiceImpl {
 
-	protected StoreManager fStoreManager;
+    protected StoreManager fStoreManager;
 
-	protected AbstractServiceImpl(StoreManager storeManager) {
-		fStoreManager = storeManager;
-	}
+    protected AbstractServiceImpl(StoreManager storeManager) {
+        fStoreManager = storeManager;
+    }
 
-	/**
-	 * check if repository is known and that object exists. To avoid later calls
-	 * to again retrieve the object from the id return the retrieved object for
-	 * later use.
-	 * 
-	 * @param repositoryId
-	 *            repository id
-	 * @param objectId
-	 *            object id
-	 * @return object for objectId
-	 */
-	protected StoredObject checkStandardParameters(String repositoryId, String objectId) {
+    /**
+     * check if repository is known and that object exists. To avoid later calls
+     * to again retrieve the object from the id return the retrieved object for
+     * later use.
+     * 
+     * @param repositoryId
+     *            repository id
+     * @param objectId
+     *            object id
+     * @return object for objectId
+     */
+    protected StoredObject checkStandardParameters(String repositoryId, String objectId) {
 
-		ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
-		if (objStore == null)
-			throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
+        if (objStore == null)
+            throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
 
-		StoredObject so = objStore.getObjectById(objectId);
+        StoredObject so = objStore.getObjectById(objectId);
 
-		if (so == null)
-			throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
+        if (so == null)
+            throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
-		return so;
-	}
+        return so;
+    }
 
-	protected StoredObject checkExistingObjectId(ObjectStore objStore, String objectId) {
+    protected StoredObject checkExistingObjectId(ObjectStore objStore, String objectId) {
 
-		StoredObject so = objStore.getObjectById(objectId);
+        StoredObject so = objStore.getObjectById(objectId);
 
-		if (so == null)
-			throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
+        if (so == null)
+            throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
-		return so;
-	}
+        return so;
+    }
 
-	protected void checkRepositoryId(String repositoryId) {
-		ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+    protected void checkRepositoryId(String repositoryId) {
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
-		if (objStore == null)
-			throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
-	}
+        if (objStore == null)
+            throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
+    }
 
-	protected TypeDefinition getTypeDefinition(String repositoryId, Properties properties) {
-		String typeId = (String) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue();
-		TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
-		if (typeDefC == null)
-			throw new RuntimeException("Cannot create object, a type with id " + typeId + " is unknown");
+    protected TypeDefinition getTypeDefinition(String repositoryId, Properties properties) {
+        String typeId = (String) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue();
+        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
+        if (typeDefC == null)
+            throw new RuntimeException("Cannot create object, a type with id " + typeId + " is unknown");
 
-		return typeDefC.getTypeDefinition();
-	}
+        return typeDefC.getTypeDefinition();
+    }
 
-	protected TypeDefinition getTypeDefinition(String repositoryId, StoredObject obj) {
+    protected TypeDefinition getTypeDefinition(String repositoryId, StoredObject obj) {
 
-		TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, obj.getTypeId());
-		return typeDefC.getTypeDefinition();
-	}
+        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, obj.getTypeId());
+        return typeDefC.getTypeDefinition();
+    }
 
-	/**
-	 * We allow checkin, cancel, checkout operations on a single version as well
-	 * as on a version series This method returns the versioned document
-	 * (version series) in each case
-	 * 
-	 * @param value
-	 *            version or version series id of a document
-	 * @return version series id
-	 */
-	protected VersionedDocument getVersionedDocumentOfObjectId(StoredObject so) {
+    /**
+     * We allow checkin, cancel, checkout operations on a single version as well
+     * as on a version series This method returns the versioned document
+     * (version series) in each case
+     * 
+     * @param value
+     *            version or version series id of a document
+     * @return version series id
+     */
+    protected VersionedDocument getVersionedDocumentOfObjectId(StoredObject so) {
 
-		VersionedDocument verDoc;
-		if (so instanceof DocumentVersion) {
-			// get document the version is contained in to c
-			verDoc = ((DocumentVersion) so).getParentDocument();
-		} else {
-			verDoc = (VersionedDocument) so;
-		}
+        VersionedDocument verDoc;
+        if (so instanceof DocumentVersion) {
+            // get document the version is contained in to c
+            verDoc = ((DocumentVersion) so).getParentDocument();
+        } else {
+            verDoc = (VersionedDocument) so;
+        }
 
-		return verDoc;
-	}
+        return verDoc;
+    }
 
-	protected VersionedDocument testIsNotCheckedOutBySomeoneElse(StoredObject so, String user) {
-		checkIsVersionableObject(so);
-		VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
-		if (verDoc.isCheckedOut())
-			testCheckedOutByCurrentUser(user, verDoc);
+    protected VersionedDocument testIsNotCheckedOutBySomeoneElse(StoredObject so, String user) {
+        checkIsVersionableObject(so);
+        VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
+        if (verDoc.isCheckedOut())
+            testCheckedOutByCurrentUser(user, verDoc);
 
-		return verDoc;
-	}
+        return verDoc;
+    }
 
-	protected VersionedDocument testHasProperCheckedOutStatus(StoredObject so, String user) {
+    protected VersionedDocument testHasProperCheckedOutStatus(StoredObject so, String user) {
 
-		checkIsVersionableObject(so);
-		VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
+        checkIsVersionableObject(so);
+        VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
 
-		checkHasUser(user);
+        checkHasUser(user);
 
-		testIsCheckedOut(verDoc);
-		testCheckedOutByCurrentUser(user, verDoc);
+        testIsCheckedOut(verDoc);
+        testCheckedOutByCurrentUser(user, verDoc);
 
-		return verDoc;
-	}
+        return verDoc;
+    }
 
-	protected void checkIsVersionableObject(StoredObject so) {
-		if (!(so instanceof VersionedDocument || so instanceof DocumentVersion))
-			throw new RuntimeException(
-					"Object is of a versionable type but not instance of VersionedDocument or DocumentVersion.");
-	}
+    protected void checkIsVersionableObject(StoredObject so) {
+        if (!(so instanceof VersionedDocument || so instanceof DocumentVersion))
+            throw new RuntimeException(
+                    "Object is of a versionable type but not instance of VersionedDocument or DocumentVersion.");
+    }
 
-	protected void checkHasUser(String user) {
-		if (null == user || user.length() == 0)
-			throw new CmisUpdateConflictException("Object can't be checked-in, no user is given.");
-	}
+    protected void checkHasUser(String user) {
+        if (null == user || user.length() == 0)
+            throw new CmisUpdateConflictException("Object can't be checked-in, no user is given.");
+    }
 
-	protected void testCheckedOutByCurrentUser(String user, VersionedDocument verDoc) {
-		if (!user.equals(verDoc.getCheckedOutBy()))
-			throw new CmisUpdateConflictException("Object can't be checked-in, user " + verDoc.getCheckedOutBy()
-					+ " has checked out the document.");
-	}
+    protected void testCheckedOutByCurrentUser(String user, VersionedDocument verDoc) {
+        if (!user.equals(verDoc.getCheckedOutBy()))
+            throw new CmisUpdateConflictException("Object can't be checked-in, user " + verDoc.getCheckedOutBy()
+                    + " has checked out the document.");
+    }
 
-	protected void testIsCheckedOut(VersionedDocument verDoc) {
-		if (!verDoc.isCheckedOut())
-			throw new CmisUpdateConflictException("Canot check-in: Document " + verDoc.getId() + " is not checked out.");
-	}
+    protected void testIsCheckedOut(VersionedDocument verDoc) {
+        if (!verDoc.isCheckedOut())
+            throw new CmisUpdateConflictException("Canot check-in: Document " + verDoc.getId() + " is not checked out.");
+    }
 
 }

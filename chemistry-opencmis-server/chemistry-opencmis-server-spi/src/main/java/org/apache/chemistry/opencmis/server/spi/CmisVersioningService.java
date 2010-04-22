@@ -38,61 +38,61 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
  */
 public interface CmisVersioningService {
 
-	/**
-	 * Checks out a document.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	public ObjectData checkOut(CallContext context, String repositoryId, Holder<String> objectId,
-			ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHolder objectInfos);
+    /**
+     * Checks out a document.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    public ObjectData checkOut(CallContext context, String repositoryId, Holder<String> objectId,
+            ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHolder objectInfos);
 
-	/**
-	 * Cancels a check out.
-	 * 
-	 * <p>
-	 * Bindings: Web Services
-	 * </p>
-	 * 
-	 * @see CmisObjectService#deleteObjectOrCancelCheckOut(CallContext, String,
-	 *      String, Boolean, ExtensionsData)
-	 */
-	public void cancelCheckOut(CallContext context, String repositoryId, String objectId, ExtensionsData extension);
+    /**
+     * Cancels a check out.
+     * 
+     * <p>
+     * Bindings: Web Services
+     * </p>
+     * 
+     * @see CmisObjectService#deleteObjectOrCancelCheckOut(CallContext, String,
+     *      String, Boolean, ExtensionsData)
+     */
+    public void cancelCheckOut(CallContext context, String repositoryId, String objectId, ExtensionsData extension);
 
-	public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId, Boolean major,
-			Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
-			Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos);
+    public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId, Boolean major,
+            Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
-	/**
-	 * Gets the latest version an object.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
-			Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-			String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension,
-			ObjectInfoHolder objectInfos);
+    /**
+     * Gets the latest version an object.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
+            Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension,
+            ObjectInfoHolder objectInfos);
 
-	/**
-	 * Gets the properties of latest version an object.
-	 * 
-	 * <p>
-	 * Bindings: Web Services
-	 * </p>
-	 */
-	public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
-			Boolean major, String filter, ExtensionsData extension);
+    /**
+     * Gets the properties of latest version an object.
+     * 
+     * <p>
+     * Bindings: Web Services
+     * </p>
+     */
+    public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
+            Boolean major, String filter, ExtensionsData extension);
 
-	/**
-	 * Gets the list of all versions of a document.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String versionSeriesId,
-			String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHolder objectInfos);
+    /**
+     * Gets the list of all versions of a document.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String versionSeriesId,
+            String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHolder objectInfos);
 }

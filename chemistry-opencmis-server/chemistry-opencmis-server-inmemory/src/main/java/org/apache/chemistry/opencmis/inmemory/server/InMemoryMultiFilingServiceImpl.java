@@ -35,93 +35,93 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl implements CmisMultiFilingService{
+public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl implements CmisMultiFilingService {
 
-	private static final Log LOG = LogFactory.getLog(InMemoryMultiFilingServiceImpl.class.getName());
+    private static final Log LOG = LogFactory.getLog(InMemoryMultiFilingServiceImpl.class.getName());
 
-	AtomLinkInfoProvider fAtomLinkProvider;
+    AtomLinkInfoProvider fAtomLinkProvider;
 
-	public InMemoryMultiFilingServiceImpl(StoreManager storeMgr) {
-		super(storeMgr);
-		fAtomLinkProvider = new AtomLinkInfoProvider(storeMgr);
-	}
+    public InMemoryMultiFilingServiceImpl(StoreManager storeMgr) {
+        super(storeMgr);
+        fAtomLinkProvider = new AtomLinkInfoProvider(storeMgr);
+    }
 
-	public ObjectData addObjectToFolder(CallContext context, String repositoryId, String objectId, String folderId,
-			Boolean allVersions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+    public ObjectData addObjectToFolder(CallContext context, String repositoryId, String objectId, String folderId,
+            Boolean allVersions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-		LOG.debug("Begin addObjectToFolder()");
+        LOG.debug("Begin addObjectToFolder()");
 
-		StoredObject[] so2 = checkParams(repositoryId, objectId, folderId);
-		if (allVersions != null && allVersions.booleanValue() == false)
-			throw new CmisNotSupportedException(
-					"Cannot add object to folder, version specific filing is not supported.");
-		StoredObject so = so2[0];
-		StoredObject folder = so2[1];
-		checkObjects(so, folder);
+        StoredObject[] so2 = checkParams(repositoryId, objectId, folderId);
+        if (allVersions != null && allVersions.booleanValue() == false)
+            throw new CmisNotSupportedException(
+                    "Cannot add object to folder, version specific filing is not supported.");
+        StoredObject so = so2[0];
+        StoredObject folder = so2[1];
+        checkObjects(so, folder);
 
-		Folder newParent = (Folder) folder;
-		MultiFiling obj = (MultiFiling) so;
-		obj.addParent(newParent);
+        Folder newParent = (Folder) folder;
+        MultiFiling obj = (MultiFiling) so;
+        obj.addParent(newParent);
 
-		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
+        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
 
-		String user = context.getUsername();
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
-				IncludeRelationships.NONE, null, false, false, extension);
+        String user = context.getUsername();
+        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+                IncludeRelationships.NONE, null, false, false, extension);
 
-		LOG.debug("End addObjectToFolder()");
-		return od;
-	}
+        LOG.debug("End addObjectToFolder()");
+        return od;
+    }
 
-	public ObjectData removeObjectFromFolder(CallContext context, String repositoryId, String objectId,
-			String folderId, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+    public ObjectData removeObjectFromFolder(CallContext context, String repositoryId, String objectId,
+            String folderId, ExtensionsData extension, ObjectInfoHolder objectInfos) {
 
-		LOG.debug("Begin removeObjectFromFolder()");
+        LOG.debug("Begin removeObjectFromFolder()");
 
-		StoredObject so = checkStandardParameters(repositoryId, objectId);
-		ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-		StoredObject folder = checkExistingObjectId(objectStore, folderId);
+        StoredObject so = checkStandardParameters(repositoryId, objectId);
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+        StoredObject folder = checkExistingObjectId(objectStore, folderId);
 
-		checkObjects(so, folder);
-		Folder parent = (Folder) folder;
-		MultiFiling obj = (MultiFiling) so;
-		obj.removeParent(parent);
+        checkObjects(so, folder);
+        Folder parent = (Folder) folder;
+        MultiFiling obj = (MultiFiling) so;
+        obj.removeParent(parent);
 
-		// To be able to provide all Atom links in the response we need
-		// additional information:
-		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-		fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
+        // To be able to provide all Atom links in the response we need
+        // additional information:
+        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
 
-		String user = context.getUsername();
-		ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
-				IncludeRelationships.NONE, null, false, false, extension);
+        String user = context.getUsername();
+        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+                IncludeRelationships.NONE, null, false, false, extension);
 
-		LOG.debug("End removeObjectFromFolder()");
+        LOG.debug("End removeObjectFromFolder()");
 
-		return od;
-	}
+        return od;
+    }
 
-	private StoredObject[] checkParams(String repositoryId, String objectId, String folderId) {
-		StoredObject[] so = new StoredObject[2];
-		so[0] = checkStandardParameters(repositoryId, objectId);
-		ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-		so[1] = checkExistingObjectId(objectStore, folderId);
-		return so;
-	}
+    private StoredObject[] checkParams(String repositoryId, String objectId, String folderId) {
+        StoredObject[] so = new StoredObject[2];
+        so[0] = checkStandardParameters(repositoryId, objectId);
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+        so[1] = checkExistingObjectId(objectStore, folderId);
+        return so;
+    }
 
-	private void checkObjects(StoredObject so, StoredObject folder) {
-		if (!(so instanceof MultiFiling))
-			throw new CmisConstraintException("Cannot add object to folder, object id " + so.getId()
-					+ " is not a multi-filed object.");
+    private void checkObjects(StoredObject so, StoredObject folder) {
+        if (!(so instanceof MultiFiling))
+            throw new CmisConstraintException("Cannot add object to folder, object id " + so.getId()
+                    + " is not a multi-filed object.");
 
-		if ((so instanceof Folder))
-			throw new CmisConstraintException("Cannot add object to folder, object id " + folder.getId()
-					+ " is a folder and folders are not multi-filed.");
+        if ((so instanceof Folder))
+            throw new CmisConstraintException("Cannot add object to folder, object id " + folder.getId()
+                    + " is a folder and folders are not multi-filed.");
 
-		if (!(folder instanceof Folder))
-			throw new CmisConstraintException("Cannot add object to folder, folder id " + folder.getId()
-					+ " does not refer to a folder.");
-	}
+        if (!(folder instanceof Folder))
+            throw new CmisConstraintException("Cannot add object to folder, folder id " + folder.getId()
+                    + " does not refer to a folder.");
+    }
 
 }

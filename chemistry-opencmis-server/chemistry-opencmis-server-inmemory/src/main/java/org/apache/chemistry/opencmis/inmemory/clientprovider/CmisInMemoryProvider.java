@@ -51,91 +51,91 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
  */
 public class CmisInMemoryProvider {
 
-	protected StoreManager fStoreManager;
-	protected RepositoryService fRepositoryService;
-	protected NavigationService fNavigationService;
-	protected ObjectService fObjectService;
-	protected VersioningService fVersioningService;
-	protected MultiFilingService fMultiService;
-	protected RepositoryInfo fRepositoryInfo;
-	protected DiscoveryService fDiscoveryService;
+    protected StoreManager fStoreManager;
+    protected RepositoryService fRepositoryService;
+    protected NavigationService fNavigationService;
+    protected ObjectService fObjectService;
+    protected VersioningService fVersioningService;
+    protected MultiFilingService fMultiService;
+    protected RepositoryInfo fRepositoryInfo;
+    protected DiscoveryService fDiscoveryService;
 
-	public CmisInMemoryProvider(Map<String, String> cfgParams) {
-		setup(cfgParams);
-	}
+    public CmisInMemoryProvider(Map<String, String> cfgParams) {
+        setup(cfgParams);
+    }
 
-	protected CmisInMemoryProvider() {
-	}
+    protected CmisInMemoryProvider() {
+    }
 
-	public RepositoryService getRepositoryService() {
-		return fRepositoryService;
-	}
+    public RepositoryService getRepositoryService() {
+        return fRepositoryService;
+    }
 
-	public NavigationService getNavigationService() {
-		return fNavigationService;
-	}
+    public NavigationService getNavigationService() {
+        return fNavigationService;
+    }
 
-	public ObjectService getObjectService() {
-		return fObjectService;
-	}
+    public ObjectService getObjectService() {
+        return fObjectService;
+    }
 
-	public VersioningService getVersioningService() {
-		return fVersioningService;
-	}
+    public VersioningService getVersioningService() {
+        return fVersioningService;
+    }
 
-	public RelationshipService getRelationshipService() {
-		return null;
-	}
+    public RelationshipService getRelationshipService() {
+        return null;
+    }
 
-	public DiscoveryService getDiscoveryService() {
-		return fDiscoveryService;
-	}
+    public DiscoveryService getDiscoveryService() {
+        return fDiscoveryService;
+    }
 
-	public MultiFilingService getMultiFilingService() {
-		return fMultiService;
-	}
+    public MultiFilingService getMultiFilingService() {
+        return fMultiService;
+    }
 
-	public AclService getAclService() {
-		return null;
-	}
+    public AclService getAclService() {
+        return null;
+    }
 
-	public PolicyService getPolicyService() {
-		return null;
-	}
+    public PolicyService getPolicyService() {
+        return null;
+    }
 
-	protected void setup(Map<String, String> cfgParams) {
-		String repositoryClassName = (String) cfgParams.get(ConfigConstants.REPOSITORY_CLASS);
-		if (null == repositoryClassName)
-			repositoryClassName = StoreManagerImpl.class.getName();
+    protected void setup(Map<String, String> cfgParams) {
+        String repositoryClassName = (String) cfgParams.get(ConfigConstants.REPOSITORY_CLASS);
+        if (null == repositoryClassName)
+            repositoryClassName = StoreManagerImpl.class.getName();
 
-		fStoreManager = StoreManagerFactory.createInstance(repositoryClassName);
-		String repositoryId = (String) cfgParams.get(ConfigConstants.REPOSITORY_ID);
+        fStoreManager = StoreManagerFactory.createInstance(repositoryClassName);
+        String repositoryId = (String) cfgParams.get(ConfigConstants.REPOSITORY_ID);
 
-		// first create repository
-		if (null != repositoryId) {
-			// then create/initialize type system
-			String typeCreatorClassName = (String) cfgParams.get(ConfigConstants.TYPE_CREATOR_CLASS);
-			fStoreManager.createAndInitRepository(repositoryId, typeCreatorClassName);
-		} else {
-			// then init repository (note: loads root folder which requires
-			// cmis:folder type available)
-			fStoreManager.initRepository(null);
-		}
+        // first create repository
+        if (null != repositoryId) {
+            // then create/initialize type system
+            String typeCreatorClassName = (String) cfgParams.get(ConfigConstants.TYPE_CREATOR_CLASS);
+            fStoreManager.createAndInitRepository(repositoryId, typeCreatorClassName);
+        } else {
+            // then init repository (note: loads root folder which requires
+            // cmis:folder type available)
+            fStoreManager.initRepository(null);
+        }
 
-		InMemoryRepositoryServiceImpl repSvc = new InMemoryRepositoryServiceImpl(fStoreManager);
-		InMemoryNavigationServiceImpl navSvc = new InMemoryNavigationServiceImpl(fStoreManager);
-		InMemoryObjectServiceImpl objSvc = new InMemoryObjectServiceImpl(fStoreManager);
-		InMemoryVersioningServiceImpl verSvc = new InMemoryVersioningServiceImpl(fStoreManager, objSvc);
-		InMemoryDiscoveryServiceImpl disSvc = new InMemoryDiscoveryServiceImpl(fStoreManager, repSvc, navSvc);
-		InMemoryMultiFilingServiceImpl multiSvc = new InMemoryMultiFilingServiceImpl(fStoreManager);
+        InMemoryRepositoryServiceImpl repSvc = new InMemoryRepositoryServiceImpl(fStoreManager);
+        InMemoryNavigationServiceImpl navSvc = new InMemoryNavigationServiceImpl(fStoreManager);
+        InMemoryObjectServiceImpl objSvc = new InMemoryObjectServiceImpl(fStoreManager);
+        InMemoryVersioningServiceImpl verSvc = new InMemoryVersioningServiceImpl(fStoreManager, objSvc);
+        InMemoryDiscoveryServiceImpl disSvc = new InMemoryDiscoveryServiceImpl(fStoreManager, repSvc, navSvc);
+        InMemoryMultiFilingServiceImpl multiSvc = new InMemoryMultiFilingServiceImpl(fStoreManager);
 
-		// initialize services
-		fRepositoryService = new RepositoryServiceImpl(repSvc);
-		fNavigationService = new NavigationServiceImpl(navSvc);
-		fObjectService = new ObjectServiceImpl(objSvc);
-		fVersioningService = new VersioningServiceImpl(verSvc);
-		fMultiService = new MultiFilingServiceImpl(multiSvc);
-		fDiscoveryService = new DiscoveryServiceImpl(disSvc);
-	}
+        // initialize services
+        fRepositoryService = new RepositoryServiceImpl(repSvc);
+        fNavigationService = new NavigationServiceImpl(navSvc);
+        fObjectService = new ObjectServiceImpl(objSvc);
+        fVersioningService = new VersioningServiceImpl(verSvc);
+        fMultiService = new MultiFilingServiceImpl(multiSvc);
+        fDiscoveryService = new DiscoveryServiceImpl(disSvc);
+    }
 
 }

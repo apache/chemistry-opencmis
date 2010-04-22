@@ -29,27 +29,27 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
  */
 public class ObjectInfoHolderImpl implements ObjectInfoHolder {
 
-	private Map<String, ObjectInfo> fObjectInfoMap;
+    private Map<String, ObjectInfo> fObjectInfoMap;
 
-	/**
-	 * Constructor.
-	 */
-	public ObjectInfoHolderImpl() {
-		fObjectInfoMap = new HashMap<String, ObjectInfo>();
-	}
+    /**
+     * Constructor.
+     */
+    public ObjectInfoHolderImpl() {
+        fObjectInfoMap = new HashMap<String, ObjectInfo>();
+    }
 
-	public void addObjectInfo(ObjectInfo info) {
-		if (info == null) {
-			throw new IllegalArgumentException("Object Info must not be null!");
-		}
-		if (info.getId() == null) {
-			throw new IllegalArgumentException("Object Info Id must not be null!");
-		}
+    public void addObjectInfo(ObjectInfo info) {
+        if (info == null) {
+            throw new IllegalArgumentException("Object Info must not be null!");
+        }
+        if (info.getId() == null) {
+            throw new IllegalArgumentException("Object Info Id must not be null!");
+        }
 
-		fObjectInfoMap.put(info.getId(), info);
-	}
+        fObjectInfoMap.put(info.getId(), info);
+    }
 
-	public ObjectInfo getObjectInfo(String id) {
-		return fObjectInfoMap.get(id);
-	}
+    public ObjectInfo getObjectInfo(String id) {
+        return fObjectInfoMap.get(id);
+    }
 }

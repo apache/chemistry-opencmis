@@ -24,206 +24,206 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
-	private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
+    private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
 
-	FolderImpl(ObjectStoreImpl objStore) {
-		super(objStore);
-	}
+    FolderImpl(ObjectStoreImpl objStore) {
+        super(objStore);
+    }
 
-	public FolderImpl(ObjectStoreImpl objStore, String name, Folder parent) {
-		super(objStore);
-		init(name, parent);
-	}
+    public FolderImpl(ObjectStoreImpl objStore, String name, Folder parent) {
+        super(objStore);
+        init(name, parent);
+    }
 
-	public void addChildFolder(Folder folder) {
-		boolean hasChild;
-		String name = folder.getName();
-		hasChild = hasChild(name);
-		if (hasChild)
-			throw new RuntimeException("Cannot create folder " + name + ". Name already exists in parent folder");
-		folder.setParent(this);
-		folder.persist();
-	}
+    public void addChildFolder(Folder folder) {
+        boolean hasChild;
+        String name = folder.getName();
+        hasChild = hasChild(name);
+        if (hasChild)
+            throw new RuntimeException("Cannot create folder " + name + ". Name already exists in parent folder");
+        folder.setParent(this);
+        folder.persist();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opencmis.client.provider.spi.inmemory.IFolder#addChildDocument(org
-	 * .opencmis.client.provider .spi.inmemory.storedobj.impl.DocumentImpl)
-	 */
-	public void addChildDocument(Document doc) {
-		addChildObject(doc);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opencmis.client.provider.spi.inmemory.IFolder#addChildDocument(org
+     * .opencmis.client.provider .spi.inmemory.storedobj.impl.DocumentImpl)
+     */
+    public void addChildDocument(Document doc) {
+        addChildObject(doc);
+    }
 
-	public void addChildDocument(VersionedDocument doc) {
-		addChildObject(doc);
-	}
+    public void addChildDocument(VersionedDocument doc) {
+        addChildObject(doc);
+    }
 
-	private void addChildObject(StoredObject so) {
-		String name = so.getName();
-		if (!NameValidator.isValidId(name))
-			throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+    private void addChildObject(StoredObject so) {
+        String name = so.getName();
+        if (!NameValidator.isValidId(name))
+            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
-		boolean hasChild;
-		hasChild = hasChild(name);
-		if (hasChild)
-			throw new RuntimeException("Cannot create document " + name + ". Name already exists in parent folder");
+        boolean hasChild;
+        hasChild = hasChild(name);
+        if (hasChild)
+            throw new RuntimeException("Cannot create document " + name + ". Name already exists in parent folder");
 
-		if (so instanceof SingleFiling)
-			((SingleFiling) so).setParent(this);
-		else if (so instanceof MultiFiling)
-			((MultiFiling) so).addParent(this);
-		else
-			throw new RuntimeException("Cannot create document, object is not fileable.");
+        if (so instanceof SingleFiling)
+            ((SingleFiling) so).setParent(this);
+        else if (so instanceof MultiFiling)
+            ((MultiFiling) so).addParent(this);
+        else
+            throw new RuntimeException("Cannot create document, object is not fileable.");
 
-		so.persist();
-	}
+        so.persist();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opencmis.client.provider.spi.inmemory.IFolder#getChildren()
-	 */
-	public List<StoredObject> getChildren(int maxItems, int skipCount) {
-		List<StoredObject> result = new ArrayList<StoredObject>();
-		for (String id : fObjStore.getIds()) {
-			StoredObject obj = fObjStore.getObject(id);
-			Filing pathObj = (Filing) obj;
-			if (pathObj.getParents().contains(this)) {
-				if (pathObj instanceof VersionedDocument) {
-					DocumentVersion ver = ((VersionedDocument) pathObj).getLatestVersion(false);
-					result.add(ver);
-				} else if (pathObj instanceof DocumentVersion) {
-					// ignore
-				} else {
-					result.add(obj);
-				}
-			}
-		}
-		sortFolderList(result);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opencmis.client.provider.spi.inmemory.IFolder#getChildren()
+     */
+    public List<StoredObject> getChildren(int maxItems, int skipCount) {
+        List<StoredObject> result = new ArrayList<StoredObject>();
+        for (String id : fObjStore.getIds()) {
+            StoredObject obj = fObjStore.getObject(id);
+            Filing pathObj = (Filing) obj;
+            if (pathObj.getParents().contains(this)) {
+                if (pathObj instanceof VersionedDocument) {
+                    DocumentVersion ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                    result.add(ver);
+                } else if (pathObj instanceof DocumentVersion) {
+                    // ignore
+                } else {
+                    result.add(obj);
+                }
+            }
+        }
+        sortFolderList(result);
 
-		if (maxItems < 0)
-			maxItems = result.size();
-		if (skipCount < 0)
-			skipCount = 0;
-		int from = Math.min(skipCount, result.size());
-		int to = Math.min(maxItems + from, result.size());
-		result = result.subList(from, to);
-		return result;
-	}
+        if (maxItems < 0)
+            maxItems = result.size();
+        if (skipCount < 0)
+            skipCount = 0;
+        int from = Math.min(skipCount, result.size());
+        int to = Math.min(maxItems + from, result.size());
+        result = result.subList(from, to);
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opencmis.client.provider.spi.inmemory.IFolder#getFolderChildren()
-	 */
-	public List<Folder> getFolderChildren(int maxItems, int skipCount) {
-		List<Folder> result = new ArrayList<Folder>();
-		for (String id : fObjStore.getIds()) {
-			StoredObject obj = fObjStore.getObject(id);
-			if (obj instanceof SingleFiling) {
-				SingleFiling pathObj = (SingleFiling) obj;
-				if (pathObj.getParent() == this && pathObj instanceof Folder)
-					result.add((Folder) obj);
-			}
-		}
-		sortFolderList(result);
-		int from = Math.min(skipCount, result.size());
-		int to = Math.min(maxItems + from, result.size());
-		result = result.subList(from, to);
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opencmis.client.provider.spi.inmemory.IFolder#getFolderChildren()
+     */
+    public List<Folder> getFolderChildren(int maxItems, int skipCount) {
+        List<Folder> result = new ArrayList<Folder>();
+        for (String id : fObjStore.getIds()) {
+            StoredObject obj = fObjStore.getObject(id);
+            if (obj instanceof SingleFiling) {
+                SingleFiling pathObj = (SingleFiling) obj;
+                if (pathObj.getParent() == this && pathObj instanceof Folder)
+                    result.add((Folder) obj);
+            }
+        }
+        sortFolderList(result);
+        int from = Math.min(skipCount, result.size());
+        int to = Math.min(maxItems + from, result.size());
+        result = result.subList(from, to);
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opencmis.client.provider.spi.inmemory.IFolder#hasChild(java.lang.
-	 * String)
-	 */
-	public boolean hasChild(String name) {
-		for (String id : fObjStore.getIds()) {
-			StoredObject obj = fObjStore.getObject(id);
-			if (obj instanceof Filing) {
-				Filing pathObj = (Filing) obj;
-				if (pathObj.getParents().contains(this) && obj.getName().equals(name))
-					return true;
-			}
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opencmis.client.provider.spi.inmemory.IFolder#hasChild(java.lang.
+     * String)
+     */
+    public boolean hasChild(String name) {
+        for (String id : fObjStore.getIds()) {
+            StoredObject obj = fObjStore.getObject(id);
+            if (obj instanceof Filing) {
+                Filing pathObj = (Filing) obj;
+                if (pathObj.getParents().contains(this) && obj.getName().equals(name))
+                    return true;
+            }
+        }
+        return false;
+    }
 
-	public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
-			List<String> requestedIds) {
+    public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
+            List<String> requestedIds) {
 
-		super.fillProperties(properties, objFactory, requestedIds);
+        super.fillProperties(properties, objFactory, requestedIds);
 
-		// add folder specific properties
+        // add folder specific properties
 
-		if (FilterParser.isContainedInFilter(PropertyIds.PARENT_ID, requestedIds)) {
-			String parentId = getParent() == null ? null : getParent().getId();
-			if (parentId != null)
-				properties.put(PropertyIds.PARENT_ID, objFactory.createPropertyStringData(PropertyIds.PARENT_ID,
-						parentId));
-		}
+        if (FilterParser.isContainedInFilter(PropertyIds.PARENT_ID, requestedIds)) {
+            String parentId = getParent() == null ? null : getParent().getId();
+            if (parentId != null)
+                properties.put(PropertyIds.PARENT_ID, objFactory.createPropertyStringData(PropertyIds.PARENT_ID,
+                        parentId));
+        }
 
-		if (FilterParser.isContainedInFilter(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, requestedIds)) {
-			String allowedChildObjects = "*"; // TODO: not yet supported
-			properties.put(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, objFactory.createPropertyStringData(
-					PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, allowedChildObjects));
-		}
+        if (FilterParser.isContainedInFilter(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, requestedIds)) {
+            String allowedChildObjects = "*"; // TODO: not yet supported
+            properties.put(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, objFactory.createPropertyStringData(
+                    PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, allowedChildObjects));
+        }
 
-		if (FilterParser.isContainedInFilter(PropertyIds.PATH, requestedIds)) {
-			String path = getPath();
-			properties.put(PropertyIds.PATH, objFactory.createPropertyStringData(PropertyIds.PATH, path));
-		}
-	}
+        if (FilterParser.isContainedInFilter(PropertyIds.PATH, requestedIds)) {
+            String path = getPath();
+            properties.put(PropertyIds.PATH, objFactory.createPropertyStringData(PropertyIds.PATH, path));
+        }
+    }
 
-	// Helper functions
-	private void init(String name, Folder parent) {
-		if (!NameValidator.isValidId(name))
-			throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
-		setName(name);
-		setParent(parent);
-	}
+    // Helper functions
+    private void init(String name, Folder parent) {
+        if (!NameValidator.isValidId(name))
+            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+        setName(name);
+        setParent(parent);
+    }
 
-	private void sortFolderList(List<? extends StoredObject> list) {
+    private void sortFolderList(List<? extends StoredObject> list) {
 
-		// TODO evaluate orderBy, for now sort by path segment
-		class FolderComparator implements Comparator<StoredObject> {
+        // TODO evaluate orderBy, for now sort by path segment
+        class FolderComparator implements Comparator<StoredObject> {
 
-			public int compare(StoredObject f1, StoredObject f2) {
-				String segment1 = f1.getName();
-				String segment2 = f2.getName();
+            public int compare(StoredObject f1, StoredObject f2) {
+                String segment1 = f1.getName();
+                String segment2 = f2.getName();
 
-				return segment1.compareTo(segment2);
-			}
-		}
+                return segment1.compareTo(segment2);
+            }
+        }
 
-		Collections.sort(list, new FolderComparator());
-	}
+        Collections.sort(list, new FolderComparator());
+    }
 
-	public void moveChildDocument(StoredObject so, Folder oldParent, Folder newParent) {
-		if (newParent.hasChild(so.getName()))
-			throw new IllegalArgumentException("Cannot move object, this name already exists in target.");
-		if (!(so instanceof Filing))
-			throw new IllegalArgumentException("Cannot move object, object does not have a path.");
+    public void moveChildDocument(StoredObject so, Folder oldParent, Folder newParent) {
+        if (newParent.hasChild(so.getName()))
+            throw new IllegalArgumentException("Cannot move object, this name already exists in target.");
+        if (!(so instanceof Filing))
+            throw new IllegalArgumentException("Cannot move object, object does not have a path.");
 
-		if (so instanceof SingleFiling) {
-			SingleFiling pathObj = (SingleFiling) so;
-			pathObj.setParent(newParent);
-		} else if (so instanceof MultiFiling) {
-			MultiFiling pathObj = (MultiFiling) so;
-			pathObj.addParent(newParent);
-			pathObj.removeParent(oldParent);
-		}
-	}
+        if (so instanceof SingleFiling) {
+            SingleFiling pathObj = (SingleFiling) so;
+            pathObj.setParent(newParent);
+        } else if (so instanceof MultiFiling) {
+            MultiFiling pathObj = (MultiFiling) so;
+            pathObj.addParent(newParent);
+            pathObj.removeParent(oldParent);
+        }
+    }
 
-	public List<String> getAllowedChildObjectTypeIds() {
-		// TODO implement this.
-		return null;
-	}
+    public List<String> getAllowedChildObjectTypeIds() {
+        // TODO implement this.
+        return null;
+    }
 
 }

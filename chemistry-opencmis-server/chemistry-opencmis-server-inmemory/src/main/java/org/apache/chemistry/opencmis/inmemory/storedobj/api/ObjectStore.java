@@ -33,80 +33,80 @@ import java.util.List;
  */
 public interface ObjectStore {
 
-	/**
-	 * Get the root folder of this object store
-	 * 
-	 * @return the root folder of this store
-	 */
-	Folder getRootFolder();
+    /**
+     * Get the root folder of this object store
+     * 
+     * @return the root folder of this store
+     */
+    Folder getRootFolder();
 
-	/**
-	 * return an object by path.
-	 * 
-	 * @param path
-	 *            the path to the object
-	 * @return the stored object with this path
-	 */
-	StoredObject getObjectByPath(String path);
+    /**
+     * return an object by path.
+     * 
+     * @param path
+     *            the path to the object
+     * @return the stored object with this path
+     */
+    StoredObject getObjectByPath(String path);
 
-	/**
-	 * get an object by its id
-	 * 
-	 * @param folderId
-	 *            the id of the object
-	 * @return the object identified by this id
-	 */
-	StoredObject getObjectById(String folderId);
+    /**
+     * get an object by its id
+     * 
+     * @param folderId
+     *            the id of the object
+     * @return the object identified by this id
+     */
+    StoredObject getObjectById(String folderId);
 
-	/**
-	 * Deletes an object from the store. For a folders the folder must be empty.
-	 * 
-	 * @param objectId
-	 */
-	void deleteObject(String objectId);
+    /**
+     * Deletes an object from the store. For a folders the folder must be empty.
+     * 
+     * @param objectId
+     */
+    void deleteObject(String objectId);
 
-	/**
-	 * Create a document as initial step. The document is created but still
-	 * temporary It is not yet persisted and does not have an id yet. After this
-	 * call additional actions can take place (like assigning properties and a
-	 * type) before it is persisted.
-	 * 
-	 * @param name
-	 *            name of the document
-	 * @return document object
-	 */
-	Document createDocument(String name);
+    /**
+     * Create a document as initial step. The document is created but still
+     * temporary It is not yet persisted and does not have an id yet. After this
+     * call additional actions can take place (like assigning properties and a
+     * type) before it is persisted.
+     * 
+     * @param name
+     *            name of the document
+     * @return document object
+     */
+    Document createDocument(String name);
 
-	/**
-	 * Create a folder as initial step. The folder is created but still
-	 * temporary It is not yet persisted and does not have an id yet. After this
-	 * call additional actions can take place (like assigning properties and a
-	 * type) before it is persisted.
-	 * 
-	 * @param name
-	 *            name of the folder
-	 * @return folder object
-	 */
-	Folder createFolder(String name);
+    /**
+     * Create a folder as initial step. The folder is created but still
+     * temporary It is not yet persisted and does not have an id yet. After this
+     * call additional actions can take place (like assigning properties and a
+     * type) before it is persisted.
+     * 
+     * @param name
+     *            name of the folder
+     * @return folder object
+     */
+    Folder createFolder(String name);
 
-	/**
-	 * Create a document that supports versions as initial step. The document is
-	 * created but still temporary. It is not yet persisted and does not have an
-	 * id yet. After this call additional actions can take place (like assigning
-	 * properties and a type) before it is persisted.
-	 * 
-	 * @param name
-	 *            name of the document
-	 * @return versioned document object
-	 */
-	VersionedDocument createVersionedDocument(String name);
+    /**
+     * Create a document that supports versions as initial step. The document is
+     * created but still temporary. It is not yet persisted and does not have an
+     * id yet. After this call additional actions can take place (like assigning
+     * properties and a type) before it is persisted.
+     * 
+     * @param name
+     *            name of the document
+     * @return versioned document object
+     */
+    VersionedDocument createVersionedDocument(String name);
 
-	/**
-	 * Return a list of all documents that are checked out in the repository.
-	 * 
-	 * @param orderBy
-	 *            orderBy specification according to CMIS spec.
-	 * @return list of checked out documents in the repository
-	 */
-	List<VersionedDocument> getCheckedOutDocuments(String orderBy);
+    /**
+     * Return a list of all documents that are checked out in the repository.
+     * 
+     * @param orderBy
+     *            orderBy specification according to CMIS spec.
+     * @return list of checked out documents in the repository
+     */
+    List<VersionedDocument> getCheckedOutDocuments(String orderBy);
 }

@@ -37,80 +37,80 @@ import org.apache.chemistry.opencmis.inmemory.server.InMemoryRepositoryServiceIm
  */
 public class RepositoryServiceImpl extends AbstractService implements RepositoryService {
 
-	private InMemoryRepositoryServiceImpl fRepSvc;
+    private InMemoryRepositoryServiceImpl fRepSvc;
 
-	/**
-	 * Constructor.
-	 */
-	public RepositoryServiceImpl(InMemoryRepositoryServiceImpl repSvc) {
-		fRepSvc = repSvc;
-	}
+    /**
+     * Constructor.
+     */
+    public RepositoryServiceImpl(InMemoryRepositoryServiceImpl repSvc) {
+        fRepSvc = repSvc;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo
-	 * (java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo
+     * (java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
 
-		return fRepSvc.getRepositoryInfo(fDummyCallContext, repositoryId, extension);
-	}
+        return fRepSvc.getRepositoryInfo(fDummyCallContext, repositoryId, extension);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos
-	 * (boolean, org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-		return fRepSvc.getRepositoryInfos(fDummyCallContext, extension);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos
+     * (boolean, org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
+        return fRepSvc.getRepositoryInfos(fDummyCallContext, extension);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.RepositoryService#getTypeChildren
-	 * (java.lang.String, java.lang.String, java.lang.Boolean,
-	 * java.math.BigInteger, java.math.BigInteger,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
-			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.RepositoryService#getTypeChildren
+     * (java.lang.String, java.lang.String, java.lang.Boolean,
+     * java.math.BigInteger, java.math.BigInteger,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
+            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
-		return fRepSvc.getTypeChildren(fDummyCallContext, repositoryId, typeId, includePropertyDefinitions, maxItems,
-				skipCount, extension);
-	}
+        return fRepSvc.getTypeChildren(fDummyCallContext, repositoryId, typeId, includePropertyDefinitions, maxItems,
+                skipCount, extension);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.RepositoryService#getTypeDefinition
-	 * (java.lang.String, java.lang.String,
-	 * org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.RepositoryService#getTypeDefinition
+     * (java.lang.String, java.lang.String,
+     * org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
 
-		return fRepSvc.getTypeDefinition(fDummyCallContext, repositoryId, typeId, extension);
-	}
+        return fRepSvc.getTypeDefinition(fDummyCallContext, repositoryId, typeId, extension);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.client.provider.RepositoryService#getTypeDescendants
-	 * (java.lang.String, java.lang.String, java.math.BigInteger,
-	 * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
-	 */
-	public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
-			Boolean includePropertyDefinitions, ExtensionsData extension) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.client.provider.RepositoryService#getTypeDescendants
+     * (java.lang.String, java.lang.String, java.math.BigInteger,
+     * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
+     */
+    public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
+            Boolean includePropertyDefinitions, ExtensionsData extension) {
 
-		return fRepSvc.getTypeDescendants(fDummyCallContext, repositoryId, typeId, depth, includePropertyDefinitions,
-				extension);
-	}
+        return fRepSvc.getTypeDescendants(fDummyCallContext, repositoryId, typeId, depth, includePropertyDefinitions,
+                extension);
+    }
 
 }

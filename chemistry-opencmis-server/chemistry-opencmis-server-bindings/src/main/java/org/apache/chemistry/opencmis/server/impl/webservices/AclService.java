@@ -41,55 +41,55 @@ import org.apache.chemistry.opencmis.server.spi.CmisAclService;
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort")
 public class AclService extends AbstractService implements ACLServicePort {
-	@Resource
-	WebServiceContext wsContext;
+    @Resource
+    WebServiceContext wsContext;
 
-	public CmisACLType applyACL(String repositoryId, String objectId, CmisAccessControlListType addAces,
-			CmisAccessControlListType removeAces, EnumACLPropagation aclPropagation, CmisExtensionType extension)
-			throws CmisException {
-		try {
-			AbstractServicesFactory factory = getServicesFactory(wsContext);
-			CmisAclService service = factory.getAclService();
-			CallContext context = createContext(wsContext, repositoryId);
+    public CmisACLType applyACL(String repositoryId, String objectId, CmisAccessControlListType addAces,
+            CmisAccessControlListType removeAces, EnumACLPropagation aclPropagation, CmisExtensionType extension)
+            throws CmisException {
+        try {
+            AbstractServicesFactory factory = getServicesFactory(wsContext);
+            CmisAclService service = factory.getAclService();
+            CallContext context = createContext(wsContext, repositoryId);
 
-			Acl acl = service.applyAcl(context, repositoryId, objectId, convert(addAces, null), convert(removeAces,
-					null), convert(AclPropagation.class, aclPropagation), convert(extension));
+            Acl acl = service.applyAcl(context, repositoryId, objectId, convert(addAces, null), convert(removeAces,
+                    null), convert(AclPropagation.class, aclPropagation), convert(extension));
 
-			if (acl == null) {
-				return null;
-			}
+            if (acl == null) {
+                return null;
+            }
 
-			CmisACLType result = new CmisACLType();
-			result.setACL(convert(acl));
-			result.setExact(acl.isExact());
+            CmisACLType result = new CmisACLType();
+            result.setACL(convert(acl));
+            result.setExact(acl.isExact());
 
-			return result;
-		} catch (Exception e) {
-			throw convertException(e);
-		}
-	}
+            return result;
+        } catch (Exception e) {
+            throw convertException(e);
+        }
+    }
 
-	public CmisACLType getACL(String repositoryId, String objectId, Boolean onlyBasicPermissions,
-			CmisExtensionType extension) throws CmisException {
-		try {
-			AbstractServicesFactory factory = getServicesFactory(wsContext);
-			CmisAclService service = factory.getAclService();
-			CallContext context = createContext(wsContext, repositoryId);
+    public CmisACLType getACL(String repositoryId, String objectId, Boolean onlyBasicPermissions,
+            CmisExtensionType extension) throws CmisException {
+        try {
+            AbstractServicesFactory factory = getServicesFactory(wsContext);
+            CmisAclService service = factory.getAclService();
+            CallContext context = createContext(wsContext, repositoryId);
 
-			Acl acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions, convert(extension));
+            Acl acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions, convert(extension));
 
-			if (acl == null) {
-				return null;
-			}
+            if (acl == null) {
+                return null;
+            }
 
-			CmisACLType result = new CmisACLType();
-			result.setACL(convert(acl));
-			result.setExact(acl.isExact());
+            CmisACLType result = new CmisACLType();
+            result.setACL(convert(acl));
+            result.setExact(acl.isExact());
 
-			return result;
-		} catch (Exception e) {
-			throw convertException(e);
-		}
-	}
+            return result;
+        } catch (Exception e) {
+            throw convertException(e);
+        }
+    }
 
 }

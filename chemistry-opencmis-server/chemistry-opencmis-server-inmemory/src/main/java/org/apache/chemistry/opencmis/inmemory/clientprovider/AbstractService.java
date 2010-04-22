@@ -21,16 +21,16 @@ package org.apache.chemistry.opencmis.inmemory.clientprovider;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 
 public class AbstractService {
-	protected CallContext fDummyCallContext;
+    protected CallContext fDummyCallContext;
 
-	protected AbstractService() {
-	}
+    protected AbstractService() {
+    }
 
-	public void setCallContext(CallContext ctx) {
-		fDummyCallContext = ctx;
-	}
+    public void setCallContext(CallContext ctx) {
+        fDummyCallContext = ctx;
+    }
 
-	public CallContext getCallContext() {
-		return fDummyCallContext;
-	}
+    public CallContext getCallContext() {
+        return fDummyCallContext;
+    }
 }

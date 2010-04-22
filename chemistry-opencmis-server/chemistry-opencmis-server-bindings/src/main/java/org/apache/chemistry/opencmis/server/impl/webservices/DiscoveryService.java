@@ -45,46 +45,46 @@ import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.DiscoveryServicePort")
 public class DiscoveryService extends AbstractService implements DiscoveryServicePort {
-	@Resource
-	WebServiceContext wsContext;
+    @Resource
+    WebServiceContext wsContext;
 
-	public void getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
-			String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems,
-			CmisExtensionType extension, Holder<CmisObjectListType> objects) throws CmisException {
-		try {
-			AbstractServicesFactory factory = getServicesFactory(wsContext);
-			CmisDiscoveryService service = factory.getDiscoveryService();
-			CallContext context = createContext(wsContext, repositoryId);
+    public void getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
+            String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems,
+            CmisExtensionType extension, Holder<CmisObjectListType> objects) throws CmisException {
+        try {
+            AbstractServicesFactory factory = getServicesFactory(wsContext);
+            CmisDiscoveryService service = factory.getDiscoveryService();
+            CallContext context = createContext(wsContext, repositoryId);
 
-			org.apache.chemistry.opencmis.commons.api.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
+            org.apache.chemistry.opencmis.commons.api.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
 
-			ObjectList changesList = service.getContentChanges(context, repositoryId, changeLogTokenHolder,
-					includeProperties, filter, includePolicyIds, includeAcl, maxItems, convert(extension), null);
+            ObjectList changesList = service.getContentChanges(context, repositoryId, changeLogTokenHolder,
+                    includeProperties, filter, includePolicyIds, includeAcl, maxItems, convert(extension), null);
 
-			if (objects != null) {
-				objects.value = convert(changesList);
-			}
+            if (objects != null) {
+                objects.value = convert(changesList);
+            }
 
-			setHolderValue(changeLogTokenHolder, changeLogToken);
-		} catch (Exception e) {
-			throw convertException(e);
-		}
-	}
+            setHolderValue(changeLogTokenHolder, changeLogToken);
+        } catch (Exception e) {
+            throw convertException(e);
+        }
+    }
 
-	public CmisObjectListType query(String repositoryId, String statement, Boolean searchAllVersions,
-			Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
-			BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
-		try {
-			AbstractServicesFactory factory = getServicesFactory(wsContext);
-			CmisDiscoveryService service = factory.getDiscoveryService();
-			CallContext context = createContext(wsContext, repositoryId);
+    public CmisObjectListType query(String repositoryId, String statement, Boolean searchAllVersions,
+            Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
+            BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
+        try {
+            AbstractServicesFactory factory = getServicesFactory(wsContext);
+            CmisDiscoveryService service = factory.getDiscoveryService();
+            CallContext context = createContext(wsContext, repositoryId);
 
-			return convert(service.query(context, repositoryId, statement, searchAllVersions, includeAllowableActions,
-					convert(IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
-					convert(extension)));
-		} catch (Exception e) {
-			throw convertException(e);
-		}
-	}
+            return convert(service.query(context, repositoryId, statement, searchAllVersions, includeAllowableActions,
+                    convert(IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
+                    convert(extension)));
+        } catch (Exception e) {
+            throw convertException(e);
+        }
+    }
 
 }

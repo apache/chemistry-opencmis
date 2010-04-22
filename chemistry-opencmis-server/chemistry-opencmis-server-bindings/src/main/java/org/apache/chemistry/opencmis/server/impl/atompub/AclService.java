@@ -47,71 +47,71 @@ import org.apache.chemistry.opencmis.server.spi.CmisAclService;
  */
 public class AclService {
 
-	/**
-	 * Get ACL.
-	 */
-	public static void getAcl(CallContext context, AbstractServicesFactory factory, String repositoryId,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		CmisAclService service = factory.getAclService();
+    /**
+     * Get ACL.
+     */
+    public static void getAcl(CallContext context, AbstractServicesFactory factory, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        CmisAclService service = factory.getAclService();
 
-		// get parameters
-		String objectId = getStringParameter(request, Constants.PARAM_ID);
-		Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
+        // get parameters
+        String objectId = getStringParameter(request, Constants.PARAM_ID);
+        Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
 
-		// execute
-		Acl acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions, null);
+        // execute
+        Acl acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions, null);
 
-		if (acl == null) {
-			throw new CmisRuntimeException("ACL is null!");
-		}
+        if (acl == null) {
+            throw new CmisRuntimeException("ACL is null!");
+        }
 
-		// set headers
-		response.setStatus(HttpServletResponse.SC_OK);
-		response.setContentType(Constants.MEDIATYPE_ACL);
+        // set headers
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType(Constants.MEDIATYPE_ACL);
 
-		// write XML
-		AclDocument aclDocument = new AclDocument();
-		aclDocument.writeAcl(acl, response.getOutputStream());
-	}
+        // write XML
+        AclDocument aclDocument = new AclDocument();
+        aclDocument.writeAcl(acl, response.getOutputStream());
+    }
 
-	/**
-	 * Apply ACL.
-	 */
-	public static void applyAcl(CallContext context, AbstractServicesFactory factory, String repositoryId,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		CmisAclService service = factory.getAclService();
+    /**
+     * Apply ACL.
+     */
+    public static void applyAcl(CallContext context, AbstractServicesFactory factory, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        CmisAclService service = factory.getAclService();
 
-		// get parameters
-		String objectId = getStringParameter(request, Constants.PARAM_ID);
-		AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION, AclPropagation.class);
+        // get parameters
+        String objectId = getStringParameter(request, Constants.PARAM_ID);
+        AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION, AclPropagation.class);
 
-		Object aclRequest = null;
-		try {
-			Unmarshaller u = JaxBHelper.createUnmarshaller();
-			aclRequest = u.unmarshal(request.getInputStream());
-		} catch (Exception e) {
-			throw new CmisInvalidArgumentException("Invalid ACL request: " + e, e);
-		}
+        Object aclRequest = null;
+        try {
+            Unmarshaller u = JaxBHelper.createUnmarshaller();
+            aclRequest = u.unmarshal(request.getInputStream());
+        } catch (Exception e) {
+            throw new CmisInvalidArgumentException("Invalid ACL request: " + e, e);
+        }
 
-		if (!(aclRequest instanceof JAXBElement<?>)) {
-			throw new CmisInvalidArgumentException("Not an ACL document!");
-		}
+        if (!(aclRequest instanceof JAXBElement<?>)) {
+            throw new CmisInvalidArgumentException("Not an ACL document!");
+        }
 
-		if (!(((JAXBElement<?>) aclRequest).getValue() instanceof CmisAccessControlListType)) {
-			throw new CmisInvalidArgumentException("Not an ACL document!");
-		}
+        if (!(((JAXBElement<?>) aclRequest).getValue() instanceof CmisAccessControlListType)) {
+            throw new CmisInvalidArgumentException("Not an ACL document!");
+        }
 
-		Acl aces = convert((CmisAccessControlListType) ((JAXBElement<?>) aclRequest).getValue(), null);
+        Acl aces = convert((CmisAccessControlListType) ((JAXBElement<?>) aclRequest).getValue(), null);
 
-		// execute
-		Acl acl = service.applyAcl(context, repositoryId, objectId, aces, aclPropagation);
+        // execute
+        Acl acl = service.applyAcl(context, repositoryId, objectId, aces, aclPropagation);
 
-		// set headers
-		response.setStatus(HttpServletResponse.SC_CREATED);
-		response.setContentType(Constants.MEDIATYPE_ACL);
+        // set headers
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setContentType(Constants.MEDIATYPE_ACL);
 
-		// write XML
-		AclDocument aclDocument = new AclDocument();
-		aclDocument.writeAcl(acl, response.getOutputStream());
-	}
+        // write XML
+        AclDocument aclDocument = new AclDocument();
+        aclDocument.writeAcl(acl, response.getOutputStream());
+    }
 }

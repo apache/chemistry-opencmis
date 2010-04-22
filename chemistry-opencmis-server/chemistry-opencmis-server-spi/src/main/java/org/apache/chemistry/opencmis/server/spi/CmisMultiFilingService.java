@@ -31,23 +31,23 @@ import org.apache.chemistry.opencmis.commons.api.server.CallContext;
  */
 public interface CmisMultiFilingService {
 
-	/**
-	 * Adds an object to a folder.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	ObjectData addObjectToFolder(CallContext context, String repositoryId, String objectId, String folderId,
-			Boolean allVersions, ExtensionsData extension, ObjectInfoHolder objectInfos);
+    /**
+     * Adds an object to a folder.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    ObjectData addObjectToFolder(CallContext context, String repositoryId, String objectId, String folderId,
+            Boolean allVersions, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
-	/**
-	 * Removes an object to a folder.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	ObjectData removeObjectFromFolder(CallContext context, String repositoryId, String objectId, String folderId,
-			ExtensionsData extension, ObjectInfoHolder objectInfos);
+    /**
+     * Removes an object to a folder.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    ObjectData removeObjectFromFolder(CallContext context, String repositoryId, String objectId, String folderId,
+            ExtensionsData extension, ObjectInfoHolder objectInfos);
 }

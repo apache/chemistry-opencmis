@@ -37,22 +37,22 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
  */
 public class AllowableActionsDocument {
 
-	/**
-	 * Creates an Allowable Actions document.
-	 */
-	public AllowableActionsDocument() {
-	}
+    /**
+     * Creates an Allowable Actions document.
+     */
+    public AllowableActionsDocument() {
+    }
 
-	/**
-	 * Writes an object.
-	 */
-	public void writeAllowableActions(AllowableActions allowableActions, OutputStream out) throws XMLStreamException,
-			JAXBException {
-		CmisAllowableActionsType allowableActionsJaxb = convert(allowableActions);
-		if (allowableActionsJaxb == null) {
-			return;
-		}
+    /**
+     * Writes an object.
+     */
+    public void writeAllowableActions(AllowableActions allowableActions, OutputStream out) throws XMLStreamException,
+            JAXBException {
+        CmisAllowableActionsType allowableActionsJaxb = convert(allowableActions);
+        if (allowableActionsJaxb == null) {
+            return;
+        }
 
-		JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createAllowableActions(allowableActionsJaxb), out, false);
-	}
+        JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createAllowableActions(allowableActionsJaxb), out, false);
+    }
 }

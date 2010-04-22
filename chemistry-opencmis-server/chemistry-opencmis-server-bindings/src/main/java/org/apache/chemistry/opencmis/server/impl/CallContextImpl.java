@@ -28,56 +28,56 @@ import org.apache.chemistry.opencmis.commons.api.server.CallContext;
  */
 public class CallContextImpl implements CallContext {
 
-	private String binding;
-	private boolean objectInfoRequired;
-	private Map<String, String> parameter = new HashMap<String, String>();
+    private String binding;
+    private boolean objectInfoRequired;
+    private Map<String, String> parameter = new HashMap<String, String>();
 
-	public CallContextImpl(String binding, String repositoryId, boolean objectInfoRequired) {
-		this.binding = binding;
-		this.objectInfoRequired = objectInfoRequired;
-		put(REPOSITORY_ID, repositoryId);
-	}
+    public CallContextImpl(String binding, String repositoryId, boolean objectInfoRequired) {
+        this.binding = binding;
+        this.objectInfoRequired = objectInfoRequired;
+        put(REPOSITORY_ID, repositoryId);
+    }
 
-	public String getBinding() {
-		return binding;
-	}
+    public String getBinding() {
+        return binding;
+    }
 
-	public boolean isObjectInfoRequired() {
-		return objectInfoRequired;
-	}
+    public boolean isObjectInfoRequired() {
+        return objectInfoRequired;
+    }
 
-	public String get(String key) {
-		return parameter.get(key);
-	}
+    public String get(String key) {
+        return parameter.get(key);
+    }
 
-	public String getRepositoryId() {
-		return get(REPOSITORY_ID);
-	}
+    public String getRepositoryId() {
+        return get(REPOSITORY_ID);
+    }
 
-	public String getUsername() {
-		return get(USERNAME);
-	}
+    public String getUsername() {
+        return get(USERNAME);
+    }
 
-	public String getPassword() {
-		return get(PASSWORD);
-	}
+    public String getPassword() {
+        return get(PASSWORD);
+    }
 
-	public String getLocale() {
-		return get(LOCALE);
-	}
+    public String getLocale() {
+        return get(LOCALE);
+    }
 
-	/**
-	 * Adds a parameter.
-	 */
-	public void put(String key, String value) {
-		parameter.put(key, value);
-	}
+    /**
+     * Adds a parameter.
+     */
+    public void put(String key, String value) {
+        parameter.put(key, value);
+    }
 
-	/**
-	 * Removes a parameter.
-	 */
-	public String remove(String key) {
-		return parameter.remove(key);
-	}
+    /**
+     * Removes a parameter.
+     */
+    public String remove(String key) {
+        return parameter.remove(key);
+    }
 
 }

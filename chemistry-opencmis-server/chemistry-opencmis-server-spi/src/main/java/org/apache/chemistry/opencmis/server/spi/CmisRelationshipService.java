@@ -34,16 +34,16 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
  */
 public interface CmisRelationshipService {
 
-	/**
-	 * Gets the relationships of an object.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	public ObjectList getObjectRelationships(CallContext context, String repositoryId, String objectId,
-			Boolean includeSubRelationshipTypes, RelationshipDirection relationshipDirection, String typeId,
-			String filter, Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount,
-			ExtensionsData extension, ObjectInfoHolder objectInfos);
+    /**
+     * Gets the relationships of an object.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    public ObjectList getObjectRelationships(CallContext context, String repositoryId, String objectId,
+            Boolean includeSubRelationshipTypes, RelationshipDirection relationshipDirection, String typeId,
+            String filter, Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount,
+            ExtensionsData extension, ObjectInfoHolder objectInfos);
 
 }

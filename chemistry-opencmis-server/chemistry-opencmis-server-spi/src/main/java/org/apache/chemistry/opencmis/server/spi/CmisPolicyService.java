@@ -33,34 +33,34 @@ import org.apache.chemistry.opencmis.commons.api.server.CallContext;
  */
 public interface CmisPolicyService {
 
-	/**
-	 * Applies a policy to an object.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	public ObjectData applyPolicy(CallContext context, String repositoryId, String policyId, String objectId,
-			ExtensionsData extension, ObjectInfoHolder objectInfos);
+    /**
+     * Applies a policy to an object.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    public ObjectData applyPolicy(CallContext context, String repositoryId, String policyId, String objectId,
+            ExtensionsData extension, ObjectInfoHolder objectInfos);
 
-	/**
-	 * Removes a policy to an object.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	public void removePolicy(CallContext context, String repositoryId, String policyId, String objectId,
-			ExtensionsData extension);
+    /**
+     * Removes a policy to an object.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    public void removePolicy(CallContext context, String repositoryId, String policyId, String objectId,
+            ExtensionsData extension);
 
-	/**
-	 * Get all applied policies of an object.
-	 * 
-	 * <p>
-	 * Bindings: AtomPub, Web Services
-	 * </p>
-	 */
-	public List<ObjectData> getAppliedPolicies(CallContext context, String repositoryId, String objectId,
-			String filter, ExtensionsData extension, ObjectInfoHolder objectInfos);
+    /**
+     * Get all applied policies of an object.
+     * 
+     * <p>
+     * Bindings: AtomPub, Web Services
+     * </p>
+     */
+    public List<ObjectData> getAppliedPolicies(CallContext context, String repositoryId, String objectId,
+            String filter, ExtensionsData extension, ObjectInfoHolder objectInfos);
 
 }

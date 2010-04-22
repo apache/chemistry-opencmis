@@ -35,57 +35,57 @@ import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
  */
 public class RelationshipServiceWrapper extends AbstractServiceWrapper implements CmisRelationshipService {
 
-	private CmisRelationshipService fService;
+    private CmisRelationshipService fService;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param service
-	 *            the real service object
-	 * @param defaultMaxItems
-	 *            default value for <code>maxItems</code> parameters
-	 */
-	public RelationshipServiceWrapper(CmisRelationshipService service, BigInteger defaultMaxItems) {
-		if (service == null) {
-			throw new IllegalArgumentException("Service must be set!");
-		}
+    /**
+     * Constructor.
+     * 
+     * @param service
+     *            the real service object
+     * @param defaultMaxItems
+     *            default value for <code>maxItems</code> parameters
+     */
+    public RelationshipServiceWrapper(CmisRelationshipService service, BigInteger defaultMaxItems) {
+        if (service == null) {
+            throw new IllegalArgumentException("Service must be set!");
+        }
 
-		fService = service;
-		setDefaultMaxItems(defaultMaxItems);
-	}
+        fService = service;
+        setDefaultMaxItems(defaultMaxItems);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.opencmis.server.spi.CmisRelationshipService#getObjectRelationships
-	 * (org.apache.opencmis .server.spi.CallContext, java.lang.String,
-	 * java.lang.String, java.lang.Boolean,
-	 * org.apache.opencmis.commons.enums.RelationshipDirection,
-	 * java.lang.String, java.lang.String, java.lang.Boolean,
-	 * java.math.BigInteger, java.math.BigInteger,
-	 * org.apache.opencmis.commons.api.ExtensionsData,
-	 * org.apache.opencmis.server.spi.ObjectInfoHolder)
-	 */
-	public ObjectList getObjectRelationships(CallContext context, String repositoryId, String objectId,
-			Boolean includeSubRelationshipTypes, RelationshipDirection relationshipDirection, String typeId,
-			String filter, Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount,
-			ExtensionsData extension, ObjectInfoHolder objectInfos) {
-		checkRepositoryId(repositoryId);
-		checkId("Object Id", objectId);
-		includeSubRelationshipTypes = getDefaultFalse(includeSubRelationshipTypes);
-		relationshipDirection = getDefault(relationshipDirection);
-		includeAllowableActions = getDefaultFalse(includeAllowableActions);
-		maxItems = getMaxItems(maxItems);
-		skipCount = getSkipCount(skipCount);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.server.spi.CmisRelationshipService#getObjectRelationships
+     * (org.apache.opencmis .server.spi.CallContext, java.lang.String,
+     * java.lang.String, java.lang.Boolean,
+     * org.apache.opencmis.commons.enums.RelationshipDirection,
+     * java.lang.String, java.lang.String, java.lang.Boolean,
+     * java.math.BigInteger, java.math.BigInteger,
+     * org.apache.opencmis.commons.api.ExtensionsData,
+     * org.apache.opencmis.server.spi.ObjectInfoHolder)
+     */
+    public ObjectList getObjectRelationships(CallContext context, String repositoryId, String objectId,
+            Boolean includeSubRelationshipTypes, RelationshipDirection relationshipDirection, String typeId,
+            String filter, Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount,
+            ExtensionsData extension, ObjectInfoHolder objectInfos) {
+        checkRepositoryId(repositoryId);
+        checkId("Object Id", objectId);
+        includeSubRelationshipTypes = getDefaultFalse(includeSubRelationshipTypes);
+        relationshipDirection = getDefault(relationshipDirection);
+        includeAllowableActions = getDefaultFalse(includeAllowableActions);
+        maxItems = getMaxItems(maxItems);
+        skipCount = getSkipCount(skipCount);
 
-		try {
-			return fService.getObjectRelationships(context, repositoryId, objectId, includeSubRelationshipTypes,
-					relationshipDirection, typeId, filter, includeAllowableActions, maxItems, skipCount, extension,
-					objectInfos);
-		} catch (Exception e) {
-			throw createCmisException(e);
-		}
-	}
+        try {
+            return fService.getObjectRelationships(context, repositoryId, objectId, includeSubRelationshipTypes,
+                    relationshipDirection, typeId, filter, includeAllowableActions, maxItems, skipCount, extension,
+                    objectInfos);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
 
 }

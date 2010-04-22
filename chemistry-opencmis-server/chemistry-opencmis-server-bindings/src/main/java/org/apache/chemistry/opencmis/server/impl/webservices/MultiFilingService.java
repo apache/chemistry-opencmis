@@ -39,41 +39,41 @@ import org.apache.chemistry.opencmis.server.spi.CmisMultiFilingService;
  */
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort")
 public class MultiFilingService extends AbstractService implements MultiFilingServicePort {
-	@Resource
-	WebServiceContext wsContext;
+    @Resource
+    WebServiceContext wsContext;
 
-	public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
-			Holder<CmisExtensionType> extension) throws CmisException {
-		try {
-			AbstractServicesFactory factory = getServicesFactory(wsContext);
-			CmisMultiFilingService service = factory.getMultiFilingService();
-			CallContext context = createContext(wsContext, repositoryId);
+    public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
+            Holder<CmisExtensionType> extension) throws CmisException {
+        try {
+            AbstractServicesFactory factory = getServicesFactory(wsContext);
+            CmisMultiFilingService service = factory.getMultiFilingService();
+            CallContext context = createContext(wsContext, repositoryId);
 
-			ExtensionsData extData = convertExtensionHolder(extension);
+            ExtensionsData extData = convertExtensionHolder(extension);
 
-			service.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extData, null);
+            service.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extData, null);
 
-			setExtensionValues(extData, extension);
-		} catch (Exception e) {
-			throw convertException(e);
-		}
-	}
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        }
+    }
 
-	public void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
-			Holder<CmisExtensionType> extension) throws CmisException {
-		try {
-			AbstractServicesFactory factory = getServicesFactory(wsContext);
-			CmisMultiFilingService service = factory.getMultiFilingService();
-			CallContext context = createContext(wsContext, repositoryId);
+    public void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
+            Holder<CmisExtensionType> extension) throws CmisException {
+        try {
+            AbstractServicesFactory factory = getServicesFactory(wsContext);
+            CmisMultiFilingService service = factory.getMultiFilingService();
+            CallContext context = createContext(wsContext, repositoryId);
 
-			ExtensionsData extData = convertExtensionHolder(extension);
+            ExtensionsData extData = convertExtensionHolder(extension);
 
-			service.removeObjectFromFolder(context, repositoryId, objectId, folderId, extData, null);
+            service.removeObjectFromFolder(context, repositoryId, objectId, folderId, extData, null);
 
-			setExtensionValues(extData, extension);
-		} catch (Exception e) {
-			throw convertException(e);
-		}
-	}
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        }
+    }
 
 }

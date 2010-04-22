@@ -29,13 +29,13 @@ import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
  */
 public interface ObjectInfoHolder {
 
-	/**
-	 * Adds an object info.
-	 */
-	void addObjectInfo(ObjectInfo info);
+    /**
+     * Adds an object info.
+     */
+    void addObjectInfo(ObjectInfo info);
 
-	/**
-	 * Retrieves an object info.
-	 */
-	ObjectInfo getObjectInfo(String id);
+    /**
+     * Retrieves an object info.
+     */
+    ObjectInfo getObjectInfo(String id);
 }

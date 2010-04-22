@@ -30,79 +30,79 @@ import org.apache.chemistry.opencmis.inmemory.NameValidator;
 
 public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefinitionImpl {
 
-	private static final long serialVersionUID = 1L;
-	private static InMemoryRelationshipTypeDefinition RELATIONSHIP_TYPE = new InMemoryRelationshipTypeDefinition();
+    private static final long serialVersionUID = 1L;
+    private static InMemoryRelationshipTypeDefinition RELATIONSHIP_TYPE = new InMemoryRelationshipTypeDefinition();
 
-	public static InMemoryRelationshipTypeDefinition getRootRelationshipType() {
-		return RELATIONSHIP_TYPE;
-	}
+    public static InMemoryRelationshipTypeDefinition getRootRelationshipType() {
+        return RELATIONSHIP_TYPE;
+    }
 
-	/* This constructor is just for creating the root document */
-	public InMemoryRelationshipTypeDefinition() {
-		init(BaseTypeId.CMIS_RELATIONSHIP.value(), "CMIS Relation");
-		setParentTypeId(null);
+    /* This constructor is just for creating the root document */
+    public InMemoryRelationshipTypeDefinition() {
+        init(BaseTypeId.CMIS_RELATIONSHIP.value(), "CMIS Relation");
+        setParentTypeId(null);
 
-		Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
-		DocumentTypeCreationHelper.setBasicRelationshipPropertyDefinitions(props);
-	}
+        Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
+        DocumentTypeCreationHelper.setBasicRelationshipPropertyDefinitions(props);
+    }
 
-	public InMemoryRelationshipTypeDefinition(String id, String displayName) {
-		init(id, displayName);
-		setParentTypeId(RELATIONSHIP_TYPE.getId());
-	}
+    public InMemoryRelationshipTypeDefinition(String id, String displayName) {
+        init(id, displayName);
+        setParentTypeId(RELATIONSHIP_TYPE.getId());
+    }
 
-	public InMemoryRelationshipTypeDefinition(String id, String displayName,
-			InMemoryRelationshipTypeDefinition parentType) {
-		// get root type
-		init(id, displayName);
-		if (parentType != null)
-			setBaseTypeId(parentType.getBaseTypeId());
-		else
-			throw new IllegalArgumentException("Must provide a parent type when creating a relationship definition");
-		setParentTypeId(parentType.getId());
-	}
+    public InMemoryRelationshipTypeDefinition(String id, String displayName,
+            InMemoryRelationshipTypeDefinition parentType) {
+        // get root type
+        init(id, displayName);
+        if (parentType != null)
+            setBaseTypeId(parentType.getBaseTypeId());
+        else
+            throw new IllegalArgumentException("Must provide a parent type when creating a relationship definition");
+        setParentTypeId(parentType.getId());
+    }
 
-	/*
-	 * Set the property definitions for this type. The parameter
-	 * propertyDefinitions should only contain the custom property definitions
-	 * for this type. The standard property definitions are added automatically.
-	 * 
-	 * @seeorg.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition#
-	 * setPropertyDefinitions(java.util.Map)
-	 */
-	public void addCustomPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
-		DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
-	}
+    /*
+     * Set the property definitions for this type. The parameter
+     * propertyDefinitions should only contain the custom property definitions
+     * for this type. The standard property definitions are added automatically.
+     * 
+     * @seeorg.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition#
+     * setPropertyDefinitions(java.util.Map)
+     */
+    public void addCustomPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
+        DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
+    }
 
-	private void init(String id, String displayName) {
-		if (!NameValidator.isValidId(id))
-			throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+    private void init(String id, String displayName) {
+        if (!NameValidator.isValidId(id))
+            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
-		setBaseTypeId(BaseTypeId.CMIS_RELATIONSHIP);
-		setId(id);
-		if (displayName == null)
-			displayName = '#' + id + '#';
-		setDisplayName(displayName);
-		// create some suitable defaults for convenience
-		setDescription("Description of " + getDisplayName() + " Type");
-		setLocalName(id);
-		setLocalNamespace("local");
-		setQueryName(id);
-		setIsControllableAcl(false);
-		setIsControllablePolicy(false);
-		setIsCreatable(true);
-		setIsFileable(true);
-		setIsFulltextIndexed(false);
-		setIsIncludedInSupertypeQuery(true);
-		setIsQueryable(false);
+        setBaseTypeId(BaseTypeId.CMIS_RELATIONSHIP);
+        setId(id);
+        if (displayName == null)
+            displayName = '#' + id + '#';
+        setDisplayName(displayName);
+        // create some suitable defaults for convenience
+        setDescription("Description of " + getDisplayName() + " Type");
+        setLocalName(id);
+        setLocalNamespace("local");
+        setQueryName(id);
+        setIsControllableAcl(false);
+        setIsControllablePolicy(false);
+        setIsCreatable(true);
+        setIsFileable(true);
+        setIsFulltextIndexed(false);
+        setIsIncludedInSupertypeQuery(true);
+        setIsQueryable(false);
 
-		// relationship specifics
-		setAllowedSourceTypes(null);
-		setAllowedTargetTypes(null);
+        // relationship specifics
+        setAllowedSourceTypes(null);
+        setAllowedTargetTypes(null);
 
-		// set base properties
-		Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();
-		setPropertyDefinitions(props); // set initial empty set of properties
-	}
+        // set base properties
+        Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();
+        setPropertyDefinitions(props); // set initial empty set of properties
+    }
 
 }
