@@ -45,23 +45,6 @@ public class WriteObjectIT extends AbstractSessionTest {
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.FOLDER_TYPE_ID.value();
 
-        /*
-         * ObjectType ot = this.session.getTypeDefinition(typeId);
-         * Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions()
-         * .values(); List<Property<?>> properties = new
-         * ArrayList<Property<?>>(); Property<?> prop = null;
-         * 
-         * for (PropertyDefinition<?> pd : pdefs) { try { CmisProperties cmisp =
-         * CmisProperties.fromValue(pd.getId()); switch (cmisp) { case NAME:
-         * prop = this.session.getObjectFactory().createProperty(pd,
-         * folderName); properties.add(prop); break; case OBJECT_TYPE_ID: prop =
-         * this.session.getObjectFactory().createProperty(pd, typeId);
-         * properties.add(prop); break; default: break; } } catch (Exception e)
-         * { // custom property definition }
-         * 
-         * }
-         */
-
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, folderName);
         properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
@@ -75,26 +58,6 @@ public class WriteObjectIT extends AbstractSessionTest {
         ObjectId parentId = this.session.createObjectId(Fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
-
-        /*
-         * ObjectType ot = this.session.getTypeDefinition(typeId);
-         * Collection<PropertyDefinition<?>> pdefs = ot.getPropertyDefintions()
-         * .values(); List<Property<?>> properties = new
-         * ArrayList<Property<?>>(); Property<?> prop = null;
-         * 
-         * for (PropertyDefinition<?> pd : pdefs) { try { CmisProperties cmisp =
-         * CmisProperties.fromValue(pd.getId()); switch (cmisp) { case NAME:
-         * prop = this.session.getObjectFactory().createProperty(pd,
-         * folderName); properties.add(prop); break; case OBJECT_TYPE_ID: prop =
-         * this.session.getObjectFactory().createProperty(pd, typeId);
-         * properties.add(prop); break; default: break; } } catch (Exception e)
-         * { /* custom property definition (note: document type should not have
-         * further mandatory properties)
-         */
-        /*
-         * this.log .info(
-         * "Custom property found but not supported in test case!", e); } }
-         */
 
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, folderName);
@@ -134,18 +97,6 @@ public class WriteObjectIT extends AbstractSessionTest {
             String srcContent = this.getContentAsString(srcDocument.getContentStream());
 
             ObjectId parentFolder = session.createObjectId(Fixture.getTestRootId());
-            /*
-             * List<Property<?>> srcProperties = srcDocument.getProperties();
-             * assertNotNull(srcProperties); List<Property<?>> dstProperties =
-             * new ArrayList<Property<?>>();
-             * 
-             * for (Property<?> p : srcProperties) { if
-             * (p.getId().equalsIgnoreCase(CmisProperties.NAME.value())) { //
-             * change the name String name = UUID.randomUUID().toString();
-             * Property<String> pn = this.session.getObjectFactory()
-             * .createProperty(p.getDefinition(), name); dstProperties.add(pn);
-             * } else { dstProperties.add(p); } }
-             */
             String name = UUID.randomUUID().toString();
 
             Map<String, Object> properties = new HashMap<String, Object>();
