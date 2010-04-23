@@ -47,7 +47,7 @@ import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
 import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
-import org.apache.chemistry.opencmis.client.runtime.util.DefaultPagingIterable;
+import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
@@ -253,7 +253,7 @@ public class PersistentSessionImpl implements Session, Serializable {
         final ObjectFactory objectFactory = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new DefaultPagingIterable<Document>(new AbstractPageFetch<Document>() {
+        return new CollectionIterable<Document>(new AbstractPageFetch<Document>() {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<Document> fetchPage(long skipCount) {
@@ -518,7 +518,7 @@ public class PersistentSessionImpl implements Session, Serializable {
         final RepositoryService repositoryService = getBinding().getRepositoryService();
         final ObjectFactory objectFactory = this.getObjectFactory();
 
-        return new DefaultPagingIterable<ObjectType>(new AbstractPageFetch<ObjectType>() {
+        return new CollectionIterable<ObjectType>(new AbstractPageFetch<ObjectType>() {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<ObjectType> fetchPage(long skipCount) {
@@ -612,7 +612,7 @@ public class PersistentSessionImpl implements Session, Serializable {
         final ObjectFactory objectFactory = this.getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new DefaultPagingIterable<QueryResult>(new AbstractPageFetch<QueryResult>() {
+        return new CollectionIterable<QueryResult>(new AbstractPageFetch<QueryResult>() {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<QueryResult> fetchPage(long skipCount) {

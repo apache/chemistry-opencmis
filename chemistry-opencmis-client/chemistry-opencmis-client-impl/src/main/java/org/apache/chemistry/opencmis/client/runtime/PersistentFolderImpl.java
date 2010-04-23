@@ -39,7 +39,7 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
 import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
-import org.apache.chemistry.opencmis.client.runtime.util.DefaultPagingIterable;
+import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
@@ -293,7 +293,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         final ObjectFactory objectFactory = getSession().getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new DefaultPagingIterable<Document>(new AbstractPageFetch<Document>() {
+        return new CollectionIterable<Document>(new AbstractPageFetch<Document>() {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<Document> fetchPage(long skipCount) {
@@ -352,7 +352,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         final ObjectFactory objectFactory = getSession().getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new DefaultPagingIterable<CmisObject>(new AbstractPageFetch<CmisObject>() {
+        return new CollectionIterable<CmisObject>(new AbstractPageFetch<CmisObject>() {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<CmisObject> fetchPage(long skipCount) {

@@ -28,11 +28,19 @@ import java.util.Iterator;
 public interface PagingIterator<T> extends Iterator<T> {
 
     /**
-     * Returns the current position within the iterator.
+     * Returns the current position within the CMIS collection.
      * 
      * @return iterator position
      */
     long getPosition();
+
+    /**
+     * Returns whether the repository contains additional items beyond the page of
+     * items already fetched.
+     * 
+     * @return true => further page requests will be made to the repository
+     */
+    boolean getHasMoreItems();
 
     /**
      * Returns the total number of items. If the repository knows the total
@@ -45,5 +53,5 @@ public interface PagingIterator<T> extends Iterator<T> {
      * @return total number of items or (-1)
      */
     long getTotalNumItems();
-
+    
 }

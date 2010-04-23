@@ -18,25 +18,23 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.util;
 
-import java.util.List;
-
 import org.apache.chemistry.opencmis.client.api.PagingIterator;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageFetchResult;
 
 /**
- * Base <code>PagingIterator</code> implementation.
+ * Abstract <code>PagingIterator</code> implementation.
  * 
  * @param <T>
  */
-public class DefaultPagingIterator<T> implements PagingIterator<T> {
+public abstract class AbstractIterator<T> implements PagingIterator<T> {
 
     private long skipCount;
-    private int skipOffset = 0;
-
+    private int skipOffset;
     private AbstractPageFetch<T> pageFetch;
 
-    private Long totalItems = null;
     private PageFetchResult<T> page = null;
+    private Long totalItems = null;
+    private Boolean hasMoreItems = null;
 
     /**
      * Construct
@@ -44,7 +42,7 @@ public class DefaultPagingIterator<T> implements PagingIterator<T> {
      * @param skipCount
      * @param pageFetch
      */
-    public DefaultPagingIterator(long skipCount, AbstractPageFetch<T> pageFetch) {
+    public AbstractIterator(long skipCount, AbstractPageFetch<T> pageFetch) {
         this.skipCount = skipCount;
         this.pageFetch = pageFetch;
     }
@@ -62,75 +60,37 @@ public class DefaultPagingIterator<T> implements PagingIterator<T> {
 
     /*
      * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.chemistry.opencmis.client.api.util.PagingIterator#getTotalNumItems
-     * ()
+     * @see org.apache.chemistry.opencmis.client.api.PagingIterator#getTotalNumItems()
      */
     public long getTotalNumItems() {
         if (totalItems == null) {
-            PageFetchResult<T> page = getPage();
+            totalItems = -1L;
+            PageFetchResult<T> page = getCurrentPage();
             if (page != null) {
                 // set number of items
                 if (page.getTotalItems() != null) {
                     totalItems = page.getTotalItems().longValue();
-                } else {
-                    totalItems = -1L;
                 }
             }
         }
         return totalItems;
     }
-
+    
     /*
      * (non-Javadoc)
-     * 
-     * @see java.util.Iterator#hasNext()
+     * @see org.apache.chemistry.opencmis.client.api.PagingIterator#getHasMoreItems()
      */
-    public boolean hasNext() {
-        if (!hasMoreItems()) {
-            return false;
-        }
-
-        long totalItems = getTotalNumItems();
-        if (totalItems < 0) {
-            // we don't know better
-            return true;
-        }
-
-        return (skipCount + skipOffset) < totalItems;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Iterator#next()
-     */
-    public T next() {
-        PageFetchResult<T> currentPage = getPage();
-        // skipOffset++;
-
-        List<T> items = currentPage.getPage();
-        if (items == null || items.isEmpty()) {
-            return null;
-        }
-
-        if (skipOffset == items.size()) {
-            skipCount += skipOffset;
-            skipOffset = 0;
-            this.page = pageFetch.fetchPage(skipCount);
-            this.totalItems = null;
-            currentPage = this.page;
-            if (currentPage != null) {
-                items = currentPage.getPage();
+    public boolean getHasMoreItems() {
+        if (hasMoreItems == null) {
+            hasMoreItems = false;
+            PageFetchResult<T> page = getCurrentPage();
+            if (page != null) {
+                if (page.getHasMoreItems() != null) {
+                    hasMoreItems = page.getHasMoreItems().booleanValue();
+                }
             }
         }
-
-        if (items == null || items.isEmpty() || skipOffset == items.size()) {
-            return null;
-        }
-
-        return items.get(skipOffset++);
+        return hasMoreItems;
     }
 
     /*
@@ -142,24 +102,56 @@ public class DefaultPagingIterator<T> implements PagingIterator<T> {
         throw new UnsupportedOperationException();
     }
 
-    private boolean hasMoreItems() {
-        PageFetchResult<T> page = getPage();
-        if (page == null) {
-            return false;
-        }
-        if (skipOffset < page.getPage().size()) {
-            return true;
-        }
-        if (page.getHasMoreItems() != null) {
-            return page.getHasMoreItems().booleanValue();
-        }
-        return false;
+    /**
+     * Gets current skip count
+     * 
+     * @return skip count
+     */
+    protected long getSkipCount() {
+        return skipCount;
+    }
+    
+    /**
+     * Gets current skip offset (from skip count)
+     * 
+     * @return skip offset
+     */
+    protected int getSkipOffset() {
+        return skipOffset;
+    }
+    
+    /**
+     * Increment the skip offset by one
+     * 
+     * @return incremented skip offset
+     */
+    protected int incrementSkipOffset() {
+        return skipOffset++;
     }
 
-    private PageFetchResult<T> getPage() {
+    /**
+     * Gets the current page of items within collection
+     * 
+     * @return current page
+     */
+    protected PageFetchResult<T> getCurrentPage() {
         if (page == null) {
             page = pageFetch.fetchPage(skipCount);
         }
+        return page;
+    }
+
+    /**
+     * Skip to the next page of items within collection
+     * 
+     * @return next page
+     */
+    protected PageFetchResult<T> incrementPage() {
+        skipCount += skipOffset;
+        skipOffset = 0;
+        totalItems = null;
+        hasMoreItems = null;
+        page = pageFetch.fetchPage(skipCount);
         return page;
     }
 

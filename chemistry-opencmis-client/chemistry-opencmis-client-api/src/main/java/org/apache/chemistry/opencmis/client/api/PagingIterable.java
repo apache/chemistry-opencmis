@@ -19,8 +19,7 @@
 package org.apache.chemistry.opencmis.client.api;
 
 /**
- * Iterable for CMIS collections that allows ability to skip to specific
- * position.
+ * Iterable for CMIS collections that allows ability to skip to specific position.
  * 
  * @param <T>
  */
@@ -30,8 +29,28 @@ public interface PagingIterable<T> extends Iterable<T> {
      * Skip to position within CMIS collection
      * 
      * @param position
-     * @return iterable whose starting point is the specicied skip to position
+     * @return iterable whose starting point is the specified skip to position
      */
     PagingIterable<T> skipTo(long position);
 
+    /**
+     * Gets an iterable for the current page within the CMIS collection
+     *
+     * @return iterable for current page
+     */
+    PagingIterable<T> getPage();
+    
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Iterable#iterator()
+     */
+    PagingIterator<T> iterator();
+
+    /**
+     * Getter version of iterator()
+     *
+     * @see java.lang.Iterable#iterator()
+     * @return iterator
+     */
+    PagingIterator<T> getIterator();
 }

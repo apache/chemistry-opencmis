@@ -40,7 +40,7 @@ import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
-import org.apache.chemistry.opencmis.client.runtime.util.DefaultPagingIterable;
+import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.Acl;
@@ -738,7 +738,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         final RelationshipService relationshipService = getBinding().getRelationshipService();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new DefaultPagingIterable<Relationship>(new AbstractPageFetch<Relationship>() {
+        return new CollectionIterable<Relationship>(new AbstractPageFetch<Relationship>() {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<Relationship> fetchPage(long skipCount) {

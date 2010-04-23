@@ -28,7 +28,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.client.api.PagingIterable;
 import org.apache.chemistry.opencmis.client.api.PagingIterator;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
-import org.apache.chemistry.opencmis.client.runtime.util.DefaultPagingIterable;
+import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.junit.Test;
 
 public class PagingListTest {
@@ -38,7 +38,7 @@ public class PagingListTest {
     private String[] data0 = {};
 
     private PagingIterable<String> getIterable(final String[] data, final long pageSize) {
-        return new DefaultPagingIterable<String>(new AbstractPageFetch<String>() {
+        return new CollectionIterable<String>(new AbstractPageFetch<String>() {
 
             @Override
             protected PageFetchResult<String> fetchPage(long skipCount) {
@@ -118,7 +118,37 @@ public class PagingListTest {
     }
 
     @Test
+    public void loopPage() {
+        this.loopPage(this.data10, 0, 5);
+        this.loopPage(this.data10, 1, 5);
+        this.loopPage(this.data10, 2, 5);
+        this.loopPage(this.data10, 3, 5);
+
+        this.loopPage(this.data10, 8, 5);
+        this.loopPage(this.data10, 9, 5);
+        this.loopPage(this.data10, 10, 5);
+        // this.loopPage(100, 5); skip out of bound
+
+        // this.loopPage(0, 0);
+        this.loopPage(this.data10, 0, 1);
+        this.loopPage(this.data10, 0, 10);
+        this.loopPage(this.data10, 0, 100);
+
+        // this.loopPage(0, 0);
+        this.loopPage(this.data10, 10, 1);
+        this.loopPage(this.data10, 10, 10);
+        this.loopPage(this.data10, 10, 100);
+
+        this.loopPage(this.data1, 0, 5);
+        this.loopPage(this.data1, 1, 5);
+
+        this.loopPage(this.data0, 0, 5);
+    }
+
+    @Test
     public void totalNumItems() {
+        System.out.println("\ntotalNumItems");
+
         int pageSize = 5;
         PagingIterable<String> p = this.getIterable(this.data10, pageSize);
         assertNotNull(p);
@@ -130,6 +160,23 @@ public class PagingListTest {
         }
         assertEquals(pageSize + 1, i.getPosition());
         assertEquals(this.data10.length, i.getTotalNumItems());
+    }
+
+    @Test
+    public void totalHasMoreItems() {
+        System.out.println("\ntotalHasMoreItems");
+        
+        int pageSize = 5;
+        PagingIterable<String> p = this.getIterable(this.data10, pageSize);
+        assertNotNull(p);
+        PagingIterator<String> i = (PagingIterator<String>) p.iterator();
+        assertNotNull(i);
+        assertEquals(true, i.getHasMoreItems());
+        for (int idx = 0; i.hasNext() && idx < (pageSize + 1); idx++) {
+            i.next();
+        }
+        assertEquals(pageSize + 1, i.getPosition());
+        assertEquals(false, i.getHasMoreItems());
     }
 
     private void loopSkip(String[] data, int skipCount, int pageSize) {
@@ -160,11 +207,31 @@ public class PagingListTest {
         int count = 0;
         for (String s : p) {
             assertNotNull(s);
+            assertEquals("A" + count, s);
             System.out.print(s + " ");
             count++;
         }
         System.out.print("\n");
         assertEquals(data.length, count);
+    }
+
+    private void loopPage(String[] data, int skipCount, int pageSize) {
+        System.out.println("\nloopPage (" + skipCount + ", " + pageSize + ")");
+
+        PagingIterable<String> p = this.getIterable(data, pageSize);
+        assertNotNull(p);
+        PagingIterable<String> pp = p.skipTo(skipCount).getPage();
+        assertNotNull(pp);
+
+        int count = 0;
+        for (String s : pp) {
+            assertNotNull(s);
+            assertEquals("A" + (count + skipCount), s);
+            System.out.print(s + " ");
+            count++;
+        }
+        System.out.print("\n");
+        assertEquals(Math.min(data.length - skipCount, pageSize), count);
     }
 
 }
