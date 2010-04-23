@@ -28,15 +28,12 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
+import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * CMIS context listener.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisRepositoryContextListener implements ServletContextListener {
 
@@ -47,40 +44,27 @@ public class CmisRepositoryContextListener implements ServletContextListener {
     private static final String CONFIG_FILENAME = "/repository.properties";
     private static final String PROPERTY_CLASS = "class";
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * javax.servlet.ServletContextListener#contextInitialized(javax.servlet
-     * .ServletContextEvent)
-     */
     public void contextInitialized(ServletContextEvent sce) {
         // create services factory
-        AbstractServicesFactory factory = createServicesFactory(CONFIG_FILENAME);
+        AbstractServiceFactory factory = createServiceFactory(CONFIG_FILENAME);
 
         // set the services factory into the servlet context
         sce.getServletContext().setAttribute(SERVICES_FACTORY, factory);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seejavax.servlet.ServletContextListener#contextDestroyed(javax.servlet.
-     * ServletContextEvent)
-     */
     public void contextDestroyed(ServletContextEvent sce) {
         // destroy services factory
-        AbstractServicesFactory factory = (AbstractServicesFactory) sce.getServletContext().getAttribute(
-                SERVICES_FACTORY);
+        AbstractServiceFactory factory = (AbstractServiceFactory) sce.getServletContext()
+                .getAttribute(SERVICES_FACTORY);
         if (factory != null) {
             factory.destroy();
         }
     }
 
     /**
-     * Creates a services factory.
+     * Creates a service factory.
      */
-    private AbstractServicesFactory createServicesFactory(String filename) {
+    private AbstractServiceFactory createServiceFactory(String filename) {
         // load properties
         InputStream stream = this.getClass().getResourceAsStream(filename);
 
@@ -113,11 +97,11 @@ public class CmisRepositoryContextListener implements ServletContextListener {
             return null;
         }
 
-        if (!(object instanceof AbstractServicesFactory)) {
-            log.warn("The provided class is not a sub class of AbstractServicesFactory!");
+        if (!(object instanceof AbstractServiceFactory)) {
+            log.warn("The provided class is not a sub class of AbstractServiceFactory!");
         }
 
-        AbstractServicesFactory factory = (AbstractServicesFactory) object;
+        AbstractServiceFactory factory = (AbstractServiceFactory) object;
 
         // initialize factory instance
         Map<String, String> parameters = new HashMap<String, String>();

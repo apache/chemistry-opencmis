@@ -36,31 +36,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.server.impl.ObjectInfoHolderImpl;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisRelationshipService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 /**
  * Relationship Service operations.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RelationshipService {
 
     /**
      * Get object relationships.
      */
-    public static void getObjectRelationships(CallContext context, AbstractServicesFactory factory,
-            String repositoryId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisRelationshipService service = factory.getRelationshipService();
-
+    public static void getObjectRelationships(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         Boolean includeSubRelationshipTypes = getBooleanParameter(request, Constants.PARAM_SUB_RELATIONSHIP_TYPES);
@@ -73,16 +65,14 @@ public class RelationshipService {
         BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectList relationships = service.getObjectRelationships(context, repositoryId, objectId,
-                includeSubRelationshipTypes, relationshipDirection, typeId, filter, includeAllowableActions, maxItems,
-                skipCount, null, objectInfoHolder);
+        ObjectList relationships = service.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes,
+                relationshipDirection, typeId, filter, includeAllowableActions, maxItems, skipCount, null);
 
         if (relationships == null) {
             throw new CmisRuntimeException("Relationships are null!");
         }
 
-        ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(objectId);
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
         if (objectInfo == null) {
             throw new CmisRuntimeException("Object Info is missing!");
         }
@@ -123,7 +113,7 @@ public class RelationshipService {
                 if (object == null) {
                     continue;
                 }
-                writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, false);
+                writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
             }
         }
 

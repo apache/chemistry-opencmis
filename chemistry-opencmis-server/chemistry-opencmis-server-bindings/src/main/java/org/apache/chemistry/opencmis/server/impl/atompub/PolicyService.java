@@ -32,45 +32,35 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.server.impl.ObjectInfoHolderImpl;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisPolicyService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 /**
  * Policy Service operations.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PolicyService {
 
     /**
      * Get applied policies.
      */
-    public static void getAppliedPolicies(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getAppliedPolicies(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisPolicyService service = factory.getPolicyService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String filter = getStringParameter(request, Constants.PARAM_FILTER);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        List<ObjectData> policies = service.getAppliedPolicies(context, repositoryId, objectId, filter, null,
-                objectInfoHolder);
+        List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, null);
 
         if (policies == null) {
             throw new CmisRuntimeException("Policies are null!");
         }
 
-        ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(objectId);
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
         if (objectInfo == null) {
             throw new CmisRuntimeException("Object Info is missing!");
         }
@@ -102,7 +92,7 @@ public class PolicyService {
                 if (policy == null) {
                     continue;
                 }
-                writePolicyEntry(entry, objectInfo.getId(), policy, objectInfoHolder, baseUrl);
+                writePolicyEntry(service, entry, objectInfo.getId(), policy, repositoryId, baseUrl);
             }
         }
 
@@ -114,20 +104,22 @@ public class PolicyService {
     /**
      * Apply policy.
      */
-    public static void applyPolicy(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void applyPolicy(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisPolicyService service = factory.getPolicyService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
 
         AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectData policy = service
-                .applyPolicy(context, repositoryId, parser.getId(), objectId, null, objectInfoHolder);
+        service.applyPolicy(repositoryId, parser.getId(), objectId, null);
 
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, parser.getId());
+        if (objectInfo == null) {
+            throw new CmisRuntimeException("Object Info is missing!");
+        }
+
+        ObjectData policy = objectInfo.getObject();
         if (policy == null) {
             throw new CmisRuntimeException("Policy is null!");
         }
@@ -145,23 +137,21 @@ public class PolicyService {
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream());
-        writePolicyEntry(entry, objectId, policy, objectInfoHolder, baseUrl);
+        writePolicyEntry(service, entry, objectId, policy, repositoryId, baseUrl);
         entry.endDocument();
     }
 
     /**
      * Remove policy.
      */
-    public static void removePolicy(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void removePolicy(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisPolicyService service = factory.getPolicyService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String policyId = getStringParameter(request, Constants.PARAM_POLICY_ID);
 
         // execute
-        service.removePolicy(context, repositoryId, policyId, objectId, null);
+        service.removePolicy(repositoryId, policyId, objectId, null);
 
         // set headers
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -170,14 +160,14 @@ public class PolicyService {
     /**
      * Writes an entry that is attached to an object.
      */
-    private static void writePolicyEntry(AtomEntry entry, String objectId, ObjectData policy,
-            ObjectInfoHolder infoHolder, UrlBuilder baseUrl) throws Exception {
+    private static void writePolicyEntry(CmisService service, AtomEntry entry, String objectId, ObjectData policy,
+            String repositoryId, UrlBuilder baseUrl) throws Exception {
         CmisObjectType resultJaxb = convert(policy);
         if (resultJaxb == null) {
             return;
         }
 
-        ObjectInfo info = infoHolder.getObjectInfo(policy.getId());
+        ObjectInfo info = service.getObjectInfo(repositoryId, policy.getId());
         if (info == null) {
             throw new CmisRuntimeException("Object Info not found!");
         }

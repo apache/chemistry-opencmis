@@ -17,7 +17,6 @@ import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +34,7 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
     private static final BigInteger DEFAULT_MAX_ITEMS_OBJECTS = BigInteger.valueOf(200);
     private static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(10);
 
-    private static final Log log = LogFactory.getLog(AbstractServicesFactory.class);
+    private static final Log log = LogFactory.getLog(FileShareServiceFactory.class);
 
     private RepositoryMap repositoryMap;
     private TypeManager typeManager;
@@ -60,7 +59,7 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
 
     @Override
     public CmisService getService(CallContext context) {
-        repositoryMap.getAuthenticatedRepository(context, context.getRepositoryId());
+        repositoryMap.authenticate(context);
 
         CmisServiceWrapper<FileShareService> wrapperService = threadLocalService.get();
         if (wrapperService == null) {

@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
+import org.apache.chemistry.opencmis.commons.api.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -47,7 +48,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
-public abstract class AbstractCmisService implements CmisService {
+public abstract class AbstractCmisService implements CmisService, ObjectInfoHandler {
 
     private Map<String, ObjectInfo> objectInfoMap;
     private boolean addObjectInfos = true;
@@ -865,9 +866,9 @@ public abstract class AbstractCmisService implements CmisService {
      * </ul>
      */
     public ObjectInfo getObjectInfo(String repositoryId, String objectId) {
-        objectInfoMap = getObjectInfoMap();
+        Map<String, ObjectInfo> oim = getObjectInfoMap();
 
-        ObjectInfo info = objectInfoMap.get(objectId);
+        ObjectInfo info = oim.get(objectId);
         if (info == null) {
             // object info has not been found -> create one
             ObjectInfoImpl infoImpl = new ObjectInfoImpl();

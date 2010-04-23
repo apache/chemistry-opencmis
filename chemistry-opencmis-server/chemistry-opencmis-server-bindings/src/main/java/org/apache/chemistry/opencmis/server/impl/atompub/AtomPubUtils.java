@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -42,13 +43,9 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 /**
  * This class contains operations used by all services.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public final class AtomPubUtils {
 
@@ -259,14 +256,14 @@ public final class AtomPubUtils {
     /**
      * Writes the a object entry.
      */
-    public static void writeObjectEntry(AtomEntry entry, ObjectData object, ObjectInfoHolder infoHolder,
+    public static void writeObjectEntry(CmisService service, AtomEntry entry, ObjectData object,
             List<ObjectInFolderContainer> children, String repositoryId, String pathSegment,
             String relativePathSegment, UrlBuilder baseUrl, boolean isRoot) throws XMLStreamException, JAXBException {
-        if ((object == null) || (infoHolder == null)) {
-            throw new CmisRuntimeException("Object or Object Info not set!");
+        if (object == null) {
+            throw new CmisRuntimeException("Object not set!");
         }
 
-        ObjectInfo info = infoHolder.getObjectInfo(object.getId());
+        ObjectInfo info = service.getObjectInfo(repositoryId, object.getId());
         if (info == null) {
             throw new CmisRuntimeException("Object Info not found!");
         }
@@ -369,7 +366,7 @@ public final class AtomPubUtils {
 
         // write children
         if ((children != null) && (children.size() > 0)) {
-            writeObjectChildren(entry, info, children, infoHolder, repositoryId, baseUrl);
+            writeObjectChildren(service, entry, info, children, repositoryId, baseUrl);
         }
 
         // we are done
@@ -379,9 +376,9 @@ public final class AtomPubUtils {
     /**
      * Writes an objects entry children feed.
      */
-    public static void writeObjectChildren(AtomEntry entry, ObjectInfo folderInfo,
-            List<ObjectInFolderContainer> children, ObjectInfoHolder infoHolder, String repositoryId, UrlBuilder baseUrl)
-            throws XMLStreamException, JAXBException {
+    public static void writeObjectChildren(CmisService service, AtomEntry entry, ObjectInfo folderInfo,
+            List<ObjectInFolderContainer> children, String repositoryId, UrlBuilder baseUrl) throws XMLStreamException,
+            JAXBException {
 
         // start
         AtomFeed feed = new AtomFeed(entry.getWriter());
@@ -408,7 +405,7 @@ public final class AtomPubUtils {
 
         for (ObjectInFolderContainer container : children) {
             if ((container != null) && (container.getObject() != null)) {
-                writeObjectEntry(entry, container.getObject().getObject(), infoHolder, container.getChildren(),
+                writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(),
                         repositoryId, container.getObject().getPathSegment(), null, baseUrl, false);
             }
         }

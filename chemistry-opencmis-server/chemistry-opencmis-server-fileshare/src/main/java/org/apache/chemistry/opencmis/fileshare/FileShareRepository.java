@@ -69,6 +69,7 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -122,16 +123,12 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * File system back-end for CMIS server.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class FileShareRepository {
 
@@ -351,7 +348,7 @@ public class FileShareRepository {
      * Create* dispatch for AtomPub.
      */
     public ObjectData create(CallContext context, Properties properties, String folderId, ContentStream contentStream,
-            VersioningState versioningState, ObjectInfoHolder objectInfos) {
+            VersioningState versioningState, ObjectInfoHandler objectInfos) {
         debug("create");
         boolean userReadOnly = checkUser(context, true);
 
@@ -370,7 +367,7 @@ public class FileShareRepository {
             throw new CmisObjectNotFoundException("Cannot create object of type '" + typeId + "'!");
         }
 
-        return compileObjectType(getFile(objectId), null, false, false, userReadOnly, objectInfos);
+        return compileObjectType(context, getFile(objectId), null, false, false, userReadOnly, objectInfos);
     }
 
     /**
@@ -635,7 +632,7 @@ public class FileShareRepository {
      * CMIS moveObject.
      */
     public ObjectData moveObject(CallContext context, Holder<String> objectId, String targetFolderId,
-            ObjectInfoHolder objectInfos) {
+            ObjectInfoHandler objectInfos) {
         debug("moveObject");
         boolean userReadOnly = checkUser(context, true);
 
@@ -670,7 +667,7 @@ public class FileShareRepository {
             }
         }
 
-        return compileObjectType(newFile, null, false, false, userReadOnly, objectInfos);
+        return compileObjectType(context, newFile, null, false, false, userReadOnly, objectInfos);
     }
 
     /**
@@ -779,7 +776,7 @@ public class FileShareRepository {
      * CMIS updateProperties.
      */
     public ObjectData updateProperties(CallContext context, Holder<String> objectId, Properties properties,
-            ObjectInfoHolder objectInfos) {
+            ObjectInfoHandler objectInfos) {
         debug("updateProperties");
         boolean userReadOnly = checkUser(context, true);
 
@@ -849,14 +846,14 @@ public class FileShareRepository {
             }
         }
 
-        return compileObjectType(newFile, null, false, false, userReadOnly, objectInfos);
+        return compileObjectType(context, newFile, null, false, false, userReadOnly, objectInfos);
     }
 
     /**
      * CMIS getObject.
      */
     public ObjectData getObject(CallContext context, String objectId, String filter, Boolean includeAllowableActions,
-            Boolean includeAcl, ObjectInfoHolder objectInfos) {
+            Boolean includeAcl, ObjectInfoHandler objectInfos) {
         debug("getObject");
         boolean userReadOnly = checkUser(context, false);
 
@@ -876,7 +873,7 @@ public class FileShareRepository {
         Set<String> filterCollection = splitFilter(filter);
 
         // gather properties
-        return compileObjectType(file, filterCollection, iaa, iacl, userReadOnly, objectInfos);
+        return compileObjectType(context, file, filterCollection, iaa, iacl, userReadOnly, objectInfos);
     }
 
     /**
@@ -949,7 +946,7 @@ public class FileShareRepository {
      */
     public ObjectInFolderList getChildren(CallContext context, String folderId, String filter,
             Boolean includeAllowableActions, Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount,
-            ObjectInfoHolder objectInfos) {
+            ObjectInfoHandler objectInfos) {
         debug("getChildren");
         boolean userReadOnly = checkUser(context, false);
 
@@ -978,8 +975,8 @@ public class FileShareRepository {
         }
 
         // set object info of the the folder
-        if (objectInfos != null) {
-            compileObjectType(folder, null, false, false, userReadOnly, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            compileObjectType(context, folder, null, false, false, userReadOnly, objectInfos);
         }
 
         // prepare result
@@ -1009,7 +1006,8 @@ public class FileShareRepository {
 
             // build and add child object
             ObjectInFolderDataImpl objectInFolder = new ObjectInFolderDataImpl();
-            objectInFolder.setObject(compileObjectType(child, filterCollection, iaa, false, userReadOnly, objectInfos));
+            objectInFolder.setObject(compileObjectType(context, child, filterCollection, iaa, false, userReadOnly,
+                    objectInfos));
             if (ips) {
                 objectInFolder.setPathSegment(child.getName());
             }
@@ -1026,7 +1024,7 @@ public class FileShareRepository {
      * CMIS getDescendants.
      */
     public List<ObjectInFolderContainer> getDescendants(CallContext context, String folderId, BigInteger depth,
-            String filter, Boolean includeAllowableActions, Boolean includePathSegment, ObjectInfoHolder objectInfos,
+            String filter, Boolean includeAllowableActions, Boolean includePathSegment, ObjectInfoHandler objectInfos,
             boolean foldersOnly) {
         debug("getDescendants or getFolderTree");
         boolean userReadOnly = checkUser(context, false);
@@ -1054,13 +1052,14 @@ public class FileShareRepository {
         }
 
         // set object info of the the folder
-        if (objectInfos != null) {
-            compileObjectType(folder, null, false, false, userReadOnly, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            compileObjectType(context, folder, null, false, false, userReadOnly, objectInfos);
         }
 
         // get the tree
         List<ObjectInFolderContainer> result = new ArrayList<ObjectInFolderContainer>();
-        gatherDescendants(folder, result, foldersOnly, d, filterCollection, iaa, ips, userReadOnly, objectInfos);
+        gatherDescendants(context, folder, result, foldersOnly, d, filterCollection, iaa, ips, userReadOnly,
+                objectInfos);
 
         return result;
     }
@@ -1068,7 +1067,7 @@ public class FileShareRepository {
     /**
      * CMIS getFolderParent.
      */
-    public ObjectData getFolderParent(CallContext context, String folderId, String filter, ObjectInfoHolder objectInfos) {
+    public ObjectData getFolderParent(CallContext context, String folderId, String filter, ObjectInfoHandler objectInfos) {
         List<ObjectParentData> parents = getObjectParents(context, folderId, filter, false, false, objectInfos);
 
         if (parents.size() == 0) {
@@ -1082,7 +1081,7 @@ public class FileShareRepository {
      * CMIS getObjectParents.
      */
     public List<ObjectParentData> getObjectParents(CallContext context, String objectId, String filter,
-            Boolean includeAllowableActions, Boolean includeRelativePathSegment, ObjectInfoHolder objectInfos) {
+            Boolean includeAllowableActions, Boolean includeRelativePathSegment, ObjectInfoHandler objectInfos) {
         debug("getObjectParents");
         boolean userReadOnly = checkUser(context, false);
 
@@ -1102,13 +1101,13 @@ public class FileShareRepository {
         }
 
         // set object info of the the object
-        if (objectInfos != null) {
-            compileObjectType(file, null, false, false, userReadOnly, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            compileObjectType(context, file, null, false, false, userReadOnly, objectInfos);
         }
 
         // get parent folder
         File parent = file.getParentFile();
-        ObjectData object = compileObjectType(parent, filterCollection, iaa, false, userReadOnly, objectInfos);
+        ObjectData object = compileObjectType(context, parent, filterCollection, iaa, false, userReadOnly, objectInfos);
 
         ObjectParentDataImpl result = new ObjectParentDataImpl();
         result.setObject(object);
@@ -1123,7 +1122,7 @@ public class FileShareRepository {
      * CMIS getObjectByPath.
      */
     public ObjectData getObjectByPath(CallContext context, String folderPath, String filter,
-            boolean includeAllowableActions, boolean includeACL, ObjectInfoHolder objectInfos) {
+            boolean includeAllowableActions, boolean includeACL, ObjectInfoHandler objectInfos) {
         debug("getObjectByPath");
         boolean userReadOnly = checkUser(context, false);
 
@@ -1148,7 +1147,8 @@ public class FileShareRepository {
             throw new CmisObjectNotFoundException("Path doesn't exist.");
         }
 
-        return compileObjectType(file, filterCollection, includeAllowableActions, includeACL, userReadOnly, objectInfos);
+        return compileObjectType(context, file, filterCollection, includeAllowableActions, includeACL, userReadOnly,
+                objectInfos);
     }
 
     // --- helper methods ---
@@ -1156,9 +1156,9 @@ public class FileShareRepository {
     /**
      * Gather the children of a folder.
      */
-    private void gatherDescendants(File folder, List<ObjectInFolderContainer> list, boolean foldersOnly, int depth,
-            Set<String> filter, boolean includeAllowableActions, boolean includePathSegments, boolean userReadOnly,
-            ObjectInfoHolder objectInfos) {
+    private void gatherDescendants(CallContext context, File folder, List<ObjectInFolderContainer> list,
+            boolean foldersOnly, int depth, Set<String> filter, boolean includeAllowableActions,
+            boolean includePathSegments, boolean userReadOnly, ObjectInfoHandler objectInfos) {
         // iterate through children
         for (File child : folder.listFiles()) {
             // skip hidden and shadow files
@@ -1173,8 +1173,8 @@ public class FileShareRepository {
 
             // add to list
             ObjectInFolderDataImpl objectInFolder = new ObjectInFolderDataImpl();
-            objectInFolder.setObject(compileObjectType(child, filter, includeAllowableActions, false, userReadOnly,
-                    objectInfos));
+            objectInFolder.setObject(compileObjectType(context, child, filter, includeAllowableActions, false,
+                    userReadOnly, objectInfos));
             if (includePathSegments) {
                 objectInFolder.setPathSegment(child.getName());
             }
@@ -1187,7 +1187,7 @@ public class FileShareRepository {
             // move to next level
             if ((depth != 1) && child.isDirectory()) {
                 container.setChildren(new ArrayList<ObjectInFolderContainer>());
-                gatherDescendants(child, container.getChildren(), foldersOnly, depth - 1, filter,
+                gatherDescendants(context, child, container.getChildren(), foldersOnly, depth - 1, filter,
                         includeAllowableActions, includePathSegments, userReadOnly, objectInfos);
             }
         }
@@ -1276,11 +1276,12 @@ public class FileShareRepository {
     /**
      * Compiles an object type object from a file or folder.�
      */
-    private ObjectData compileObjectType(File file, Set<String> filter, boolean includeAllowableActions,
-            boolean includeAcl, boolean userReadOnly, ObjectInfoHolder objectInfos) {
+    private ObjectData compileObjectType(CallContext context, File file, Set<String> filter,
+            boolean includeAllowableActions, boolean includeAcl, boolean userReadOnly, ObjectInfoHandler objectInfos) {
         ObjectDataImpl result = new ObjectDataImpl();
+        ObjectInfoImpl objectInfo = new ObjectInfoImpl();
 
-        result.setProperties(compileProperties(file, filter, objectInfos));
+        result.setProperties(compileProperties(file, filter, objectInfo));
 
         if (includeAllowableActions) {
             result.setAllowableActions(compileAllowableActions(file, userReadOnly));
@@ -1291,13 +1292,18 @@ public class FileShareRepository {
             result.setIsExactAcl(true);
         }
 
+        if (context.isObjectInfoRequired()) {
+            objectInfo.setObject(result);
+            objectInfos.addObjectInfo(objectInfo);
+        }
+
         return result;
     }
 
     /**
      * Gathers all base properties of a file or folder.
      */
-    private Properties compileProperties(File file, Set<String> orgfilter, ObjectInfoHolder objectInfos) {
+    private Properties compileProperties(File file, Set<String> orgfilter, ObjectInfoImpl objectInfo) {
         if (file == null) {
             throw new IllegalArgumentException("File must not be null!");
         }
@@ -1312,16 +1318,44 @@ public class FileShareRepository {
 
         // find base type
         String typeId = null;
-        ObjectInfoImpl objectInfo = null;
 
         if (file.isDirectory()) {
             typeId = TypeManager.FOLDER_TYPE_ID;
-            objectInfo = new FolderInfo();
+            objectInfo.setBaseType(BaseTypeId.CMIS_FOLDER);
             objectInfo.setTypeId(typeId);
+            objectInfo.setContentType(null);
+            objectInfo.setFileName(null);
+            objectInfo.setHasAcl(true);
+            objectInfo.setHasContent(false);
+            objectInfo.setVersionSeriesId(null);
+            objectInfo.setIsCurrentVersion(true);
+            objectInfo.setRelationshipSourceIds(null);
+            objectInfo.setRelationshipTargetIds(null);
+            objectInfo.setRenditionInfos(null);
+            objectInfo.setSupportsDescendants(true);
+            objectInfo.setSupportsFolderTree(true);
+            objectInfo.setSupportsPolicies(false);
+            objectInfo.setSupportsRelationships(false);
+            objectInfo.setWorkingCopyId(null);
+            objectInfo.setWorkingCopyOriginalId(null);
         } else {
             typeId = TypeManager.DOCUMENT_TYPE_ID;
-            objectInfo = new DocumentInfo();
+            objectInfo.setBaseType(BaseTypeId.CMIS_DOCUMENT);
             objectInfo.setTypeId(typeId);
+            objectInfo.setHasAcl(true);
+            objectInfo.setHasContent(true);
+            objectInfo.setHasParent(true);
+            objectInfo.setVersionSeriesId(null);
+            objectInfo.setIsCurrentVersion(true);
+            objectInfo.setRelationshipSourceIds(null);
+            objectInfo.setRelationshipTargetIds(null);
+            objectInfo.setRenditionInfos(null);
+            objectInfo.setSupportsDescendants(false);
+            objectInfo.setSupportsFolderTree(false);
+            objectInfo.setSupportsPolicies(false);
+            objectInfo.setSupportsRelationships(false);
+            objectInfo.setWorkingCopyId(null);
+            objectInfo.setWorkingCopyOriginalId(null);
         }
 
         // let's do it
@@ -1395,10 +1429,6 @@ public class FileShareRepository {
                 if (!filter.isEmpty()) {
                     debug("Unknown filter properties: " + filter.toString(), null);
                 }
-            }
-
-            if (objectInfos != null) {
-                objectInfos.addObjectInfo(objectInfo);
             }
 
             return result;

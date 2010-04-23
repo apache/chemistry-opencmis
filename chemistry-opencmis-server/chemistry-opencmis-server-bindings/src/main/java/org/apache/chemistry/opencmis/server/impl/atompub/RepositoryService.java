@@ -54,18 +54,14 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 
 /**
  * Repository Service operations.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public final class RepositoryService {
 
@@ -78,10 +74,8 @@ public final class RepositoryService {
     /**
      * Renders the service document.
      */
-    public static void getRepositories(CallContext context, AbstractServicesFactory factory,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisRepositoryService service = factory.getRepositoryService();
-
+    public static void getRepositories(CallContext context, CmisService service, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         // get parameters
         String repositoryId = getStringParameter(request, Constants.PARAM_REPOSITORY_ID);
 
@@ -89,9 +83,9 @@ public final class RepositoryService {
         List<RepositoryInfo> infoDataList = null;
 
         if (repositoryId == null) {
-            infoDataList = service.getRepositoryInfos(context, null);
+            infoDataList = service.getRepositoryInfos(null);
         } else {
-            infoDataList = Collections.singletonList(service.getRepositoryInfo(context, repositoryId, null));
+            infoDataList = Collections.singletonList(service.getRepositoryInfo(repositoryId, null));
         }
 
         // set headers
@@ -239,10 +233,8 @@ public final class RepositoryService {
     /**
      * Renders a type children collection.
      */
-    public static void getTypeChildren(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getTypeChildren(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisRepositoryService service = factory.getRepositoryService();
-
         // get parameters
         String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
         boolean includePropertyDefinitions = getBooleanParameter(request, Constants.PARAM_PROPERTY_DEFINITIONS, false);
@@ -250,8 +242,8 @@ public final class RepositoryService {
         BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
         // execute
-        TypeDefinitionList typeList = service.getTypeChildren(context, repositoryId, typeId,
-                includePropertyDefinitions, maxItems, skipCount, null);
+        TypeDefinitionList typeList = service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
+                maxItems, skipCount, null);
 
         BigInteger numItems = (typeList == null ? null : typeList.getNumItems());
         Boolean hasMoreItems = (typeList == null ? null : typeList.hasMoreItems());
@@ -262,7 +254,7 @@ public final class RepositoryService {
         // in order to get the parent type, we need the type definition of this
         // type as well
         if (typeId != null) {
-            TypeDefinition typeDefinition = service.getTypeDefinition(context, repositoryId, typeId, null);
+            TypeDefinition typeDefinition = service.getTypeDefinition(repositoryId, typeId, null);
 
             parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentTypeId());
             typeName = (typeDefinition == null ? typeId : typeDefinition.getDisplayName());
@@ -326,17 +318,15 @@ public final class RepositoryService {
     /**
      * Renders a type descendants feed.
      */
-    public static void getTypeDescendants(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getTypeDescendants(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisRepositoryService service = factory.getRepositoryService();
-
         // get parameters
         String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
         BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
         boolean includePropertyDefinitions = getBooleanParameter(request, Constants.PARAM_PROPERTY_DEFINITIONS, false);
 
         // execute
-        List<TypeDefinitionContainer> typeTree = service.getTypeDescendants(context, repositoryId, typeId, depth,
+        List<TypeDefinitionContainer> typeTree = service.getTypeDescendants(repositoryId, typeId, depth,
                 includePropertyDefinitions, null);
 
         String parentTypeId = null;
@@ -345,7 +335,7 @@ public final class RepositoryService {
         // in order to get the parent type, we need the type definition of this
         // type as well
         if (typeId != null) {
-            TypeDefinition typeDefinition = service.getTypeDefinition(context, repositoryId, typeId, null);
+            TypeDefinition typeDefinition = service.getTypeDefinition(repositoryId, typeId, null);
 
             parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentTypeId());
             typeName = (typeDefinition == null ? typeId : typeDefinition.getDisplayName());
@@ -403,15 +393,13 @@ public final class RepositoryService {
     /**
      * Renders a type definition.
      */
-    public static void getTypeDefinition(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getTypeDefinition(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisRepositoryService service = factory.getRepositoryService();
-
         // get parameters
         String typeId = getStringParameter(request, Constants.PARAM_ID);
 
         // execute
-        TypeDefinition type = service.getTypeDefinition(context, repositoryId, typeId, null);
+        TypeDefinition type = service.getTypeDefinition(repositoryId, typeId, null);
 
         // write XML
         response.setStatus(HttpServletResponse.SC_OK);

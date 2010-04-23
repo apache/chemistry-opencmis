@@ -25,7 +25,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.chemistry.opencmis.commons.api.Acl;
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisACLType;
@@ -33,8 +33,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumACLPropagation;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisAclService;
 
 /**
  * CMIS ACL Service.
@@ -47,13 +45,12 @@ public class AclService extends AbstractService implements ACLServicePort {
     public CmisACLType applyACL(String repositoryId, String objectId, CmisAccessControlListType addAces,
             CmisAccessControlListType removeAces, EnumACLPropagation aclPropagation, CmisExtensionType extension)
             throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisAclService service = factory.getAclService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            Acl acl = service.applyAcl(context, repositoryId, objectId, convert(addAces, null), convert(removeAces,
-                    null), convert(AclPropagation.class, aclPropagation), convert(extension));
+            Acl acl = service.applyAcl(repositoryId, objectId, convert(addAces, null), convert(removeAces, null),
+                    convert(AclPropagation.class, aclPropagation), convert(extension));
 
             if (acl == null) {
                 return null;
@@ -66,18 +63,18 @@ public class AclService extends AbstractService implements ACLServicePort {
             return result;
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public CmisACLType getACL(String repositoryId, String objectId, Boolean onlyBasicPermissions,
             CmisExtensionType extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisAclService service = factory.getAclService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            Acl acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions, convert(extension));
-
+            Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, convert(extension));
             if (acl == null) {
                 return null;
             }
@@ -89,7 +86,8 @@ public class AclService extends AbstractService implements ACLServicePort {
             return result;
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
-
 }

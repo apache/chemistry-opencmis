@@ -30,15 +30,13 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DiscoveryServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
 
 /**
  * CMIS Discovery Service.
@@ -51,15 +49,14 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
     public void getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems,
             CmisExtensionType extension, Holder<CmisObjectListType> objects) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisDiscoveryService service = factory.getDiscoveryService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             org.apache.chemistry.opencmis.commons.api.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
 
-            ObjectList changesList = service.getContentChanges(context, repositoryId, changeLogTokenHolder,
-                    includeProperties, filter, includePolicyIds, includeAcl, maxItems, convert(extension), null);
+            ObjectList changesList = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties,
+                    filter, includePolicyIds, includeAcl, maxItems, convert(extension));
 
             if (objects != null) {
                 objects.value = convert(changesList);
@@ -68,23 +65,25 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
             setHolderValue(changeLogTokenHolder, changeLogToken);
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public CmisObjectListType query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisDiscoveryService service = factory.getDiscoveryService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            return convert(service.query(context, repositoryId, statement, searchAllVersions, includeAllowableActions,
-                    convert(IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
+            return convert(service.query(repositoryId, statement, searchAllVersions, includeAllowableActions, convert(
+                    IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
                     convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
-
 }

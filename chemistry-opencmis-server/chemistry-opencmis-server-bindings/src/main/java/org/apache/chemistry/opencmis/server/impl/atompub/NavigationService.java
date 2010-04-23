@@ -53,6 +53,7 @@ import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -60,26 +61,17 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
-import org.apache.chemistry.opencmis.server.impl.ObjectInfoHolderImpl;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisNavigationService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 /**
  * Navigation Service operations.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public final class NavigationService {
 
     /**
      * Children Collection GET.
      */
-    public static void getChildren(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getChildren(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisNavigationService service = factory.getNavigationService();
-
         // get parameters
         String folderId = getStringParameter(request, Constants.PARAM_ID);
         String filter = getStringParameter(request, Constants.PARAM_FILTER);
@@ -93,16 +85,15 @@ public final class NavigationService {
         BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectInFolderList children = service.getChildren(context, repositoryId, folderId, filter, orderBy,
+        ObjectInFolderList children = service.getChildren(repositoryId, folderId, filter, orderBy,
                 includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItems,
-                skipCount, null, objectInfoHolder);
+                skipCount, null);
 
         if (children == null) {
             throw new CmisRuntimeException("Children are null!");
         }
 
-        ObjectInfo folderInfo = objectInfoHolder.getObjectInfo(folderId);
+        ObjectInfo folderInfo = service.getObjectInfo(repositoryId, folderId);
         if (folderInfo == null) {
             throw new CmisRuntimeException("Folder Object Info is missing!");
         }
@@ -186,8 +177,8 @@ public final class NavigationService {
                 if ((object == null) || (object.getObject() == null)) {
                     continue;
                 }
-                writeObjectEntry(entry, object.getObject(), objectInfoHolder, null, repositoryId, object
-                        .getPathSegment(), null, baseUrl, false);
+                writeObjectEntry(service, entry, object.getObject(), null, repositoryId, object.getPathSegment(), null,
+                        baseUrl, false);
             }
         }
 
@@ -199,10 +190,8 @@ public final class NavigationService {
     /**
      * Descendants feed GET.
      */
-    public static void getDescendants(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getDescendants(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisNavigationService service = factory.getNavigationService();
-
         // get parameters
         String folderId = getStringParameter(request, Constants.PARAM_ID);
         BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
@@ -214,16 +203,14 @@ public final class NavigationService {
         Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        List<ObjectInFolderContainer> descendants = service.getDescendants(context, repositoryId, folderId, depth,
-                filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null,
-                objectInfoHolder);
+        List<ObjectInFolderContainer> descendants = service.getDescendants(repositoryId, folderId, depth, filter,
+                includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
 
         if (descendants == null) {
             throw new CmisRuntimeException("Descendants are null!");
         }
 
-        ObjectInfo folderInfo = objectInfoHolder.getObjectInfo(folderId);
+        ObjectInfo folderInfo = service.getObjectInfo(repositoryId, folderId);
         if (folderInfo == null) {
             throw new CmisRuntimeException("Folder Object Info is missing!");
         }
@@ -266,8 +253,8 @@ public final class NavigationService {
             if ((container == null) || (container.getObject() == null) || (container.getObject().getObject() == null)) {
                 continue;
             }
-            writeObjectEntry(entry, container.getObject().getObject(), objectInfoHolder, container.getChildren(),
-                    repositoryId, container.getObject().getPathSegment(), null, baseUrl, false);
+            writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(), repositoryId,
+                    container.getObject().getPathSegment(), null, baseUrl, false);
         }
 
         // we are done
@@ -278,10 +265,8 @@ public final class NavigationService {
     /**
      * Folder tree feed GET.
      */
-    public static void getFolderTree(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getFolderTree(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisNavigationService service = factory.getNavigationService();
-
         // get parameters
         String folderId = getStringParameter(request, Constants.PARAM_ID);
         BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
@@ -293,16 +278,14 @@ public final class NavigationService {
         Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        List<ObjectInFolderContainer> folderTree = service.getFolderTree(context, repositoryId, folderId, depth,
-                filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null,
-                objectInfoHolder);
+        List<ObjectInFolderContainer> folderTree = service.getFolderTree(repositoryId, folderId, depth, filter,
+                includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
 
         if (folderTree == null) {
             throw new CmisRuntimeException("Folder tree is null!");
         }
 
-        ObjectInfo folderInfo = objectInfoHolder.getObjectInfo(folderId);
+        ObjectInfo folderInfo = service.getObjectInfo(repositoryId, folderId);
         if (folderInfo == null) {
             throw new CmisRuntimeException("Folder Object Info is missing!");
         }
@@ -346,8 +329,8 @@ public final class NavigationService {
             if ((container == null) || (container.getObject() == null) || (container.getObject().getObject() == null)) {
                 continue;
             }
-            writeObjectEntry(entry, container.getObject().getObject(), objectInfoHolder, container.getChildren(),
-                    repositoryId, container.getObject().getPathSegment(), null, baseUrl, false);
+            writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(), repositoryId,
+                    container.getObject().getPathSegment(), null, baseUrl, false);
         }
 
         // we are done
@@ -358,10 +341,8 @@ public final class NavigationService {
     /**
      * Object parents feed GET.
      */
-    public static void getObjectParents(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getObjectParents(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisNavigationService service = factory.getNavigationService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String filter = getStringParameter(request, Constants.PARAM_FILTER);
@@ -372,16 +353,14 @@ public final class NavigationService {
         Boolean includeRelativePathSegment = getBooleanParameter(request, Constants.PARAM_RELATIVE_PATH_SEGMENT);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        List<ObjectParentData> parents = service.getObjectParents(context, repositoryId, objectId, filter,
-                includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment, null,
-                objectInfoHolder);
+        List<ObjectParentData> parents = service.getObjectParents(repositoryId, objectId, filter,
+                includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment, null);
 
         if (parents == null) {
             throw new CmisRuntimeException("Parents are null!");
         }
 
-        ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(objectId);
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
         if (objectInfo == null) {
             throw new CmisRuntimeException("Object Info is missing!");
         }
@@ -413,7 +392,7 @@ public final class NavigationService {
                 if ((object == null) || (object.getObject() == null)) {
                     continue;
                 }
-                writeObjectEntry(entry, object.getObject(), objectInfoHolder, null, repositoryId, null, object
+                writeObjectEntry(service, entry, object.getObject(), null, repositoryId, null, object
                         .getRelativePathSegment(), baseUrl, false);
             }
         }
@@ -426,10 +405,8 @@ public final class NavigationService {
     /**
      * Checked Out Collection GET.
      */
-    public static void getCheckedOutDocs(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getCheckedOutDocs(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisNavigationService service = factory.getNavigationService();
-
         // get parameters
         String folderId = getStringParameter(request, Constants.PARAM_ID);
         String filter = getStringParameter(request, Constants.PARAM_FILTER);
@@ -442,10 +419,8 @@ public final class NavigationService {
         BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectList checkedOut = service.getCheckedOutDocs(context, repositoryId, folderId, filter, orderBy,
-                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, null,
-                objectInfoHolder);
+        ObjectList checkedOut = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
+                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, null);
 
         if (checkedOut == null) {
             throw new CmisRuntimeException("Checked Out list is null!");
@@ -453,7 +428,7 @@ public final class NavigationService {
 
         ObjectInfo folderInfo = null;
         if (folderId != null) {
-            folderInfo = objectInfoHolder.getObjectInfo(folderId);
+            folderInfo = service.getObjectInfo(repositoryId, folderId);
             if (folderInfo == null) {
                 throw new CmisRuntimeException("Folder Object Info is missing!");
             }
@@ -507,7 +482,7 @@ public final class NavigationService {
                 if (object == null) {
                     continue;
                 }
-                writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, false);
+                writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
             }
         }
 

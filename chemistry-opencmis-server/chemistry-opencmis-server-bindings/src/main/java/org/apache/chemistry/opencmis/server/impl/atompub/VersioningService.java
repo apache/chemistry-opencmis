@@ -34,39 +34,35 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.server.impl.ObjectInfoHolderImpl;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
-import org.apache.chemistry.opencmis.server.spi.CmisVersioningService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 /**
  * Versioning Service operations.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class VersioningService {
 
     /**
      * Check Out.
      */
-    public static void checkOut(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void checkOut(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisVersioningService service = factory.getVersioningService();
-
         // get parameters
         AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectData object = service.checkOut(context, repositoryId, new Holder<String>(parser.getId()), null, null,
-                objectInfoHolder);
+        Holder<String> checkOutId = new Holder<String>(parser.getId());
+        service.checkOut(repositoryId, checkOutId, null, null);
 
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, checkOutId.getValue());
+        if (objectInfo == null) {
+            throw new CmisRuntimeException("Object Info is missing!");
+        }
+
+        ObjectData object = objectInfo.getObject();
         if (object == null) {
             throw new CmisRuntimeException("Object is null!");
         }
@@ -87,32 +83,29 @@ public class VersioningService {
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream());
-        writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
 
     /**
      * Get all versions.
      */
-    public static void getAllVersions(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getAllVersions(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisVersioningService service = factory.getVersioningService();
-
         // get parameters
-        String versionSeriesId = getStringParameter(request, Constants.PARAM_ID);
+        String objectId = getStringParameter(request, Constants.PARAM_ID);
         String filter = getStringParameter(request, Constants.PARAM_FILTER);
         Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        List<ObjectData> versions = service.getAllVersions(context, repositoryId, versionSeriesId, filter,
-                includeAllowableActions, null, objectInfoHolder);
+        List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, null, filter,
+                includeAllowableActions, null);
 
         if (versions == null) {
             throw new CmisRuntimeException("Versions are null!");
         }
 
-        ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(versionSeriesId);
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
         if (objectInfo == null) {
             throw new CmisRuntimeException("Version Series Info is missing!");
         }
@@ -137,7 +130,7 @@ public class VersioningService {
 
         feed.writeSelfLink(compileUrl(baseUrl, RESOURCE_VERSIONS, objectInfo.getId()), null);
 
-        feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, versionSeriesId));
+        feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, objectId));
 
         // write entries
         AtomEntry entry = new AtomEntry(feed.getWriter());
@@ -145,7 +138,7 @@ public class VersioningService {
             if (object == null) {
                 continue;
             }
-            writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, false);
+            writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
         }
 
         // we are done
@@ -156,15 +149,13 @@ public class VersioningService {
     /**
      * Delete object.
      */
-    public static void deleteAllVersions(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void deleteAllVersions(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisObjectService service = factory.getObjectService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
 
         // execute
-        service.deleteObjectOrCancelCheckOut(context, repositoryId, objectId, Boolean.TRUE, null);
+        service.deleteObjectOrCancelCheckOut(repositoryId, objectId, Boolean.TRUE, null);
 
         // set headers
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);

@@ -27,12 +27,10 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisMultiFilingService;
 
 /**
  * CMIS MultiFiling Service.
@@ -44,36 +42,37 @@ public class MultiFilingService extends AbstractService implements MultiFilingSe
 
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             Holder<CmisExtensionType> extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisMultiFilingService service = factory.getMultiFilingService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extData, null);
+            service.addObjectToFolder(repositoryId, objectId, folderId, allVersions, extData);
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
             Holder<CmisExtensionType> extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisMultiFilingService service = factory.getMultiFilingService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.removeObjectFromFolder(context, repositoryId, objectId, folderId, extData, null);
+            service.removeObjectFromFolder(repositoryId, objectId, folderId, extData);
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
-
 }

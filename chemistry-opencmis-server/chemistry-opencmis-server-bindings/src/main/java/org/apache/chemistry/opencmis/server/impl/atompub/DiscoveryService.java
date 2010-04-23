@@ -41,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.api.Holder;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -49,16 +50,9 @@ import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisQueryType;
-import org.apache.chemistry.opencmis.server.impl.ObjectInfoHolderImpl;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 /**
  * Discovery Service operations.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class DiscoveryService {
 
@@ -68,10 +62,8 @@ public class DiscoveryService {
     /**
      * Query.
      */
-    public static void query(CallContext context, AbstractServicesFactory factory, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisDiscoveryService service = factory.getDiscoveryService();
-
+    public static void query(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         // get parameters
         String statement = null;
         Boolean searchAllVersions = null;
@@ -128,8 +120,8 @@ public class DiscoveryService {
         }
 
         // execute
-        ObjectList results = service.query(context, repositoryId, statement, searchAllVersions,
-                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, null);
+        ObjectList results = service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
+                includeRelationships, renditionFilter, maxItems, skipCount, null);
 
         if (results == null) {
             throw new CmisRuntimeException("Results are null!");
@@ -212,10 +204,8 @@ public class DiscoveryService {
     /**
      * Get content changes.
      */
-    public static void getContentChanges(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getContentChanges(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisDiscoveryService service = factory.getDiscoveryService();
-
         // get parameters
         String changeLogToken = getStringParameter(request, Constants.PARAM_CHANGE_LOG_TOKEN);
         Boolean includeProperties = getBooleanParameter(request, Constants.PARAM_PROPERTIES);
@@ -225,10 +215,9 @@ public class DiscoveryService {
         BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
         Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
-        ObjectList changes = service.getContentChanges(context, repositoryId, changeLogTokenHolder, includeProperties,
-                filter, includePolicyIds, includeAcl, maxItems, null, objectInfoHolder);
+        ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties, filter,
+                includePolicyIds, includeAcl, maxItems, null);
 
         if (changes == null) {
             throw new CmisRuntimeException("Changes are null!");
@@ -270,7 +259,7 @@ public class DiscoveryService {
                 if (object == null) {
                     continue;
                 }
-                writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, false);
+                writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
             }
         }
 

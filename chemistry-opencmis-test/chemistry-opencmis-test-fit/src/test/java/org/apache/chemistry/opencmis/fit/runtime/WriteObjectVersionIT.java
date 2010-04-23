@@ -39,7 +39,7 @@ public class WriteObjectVersionIT extends AbstractSessionTest {
         DocumentType dt = (DocumentType) document.getType();
         assertNotNull(dt);
         ObjectId id = null;
-        if (dt.isVersionable()) {
+        if (dt.isVersionable() != null && dt.isVersionable().booleanValue()) {
             id = document.checkOut();
         }
 

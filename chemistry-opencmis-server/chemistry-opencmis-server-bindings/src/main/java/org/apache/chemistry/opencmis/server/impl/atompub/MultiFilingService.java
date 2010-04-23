@@ -29,29 +29,22 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
+import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.server.impl.ObjectInfoHolderImpl;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisMultiFilingService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 /**
  * MultiFiling Service operations.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class MultiFilingService {
 
     /**
      * Remove object from folder.
      */
-    public static void removeObjectFromFolder(CallContext context, AbstractServicesFactory factory,
-            String repositoryId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisMultiFilingService service = factory.getMultiFilingService();
-
+    public static void removeObjectFromFolder(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String removeFrom = getStringParameter(request, Constants.PARAM_REMOVE_FROM);
 
@@ -59,10 +52,14 @@ public class MultiFilingService {
         String objectId = parser.getId();
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectData object = service.removeObjectFromFolder(context, repositoryId, objectId, removeFrom, null,
-                objectInfoHolder);
+        service.removeObjectFromFolder(repositoryId, objectId, removeFrom, null);
 
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
+        if (objectInfo == null) {
+            throw new CmisRuntimeException("Object Info is missing!");
+        }
+
+        ObjectData object = objectInfo.getObject();
         if (object == null) {
             throw new CmisRuntimeException("Object is null!");
         }
@@ -81,7 +78,7 @@ public class MultiFilingService {
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream());
-        writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
 }

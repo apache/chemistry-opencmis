@@ -20,18 +20,16 @@ package org.apache.chemistry.opencmis.server.impl.dummy;
 
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
+import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
+import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of a repository factory without back-end for test purposes.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
-public class DummyServicesFactory extends AbstractServicesFactory {
+public class DummyServicesFactory extends AbstractServiceFactory {
 
     private static final String REPOSITORY_ID = "repository.id";
     private static final String REPOSITORY_ID_DEFAULT = "test-rep";
@@ -41,38 +39,37 @@ public class DummyServicesFactory extends AbstractServicesFactory {
 
     private static final Log LOG = LogFactory.getLog(DummyServicesFactory.class.getName());
 
-    private DummyRepositoryService fRepositoryService;
-    private String fId;
-    private String fName;
+    private DummyService service;
+    private String id;
+    private String name;
 
     @Override
     public void init(Map<String, String> parameters) {
         // get the id
-        fId = parameters.get(REPOSITORY_ID);
-        if ((fId == null) || (fId.trim().length() == 0)) {
-            fId = REPOSITORY_ID_DEFAULT;
+        id = parameters.get(REPOSITORY_ID);
+        if ((id == null) || (id.trim().length() == 0)) {
+            id = REPOSITORY_ID_DEFAULT;
         }
 
         // get the name
-        fName = parameters.get(REPOSITORY_NAME);
-        if ((fName == null) || (fName.trim().length() == 0)) {
-            fName = REPOSITORY_NAME_DEFAULT;
+        name = parameters.get(REPOSITORY_NAME);
+        if ((name == null) || (name.trim().length() == 0)) {
+            name = REPOSITORY_NAME_DEFAULT;
         }
 
         // create a repository service
-        fRepositoryService = new DummyRepositoryService(fId, fName);
+        service = new DummyService(id, name);
 
-        LOG.info("Initialized dummy repository '" + fName + "' (" + fId + ")");
+        LOG.info("Initialized dummy repository '" + name + "' (" + id + ")");
     }
 
     @Override
     public void destroy() {
-        LOG.info("Destroyed dummy repository '" + fName + "' (" + fId + ")");
+        LOG.info("Destroyed dummy repository '" + name + "' (" + id + ")");
     }
 
     @Override
-    public CmisRepositoryService getRepositoryService() {
-        return fRepositoryService;
+    public CmisService getService(CallContext context) {
+        return service;
     }
-
 }

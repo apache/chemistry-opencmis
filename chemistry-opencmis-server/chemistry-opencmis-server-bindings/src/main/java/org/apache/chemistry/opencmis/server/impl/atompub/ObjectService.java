@@ -48,6 +48,7 @@ import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.PropertyData;
 import org.apache.chemistry.opencmis.commons.api.PropertyString;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -57,18 +58,9 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
-import org.apache.chemistry.opencmis.server.impl.ObjectInfoHolderImpl;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisMultiFilingService;
-import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
-import org.apache.chemistry.opencmis.server.spi.CmisVersioningService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 /**
  * Object Service operations.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public final class ObjectService {
 
@@ -77,9 +69,8 @@ public final class ObjectService {
     /**
      * Create*.
      */
-    public static void create(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void create(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         // get parameters
         String folderId = getStringParameter(request, Constants.PARAM_ID);
         String sourceFolderId = getStringParameter(request, Constants.PARAM_SOURCE_FOLDER_ID);
@@ -90,34 +81,33 @@ public final class ObjectService {
         String objectId = parser.getId();
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectData object = null;
+        String newObjectId = null;
 
         if (objectId == null) {
             // create
-            CmisObjectService service = factory.getObjectService();
-            object = service.create(context, repositoryId, parser.getProperties(), folderId, parser.getContentStream(),
-                    versioningState, parser.getPolicyIds(), null, objectInfoHolder);
+            newObjectId = service.create(repositoryId, parser.getProperties(), folderId, parser.getContentStream(),
+                    versioningState, parser.getPolicyIds(), null);
         } else {
             if ((sourceFolderId == null) || (sourceFolderId.trim().length() == 0)) {
                 // addObjectToFolder
-                CmisMultiFilingService service = factory.getMultiFilingService();
-                object = service.addObjectToFolder(context, repositoryId, objectId, sourceFolderId, null, null,
-                        objectInfoHolder);
+                service.addObjectToFolder(repositoryId, objectId, folderId, null, null);
+                newObjectId = objectId;
             } else {
                 // move
-                CmisObjectService service = factory.getObjectService();
-                object = service.moveObject(context, repositoryId, new Holder<String>(objectId), folderId,
-                        sourceFolderId, null, objectInfoHolder);
+                Holder<String> objectIdHolder = new Holder<String>(objectId);
+                service.moveObject(repositoryId, objectIdHolder, folderId, sourceFolderId, null);
+                newObjectId = objectIdHolder.getValue();
             }
         }
 
-        if (object == null) {
-            throw new CmisRuntimeException("Object is null!");
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
+        if (objectInfo == null) {
+            throw new CmisRuntimeException("Object Info is missing!");
         }
 
-        if (object.getId() == null) {
-            throw new CmisRuntimeException("Object Id is null!");
+        ObjectData object = objectInfo.getObject();
+        if (object == null) {
+            throw new CmisRuntimeException("Object is null!");
         }
 
         // set headers
@@ -125,57 +115,62 @@ public final class ObjectService {
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         response.setContentType(Constants.MEDIATYPE_ENTRY);
-        response.setHeader("Location", compileUrl(baseUrl, RESOURCE_ENTRY, object.getId()));
+        response.setHeader("Location", compileUrl(baseUrl, RESOURCE_ENTRY, newObjectId));
 
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream());
-        writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
 
     /**
      * Create relationship.
      */
-    public static void createRelationship(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void createRelationship(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisObjectService service = factory.getObjectService();
-
         // get parameters
         AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectData object = service.create(context, repositoryId, parser.getProperties(), null, null, null, parser
-                .getPolicyIds(), null, objectInfoHolder);
+        String newObjectId = service.createRelationship(repositoryId, parser.getProperties(), parser.getPolicyIds(),
+                null, null, null);
+
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
+        if (objectInfo == null) {
+            throw new CmisRuntimeException("Object Info is missing!");
+        }
+
+        ObjectData object = objectInfo.getObject();
+        if (object == null) {
+            throw new CmisRuntimeException("Object is null!");
+        }
 
         // set headers
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         response.setContentType(Constants.MEDIATYPE_ENTRY);
-        response.setHeader("Location", compileUrl(baseUrl, RESOURCE_ENTRY, object.getId()));
+        response.setHeader("Location", compileUrl(baseUrl, RESOURCE_ENTRY, newObjectId));
 
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream());
-        writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
 
     /**
      * Delete object.
      */
-    public static void deleteObject(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void deleteObject(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisObjectService service = factory.getObjectService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
 
         // execute
-        service.deleteObjectOrCancelCheckOut(context, repositoryId, objectId, allVersions, null);
+        service.deleteObjectOrCancelCheckOut(repositoryId, objectId, allVersions, null);
 
         // set headers
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -184,16 +179,14 @@ public final class ObjectService {
     /**
      * Delete content stream.
      */
-    public static void deleteContentStream(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void deleteContentStream(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisObjectService service = factory.getObjectService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
 
         // execute
-        service.deleteContentStream(context, repositoryId, new Holder<String>(objectId), changeToken == null ? null
+        service.deleteContentStream(repositoryId, new Holder<String>(objectId), changeToken == null ? null
                 : new Holder<String>(changeToken), null);
 
         // set headers
@@ -203,10 +196,8 @@ public final class ObjectService {
     /**
      * Set content stream.
      */
-    public static void setContentStream(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void setContentStream(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisObjectService service = factory.getObjectService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
@@ -225,7 +216,7 @@ public final class ObjectService {
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
-        service.setContentStream(context, repositoryId, objectIdHolder, overwriteFlag, changeToken == null ? null
+        service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeToken == null ? null
                 : new Holder<String>(changeToken), contentStream, null);
 
         // set headers
@@ -240,10 +231,8 @@ public final class ObjectService {
     /**
      * Delete tree.
      */
-    public static void deleteTree(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void deleteTree(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisObjectService service = factory.getObjectService();
-
         // get parameters
         String folderId = getStringParameter(request, Constants.PARAM_ID);
         Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
@@ -251,7 +240,7 @@ public final class ObjectService {
         Boolean continueOnFailure = getBooleanParameter(request, Constants.PARAM_CONTINUE_ON_FAILURE);
 
         // execute
-        FailedToDeleteData ftd = service.deleteTree(context, repositoryId, folderId, allVersions, unfileObjects,
+        FailedToDeleteData ftd = service.deleteTree(repositoryId, folderId, allVersions, unfileObjects,
                 continueOnFailure, null);
 
         if ((ftd != null) && (ftd.getIds() != null) && (ftd.getIds().size() > 0)) {
@@ -278,9 +267,8 @@ public final class ObjectService {
     /**
      * getObject.
      */
-    public static void getObject(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getObject(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         ReturnVersion returnVersion = getEnumParameter(request, Constants.PARAM_RETURN_VERSION, ReturnVersion.class);
@@ -293,25 +281,22 @@ public final class ObjectService {
         Boolean includeAcl = getBooleanParameter(request, Constants.PARAM_ACL);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
         ObjectData object = null;
 
         if ((returnVersion == ReturnVersion.LATEST) || (returnVersion == ReturnVersion.LASTESTMAJOR)) {
-            CmisVersioningService service = factory.getVersioningService();
-            object = service.getObjectOfLatestVersion(context, repositoryId, objectId,
+            object = service.getObjectOfLatestVersion(repositoryId, objectId, null,
                     returnVersion == ReturnVersion.LASTESTMAJOR, filter, includeAllowableActions, includeRelationships,
-                    renditionFilter, includePolicyIds, includeAcl, null, objectInfoHolder);
+                    renditionFilter, includePolicyIds, includeAcl, null);
         } else {
-            CmisObjectService service = factory.getObjectService();
-            object = service.getObject(context, repositoryId, objectId, filter, includeAllowableActions,
-                    includeRelationships, renditionFilter, includePolicyIds, includeAcl, null, objectInfoHolder);
+            object = service.getObject(repositoryId, objectId, filter, includeAllowableActions, includeRelationships,
+                    renditionFilter, includePolicyIds, includeAcl, null);
         }
 
         if (object == null) {
             throw new CmisRuntimeException("Object is null!");
         }
 
-        ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(object.getId());
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
         if (objectInfo == null) {
             throw new CmisRuntimeException("Object Info is missing!");
         }
@@ -325,17 +310,15 @@ public final class ObjectService {
 
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream());
-        writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
 
     /**
      * objectByPath URI template.
      */
-    public static void getObjectByPath(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getObjectByPath(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisObjectService service = factory.getObjectService();
-
         // get parameters
         String path = getStringParameter(request, Constants.PARAM_PATH);
         String filter = getStringParameter(request, Constants.PARAM_FILTER);
@@ -347,15 +330,14 @@ public final class ObjectService {
         Boolean includeAcl = getBooleanParameter(request, Constants.PARAM_ACL);
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectData object = service.getObjectByPath(context, repositoryId, path, filter, includeAllowableActions,
-                includeRelationships, renditionFilter, includePolicyIds, includeAcl, null, objectInfoHolder);
+        ObjectData object = service.getObjectByPath(repositoryId, path, filter, includeAllowableActions,
+                includeRelationships, renditionFilter, includePolicyIds, includeAcl, null);
 
         if (object == null) {
             throw new CmisRuntimeException("Object is null!");
         }
 
-        ObjectInfo objectInfo = objectInfoHolder.getObjectInfo(object.getId());
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, object.getId());
         if (objectInfo == null) {
             throw new CmisRuntimeException("Object Info is missing!");
         }
@@ -369,22 +351,20 @@ public final class ObjectService {
 
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream());
-        writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
 
     /**
      * Allowable Actions.
      */
-    public static void getAllowableActions(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getAllowableActions(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisObjectService service = factory.getObjectService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
 
         // execute
-        AllowableActions allowableActions = service.getAllowableActions(context, repositoryId, objectId, null);
+        AllowableActions allowableActions = service.getAllowableActions(repositoryId, objectId, null);
 
         if (allowableActions == null) {
             throw new CmisRuntimeException("Allowable Actions is null!");
@@ -402,10 +382,8 @@ public final class ObjectService {
     /**
      * getContentStream.
      */
-    public static void getContentStream(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getContentStream(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisObjectService service = factory.getObjectService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String streamId = getStringParameter(request, Constants.PARAM_STREAM_ID);
@@ -423,8 +401,7 @@ public final class ObjectService {
         }
 
         // execute
-        ContentStream content = service.getContentStream(context, repositoryId, objectId, streamId, offset, length,
-                null);
+        ContentStream content = service.getContentStream(repositoryId, objectId, streamId, offset, length, null);
 
         if ((content == null) || (content.getStream() == null)) {
             throw new CmisRuntimeException("Content stream is null!");
@@ -460,9 +437,8 @@ public final class ObjectService {
     /**
      * UpdateProperties.
      */
-    public static void updateProperties(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void updateProperties(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         Boolean checkin = getBooleanParameter(request, Constants.PARAM_CHECK_IN);
@@ -472,34 +448,31 @@ public final class ObjectService {
         AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
 
         // execute
-        ObjectInfoHolder objectInfoHolder = new ObjectInfoHolderImpl();
-        ObjectData object = null;
+        Holder<String> objectIdHolder = new Holder<String>(objectId);
 
         if ((checkin != null) && (checkin.booleanValue())) {
-            CmisVersioningService service = factory.getVersioningService();
-            object = service.checkIn(context, repositoryId, new Holder<String>(objectId), major,
-                    parser.getProperties(), parser.getContentStream(), checkinComment, parser.getPolicyIds(), null,
-                    null, null, objectInfoHolder);
+            service.checkIn(repositoryId, objectIdHolder, major, parser.getProperties(), parser.getContentStream(),
+                    checkinComment, parser.getPolicyIds(), null, null, null);
         } else {
             String changeToken = extractChangeToken(parser.getProperties());
 
-            CmisObjectService service = factory.getObjectService();
-            object = service.updateProperties(context, repositoryId, new Holder<String>(objectId),
-                    changeToken == null ? null : new Holder<String>(changeToken), parser.getProperties(), parser
-                            .getAcl(), null, objectInfoHolder);
+            service.updateProperties(repositoryId, objectIdHolder, changeToken == null ? null : new Holder<String>(
+                    changeToken), parser.getProperties(), null);
         }
 
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectIdHolder.getValue());
+        if (objectInfo == null) {
+            throw new CmisRuntimeException("Object Info is missing!");
+        }
+
+        ObjectData object = objectInfo.getObject();
         if (object == null) {
             throw new CmisRuntimeException("Object is null!");
         }
 
-        if (object.getId() == null) {
-            throw new CmisRuntimeException("Object Id is null!");
-        }
-
         // set headers
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-        String location = compileUrl(baseUrl, RESOURCE_ENTRY, object.getId());
+        String location = compileUrl(baseUrl, RESOURCE_ENTRY, objectIdHolder.getValue());
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         response.setContentType(Constants.MEDIATYPE_ENTRY);
@@ -509,7 +482,7 @@ public final class ObjectService {
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream());
-        writeObjectEntry(entry, object, objectInfoHolder, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
 

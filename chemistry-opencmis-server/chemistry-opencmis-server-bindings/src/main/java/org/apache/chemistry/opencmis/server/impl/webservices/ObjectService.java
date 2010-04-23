@@ -35,7 +35,7 @@ import javax.xml.ws.WebServiceContext;
 
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -52,8 +52,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUnfileObject;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumVersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteTreeResponse.FailedToDelete;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
 
 import com.sun.xml.ws.developer.StreamingAttachment;
 
@@ -70,16 +68,15 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             CmisContentStreamType contentStream, EnumVersioningState versioningState, List<String> policies,
             CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
             Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            String id = service.createDocument(context, repositoryId, convert(properties), folderId,
-                    convert(contentStream), convert(VersioningState.class, versioningState), policies, convert(addAces,
-                            null), convert(removeAces, null), extData);
+            String id = service.createDocument(repositoryId, convert(properties), folderId, convert(contentStream),
+                    convert(VersioningState.class, versioningState), policies, convert(addAces, null), convert(
+                            removeAces, null), extData);
 
             if (objectId != null) {
                 objectId.value = id;
@@ -88,6 +85,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
@@ -95,15 +94,86 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             String folderId, EnumVersioningState versioningState, List<String> policies,
             CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
             Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            String id = service.createDocumentFromSource(context, repositoryId, sourceId, convert(properties),
-                    folderId, convert(VersioningState.class, versioningState), policies, convert(addAces, null),
+            String id = service.createDocumentFromSource(repositoryId, sourceId, convert(properties), folderId,
+                    convert(VersioningState.class, versioningState), policies, convert(addAces, null), convert(
+                            removeAces, null), extData);
+
+            if (objectId != null) {
+                objectId.value = id;
+            }
+
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        } finally {
+            closeService(service);
+        }
+    }
+
+    public void createFolder(String repositoryId, CmisPropertiesType properties, String folderId,
+            List<String> policies, CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
+            Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
+        CmisService service = null;
+        try {
+            service = getService(wsContext, repositoryId);
+
+            ExtensionsData extData = convertExtensionHolder(extension);
+
+            String id = service.createFolder(repositoryId, convert(properties), folderId, policies, convert(addAces,
+                    null), convert(removeAces, null), extData);
+
+            if (objectId != null) {
+                objectId.value = id;
+            }
+
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        } finally {
+            closeService(service);
+        }
+    }
+
+    public void createPolicy(String repositoryId, CmisPropertiesType properties, String folderId,
+            List<String> policies, CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
+            Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
+        CmisService service = null;
+        try {
+            service = getService(wsContext, repositoryId);
+
+            ExtensionsData extData = convertExtensionHolder(extension);
+
+            String id = service.createPolicy(repositoryId, convert(properties), folderId, policies, convert(addAces,
+                    null), convert(removeAces, null), extData);
+
+            if (objectId != null) {
+                objectId.value = id;
+            }
+
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        } finally {
+            closeService(service);
+        }
+    }
+
+    public void createRelationship(String repositoryId, CmisPropertiesType properties, List<String> policies,
+            CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
+            Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
+        CmisService service = null;
+        try {
+            service = getService(wsContext, repositoryId);
+
+            ExtensionsData extData = convertExtensionHolder(extension);
+
+            String id = service.createRelationship(repositoryId, convert(properties), policies, convert(addAces, null),
                     convert(removeAces, null), extData);
 
             if (objectId != null) {
@@ -113,213 +183,153 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
             throw convertException(e);
-        }
-    }
-
-    public void createFolder(String repositoryId, CmisPropertiesType properties, String folderId,
-            List<String> policies, CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
-            Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
-        try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
-
-            ExtensionsData extData = convertExtensionHolder(extension);
-
-            String id = service.createFolder(context, repositoryId, convert(properties), folderId, policies, convert(
-                    addAces, null), convert(removeAces, null), extData);
-
-            if (objectId != null) {
-                objectId.value = id;
-            }
-
-            setExtensionValues(extData, extension);
-        } catch (Exception e) {
-            throw convertException(e);
-        }
-    }
-
-    public void createPolicy(String repositoryId, CmisPropertiesType properties, String folderId,
-            List<String> policies, CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
-            Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
-        try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
-
-            ExtensionsData extData = convertExtensionHolder(extension);
-
-            String id = service.createPolicy(context, repositoryId, convert(properties), folderId, policies, convert(
-                    addAces, null), convert(removeAces, null), extData);
-
-            if (objectId != null) {
-                objectId.value = id;
-            }
-
-            setExtensionValues(extData, extension);
-        } catch (Exception e) {
-            throw convertException(e);
-        }
-    }
-
-    public void createRelationship(String repositoryId, CmisPropertiesType properties, List<String> policies,
-            CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
-            Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
-        try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
-
-            ExtensionsData extData = convertExtensionHolder(extension);
-
-            String id = service.createRelationship(context, repositoryId, convert(properties), policies, convert(
-                    addAces, null), convert(removeAces, null), extData);
-
-            if (objectId != null) {
-                objectId.value = id;
-            }
-
-            setExtensionValues(extData, extension);
-        } catch (Exception e) {
-            throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Holder<CmisExtensionType> extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
             org.apache.chemistry.opencmis.commons.api.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.deleteContentStream(context, repositoryId, objectIdHolder, changeTokenHolder, extData);
+            service.deleteContentStream(repositoryId, objectIdHolder, changeTokenHolder, extData);
 
             setHolderValue(objectIdHolder, objectId);
             setHolderValue(changeTokenHolder, changeToken);
             setExtensionValues(extData, extension);
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions,
             Holder<CmisExtensionType> extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.deleteObjectOrCancelCheckOut(context, repositoryId, objectId, allVersions, extData);
+            service.deleteObjectOrCancelCheckOut(repositoryId, objectId, allVersions, extData);
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public FailedToDelete deleteTree(String repositoryId, String folderId, Boolean allVersions,
             EnumUnfileObject unfileObjects, Boolean continueOnFailure, CmisExtensionType extension)
             throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            return convert(service.deleteTree(context, repositoryId, folderId, allVersions, convert(UnfileObject.class,
+            return convert(service.deleteTree(repositoryId, folderId, allVersions, convert(UnfileObject.class,
                     unfileObjects), continueOnFailure, convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public CmisAllowableActionsType getAllowableActions(String repositoryId, String objectId,
             CmisExtensionType extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            return convert(service.getAllowableActions(context, repositoryId, objectId, convert(extension)));
+            return convert(service.getAllowableActions(repositoryId, objectId, convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public CmisContentStreamType getContentStream(String repositoryId, String objectId, String streamId,
             BigInteger offset, BigInteger length, CmisExtensionType extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            return convert(service.getContentStream(context, repositoryId, objectId, streamId, offset, length,
+            return convert(service.getContentStream(repositoryId, objectId, streamId, offset, length,
                     convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public CmisObjectType getObject(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            return convert(service.getObject(context, repositoryId, objectId, filter, includeAllowableActions, convert(
+            return convert(service.getObject(repositoryId, objectId, filter, includeAllowableActions, convert(
                     IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds, includeAcl,
-                    convert(extension), null));
+                    convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public CmisObjectType getObjectByPath(String repositoryId, String path, String filter,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            return convert(service.getObjectByPath(context, repositoryId, path, filter, includeAllowableActions,
-                    convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
-                    includeAcl, convert(extension), null));
+            return convert(service.getObjectByPath(repositoryId, path, filter, includeAllowableActions, convert(
+                    IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds, includeAcl,
+                    convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public CmisPropertiesType getProperties(String repositoryId, String objectId, String filter,
             CmisExtensionType extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            return convert(service.getProperties(context, repositoryId, objectId, filter, convert(extension)));
+            return convert(service.getProperties(repositoryId, objectId, filter, convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public List<CmisRenditionType> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             List<CmisRenditionType> result = new ArrayList<CmisRenditionType>();
 
-            List<RenditionData> renditionList = service.getRenditions(context, repositoryId, objectId, renditionFilter,
+            List<RenditionData> renditionList = service.getRenditions(repositoryId, objectId, renditionFilter,
                     maxItems, skipCount, convert(extension));
 
             if (renditionList != null) {
@@ -331,41 +341,43 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             return result;
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             Holder<CmisExtensionType> extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.moveObject(context, repositoryId, objectIdHolder, targetFolderId, sourceFolderId, extData, null);
+            service.moveObject(repositoryId, objectIdHolder, targetFolderId, sourceFolderId, extData);
 
             setHolderValue(objectIdHolder, objectId);
             setExtensionValues(extData, extension);
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, CmisContentStreamType contentStream, Holder<CmisExtensionType> extension)
             throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
             org.apache.chemistry.opencmis.commons.api.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.setContentStream(context, repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
+            service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
                     convert(contentStream), extData);
 
             setHolderValue(objectIdHolder, objectId);
@@ -373,28 +385,30 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             CmisPropertiesType properties, Holder<CmisExtensionType> extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisObjectService service = factory.getObjectService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
             org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
             org.apache.chemistry.opencmis.commons.api.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.updateProperties(context, repositoryId, objectIdHolder, changeTokenHolder, convert(properties),
-                    null, extData, null);
+            service.updateProperties(repositoryId, objectIdHolder, changeTokenHolder, convert(properties), extData);
 
             setHolderValue(objectIdHolder, objectId);
             setHolderValue(changeTokenHolder, changeToken);
             setExtensionValues(extData, extension);
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 }

@@ -180,6 +180,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
                     + folderId);
 
         ObjectData res = getFolderParentIntern(repositoryId, folder, filter, objectInfos);
+        if (res == null)
+            throw new CmisInvalidArgumentException("Cannot get parent of a root folder");
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -230,8 +232,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
         if (so instanceof Filing)
             spo = (Filing) so;
         else
-            throw new CmisInvalidArgumentException(
-                    "Can't get object parent, id does not refer to a folder or document: " + objectId);
+            return Collections.emptyList();
 
         result = getObjectParentsIntern(repositoryId, spo, filter, objectInfos);
 
@@ -386,10 +387,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl i
         Folder parentFolder = sop.getParent();
 
         if (null == parentFolder) {
-            if (sop instanceof Children) // a folder without a parent
-                throw new CmisInvalidArgumentException("Cannot get parent of a root folder");
-            else
-                return null; // an unfiled document
+            return null;
         }
 
         copyFilteredProperties(repositoryId, parentFolder, filter, parent);

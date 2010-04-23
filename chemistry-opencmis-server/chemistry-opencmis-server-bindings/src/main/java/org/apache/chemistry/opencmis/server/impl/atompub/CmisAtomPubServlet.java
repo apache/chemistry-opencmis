@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
@@ -43,9 +44,9 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
+import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -184,31 +185,41 @@ public class CmisAtomPubServlet extends HttpServlet {
     private void dispatch(CallContext context, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        // get services factory
-        AbstractServicesFactory servicesFactory = (AbstractServicesFactory) getServletContext().getAttribute(
-                CmisRepositoryContextListener.SERVICES_FACTORY);
+        CmisService service = null;
+        try {
+            // get services factory
+            AbstractServiceFactory factory = (AbstractServiceFactory) getServletContext().getAttribute(
+                    CmisRepositoryContextListener.SERVICES_FACTORY);
 
-        // analyze the path
-        String[] pathFragments = splitPath(request);
+            // get the service
+            service = factory.getService(context);
 
-        if (pathFragments.length < 2) {
-            // root -> service document
-            RepositoryService.getRepositories(context, servicesFactory, request, response);
-            return;
-        }
+            // analyze the path
+            String[] pathFragments = splitPath(request);
 
-        String method = request.getMethod();
-        String repositoryId = pathFragments[0];
-        String resource = pathFragments[1];
+            if (pathFragments.length < 2) {
+                // root -> service document
+                RepositoryService.getRepositories(context, service, request, response);
+                return;
+            }
 
-        // dispatch
-        boolean methodFound = fDispatcher.dispatch(resource, method, context, servicesFactory, repositoryId, request,
-                response);
+            String method = request.getMethod();
+            String repositoryId = pathFragments[0];
+            String resource = pathFragments[1];
 
-        // if the dispatcher couldn't find a matching method, return an error
-        // message
-        if (!methodFound) {
-            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Unknown operation");
+            // dispatch
+            boolean methodFound = fDispatcher.dispatch(resource, method, context, service, repositoryId, request,
+                    response);
+
+            // if the dispatcher couldn't find a matching method, return an
+            // error message
+            if (!methodFound) {
+                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Unknown operation");
+            }
+        } finally {
+            if (service != null) {
+                service.close();
+            }
         }
     }
 
@@ -225,7 +236,7 @@ public class CmisAtomPubServlet extends HttpServlet {
 
         CallContextImpl context = new CallContextImpl(CallContext.BINDING_ATOMPUB, repositoryId, true);
 
-        // call call text handler
+        // call call context handler
         if (fCallContextHandler != null) {
             Map<String, String> callContextMap = fCallContextHandler.getCallContextMap(request);
             if (callContextMap != null) {

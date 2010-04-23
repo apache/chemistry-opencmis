@@ -26,15 +26,13 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumRelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipServicePort;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisRelationshipService;
 
 /**
  * CMIS Relationship Service.
@@ -48,17 +46,17 @@ public class RelationshipService extends AbstractService implements Relationship
             Boolean includeSubRelationshipTypes, EnumRelationshipDirection relationshipDirection, String typeId,
             String filter, Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount,
             CmisExtensionType extension) throws CmisException {
+        CmisService service = null;
         try {
-            AbstractServicesFactory factory = getServicesFactory(wsContext);
-            CmisRelationshipService service = factory.getRelationshipService();
-            CallContext context = createContext(wsContext, repositoryId);
+            service = getService(wsContext, repositoryId);
 
-            return convert(service.getObjectRelationships(context, repositoryId, objectId, includeSubRelationshipTypes,
-                    convert(RelationshipDirection.class, relationshipDirection), typeId, filter,
-                    includeAllowableActions, maxItems, skipCount, convert(extension), null));
+            return convert(service.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes, convert(
+                    RelationshipDirection.class, relationshipDirection), typeId, filter, includeAllowableActions,
+                    maxItems, skipCount, convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
-
 }

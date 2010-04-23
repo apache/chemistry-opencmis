@@ -67,16 +67,13 @@ public class RepositoryMap {
     }
 
     /**
-     * Gets a repository object by id.
+     * Takes user and password from the CallContext and checks them.
      */
-    public FileShareRepository getAuthenticatedRepository(CallContext context, String repositoryId) {
+    public void authenticate(CallContext context) {
         // check user and password first
         if (!authenticate(context.getUsername(), context.getPassword())) {
             throw new CmisPermissionDeniedException();
         }
-
-        // get repository object
-        return repositoryId == null ? null : getRepository(repositoryId);
     }
 
     /**

@@ -30,36 +30,30 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
-import org.apache.chemistry.opencmis.server.spi.CmisAclService;
 
 /**
  * ACL Service operations.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AclService {
 
     /**
      * Get ACL.
      */
-    public static void getAcl(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void getAcl(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisAclService service = factory.getAclService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
 
         // execute
-        Acl acl = service.getAcl(context, repositoryId, objectId, onlyBasicPermissions, null);
+        Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, null);
 
         if (acl == null) {
             throw new CmisRuntimeException("ACL is null!");
@@ -77,10 +71,8 @@ public class AclService {
     /**
      * Apply ACL.
      */
-    public static void applyAcl(CallContext context, AbstractServicesFactory factory, String repositoryId,
+    public static void applyAcl(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CmisAclService service = factory.getAclService();
-
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION, AclPropagation.class);
@@ -104,7 +96,7 @@ public class AclService {
         Acl aces = convert((CmisAccessControlListType) ((JAXBElement<?>) aclRequest).getValue(), null);
 
         // execute
-        Acl acl = service.applyAcl(context, repositoryId, objectId, aces, aclPropagation);
+        Acl acl = service.applyAcl(repositoryId, objectId, aces, aclPropagation);
 
         // set headers
         response.setStatus(HttpServletResponse.SC_CREATED);

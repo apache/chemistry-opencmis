@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.server.spi.AbstractServicesFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -54,7 +54,7 @@ public class Dispatcher {
     public synchronized void addResource(String resource, String httpMethod, Class<?> clazz, String classmethod)
             throws NoSuchMethodException {
 
-        Method m = clazz.getMethod(classmethod, CallContext.class, AbstractServicesFactory.class, String.class,
+        Method m = clazz.getMethod(classmethod, CallContext.class, CmisService.class, String.class,
                 HttpServletRequest.class, HttpServletResponse.class);
 
         fMethodMap.put(getKey(resource, httpMethod), m);
@@ -66,9 +66,8 @@ public class Dispatcher {
      * @return <code>true</code> if the method was found, <code>false</code>
      *         otherwise.
      */
-    public boolean dispatch(String resource, String httpMethod, CallContext context, AbstractServicesFactory factory,
+    public boolean dispatch(String resource, String httpMethod, CallContext context, CmisService service,
             String repositoryId, HttpServletRequest request, HttpServletResponse response) {
-
         Method m = fMethodMap.get(getKey(resource, httpMethod));
         if (m == null) {
             return false;
@@ -79,7 +78,7 @@ public class Dispatcher {
         }
 
         try {
-            m.invoke(null, context, factory, repositoryId, request, response);
+            m.invoke(null, context, service, repositoryId, request, response);
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (IllegalAccessException e) {
