@@ -55,9 +55,10 @@ public class PagingListTest {
                     hasMoreItems = Boolean.FALSE;
                 }
 
-                //. simulate rolling total number of items (for repositories that don't necessarily know up front)
+                // . simulate rolling total number of items (for repositories
+                // that don't necessarily know up front)
                 int totalItems = (to == data.length) ? to : to + 1;
-                
+
                 for (int i = from; i < to; i++) {
                     page.add(data[i]);
                 }
@@ -130,7 +131,7 @@ public class PagingListTest {
         assertEquals(pageSize + 1, i.getPosition());
         assertEquals(this.data10.length, i.getTotalNumItems());
     }
-    
+
     private void loopSkip(String[] data, int skipCount, int pageSize) {
         System.out.println("\nloopSkip (" + skipCount + ", " + pageSize + ")");
 

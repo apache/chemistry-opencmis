@@ -34,33 +34,35 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore // relations not yet supported
+// relations not yet supported
+@Ignore
 public class WriteObjectRelationIT extends AbstractSessionTest {
 
-	@Test
-	public void createAndLoopRelations() {
-		String path1 = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
-		Document document1 = (Document) this.session.getObjectByPath(path1);
-		assertNotNull("Document not found: " + path1, document1);
-		
-		String path2 = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT2_NAME;
-		Document document2 = (Document) this.session.getObjectByPath(path2);
-		assertNotNull("Document not found: " + path2, document2);
+    @Test
+    public void createAndLoopRelations() {
+        String path1 = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
+        Document document1 = (Document) this.session.getObjectByPath(path1);
+        assertNotNull("Document not found: " + path1, document1);
+
+        String path2 = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT2_NAME;
+        Document document2 = (Document) this.session.getObjectByPath(path2);
+        assertNotNull("Document not found: " + path2, document2);
 
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.OBJECT_TYPE_ID, ObjectType.RELATIONSHIP_BASETYPE_ID);
         properties.put(PropertyIds.SOURCE_ID, document1.getId());
         properties.put(PropertyIds.TARGET_ID, document2.getId());
 
-		ObjectId id = this.session.createRelationship(properties, null, null, null);
+        ObjectId id = this.session.createRelationship(properties, null, null, null);
 
-		ObjectType ot = document1.getType();
-		PagingIterable<Relationship> relations = document1.getRelationships(true, RelationshipDirection.EITHER, ot, this.session.getDefaultContext(), 10);
-		for (Relationship r : relations) {
-			assertNotNull(r);
-			assertEquals(id, r.getId());
-			break;
-		}
-	}
-	
+        ObjectType ot = document1.getType();
+        PagingIterable<Relationship> relations = document1.getRelationships(true, RelationshipDirection.EITHER, ot,
+                this.session.getDefaultContext(), 10);
+        for (Relationship r : relations) {
+            assertNotNull(r);
+            assertEquals(id, r.getId());
+            break;
+        }
+    }
+
 }

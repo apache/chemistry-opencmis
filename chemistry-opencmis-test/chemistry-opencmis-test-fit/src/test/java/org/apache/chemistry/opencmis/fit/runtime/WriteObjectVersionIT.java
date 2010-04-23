@@ -29,31 +29,31 @@ import org.apache.chemistry.opencmis.client.api.PagingIterable;
 import org.junit.Test;
 
 public class WriteObjectVersionIT extends AbstractSessionTest {
-	@Test
-	public void checkOutDocs() {
+    @Test
+    public void checkOutDocs() {
 
-		/* check out one versionable document */
-		String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
-		Document document = (Document) this.session.getObjectByPath(path);
-		assertNotNull("Document not found: " + path, document);
-		DocumentType dt = (DocumentType) document.getType();
-		assertNotNull(dt);
-		ObjectId id = null;
-		if (dt.isVersionable()) {
-			id = document.checkOut();
-		}
+        /* check out one versionable document */
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
+        Document document = (Document) this.session.getObjectByPath(path);
+        assertNotNull("Document not found: " + path, document);
+        DocumentType dt = (DocumentType) document.getType();
+        assertNotNull(dt);
+        ObjectId id = null;
+        if (dt.isVersionable()) {
+            id = document.checkOut();
+        }
 
-		/* get all verchecked out docs which should be exactly one or zero */
-		Folder f = this.session.getRootFolder();
-		assertNotNull(f);
-		PagingIterable<Document> pi = f.getCheckedOutDocs(10);
-		assertNotNull(pi);
+        /* get all verchecked out docs which should be exactly one or zero */
+        Folder f = this.session.getRootFolder();
+        assertNotNull(f);
+        PagingIterable<Document> pi = f.getCheckedOutDocs(10);
+        assertNotNull(pi);
 
-		for (Document d : pi) {
-			assertNotNull(d);
-			assertEquals(id, d.getId());
-			break; // check only first and only loop entry
-		}
-	}
+        for (Document d : pi) {
+            assertNotNull(d);
+            assertEquals(id, d.getId());
+            break; // check only first and only loop entry
+        }
+    }
 
 }
