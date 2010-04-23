@@ -37,7 +37,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
-import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 
 public class InMemoryDiscoveryServiceImpl implements CmisDiscoveryService {

@@ -60,11 +60,6 @@ import org.apache.chemistry.opencmis.inmemory.clientprovider.RepositoryServiceIm
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
-import org.apache.chemistry.opencmis.server.support.DiscoveryServiceWrapper;
-import org.apache.chemistry.opencmis.server.support.NavigationServiceWrapper;
-import org.apache.chemistry.opencmis.server.support.ObjectServiceWrapper;
-import org.apache.chemistry.opencmis.server.support.RepositoryServiceWrapper;
-import org.apache.chemistry.opencmis.server.support.VersioningServiceWrapper;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -367,8 +362,8 @@ public class InMemoryService extends AbstractCmisService {
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        return super.query(repositoryId, statement, searchAllVersions, includeAllowableActions, includeRelationships,
-                renditionFilter, maxItems, skipCount, extension);
+        return fDisSvc.query(getCallContext(), repositoryId, statement, searchAllVersions, includeAllowableActions,
+                includeRelationships, renditionFilter, maxItems, skipCount, extension);
     }
 
     // --- multi filing service ---
