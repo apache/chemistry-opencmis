@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 
@@ -62,7 +63,13 @@ public class FileShareService extends AbstractCmisService {
 
     @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-        return getRepository().getRepositoryInfo(getCallContext());
+        for (FileShareRepository fsr : repositoryMap.getRepositories()) {
+            if (fsr.getRepositoryId().equals(repositoryId)) {
+                return fsr.getRepositoryInfo(getCallContext());
+            }
+        }
+
+        throw new CmisObjectNotFoundException("Unknown repository '" + repositoryId + "'!");
     }
 
     @Override
@@ -101,7 +108,7 @@ public class FileShareService extends AbstractCmisService {
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         return getRepository().getChildren(getCallContext(), folderId, filter, includeAllowableActions,
-                includePathSegment, maxItems, skipCount, null);
+                includePathSegment, maxItems, skipCount, this);
     }
 
     @Override
@@ -109,12 +116,12 @@ public class FileShareService extends AbstractCmisService {
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
         return getRepository().getDescendants(getCallContext(), folderId, depth, filter, includeAllowableActions,
-                includePathSegment, null, false);
+                includePathSegment, this, false);
     }
 
     @Override
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
-        return getRepository().getFolderParent(getCallContext(), folderId, filter, null);
+        return getRepository().getFolderParent(getCallContext(), folderId, filter, this);
     }
 
     @Override
@@ -122,7 +129,7 @@ public class FileShareService extends AbstractCmisService {
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
         return getRepository().getDescendants(getCallContext(), folderId, depth, filter, includeAllowableActions,
-                includePathSegment, null, true);
+                includePathSegment, this, true);
     }
 
     @Override
@@ -130,7 +137,7 @@ public class FileShareService extends AbstractCmisService {
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
         return getRepository().getObjectParents(getCallContext(), objectId, filter, includeAllowableActions,
-                includeRelativePathSegment, null);
+                includeRelativePathSegment, this);
     }
 
     @Override
@@ -152,7 +159,7 @@ public class FileShareService extends AbstractCmisService {
     public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState, List<String> policies, ExtensionsData extension) {
         ObjectData object = getRepository().create(getCallContext(), properties, folderId, contentStream,
-                versioningState, null);
+                versioningState, this);
 
         return object.getId();
     }
@@ -211,7 +218,8 @@ public class FileShareService extends AbstractCmisService {
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
-        return getRepository().getObject(getCallContext(), objectId, filter, includeAllowableActions, includeAcl, null);
+        return getRepository().getObject(getCallContext(), objectId, null, filter, includeAllowableActions, includeAcl,
+                this);
     }
 
     @Override
@@ -219,12 +227,12 @@ public class FileShareService extends AbstractCmisService {
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
         return getRepository().getObjectByPath(getCallContext(), path, filter, includeAllowableActions, includeAcl,
-                null);
+                this);
     }
 
     @Override
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
-        ObjectData object = getRepository().getObject(getCallContext(), objectId, filter, false, false, null);
+        ObjectData object = getRepository().getObject(getCallContext(), objectId, null, filter, false, false, this);
         return object.getProperties();
     }
 
@@ -237,7 +245,7 @@ public class FileShareService extends AbstractCmisService {
     @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
-        getRepository().moveObject(getCallContext(), objectId, targetFolderId, null);
+        getRepository().moveObject(getCallContext(), objectId, targetFolderId, this);
     }
 
     @Override
@@ -249,7 +257,7 @@ public class FileShareService extends AbstractCmisService {
     @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
-        getRepository().updateProperties(getCallContext(), objectId, properties, null);
+        getRepository().updateProperties(getCallContext(), objectId, properties, this);
     }
 
     // --- versioning service ---
@@ -257,8 +265,8 @@ public class FileShareService extends AbstractCmisService {
     @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
-        ObjectData theVersion = getRepository().getObject(getCallContext(), versionSeriesId, filter,
-                includeAllowableActions, false, null);
+        ObjectData theVersion = getRepository().getObject(getCallContext(), objectId, versionSeriesId, filter,
+                includeAllowableActions, false, this);
 
         return Collections.singletonList(theVersion);
     }
@@ -267,14 +275,15 @@ public class FileShareService extends AbstractCmisService {
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
-        return getRepository().getObject(getCallContext(), versionSeriesId, filter, includeAllowableActions,
-                includeAcl, null);
+        return getRepository().getObject(getCallContext(), objectId, versionSeriesId, filter, includeAllowableActions,
+                includeAcl, this);
     }
 
     @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
-        ObjectData object = getRepository().getObject(getCallContext(), versionSeriesId, filter, false, false, null);
+        ObjectData object = getRepository().getObject(getCallContext(), objectId, versionSeriesId, filter, false,
+                false, null);
 
         return object.getProperties();
     }

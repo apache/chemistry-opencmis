@@ -52,9 +52,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * CMIS AtomPub servlet.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisAtomPubServlet extends HttpServlet {
 
@@ -69,79 +66,79 @@ public class CmisAtomPubServlet extends HttpServlet {
 
     private static final Log LOG = LogFactory.getLog(CmisAtomPubServlet.class.getName());
 
-    private Dispatcher fDispatcher;
-    private CallContextHandler fCallContextHandler;
+    private Dispatcher dispatcher;
+    private CallContextHandler callContextHandler;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
         // initialize the call context handler
-        fCallContextHandler = null;
+        callContextHandler = null;
         String callContextHandlerClass = config.getInitParameter(PARAM_CALL_CONTEXT_HANDLER);
         if (callContextHandlerClass != null) {
             try {
-                fCallContextHandler = (CallContextHandler) Class.forName(callContextHandlerClass).newInstance();
+                callContextHandler = (CallContextHandler) Class.forName(callContextHandlerClass).newInstance();
             } catch (Exception e) {
                 throw new ServletException("Could not load call context handler: " + e, e);
             }
         }
 
         // initialize the dispatcher
-        fDispatcher = new Dispatcher();
+        dispatcher = new Dispatcher();
 
         try {
-            fDispatcher
+            dispatcher
                     .addResource(AtomPubUtils.RESOURCE_TYPES, METHOD_GET, RepositoryService.class, "getTypeChildren");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_TYPESDESC, METHOD_GET, RepositoryService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_TYPESDESC, METHOD_GET, RepositoryService.class,
                     "getTypeDescendants");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_TYPE, METHOD_GET, RepositoryService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_TYPE, METHOD_GET, RepositoryService.class,
                     "getTypeDefinition");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_DESCENDANTS, METHOD_GET, NavigationService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_DESCENDANTS, METHOD_GET, NavigationService.class,
                     "getDescendants");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_FOLDERTREE, METHOD_GET, NavigationService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_FOLDERTREE, METHOD_GET, NavigationService.class,
                     "getFolderTree");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_PARENTS, METHOD_GET, NavigationService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_PARENTS, METHOD_GET, NavigationService.class,
                     "getObjectParents");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_CHECKEDOUT, METHOD_GET, NavigationService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_CHECKEDOUT, METHOD_GET, NavigationService.class,
                     "getCheckedOutDocs");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, METHOD_GET, ObjectService.class, "getObject");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_OBJECTBYID, METHOD_GET, ObjectService.class, "getObject");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_OBJECTBYPATH, METHOD_GET, ObjectService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, METHOD_GET, ObjectService.class, "getObject");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_OBJECTBYID, METHOD_GET, ObjectService.class, "getObject");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_OBJECTBYPATH, METHOD_GET, ObjectService.class,
                     "getObjectByPath");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_ALLOWABLEACIONS, METHOD_GET, ObjectService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_ALLOWABLEACIONS, METHOD_GET, ObjectService.class,
                     "getAllowableActions");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_CONTENT, METHOD_GET, ObjectService.class, "getContentStream");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_CONTENT, METHOD_PUT, ObjectService.class, "setContentStream");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_CONTENT, METHOD_DELETE, ObjectService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_CONTENT, METHOD_GET, ObjectService.class, "getContentStream");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_CONTENT, METHOD_PUT, ObjectService.class, "setContentStream");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_CONTENT, METHOD_DELETE, ObjectService.class,
                     "deleteContentStream");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_CHILDREN, METHOD_POST, ObjectService.class, "create");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_RELATIONSHIPS, METHOD_POST, ObjectService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_CHILDREN, METHOD_POST, ObjectService.class, "create");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_RELATIONSHIPS, METHOD_POST, ObjectService.class,
                     "createRelationship");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, METHOD_PUT, ObjectService.class, "updateProperties");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, METHOD_DELETE, ObjectService.class, "deleteObject");
-            fDispatcher
+            dispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, METHOD_PUT, ObjectService.class, "updateProperties");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, METHOD_DELETE, ObjectService.class, "deleteObject");
+            dispatcher
                     .addResource(AtomPubUtils.RESOURCE_DESCENDANTS, METHOD_DELETE, ObjectService.class, "deleteTree");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_CHECKEDOUT, METHOD_POST, VersioningService.class, "checkOut");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_VERSIONS, METHOD_GET, VersioningService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_CHECKEDOUT, METHOD_POST, VersioningService.class, "checkOut");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_VERSIONS, METHOD_GET, VersioningService.class,
                     "getAllVersions");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_VERSIONS, METHOD_DELETE, VersioningService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_VERSIONS, METHOD_DELETE, VersioningService.class,
                     "deleteAllVersions");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_QUERY, METHOD_GET, DiscoveryService.class, "query");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_QUERY, METHOD_POST, DiscoveryService.class, "query");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_CHANGES, METHOD_GET, DiscoveryService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_QUERY, METHOD_GET, DiscoveryService.class, "query");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_QUERY, METHOD_POST, DiscoveryService.class, "query");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_CHANGES, METHOD_GET, DiscoveryService.class,
                     "getContentChanges");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
                     "getObjectRelationships");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_UNFILED, METHOD_POST, MultiFilingService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_UNFILED, METHOD_POST, MultiFilingService.class,
                     "removeObjectFromFolder");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_ACL, METHOD_GET, AclService.class, "getAcl");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_ACL, METHOD_PUT, AclService.class, "applyAcl");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_POLICIES, METHOD_GET, PolicyService.class,
+            dispatcher.addResource(AtomPubUtils.RESOURCE_ACL, METHOD_GET, AclService.class, "getAcl");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_ACL, METHOD_PUT, AclService.class, "applyAcl");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_POLICIES, METHOD_GET, PolicyService.class,
                     "getAppliedPolicies");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_POLICIES, METHOD_POST, PolicyService.class, "applyPolicy");
-            fDispatcher.addResource(AtomPubUtils.RESOURCE_POLICIES, METHOD_DELETE, PolicyService.class, "removePolicy");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_POLICIES, METHOD_POST, PolicyService.class, "applyPolicy");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_POLICIES, METHOD_DELETE, PolicyService.class, "removePolicy");
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);
         }
@@ -208,7 +205,7 @@ public class CmisAtomPubServlet extends HttpServlet {
             String resource = pathFragments[1];
 
             // dispatch
-            boolean methodFound = fDispatcher.dispatch(resource, method, context, service, repositoryId, request,
+            boolean methodFound = dispatcher.dispatch(resource, method, context, service, repositoryId, request,
                     response);
 
             // if the dispatcher couldn't find a matching method, return an
@@ -237,8 +234,8 @@ public class CmisAtomPubServlet extends HttpServlet {
         CallContextImpl context = new CallContextImpl(CallContext.BINDING_ATOMPUB, repositoryId, true);
 
         // call call context handler
-        if (fCallContextHandler != null) {
-            Map<String, String> callContextMap = fCallContextHandler.getCallContextMap(request);
+        if (callContextHandler != null) {
+            Map<String, String> callContextMap = callContextHandler.getCallContextMap(request);
             if (callContextMap != null) {
                 for (Map.Entry<String, String> e : callContextMap.entrySet()) {
                     context.put(e.getKey(), e.getValue());

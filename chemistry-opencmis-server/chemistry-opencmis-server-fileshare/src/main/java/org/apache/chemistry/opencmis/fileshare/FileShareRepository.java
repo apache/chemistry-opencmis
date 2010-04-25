@@ -852,14 +852,20 @@ public class FileShareRepository {
     /**
      * CMIS getObject.
      */
-    public ObjectData getObject(CallContext context, String objectId, String filter, Boolean includeAllowableActions,
-            Boolean includeAcl, ObjectInfoHandler objectInfos) {
+    public ObjectData getObject(CallContext context, String objectId, String versionServicesId, String filter,
+            Boolean includeAllowableActions, Boolean includeAcl, ObjectInfoHandler objectInfos) {
         debug("getObject");
         boolean userReadOnly = checkUser(context, false);
 
         // check id
-        if (objectId == null) {
+        if ((objectId == null) && (versionServicesId == null)) {
             throw new CmisInvalidArgumentException("Object Id must be set.");
+        }
+
+        if (objectId == null) {
+            // this works only because there are no versions in a file system
+            // and the object id and version series id are the same
+            objectId = versionServicesId;
         }
 
         // get the file or folder

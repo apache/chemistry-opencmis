@@ -131,6 +131,19 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     /**
+     * Throws an exception if the given ids are all <code>null</code> or empty.
+     */
+    protected void checkIds(String name, String... ids) {
+        for (String id : ids) {
+            if (id != null && id.length() > 0) {
+                return;
+            }
+        }
+
+        throw new CmisInvalidArgumentException(name + " must be set!");
+    }
+
+    /**
      * Throws an exception if the given holder or id is <code>null</code> or
      * empty.
      */
@@ -886,7 +899,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
-        checkId("Object Id", versionSeriesId);
+        checkIds("Version Series Id", objectId, versionSeriesId);
         major = getDefaultFalse(major);
         includeAllowableActions = getDefaultFalse(includeAllowableActions);
         includeRelationships = getDefault(includeRelationships);
@@ -906,7 +919,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
-        checkId("Object Id", versionSeriesId);
+        checkIds("Version Series Id", objectId, versionSeriesId);
         major = getDefaultFalse(major);
 
         try {
@@ -920,7 +933,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
-        checkId("Version Series Id", versionSeriesId);
+        checkIds("Version Series Id", objectId, versionSeriesId);
         includeAllowableActions = getDefaultFalse(includeAllowableActions);
 
         try {

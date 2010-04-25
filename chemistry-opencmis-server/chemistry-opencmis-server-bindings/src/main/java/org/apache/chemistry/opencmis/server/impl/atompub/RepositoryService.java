@@ -59,6 +59,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 
 /**
  * Repository Service operations.
@@ -86,6 +87,9 @@ public final class RepositoryService {
             infoDataList = service.getRepositoryInfos(null);
         } else {
             infoDataList = Collections.singletonList(service.getRepositoryInfo(repositoryId, null));
+            if (context instanceof CallContextImpl) {
+                ((CallContextImpl) context).put(CallContext.REPOSITORY_ID, repositoryId);
+            }
         }
 
         // set headers
