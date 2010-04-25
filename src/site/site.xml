@@ -44,7 +44,7 @@
 		</menu>
 		<menu name="CMIS Client">
 			<item name="Client API" href="client-api.html" />
-			<item name="Provider Layer" href="client-provider.html" />
+			<item name="Client Binding Layer" href="client-binding.html" />
 		</menu>
 		<menu name="CMIS Server">
 			<item name="Server Framework" href="server.html" />

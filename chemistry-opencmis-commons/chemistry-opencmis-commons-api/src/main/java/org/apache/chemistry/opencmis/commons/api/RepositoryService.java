@@ -22,19 +22,29 @@ import java.math.BigInteger;
 import java.util.List;
 
 /**
- * Repository Service interface. See CMIS 1.0 domain model for details.
+ * Repository Service interface.
+ * 
+ * <p>
+ * <em>
+ * See CMIS 1.0 specification for details on the operations, parameters,
+ * exceptions and the domain model.
+ * </em>
+ * </p>
  */
 public interface RepositoryService {
 
     /**
-     * Returns a list of CMIS repositories available from this CMIS service
-     * endpoint.
+     * Returns a list of CMIS repository information available from this CMIS
+     * service endpoint.
+     * 
+     * In contrast to the CMIS specification this method returns repository
+     * infos not only repository ids.
      */
     List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension);
 
     /**
      * Returns information about the CMIS repository, the optional capabilities
-     * it supports and its Access Control information if applicable.
+     * it supports and its access control information if applicable.
      * 
      * @param repositoryId
      *            the identifier for the repository
@@ -42,17 +52,26 @@ public interface RepositoryService {
     RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension);
 
     /**
-     * Returns the list of Object-Types defined for the Repository that are
-     * children of the specified Type.
+     * Returns the list of object types defined for the repository that are
+     * children of the specified type.
      * 
      * @param repositoryId
      *            the identifier for the repository
      * @param typeId
-     *            optional) the typeId of an Object-Type specified in the
-     *            repository
+     *            <em>(optional)</em> the typeId of an object type specified in
+     *            the repository (if not specified the repository MUST return
+     *            all base object types)
      * @param includePropertyDefinitions
-     *            (optional) if <code>true</code>, then the Repository MUST
+     *            <em>(optional)</em> if <code>true</code> the repository MUST
      *            return the property definitions for each object type returned
+     *            (default is <code>false</code>)
+     * @param maxItems
+     *            <em>(optional)</em> the maximum number of items to return in a
+     *            response (default is repository specific)
+     * @param skipCount
+     *            <em>(optional)</em> number of potential results that the
+     *            repository MUST skip/page over before returning any results
+     *            (default is 0)
      */
     TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
@@ -60,12 +79,32 @@ public interface RepositoryService {
     /**
      * Returns the set of descendant object type defined for the repository
      * under the specified type.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param typeId
+     *            <em>(optional)</em> the typeId of an object type specified in
+     *            the repository (if not specified the repository MUST return
+     *            all types and MUST ignore the value of the depth parameter)
+     * @param depth
+     *            <em>(optional)</em> the number of levels of depth in the type
+     *            hierarchy from which to return results (default is repository
+     *            specific)
+     * @param includePropertyDefinitions
+     *            <em>(optional)</em> if <code>true</code> the repository MUST
+     *            return the property definitions for each object type returned
+     *            (default is <code>false</code>)
      */
     List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension);
 
     /**
      * Gets the definition of the specified object type.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param typeId
+     *            typeId of an object type specified in the repository
      */
     TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension);
 }

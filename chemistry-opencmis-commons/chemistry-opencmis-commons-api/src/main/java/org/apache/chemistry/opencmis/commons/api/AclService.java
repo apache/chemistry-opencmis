@@ -21,18 +21,45 @@ package org.apache.chemistry.opencmis.commons.api;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 
 /**
- * ACL Service interface. See CMIS 1.0 domain model for details.
+ * ACL Service interface.
  * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- * @see <a
- *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
- *      CMIS Technical Committee</a>
+ * <p>
+ * <em>
+ * See CMIS 1.0 specification for details on the operations, parameters,
+ * exceptions and the domain model.
+ * </em>
+ * </p>
  */
 public interface AclService {
 
+    /**
+     * Get the ACL currently applied to the specified object.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param objectId
+     *            the identifier for the object
+     * @param onlyBasicPermissions
+     *            <em>(optional)</em> an indicator if only basic permissions
+     *            should be returned (default is <code>true</code>)
+     */
     Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension);
 
+    /**
+     * Adds or removes the given ACEs to or from the ACL of the object.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param objectId
+     *            the identifier for the object
+     * @param addAces
+     *            <em>(optional)</em> the ACEs to be added
+     * @param removeAces
+     *            <em>(optional)</em> the ACEs to be removed
+     * @param aclPropagation
+     *            <em>(optional)</em> specifies how ACEs should be handled
+     *            (default is {@link AclPropagation#REPOSITORYDETERMINED})
+     */
     Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces, AclPropagation aclPropagation,
             ExtensionsData extension);
 }

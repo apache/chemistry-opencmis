@@ -2,6 +2,9 @@ package org.apache.chemistry.opencmis.commons.api.server;
 
 import java.util.Map;
 
+/**
+ * Factory for {@link CmisService} objects.
+ */
 public interface CmisServiceFactory {
 
     /**

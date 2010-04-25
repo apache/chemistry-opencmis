@@ -23,31 +23,52 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
 /**
- * Versioning Service interface. See CMIS 1.0 domain model for details.
+ * Versioning Service interface.
  * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- * @see <a
- *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
- *      CMIS Technical Committee</a>
+ * <p>
+ * <em>
+ * See CMIS 1.0 specification for details on the operations, parameters,
+ * exceptions and the domain model.
+ * </em>
+ * </p>
  */
 public interface VersioningService {
+    /**
+     * Create a private working copy of the document.
+     */
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied);
 
+    /**
+     * Reverses the effect of a check-out.
+     */
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension);
 
+    /**
+     * Checks-in the private working copy (PWC) document.
+     */
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension);
 
+    /**
+     * Get the latest document object in the version series.
+     */
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension);
 
+    /**
+     * Get a subset of the properties for the latest document object in the
+     * version series.
+     */
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension);
 
+    /**
+     * Returns the list of all document objects in the specified version series,
+     * sorted by the property "cmis:creationDate" descending.
+     */
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension);
 }

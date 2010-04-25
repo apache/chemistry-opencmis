@@ -23,18 +23,22 @@ import java.math.BigInteger;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 
 /**
- * Relationship Service interface. See CMIS 1.0 domain model for details.
+ * Relationship Service interface.
  * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- * @see <a
- *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
- *      CMIS Technical Committee</a>
+ * <p>
+ * <em>
+ * See CMIS 1.0 specification for details on the operations, parameters,
+ * exceptions and the domain model.
+ * </em>
+ * </p>
  */
 public interface RelationshipService {
 
+    /**
+     * Gets all or a subset of relationships associated with an independent
+     * object.
+     */
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
-
 }

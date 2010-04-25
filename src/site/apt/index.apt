@@ -14,7 +14,7 @@ OpenCMIS
   
     * {{{./client-api.html}Client API}}
 
-    * {{{./client-provider.html}Provider Layer}}
+    * {{{./client-binding.html}Client Binding Layer}}
 
   * <<CMIS Server>>
   

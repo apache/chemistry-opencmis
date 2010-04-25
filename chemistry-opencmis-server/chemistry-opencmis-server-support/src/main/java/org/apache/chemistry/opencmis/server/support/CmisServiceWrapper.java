@@ -283,7 +283,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     /**
-     * Returns the <code>"cmis:none"<code> if <code>value</code> is
+     * Returns the <code>"cmis:none"</code> if <code>value</code> is
      * <code>null</code>.
      */
     protected String getDefaultRenditionFilter(String value) {

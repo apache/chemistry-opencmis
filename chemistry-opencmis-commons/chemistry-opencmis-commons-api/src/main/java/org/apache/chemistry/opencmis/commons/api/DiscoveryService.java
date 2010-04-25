@@ -23,20 +23,27 @@ import java.math.BigInteger;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
 /**
- * Discovery Service interface. See CMIS 1.0 domain model for details.
+ * Discovery Service interface.
  * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- * @see <a
- *      href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis">OASIS
- *      CMIS Technical Committee</a>
+ * <p>
+ * <em>
+ * See CMIS 1.0 specification for details on the operations, parameters,
+ * exceptions and the domain model.
+ * </em>
+ * </p>
  */
 public interface DiscoveryService {
 
+    /**
+     * Executes a CMIS query statement against the contents of the repository.
+     */
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
+    /**
+     * Gets a list of content changes.
+     */
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension);
 }
