@@ -163,7 +163,7 @@ public class PagingListTest {
     }
 
     @Test
-    public void totalHasMoreItems() {
+    public void hasMoreItems() {
         System.out.println("\ntotalHasMoreItems");
         
         int pageSize = 5;
@@ -180,7 +180,7 @@ public class PagingListTest {
     }
 
     @Test
-    public void totalPageNumItems() {
+    public void pageNumItems() {
         System.out.println("\ntotalPageNumItems");
         
         int pageSize = 7;
