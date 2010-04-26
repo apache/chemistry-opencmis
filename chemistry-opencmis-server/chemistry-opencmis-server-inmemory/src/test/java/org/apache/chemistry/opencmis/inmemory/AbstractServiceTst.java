@@ -21,6 +21,7 @@ import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.MultiFilingService;
 import org.apache.chemistry.opencmis.commons.api.NavigationService;
@@ -54,6 +55,7 @@ public class AbstractServiceTst /* extends TestCase */{
     protected RepositoryService fRepSvc;
     protected VersioningService fVerSvc;
     protected MultiFilingService fMultiSvc;
+    protected DiscoveryService fDiscSvc;
     protected DummyCallContext fTestCallContext;
     private String fTypeCreatorClassName;
     protected boolean fUseClientProviderInterface;
@@ -327,7 +329,7 @@ public class AbstractServiceTst /* extends TestCase */{
 
     /**
      * Instantiates the services by using directly the service implementations.
-     * 
+     *
      * @param parameters
      *            configuration parameters for client provider interface and
      *            in-memory provider
@@ -341,11 +343,12 @@ public class AbstractServiceTst /* extends TestCase */{
         fNavSvc = inMemSpi.getNavigationService();
         fVerSvc = inMemSpi.getVersioningService();
         fMultiSvc = inMemSpi.getMultiFilingService();
+        fDiscSvc = inMemSpi.getDiscoveryService();
     }
 
     /**
      * Instantiates the services by using the client provider interface.
-     * 
+     *
      * @param parameters
      *            configuration parameters for client provider interface and
      *            in-memory provider
@@ -370,6 +373,7 @@ public class AbstractServiceTst /* extends TestCase */{
         fNavSvc = binding.getNavigationService();
         fVerSvc = binding.getVersioningService();
         fMultiSvc = binding.getMultiFilingService();
+        fDiscSvc = binding.getDiscoveryService();
     }
 
     protected String getStringProperty(ObjectData objData, String propertyKey) {

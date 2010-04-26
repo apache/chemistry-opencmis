@@ -20,17 +20,14 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
@@ -40,9 +37,9 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
  * InMemory folder implementation
- * 
+ *
  * @author Jens
- * 
+ *
  */
 
 public class ObjectStoreImpl implements ObjectStore {
@@ -70,7 +67,7 @@ public class ObjectStoreImpl implements ObjectStore {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#
      * getRootFolder()
@@ -81,7 +78,7 @@ public class ObjectStoreImpl implements ObjectStore {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#
      * getFolderByPath(java.lang .String)
@@ -111,7 +108,7 @@ public class ObjectStoreImpl implements ObjectStore {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#
      * getObjectById(java.lang .String)
@@ -124,7 +121,7 @@ public class ObjectStoreImpl implements ObjectStore {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#
      * deleteObject(java.lang .String)
@@ -187,7 +184,7 @@ public class ObjectStoreImpl implements ObjectStore {
         fStoredObjectMap.remove(id);
     }
 
-    Set<String> getIds() {
+    public Set<String> getIds() {
         Set<String> entries = fStoredObjectMap.keySet();
         return entries;
     }
