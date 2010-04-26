@@ -35,6 +35,13 @@ public interface PagingIterator<T> extends Iterator<T> {
     long getPosition();
 
     /**
+     * Returns the number of items fetched for the current page.
+     * 
+     * @return number of items for currently fetched page
+     */
+    long getPageNumItems();
+    
+    /**
      * Returns whether the repository contains additional items beyond the page of
      * items already fetched.
      * 

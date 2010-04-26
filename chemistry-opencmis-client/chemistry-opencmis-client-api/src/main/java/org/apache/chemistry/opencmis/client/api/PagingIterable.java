@@ -45,12 +45,4 @@ public interface PagingIterable<T> extends Iterable<T> {
      * @see java.lang.Iterable#iterator()
      */
     PagingIterator<T> iterator();
-
-    /**
-     * Getter version of iterator()
-     *
-     * @see java.lang.Iterable#iterator()
-     * @return iterator
-     */
-    PagingIterator<T> getIterator();
 }

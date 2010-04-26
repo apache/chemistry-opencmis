@@ -179,6 +179,23 @@ public class PagingListTest {
         assertEquals(false, i.getHasMoreItems());
     }
 
+    @Test
+    public void totalPageNumItems() {
+        System.out.println("\ntotalPageNumItems");
+        
+        int pageSize = 7;
+        PagingIterable<String> p = this.getIterable(this.data10, pageSize);
+        assertNotNull(p);
+        PagingIterator<String> i = (PagingIterator<String>) p.iterator();
+        assertNotNull(i);
+        assertEquals(pageSize, i.getPageNumItems());
+        for (int idx = 0; i.hasNext() && idx < (pageSize + 1); idx++) {
+            i.next();
+        }
+        assertEquals(pageSize + 1, i.getPosition());
+        assertEquals(this.data10.length - pageSize, i.getPageNumItems());
+    }
+
     private void loopSkip(String[] data, int skipCount, int pageSize) {
         System.out.println("\nloopSkip (" + skipCount + ", " + pageSize + ")");
 

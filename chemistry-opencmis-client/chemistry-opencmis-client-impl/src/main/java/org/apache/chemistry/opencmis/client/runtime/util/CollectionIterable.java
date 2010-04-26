@@ -61,15 +61,6 @@ public class CollectionIterable<T> implements PagingIterable<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.PagingIterable#getIterator()
-     */
-    public PagingIterator<T> getIterator() {
-        return iterator();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.apache.chemistry.opencmis.client.api.util.PagingIterable#skipTo(long)
      */
     public PagingIterable<T> skipTo(long position) {

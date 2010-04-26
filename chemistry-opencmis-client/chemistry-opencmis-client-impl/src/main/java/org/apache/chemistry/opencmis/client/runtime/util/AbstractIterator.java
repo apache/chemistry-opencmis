@@ -18,8 +18,11 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.util;
 
+import java.util.List;
+
 import org.apache.chemistry.opencmis.client.api.PagingIterator;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageFetchResult;
+
 
 /**
  * Abstract <code>PagingIterator</code> implementation.
@@ -50,14 +53,28 @@ public abstract class AbstractIterator<T> implements PagingIterator<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.apache.chemistry.opencmis.client.api.util.PagingIterator#getPosition
+     * @see org.apache.chemistry.opencmis.client.api.util.PagingIterator#getPosition
      * ()
      */
     public long getPosition() {
         return skipCount + skipOffset;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.apache.chemistry.opencmis.client.api.PagingIterator#getPageNumItems()
+     */
+    public long getPageNumItems() {
+        PageFetchResult<T> page = getCurrentPage();
+        if (page != null) {
+            List<T> items = page.getPage();
+            if (items != null) {
+                return items.size();
+            }
+        }
+        return 0L;
+    }
+    
     /*
      * (non-Javadoc)
      * @see org.apache.chemistry.opencmis.client.api.PagingIterator#getTotalNumItems()
@@ -95,7 +112,6 @@ public abstract class AbstractIterator<T> implements PagingIterator<T> {
 
     /*
      * (non-Javadoc)
-     * 
      * @see java.util.Iterator#remove()
      */
     public void remove() {
