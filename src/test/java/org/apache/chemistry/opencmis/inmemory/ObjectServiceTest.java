@@ -70,10 +70,10 @@ import static org.junit.Assert.*;
 public class ObjectServiceTest extends AbstractServiceTst {
 
     private static Log log = LogFactory.getLog(ObjectServiceTest.class);
-    private static final String TEST_FOLDER_TYPE_ID = "MyFolderType";
-    private static final String TEST_DOCUMENT_TYPE_ID = "MyDocumentType";
-    private static final String TEST_FOLDER_STRING_PROP_ID = "MyFolderStringProp";
-    private static final String TEST_DOCUMENT_STRING_PROP_ID = "MyDocumentStringProp";
+    public static final String TEST_FOLDER_TYPE_ID = "MyFolderType";
+    public static final String TEST_DOCUMENT_TYPE_ID = "MyDocumentType";
+    public static final String TEST_FOLDER_STRING_PROP_ID = "MyFolderStringProp";
+    public static final String TEST_DOCUMENT_STRING_PROP_ID = "MyDocumentStringProp";
     private static final String TEST_CUSTOM_DOCUMENT_TYPE_ID = "MyCustomDocumentType";
     private static final String TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID = "MyCustomInheritedDocType";
     private static final String TEST_DOCUMENT_MY_STRING_PROP_ID = "MyCustomDocumentStringProp";
@@ -890,7 +890,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
 
         /**
          * create root types and a sample type for folder and document
-         * 
+         *
          * @return typesMap map filled with created types
          */
         public List<TypeDefinition> createTypesList() {
