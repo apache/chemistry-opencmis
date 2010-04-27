@@ -36,7 +36,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionList
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 
-public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl implements CmisRepositoryService {
+public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
     public InMemoryRepositoryServiceImpl(StoreManager storeManager) {
         super(storeManager);

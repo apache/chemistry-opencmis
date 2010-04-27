@@ -41,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -53,14 +54,12 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.chemistry.opencmis.server.spi.CmisDiscoveryService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
-import org.apache.chemistry.opencmis.server.support.query.CMISQLLexer;
-import org.apache.chemistry.opencmis.server.support.query.CMISQLParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.chemistry.opencmis.server.support.query.CMISQLLexer;
+import org.apache.chemistry.opencmis.server.support.query.CMISQLParser;
 
-public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl implements CmisDiscoveryService {
+public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
 
     private static final Log LOG = LogFactory.getLog(InMemoryDiscoveryServiceImpl.class.getName());
 
@@ -79,7 +78,7 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl im
 
     public ObjectList getContentChanges(CallContext context, String repositoryId, Holder<String> changeLogToken,
             Boolean includeProperties, String filter, Boolean includePolicyIds, Boolean includeAcl,
-            BigInteger maxItems, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            BigInteger maxItems, ExtensionsData extension, ObjectInfoHandler objectInfos) {
         // dummy implementation using hard coded values
 
         RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);

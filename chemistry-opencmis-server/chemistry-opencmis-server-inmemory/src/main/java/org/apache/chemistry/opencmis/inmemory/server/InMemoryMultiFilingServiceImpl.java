@@ -21,21 +21,21 @@ package org.apache.chemistry.opencmis.inmemory.server;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.chemistry.opencmis.server.spi.CmisMultiFilingService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl implements CmisMultiFilingService {
+public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl {
 
     private static final Log LOG = LogFactory.getLog(InMemoryMultiFilingServiceImpl.class.getName());
 
@@ -47,7 +47,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
     }
 
     public ObjectData addObjectToFolder(CallContext context, String repositoryId, String objectId, String folderId,
-            Boolean allVersions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            Boolean allVersions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("Begin addObjectToFolder()");
 
@@ -63,8 +63,13 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         MultiFiling obj = (MultiFiling) so;
         obj.addParent(newParent);
 
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
+
 
         String user = context.getUsername();
         ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
@@ -75,7 +80,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
     }
 
     public ObjectData removeObjectFromFolder(CallContext context, String repositoryId, String objectId,
-            String folderId, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            String folderId, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("Begin removeObjectFromFolder()");
 
@@ -90,8 +95,12 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
         // To be able to provide all Atom links in the response we need
         // additional information:
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
 
         String user = context.getUsername();
         ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,

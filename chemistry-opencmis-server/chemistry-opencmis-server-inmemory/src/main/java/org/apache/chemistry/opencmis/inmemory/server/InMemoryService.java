@@ -30,17 +30,14 @@ import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.api.Holder;
-import org.apache.chemistry.opencmis.commons.api.NavigationService;
 import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.api.ObjectList;
 import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.api.ObjectService;
 import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.api.RepositoryService;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
@@ -54,9 +51,6 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
-import org.apache.chemistry.opencmis.inmemory.clientprovider.NavigationServiceImpl;
-import org.apache.chemistry.opencmis.inmemory.clientprovider.ObjectServiceImpl;
-import org.apache.chemistry.opencmis.inmemory.clientprovider.RepositoryServiceImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
@@ -110,11 +104,6 @@ public class InMemoryService extends AbstractCmisService {
             }
         }
 
-        // With some special configuration settings fill the repository with
-        // some documents and folders
-        // if is empty
-        if (!allAvailableRepositories.contains(repositoryId))
-            fillRepositoryIfConfigured(parameters, repositoryId);
 
         fRepSvc = new InMemoryRepositoryServiceImpl(storeManager);
         fNavSvc = new InMemoryNavigationServiceImpl(storeManager);
@@ -123,6 +112,11 @@ public class InMemoryService extends AbstractCmisService {
         fDisSvc = new InMemoryDiscoveryServiceImpl(storeManager, fRepSvc, fNavSvc);
         fMultiSvc = new InMemoryMultiFilingServiceImpl(storeManager);
 
+        // With some special configuration settings fill the repository with
+        // some documents and folders
+        // if is empty
+        if (!allAvailableRepositories.contains(repositoryId))
+            fillRepositoryIfConfigured(parameters, repositoryId);
     }
 
     public CallContext getCallContext() {
@@ -166,39 +160,39 @@ public class InMemoryService extends AbstractCmisService {
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         return fNavSvc.getCheckedOutDocs(getCallContext(), repositoryId, folderId, filter, orderBy,
-                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension, null);
+                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension, this);
     }
 
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         return fNavSvc.getChildren(getCallContext(), repositoryId, folderId, filter, orderBy, includeAllowableActions,
-                includeRelationships, renditionFilter, includePathSegment, maxItems, skipCount, extension, null);
+                includeRelationships, renditionFilter, includePathSegment, maxItems, skipCount, extension, this);
     }
 
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
         return fNavSvc.getDescendants(getCallContext(), repositoryId, folderId, depth, filter, includeAllowableActions,
-                includeRelationships, renditionFilter, includePathSegment, extension, null);
+                includeRelationships, renditionFilter, includePathSegment, extension, this);
     }
 
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
-        return fNavSvc.getFolderParent(getCallContext(), repositoryId, folderId, filter, extension, null);
+        return fNavSvc.getFolderParent(getCallContext(), repositoryId, folderId, filter, extension, this);
     }
 
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
         return fNavSvc.getFolderTree(getCallContext(), repositoryId, folderId, depth, filter, includeAllowableActions,
-                includeRelationships, renditionFilter, includePathSegment, extension, null);
+                includeRelationships, renditionFilter, includePathSegment, extension, this);
     }
 
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
         return fNavSvc.getObjectParents(getCallContext(), repositoryId, objectId, filter, includeAllowableActions,
-                includeRelationships, renditionFilter, includeRelativePathSegment, extension, null);
+                includeRelationships, renditionFilter, includeRelativePathSegment, extension, this);
     }
 
     // --- object service ---
@@ -206,7 +200,7 @@ public class InMemoryService extends AbstractCmisService {
     public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState, List<String> policies, ExtensionsData extension) {
         ObjectData od = fObjSvc.create(getCallContext(), repositoryId, properties, folderId, contentStream,
-                versioningState, policies, extension, null);
+                versioningState, policies, extension, this);
         return od.getId();
 
     }
@@ -276,14 +270,14 @@ public class InMemoryService extends AbstractCmisService {
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
         return fObjSvc.getObject(getCallContext(), repositoryId, objectId, filter, includeAllowableActions,
-                includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, null);
+                includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, this);
     }
 
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
         return fObjSvc.getObjectByPath(getCallContext(), repositoryId, path, filter, includeAllowableActions,
-                includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, null);
+                includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, this);
     }
 
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
@@ -298,7 +292,7 @@ public class InMemoryService extends AbstractCmisService {
 
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
-        fObjSvc.moveObject(getCallContext(), repositoryId, objectId, targetFolderId, sourceFolderId, extension, null);
+        fObjSvc.moveObject(getCallContext(), repositoryId, objectId, targetFolderId, sourceFolderId, extension, this);
     }
 
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
@@ -310,7 +304,7 @@ public class InMemoryService extends AbstractCmisService {
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         fObjSvc.updateProperties(getCallContext(), repositoryId, objectId, changeToken, properties, null, extension,
-                null);
+                this);
     }
 
     // --- versioning service ---
@@ -323,12 +317,12 @@ public class InMemoryService extends AbstractCmisService {
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
         fVerSvc.checkIn(getCallContext(), repositoryId, objectId, major, properties, contentStream, checkinComment,
-                policies, addAces, removeAces, extension, null);
+                policies, addAces, removeAces, extension, this);
     }
 
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
-        fVerSvc.checkOut(getCallContext(), repositoryId, objectId, extension, contentCopied, null);
+        fVerSvc.checkOut(getCallContext(), repositoryId, objectId, extension, contentCopied, this);
     }
 
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
@@ -336,7 +330,7 @@ public class InMemoryService extends AbstractCmisService {
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
         return fVerSvc.getObjectOfLatestVersion(getCallContext(), repositoryId, versionSeriesId, major, filter,
                 includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl,
-                extension, null);
+                extension, this);
     }
 
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
@@ -348,15 +342,15 @@ public class InMemoryService extends AbstractCmisService {
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
         return fVerSvc.getAllVersions(getCallContext(), repositoryId, versionSeriesId, filter, includeAllowableActions,
-                extension, null);
+                extension, this);
     }
 
     // --- discovery service ---
 
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
-        return super.getContentChanges(repositoryId, changeLogToken, includeProperties, filter, includePolicyIds,
-                includeAcl, maxItems, extension);
+        return fDisSvc.getContentChanges(getCallContext(), repositoryId, changeLogToken, includeProperties, filter, includePolicyIds,
+                includeAcl, maxItems, extension, this);
     }
 
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
@@ -370,11 +364,11 @@ public class InMemoryService extends AbstractCmisService {
 
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
-        fMultiSvc.addObjectToFolder(getCallContext(), repositoryId, objectId, folderId, allVersions, extension, null);
+        fMultiSvc.addObjectToFolder(getCallContext(), repositoryId, objectId, folderId, allVersions, extension, this);
     }
 
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
-        fMultiSvc.removeObjectFromFolder(getCallContext(), repositoryId, objectId, folderId, extension, null);
+        fMultiSvc.removeObjectFromFolder(getCallContext(), repositoryId, objectId, folderId, extension, this);
     }
 
     // --- relationship service ---
@@ -457,9 +451,9 @@ public class InMemoryService extends AbstractCmisService {
             return;
 
         BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
-        NavigationService navSvc = new NavigationServiceImpl(fNavSvc);
-        ObjectService objSvc = new ObjectServiceImpl(fObjSvc);
-        RepositoryService repSvc = new RepositoryServiceImpl(fRepSvc);
+//        NavigationService navSvc = new NavigationServiceImpl(fNavSvc);
+//        ObjectService objSvc = new ObjectServiceImpl(fObjSvc);
+//        RepositoryService repSvc = new RepositoryServiceImpl(fRepSvc);
 
         String levelsStr = parameters.get(ConfigConstants.FILLER_DEPTH);
         int levels = 1;
@@ -490,7 +484,7 @@ public class InMemoryService extends AbstractCmisService {
             contentSizeKB = Integer.parseInt(contentSizeKBStr);
 
         // Create a hierarchy of folders and fill it with some documents
-        ObjectGenerator gen = new ObjectGenerator(objectFactory, navSvc, objSvc, repositoryId);
+        ObjectGenerator gen = new ObjectGenerator(objectFactory, this, this, repositoryId);
 
         gen.setNumberOfDocumentsToCreatePerFolder(docsPerLevel);
 
@@ -519,10 +513,10 @@ public class InMemoryService extends AbstractCmisService {
         // Simulate a runtime context with configuration parameters
         // Attach the CallContext to a thread local context that can be accessed
         // from everywhere
-        // RuntimeContext.attachCfg(new DummyCallContext());
-
+        DummyCallContext ctx = new DummyCallContext();
+        setCallContext(ctx);
         // Build the tree
-        RepositoryInfo rep = repSvc.getRepositoryInfo(repositoryId, null);
+        RepositoryInfo rep = fRepSvc.getRepositoryInfo(ctx, repositoryId, null);
         String rootFolderId = rep.getRootFolderId();
 
         try {
