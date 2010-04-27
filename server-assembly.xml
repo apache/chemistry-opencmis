@@ -35,8 +35,7 @@
 
         <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-bindings</include>
 
-        <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-spi</include>
-        <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-bindings</include>
+         <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-bindings</include>
         <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-support</include>
         <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-inmemory</include>
         <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-fileshare</include>

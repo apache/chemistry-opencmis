@@ -70,7 +70,7 @@ public abstract class AbstractLocalService {
     /**
      * Simple {@link CallContext} implementation.
      */
-    class LocalCallContext implements CallContext {
+    static class LocalCallContext implements CallContext {
 
         private Map<String, String> contextMap = new HashMap<String, String>();
 

@@ -34,7 +34,6 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
 
 public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
