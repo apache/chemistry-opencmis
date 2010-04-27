@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
-import java.util.List;
 
 /**
  * Documents can have in the CMIS specification multiple parents. This interface

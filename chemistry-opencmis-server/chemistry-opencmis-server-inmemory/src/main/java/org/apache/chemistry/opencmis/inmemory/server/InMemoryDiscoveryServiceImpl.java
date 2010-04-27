@@ -54,10 +54,10 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.chemistry.opencmis.server.support.query.CMISQLLexer;
 import org.apache.chemistry.opencmis.server.support.query.CMISQLParser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
 
