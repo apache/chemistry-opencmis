@@ -21,10 +21,8 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
  * @author Jens

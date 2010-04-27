@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +41,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Jens
