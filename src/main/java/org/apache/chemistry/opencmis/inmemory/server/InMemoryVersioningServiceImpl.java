@@ -30,10 +30,12 @@ import org.apache.chemistry.opencmis.commons.api.ObjectData;
 import org.apache.chemistry.opencmis.commons.api.Properties;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -41,12 +43,10 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.chemistry.opencmis.server.spi.CmisVersioningService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl implements CmisVersioningService {
+public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
     private static final Log LOG = LogFactory.getLog(InMemoryVersioningServiceImpl.class.getName());
 
@@ -71,7 +71,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
 
     public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId, Boolean major,
             Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
-            Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
         String user = context.getUsername();
@@ -89,7 +89,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
 
         // To be able to provide all Atom links in the response we need
         // additional information:
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
 
         ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
@@ -98,7 +102,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
     }
 
     public ObjectData checkOut(CallContext context, String repositoryId, Holder<String> objectId,
-            ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHolder objectInfos) {
+            ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHandler objectInfos) {
 
         StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
@@ -131,7 +135,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
 
         // To be able to provide all Atom links in the response we need
         // additional information:
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
 
         ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
@@ -140,7 +148,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
     }
 
     public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String versionSeriesId,
-            String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
 
@@ -157,7 +165,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
         }
 
         // provide information for Atom links for version series:
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
 
         return res;
     }
@@ -165,7 +177,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
     public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension,
-            ObjectInfoHolder objectInfos) {
+            ObjectInfoHandler objectInfos) {
 
         StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
         ObjectData objData = null;
@@ -182,7 +194,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
             throw new RuntimeException("Object is not instance of a document (version series)");
 
         // provide information for Atom links for version series:
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
 
         return objData;
     }
@@ -209,7 +225,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl i
     }
 
     private ObjectData getObject(CallContext context, String repositoryId, String objectId, String filter,
-            Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         return fObjectService.getObject(context, repositoryId, objectId, filter, includeAllowableActions,
                 IncludeRelationships.NONE, null, false, includeAllowableActions, extension, objectInfos);

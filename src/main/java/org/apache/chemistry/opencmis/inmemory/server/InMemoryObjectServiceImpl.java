@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.api.RenditionData;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.api.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -51,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
@@ -69,13 +71,10 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.chemistry.opencmis.server.spi.CmisObjectService;
-import org.apache.chemistry.opencmis.server.spi.CmisRepositoryService;
-import org.apache.chemistry.opencmis.server.spi.ObjectInfoHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl implements CmisObjectService {
+public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private static final Log LOG = LogFactory.getLog(InMemoryServiceFactoryImpl.class.getName());
 
     AtomLinkInfoProvider fAtomLinkProvider;
@@ -180,17 +179,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
      * org.opencmis.client.provider.ContentStreamData,
      * org.opencmis.commons.enums.VersioningState,
      * org.opencmis.client.provider.ExtensionsData,
-     * org.opencmis.server.spi.ObjectInfoHolder)
+     * org.opencmis.server.spi.ObjectInfoHandler)
      * 
      * An additional create call compared to the ObjectService from the CMIS
      * spec. This one is needed because the Atom binding in the server
      * implementation does not know what kind of object needs to be created.
-     * Also the ObjectInfoHolder needs to be filled.
+     * Also the ObjectInfoHandler needs to be filled.
      */
     @SuppressWarnings("unchecked")
     public ObjectData create(CallContext context, String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies,
-            ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         if (null == properties || null == properties.getProperties())
             throw new RuntimeException("Cannot create object, without properties.");
@@ -227,7 +226,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
         ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, od, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
         return od;
     }
 
@@ -339,7 +342,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 
     public ObjectData getObject(CallContext context, String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-            Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("start getObject()");
 
@@ -352,7 +355,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
         ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, user, includeAllowableActions,
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
 
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
 
         LOG.debug("stop getObject()");
 
@@ -361,7 +368,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 
     public ObjectData getObjectByPath(CallContext context, String repositoryId, String path, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-            Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("start getObjectByPath()");
         checkRepositoryId(repositoryId);
@@ -379,7 +386,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 
         // To be able to provide all Atom links in the response we need
         // additional information:
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
 
         return od;
     }
@@ -412,7 +423,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
     }
 
     public ObjectData moveObject(CallContext context, String repositoryId, Holder<String> objectId,
-            String targetFolderId, String sourceFolderId, ExtensionsData extension, ObjectInfoHolder objectInfos) {
+            String targetFolderId, String sourceFolderId, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("start moveObject()");
         StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
@@ -464,13 +475,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
         objectId.setValue(so.getId());
         LOG.debug("stop moveObject()");
 
-        // To be able to provide all Atom links in the response we need
-        // additional information:
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-
         String user = context.getUsername();
         ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
+
+        // To be able to provide all Atom links in the response we need
+        // additional information:
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, od, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
 
         return od;
     }
@@ -509,7 +524,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
 
     public ObjectData updateProperties(CallContext context, String repositoryId, Holder<String> objectId,
             Holder<String> changeToken, Properties properties, Acl acl, ExtensionsData extension,
-            ObjectInfoHolder objectInfos) {
+            ObjectInfoHandler objectInfos) {
 
         LOG.debug("start updateProperties()");
         StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
@@ -616,13 +631,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl imple
             // extension);
         }
 
-        // To be able to provide all Atom links in the response we need
-        // additional information:
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfos);
-
         String user = context.getUsername();
         ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
+
+        // To be able to provide all Atom links in the response we need
+        // additional information:
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, od, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
 
         LOG.debug("stop updateProperties()");
 
