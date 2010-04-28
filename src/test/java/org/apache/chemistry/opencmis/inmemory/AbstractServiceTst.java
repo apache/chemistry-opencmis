@@ -37,8 +37,6 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo;
-import org.apache.chemistry.opencmis.inmemory.clientprovider.CmisInMemoryProvider;
-import org.apache.chemistry.opencmis.inmemory.clientprovider.DummyCallContext;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceFactoryImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.commons.logging.Log;
@@ -58,7 +56,6 @@ public class AbstractServiceTst /* extends TestCase */{
     protected DiscoveryService fDiscSvc;
     protected DummyCallContext fTestCallContext;
     private String fTypeCreatorClassName;
-    protected boolean fUseClientProviderInterface;
 
     public AbstractServiceTst() {
         // The in-memory server unit tests can either be run directly against
@@ -68,8 +65,6 @@ public class AbstractServiceTst /* extends TestCase */{
         // binding interfaces offers some benefits like type system caching etc.
         // The default is using the direct implementation. Subclasses may
         // override this behavior.
-
-        fUseClientProviderInterface = true;
 
         // Init with default types, can be overridden by subclasses:
         fTypeCreatorClassName = UnitTestTypeSystemCreator.class.getName();
@@ -101,10 +96,7 @@ public class AbstractServiceTst /* extends TestCase */{
         // initialized.
         // RuntimeContext.attachCfg(fTestCallContext);
 
-        if (fUseClientProviderInterface)
-            initializeUsingLocalBinding(parameters);
-        else
-            initializeDirect(parameters);
+        initializeUsingLocalBinding(parameters);
 
         assertNotNull(fRepSvc);
         assertNotNull(fObjSvc);
@@ -327,26 +319,7 @@ public class AbstractServiceTst /* extends TestCase */{
         assertEquals(objectId, pd.getFirstValue());
     }
 
-    /**
-     * Instantiates the services by using directly the service implementations.
-     *
-     * @param parameters
-     *            configuration parameters for client provider interface and
-     *            in-memory provider
-     */
-    private void initializeDirect(Map<String, String> parameters) {
-        LOG.info("Initialize unit test using directly the InMemory-classes.");
-
-        CmisInMemoryProvider inMemSpi = new CmisInMemoryProvider(parameters);
-        fRepSvc = inMemSpi.getRepositoryService();
-        fObjSvc = inMemSpi.getObjectService();
-        fNavSvc = inMemSpi.getNavigationService();
-        fVerSvc = inMemSpi.getVersioningService();
-        fMultiSvc = inMemSpi.getMultiFilingService();
-        fDiscSvc = inMemSpi.getDiscoveryService();
-    }
-
-    /**
+     /**
      * Instantiates the services by using the client provider interface.
      *
      * @param parameters
