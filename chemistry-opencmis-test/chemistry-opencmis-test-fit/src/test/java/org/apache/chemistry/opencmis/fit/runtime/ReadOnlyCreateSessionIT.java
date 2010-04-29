@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.fit.runtime;
 
 import java.util.Hashtable;
 
-import org.apache.chemistry.opencmis.client.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.SessionType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;

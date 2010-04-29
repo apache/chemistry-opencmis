@@ -21,9 +21,9 @@ package org.apache.chemistry.opencmis.fit;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
+import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;

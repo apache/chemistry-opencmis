@@ -16,13 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client;
+package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 import java.util.Map;
-
-import org.apache.chemistry.opencmis.client.api.Repository;
-import org.apache.chemistry.opencmis.client.api.Session;
 
 /**
  * Entry point into the OpenCMIS Client API. The <code>SessionFactory</code>
