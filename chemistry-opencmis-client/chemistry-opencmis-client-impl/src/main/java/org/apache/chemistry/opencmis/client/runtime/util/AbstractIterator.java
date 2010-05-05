@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageF
 
 
 /**
- * Abstract <code>ItemIterator</code> implementation.
+ * Abstract <code>Iterator</code> implementation.
  * 
  * @param <T>
  */

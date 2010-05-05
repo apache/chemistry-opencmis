@@ -198,9 +198,11 @@ public class ItemIterableTest {
         assertNotNull(p);
         Iterator<String> i = p.iterator();
         assertNotNull(i);
+        assertEquals(true, p.getHasMoreItems());
         for (int idx = 0; i.hasNext() && idx < (pageSize + 1); idx++) {
-            assertNotNull(i.next());
+            i.next();
         }
+        assertEquals(false, p.getHasMoreItems());
     }
 
     @Test

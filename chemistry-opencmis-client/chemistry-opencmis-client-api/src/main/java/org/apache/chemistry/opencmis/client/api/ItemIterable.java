@@ -69,6 +69,14 @@ public interface ItemIterable<T> extends Iterable<T> {
     long getPageNumItems();
     
     /**
+     * Returns whether the repository contains additional items beyond the page of
+     * items already fetched.
+     * 
+     * @return true => further page requests will be made to the repository
+     */
+    boolean getHasMoreItems();
+    
+    /**
      * Returns the total number of items. If the repository knows the total
      * number of items in a result set, the repository SHOULD include the number
      * here. If the repository does not know the number of items in a result

@@ -20,16 +20,16 @@ package org.apache.chemistry.opencmis.client.runtime.util;
 
 
 /**
- * CMIS Collection Iterable
+ * Iterable for a CMIS Collection Page
  */
-public class CollectionIterable<T> extends AbstractIterable<T> {
+public class CollectionPageIterable<T> extends AbstractIterable<T> {
 
     /**
      * Construct
      * 
      * @param pageFetch
      */
-    public CollectionIterable(AbstractPageFetch<T> pageFetch) {
+    public CollectionPageIterable(AbstractPageFetch<T> pageFetch) {
         this(0, pageFetch);
     }
 
@@ -39,12 +39,12 @@ public class CollectionIterable<T> extends AbstractIterable<T> {
      * @param position
      * @param pageFetch
      */
-    protected CollectionIterable(long position, AbstractPageFetch<T> pageFetch) {
+    protected CollectionPageIterable(long position, AbstractPageFetch<T> pageFetch) {
         super(position, pageFetch);
     }
 
     @Override
     protected AbstractIterator<T> createIterator() {
-        return new CollectionIterator<T>(getSkipCount(), getPageFetch());
+        return new CollectionPageIterator<T>(getSkipCount(), getPageFetch());
     }
 }
