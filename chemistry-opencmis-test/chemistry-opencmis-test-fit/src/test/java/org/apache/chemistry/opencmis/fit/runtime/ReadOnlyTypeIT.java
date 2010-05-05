@@ -82,7 +82,8 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
     public void readTypeChildrenDocument() {
         ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
         Assert.assertNotNull(otd);
-        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true, 2);
+        this.session.getDefaultContext().setMaxItemsPerPage(2);
+        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
         Assert.assertNotNull(pc);
 
         for (ObjectType ot1 : pc) {
@@ -92,13 +93,44 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
     }
 
     @Test
+    public void readTypeChildrenDocumentSkip() {
+        ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
+        Assert.assertNotNull(otd);
+        this.session.getDefaultContext().setMaxItemsPerPage(2);
+        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
+        Assert.assertNotNull(pc);
+
+        PagingIterable<ObjectType> pcc = pc.skipTo(2).getPage(2); 
+        for (ObjectType ot1 : pcc) {
+            ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
+            Assert.assertEquals(ot1.getId(), ot2.getId());
+        }
+    }
+
+    @Test
     public void readTypeChildrenFolder() {
         ObjectType otd = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
         Assert.assertNotNull(otd);
-        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true, 2);
+        this.session.getDefaultContext().setMaxItemsPerPage(2);
+        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
         Assert.assertNotNull(pc);
 
         for (ObjectType ot1 : pc) {
+            ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
+            Assert.assertEquals(ot1, ot2);
+        }
+    }
+
+    @Test
+    public void readTypeChildrenFolderSkip() {
+        ObjectType otd = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
+        Assert.assertNotNull(otd);
+        this.session.getDefaultContext().setMaxItemsPerPage(2);
+        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
+        Assert.assertNotNull(pc);
+
+        PagingIterable<ObjectType> pcc = pc.skipTo(0).getPage(2); 
+        for (ObjectType ot1 : pcc) {
             ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
             Assert.assertEquals(ot1, ot2);
         }

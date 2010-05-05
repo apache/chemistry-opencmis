@@ -75,8 +75,8 @@ public class ObjectTypeHelper {
         return parentType;
     }
 
-    public PagingIterable<ObjectType> getChildren(int itemsPerPage) {
-        return session.getTypeChildren(objectType.getId(), true, itemsPerPage);
+    public PagingIterable<ObjectType> getChildren() {
+        return session.getTypeChildren(objectType.getId(), true);
     }
 
     public List<Tree<ObjectType>> getDescendants(int depth) {

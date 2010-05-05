@@ -73,4 +73,8 @@ public interface OperationContext {
     void setCacheEnabled(boolean cacheEnabled);
 
     String getCacheKey();
+    
+    void setMaxItemsPerPage(int maxItemsPerPage);
+
+    int getMaxItemsPerPage();
 }

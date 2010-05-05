@@ -67,12 +67,10 @@ public interface ObjectType extends TypeDefinition {
      * Get the list of types directly derived from this type (which will return
      * this type on {@code getParent()}).
      * 
-     * @param itemsPerPage
-     *            types per page
      * @return a {@code List} of types which are directly derived from this
      *         type. @
      */
-    PagingIterable<ObjectType> getChildren(int itemsPerPage);
+    PagingIterable<ObjectType> getChildren();
 
     /**
      * Get the list of all types somehow derived from this type.

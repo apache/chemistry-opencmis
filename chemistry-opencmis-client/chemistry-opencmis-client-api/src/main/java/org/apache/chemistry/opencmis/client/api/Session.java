@@ -85,7 +85,7 @@ public interface Session {
      */
     OperationContext createOperationContext(Set<String> filter, boolean includeAcls, boolean includeAllowableActions,
             boolean includePolicies, IncludeRelationships includeRelationships, Set<String> renditionFilter,
-            boolean includePathSegments, String orderBy, boolean cacheEnabled);
+            boolean includePathSegments, String orderBy, boolean cacheEnabled, int maxItemsPerPage);
 
     /**
      * Creates an object id.
@@ -123,7 +123,7 @@ public interface Session {
     /**
      * Returns the type children of the given type id.
      */
-    PagingIterable<ObjectType> getTypeChildren(String typeId, boolean includePropertyDefinitions, int itemsPerPage);
+    PagingIterable<ObjectType> getTypeChildren(String typeId, boolean includePropertyDefinitions);
 
     /**
      * Returns the type descendants of the given type id.
@@ -144,9 +144,9 @@ public interface Session {
      * 
      * @see Folder#getCheckedOutDocs(int)
      */
-    PagingIterable<Document> getCheckedOutDocs(int itemsPerPage);
+    PagingIterable<Document> getCheckedOutDocs();
 
-    PagingIterable<Document> getCheckedOutDocs(OperationContext context, int itemsPerPage);
+    PagingIterable<Document> getCheckedOutDocs(OperationContext context);
 
     /**
      * Object service <code>getObject</code>.
@@ -167,15 +167,14 @@ public interface Session {
     /**
      * Discovery service <code>query</code>.
      */
-    PagingIterable<QueryResult> query(String statement, boolean searchAllVersions, int itemsPerPage);
+    PagingIterable<QueryResult> query(String statement, boolean searchAllVersions);
 
-    PagingIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context,
-            int itemsPerPage);
+    PagingIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context);
 
     /**
      * Discovery service <code>getContentChanges</code>.
      */
-    PagingIterable<ChangeEvent> getContentChanges(String changeLogToken, int itemsPerPage);
+    PagingIterable<ChangeEvent> getContentChanges(String changeLogToken);
 
     // create
 

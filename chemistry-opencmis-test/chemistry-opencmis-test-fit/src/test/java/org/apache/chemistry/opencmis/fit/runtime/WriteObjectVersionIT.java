@@ -26,32 +26,56 @@ import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.junit.Before;
 import org.junit.Test;
 
 public class WriteObjectVersionIT extends AbstractSessionTest {
-    @Test
-    public void checkOutDocs() {
 
+    private ObjectId checkdOutId = null;
+
+    @Before
+    public void checkOutVersionableDocument() {
         /* check out one versionable document */
         String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
         Document document = (Document) this.session.getObjectByPath(path);
         assertNotNull("Document not found: " + path, document);
         DocumentType dt = (DocumentType) document.getType();
         assertNotNull(dt);
-        ObjectId id = null;
         if (dt.isVersionable() != null && dt.isVersionable().booleanValue()) {
-            id = document.checkOut();
+            this.checkdOutId = document.checkOut();
         }
+    }
+
+    @Test
+    public void checkOutDocs() {
 
         /* get all verchecked out docs which should be exactly one or zero */
         Folder f = this.session.getRootFolder();
         assertNotNull(f);
-        PagingIterable<Document> pi = f.getCheckedOutDocs(10);
+        PagingIterable<Document> pi = f.getCheckedOutDocs();
         assertNotNull(pi);
 
         for (Document d : pi) {
             assertNotNull(d);
-            assertEquals(id, d.getId());
+            assertEquals(this.checkdOutId, d.getId());
+            break; // check only first and only loop entry
+        }
+
+    }
+
+    @Test
+    public void checkOutDocsSkip() {
+
+        /* get all verchecked out docs which should be exactly one or zero */
+        Folder f = this.session.getRootFolder();
+        assertNotNull(f);
+        PagingIterable<Document> pi = f.getCheckedOutDocs();
+        assertNotNull(pi);
+        // test skipTo and getPage
+        PagingIterable<Document> pii = pi.skipTo(2).getPage(2);
+        for (Document d : pii) {
+            assertNotNull(d);
+            assertEquals(this.checkdOutId, d.getId());
             break; // check only first and only loop entry
         }
     }

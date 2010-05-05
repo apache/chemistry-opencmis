@@ -124,7 +124,7 @@ public interface CmisObject extends ObjectId {
     // relationship service
 
     PagingIterable<Relationship> getRelationships(boolean includeSubRelationshipTypes,
-            RelationshipDirection relationshipDirection, ObjectType type, OperationContext context, int itemsPerPage);
+            RelationshipDirection relationshipDirection, ObjectType type, OperationContext context);
 
     // renditions
 

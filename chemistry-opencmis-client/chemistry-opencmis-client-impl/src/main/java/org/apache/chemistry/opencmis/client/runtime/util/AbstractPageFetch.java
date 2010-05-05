@@ -28,6 +28,12 @@ import java.util.List;
  */
 public abstract class AbstractPageFetch<T> {
 
+    protected long pageSize;
+
+    public AbstractPageFetch(long pageSize) {
+        this.pageSize = pageSize;
+    }
+    
     /**
      * Fetches the given page from the server.
      * 
@@ -60,6 +66,10 @@ public abstract class AbstractPageFetch<T> {
         public Boolean getHasMoreItems() {
             return hasMoreItems;
         }
+    }
+
+    public void setPageSize(int maxNumItems) {
+        this.pageSize = maxNumItems;
     }
 
 }

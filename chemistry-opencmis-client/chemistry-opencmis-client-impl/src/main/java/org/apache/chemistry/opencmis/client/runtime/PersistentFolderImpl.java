@@ -38,8 +38,8 @@ import org.apache.chemistry.opencmis.client.api.PagingIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
-import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
+import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
@@ -273,8 +273,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      * 
      * @see org.apache.opencmis.client.api.Folder#getCheckedOutDocs(int)
      */
-    public PagingIterable<Document> getCheckedOutDocs(int itemsPerPage) {
-        return getCheckedOutDocs(getSession().getDefaultContext(), itemsPerPage);
+    public PagingIterable<Document> getCheckedOutDocs() {
+        return getCheckedOutDocs(getSession().getDefaultContext());
     }
 
     /*
@@ -283,17 +283,13 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      * @seeorg.apache.opencmis.client.api.Folder#getCheckedOutDocs(org.apache.
      * opencmis.client.api. OperationContext, int)
      */
-    public PagingIterable<Document> getCheckedOutDocs(OperationContext context, final int itemsPerPage) {
-        if (itemsPerPage < 1) {
-            throw new IllegalArgumentException("itemsPerPage must be > 0!");
-        }
-
+    public PagingIterable<Document> getCheckedOutDocs(OperationContext context) {
         final String objectId = getObjectId();
         final NavigationService navigationService = getBinding().getNavigationService();
         final ObjectFactory objectFactory = getSession().getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new CollectionIterable<Document>(new AbstractPageFetch<Document>() {
+        return new CollectionIterable<Document>(new AbstractPageFetch<Document>(ctxt.getMaxItemsPerPage()) {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<Document> fetchPage(long skipCount) {
@@ -301,7 +297,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                 // get checked out documents for this folder
                 ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), objectId, ctxt
                         .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger.valueOf(itemsPerPage),
+                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger.valueOf(this.pageSize),
                         BigInteger.valueOf(skipCount), null);
 
                 // convert objects
@@ -330,8 +326,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      * 
      * @see org.apache.opencmis.client.api.Folder#getChildren(int)
      */
-    public PagingIterable<CmisObject> getChildren(int itemsPerPage) {
-        return getChildren(getSession().getDefaultContext(), itemsPerPage);
+    public PagingIterable<CmisObject> getChildren() {
+        return getChildren(getSession().getDefaultContext());
     }
 
     /*
@@ -341,18 +337,13 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      * org.apache.opencmis.client.api.Folder#getChildren(org.apache.opencmis
      * .client.api.OperationContext , int)
      */
-    public PagingIterable<CmisObject> getChildren(OperationContext context, final int itemsPerPage) {
-
-        if (itemsPerPage < 1) {
-            throw new IllegalArgumentException("itemsPerPage must be > 0!");
-        }
-
+    public PagingIterable<CmisObject> getChildren(OperationContext context) {
         final String objectId = getObjectId();
         final NavigationService navigationService = getBinding().getNavigationService();
         final ObjectFactory objectFactory = getSession().getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new CollectionIterable<CmisObject>(new AbstractPageFetch<CmisObject>() {
+        return new CollectionIterable<CmisObject>(new AbstractPageFetch<CmisObject>(ctxt.getMaxItemsPerPage()) {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<CmisObject> fetchPage(long skipCount) {
@@ -361,7 +352,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                 ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId, ctxt
                         .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
                         .getIncludeRelationships(), ctxt.getRenditionFilterString(), ctxt.isIncludePathSegments(),
-                        BigInteger.valueOf(itemsPerPage), BigInteger.valueOf(skipCount), null);
+                        BigInteger.valueOf(this.pageSize), BigInteger.valueOf(skipCount), null);
 
                 // convert objects
                 List<CmisObject> page = new ArrayList<CmisObject>();

@@ -75,4 +75,14 @@ public class CollectionIterable<T> implements PagingIterable<T> {
     public PagingIterable<T> getPage() {
         return new PageIterable<T>(skipCount, pageFetch);
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.chemistry.opencmis.client.api.PagingIterable#getPage(int)
+     */
+    public PagingIterable<T> getPage(int maxNumItems) {
+        this.pageFetch.setPageSize(maxNumItems);
+        return new PageIterable<T>(skipCount, pageFetch);
+   }
 }

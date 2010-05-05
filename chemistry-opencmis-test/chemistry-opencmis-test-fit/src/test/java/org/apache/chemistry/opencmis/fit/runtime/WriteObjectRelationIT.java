@@ -57,7 +57,7 @@ public class WriteObjectRelationIT extends AbstractSessionTest {
 
         ObjectType ot = document1.getType();
         PagingIterable<Relationship> relations = document1.getRelationships(true, RelationshipDirection.EITHER, ot,
-                this.session.getDefaultContext(), 10);
+                this.session.getDefaultContext());
         for (Relationship r : relations) {
             assertNotNull(r);
             assertEquals(id, r.getId());

@@ -40,7 +40,27 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
             ReadOnlyDiscoverIT.log.info("queries not supported");
             break;
         default:
-            PagingIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false, 2);
+            PagingIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false);
+            Assert.assertNotNull(resultSet);
+            // Assert.assertFalse(resultSet.isEmpty());
+            for (QueryResult o : resultSet) {
+                Assert.assertNotNull(o);
+            }
+
+            break;
+        }
+
+    }
+    @Test
+    public void querySkip() {
+        CapabilityQuery query = this.session.getRepositoryInfo().getCapabilities().getQueryCapability();
+
+        switch (query) {
+        case NONE:
+            ReadOnlyDiscoverIT.log.info("queries not supported");
+            break;
+        default:
+            PagingIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false).skipTo(2).getPage(2);
             Assert.assertNotNull(resultSet);
             // Assert.assertFalse(resultSet.isEmpty());
             for (QueryResult o : resultSet) {

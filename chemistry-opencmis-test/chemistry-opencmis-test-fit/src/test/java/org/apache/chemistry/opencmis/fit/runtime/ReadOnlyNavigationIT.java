@@ -32,12 +32,26 @@ import org.junit.Test;
 public class ReadOnlyNavigationIT extends AbstractSessionTest {
 
     @Test
+    public void navigateChildrenSkip() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
+        Folder folder = (Folder) this.session.getObjectByPath(path);
+        Assert.assertNotNull("folder not found: " + path, folder);
+
+        PagingIterable<CmisObject> pl = folder.getChildren().skipTo(2).getPage(2);
+        Assert.assertNotNull(pl);
+
+        for (CmisObject o : pl) {
+            Assert.assertNotNull(o);
+        }
+    }
+
+    @Test
     public void navigateChildrenMin() {
         String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME;
         Folder folder = (Folder) this.session.getObjectByPath(path);
         Assert.assertNotNull("folder not found: " + path, folder);
 
-        PagingIterable<CmisObject> pl = folder.getChildren(1);
+        PagingIterable<CmisObject> pl = folder.getChildren();
         Assert.assertNotNull(pl);
 
         for (CmisObject o : pl) {
@@ -51,7 +65,8 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
         Folder folder = (Folder) this.session.getObjectByPath(path);
         Assert.assertNotNull("folder not found: " + path, folder);
 
-        PagingIterable<CmisObject> pl = folder.getChildren(1000);
+        this.session.getDefaultContext().setMaxItemsPerPage(1000);
+        PagingIterable<CmisObject> pl = folder.getChildren();
         Assert.assertNotNull(pl);
 
         for (CmisObject o : pl) {
@@ -65,7 +80,8 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
         Folder folder = (Folder) this.session.getObjectByPath(path);
         Assert.assertNotNull("folder not found: " + path, folder);
 
-        PagingIterable<CmisObject> pl = folder.getChildren(2);
+        this.session.getDefaultContext().setMaxItemsPerPage(2);
+        PagingIterable<CmisObject> pl = folder.getChildren();
         Assert.assertNotNull(pl);
 
         for (CmisObject o : pl) {
@@ -175,7 +191,8 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
         Folder folder = (Folder) this.session.getObjectByPath(path);
         Assert.assertNotNull("folder not found: " + path, folder);
 
-        PagingIterable<CmisObject> pl = folder.getChildren(2);
+        this.session.getDefaultContext().setMaxItemsPerPage(2);
+        PagingIterable<CmisObject> pl = folder.getChildren();
         Assert.assertNotNull(pl);
 
         CmisObject firstObject = pl.iterator().next();

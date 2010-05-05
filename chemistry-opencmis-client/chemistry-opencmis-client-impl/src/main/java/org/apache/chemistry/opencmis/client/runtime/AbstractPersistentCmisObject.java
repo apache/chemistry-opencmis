@@ -727,18 +727,14 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * org.apache.opencmis.client.api.OperationContext, int)
      */
     public PagingIterable<Relationship> getRelationships(final boolean includeSubRelationshipTypes,
-            final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context,
-            final int itemsPerPage) {
-        if (itemsPerPage < 1) {
-            throw new IllegalArgumentException("itemsPerPage must be > 0!");
-        }
+            final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context) {
 
         final String objectId = getObjectId();
         final String typeId = (type == null ? null : type.getId());
         final RelationshipService relationshipService = getBinding().getRelationshipService();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new CollectionIterable<Relationship>(new AbstractPageFetch<Relationship>() {
+        return new CollectionIterable<Relationship>(new AbstractPageFetch<Relationship>(ctxt.getMaxItemsPerPage()) {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<Relationship> fetchPage(long skipCount) {
@@ -746,7 +742,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                 // fetch the relationships
                 ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(), objectId,
                         includeSubRelationshipTypes, relationshipDirection, typeId, ctxt.getFilterString(), ctxt
-                                .isIncludeAllowableActions(), BigInteger.valueOf(itemsPerPage), BigInteger
+                                .isIncludeAllowableActions(), BigInteger.valueOf(this.pageSize), BigInteger
                                 .valueOf(skipCount), null);
 
                 // convert relationship objects

@@ -47,6 +47,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
     private String orderBy;
     private boolean cacheEnabled;
     private String cacheKey;
+    private int maxItemsPerPage;
 
     /**
      * Default constructor.
@@ -62,6 +63,8 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setOrderBy(null);
         setCacheEnabled(false);
         generateCacheKey();
+
+        setMaxItemsPerPage(100);  // default
     }
 
     /**
@@ -78,14 +81,16 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setOrderBy(source.getOrderBy());
         setCacheEnabled(source.isCacheEnabled());
         generateCacheKey();
-    }
+
+        setMaxItemsPerPage(source.getMaxItemsPerPage());
+}
 
     /**
      * Constructor with parameters.
      */
     public OperationContextImpl(Set<String> propertyFilter, boolean includeAcls, boolean includeAllowableActions,
             boolean includePolicies, IncludeRelationships includeRelationships, Set<String> renditionFilter,
-            boolean includePathSegments, String orderBy, boolean cacheEnabled) {
+            boolean includePathSegments, String orderBy, boolean cacheEnabled, int maxItemsPerPage) {
         setFilter(propertyFilter);
         setIncludeAcls(includeAcls);
         setIncludeAllowableActions(includeAllowableActions);
@@ -96,6 +101,8 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setOrderBy(orderBy);
         setCacheEnabled(cacheEnabled);
         generateCacheKey();
+        
+        setMaxItemsPerPage(maxItemsPerPage);
     }
 
     /*
@@ -483,5 +490,17 @@ public class OperationContextImpl implements OperationContext, Serializable {
         sb.append(renditionFilter == null ? "" : getRenditionFilterString());
 
         cacheKey = sb.toString();
+    }
+
+    public int getMaxItemsPerPage() {
+        return this.maxItemsPerPage ;
+    }
+
+    public void setMaxItemsPerPage(int maxItemsPerPage) {
+        if (maxItemsPerPage < 1) {
+            throw new IllegalArgumentException("itemsPerPage must be > 0!");
+        }
+
+        this.maxItemsPerPage = maxItemsPerPage;
     }
 }

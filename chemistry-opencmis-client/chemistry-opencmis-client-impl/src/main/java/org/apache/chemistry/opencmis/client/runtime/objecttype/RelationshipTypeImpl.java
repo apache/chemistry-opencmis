@@ -49,8 +49,8 @@ public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl impleme
         return helper.getBaseType();
     }
 
-    public PagingIterable<ObjectType> getChildren(int itemsPerPage) {
-        return helper.getChildren(itemsPerPage);
+    public PagingIterable<ObjectType> getChildren() {
+        return helper.getChildren();
     }
 
     public List<Tree<ObjectType>> getDescendants(int depth) {

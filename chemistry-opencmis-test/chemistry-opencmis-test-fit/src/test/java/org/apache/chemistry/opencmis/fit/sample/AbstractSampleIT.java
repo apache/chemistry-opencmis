@@ -103,7 +103,7 @@ public abstract class AbstractSampleIT {
         checkBaseType(folderBaseId, BaseTypeId.CMIS_FOLDER, folderType);
 
         // get base types via getTypesChildren
-        PagingIterable<ObjectType> baseTypes = getSession().getTypeChildren(null, true, 10);
+        PagingIterable<ObjectType> baseTypes = getSession().getTypeChildren(null, true);
         assertNotNull(baseTypes);
 
         boolean hasDocumentBaseType = false;
