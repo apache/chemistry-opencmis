@@ -18,11 +18,6 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>chemistry-opencmis-server-spi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-commons-api</artifactId>
             <version>${project.version}</version>
         </dependency>
