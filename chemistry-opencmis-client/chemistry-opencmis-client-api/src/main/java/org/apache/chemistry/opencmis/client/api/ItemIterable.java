@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.util.Iterator;
+
 /**
  * Iterable for CMIS collections that allows ability to skip to specific
  * position or return a sub collection.
@@ -57,5 +59,25 @@ public interface ItemIterable<T> extends Iterable<T> {
      * 
      * @see java.lang.Iterable#iterator()
      */
-    ItemIterator<T> iterator();
+    Iterator<T> iterator();
+
+    /**
+     * Returns the number of items fetched for the current page.
+     * 
+     * @return number of items for currently fetched collection
+     */
+    long getPageNumItems();
+    
+    /**
+     * Returns the total number of items. If the repository knows the total
+     * number of items in a result set, the repository SHOULD include the number
+     * here. If the repository does not know the number of items in a result
+     * set, this parameter SHOULD not be set. The value in the parameter MAY NOT
+     * be accurate the next time the client retrieves the result set or the next
+     * page in the result set.
+     * 
+     * @return total number of items or (-1)
+     */
+    long getTotalNumItems();
+
 }

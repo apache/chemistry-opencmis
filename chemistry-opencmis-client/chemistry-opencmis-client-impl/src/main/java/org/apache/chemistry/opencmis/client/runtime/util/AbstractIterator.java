@@ -18,9 +18,9 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.util;
 
+import java.util.Iterator;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.ItemIterator;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageFetchResult;
 
 
@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageF
  * 
  * @param <T>
  */
-public abstract class AbstractIterator<T> implements ItemIterator<T> {
+public abstract class AbstractIterator<T> implements Iterator<T> {
 
     private long skipCount;
     private int skipOffset;
@@ -64,7 +64,7 @@ public abstract class AbstractIterator<T> implements ItemIterator<T> {
      * (non-Javadoc)
      * @see org.apache.chemistry.opencmis.client.api.ItemIterator#getPageNumItems()
      */
-    public long getCurrentCollectionNumItems() {
+    public long getPageNumItems() {
         PageFetchResult<T> page = getCurrentPage();
         if (page != null) {
             List<T> items = page.getPage();

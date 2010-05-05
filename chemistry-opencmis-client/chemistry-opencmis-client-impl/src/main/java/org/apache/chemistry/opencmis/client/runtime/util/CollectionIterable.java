@@ -18,8 +18,9 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.util;
 
+import java.util.Iterator;
+
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
-import org.apache.chemistry.opencmis.client.api.ItemIterator;
 
 /**
  * CMIS Collection Iterable
@@ -28,6 +29,7 @@ public class CollectionIterable<T> implements ItemIterable<T> {
 
     private AbstractPageFetch<T> pageFetch;
     private long skipCount;
+    private CollectionIterator<T> iterator;
 
     /**
      * Construct
@@ -54,8 +56,11 @@ public class CollectionIterable<T> implements ItemIterable<T> {
      * 
      * @see java.lang.Iterable#iterator()
      */
-    public ItemIterator<T> iterator() {
-        return new CollectionIterator<T>(skipCount, pageFetch);
+    public Iterator<T> iterator() {
+        if (this.iterator == null) {
+            this.iterator = new CollectionIterator<T>(skipCount, pageFetch);
+        }
+        return this.iterator;
     }
 
     /*
@@ -85,4 +90,18 @@ public class CollectionIterable<T> implements ItemIterable<T> {
         this.pageFetch.setMaxNumItems(maxNumItems);
         return new ItemIterableImpl<T>(skipCount, pageFetch);
    }
+
+    public long getPageNumItems() {
+        if (this.iterator == null) {
+            this.iterator = new CollectionIterator<T>(skipCount, pageFetch);
+        }
+        return this.iterator.getPageNumItems();
+    }
+
+    public long getTotalNumItems() {
+        if (this.iterator == null) {
+            this.iterator = new CollectionIterator<T>(skipCount, pageFetch);
+        }
+        return this.iterator.getTotalNumItems();
+    }
 }
