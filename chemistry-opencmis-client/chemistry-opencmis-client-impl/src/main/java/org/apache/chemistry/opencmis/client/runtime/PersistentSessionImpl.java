@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -234,7 +234,7 @@ public class PersistentSessionImpl implements Session, Serializable {
      * 
      * @see org.apache.opencmis.client.api.Session#getCheckedOutDocs(int)
      */
-    public PagingIterable<Document> getCheckedOutDocs() {
+    public ItemIterable<Document> getCheckedOutDocs() {
         return getCheckedOutDocs(getDefaultContext());
     }
 
@@ -244,7 +244,7 @@ public class PersistentSessionImpl implements Session, Serializable {
      * @seeorg.apache.opencmis.client.api.Session#getCheckedOutDocs(org.apache.
      * opencmis.client.api. OperationContext, int)
      */
-    public PagingIterable<Document> getCheckedOutDocs(OperationContext context) {
+    public ItemIterable<Document> getCheckedOutDocs(OperationContext context) {
         final NavigationService navigationService = getBinding().getNavigationService();
         final ObjectFactory objectFactory = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
@@ -257,8 +257,8 @@ public class PersistentSessionImpl implements Session, Serializable {
                 // get all checked out documents
                 ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), null, ctxt
                         .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger.valueOf(this.pageSize),
-                        BigInteger.valueOf(skipCount), null);
+                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger
+                        .valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert objects
                 List<Document> page = new ArrayList<Document>();
@@ -288,7 +288,7 @@ public class PersistentSessionImpl implements Session, Serializable {
      * org.apache.opencmis.client.api.Session#getContentChanges(java.lang.String
      * , int)
      */
-    public PagingIterable<ChangeEvent> getContentChanges(String changeLogToken) {
+    public ItemIterable<ChangeEvent> getContentChanges(String changeLogToken) {
         throw new CmisRuntimeException("not implemented");
     }
 
@@ -486,6 +486,7 @@ public class PersistentSessionImpl implements Session, Serializable {
      * 
      * 
      * 
+     * 
      * @seeorg.apache.opencmis.client.api.Session#getRootFolder(org.apache.opencmis
      * .client.api. OperationContext)
      */
@@ -507,11 +508,12 @@ public class PersistentSessionImpl implements Session, Serializable {
      * org.apache.opencmis.client.api.Session#getTypeChildren(java.lang.String,
      * boolean, int)
      */
-    public PagingIterable<ObjectType> getTypeChildren(final String typeId, final boolean includePropertyDefinitions) {
+    public ItemIterable<ObjectType> getTypeChildren(final String typeId, final boolean includePropertyDefinitions) {
         final RepositoryService repositoryService = getBinding().getRepositoryService();
         final ObjectFactory objectFactory = this.getObjectFactory();
 
-        return new CollectionIterable<ObjectType>(new AbstractPageFetch<ObjectType>(this.getDefaultContext().getMaxItemsPerPage()) {
+        return new CollectionIterable<ObjectType>(new AbstractPageFetch<ObjectType>(this.getDefaultContext()
+                .getMaxItemsPerPage()) {
 
             @Override
             protected AbstractPageFetch.PageFetchResult<ObjectType> fetchPage(long skipCount) {
@@ -519,7 +521,7 @@ public class PersistentSessionImpl implements Session, Serializable {
                 // fetch the data
                 TypeDefinitionList tdl = repositoryService.getTypeChildren(
                         PersistentSessionImpl.this.getRepositoryId(), typeId, includePropertyDefinitions, BigInteger
-                                .valueOf(this.pageSize), BigInteger.valueOf(skipCount), null);
+                                .valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert type definitions
                 List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
@@ -583,7 +585,7 @@ public class PersistentSessionImpl implements Session, Serializable {
      * @see org.apache.opencmis.client.api.Session#query(java.lang.String,
      * boolean, int)
      */
-    public PagingIterable<QueryResult> query(final String statement, final boolean searchAllVersions) {
+    public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions) {
         return query(statement, searchAllVersions, getDefaultContext());
     }
 
@@ -593,7 +595,7 @@ public class PersistentSessionImpl implements Session, Serializable {
      * @see org.apache.opencmis.client.api.Session#query(java.lang.String,
      * boolean, org.apache.opencmis.client.api.OperationContext, int)
      */
-    public PagingIterable<QueryResult> query(final String statement, final boolean searchAllVersions,
+    public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions,
             OperationContext context) {
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
@@ -608,7 +610,7 @@ public class PersistentSessionImpl implements Session, Serializable {
                 // fetch the data
                 ObjectList resultList = discoveryService.query(getRepositoryId(), statement, searchAllVersions, ctxt
                         .isIncludeAllowableActions(), ctxt.getIncludeRelationships(), ctxt.getRenditionFilterString(),
-                        BigInteger.valueOf(this.pageSize), BigInteger.valueOf(skipCount), null);
+                        BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert type definitions
                 List<QueryResult> page = new ArrayList<QueryResult>();

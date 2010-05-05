@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.RelationshipType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
@@ -49,7 +49,7 @@ public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl impleme
         return helper.getBaseType();
     }
 
-    public PagingIterable<ObjectType> getChildren() {
+    public ItemIterable<ObjectType> getChildren() {
         return helper.getChildren();
     }
 

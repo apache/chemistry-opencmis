@@ -27,7 +27,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -56,7 +56,7 @@ public class WriteObjectRelationIT extends AbstractSessionTest {
         ObjectId id = this.session.createRelationship(properties, null, null, null);
 
         ObjectType ot = document1.getType();
-        PagingIterable<Relationship> relations = document1.getRelationships(true, RelationshipDirection.EITHER, ot,
+        ItemIterable<Relationship> relations = document1.getRelationships(true, RelationshipDirection.EITHER, ot,
                 this.session.getDefaultContext());
         for (Relationship r : relations) {
             assertNotNull(r);

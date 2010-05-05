@@ -34,7 +34,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
@@ -273,7 +273,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      * 
      * @see org.apache.opencmis.client.api.Folder#getCheckedOutDocs(int)
      */
-    public PagingIterable<Document> getCheckedOutDocs() {
+    public ItemIterable<Document> getCheckedOutDocs() {
         return getCheckedOutDocs(getSession().getDefaultContext());
     }
 
@@ -283,7 +283,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      * @seeorg.apache.opencmis.client.api.Folder#getCheckedOutDocs(org.apache.
      * opencmis.client.api. OperationContext, int)
      */
-    public PagingIterable<Document> getCheckedOutDocs(OperationContext context) {
+    public ItemIterable<Document> getCheckedOutDocs(OperationContext context) {
         final String objectId = getObjectId();
         final NavigationService navigationService = getBinding().getNavigationService();
         final ObjectFactory objectFactory = getSession().getObjectFactory();
@@ -297,7 +297,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                 // get checked out documents for this folder
                 ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), objectId, ctxt
                         .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger.valueOf(this.pageSize),
+                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger.valueOf(this.maxNumItems),
                         BigInteger.valueOf(skipCount), null);
 
                 // convert objects
@@ -326,7 +326,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      * 
      * @see org.apache.opencmis.client.api.Folder#getChildren(int)
      */
-    public PagingIterable<CmisObject> getChildren() {
+    public ItemIterable<CmisObject> getChildren() {
         return getChildren(getSession().getDefaultContext());
     }
 
@@ -337,7 +337,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      * org.apache.opencmis.client.api.Folder#getChildren(org.apache.opencmis
      * .client.api.OperationContext , int)
      */
-    public PagingIterable<CmisObject> getChildren(OperationContext context) {
+    public ItemIterable<CmisObject> getChildren(OperationContext context) {
         final String objectId = getObjectId();
         final NavigationService navigationService = getBinding().getNavigationService();
         final ObjectFactory objectFactory = getSession().getObjectFactory();
@@ -352,7 +352,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                 ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId, ctxt
                         .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
                         .getIncludeRelationships(), ctxt.getRenditionFilterString(), ctxt.isIncludePathSegments(),
-                        BigInteger.valueOf(this.pageSize), BigInteger.valueOf(skipCount), null);
+                        BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert objects
                 List<CmisObject> page = new ArrayList<CmisObject>();

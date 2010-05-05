@@ -20,11 +20,11 @@ package org.apache.chemistry.opencmis.client.api;
 
 /**
  * Iterable for CMIS collections that allows ability to skip to specific
- * position.
+ * position or return a sub collection.
  * 
  * @param <T>
  */
-public interface PagingIterable<T> extends Iterable<T> {
+public interface ItemIterable<T> extends Iterable<T> {
 
     /**
      * Skip to position within CMIS collection
@@ -32,30 +32,30 @@ public interface PagingIterable<T> extends Iterable<T> {
      * @param position
      * @return iterable whose starting point is the specified skip to position
      */
-    PagingIterable<T> skipTo(long position);
+    ItemIterable<T> skipTo(long position);
 
     /**
-     * Gets an iterable for the current page within the CMIS collection using
-     * default page size
+     * Gets an iterable for the current sub collection within the CMIS collection using
+     * default maximum number of items 
      * 
      * @return iterable for current page
      */
-    PagingIterable<T> getPage();
+    ItemIterable<T> getPage();
 
     /**
-     * Gets an iterable for the current page within the CMIS collection
+     * Gets an iterable for the current sub collection within the CMIS collection
      * 
      * @param maxNumItems
-     *            maximum number of items the page will contain
+     *            maximum number of items the sub collection will contain
      * 
      * @return iterable for current page
      */
-    PagingIterable<T> getPage(int maxNumItems);
+    ItemIterable<T> getPage(int maxNumItems);
 
     /*
      * (non-Javadoc)
      * 
      * @see java.lang.Iterable#iterator()
      */
-    PagingIterator<T> iterator();
+    ItemIterator<T> iterator();
 }

@@ -18,13 +18,13 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.util;
 
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
-import org.apache.chemistry.opencmis.client.api.PagingIterator;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterator;
 
 /**
  * CMIS Collection Iterable
  */
-public class CollectionIterable<T> implements PagingIterable<T> {
+public class CollectionIterable<T> implements ItemIterable<T> {
 
     private AbstractPageFetch<T> pageFetch;
     private long skipCount;
@@ -54,7 +54,7 @@ public class CollectionIterable<T> implements PagingIterable<T> {
      * 
      * @see java.lang.Iterable#iterator()
      */
-    public PagingIterator<T> iterator() {
+    public ItemIterator<T> iterator() {
         return new CollectionIterator<T>(skipCount, pageFetch);
     }
 
@@ -63,26 +63,26 @@ public class CollectionIterable<T> implements PagingIterable<T> {
      * 
      * @see org.apache.chemistry.opencmis.client.api.util.PagingIterable#skipTo(long)
      */
-    public PagingIterable<T> skipTo(long position) {
+    public ItemIterable<T> skipTo(long position) {
         return new CollectionIterable<T>(position, pageFetch);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.PagingIterable#getPage()
+     * @see org.apache.chemistry.opencmis.client.api.ItemIterable#getPage()
      */
-    public PagingIterable<T> getPage() {
-        return new PageIterable<T>(skipCount, pageFetch);
+    public ItemIterable<T> getPage() {
+        return new ItemIterableImpl<T>(skipCount, pageFetch);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.PagingIterable#getPage(int)
+     * @see org.apache.chemistry.opencmis.client.api.ItemIterable#getPage(int)
      */
-    public PagingIterable<T> getPage(int maxNumItems) {
-        this.pageFetch.setPageSize(maxNumItems);
-        return new PageIterable<T>(skipCount, pageFetch);
+    public ItemIterable<T> getPage(int maxNumItems) {
+        this.pageFetch.setMaxNumItems(maxNumItems);
+        return new ItemIterableImpl<T>(skipCount, pageFetch);
    }
 }

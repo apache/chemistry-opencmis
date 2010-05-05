@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
@@ -103,7 +103,7 @@ public abstract class AbstractSampleIT {
         checkBaseType(folderBaseId, BaseTypeId.CMIS_FOLDER, folderType);
 
         // get base types via getTypesChildren
-        PagingIterable<ObjectType> baseTypes = getSession().getTypeChildren(null, true);
+        ItemIterable<ObjectType> baseTypes = getSession().getTypeChildren(null, true);
         assertNotNull(baseTypes);
 
         boolean hasDocumentBaseType = false;

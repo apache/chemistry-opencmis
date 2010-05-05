@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.fit.runtime;
 
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
@@ -40,7 +40,7 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
             ReadOnlyDiscoverIT.log.info("queries not supported");
             break;
         default:
-            PagingIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false);
+            ItemIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false);
             Assert.assertNotNull(resultSet);
             // Assert.assertFalse(resultSet.isEmpty());
             for (QueryResult o : resultSet) {
@@ -60,7 +60,7 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
             ReadOnlyDiscoverIT.log.info("queries not supported");
             break;
         default:
-            PagingIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false).skipTo(2).getPage(2);
+            ItemIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false).skipTo(2).getPage(2);
             Assert.assertNotNull(resultSet);
             // Assert.assertFalse(resultSet.isEmpty());
             for (QueryResult o : resultSet) {

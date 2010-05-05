@@ -28,10 +28,10 @@ import java.util.List;
  */
 public abstract class AbstractPageFetch<T> {
 
-    protected long pageSize;
+    protected long maxNumItems;
 
-    public AbstractPageFetch(long pageSize) {
-        this.pageSize = pageSize;
+    public AbstractPageFetch(long maxNumItems) {
+        this.maxNumItems = maxNumItems;
     }
     
     /**
@@ -68,8 +68,8 @@ public abstract class AbstractPageFetch<T> {
         }
     }
 
-    public void setPageSize(int maxNumItems) {
-        this.pageSize = maxNumItems;
+    public void setMaxNumItems(int maxNumItems) {
+        this.maxNumItems = maxNumItems;
     }
 
 }

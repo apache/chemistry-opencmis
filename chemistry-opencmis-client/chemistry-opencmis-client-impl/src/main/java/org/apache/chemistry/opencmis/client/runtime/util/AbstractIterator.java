@@ -20,16 +20,16 @@ package org.apache.chemistry.opencmis.client.runtime.util;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.PagingIterator;
+import org.apache.chemistry.opencmis.client.api.ItemIterator;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageFetchResult;
 
 
 /**
- * Abstract <code>PagingIterator</code> implementation.
+ * Abstract <code>ItemIterator</code> implementation.
  * 
  * @param <T>
  */
-public abstract class AbstractIterator<T> implements PagingIterator<T> {
+public abstract class AbstractIterator<T> implements ItemIterator<T> {
 
     private long skipCount;
     private int skipOffset;
@@ -62,9 +62,9 @@ public abstract class AbstractIterator<T> implements PagingIterator<T> {
 
     /*
      * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.PagingIterator#getPageNumItems()
+     * @see org.apache.chemistry.opencmis.client.api.ItemIterator#getPageNumItems()
      */
-    public long getPageNumItems() {
+    public long getCurrentCollectionNumItems() {
         PageFetchResult<T> page = getCurrentPage();
         if (page != null) {
             List<T> items = page.getPage();
@@ -77,7 +77,7 @@ public abstract class AbstractIterator<T> implements PagingIterator<T> {
     
     /*
      * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.PagingIterator#getTotalNumItems()
+     * @see org.apache.chemistry.opencmis.client.api.ItemIterator#getTotalNumItems()
      */
     public long getTotalNumItems() {
         if (totalItems == null) {
@@ -95,7 +95,7 @@ public abstract class AbstractIterator<T> implements PagingIterator<T> {
     
     /*
      * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.PagingIterator#getHasMoreItems()
+     * @see org.apache.chemistry.opencmis.client.api.ItemIterator#getHasMoreItems()
      */
     public boolean getHasMoreItems() {
         if (hasMoreItems == null) {

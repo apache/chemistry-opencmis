@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageF
  * 
  * @param <T>
  */
-public class PageIterator<T> extends AbstractIterator<T> {
+public class ItemIteratorImpl<T> extends AbstractIterator<T> {
 
     /**
      * Construct
@@ -35,7 +35,7 @@ public class PageIterator<T> extends AbstractIterator<T> {
      * @param skipCount
      * @param pageFetch
      */
-    public PageIterator(long skipCount, AbstractPageFetch<T> pageFetch) {
+    public ItemIteratorImpl(long skipCount, AbstractPageFetch<T> pageFetch) {
         super(skipCount, pageFetch);
     }
 

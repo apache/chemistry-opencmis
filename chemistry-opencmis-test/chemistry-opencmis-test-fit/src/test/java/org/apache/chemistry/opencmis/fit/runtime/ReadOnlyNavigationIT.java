@@ -25,7 +25,7 @@ import junit.framework.Assert;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
         Folder folder = (Folder) this.session.getObjectByPath(path);
         Assert.assertNotNull("folder not found: " + path, folder);
 
-        PagingIterable<CmisObject> pl = folder.getChildren().skipTo(2).getPage(2);
+        ItemIterable<CmisObject> pl = folder.getChildren().skipTo(2).getPage(2);
         Assert.assertNotNull(pl);
 
         for (CmisObject o : pl) {
@@ -51,7 +51,7 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
         Folder folder = (Folder) this.session.getObjectByPath(path);
         Assert.assertNotNull("folder not found: " + path, folder);
 
-        PagingIterable<CmisObject> pl = folder.getChildren();
+        ItemIterable<CmisObject> pl = folder.getChildren();
         Assert.assertNotNull(pl);
 
         for (CmisObject o : pl) {
@@ -66,7 +66,7 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
         Assert.assertNotNull("folder not found: " + path, folder);
 
         this.session.getDefaultContext().setMaxItemsPerPage(1000);
-        PagingIterable<CmisObject> pl = folder.getChildren();
+        ItemIterable<CmisObject> pl = folder.getChildren();
         Assert.assertNotNull(pl);
 
         for (CmisObject o : pl) {
@@ -81,7 +81,7 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
         Assert.assertNotNull("folder not found: " + path, folder);
 
         this.session.getDefaultContext().setMaxItemsPerPage(2);
-        PagingIterable<CmisObject> pl = folder.getChildren();
+        ItemIterable<CmisObject> pl = folder.getChildren();
         Assert.assertNotNull(pl);
 
         for (CmisObject o : pl) {
@@ -192,7 +192,7 @@ public class ReadOnlyNavigationIT extends AbstractSessionTest {
         Assert.assertNotNull("folder not found: " + path, folder);
 
         this.session.getDefaultContext().setMaxItemsPerPage(2);
-        PagingIterable<CmisObject> pl = folder.getChildren();
+        ItemIterable<CmisObject> pl = folder.getChildren();
         Assert.assertNotNull(pl);
 
         CmisObject firstObject = pl.iterator().next();

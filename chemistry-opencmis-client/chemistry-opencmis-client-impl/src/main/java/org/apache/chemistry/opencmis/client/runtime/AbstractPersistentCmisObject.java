@@ -34,7 +34,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
@@ -726,7 +726,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * org.apache.opencmis.client.api.objecttype.ObjectType,
      * org.apache.opencmis.client.api.OperationContext, int)
      */
-    public PagingIterable<Relationship> getRelationships(final boolean includeSubRelationshipTypes,
+    public ItemIterable<Relationship> getRelationships(final boolean includeSubRelationshipTypes,
             final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context) {
 
         final String objectId = getObjectId();
@@ -742,7 +742,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                 // fetch the relationships
                 ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(), objectId,
                         includeSubRelationshipTypes, relationshipDirection, typeId, ctxt.getFilterString(), ctxt
-                                .isIncludeAllowableActions(), BigInteger.valueOf(this.pageSize), BigInteger
+                                .isIncludeAllowableActions(), BigInteger.valueOf(this.maxNumItems), BigInteger
                                 .valueOf(skipCount), null);
 
                 // convert relationship objects

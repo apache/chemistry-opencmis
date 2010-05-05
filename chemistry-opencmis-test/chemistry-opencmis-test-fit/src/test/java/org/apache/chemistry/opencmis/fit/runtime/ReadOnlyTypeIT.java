@@ -25,7 +25,7 @@ import junit.framework.Assert;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.FolderType;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.PolicyType;
 import org.apache.chemistry.opencmis.client.api.RelationshipType;
 import org.apache.chemistry.opencmis.client.api.Tree; //import org.apache.chemistry.opencmis.client.api.util.PagingList;
@@ -83,7 +83,7 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
         ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
         Assert.assertNotNull(otd);
         this.session.getDefaultContext().setMaxItemsPerPage(2);
-        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
+        ItemIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
         Assert.assertNotNull(pc);
 
         for (ObjectType ot1 : pc) {
@@ -97,10 +97,10 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
         ObjectType otd = this.session.getTypeDefinition(ObjectType.DOCUMENT_BASETYPE_ID);
         Assert.assertNotNull(otd);
         this.session.getDefaultContext().setMaxItemsPerPage(2);
-        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
+        ItemIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
         Assert.assertNotNull(pc);
 
-        PagingIterable<ObjectType> pcc = pc.skipTo(2).getPage(2); 
+        ItemIterable<ObjectType> pcc = pc.skipTo(2).getPage(2); 
         for (ObjectType ot1 : pcc) {
             ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
             Assert.assertEquals(ot1.getId(), ot2.getId());
@@ -112,7 +112,7 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
         ObjectType otd = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
         Assert.assertNotNull(otd);
         this.session.getDefaultContext().setMaxItemsPerPage(2);
-        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
+        ItemIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
         Assert.assertNotNull(pc);
 
         for (ObjectType ot1 : pc) {
@@ -126,10 +126,10 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
         ObjectType otd = this.session.getTypeDefinition(ObjectType.FOLDER_BASETYPE_ID);
         Assert.assertNotNull(otd);
         this.session.getDefaultContext().setMaxItemsPerPage(2);
-        PagingIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
+        ItemIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
         Assert.assertNotNull(pc);
 
-        PagingIterable<ObjectType> pcc = pc.skipTo(0).getPage(2); 
+        ItemIterable<ObjectType> pcc = pc.skipTo(0).getPage(2); 
         for (ObjectType ot1 : pcc) {
             ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
             Assert.assertEquals(ot1, ot2);

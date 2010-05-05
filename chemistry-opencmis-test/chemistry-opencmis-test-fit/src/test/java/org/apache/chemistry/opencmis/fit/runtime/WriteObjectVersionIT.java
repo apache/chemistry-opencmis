@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,7 +52,7 @@ public class WriteObjectVersionIT extends AbstractSessionTest {
         /* get all verchecked out docs which should be exactly one or zero */
         Folder f = this.session.getRootFolder();
         assertNotNull(f);
-        PagingIterable<Document> pi = f.getCheckedOutDocs();
+        ItemIterable<Document> pi = f.getCheckedOutDocs();
         assertNotNull(pi);
 
         for (Document d : pi) {
@@ -69,10 +69,10 @@ public class WriteObjectVersionIT extends AbstractSessionTest {
         /* get all verchecked out docs which should be exactly one or zero */
         Folder f = this.session.getRootFolder();
         assertNotNull(f);
-        PagingIterable<Document> pi = f.getCheckedOutDocs();
+        ItemIterable<Document> pi = f.getCheckedOutDocs();
         assertNotNull(pi);
         // test skipTo and getPage
-        PagingIterable<Document> pii = pi.skipTo(2).getPage(2);
+        ItemIterable<Document> pii = pi.skipTo(2).getPage(2);
         for (Document d : pii) {
             assertNotNull(d);
             assertEquals(this.checkdOutId, d.getId());

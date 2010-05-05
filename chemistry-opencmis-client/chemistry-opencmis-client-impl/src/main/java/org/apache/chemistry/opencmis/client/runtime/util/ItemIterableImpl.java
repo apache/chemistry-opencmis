@@ -18,13 +18,13 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.util;
 
-import org.apache.chemistry.opencmis.client.api.PagingIterable;
-import org.apache.chemistry.opencmis.client.api.PagingIterator;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ItemIterator;
 
 /**
  * Iterable for a CMIS Collection Page
  */
-public class PageIterable<T> implements PagingIterable<T> {
+public class ItemIterableImpl<T> implements ItemIterable<T> {
 
     private AbstractPageFetch<T> pageFetch;
     private long skipCount;
@@ -34,7 +34,7 @@ public class PageIterable<T> implements PagingIterable<T> {
      * 
      * @param pageFetch
      */
-    public PageIterable(AbstractPageFetch<T> pageFetch) {
+    public ItemIterableImpl(AbstractPageFetch<T> pageFetch) {
         this(0, pageFetch);
     }
 
@@ -44,7 +44,7 @@ public class PageIterable<T> implements PagingIterable<T> {
      * @param position
      * @param pageFetch
      */
-    protected PageIterable(long position, AbstractPageFetch<T> pageFetch) {
+    protected ItemIterableImpl(long position, AbstractPageFetch<T> pageFetch) {
         this.pageFetch = pageFetch;
         this.skipCount = position;
     }
@@ -54,8 +54,8 @@ public class PageIterable<T> implements PagingIterable<T> {
      * 
      * @see java.lang.Iterable#iterator()
      */
-    public PagingIterator<T> iterator() {
-        return new PageIterator<T>(skipCount, pageFetch);
+    public ItemIterator<T> iterator() {
+        return new ItemIteratorImpl<T>(skipCount, pageFetch);
     }
 
     /*
@@ -64,25 +64,26 @@ public class PageIterable<T> implements PagingIterable<T> {
      * @see
      * org.apache.chemistry.opencmis.client.api.util.PagingIterable#skipTo(long)
      */
-    public PagingIterable<T> skipTo(long position) {
+    public ItemIterable<T> skipTo(long position) {
         return new CollectionIterable<T>(position, pageFetch);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.PagingIterable#getPage()
+     * @see org.apache.chemistry.opencmis.client.api.ItemIterable#getPage()
      */
-    public PagingIterable<T> getPage() {
-        return new PageIterable<T>(skipCount, pageFetch);
+    public ItemIterable<T> getPage() {
+        return new ItemIterableImpl<T>(skipCount, pageFetch);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.PagingIterable#getPage(int)
+     * @see org.apache.chemistry.opencmis.client.api.ItemIterable#getPage(int)
      */
-    public PagingIterable<T> getPage(int maxNumItems) {
-        return new PageIterable<T>(skipCount, pageFetch);
+    public ItemIterable<T> getPage(int maxNumItems) {
+        this.pageFetch.setMaxNumItems(maxNumItems);
+        return new ItemIterableImpl<T>(skipCount, pageFetch);
     }
 }
