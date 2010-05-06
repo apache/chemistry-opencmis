@@ -24,8 +24,8 @@ java -Dopencmis.test.atompub.url=http://localhost:8080/opencmis/atom -cp ^
 %M2_REPO%/org/jvnet/staxex/stax-ex/1.2/stax-ex-1.2.jar;^
 %M2_REPO%/com/sun/xml/stream/buffer/streambuffer/0.9/streambuffer-0.9.jar;^
 %M2_REPO%/org/codehaus/woodstox/wstx-asl/3.2.3/wstx-asl-3.2.3.jar;^
-%M2_REPO%/org/apache/opencmis/opencmis-commons-api/0.1-SNAPSHOT/opencmis-commons-api-0.1-SNAPSHOT.jar;^
-%M2_REPO%/org/apache/opencmis/opencmis-commons-impl/0.1-SNAPSHOT/opencmis-commons-impl-0.1-SNAPSHOT.jar;^
-%M2_REPO%/org/apache/opencmis/opencmis-provider-impl/0.1-SNAPSHOT/opencmis-provider-impl-0.1-SNAPSHOT.jar;^
-%M2_REPO%/org/apache/opencmis/opencmis-test-util/0.1-SNAPSHOT/opencmis-test-util-0.1-SNAPSHOT.jar; ^
+%M2_REPO%/org/apache/chemistry/opencmis/chemistry-opencmis-client-bindings/0.1-incubating-SNAPSHOT/chemistry-opencmis-client-bindings-0.1-incubating-SNAPSHOT.jar;^
+%M2_REPO%/org/apache/chemistry/opencmis/chemistry-opencmis-commons-impl/0.1-incubating-SNAPSHOT/chemistry-opencmis-commons-impl-0.1-incubating-SNAPSHOT.jar;^
+%M2_REPO%/org/apache/chemistry/opencmis/chemistry-opencmis-commons-api/0.1-incubating-SNAPSHOT/chemistry-opencmis-commons-api-0.1-incubating-SNAPSHOT.jar;^
+%M2_REPO%/org/apache/chemistry/opencmis/chemistry-opencmis-test-util/0.1-incubating-SNAPSHOT/chemistry-opencmis-test-util-0.1-incubating-SNAPSHOT.jar ^
 org.apache.chemistry.opencmis.util.repository.ObjGenApp %*
