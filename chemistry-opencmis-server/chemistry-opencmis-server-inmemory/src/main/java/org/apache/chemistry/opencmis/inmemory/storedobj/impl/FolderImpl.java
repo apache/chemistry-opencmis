@@ -36,13 +36,18 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
     }
 
     public void addChildFolder(Folder folder) {
-        boolean hasChild;
-        String name = folder.getName();
-        hasChild = hasChild(name);
-        if (hasChild)
-            throw new RuntimeException("Cannot create folder " + name + ". Name already exists in parent folder");
-        folder.setParent(this);
-        folder.persist();
+        try {
+            fObjStore.lock();
+            boolean hasChild;
+            String name = folder.getName();
+            hasChild = hasChild(name);
+            if (hasChild)
+                throw new RuntimeException("Cannot create folder " + name + ". Name already exists in parent folder");
+            folder.setParent(this);
+            folder.persist();
+        } finally {
+            fObjStore.unlock();
+        }
     }
 
     /*
@@ -61,23 +66,28 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
     }
 
     private void addChildObject(StoredObject so) {
-        String name = so.getName();
-        if (!NameValidator.isValidId(name))
-            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+        try {
+            fObjStore.lock();
+            String name = so.getName();
+            if (!NameValidator.isValidId(name))
+                throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
-        boolean hasChild;
-        hasChild = hasChild(name);
-        if (hasChild)
-            throw new RuntimeException("Cannot create document " + name + ". Name already exists in parent folder");
+            boolean hasChild;
+            hasChild = hasChild(name);
+            if (hasChild)
+                throw new RuntimeException("Cannot create document " + name + ". Name already exists in parent folder");
 
-        if (so instanceof SingleFiling)
-            ((SingleFiling) so).setParent(this);
-        else if (so instanceof MultiFiling)
-            ((MultiFiling) so).addParent(this);
-        else
-            throw new RuntimeException("Cannot create document, object is not fileable.");
-
-        so.persist();
+            if (so instanceof SingleFiling)
+                ((SingleFiling) so).setParent(this);
+            else if (so instanceof MultiFiling)
+                ((MultiFiling) so).addParent(this);
+            else
+                throw new RuntimeException("Cannot create document, object is not fileable.");
+            
+            so.persist();
+        } finally {
+            fObjStore.unlock();
+        }
     }
 
     /*
@@ -206,18 +216,23 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
     }
 
     public void moveChildDocument(StoredObject so, Folder oldParent, Folder newParent) {
-        if (newParent.hasChild(so.getName()))
-            throw new IllegalArgumentException("Cannot move object, this name already exists in target.");
-        if (!(so instanceof Filing))
-            throw new IllegalArgumentException("Cannot move object, object does not have a path.");
+        try {
+            fObjStore.lock();
+            if (newParent.hasChild(so.getName()))
+                throw new IllegalArgumentException("Cannot move object, this name already exists in target.");
+            if (!(so instanceof Filing))
+                throw new IllegalArgumentException("Cannot move object, object does not have a path.");
 
-        if (so instanceof SingleFiling) {
-            SingleFiling pathObj = (SingleFiling) so;
-            pathObj.setParent(newParent);
-        } else if (so instanceof MultiFiling) {
-            MultiFiling pathObj = (MultiFiling) so;
-            pathObj.addParent(newParent);
-            pathObj.removeParent(oldParent);
+            if (so instanceof SingleFiling) {
+                SingleFiling pathObj = (SingleFiling) so;
+                pathObj.setParent(newParent);
+            } else if (so instanceof MultiFiling) {
+                MultiFiling pathObj = (MultiFiling) so;
+                pathObj.addParent(newParent);
+                pathObj.removeParent(oldParent);
+            }
+        } finally {
+            fObjStore.unlock();
         }
     }
 

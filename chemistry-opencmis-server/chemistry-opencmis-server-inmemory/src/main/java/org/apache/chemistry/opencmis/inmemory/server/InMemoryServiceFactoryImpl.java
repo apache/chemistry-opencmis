@@ -19,13 +19,23 @@
 package org.apache.chemistry.opencmis.inmemory.server;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.commons.api.server.CmisService;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
+import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,23 +48,30 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     private static final BigInteger DEFAULT_DEPTH_TYPES = BigInteger.valueOf(-1);
     private static CallContext OVERRIDE_CTX;
 
-    private InMemoryService inMemoryService;
-    // private CmisServiceWrapper<InMemoryService> wrapperService;
+    private Map<String, String> inMemoryServiceParameters;
     private ThreadLocal<CmisServiceWrapper<InMemoryService>> threadLocalService = new ThreadLocal<CmisServiceWrapper<InMemoryService>>();
     private boolean fUseOverrideCtx = false;
+    private StoreManager storeManager; // singleton root of everything
 
     @Override
     public void init(Map<String, String> parameters) {
         LOG.info("Initializing in-memory repository...");
 
-        inMemoryService = new InMemoryService(parameters);
-        // wrapperService = new
-        // CmisServiceWrapper<InMemoryService>(inMemoryService,
-        // DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES,
-        // DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+        inMemoryServiceParameters = parameters;
         String overrideCtx = parameters.get(ConfigConstants.OVERRIDE_CALL_CONTEXT);
         if (null != overrideCtx)
             fUseOverrideCtx = true;
+
+        String repositoryClassName = (String) parameters.get(ConfigConstants.REPOSITORY_CLASS);
+        if (null == repositoryClassName)
+            repositoryClassName = StoreManagerImpl.class.getName();
+
+        if (null == storeManager)
+            storeManager = StoreManagerFactory.createInstance(repositoryClassName);
+
+        initStorageManager(parameters);
+
+        fillRepositoryIfConfigured(parameters);
 
         LOG.info("...initialized in-memory repository.");
     }
@@ -65,34 +82,200 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
     @Override
     public CmisService getService(CallContext context) {
-        LOG.debug("start getService()");
+      LOG.debug("start getService()");
 
-        // Attach the CallContext to a thread local context that can be
-        // accessed from everywhere
-        // Some unit tests set their own context. So if we find one then we use
-        // this one and ignore the provided one. Otherwise we set a new context.
-        if (fUseOverrideCtx && null != OVERRIDE_CTX) {
-            context = OVERRIDE_CTX;
-        }
+      // Attach the CallContext to a thread local context that can be
+      // accessed from everywhere
+      // Some unit tests set their own context. So if we find one then we use
+      // this one and ignore the provided one. Otherwise we set a new context.
+      if (fUseOverrideCtx && null != OVERRIDE_CTX) {
+          context = OVERRIDE_CTX;
+      }
 
-        CmisServiceWrapper<InMemoryService> wrapperService = threadLocalService.get();
-        if (wrapperService == null) {
-            wrapperService = new CmisServiceWrapper<InMemoryService>(inMemoryService, DEFAULT_MAX_ITEMS_TYPES,
-                    DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
-            threadLocalService.set(wrapperService);
-        }
+      CmisServiceWrapper<InMemoryService> wrapperService = threadLocalService.get();
+      if (wrapperService == null) {
+          wrapperService = new CmisServiceWrapper<InMemoryService>(new InMemoryService(
+                  inMemoryServiceParameters, storeManager), DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES,
+                  DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+          threadLocalService.set(wrapperService);
+      }
 
-        wrapperService.getWrappedService().setCallContext(context);
+      wrapperService.getWrappedService().setCallContext(context);
 
-        LOG.debug("stop getService()");
-        return inMemoryService; // wrapperService;
+      LOG.debug("stop getService()");
+      return wrapperService.getWrappedService(); // wrapperService;
 
-    }
+  }
 
     @Override
     public void destroy() {
         threadLocalService = null;
-        // RuntimeContext.remove();
     }
 
+    private void initStorageManager(Map<String, String> parameters) {
+        // initialize in-memory management
+        String repositoryClassName = (String) parameters.get(ConfigConstants.REPOSITORY_CLASS);
+        if (null == repositoryClassName)
+            repositoryClassName = StoreManagerImpl.class.getName();
+
+        if (null == storeManager)
+            storeManager = StoreManagerFactory.createInstance(repositoryClassName);
+
+        String repositoryId = parameters.get(ConfigConstants.REPOSITORY_ID);
+
+        List<String> allAvailableRepositories = storeManager.getAllRepositoryIds();
+
+        // init existing repositories
+        for (String existingRepId : allAvailableRepositories)
+            storeManager.initRepository(existingRepId);
+
+        // create repository if configured as a startup parameter
+        if (null != repositoryId) {
+            if (allAvailableRepositories.contains(repositoryId))
+                LOG.warn("Repostory " + repositoryId + " already exists and will not be created.");
+            else {
+                String typeCreatorClassName = parameters.get(ConfigConstants.TYPE_CREATOR_CLASS);
+                storeManager.createAndInitRepository(repositoryId, typeCreatorClassName);
+            }
+        }
+
+    }
+
+    private List<String> readPropertiesToSetFromConfig(Map<String, String> parameters, String keyPrefix) {
+      List<String> propsToSet = new ArrayList<String>();
+      for (int i = 0;; ++i) {
+          String propertyKey = keyPrefix + Integer.toString(i);
+          String propertyToAdd = parameters.get(propertyKey);
+          if (null == propertyToAdd)
+              break;
+          else
+              propsToSet.add(propertyToAdd);
+      }
+      return propsToSet;
+    }
+
+    
+    private void fillRepositoryIfConfigured(Map<String, String> parameters) {
+
+      class DummyCallContext implements CallContext {
+
+          public String get(String key) {
+              return null;
+          }
+
+          public String getBinding() {
+              return null;
+          }
+
+          public boolean isObjectInfoRequired() {
+              return false;
+          }
+
+          public String getRepositoryId() {
+              return null;
+          }
+
+          public String getLocale() {
+              return null;
+          }
+
+          public String getPassword() {
+              return null;
+          }
+
+          public String getUsername() {
+              return null;
+          }
+      }
+
+//      List<String> allAvailableRepositories = storeManager.getAllRepositoryIds();
+      String repositoryId = parameters.get(ConfigConstants.REPOSITORY_ID);
+      String doFillRepositoryStr = parameters.get(ConfigConstants.USE_REPOSITORY_FILER);
+      boolean doFillRepository = doFillRepositoryStr == null ? false : Boolean.parseBoolean(doFillRepositoryStr);
+
+      if (doFillRepository /* && !allAvailableRepositories.contains(repositoryId) */ ) {
+
+          // create an initial temporary service instance to fill the repository
+          
+          InMemoryService svc = new InMemoryService(inMemoryServiceParameters, storeManager);
+                  
+          BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
+
+          String levelsStr = parameters.get(ConfigConstants.FILLER_DEPTH);
+          int levels = 1;
+          if (null != levelsStr)
+              levels = Integer.parseInt(levelsStr);
+
+          String docsPerLevelStr = parameters.get(ConfigConstants.FILLER_DOCS_PER_FOLDER);
+          int docsPerLevel = 1;
+          if (null != docsPerLevelStr)
+              docsPerLevel = Integer.parseInt(docsPerLevelStr);
+
+          String childrenPerLevelStr = parameters.get(ConfigConstants.FILLER_FOLDERS_PER_FOLDER);
+          int childrenPerLevel = 2;
+          if (null != childrenPerLevelStr)
+              childrenPerLevel = Integer.parseInt(childrenPerLevelStr);
+
+          String documentTypeId = parameters.get(ConfigConstants.FILLER_DOCUMENT_TYPE_ID);
+          if (null == documentTypeId)
+              documentTypeId = BaseTypeId.CMIS_DOCUMENT.value();
+
+          String folderTypeId = parameters.get(ConfigConstants.FILLER_FOLDER_TYPE_ID);
+          if (null == folderTypeId)
+              folderTypeId = BaseTypeId.CMIS_FOLDER.value();
+
+          int contentSizeKB = 0;
+          String contentSizeKBStr = parameters.get(ConfigConstants.FILLER_CONTENT_SIZE);
+          if (null != contentSizeKBStr)
+              contentSizeKB = Integer.parseInt(contentSizeKBStr);
+
+          // Create a hierarchy of folders and fill it with some documents
+          ObjectGenerator gen = new ObjectGenerator(objectFactory, svc, svc, repositoryId);
+
+          gen.setNumberOfDocumentsToCreatePerFolder(docsPerLevel);
+
+          // Set the type id for all created documents:
+          gen.setDocumentTypeId(documentTypeId);
+
+          // Set the type id for all created folders:
+          gen.setFolderTypeId(folderTypeId);
+
+          // Set contentSize
+          gen.setContentSizeInKB(contentSizeKB);
+
+          // set properties that need to be filled
+          // set the properties the generator should fill with values for
+          // documents:
+          // Note: must be valid properties in configured document and folder type
+
+          List<String> propsToSet = readPropertiesToSetFromConfig(parameters, ConfigConstants.FILLER_DOCUMENT_PROPERTY);
+          if (null != propsToSet)
+              gen.setDocumentPropertiesToGenerate(propsToSet);
+
+          propsToSet = readPropertiesToSetFromConfig(parameters, ConfigConstants.FILLER_FOLDER_PROPERTY);
+          if (null != propsToSet)
+              gen.setFolderPropertiesToGenerate(propsToSet);
+
+          // Simulate a runtime context with configuration parameters
+          // Attach the CallContext to a thread local context that can be accessed
+          // from everywhere
+          DummyCallContext ctx = new DummyCallContext();
+          svc.setCallContext(ctx);
+
+          // Build the tree
+          RepositoryInfo rep = svc.getRepositoryInfo(repositoryId, null);
+          String rootFolderId = rep.getRootFolderId();
+
+          try {
+              gen.createFolderHierachy(levels, childrenPerLevel, rootFolderId);
+              // Dump the tree
+              gen.dumpFolder(rootFolderId, "*");
+          } catch (Exception e) {
+              LOG.error("Could not create folder hierarchy with documents. " + e);
+              e.printStackTrace();
+          }
+      } // if 
+          
+    } // fillRepositoryIfConfigured
+ 
 }
