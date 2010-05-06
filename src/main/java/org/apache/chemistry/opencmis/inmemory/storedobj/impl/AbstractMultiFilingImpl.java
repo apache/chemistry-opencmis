@@ -21,6 +21,9 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
+import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 
@@ -47,6 +50,16 @@ public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implement
      */
     public void addParent(Folder parent) {
 
+      try {
+          fObjStore.lock();
+          addParentIntern(parent);
+      } finally {
+        fObjStore.unlock();
+      }
+    }
+
+    private void addParentIntern(Folder parent) {
+
         if (parent.hasChild(getName()))
             throw new IllegalArgumentException(
                     "Cannot assign new parent folder, this name already exists in target folder.");
@@ -55,8 +68,9 @@ public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implement
             fParents = new ArrayList<Folder>();
 
         fParents.add(parent);
-    }
-
+      }
+    
+    
     /*
      * (non-Javadoc)
      * 
@@ -65,6 +79,15 @@ public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implement
      * (org.apache.opencmis.inmemory.storedobj.api.Folder)
      */
     public void removeParent(Folder parent) {
+        try {
+            fObjStore.lock();
+            removeParentIntern(parent);
+        } finally {
+          fObjStore.unlock();
+        }
+    }
+
+    private void removeParentIntern(Folder parent) {
         fParents.remove(parent);
         if (fParents.isEmpty())
             fParents = null;
@@ -100,8 +123,30 @@ public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implement
      * org.apache.opencmis.inmemory.storedobj.api.Folder)
      */
     public void move(Folder oldParent, Folder newParent) {
-        addParent(newParent);
-        removeParent(oldParent);
+        try {
+            fObjStore.lock();
+            addParentIntern(newParent);
+            removeParentIntern(oldParent);
+        } finally {
+          fObjStore.unlock();
+        }
     }
 
+    public void rename(String newName) {
+        try {
+            if (!NameValidator.isValidId(newName))
+                throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+            fObjStore.lock();
+            for (Folder folder : fParents) {
+              if (folder == null)
+                  throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
+              if (folder.hasChild(newName))
+                  throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
+                          + ". This path already exists in parent " + folder.getPath() + ".");
+            }
+            setName(newName);
+        } finally {
+          fObjStore.unlock();
+        }
+    }
 }

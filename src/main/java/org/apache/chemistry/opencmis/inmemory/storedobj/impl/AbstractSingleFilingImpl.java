@@ -98,34 +98,49 @@ public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implemen
      * setParent(org.opencmis.client.provider.spi.inmemory.storedobj.api.Folder)
      */
     public void setParent(Folder parent) {
-        fParent = (FolderImpl) parent;
+        try {
+            fObjStore.lock();
+            fParent = (FolderImpl) parent;
+        } finally {
+          fObjStore.unlock();
+        }
     }
 
     public void rename(String newName) {
         if (!NameValidator.isValidId(newName))
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
-        if (getParent() == null)
-            throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
-        if (getParent().hasChild(newName))
-            throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
-                    + ". This path already exists.");
+        try {
+            fObjStore.lock();
+            if (getParent() == null)
+                throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
+            if (getParent().hasChild(newName))
+                throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
+                        + ". This path already exists.");
 
-        setName(newName);
+            setName(newName);
+        } finally {
+          fObjStore.unlock();
+        }
     }
 
     public void move(Folder oldParent, Folder newParent) {
 
-        if (this instanceof Document || this instanceof VersionedDocument)
-            fParent.moveChildDocument(this, oldParent, newParent);
-        else {// it must be a folder
-            if (getParent() == null)
-                throw new IllegalArgumentException("Root folder cannot be moved.");
-            if (newParent == null)
-                throw new IllegalArgumentException("null is not a valid move target.");
-            if (newParent.hasChild(getName()))
-                throw new IllegalArgumentException("Cannot move folder, this name already exists in target.");
+        try {
+            fObjStore.lock();
+            if (this instanceof Document || this instanceof VersionedDocument)
+                fParent.moveChildDocument(this, oldParent, newParent);
+            else {// it must be a folder
+                if (getParent() == null)
+                    throw new IllegalArgumentException("Root folder cannot be moved.");
+                if (newParent == null)
+                    throw new IllegalArgumentException("null is not a valid move target.");
+                if (newParent.hasChild(getName()))
+                    throw new IllegalArgumentException("Cannot move folder, this name already exists in target.");
 
-            setParent(newParent);
+                setParent(newParent);
+            }
+        } finally {
+          fObjStore.unlock();
         }
     }
 

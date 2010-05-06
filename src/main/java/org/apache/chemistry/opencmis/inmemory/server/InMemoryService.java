@@ -19,13 +19,11 @@
 package org.apache.chemistry.opencmis.inmemory.server;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.api.Acl;
 import org.apache.chemistry.opencmis.commons.api.AllowableActions;
-import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
@@ -43,18 +41,12 @@ import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.api.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.api.server.CallContext;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
-import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
-import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
-import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -76,47 +68,15 @@ public class InMemoryService extends AbstractCmisService {
         return storeManager;
     }
 
-    public InMemoryService(Map<String, String> parameters) {
+    public InMemoryService(Map<String, String> parameters, StoreManager sm) {
 
-        // initialize in-memory management
-        String repositoryClassName = (String) parameters.get(ConfigConstants.REPOSITORY_CLASS);
-        if (null == repositoryClassName)
-            repositoryClassName = StoreManagerImpl.class.getName();
-
-        if (null == storeManager)
-            storeManager = StoreManagerFactory.createInstance(repositoryClassName);
-
-        String repositoryId = parameters.get(ConfigConstants.REPOSITORY_ID);
-
-        List<String> allAvailableRepositories = storeManager.getAllRepositoryIds();
-
-        // init existing repositories
-        for (String existingRepId : allAvailableRepositories)
-            storeManager.initRepository(existingRepId);
-
-        // create repository if configured as a startup parameter
-        if (null != repositoryId) {
-            if (allAvailableRepositories.contains(repositoryId))
-                LOG.warn("Repostory " + repositoryId + " already exists and will not be created.");
-            else {
-                String typeCreatorClassName = parameters.get(ConfigConstants.TYPE_CREATOR_CLASS);
-                storeManager.createAndInitRepository(repositoryId, typeCreatorClassName);
-            }
-        }
-
-
+        storeManager = sm;
         fRepSvc = new InMemoryRepositoryServiceImpl(storeManager);
         fNavSvc = new InMemoryNavigationServiceImpl(storeManager);
         fObjSvc = new InMemoryObjectServiceImpl(storeManager);
         fVerSvc = new InMemoryVersioningServiceImpl(storeManager, fObjSvc);
         fDisSvc = new InMemoryDiscoveryServiceImpl(storeManager, fRepSvc, fNavSvc);
         fMultiSvc = new InMemoryMultiFilingServiceImpl(storeManager);
-
-        // With some special configuration settings fill the repository with
-        // some documents and folders
-        // if is empty
-        if (!allAvailableRepositories.contains(repositoryId))
-            fillRepositoryIfConfigured(parameters, repositoryId);
     }
 
     public CallContext getCallContext() {
@@ -412,135 +372,5 @@ public class InMemoryService extends AbstractCmisService {
 
     // //////////////
     //	
-    private void fillRepositoryIfConfigured(Map<String, String> parameters, String repositoryId) {
-        class DummyCallContext implements CallContext {
-
-            public String get(String key) {
-                return null;
-            }
-
-            public String getBinding() {
-                return null;
-            }
-
-            public boolean isObjectInfoRequired() {
-                return false;
-            }
-
-            public String getRepositoryId() {
-                return null;
-            }
-
-            public String getLocale() {
-                return null;
-            }
-
-            public String getPassword() {
-                return null;
-            }
-
-            public String getUsername() {
-                return null;
-            }
-        }
-
-        String doFillRepositoryStr = parameters.get(ConfigConstants.USE_REPOSITORY_FILER);
-        boolean doFillRepository = doFillRepositoryStr == null ? false : Boolean.parseBoolean(doFillRepositoryStr);
-
-        if (!doFillRepository)
-            return;
-
-        BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
-//        NavigationService navSvc = new NavigationServiceImpl(fNavSvc);
-//        ObjectService objSvc = new ObjectServiceImpl(fObjSvc);
-//        RepositoryService repSvc = new RepositoryServiceImpl(fRepSvc);
-
-        String levelsStr = parameters.get(ConfigConstants.FILLER_DEPTH);
-        int levels = 1;
-        if (null != levelsStr)
-            levels = Integer.parseInt(levelsStr);
-
-        String docsPerLevelStr = parameters.get(ConfigConstants.FILLER_DOCS_PER_FOLDER);
-        int docsPerLevel = 1;
-        if (null != docsPerLevelStr)
-            docsPerLevel = Integer.parseInt(docsPerLevelStr);
-
-        String childrenPerLevelStr = parameters.get(ConfigConstants.FILLER_FOLDERS_PER_FOLDER);
-        int childrenPerLevel = 2;
-        if (null != childrenPerLevelStr)
-            childrenPerLevel = Integer.parseInt(childrenPerLevelStr);
-
-        String documentTypeId = parameters.get(ConfigConstants.FILLER_DOCUMENT_TYPE_ID);
-        if (null == documentTypeId)
-            documentTypeId = BaseTypeId.CMIS_DOCUMENT.value();
-
-        String folderTypeId = parameters.get(ConfigConstants.FILLER_FOLDER_TYPE_ID);
-        if (null == folderTypeId)
-            folderTypeId = BaseTypeId.CMIS_FOLDER.value();
-
-        int contentSizeKB = 0;
-        String contentSizeKBStr = parameters.get(ConfigConstants.FILLER_CONTENT_SIZE);
-        if (null != contentSizeKBStr)
-            contentSizeKB = Integer.parseInt(contentSizeKBStr);
-
-        // Create a hierarchy of folders and fill it with some documents
-        ObjectGenerator gen = new ObjectGenerator(objectFactory, this, this, repositoryId);
-
-        gen.setNumberOfDocumentsToCreatePerFolder(docsPerLevel);
-
-        // Set the type id for all created documents:
-        gen.setDocumentTypeId(documentTypeId);
-
-        // Set the type id for all created folders:
-        gen.setFolderTypeId(folderTypeId);
-
-        // Set contentSize
-        gen.setContentSizeInKB(contentSizeKB);
-
-        // set properties that need to be filled
-        // set the properties the generator should fill with values for
-        // documents:
-        // Note: must be valid properties in configured document and folder type
-
-        List<String> propsToSet = readPropertiesToSetFromConfig(parameters, ConfigConstants.FILLER_DOCUMENT_PROPERTY);
-        if (null != propsToSet)
-            gen.setDocumentPropertiesToGenerate(propsToSet);
-
-        propsToSet = readPropertiesToSetFromConfig(parameters, ConfigConstants.FILLER_FOLDER_PROPERTY);
-        if (null != propsToSet)
-            gen.setFolderPropertiesToGenerate(propsToSet);
-
-        // Simulate a runtime context with configuration parameters
-        // Attach the CallContext to a thread local context that can be accessed
-        // from everywhere
-        DummyCallContext ctx = new DummyCallContext();
-        setCallContext(ctx);
-        // Build the tree
-        RepositoryInfo rep = fRepSvc.getRepositoryInfo(ctx, repositoryId, null);
-        String rootFolderId = rep.getRootFolderId();
-
-        try {
-            gen.createFolderHierachy(levels, childrenPerLevel, rootFolderId);
-            // Dump the tree
-            gen.dumpFolder(rootFolderId, "*");
-        } catch (Exception e) {
-            LOG.error("Could not create folder hierarchy with documents. " + e);
-            e.printStackTrace();
-        }
-
-    }
-
-    private List<String> readPropertiesToSetFromConfig(Map<String, String> parameters, String keyPrefix) {
-        List<String> propsToSet = new ArrayList<String>();
-        for (int i = 0;; ++i) {
-            String propertyKey = keyPrefix + Integer.toString(i);
-            String propertyToAdd = parameters.get(propertyKey);
-            if (null == propertyToAdd)
-                break;
-            else
-                propsToSet.add(propertyToAdd);
-        }
-        return propsToSet;
-    }
 
 }

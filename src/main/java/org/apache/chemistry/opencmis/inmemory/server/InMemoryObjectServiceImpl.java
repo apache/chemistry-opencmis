@@ -585,21 +585,14 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         // get name from properties and perform special rename to check if
-        // path
-        // already exists
+        // path already exists
         PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
         if (pd != null && so instanceof Filing) {
             String newName = (String) pd.getFirstValue();
             List<Folder> parents = ((Filing) so).getParents();
             if (so instanceof Folder && parents.isEmpty())
                 throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
-            for (Folder parent : parents) {
-                if (parent.hasChild(newName))
-                    throw new CmisConstraintException(
-                            "updateProperties failed, cannot rename because path already exists.");
-            }
-            so.rename((String) pd.getFirstValue()); // note: this does
-            // persist
+            so.rename((String) pd.getFirstValue()); // note: this does persist
             hasUpdatedName = true;
         }
 

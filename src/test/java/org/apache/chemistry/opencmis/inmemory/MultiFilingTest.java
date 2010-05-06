@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.commons.logging.Log;
@@ -162,7 +163,7 @@ public class MultiFilingTest extends AbstractServiceTst {
             renameDocumentAndCheckResult(docId);
             fail("A rename to an existing name in one of the filed folders should fail");
         } catch (Exception e) {
-            assertTrue(e instanceof CmisConstraintException);
+            assertTrue(e instanceof CmisNameConstraintViolationException);
         }
         LOG.debug("End testRenameMultiFiledDocument()");
     }

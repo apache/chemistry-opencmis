@@ -19,10 +19,12 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -36,10 +38,27 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
- * InMemory folder implementation
- *
- * @author Jens
- *
+ * The object store is the central core of the in-memory repository. It is based on huge HashMap
+ * map mapping ids to objects in memory. To allow access from multiple threads a Java concurrent
+ * HashMap is used that allows parallel access methods. 
+ * 
+ * Certain methods in the in-memory repository must guarantee constraints. For example a folder 
+ * enforces that each child has a unique name. Therefore certain operations must occur in an
+ * atomic manner. In the example it must be guaranteed that no write access occurs to the 
+ * map between acquiring the iterator to find the children and finishing the add operation when
+ * no name conflicts can occur. For this purpose this class has methods to lock an unlock the
+ * state of the repository. It is very important that the caller acquiring the lock enforces an
+ * unlock under all circumstances. Typical code is: 
+ * 
+ * ObjectStoreImpl os = ... ;
+ * try {
+ *     os.lock();
+ * } finally {
+ *     os.unlock();
+ * }
+ * 
+ * The locking is very coarse-grained. Productive implementations would probably implement finer
+ * grained locks on a folder or document rather than the complete repository.
  */
 
 public class ObjectStoreImpl implements ObjectStore {
@@ -50,9 +69,12 @@ public class ObjectStoreImpl implements ObjectStore {
     private static int NEXT_UNUSED_ID = 100;
 
     /**
-     * Maps the absolute folder path to the corresponding folder object
+     * a concurrent HashMap as core element to hold all objects in the repository
      */
-    private Map<String, StoredObject> fStoredObjectMap = new HashMap<String, StoredObject>();
+    private Map<String, StoredObject> fStoredObjectMap = new ConcurrentHashMap<String, StoredObject>();
+    
+    private Lock fLock = new ReentrantLock();
+    
     final String fRepositoryId;
     FolderImpl fRootFolder = null;
 
@@ -65,6 +87,14 @@ public class ObjectStoreImpl implements ObjectStore {
         return NEXT_UNUSED_ID++;
     }
 
+    public void lock() {
+      fLock.lock();
+    }
+    
+    public void unlock() {
+      fLock.unlock();
+    }
+    
     /*
      * (non-Javadoc)
      *

@@ -241,7 +241,6 @@ public class StoredObjectImpl implements StoredObject {
 
     public void rename(String newName) {
         setName(newName);
-        persist();
     }
 
     /*

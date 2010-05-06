@@ -52,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
@@ -639,7 +640,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
                 fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, newProps, null);
                 fail("Update with a conflicting name should fail.");
             } catch (Exception e) {
-                assertTrue(e instanceof CmisConstraintException);
+                assertTrue(e instanceof CmisNameConstraintViolationException);
             }
 
         } catch (Exception e) {

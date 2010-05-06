@@ -92,7 +92,7 @@ public class AbstractServiceTst /* extends TestCase */{
         addParameters(parameters);
 
         fTestCallContext = new DummyCallContext();
-        // Attach a standatrd CallContext to a thread before the services are
+        // Attach a standard CallContext to a thread before the services are
         // initialized.
         // RuntimeContext.attachCfg(fTestCallContext);
 
