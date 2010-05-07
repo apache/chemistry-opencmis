@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.junit.Test;
 
-public class ReadOnlyNavigationIT extends AbstractSessionTest {
+public abstract class AbstractReadOnlyNavigationIT extends AbstractSessionTest {
 
     @Test
     public void navigateChildrenSkip() {

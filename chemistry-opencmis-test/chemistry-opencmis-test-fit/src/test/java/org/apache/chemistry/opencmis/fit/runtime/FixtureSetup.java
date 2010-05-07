@@ -38,6 +38,11 @@ public class FixtureSetup {
     private String rootFolderId = null; // root
     private String testRootFolderId = null; // test root
     private String repositoryId = null;
+    private Fixture fixture = null;
+
+    public FixtureSetup(Fixture fixture) {
+        this.fixture = fixture;
+    }
 
     public void teardown() {
         this.binding.getObjectService().deleteTree(this.repositoryId, this.testRootFolderId, true, UnfileObject.DELETE,
@@ -45,16 +50,16 @@ public class FixtureSetup {
     }
 
     public void setup() {
-        this.repositoryId = Fixture.getParamter().get(SessionParameter.REPOSITORY_ID);
+        this.repositoryId = this.fixture.getParamter().get(SessionParameter.REPOSITORY_ID);
         Assert.assertNotNull(this.repositoryId);
 
-        this.binding = CmisBindingFactory.newInstance().createCmisBinding(Fixture.getParamter());
+        this.binding = CmisBindingFactory.newInstance().createCmisBinding(this.fixture.getParamter());
         Assert.assertNotNull(this.binding);
 
         // root folder
-        if (Fixture.getParamter().containsKey(FixtureSessionParameter.TEST_ROOT_FOLDER_ID)) {
+        if (this.fixture.getParamter().containsKey(Fixture.TEST_ROOT_FOLDER_ID)) {
             // test root folder
-            this.rootFolderId = Fixture.getParamter().get(FixtureSessionParameter.TEST_ROOT_FOLDER_ID);
+            this.rootFolderId = this.fixture.getParamter().get(Fixture.TEST_ROOT_FOLDER_ID);
             Assert.assertNotNull(this.rootFolderId);
         } else {
             RepositoryInfo rid = this.binding.getRepositoryService().getRepositoryInfo(this.repositoryId, null);

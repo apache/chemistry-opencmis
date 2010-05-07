@@ -16,20 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.fit.runtime;
+package org.apache.chemistry.opencmis.fit.runtime.webservices;
 
-public interface FixtureSessionParameter {
+import org.apache.chemistry.opencmis.fit.runtime.AbstractWriteObjectVersionIT;
+import org.apache.chemistry.opencmis.fit.runtime.Fixture;
 
-    /*
-     * session parameter
-     */
+public class WriteObjectVersionWebServicesIT extends AbstractWriteObjectVersionIT {
 
-    /**
-     * CONFIG_PATH is referenced in pom.xml! If you change here then change pom.
-     */
-    static final String CONFIG_PATH = "org.apache.chemistry.opencmis.fit.runtime.config.path";
-
-    static final String SESSION_FACTORY = "org.apache.chemistry.opencmis.fit.runtime.session.factory";
-    static final String TEST_ROOT_FOLDER_ID = "org.apache.chemistry.opencmis.fit.runtime.root.folder.id";
-
+    @Override
+    public void initFixture(Fixture fixture) {
+        fixture.enableWebServices();
+    }
 }

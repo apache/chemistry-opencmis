@@ -51,12 +51,20 @@ public abstract class AbstractSessionTest {
             super.failed(e, method);
             AbstractSessionTest.this.log.error(method.getName(), e);
         }
+
+        @Override
+        public void starting(FrameworkMethod method) {
+            super.starting(method);
+
+            AbstractSessionTest.this.fixture.logTestClassContext(AbstractSessionTest.this.getClass(), method);
+        }
     };
 
     @BeforeClass
     public static void classSetup() {
         AbstractSessionTest.initializeLogging();
         Fixture.logHeader();
+
     }
 
     /**
@@ -77,16 +85,28 @@ public abstract class AbstractSessionTest {
      */
     protected Session session = null;
 
+    /**
+     * Test Fixture
+     */
+    protected Fixture fixture = null;
+
+    public AbstractSessionTest() {
+        this.fixture = new Fixture();
+        this.initFixture(this.fixture);
+        this.fixture.init();
+    }
+
     @Before
     public void setUp() throws Exception {
-        SessionFactory factory = Fixture.getSessionFactory();
-        this.session = factory.createSession(Fixture.getParamter());
-        Fixture.setUpTestData(this.session);
+        SessionFactory factory = this.fixture.getSessionFactory();
+        this.session = factory.createSession(this.fixture.getParamter());
+        this.fixture.setUpTestData(this.session);
     }
 
     @After
     public void tearDown() throws Exception {
-        Fixture.teardownTestData(this.session);
+        this.fixture.teardownTestData(this.session);
     }
 
+    public abstract void initFixture(Fixture fixture);
 }

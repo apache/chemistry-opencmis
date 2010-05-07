@@ -18,9 +18,6 @@
  */
 package org.apache.chemistry.opencmis.fit.runtime;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Map;
@@ -34,6 +31,7 @@ import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.runners.model.FrameworkMethod;
 
 /**
  * Definition of unit environment for running test cases. Default implementation
@@ -43,9 +41,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Fixture {
 
-    private static String CONNECTION_PATH = Fixture.CONNECTION_ATOM_PATH;
+    private String connectionPath = Fixture.CONNECTION_ATOM_PATH;
     private static final String CONNECTION_ATOM_PATH = "/inmemory.atom.properties";
     private static final String CONNECTION_WS_PATH = "/inmemory.ws.properties";
+    public static final String SESSION_FACTORY = "org.apache.chemistry.opencmis.fit.runtime.session.factory";
+    public static final String TEST_ROOT_FOLDER_ID = "org.apache.chemistry.opencmis.fit.runtime.root.folder.id";
 
     private static Log log = LogFactory.getLog(Fixture.class);
 
@@ -57,12 +57,12 @@ public class Fixture {
     /*
      * test data setup
      */
-    private static FixtureSetup testData = new FixtureSetup();
+    private FixtureSetup testData = new FixtureSetup(this);
 
     /**
      * @return session parameter
      */
-    public static Map<String, String> getParamter() {
+    public Map<String, String> getParamter() {
         return parameter;
     }
 
@@ -71,62 +71,51 @@ public class Fixture {
      * 
      * @param paramter
      */
-    public static void setParamter(Map<String, String> paramter) {
+    public void setParamter(Map<String, String> paramter) {
         FixtureData.changeValues(paramter);
-        Fixture.parameter = paramter;
+        this.parameter = paramter;
     }
 
     /**
      * session parameter.
      */
-    private static Map<String, String> parameter = null;
+    private Map<String, String> parameter = null;
 
     /**
      * Overwriting default session factory.
      * 
      * @param factory
      */
-    public static void setSessionFactory(SessionFactory factory) {
-        Fixture.factory = factory;
+    public void setSessionFactory(SessionFactory factory) {
+        this.factory = factory;
     }
 
     /**
      * @return factory
      */
-    public static SessionFactory getSessionFactory() {
-        return Fixture.factory;
+    public SessionFactory getSessionFactory() {
+        return this.factory;
     }
 
     /**
      * factory
      */
-    private static SessionFactory factory = null;
+    private SessionFactory factory = null;
 
-    static {
-        // Mock as default
-        Fixture.init();
+    public Fixture() {
     }
 
-    public static void init() {
+    public void init() {
         /* get optional path from system properties */
-        String pathname = System.getProperty(FixtureSessionParameter.CONFIG_PATH);
-        pathname = (pathname != null) ? pathname.trim() : null;
         Properties properties = null;
         Map<String, String> sessionParameter = null;
         SessionFactory factory = null;
         String factoryClassName = null;
         try {
-            if (pathname != null && !"".equalsIgnoreCase(pathname)) {
-                // read from file
-                properties = new Properties();
-                FileInputStream in = new FileInputStream(new File(pathname));
-                properties.load(in);
-            } else {
-                // get default settings
-                InputStream in = Fixture.class.getResourceAsStream(Fixture.CONNECTION_PATH);
-                properties = new Properties();
-                properties.load(in);
-            }
+            // get settings
+            InputStream in = Fixture.class.getResourceAsStream(this.connectionPath);
+            properties = new Properties();
+            properties.load(in);
 
             /* convert to map, filter empty values */
             sessionParameter = new Hashtable<String, String>();
@@ -137,10 +126,10 @@ public class Fixture {
                     sessionParameter.put(key, value);
                 }
             }
-            Fixture.setParamter(sessionParameter);
+            this.setParamter(sessionParameter);
 
             /* load factory class */
-            factoryClassName = sessionParameter.get(FixtureSessionParameter.SESSION_FACTORY);
+            factoryClassName = sessionParameter.get(Fixture.SESSION_FACTORY);
             if (factoryClassName != null && !"".equalsIgnoreCase(factoryClassName)) {
                 Class<?> clazz = Class.forName(factoryClassName);
                 factory = (SessionFactory) clazz.newInstance();
@@ -148,54 +137,57 @@ public class Fixture {
                 /* default */
                 factory = SessionFactoryImpl.newInstance();
             }
-            Fixture.setSessionFactory(factory);
-        } catch (IOException e) {
-            Fixture.log.error(pathname, e);
-            throw new CmisRuntimeException(pathname, e);
+            this.setSessionFactory(factory);
         } catch (Exception e) {
             Fixture.log.error(factoryClassName, e);
             throw new CmisRuntimeException(factoryClassName, e);
         }
     }
 
-    public static void setUpTestData(Session session) {
-        Fixture.testData.setup();
+    public void setUpTestData(Session session) {
+        this.testData.setup();
     }
 
-    public static void teardownTestData(Session session) {
-        Fixture.testData.teardown();
+    public void teardownTestData(Session session) {
+        this.testData.teardown();
     }
 
-    private static boolean isLogged = false;
+    private static boolean isHeaderLogged = false;
 
     public static void logHeader() {
-        if (!Fixture.isLogged) {
+        if (!Fixture.isHeaderLogged) {
             /*
              * log header only once
              */
             Fixture.log.info("---------------------------------------------------------------");
-            Fixture.log.info("--- OpenCMIS FIT Test Suite (1) --------------------------------");
-            Fixture.log.info("---------------------------------------------------------------");
-            Fixture.log.info("config path (prop): " + System.getProperty(FixtureSessionParameter.CONFIG_PATH));
-            Fixture.log.info("session factory:    " + Fixture.getSessionFactory().getClass());
-            Fixture.log.info("session parameter:  " + Fixture.getParamter());
-
+            Fixture.log.info("--- OpenCMIS FIT Test Suite -----------------------------------");
             Fixture.log.info("---------------------------------------------------------------");
 
-            Fixture.isLogged = true;
+            Fixture.isHeaderLogged = true;
         }
     }
 
-    public static void enableAtomPub() {
-        Fixture.CONNECTION_PATH = Fixture.CONNECTION_ATOM_PATH;
+    public <T> void logTestClassContext(Class<T> c, FrameworkMethod method) {
+        Log l = LogFactory.getLog(c);
+        l.info("---------------------------------------------------------------");
+        l.info("test class:         " + c.getName());
+        l.info("test method:        " + method.getName());
+        l.info("session factory:    " + this.getSessionFactory().getClass());
+        l.info("test root id:       " + this.getTestRootId());
+//        l.info("session parameter:  " + this.getParamter());
+        l.info("---------------------------------------------------------------");
     }
 
-    public static void enableWebServices() {
-        Fixture.CONNECTION_PATH = Fixture.CONNECTION_WS_PATH;
+    public void enableAtomPub() {
+        this.connectionPath = Fixture.CONNECTION_ATOM_PATH;
     }
 
-    public static String getTestRootId() {
-        return Fixture.testData.getTestRootId();
+    public void enableWebServices() {
+        this.connectionPath = Fixture.CONNECTION_WS_PATH;
+    }
+
+    public String getTestRootId() {
+        return this.testData.getTestRootId();
     }
 
 }

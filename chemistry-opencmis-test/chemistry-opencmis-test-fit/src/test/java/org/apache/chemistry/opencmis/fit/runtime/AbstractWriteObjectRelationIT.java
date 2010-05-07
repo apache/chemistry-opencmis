@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -36,7 +36,7 @@ import org.junit.Test;
 
 // relations not yet supported
 @Ignore
-public class WriteObjectRelationIT extends AbstractSessionTest {
+public abstract class AbstractWriteObjectRelationIT extends AbstractSessionTest {
 
     @Test
     public void createAndLoopRelations() {

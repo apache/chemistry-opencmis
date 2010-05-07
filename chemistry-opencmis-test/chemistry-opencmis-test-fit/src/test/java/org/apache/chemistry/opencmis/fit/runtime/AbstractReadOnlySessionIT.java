@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * Testing session
  */
-public class ReadOnlySessionIT extends AbstractSessionTest {
+public abstract class AbstractReadOnlySessionIT extends AbstractSessionTest {
 
     @Test
     public void testSession() {

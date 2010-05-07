@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.api.ContentStream;
 import org.junit.Test;
 
-public class ReadOnlyContentStreamIT extends AbstractSessionTest {
+public abstract class AbstractReadOnlyContentStreamIT extends AbstractSessionTest {
 
     @Test
     public void readContentStream() throws IOException {

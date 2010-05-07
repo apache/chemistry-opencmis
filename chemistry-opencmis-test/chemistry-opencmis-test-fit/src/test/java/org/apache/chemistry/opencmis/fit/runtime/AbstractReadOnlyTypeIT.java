@@ -24,15 +24,15 @@ import junit.framework.Assert;
 
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.FolderType;
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.PolicyType;
 import org.apache.chemistry.opencmis.client.api.RelationshipType;
-import org.apache.chemistry.opencmis.client.api.Tree; //import org.apache.chemistry.opencmis.client.api.util.PagingList;
+import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.junit.Test;
 
-public class ReadOnlyTypeIT extends AbstractSessionTest {
+public abstract class AbstractReadOnlyTypeIT extends AbstractSessionTest {
 
     @Test
     public void readOptionalBaseTypePolicy() {
@@ -100,7 +100,7 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
         ItemIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
         Assert.assertNotNull(pc);
 
-        ItemIterable<ObjectType> pcc = pc.skipTo(2).getPage(2); 
+        ItemIterable<ObjectType> pcc = pc.skipTo(2).getPage(2);
         for (ObjectType ot1 : pcc) {
             ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
             Assert.assertEquals(ot1.getId(), ot2.getId());
@@ -129,7 +129,7 @@ public class ReadOnlyTypeIT extends AbstractSessionTest {
         ItemIterable<ObjectType> pc = this.session.getTypeChildren(otd.getId(), true);
         Assert.assertNotNull(pc);
 
-        ItemIterable<ObjectType> pcc = pc.skipTo(0).getPage(2); 
+        ItemIterable<ObjectType> pcc = pc.skipTo(0).getPage(2);
         for (ObjectType ot1 : pcc) {
             ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
             Assert.assertEquals(ot1, ot2);

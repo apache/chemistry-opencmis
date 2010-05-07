@@ -22,14 +22,10 @@ import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ReadOnlyDiscoverIT extends AbstractSessionTest {
-
-    private static Log log = LogFactory.getLog(ReadOnlyDiscoverIT.class);
+public abstract class AbstractReadOnlyDiscoverIT extends AbstractSessionTest {
 
     @Test
     public void query() {
@@ -37,7 +33,7 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
 
         switch (query) {
         case NONE:
-            ReadOnlyDiscoverIT.log.info("queries not supported");
+            this.log.info("queries not supported");
             break;
         default:
             ItemIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false);
@@ -51,16 +47,18 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
         }
 
     }
+
     @Test
     public void querySkip() {
         CapabilityQuery query = this.session.getRepositoryInfo().getCapabilities().getQueryCapability();
 
         switch (query) {
         case NONE:
-            ReadOnlyDiscoverIT.log.info("queries not supported");
+            this.log.info("queries not supported");
             break;
         default:
-            ItemIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false).skipTo(2).getPage(2);
+            ItemIterable<QueryResult> resultSet = this.session.query(FixtureData.QUERY.toString(), false).skipTo(2)
+                    .getPage(2);
             Assert.assertNotNull(resultSet);
             // Assert.assertFalse(resultSet.isEmpty());
             for (QueryResult o : resultSet) {
@@ -78,7 +76,7 @@ public class ReadOnlyDiscoverIT extends AbstractSessionTest {
 
         switch (changes) {
         case NONE:
-            ReadOnlyDiscoverIT.log.info("changes not supported");
+            this.log.info("changes not supported");
             break;
         default:
             break;

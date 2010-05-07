@@ -38,7 +38,7 @@ import org.junit.Test;
 /**
  * Readonly tests on files and documents
  */
-public class ReadOnlyObjectIT extends AbstractSessionTest {
+public abstract class AbstractReadOnlyObjectIT extends AbstractSessionTest {
 
     @Test
     public void verifyRoot() {
@@ -67,9 +67,9 @@ public class ReadOnlyObjectIT extends AbstractSessionTest {
         Assert.assertEquals(ObjectType.FOLDER_BASETYPE_ID, folder.getBaseType().getId());
 
         Assert.assertNotNull(folder.getCreatedBy());
-        Assert.assertEquals(Fixture.getParamter().get(SessionParameter.USER), folder.getCreatedBy());
+        Assert.assertEquals(this.fixture.getParamter().get(SessionParameter.USER), folder.getCreatedBy());
         Assert.assertNotNull(folder.getLastModifiedBy());
-        Assert.assertEquals(Fixture.getParamter().get(SessionParameter.USER), folder.getLastModifiedBy());
+        Assert.assertEquals(this.fixture.getParamter().get(SessionParameter.USER), folder.getLastModifiedBy());
         Assert.assertNotNull(folder.getLastModificationDate());
         Assert.assertNotNull(folder.getCreationDate());
 
@@ -95,9 +95,9 @@ public class ReadOnlyObjectIT extends AbstractSessionTest {
         Assert.assertNotNull("document not found: " + path, document);
 
         Assert.assertNotNull(document.getCreatedBy());
-        Assert.assertEquals(Fixture.getParamter().get(SessionParameter.USER), document.getCreatedBy());
+        Assert.assertEquals(this.fixture.getParamter().get(SessionParameter.USER), document.getCreatedBy());
         Assert.assertNotNull(document.getLastModifiedBy());
-        Assert.assertEquals(Fixture.getParamter().get(SessionParameter.USER), document.getLastModifiedBy());
+        Assert.assertEquals(this.fixture.getParamter().get(SessionParameter.USER), document.getLastModifiedBy());
         Assert.assertNotNull(document.getLastModificationDate());
         Assert.assertNotNull(document.getCreationDate());
     }

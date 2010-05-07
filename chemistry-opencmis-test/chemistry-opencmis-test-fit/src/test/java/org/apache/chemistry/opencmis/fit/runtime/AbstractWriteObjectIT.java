@@ -37,11 +37,11 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.junit.Test;
 
-public class WriteObjectIT extends AbstractSessionTest {
+public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
     @Test
     public void createFolder() {
-        ObjectId parentId = this.session.createObjectId(Fixture.getTestRootId());
+        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.FOLDER_TYPE_ID.value();
 
@@ -55,7 +55,7 @@ public class WriteObjectIT extends AbstractSessionTest {
 
     @Test
     public void createDocument() throws IOException {
-        ObjectId parentId = this.session.createObjectId(Fixture.getTestRootId());
+        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
@@ -96,7 +96,7 @@ public class WriteObjectIT extends AbstractSessionTest {
             assertNotNull("Document not found: " + path, srcDocument);
             String srcContent = this.getContentAsString(srcDocument.getContentStream());
 
-            ObjectId parentFolder = session.createObjectId(Fixture.getTestRootId());
+            ObjectId parentFolder = session.createObjectId(this.fixture.getTestRootId());
             String name = UUID.randomUUID().toString();
 
             Map<String, Object> properties = new HashMap<String, Object>();

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.fit.runtime;
+package org.apache.chemistry.opencmis.fit.runtime.misc;
 
 import java.util.Hashtable;
 
@@ -25,28 +25,58 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.SessionType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.fit.runtime.Fixture;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
+import org.junit.rules.TestWatchman;
+import org.junit.runners.model.FrameworkMethod;
 
 /**
  * Independent session creation test (read only)
  */
-public class ReadOnlyCreateSessionIT {
+public abstract class AbstractReadOnlyCreateSessionIT {
 
     protected Log log = LogFactory.getLog(this.getClass());
 
+    /**
+     * trace each junit error
+     */
+    @Rule
+    public MethodRule watch = new TestWatchman() {
+        @Override
+        public void failed(Throwable e, FrameworkMethod method) {
+            super.failed(e, method);
+            AbstractReadOnlyCreateSessionIT.this.log.error(method.getName(), e);
+        }
+
+        @Override
+        public void starting(FrameworkMethod method) {
+            super.starting(method);
+
+            AbstractReadOnlyCreateSessionIT.this.fixture.logTestClassContext(AbstractReadOnlyCreateSessionIT.this
+                    .getClass(), method);
+        }
+    };
+
+    protected Fixture fixture = null;
+
     @Before
     public void setup() {
+        this.init();
     }
+
+    protected abstract void init();
 
     @Test
     public void createDefaultSession() {
-        SessionFactory factory = Fixture.getSessionFactory();
+        SessionFactory factory = this.fixture.getSessionFactory();
 
-        Hashtable<String, String> parameter = new Hashtable<String, String>(Fixture.getParamter());
+        Hashtable<String, String> parameter = new Hashtable<String, String>(this.fixture.getParamter());
         parameter.remove(SessionParameter.SESSION_TYPE);
 
         Session s = factory.createSession(parameter);
@@ -55,9 +85,9 @@ public class ReadOnlyCreateSessionIT {
 
     @Test
     public void createPersistentSession() {
-        SessionFactory factory = Fixture.getSessionFactory();
+        SessionFactory factory = this.fixture.getSessionFactory();
 
-        Hashtable<String, String> parameter = new Hashtable<String, String>(Fixture.getParamter());
+        Hashtable<String, String> parameter = new Hashtable<String, String>(this.fixture.getParamter());
         parameter.put(SessionParameter.SESSION_TYPE, SessionType.PERSISTENT.value());
 
         Session s = factory.createSession(parameter);
@@ -66,9 +96,9 @@ public class ReadOnlyCreateSessionIT {
 
     @Test
     public void createTransientSession() {
-        SessionFactory factory = Fixture.getSessionFactory();
+        SessionFactory factory = this.fixture.getSessionFactory();
 
-        Hashtable<String, String> parameter = new Hashtable<String, String>(Fixture.getParamter());
+        Hashtable<String, String> parameter = new Hashtable<String, String>(this.fixture.getParamter());
         parameter.put(SessionParameter.SESSION_TYPE, SessionType.TRANSIENT.value());
 
         try {

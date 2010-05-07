@@ -31,7 +31,7 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ReadOnlyAclCapabilityIT extends AbstractSessionTest {
+public abstract class AbstractReadOnlyAclCapabilityIT extends AbstractSessionTest {
 
     private AclCapabilities aclCapabilities = null;
 

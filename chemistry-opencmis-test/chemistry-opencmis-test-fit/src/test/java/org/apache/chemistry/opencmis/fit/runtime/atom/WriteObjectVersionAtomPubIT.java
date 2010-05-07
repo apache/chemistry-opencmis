@@ -16,14 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.fit.runtime.suite;
+package org.apache.chemistry.opencmis.fit.runtime.atom;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.apache.chemistry.opencmis.fit.runtime.AbstractWriteObjectVersionIT;
+import org.apache.chemistry.opencmis.fit.runtime.Fixture;
 
-@RunWith(Suite.class)
-@SuiteClasses( {})
-public class SuiteAtomPubIT {
+public class WriteObjectVersionAtomPubIT extends AbstractWriteObjectVersionIT {
 
+    @Override
+    public void initFixture(Fixture fixture) {
+        fixture.enableAtomPub();
+    }
 }

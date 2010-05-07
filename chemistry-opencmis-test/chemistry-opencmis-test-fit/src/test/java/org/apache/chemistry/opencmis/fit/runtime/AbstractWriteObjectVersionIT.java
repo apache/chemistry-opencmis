@@ -24,12 +24,12 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WriteObjectVersionIT extends AbstractSessionTest {
+public abstract class AbstractWriteObjectVersionIT extends AbstractSessionTest {
 
     private ObjectId checkdOutId = null;
 

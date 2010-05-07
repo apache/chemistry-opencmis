@@ -16,17 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.fit.runtime.suite;
+package org.apache.chemistry.opencmis.fit.runtime.webservices;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.apache.chemistry.opencmis.fit.runtime.AbstractWriteObjectIT;
+import org.apache.chemistry.opencmis.fit.runtime.Fixture;
 
-@RunWith(Suite.class)
-@SuiteClasses( {})
-public class SuiteWebServiceIT {
-    static {
-        // TODO SKL not working
-        // Fixture.enableWebServices();
+public class WriteObjectWebServicesIT extends AbstractWriteObjectIT {
+
+    @Override
+    public void initFixture(Fixture fixture) {
+        fixture.enableWebServices();
     }
+
 }

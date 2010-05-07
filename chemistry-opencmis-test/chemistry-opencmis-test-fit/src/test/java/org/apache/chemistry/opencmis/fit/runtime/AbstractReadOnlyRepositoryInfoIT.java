@@ -33,7 +33,7 @@ import org.junit.Test;
 /**
  * Testing folder and files.
  */
-public class ReadOnlyRepositoryInfoIT extends AbstractSessionTest {
+public abstract class AbstractReadOnlyRepositoryInfoIT extends AbstractSessionTest {
 
     @Test
     public void changesIncomplete() {
