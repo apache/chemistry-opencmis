@@ -340,6 +340,14 @@ public class PersistentSessionImpl implements Session, Serializable {
 
     /*
      * (non-Javadoc)
+     * @see org.apache.chemistry.opencmis.client.api.Session#createOperationContext()
+     */
+    public OperationContext createOperationContext() {
+        return new OperationContextImpl();
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see
      * org.apache.opencmis.client.api.Session#createObjectId(java.lang.String)

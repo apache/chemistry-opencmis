@@ -81,6 +81,11 @@ public interface Session {
     void setDefaultContext(OperationContext context);
 
     /**
+     * Creates a default operation context object.
+     */
+    OperationContext createOperationContext();
+    
+    /**
      * Creates an operation context object.
      */
     OperationContext createOperationContext(Set<String> filter, boolean includeAcls, boolean includeAllowableActions,
