@@ -265,6 +265,22 @@
             	<groupId>org.apache.maven.plugins</groupId>
             	<artifactId>maven-javadoc-plugin</artifactId>
             	<version>2.7</version>
+            	<configuration>
+            		<groups>
+            			<group>
+            				<title>OpenCMIS Client API</title>
+            				<packages>org.apache.chemistry.opencmis.client.api</packages>
+            			</group>
+            			<group>
+            				<title>OpenCMIS Commons API</title>
+            				<packages>org.apache.chemistry.opencmis.commons:org.apache.chemistry.opencmis.commons.enums:org.apache.chemistry.opencmis.commons.exceptions:org.apache.chemistry.opencmis.commons.api</packages>
+            			</group>
+            			<group>
+            				<title>OpenCMIS Bindings SPI</title>
+            				<packages>org.apache.chemistry.opencmis.client.bindings.spi</packages>
+            			</group>
+            		</groups>
+            	</configuration>
             </plugin>
         </plugins>
     </build>
