@@ -277,14 +277,14 @@
                         </group>
                         <group>
                             <title>OpenCMIS Bindings SPI</title>
-                            <packages>org.apache.chemistry.opencmis.client.bindings.spi</packages>
+                            <packages>org.apache.chemistry.opencmis.client.bindings</packages>
                         </group>
                         <group>
                             <title>OpenCMIS Server</title>
                             <packages>org.apache.chemistry.opencmis.commons.api.server:org.apache.chemistry.opencmis.server.support:org.apache.chemistry.opencmis.server.support.query</packages>
                         </group>
                     </groups>
-                    <excludePackageNames>org.apache.chemistry.opencmis.commons.impl.jaxb:org.apache.chemistry.opencmis.client.bindings.impl:org.apache.chemistry.opencmis.client.bindings.cache:org.apache.chemistry.opencmis.client.bindings.spi:org.apache.chemistry.opencmis.server.impl:org.apache.chemistry.opencmis.fit:org.apache.chemistry.opencmis.util.repository:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.inmemory:org.apache.chemistry.opencmis.browser:org.apache.chemistry.opencmis.commander</excludePackageNames>
+                    <excludePackageNames>org.apache.chemistry.opencmis.commons.impl:org.apache.chemistry.opencmis.commons.impl.*:org.apache.chemistry.opencmis.client.runtime:org.apache.chemistry.opencmis.client.runtime.*:org.apache.chemistry.opencmis.commons.impl.jaxb:org.apache.chemistry.opencmis.client.bindings.impl:org.apache.chemistry.opencmis.client.bindings.cache:org.apache.chemistry.opencmis.client.bindings.spi:org.apache.chemistry.opencmis.server.impl:org.apache.chemistry.opencmis.fit:org.apache.chemistry.opencmis.util.repository:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.inmemory:org.apache.chemistry.opencmis.browser:org.apache.chemistry.opencmis.commander</excludePackageNames>
                 </configuration>
             </plugin>
         </plugins>
