@@ -363,7 +363,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
     public Properties convertProperties(Map<String, ?> properties, ObjectType type, Set<Updatability> updatabilityFilter) {
         // check input
         if (properties == null) {
-            throw new IllegalArgumentException("Properties must be set!");
+            return null;
         }
 
         // get the type

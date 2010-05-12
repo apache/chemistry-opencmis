@@ -33,11 +33,11 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ExtensionHandler;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -46,8 +46,8 @@ import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
-import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
+import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.api.Ace;
 import org.apache.chemistry.opencmis.commons.api.CmisBinding;
@@ -340,7 +340,9 @@ public class PersistentSessionImpl implements Session, Serializable {
 
     /*
      * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.Session#createOperationContext()
+     * 
+     * @see
+     * org.apache.chemistry.opencmis.client.api.Session#createOperationContext()
      */
     public OperationContext createOperationContext() {
         return new OperationContextImpl();
@@ -483,6 +485,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 
     /*
      * (non-Javadoc)
+     * 
+     * 
      * 
      * 
      * 
@@ -718,6 +722,9 @@ public class PersistentSessionImpl implements Session, Serializable {
         if ((folderId != null) && (folderId.getId() == null)) {
             throw new IllegalArgumentException("Folder Id must be set!");
         }
+        if ((properties == null) || (properties.isEmpty())) {
+            throw new IllegalArgumentException("Properties must not be empty!");
+        }
 
         String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
@@ -744,10 +751,6 @@ public class PersistentSessionImpl implements Session, Serializable {
      */
     public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
-        if ((folderId != null) && (folderId.getId() == null)) {
-            throw new IllegalArgumentException("Folder Id must be set!");
-        }
-
         // get the type of the source document
         ObjectType type = null;
         if (source instanceof CmisObject) {
@@ -785,6 +788,9 @@ public class PersistentSessionImpl implements Session, Serializable {
         if ((folderId != null) && (folderId.getId() == null)) {
             throw new IllegalArgumentException("Folder Id must be set!");
         }
+        if ((properties == null) || (properties.isEmpty())) {
+            throw new IllegalArgumentException("Properties must not be empty!");
+        }
 
         String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
@@ -810,6 +816,9 @@ public class PersistentSessionImpl implements Session, Serializable {
         if ((folderId != null) && (folderId.getId() == null)) {
             throw new IllegalArgumentException("Folder Id must be set!");
         }
+        if ((properties == null) || (properties.isEmpty())) {
+            throw new IllegalArgumentException("Properties must not be empty!");
+        }
 
         String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
@@ -832,6 +841,10 @@ public class PersistentSessionImpl implements Session, Serializable {
      */
     public ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces) {
+        if ((properties == null) || (properties.isEmpty())) {
+            throw new IllegalArgumentException("Properties must not be empty!");
+        }
+
         String newId = getBinding().getObjectService().createRelationship(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
                 objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),

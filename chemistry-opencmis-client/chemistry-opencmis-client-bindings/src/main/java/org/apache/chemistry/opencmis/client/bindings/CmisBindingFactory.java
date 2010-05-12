@@ -36,8 +36,6 @@ public final class CmisBindingFactory {
     public static final String BINDING_SPI_WEBSERVICES = "org.apache.chemistry.opencmis.client.bindings.spi.webservices.CmisWebServicesSpi";
     /** Default CMIS local binding SPI implementation */
     public static final String BINDING_SPI_LOCAL = "org.apache.chemistry.opencmis.client.bindings.spi.local.CmisLocalSpi";
-    /** CMIS In Memory binding SPI implementation (for testing only!) */
-    public static final String BINDING_SPI_INMEMORY = "org.apache.chemistry.opencmis.inmemory.clientprovider.CmisInMemorySpiFactory";
 
     /** Standard authentication provider class */
     public static final String STANDARD_AUTHENTICATION_PROVIDER = "org.apache.chemistry.opencmis.client.bindings.spi.StandardAuthenticationProvider";

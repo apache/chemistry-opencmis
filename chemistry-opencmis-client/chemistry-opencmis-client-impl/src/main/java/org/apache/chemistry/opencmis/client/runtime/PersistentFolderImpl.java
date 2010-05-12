@@ -87,6 +87,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context) {
+        if ((properties == null) || (properties.isEmpty())) {
+            throw new IllegalArgumentException("Properties must not be empty!");
+        }
+        
         String objectId = getObjectId();
 
         ObjectFactory of = getObjectFactory();
@@ -174,6 +178,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      */
     public Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces, OperationContext context) {
+        if ((properties == null) || (properties.isEmpty())) {
+            throw new IllegalArgumentException("Properties must not be empty!");
+        }
+        
         String objectId = getObjectId();
 
         ObjectFactory of = getObjectFactory();
@@ -205,6 +213,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
      */
     public Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces, OperationContext context) {
+        if ((properties == null) || (properties.isEmpty())) {
+            throw new IllegalArgumentException("Properties must not be empty!");
+        }
+        
         String objectId = getObjectId();
 
         ObjectFactory of = getObjectFactory();
