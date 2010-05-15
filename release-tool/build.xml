@@ -30,7 +30,7 @@
   <property name="release.basedir" value="${basedir}" />
   <property name="release.dir" value="${release.basedir}/release" />
   <property name="svn.dir" value="${release.basedir}/svn" />
-  <property name="doc.dir" value="${release.basedir}/doc" />
+  <property name="doc.dir" value="${release.basedir}/docs" />
   <property name="pack.dir" value="${release.basedir}/pack" />
 
   <!-- tools -->
@@ -144,15 +144,17 @@
     <!-- copy everything -->
     <copy todir="${pack.dir}" file="${svn.dir}/LICENSE.txt" />
     <copy todir="${pack.dir}" file="${svn.dir}/NOTICE.txt" />
-    
+    <copy todir="${pack.dir}" file="${svn.dir}/RELEASE-NOTES.txt" />
+
     <copy todir="${pack.dir}/src">
       <fileset dir="${svn.dir}">
         <exclude name="LICENSE.txt"/>
         <exclude name="NOTICE.txt"/>
+        <exclude name="RELEASE-NOTES.txt"/>
         <exclude name="**/.svn/**"/>
         <exclude name="**/target/**"/>
         <exclude name="**/_dev/**"/>
-        <exclude name="**/release-tools/**"/>
+        <exclude name="**/release-tool/**"/>
       </fileset>
     </copy>
 
