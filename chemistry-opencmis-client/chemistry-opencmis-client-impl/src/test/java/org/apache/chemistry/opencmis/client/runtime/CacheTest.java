@@ -18,9 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -133,13 +130,7 @@ public class CacheTest {
      * @param path
      * @return a mocked object
      */
-    private CmisObject createCmisObject(String id) {
-        CmisObject obj = createNiceMock(CmisObject.class);
-
-        expect(obj.getId()).andReturn(id).anyTimes();
-
-        replay(obj);
-
-        return obj;
+    private CmisObject createCmisObject(final String id) {
+        return new CmisObjectMock(id);
     }
 }
