@@ -3,13 +3,13 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.Holder;
-import org.apache.chemistry.opencmis.commons.api.ObjectList;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
-import org.apache.chemistry.opencmis.commons.api.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 public class DiscoveryServiceImpl extends AbstractLocalService implements DiscoveryService {
 

@@ -21,10 +21,10 @@ package org.apache.chemistry.opencmis.client.bindings.framework;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.api.Properties;
-import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>

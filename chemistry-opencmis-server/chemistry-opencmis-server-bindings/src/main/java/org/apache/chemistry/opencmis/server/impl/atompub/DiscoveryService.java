@@ -37,11 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.chemistry.opencmis.commons.api.Holder;
-import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.ObjectList;
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -50,6 +47,9 @@ import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisQueryType;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 /**
  * Discovery Service operations.

@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.server;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
+import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 
 /**
  * Implementation of the {@link RenditionInfo} interface.

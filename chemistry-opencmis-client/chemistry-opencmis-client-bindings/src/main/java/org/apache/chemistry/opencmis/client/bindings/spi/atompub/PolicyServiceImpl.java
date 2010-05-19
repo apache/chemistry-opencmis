@@ -30,15 +30,15 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEnt
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.PolicyService;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyId;
+import org.apache.chemistry.opencmis.commons.spi.PolicyService;
 
 /**
  * Policy Service AtomPub client.

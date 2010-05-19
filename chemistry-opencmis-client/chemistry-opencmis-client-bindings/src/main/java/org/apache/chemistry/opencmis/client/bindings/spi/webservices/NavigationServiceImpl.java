@@ -25,13 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.NavigationService;
-import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.api.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.api.ObjectList;
-import org.apache.chemistry.opencmis.commons.api.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
@@ -39,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderContain
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectParentsType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.NavigationServicePort;
+import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 
 /**
  * Navigation Service Web Services client.

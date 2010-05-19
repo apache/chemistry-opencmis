@@ -10,13 +10,13 @@ import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

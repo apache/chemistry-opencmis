@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyIntegerDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefinition;
 
 /**
  * Boolean property definition data implementation.

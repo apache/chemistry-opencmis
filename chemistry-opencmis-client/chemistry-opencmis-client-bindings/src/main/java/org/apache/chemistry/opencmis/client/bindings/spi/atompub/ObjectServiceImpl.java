@@ -33,18 +33,16 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.api.Acl;
-import org.apache.chemistry.opencmis.commons.api.AllowableActions;
-import org.apache.chemistry.opencmis.commons.api.ContentStream;
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.FailedToDeleteData;
-import org.apache.chemistry.opencmis.commons.api.Holder;
-import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.ObjectService;
-import org.apache.chemistry.opencmis.commons.api.Properties;
-import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyId;
-import org.apache.chemistry.opencmis.commons.api.RenditionData;
+import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyId;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -59,6 +57,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteData
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyString;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
 /**
  * Object Service AtomPub client.

@@ -26,11 +26,11 @@ import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
 
 /**
  * CMIS MultiFiling Service.

@@ -23,7 +23,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.api.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
 public class PersistentRelationshipImpl extends AbstractPersistentCmisObject implements Relationship {
 

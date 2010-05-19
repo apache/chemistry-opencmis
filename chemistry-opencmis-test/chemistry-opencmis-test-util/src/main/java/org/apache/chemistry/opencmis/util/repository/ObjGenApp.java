@@ -33,11 +33,11 @@ import joptsimple.OptionSpec;
 
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.api.CmisBinding;
-import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.api.RepositoryService;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
+import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
 public class ObjGenApp {
     public static final String DEFAULT_USER = "";

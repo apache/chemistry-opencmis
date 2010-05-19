@@ -19,9 +19,9 @@
 package org.apache.chemistry.opencmis.inmemory.server;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.api.Properties;
-import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.api.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;

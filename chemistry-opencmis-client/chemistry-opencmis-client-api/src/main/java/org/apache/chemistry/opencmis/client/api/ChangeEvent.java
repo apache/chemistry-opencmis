@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.ChangeEventInfo;
+import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 
 /**
  * Change Event from the change log.

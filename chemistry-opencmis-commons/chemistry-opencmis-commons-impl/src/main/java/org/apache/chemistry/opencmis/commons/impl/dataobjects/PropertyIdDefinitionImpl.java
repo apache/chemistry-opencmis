@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyIdDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyIdDefinition;
 
 /**
  * Id property definition data implementation.

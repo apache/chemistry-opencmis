@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.PolicyType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
-import org.apache.chemistry.opencmis.commons.api.PolicyTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
 
 /**

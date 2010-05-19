@@ -3,7 +3,7 @@ package org.apache.chemistry.opencmis.inmemory;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 public class DummyCallContext implements CallContext {
     private Map<String, String> fParameter = new HashMap<String, String>();

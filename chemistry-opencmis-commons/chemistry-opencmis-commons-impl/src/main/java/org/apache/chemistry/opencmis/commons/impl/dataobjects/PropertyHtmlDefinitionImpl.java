@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyHtmlDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyHtmlDefinition;
 
 /**
  * HTML property definition data implementation.

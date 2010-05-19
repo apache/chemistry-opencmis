@@ -25,16 +25,16 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.setHolderValu
 import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.Holder;
-import org.apache.chemistry.opencmis.commons.api.ObjectList;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DiscoveryServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
+import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 /**
  * Discovery Service Web Services client.

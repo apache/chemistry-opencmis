@@ -2,9 +2,9 @@ package org.apache.chemistry.opencmis.commons.impl.server;
 
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
-import org.apache.chemistry.opencmis.commons.api.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 
 public abstract class AbstractServiceFactory implements CmisServiceFactory {
 

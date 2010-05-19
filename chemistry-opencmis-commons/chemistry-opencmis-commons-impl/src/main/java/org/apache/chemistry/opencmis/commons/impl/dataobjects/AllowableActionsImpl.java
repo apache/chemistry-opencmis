@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.chemistry.opencmis.commons.api.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 
 /**

@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.api.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 
 /**

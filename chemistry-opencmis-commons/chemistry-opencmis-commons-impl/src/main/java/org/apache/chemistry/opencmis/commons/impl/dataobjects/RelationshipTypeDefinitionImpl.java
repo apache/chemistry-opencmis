@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.RelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 
 /**
  * Relationship type definition.

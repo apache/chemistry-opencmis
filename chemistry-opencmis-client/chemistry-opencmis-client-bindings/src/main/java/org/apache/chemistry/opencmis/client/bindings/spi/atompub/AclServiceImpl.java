@@ -22,12 +22,12 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
-import org.apache.chemistry.opencmis.commons.api.Acl;
-import org.apache.chemistry.opencmis.commons.api.AclService;
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.spi.AclService;
 
 /**
  * ACL Service AtomPub client.
@@ -84,7 +84,7 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
      * java.lang.String, java.lang.Boolean,
      * org.apache.opencmis.client.provider.ExtensionsData)
      */
-    public org.apache.chemistry.opencmis.commons.api.Acl getAcl(String repositoryId, String objectId,
+    public org.apache.chemistry.opencmis.commons.data.Acl getAcl(String repositoryId, String objectId,
             Boolean onlyBasicPermissions, ExtensionsData extension) {
 
         // find the link

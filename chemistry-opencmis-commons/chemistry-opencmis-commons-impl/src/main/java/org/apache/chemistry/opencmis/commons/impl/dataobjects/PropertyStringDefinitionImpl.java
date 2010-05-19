@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyStringDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
 
 /**
  * String property definition data implementation.

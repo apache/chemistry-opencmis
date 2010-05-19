@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.api.FolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
 
 /**
  * Folder type definition.

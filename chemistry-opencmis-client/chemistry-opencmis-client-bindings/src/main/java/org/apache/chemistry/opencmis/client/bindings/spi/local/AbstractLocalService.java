@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
-import org.apache.chemistry.opencmis.commons.api.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 
 /**
  * Base class for all local clients.

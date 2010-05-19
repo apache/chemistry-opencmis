@@ -26,13 +26,13 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumRelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipServicePort;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
 
 /**
  * CMIS Relationship Service.

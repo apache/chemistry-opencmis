@@ -20,15 +20,15 @@ package org.apache.chemistry.opencmis.client.bindings.spi;
 
 import java.io.Serializable;
 
-import org.apache.chemistry.opencmis.commons.api.AclService;
-import org.apache.chemistry.opencmis.commons.api.DiscoveryService;
-import org.apache.chemistry.opencmis.commons.api.MultiFilingService;
-import org.apache.chemistry.opencmis.commons.api.NavigationService;
-import org.apache.chemistry.opencmis.commons.api.ObjectService;
-import org.apache.chemistry.opencmis.commons.api.PolicyService;
-import org.apache.chemistry.opencmis.commons.api.RelationshipService;
-import org.apache.chemistry.opencmis.commons.api.RepositoryService;
-import org.apache.chemistry.opencmis.commons.api.VersioningService;
+import org.apache.chemistry.opencmis.commons.spi.AclService;
+import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
+import org.apache.chemistry.opencmis.commons.spi.NavigationService;
+import org.apache.chemistry.opencmis.commons.spi.ObjectService;
+import org.apache.chemistry.opencmis.commons.spi.PolicyService;
+import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
+import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
+import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 
 /**
  * CMIS SPI interface.

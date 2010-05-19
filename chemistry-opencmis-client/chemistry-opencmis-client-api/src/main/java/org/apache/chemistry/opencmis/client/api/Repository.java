@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 
 /**
  * Represents a repository.

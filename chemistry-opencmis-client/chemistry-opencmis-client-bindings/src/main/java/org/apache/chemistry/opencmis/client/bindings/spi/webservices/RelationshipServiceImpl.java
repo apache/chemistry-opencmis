@@ -23,14 +23,14 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.ObjectList;
-import org.apache.chemistry.opencmis.commons.api.RelationshipService;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumRelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipServicePort;
+import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 
 /**
  * Relationship Service Web Services client.

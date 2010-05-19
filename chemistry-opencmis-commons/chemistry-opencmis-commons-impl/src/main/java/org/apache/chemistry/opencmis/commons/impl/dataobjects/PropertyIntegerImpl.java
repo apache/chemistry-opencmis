@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyInteger;
+import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 
 /**
  * Integer property data implementation.

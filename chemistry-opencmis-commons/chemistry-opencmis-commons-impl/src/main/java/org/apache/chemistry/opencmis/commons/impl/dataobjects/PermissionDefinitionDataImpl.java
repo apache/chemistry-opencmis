@@ -23,7 +23,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
  * 
  */
 public class PermissionDefinitionDataImpl extends AbstractExtensionData implements
-        org.apache.chemistry.opencmis.commons.api.PermissionDefinition {
+        org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition {
 
     private static final long serialVersionUID = 1L;
 

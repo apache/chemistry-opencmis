@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyBooleanDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
 
 /**
  * Boolean property definition data implementation.

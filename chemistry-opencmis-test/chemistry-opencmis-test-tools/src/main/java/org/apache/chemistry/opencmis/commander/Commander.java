@@ -28,8 +28,8 @@ import java.util.Properties;
 
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.api.CmisBinding;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
  * Commander tool main.

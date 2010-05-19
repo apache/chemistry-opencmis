@@ -24,8 +24,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.chemistry.opencmis.commons.api.Acl;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisACLType;
@@ -33,6 +32,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumACLPropagation;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
 
 /**
  * CMIS ACL Service.

@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.GregorianCalendar;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyDateTimeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 
 /**

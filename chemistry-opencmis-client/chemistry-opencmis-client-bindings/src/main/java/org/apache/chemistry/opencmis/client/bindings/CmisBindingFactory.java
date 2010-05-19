@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
  * Default factory for a CMIS binding instance.

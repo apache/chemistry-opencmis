@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.client.bindings.cache.impl.LruCacheLevelImp
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 
 /**
  * A cache for type definition objects.

@@ -20,9 +20,9 @@ package org.apache.chemistry.opencmis.server.impl.dummy;
 
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

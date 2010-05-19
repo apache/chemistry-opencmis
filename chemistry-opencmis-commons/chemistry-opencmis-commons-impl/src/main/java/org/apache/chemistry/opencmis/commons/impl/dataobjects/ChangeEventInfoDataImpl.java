@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.GregorianCalendar;
 
-import org.apache.chemistry.opencmis.commons.api.ChangeEventInfo;
+import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 
 /**

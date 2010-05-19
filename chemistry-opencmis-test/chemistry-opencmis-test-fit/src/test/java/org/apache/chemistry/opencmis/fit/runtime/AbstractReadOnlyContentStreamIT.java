@@ -25,7 +25,7 @@ import java.io.InputStream;
 import junit.framework.Assert;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.junit.Test;
 
 public abstract class AbstractReadOnlyContentStreamIT extends AbstractSessionTest {

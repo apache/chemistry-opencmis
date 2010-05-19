@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.api.PolicyTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
 
 /**
  * Policy type definition.

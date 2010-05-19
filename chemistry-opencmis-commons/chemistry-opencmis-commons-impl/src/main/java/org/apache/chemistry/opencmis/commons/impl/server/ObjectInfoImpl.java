@@ -21,10 +21,10 @@ package org.apache.chemistry.opencmis.commons.impl.server;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.ObjectData;
-import org.apache.chemistry.opencmis.commons.api.server.ObjectInfo;
-import org.apache.chemistry.opencmis.commons.api.server.RenditionInfo;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
+import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 
 /**
  * Implementation of the {@link ObjectInfo} interface.

@@ -22,12 +22,12 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convertExtens
 import static org.apache.chemistry.opencmis.commons.impl.Converter.setExtensionValues;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.MultiFilingService;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort;
+import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
 
 /**
  * MultiFiling Service Web Services client.

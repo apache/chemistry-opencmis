@@ -23,12 +23,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.chemistry.opencmis.commons.api.Ace;
-import org.apache.chemistry.opencmis.commons.api.CmisBinding;
-import org.apache.chemistry.opencmis.commons.api.ContentStream;
-import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
  * A session is associated with a specific connection to a CMIS repository. A

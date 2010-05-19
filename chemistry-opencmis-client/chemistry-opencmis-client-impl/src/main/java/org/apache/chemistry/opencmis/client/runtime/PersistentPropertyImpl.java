@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Property;
-import org.apache.chemistry.opencmis.commons.api.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;

@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**

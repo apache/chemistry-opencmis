@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.bindings.framework.AbstractSimpleReadWriteTests;
-import org.apache.chemistry.opencmis.commons.api.CmisBinding;
+import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>

@@ -20,10 +20,10 @@ package org.apache.chemistry.opencmis.fit.runtime;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.AclCapabilities;
-import org.apache.chemistry.opencmis.commons.api.PermissionMapping;
-import org.apache.chemistry.opencmis.commons.api.RepositoryCapabilities;
-import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.junit.Assert;

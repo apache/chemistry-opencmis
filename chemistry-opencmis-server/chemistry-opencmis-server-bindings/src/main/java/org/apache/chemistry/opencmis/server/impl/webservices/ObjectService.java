@@ -33,9 +33,8 @@ import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.api.RenditionData;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -52,6 +51,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUnfileObject;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumVersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteTreeResponse.FailedToDelete;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
 
 import com.sun.xml.ws.developer.StreamingAttachment;
 
@@ -194,8 +194,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
-            org.apache.chemistry.opencmis.commons.api.Holder<String> changeTokenHolder = convertHolder(changeToken);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> objectIdHolder = convertHolder(objectId);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
             service.deleteContentStream(repositoryId, objectIdHolder, changeTokenHolder, extData);
@@ -352,7 +352,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> objectIdHolder = convertHolder(objectId);
             ExtensionsData extData = convertExtensionHolder(extension);
 
             service.moveObject(repositoryId, objectIdHolder, targetFolderId, sourceFolderId, extData);
@@ -373,8 +373,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
-            org.apache.chemistry.opencmis.commons.api.Holder<String> changeTokenHolder = convertHolder(changeToken);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> objectIdHolder = convertHolder(objectId);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
             service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
@@ -396,8 +396,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            org.apache.chemistry.opencmis.commons.api.Holder<String> objectIdHolder = convertHolder(objectId);
-            org.apache.chemistry.opencmis.commons.api.Holder<String> changeTokenHolder = convertHolder(changeToken);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> objectIdHolder = convertHolder(objectId);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
             service.updateProperties(repositoryId, objectIdHolder, changeTokenHolder, convert(properties), extData);

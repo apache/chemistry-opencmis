@@ -21,14 +21,14 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.commons.api.Acl;
-import org.apache.chemistry.opencmis.commons.api.AclService;
-import org.apache.chemistry.opencmis.commons.api.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumACLPropagation;
+import org.apache.chemistry.opencmis.commons.spi.AclService;
 
 /**
  * ACL Service Web Services client.

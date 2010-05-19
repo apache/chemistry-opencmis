@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.server.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.api.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 /**
  * Implementation of the {@link CallContext} interface.

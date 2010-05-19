@@ -21,9 +21,9 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.api.AclCapabilities;
-import org.apache.chemistry.opencmis.commons.api.PermissionDefinition;
-import org.apache.chemistry.opencmis.commons.api.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 

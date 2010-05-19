@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.client.api;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.api.Ace;
-import org.apache.chemistry.opencmis.commons.api.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**

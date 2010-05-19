@@ -18,12 +18,12 @@
  */
 package org.apache.chemistry.opencmis.util.repository;
 
-import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.api.CmisBinding;
-import org.apache.chemistry.opencmis.commons.api.NavigationService;
-import org.apache.chemistry.opencmis.commons.api.ObjectService;
-import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.api.RepositoryService;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
+import org.apache.chemistry.opencmis.commons.spi.NavigationService;
+import org.apache.chemistry.opencmis.commons.spi.ObjectService;
+import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
 public class MultiThreadedObjectGenerator {
 

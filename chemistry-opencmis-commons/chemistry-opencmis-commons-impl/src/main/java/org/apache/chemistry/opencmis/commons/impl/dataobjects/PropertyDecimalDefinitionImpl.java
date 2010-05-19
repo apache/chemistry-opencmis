@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.math.BigDecimal;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyDecimalDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 
 /**

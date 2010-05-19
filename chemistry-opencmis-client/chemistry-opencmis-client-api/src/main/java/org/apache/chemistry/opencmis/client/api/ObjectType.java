@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 

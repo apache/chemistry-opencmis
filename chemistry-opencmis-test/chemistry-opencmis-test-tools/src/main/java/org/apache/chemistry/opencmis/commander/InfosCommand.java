@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.commander;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.CmisBinding;
-import org.apache.chemistry.opencmis.commons.api.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 public class InfosCommand implements Command {
 

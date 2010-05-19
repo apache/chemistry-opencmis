@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.api.PropertyUriDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
 
 /**
  * URI property definition data implementation.

@@ -29,14 +29,14 @@ import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.chemistry.opencmis.commons.api.ObjectList;
-import org.apache.chemistry.opencmis.commons.api.server.CmisService;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DiscoveryServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
 
 /**
  * CMIS Discovery Service.
@@ -53,7 +53,7 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
         try {
             service = getService(wsContext, repositoryId);
 
-            org.apache.chemistry.opencmis.commons.api.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
 
             ObjectList changesList = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties,
                     filter, includePolicyIds, includeAcl, maxItems, convert(extension));

@@ -25,20 +25,20 @@ import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.Ace;
-import org.apache.chemistry.opencmis.commons.api.Acl;
-import org.apache.chemistry.opencmis.commons.api.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.commons.api.ContentStream;
-import org.apache.chemistry.opencmis.commons.api.Properties;
-import org.apache.chemistry.opencmis.commons.api.PropertyBoolean;
-import org.apache.chemistry.opencmis.commons.api.PropertyData;
-import org.apache.chemistry.opencmis.commons.api.PropertyDateTime;
-import org.apache.chemistry.opencmis.commons.api.PropertyDecimal;
-import org.apache.chemistry.opencmis.commons.api.PropertyHtml;
-import org.apache.chemistry.opencmis.commons.api.PropertyId;
-import org.apache.chemistry.opencmis.commons.api.PropertyInteger;
-import org.apache.chemistry.opencmis.commons.api.PropertyString;
-import org.apache.chemistry.opencmis.commons.api.PropertyUri;
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
+import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
+import org.apache.chemistry.opencmis.commons.data.PropertyHtml;
+import org.apache.chemistry.opencmis.commons.data.PropertyId;
+import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
+import org.apache.chemistry.opencmis.commons.data.PropertyString;
+import org.apache.chemistry.opencmis.commons.data.PropertyUri;
+import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 
 /**
  * CMIS binding object factory implementation.
