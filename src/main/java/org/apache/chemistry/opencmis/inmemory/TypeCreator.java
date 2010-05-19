@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.inmemory;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.api.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 
 /**
  * A simple interface to create a type system. This needs to be implemented by a
