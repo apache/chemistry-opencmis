@@ -118,7 +118,7 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
         }
     }
 
-    public ObjectList query(CallContext context, String repositoryId, String statement, Boolean searchAllVersions,
+     public ObjectList query(CallContext context, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
@@ -127,33 +127,52 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
 
         String user = context.getUsername();
-        String tableName = null;
         List<ObjectData> lod = new ArrayList<ObjectData>();
-        // iterate over all the objects and check for each if the query matches
-        for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
-            StoredObject so = objectStore.getObjectById(objectId);
-            if (tableName != null) {
-                // type already available: check early
-                if (!typeMatches(context, repositoryId, tableName, so.getTypeId())) {
-                    continue;
-                }
-            }
-            InMemoryQueryWalker.query_return ret = queryStoredObject(statement, so);
-            if (tableName == null) {
-                // first time: check late
-                tableName = ret.tableName.toLowerCase();
-                if (!typeMatches(context, repositoryId, tableName, so.getTypeId())) {
-                    continue;
-                }
-            }
-            if (ret.matches) {
-                String filter = "*"; // TODO select_list
-                ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, user,
-                        includeAllowableActions, includeRelationships, renditionFilter, false, false, null);
-                lod.add(od);
-            }
-        }
 
+        try {
+            CMISQLParser parser = getParser(statement);
+
+            CMISQLParser.query_return parsedStatement = parser.query();
+            if (parser.errorMessage != null) {
+                throw new CmisRuntimeException("Cannot parse query: " + statement + " (" + parser.errorMessage + ")");
+            }
+            CommonTree tree = (CommonTree) parsedStatement.getTree();            
+            TokenStream tokens = parser.getTokenStream();
+
+            String tableName = null;
+            // iterate over all the objects and check for each if the query matches
+            for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
+                StoredObject so = objectStore.getObjectById(objectId);
+                if (tableName != null) {
+                    // type already available: check early
+                    if (!typeMatches(context, repositoryId, tableName, so.getTypeId())) {
+                        continue;
+                    }
+                }
+                CommonTreeNodeStream nodes = new CommonTreeNodeStream(tree);
+                nodes.setTokenStream(tokens);
+                InMemoryQueryWalker walker = new InMemoryQueryWalker(nodes);
+                InMemoryQueryWalker.query_return ret = matchStoredObject(walker, so);
+                if (tableName == null) {
+                    // first time: check late
+                    tableName = ret.tableName.toLowerCase();
+                    if (!typeMatches(context, repositoryId, tableName, so.getTypeId())) {
+                        continue;
+                    }
+                }
+                if (ret.matches) {
+                    String filter = "*"; // TODO select_list
+                    ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, user,
+                            includeAllowableActions, includeRelationships, renditionFilter, false, false, null);
+                    lod.add(od);
+                }
+            }
+
+        } catch (IOException e) {
+            throw new CmisRuntimeException(e.getMessage(), e);
+        } catch (RecognitionException e) {
+            throw new CmisRuntimeException("Cannot parse query: " + statement, e);
+        }
         // TODO order_by_clause
 
         ObjectListImpl objList = new ObjectListImpl();
@@ -176,6 +195,20 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
         return false;
     }
 
+
+    private CMISQLParser getParser(String statement) throws RecognitionException, IOException {
+        CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
+        TokenSource lexer = new CMISQLLexer(input);
+        TokenStream tokens = new CommonTokenStream(lexer);
+        CMISQLParser parser = new CMISQLParser(tokens);
+        return parser;
+    }
+        
+    private InMemoryQueryWalker.query_return matchStoredObject(InMemoryQueryWalker walker, StoredObject so) throws RecognitionException {
+        InMemoryQueryWalker.query_return res = walker.query(so);
+        return res;
+    }
+    
     protected InMemoryQueryWalker.query_return queryStoredObject(String statement, StoredObject so) {
         try {
             CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));

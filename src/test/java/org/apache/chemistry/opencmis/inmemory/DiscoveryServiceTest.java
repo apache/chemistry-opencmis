@@ -92,6 +92,11 @@ public class DiscoveryServiceTest extends AbstractServiceTst {
         // root + 2 at level 1 + 2*2 at level 2 = 7
         assertEquals(BigInteger.valueOf(7), res.getNumItems());
 
+        statement = "SELECT * FROM cmis:folder WHERE name='Jens'";
+        res = fDiscSvc.query(fRepositoryId, statement, searchAllVersions, includeAllowableActions,
+                includeRelationships, renditionFilter, maxItems, skipCount, null);
+        assertEquals(BigInteger.valueOf(0), res.getNumItems());
+
         log.info("... testQuery() finished.");
     }
 
