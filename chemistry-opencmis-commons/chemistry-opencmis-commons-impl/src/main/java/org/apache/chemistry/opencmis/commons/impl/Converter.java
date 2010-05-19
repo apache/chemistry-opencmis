@@ -66,6 +66,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyUri;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
@@ -220,7 +221,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumPropertyType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumSupportedPermissions;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumTypeOfChanges;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUpdatability;
-import org.apache.chemistry.opencmis.commons.spi.Choice;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 import com.sun.xml.ws.developer.StreamingDataHandler;

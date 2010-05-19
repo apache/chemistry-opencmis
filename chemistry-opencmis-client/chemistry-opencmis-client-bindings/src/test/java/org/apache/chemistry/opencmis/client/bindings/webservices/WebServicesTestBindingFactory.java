@@ -41,6 +41,8 @@ public class WebServicesTestBindingFactory {
             isPrefix = false;
         } else if (urlLower.endsWith(".xml")) {
             isPrefix = false;
+        } else if (urlLower.endsWith(".aspx")) {
+            isPrefix = false;
         }
 
         return createBinding(url, isPrefix, username, password);
