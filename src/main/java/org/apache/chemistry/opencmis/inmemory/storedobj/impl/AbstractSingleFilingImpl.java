@@ -82,6 +82,10 @@ public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implemen
         return fParent;
     }
 
+    public boolean hasParent() {
+      return null != fParent;
+    }
+
     public List<Folder> getParents() {
         if (null == fParent)
             return Collections.emptyList();

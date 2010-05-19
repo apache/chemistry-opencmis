@@ -249,4 +249,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         return null != fContent;
     }
 
+    public boolean hasParent() {
+      return true;
+    }
+
 }

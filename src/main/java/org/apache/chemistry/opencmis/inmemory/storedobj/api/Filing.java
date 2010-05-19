@@ -44,6 +44,16 @@ public interface Filing {
      * @return list of parent folders
      */
     List<Folder> getParents();
+    
+    /**
+     * usually true except for the root folder, optimized call that just tests
+     * existence to provide information for AtomPub links (much cheaper than
+     * calling getParents() and test for empty result.
+     * 
+     * @return
+     *    true if object has a parent, false if it is a root object
+     */
+    boolean hasParent();
 
     /**
      * Move an object to a different folder. Source and target object are
