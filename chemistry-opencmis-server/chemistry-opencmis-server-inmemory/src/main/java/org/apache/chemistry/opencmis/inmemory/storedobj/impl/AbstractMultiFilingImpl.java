@@ -103,6 +103,10 @@ public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implement
         return fParents;
     }
 
+    public boolean hasParent() {
+      return null != fParents && !fParents.isEmpty();
+    }
+      
     /*
      * (non-Javadoc)
      * 

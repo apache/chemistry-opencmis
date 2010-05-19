@@ -116,7 +116,7 @@ public class AtomLinkInfoProvider {
         // Filing
         if (so instanceof Filing) {
             Filing sop = ((Filing) so);
-            objInfo.setHasParent(!sop.getParents().isEmpty());
+            objInfo.setHasParent(sop.hasParent());
         } else {
             objInfo.setHasParent(false);
         }
