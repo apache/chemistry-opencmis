@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,9 +52,6 @@ import org.w3c.dom.Document;
 
 /**
  * CMIS Browser Servlet.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class BrowseServlet extends HttpServlet {
 
@@ -131,7 +128,7 @@ public class BrowseServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getParameter(PARAM_URL) == null) {
+        if ((req.getQueryString() == null) || (!req.getQueryString().startsWith(PARAM_URL + "="))) {
             printInput(req, resp);
             return;
         }
@@ -143,36 +140,12 @@ public class BrowseServlet extends HttpServlet {
      * Main method of the browser.
      */
     protected void doBrowse(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String browseUrl = req.getParameter(PARAM_URL);
+        String browseUrl = URLDecoder.decode(req.getQueryString().substring(PARAM_URL.length() + 1), "UTF-8");
 
         // check URL
         if (!browseUrl.matches(fAllow)) {
             printError(req, resp, "Prohibited URL!", null);
             return;
-        }
-
-        // re-encode parameters
-        int qm = browseUrl.indexOf('?');
-        if ((qm > -1) && (browseUrl.length() > qm + 1)) {
-            StringBuilder urlSb = new StringBuilder(browseUrl.substring(0, qm + 1));
-            StringBuilder paramSb = new StringBuilder();
-
-            for (int i = qm + 1; i < browseUrl.length(); i++) {
-                char c = browseUrl.charAt(i);
-                if ((c == '=') || (c == '&')) {
-                    urlSb.append(URLEncoder.encode(paramSb.toString(), "UTF-8"));
-                    urlSb.append(c);
-                    paramSb = new StringBuilder();
-                } else {
-                    paramSb.append(c);
-                }
-            }
-
-            if (paramSb.length() > 0) {
-                urlSb.append(URLEncoder.encode(paramSb.toString(), "UTF-8"));
-            }
-
-            browseUrl = urlSb.toString();
         }
 
         try {
@@ -220,7 +193,7 @@ public class BrowseServlet extends HttpServlet {
                 // apply stylesheet
                 TransformerFactory f = TransformerFactory.newInstance();
                 Transformer t = f.newTransformer(stylesheet);
-                t.setParameter("browseUrl", getServletUrl(req) + "?url=");
+                t.setParameter("browseUrl", getServletUrl(req) + "?" + PARAM_URL + "=");
                 t.setParameter("auxRoot", getAuxRoot(req, fAuxRoot));
 
                 resp.setContentType("text/html");
