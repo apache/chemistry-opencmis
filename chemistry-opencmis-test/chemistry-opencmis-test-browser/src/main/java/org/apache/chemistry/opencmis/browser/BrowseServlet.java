@@ -61,6 +61,8 @@ public class BrowseServlet extends HttpServlet {
 
     private static final String CONTEXT_PREFIX = "{ctx}";
     private static final String PARAM_URL = "url";
+    private static final int PARAM_URL_MIN_LEN = PARAM_URL.length() + "=".length() + "http".length() + "://".length()
+            + 1;
     private static final String INIT_PARAM_AUXROOT = "auxroot";
     private static final String INIT_PARAM_ALLOW = "allow";
     private static final String INIT_PARAM_STYLESHEET = "stylesheet:";
@@ -128,7 +130,8 @@ public class BrowseServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if ((req.getQueryString() == null) || (!req.getQueryString().startsWith(PARAM_URL + "="))) {
+        if ((req.getQueryString() == null) || (!req.getQueryString().startsWith(PARAM_URL + "="))
+                || (req.getQueryString().length() < PARAM_URL_MIN_LEN)) {
             printInput(req, resp);
             return;
         }
@@ -140,7 +143,14 @@ public class BrowseServlet extends HttpServlet {
      * Main method of the browser.
      */
     protected void doBrowse(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String browseUrl = URLDecoder.decode(req.getQueryString().substring(PARAM_URL.length() + 1), "UTF-8");
+        String browseUrl = req.getQueryString().substring(PARAM_URL.length() + 1);
+
+        // check if decoding is necessary
+        // (if the char after 'http' or 'https' is not a colon, then it must be
+        // decoded)
+        if (browseUrl.charAt(4) != ':' && browseUrl.charAt(5) != ':') {
+            browseUrl = URLDecoder.decode(browseUrl, "UTF-8");
+        }
 
         // check URL
         if (!browseUrl.matches(fAllow)) {
