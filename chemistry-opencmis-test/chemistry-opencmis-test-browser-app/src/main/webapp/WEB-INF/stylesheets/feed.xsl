@@ -40,9 +40,9 @@
 					<xsl:if test="atom:feed/atom:link[@rel='service']">
 						<a href="{$browseUrl}{atom:feed/atom:link[@rel='service']/@href}">Service</a> -
 					</xsl:if>
-					<xsl:if test="atom:feed/atom:link[@rel='seld']">
+					<xsl:if test="atom:feed/atom:link[@rel='self']">
 						<a href="{$browseUrl}{atom:feed/atom:link[@rel='self']/@href}">Entry</a> -
-					</xsl:if>					
+					</xsl:if>
 					<xsl:if test="atom:feed/atom:link[@rel='up']">
 						<a href="{$browseUrl}{atom:feed/atom:link[@rel='up']/@href}">Up</a> -
 					</xsl:if>
@@ -56,16 +56,16 @@
 					</xsl:if>
 					<xsl:if test="atom:feed/atom:link[@rel='previous']">
 						<a href="{$browseUrl}{atom:feed/atom:link[@rel='previous']/@href}">Previous</a> -
-					</xsl:if>					
+					</xsl:if>
 					<xsl:if test="atom:feed/atom:link[@rel='next']">
 						<a href="{$browseUrl}{atom:feed/atom:link[@rel='next']/@href}">Next</a> -
-					</xsl:if>		
+					</xsl:if>
 					<xsl:if test="atom:feed/atom:link[@rel='last']">
 						<a href="{$browseUrl}{atom:feed/atom:link[@rel='last']/@href}">Last</a> -
-					</xsl:if>						
+					</xsl:if>
 					<xsl:if test="atom:feed/atom:link[@rel='http://docs.oasis-open.org/ns/cmis/link/200908/foldertree']">
 						<a href="{$browseUrl}{atom:feed/atom:link[@rel='http://docs.oasis-open.org/ns/cmis/link/200908/foldertree']/@href}">Folder Tree</a> -
-					</xsl:if>				
+					</xsl:if>
 					<xsl:if test="atom:feed/atom:link[@rel='http://docs.oasis-open.org/ns/cmis/link/200908/allowableactions']">
 						<a href="{$browseUrl}{atom:feed/atom:link[@rel='http://docs.oasis-open.org/ns/cmis/link/200908/allowableactions']/@href}">Allowable Actions</a> -
 					</xsl:if>
@@ -99,7 +99,7 @@
 						<xsl:variable name="odd">
 							<xsl:if test="(position() mod 2) != 1"></xsl:if>
 							<xsl:if test="(position() mod 2) = 1">-odd</xsl:if>
-						</xsl:variable>					
+						</xsl:variable>
 						
 						<tr>
 							<td class="tdlinks{$odd}" rowspan="2">
@@ -156,7 +156,7 @@
 							<td class="tdlinks{$odd}" colspan="4">
 								<a href="{$browseUrl}{atom:link[@rel='self']/@href}" class="actionlink">Entry</a> - 
 								<a href="{$browseUrl}{atom:link[@rel='describedby']/@href}" class="actionlink">Type Info</a> -
-								<xsl:if test="atom:link[@rel='down']">							
+								<xsl:if test="atom:link[@rel='down']">
 									<xsl:for-each select="atom:link[@rel='down']">
 										<a href="{$browseUrl}{@href}" class="actionlink">Down (<xsl:value-of select="@type" />)</a> -
 									</xsl:for-each>
