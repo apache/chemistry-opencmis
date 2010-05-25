@@ -46,6 +46,33 @@ public interface NavigationService {
      * 
      * @param repositoryId
      *            the identifier for the repository
+     * @param folderId
+     *            the identifier for the folder
+     * @param filter
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            defines which properties must be returned by the repository
+     *            (default is repository specific)
+     * @param orderBy
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            define the order of the result set. Each query name must be
+     *            followed by the ascending modifier "ASC" or the descending
+     *            modifier "DESC" (default is repository specific)
+     * @param includeAllowableActions
+     *            <em>(optional)</em> if <code>true</code>, then the repository
+     *            must return the available actions for each object in the
+     *            result set (default is <code>false</code>)
+     * @param includeRelationships
+     *            <em>(optional)</em> indicates what relationships in which the
+     *            objects participate must be returned (default is
+     *            {@link IncludeRelationships#NONE})
+     * @param renditionFilter
+     *            <em>(optional)</em> indicates what set of renditions the
+     *            repository must return whose kind matches this filter (default
+     *            is <code>"cmis:none"</code>)
+     * @param includePathSegment
+     *            <em>(optional)</em> if <code>true</code>, returns a path
+     *            segment for each child object for use in constructing that
+     *            object's path (default is <code>false</code>)
      * @param maxItems
      *            <em>(optional)</em> the maximum number of items to return in a
      *            response (default is repository specific)
@@ -64,7 +91,32 @@ public interface NavigationService {
      * 
      * @param repositoryId
      *            the identifier for the repository
-     */
+     * @param folderId
+     *            the identifier for the folder
+     * @param depth
+     *            the number of levels of depth in the folder hierarchy from
+     *            which to return results
+     * @param filter
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            defines which properties must be returned by the repository
+     *            (default is repository specific)
+     * @param includeAllowableActions
+     *            <em>(optional)</em> if <code>true</code>, then the repository
+     *            must return the available actions for each object in the
+     *            result set (default is <code>false</code>)
+     * @param includeRelationships
+     *            <em>(optional)</em> indicates what relationships in which the
+     *            objects participate must be returned (default is
+     *            {@link IncludeRelationships#NONE})
+     * @param renditionFilter
+     *            <em>(optional)</em> indicates what set of renditions the
+     *            repository must return whose kind matches this filter (default
+     *            is <code>"cmis:none"</code>)
+     * @param includePathSegment
+     *            <em>(optional)</em> if <code>true</code>, returns a path
+     *            segment for each child object for use in constructing that
+     *            object's path (default is <code>false</code>)
+     **/
     List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, ExtensionsData extension);
@@ -75,7 +127,32 @@ public interface NavigationService {
      * 
      * @param repositoryId
      *            the identifier for the repository
-     */
+     * @param folderId
+     *            the identifier for the folder
+     * @param depth
+     *            the number of levels of depth in the folder hierarchy from
+     *            which to return results
+     * @param filter
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            defines which properties must be returned by the repository
+     *            (default is repository specific)
+     * @param includeAllowableActions
+     *            <em>(optional)</em> if <code>true</code>, then the repository
+     *            must return the available actions for each object in the
+     *            result set (default is <code>false</code>)
+     * @param includeRelationships
+     *            <em>(optional)</em> indicates what relationships in which the
+     *            objects participate must be returned (default is
+     *            {@link IncludeRelationships#NONE})
+     * @param renditionFilter
+     *            <em>(optional)</em> indicates what set of renditions the
+     *            repository must return whose kind matches this filter (default
+     *            is <code>"cmis:none"</code>)
+     * @param includePathSegment
+     *            <em>(optional)</em> if <code>true</code>, returns a path
+     *            segment for each child object for use in constructing that
+     *            object's path (default is <code>false</code>)
+     **/
     List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, ExtensionsData extension);
@@ -85,6 +162,28 @@ public interface NavigationService {
      * 
      * @param repositoryId
      *            the identifier for the repository
+     * @param objectId
+     *            the identifier for the object
+     * @param filter
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            defines which properties must be returned by the repository
+     *            (default is repository specific)
+     * @param includeAllowableActions
+     *            <em>(optional)</em> if <code>true</code>, then the repository
+     *            must return the available actions for each object in the
+     *            result set (default is <code>false</code>)
+     * @param includeRelationships
+     *            <em>(optional)</em> indicates what relationships in which the
+     *            objects participate must be returned (default is
+     *            {@link IncludeRelationships#NONE})
+     * @param renditionFilter
+     *            <em>(optional)</em> indicates what set of renditions the
+     *            repository must return whose kind matches this filter (default
+     *            is <code>"cmis:none"</code>)
+     * @param includeRelativePathSegment
+     *            <em>(optional)</em> if <code>true</code>, returns a relative
+     *            path segment for each parent object for use in constructing
+     *            that object's path (default is <code>false</code>)
      */
     List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
@@ -95,6 +194,12 @@ public interface NavigationService {
      * 
      * @param repositoryId
      *            the identifier for the repository
+     * @param folderId
+     *            the identifier for the folder
+     * @param filter
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            defines which properties must be returned by the repository
+     *            (default is repository specific)
      */
     ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension);
 
@@ -104,6 +209,29 @@ public interface NavigationService {
      * 
      * @param repositoryId
      *            the identifier for the repository
+     * @param folderId
+     *            the identifier for the folder
+     * @param filter
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            defines which properties must be returned by the repository
+     *            (default is repository specific)
+     * @param orderBy
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            define the order of the result set. Each query name must be
+     *            followed by the ascending modifier "ASC" or the descending
+     *            modifier "DESC" (default is repository specific)
+     * @param includeAllowableActions
+     *            <em>(optional)</em> if <code>true</code>, then the repository
+     *            must return the available actions for each object in the
+     *            result set (default is <code>false</code>)
+     * @param includeRelationships
+     *            <em>(optional)</em> indicates what relationships in which the
+     *            objects participate must be returned (default is
+     *            {@link IncludeRelationships#NONE})
+     * @param renditionFilter
+     *            <em>(optional)</em> indicates what set of renditions the
+     *            repository must return whose kind matches this filter (default
+     *            is <code>"cmis:none"</code>)
      * @param maxItems
      *            <em>(optional)</em> the maximum number of items to return in a
      *            response (default is repository specific)

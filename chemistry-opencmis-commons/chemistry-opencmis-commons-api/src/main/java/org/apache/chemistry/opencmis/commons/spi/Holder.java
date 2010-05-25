@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.spi;
 
+/**
+ * Holder for IN/OUT parameters.
+ */
 public final class Holder<T> {
 
     private T fValue;
