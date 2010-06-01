@@ -58,6 +58,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictExcept
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
@@ -237,6 +238,37 @@ public class ObjectServiceTest extends AbstractServiceTst {
         log.info("... testCreateDocumentWithContent() finished.");
     }
 
+    @Test
+    public void testCreateDocumentWithContentNoFileNameNoMimeType() {
+        log.info("starting testCreateDocumentWithContent() ...");
+        ContentStreamDataImpl contentStream = null;
+        List<String> policies = null;
+        Acl addACEs = null;
+        Acl removeACEs = null;
+        ExtensionsData extension = null;
+
+        Properties props = createDocumentProperties(DOCUMENT_ID, DOCUMENT_TYPE_ID);
+
+        contentStream = (ContentStreamDataImpl) createContent();
+        contentStream.setFileName(null);
+        contentStream.setMimeType(null);
+
+        String id = null;
+        try {
+            id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, contentStream, VersioningState.NONE, policies,
+                    addACEs, removeACEs, extension);
+            if (null == id)
+                fail("createDocument failed.");
+
+            ContentStream sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
+                    BigInteger.valueOf(-1) /* length */, null);
+            assertNotNull(sd.getMimeType());
+            assertNotNull(sd.getFileName());
+        } catch (Exception e) {
+            fail("createDocument() failed with exception: " + e);
+        }
+    }
+    
     @Test
     public void testCreateDocumentFromSource() {
         log.info("starting testCreateDocumentFromSource() ...");
