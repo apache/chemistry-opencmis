@@ -75,8 +75,14 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
             fContent = null;
         } else {
             fContent = new ContentStreamDataImpl();
-            fContent.setFileName(content.getFileName());
-            fContent.setMimeType(content.getMimeType());
+            String fileName = content.getFileName();
+            if (null == fileName || fileName.length() <= 0)
+                fileName = getName(); // use name of document as fallback
+            fContent.setFileName(fileName);
+            String mimeType = content.getMimeType();
+            if (null == mimeType || mimeType.length() <= 0)
+                mimeType = "application/octet-stream";  // use as fallback
+            fContent.setMimeType(mimeType);
             try {
                 fContent.setContent(content.getStream());
             } catch (IOException e) {
