@@ -22,19 +22,16 @@ import java.math.BigInteger;
 
 /**
  * Base exception class for all CMIS client exceptions.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class CmisBaseException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
     /** Error code used by the Web Services binding. */
-    private BigInteger fCode;
+    private BigInteger code = BigInteger.ZERO;
 
     /** Content the of the error page returned by the AtomPub server. */
-    private String fErrorContent;
+    private String errorContent;
 
     /**
      * Default constructor.
@@ -55,7 +52,7 @@ public abstract class CmisBaseException extends RuntimeException {
      */
     public CmisBaseException(String message, BigInteger code, Throwable cause) {
         super(message, cause);
-        fCode = code;
+        this.code = code;
     }
 
     /**
@@ -70,7 +67,7 @@ public abstract class CmisBaseException extends RuntimeException {
      */
     public CmisBaseException(String message, String errorContent, Throwable cause) {
         super(message, cause);
-        fErrorContent = errorContent;
+        this.errorContent = errorContent;
     }
 
     /**
@@ -83,7 +80,7 @@ public abstract class CmisBaseException extends RuntimeException {
      */
     public CmisBaseException(String message, BigInteger code) {
         super(message);
-        fCode = code;
+        this.code = code;
     }
 
     /**
@@ -96,7 +93,7 @@ public abstract class CmisBaseException extends RuntimeException {
      */
     public CmisBaseException(String message, String errorContent) {
         super(message);
-        fErrorContent = errorContent;
+        this.errorContent = errorContent;
     }
 
     /**
@@ -129,7 +126,7 @@ public abstract class CmisBaseException extends RuntimeException {
      *         send an error code or the binding doesn't support error codes.
      */
     public BigInteger getCode() {
-        return fCode;
+        return code;
     }
 
     /**
@@ -140,6 +137,6 @@ public abstract class CmisBaseException extends RuntimeException {
      *         didn't send text content.
      */
     public String getErrorContent() {
-        return fErrorContent;
+        return errorContent;
     }
 }
