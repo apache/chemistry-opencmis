@@ -163,7 +163,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
                 "Sample Decimal Property");
         propertyDefinitions.put(prop3.getId(), prop3);
 
-        prop3 = PropertyCreationHelper.createDecimalDefinition("DecimalPropMV", "Sample Decimal multi-value Property");
+        prop3 = PropertyCreationHelper.createDecimalMultiDefinition("DecimalPropMV", "Sample Decimal multi-value Property");
         propertyDefinitions.put(prop3.getId(), prop3);
 
         PropertyHtmlDefinitionImpl prop4 = PropertyCreationHelper.createHtmlDefinition("HtmlProp",
@@ -176,14 +176,14 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
         PropertyIdDefinitionImpl prop5 = PropertyCreationHelper.createIdDefinition("IdProp", "Sample Id Property");
         propertyDefinitions.put(prop5.getId(), prop5);
 
-        prop5 = PropertyCreationHelper.createIdDefinition("IdPropMV", "Sample Id Html multi-value Property");
+        prop5 = PropertyCreationHelper.createIdMultiDefinition("IdPropMV", "Sample Id Html multi-value Property");
         propertyDefinitions.put(prop5.getId(), prop5);
 
         PropertyIntegerDefinitionImpl prop6 = PropertyCreationHelper.createIntegerDefinition("IntProp",
                 "Sample Int Property");
         propertyDefinitions.put(prop6.getId(), prop6);
 
-        prop6 = PropertyCreationHelper.createIntegerDefinition("IntPropMV", "Sample Int multi-value Property");
+        prop6 = PropertyCreationHelper.createIntegerMultiDefinition("IntPropMV", "Sample Int multi-value Property");
         propertyDefinitions.put(prop6.getId(), prop6);
 
         PropertyStringDefinitionImpl prop7 = PropertyCreationHelper.createStringDefinition("StringProp",
@@ -193,7 +193,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
         PropertyUriDefinitionImpl prop8 = PropertyCreationHelper.createUriDefinition("UriProp", "Sample Uri Property");
         propertyDefinitions.put(prop8.getId(), prop8);
 
-        prop8 = PropertyCreationHelper.createUriDefinition("UriPropMV", "Sample Uri multi-value Property");
+        prop8 = PropertyCreationHelper.createUriMultiDefinition("UriPropMV", "Sample Uri multi-value Property");
         propertyDefinitions.put(prop8.getId(), prop8);
 
         PropertyStringDefinitionImpl prop9 = PropertyCreationHelper.createStringDefinition("PickListProp",
