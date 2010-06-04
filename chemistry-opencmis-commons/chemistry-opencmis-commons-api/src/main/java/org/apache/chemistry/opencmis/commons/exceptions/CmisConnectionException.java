@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS Connection Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisConnectionException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisConnectionException extends CmisBaseException {
     }
 
     public CmisConnectionException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisConnectionException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }

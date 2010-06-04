@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS NameConstraintViolation Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisNameConstraintViolationException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisNameConstraintViolationException extends CmisBaseException {
     }
 
     public CmisNameConstraintViolationException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisNameConstraintViolationException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }

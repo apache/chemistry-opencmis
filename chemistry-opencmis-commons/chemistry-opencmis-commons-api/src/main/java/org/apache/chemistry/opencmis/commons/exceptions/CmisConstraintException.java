@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS Constraint Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisConstraintException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisConstraintException extends CmisBaseException {
     }
 
     public CmisConstraintException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisConstraintException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }

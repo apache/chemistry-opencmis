@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS PermissionDenied Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisPermissionDeniedException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisPermissionDeniedException extends CmisBaseException {
     }
 
     public CmisPermissionDeniedException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisPermissionDeniedException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }

@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS ContentAlreadyExists Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisContentAlreadyExistsException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisContentAlreadyExistsException extends CmisBaseException {
     }
 
     public CmisContentAlreadyExistsException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisContentAlreadyExistsException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }

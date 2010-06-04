@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS UpdateConflict Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisUpdateConflictException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisUpdateConflictException extends CmisBaseException {
     }
 
     public CmisUpdateConflictException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisUpdateConflictException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }

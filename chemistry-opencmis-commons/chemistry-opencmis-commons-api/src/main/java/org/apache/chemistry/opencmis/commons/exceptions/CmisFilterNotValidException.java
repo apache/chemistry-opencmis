@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS FilterNotValid Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisFilterNotValidException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisFilterNotValidException extends CmisBaseException {
     }
 
     public CmisFilterNotValidException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisFilterNotValidException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }

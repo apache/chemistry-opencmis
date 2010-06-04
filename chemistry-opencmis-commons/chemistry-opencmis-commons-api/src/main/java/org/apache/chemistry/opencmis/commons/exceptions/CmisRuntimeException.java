@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS Runtime Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisRuntimeException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisRuntimeException extends CmisBaseException {
     }
 
     public CmisRuntimeException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisRuntimeException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }

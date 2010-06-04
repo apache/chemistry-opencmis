@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS ObjectNotFound Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisObjectNotFoundException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisObjectNotFoundException extends CmisBaseException {
     }
 
     public CmisObjectNotFoundException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisObjectNotFoundException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }

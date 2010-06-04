@@ -22,9 +22,6 @@ import java.math.BigInteger;
 
 /**
  * CMIS InvalidArgument Exception.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class CmisInvalidArgumentException extends CmisBaseException {
 
@@ -51,10 +48,10 @@ public class CmisInvalidArgumentException extends CmisBaseException {
     }
 
     public CmisInvalidArgumentException(String message, Throwable cause) {
-        super(message, (BigInteger) null, cause);
+        super(message, BigInteger.ZERO, cause);
     }
 
     public CmisInvalidArgumentException(String message) {
-        super(message, (BigInteger) null);
+        super(message, BigInteger.ZERO);
     }
 }
