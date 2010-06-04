@@ -214,7 +214,7 @@ public class DocumentTypeCreationHelper {
 
         PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.PATH,
                 "CMIS Path Property");
-        propId.setUpdatability(Updatability.READONLY);
+        propS.setUpdatability(Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
     }
