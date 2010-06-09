@@ -170,7 +170,7 @@ public class DefaultTypeSystemCreator implements TypeCreator {
         PropertyIdDefinitionImpl prop5 = PropertyCreationHelper.createIdDefinition("IdProp", "Sample Id Property");
         propertyDefinitions.put(prop5.getId(), prop5);
 
-        prop5 = PropertyCreationHelper.createIdDefinition("IdPropMV", "Sample Id Html multi-value Property");
+        prop5 = PropertyCreationHelper.createIdMultiDefinition("IdPropMV", "Sample Id Html multi-value Property");
         propertyDefinitions.put(prop5.getId(), prop5);
 
         PropertyIntegerDefinitionImpl prop6 = PropertyCreationHelper.createIntegerDefinition("IntProp",
