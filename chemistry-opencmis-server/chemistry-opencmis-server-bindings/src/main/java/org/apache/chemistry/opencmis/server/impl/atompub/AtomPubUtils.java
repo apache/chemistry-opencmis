@@ -438,6 +438,9 @@ public final class AtomPubUtils {
         UrlBuilder downLink = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
         downLink.addParameter(Constants.PARAM_TYPE_ID, type.getId());
         entry.writeDownLink(downLink.toString(), Constants.MEDIATYPE_CHILDREN);
+        UrlBuilder downLink2 = compileUrlBuilder(baseUrl, RESOURCE_TYPESDESC, null);
+        downLink2.addParameter(Constants.PARAM_TYPE_ID, type.getId());
+        entry.writeDownLink(downLink2.toString(), Constants.MEDIATYPE_DESCENDANTS);
         entry.writeDescribedByLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getBaseTypeId().value()));
 
         // write children
