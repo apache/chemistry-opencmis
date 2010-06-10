@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
@@ -203,11 +204,10 @@ public class PropertyCreationHelper {
         prop.setUpdatability(Updatability.READWRITE);
     }
 
-    public static Properties getPropertiesFromObject(String repositoryId, StoredObject so, StoreManager storeManager,
-            List<String> requestedIds) {
+    public static Properties getPropertiesFromObject(StoredObject so, TypeDefinition td, List<String> requestedIds) {
         // build properties collection
 
-        BindingsObjectFactory objectFactory = storeManager.getObjectFactory();
+        BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
         Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
         so.fillProperties(properties, objectFactory, requestedIds);
 
@@ -215,13 +215,11 @@ public class PropertyCreationHelper {
         // (String) props.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID).
         // getFirstValue();
         if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, requestedIds)) {
-            TypeDefinitionContainer typeDefC = storeManager.getTypeById(repositoryId, typeId);
-            if (typeDefC == null) {
+            if (td == null) {
                 log.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
                         + " is unknown");
             } else {
-                TypeDefinition typeDef = typeDefC.getTypeDefinition();
-                String baseTypeId = typeDef.getBaseTypeId().value();
+                String baseTypeId = td.getBaseTypeId().value();
                 properties.put(PropertyIds.BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID,
                         baseTypeId));
             }
@@ -231,7 +229,7 @@ public class PropertyCreationHelper {
         return props;
     }
 
-    public static ObjectData getObjectData(StoreManager sm, StoredObject so, String filter, String user,
+    public static ObjectData getObjectData(TypeDefinition typeDef, StoredObject so, String filter, String user,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
@@ -242,12 +240,11 @@ public class PropertyCreationHelper {
 
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-        Properties props = getPropertiesFromObject(so.getRepositoryId(), so, sm, requestedIds);
+        Properties props = getPropertiesFromObject(so, typeDef, requestedIds);
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
-            ObjectStore objectStore = sm.getObjectStore(so.getRepositoryId());
-            AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so, user);
+            AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
             od.setAllowableActions(allowableActions);
         }
         if (null != includeACL && includeACL)

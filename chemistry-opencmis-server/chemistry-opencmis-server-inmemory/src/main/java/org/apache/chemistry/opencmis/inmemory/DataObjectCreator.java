@@ -48,7 +48,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class DataObjectCreator {
 
-    public static AllowableActions fillAllowableActions(ObjectStore objStore, StoredObject so, String user) {
+    public static AllowableActions fillAllowableActions(StoredObject so, String user) {
 
         boolean isFolder = so instanceof Folder;
         boolean isDocument = so instanceof Content;
@@ -57,7 +57,8 @@ public class DataObjectCreator {
         boolean canCheckIn = false;
         boolean isVersioned = so instanceof Version || so instanceof VersionedDocument;
         boolean hasContent = so instanceof Content && ((Content) so).hasContent();
-
+        boolean isRootFolder = isFolder && ((Folder)so).getParent() == null;
+        
         if (so instanceof Version) {
             isCheckedOut = ((Version) so).isPwc();
             canCheckIn = isCheckedOut && ((Version) so).getParentDocument().getCheckedOutBy().equals(user);
@@ -66,7 +67,7 @@ public class DataObjectCreator {
             canCheckOut = !((VersionedDocument) so).isCheckedOut();
             canCheckIn = isCheckedOut && ((VersionedDocument) so).getCheckedOutBy().equals(user);
         }
-
+        
         AllowableActionsImpl allowableActions = new AllowableActionsImpl();
         Set<Action> set = allowableActions.getAllowableActions();
 
@@ -75,14 +76,14 @@ public class DataObjectCreator {
 
         if (isFolder || isDocument) {
             set.add(Action.CAN_GET_PROPERTIES);
-            if (!so.equals(objStore.getRootFolder())) {
+            if (!isRootFolder) {
                 set.add(Action.CAN_GET_OBJECT_PARENTS);
             }
             set.add(Action.CAN_MOVE_OBJECT);
         }
 
         if (isFolder) {
-            if (!so.equals(objStore.getRootFolder())) {
+            if (!isRootFolder) {
                 set.add(Action.CAN_GET_FOLDER_PARENT);
             }
             set.add(Action.CAN_GET_FOLDER_TREE);

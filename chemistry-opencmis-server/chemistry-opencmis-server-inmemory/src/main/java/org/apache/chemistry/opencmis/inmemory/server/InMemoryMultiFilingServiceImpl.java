@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.inmemory.server;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
@@ -70,9 +71,9 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
             objectInfos.addObjectInfo(objectInfo);
         }
 
-
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
         String user = context.getUsername();
-        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         LOG.debug("End addObjectToFolder()");
@@ -103,7 +104,8 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         }
 
         String user = context.getUsername();
-        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         LOG.debug("End removeObjectFromFolder()");
