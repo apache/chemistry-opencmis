@@ -162,7 +162,8 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
                 }
                 if (ret.matches) {
                     String filter = "*"; // TODO select_list
-                    ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, user,
+	                TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+                    ObjectData od = PropertyCreationHelper.getObjectData(td, so, filter, user,
                             includeAllowableActions, includeRelationships, renditionFilter, false, false, null);
                     lod.add(od);
                 }
