@@ -30,6 +30,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -493,7 +494,11 @@ public class AtomEntryParser {
 
     private boolean next(XMLStreamReader parser) throws Exception {
         if (parser.hasNext()) {
-            parser.next();
+            try {
+                parser.next();
+            } catch (XMLStreamException e) {
+                return false;
+            }
             return true;
         }
 

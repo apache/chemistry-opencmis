@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -34,9 +35,6 @@ import org.junit.Test;
 
 /**
  * AtomEntryParser test.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AtomEntryParserTest {
 
@@ -173,6 +171,7 @@ public class AtomEntryParserTest {
     public void testAtomTitle() throws Exception {
         AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(ATOM_ENTRY_NAME.getBytes()));
 
+        assertNotNull(aep);
         assertNotNull(aep.getObject());
         assertNotNull(aep.getObject().getProperties());
         assertNotNull(aep.getObject().getProperties().getProperties());
@@ -182,6 +181,28 @@ public class AtomEntryParserTest {
                 PropertyIds.NAME);
 
         assertEquals("atom.title", nameProperty.getFirstValue());
+    }
+
+    @Test
+    public void testNullStream() throws Exception {
+        AtomEntryParser aep = new AtomEntryParser(null);
+
+        assertNotNull(aep);
+        assertNull(aep.getId());
+        assertNull(aep.getObject());
+        assertNull(aep.getContentStream());
+        assertNull(aep.getProperties());
+    }
+
+    @Test
+    public void testEmptyStream() throws Exception {
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]));
+
+        assertNotNull(aep);
+        assertNull(aep.getId());
+        assertNull(aep.getObject());
+        assertNull(aep.getContentStream());
+        assertNull(aep.getProperties());
     }
 
     private byte[] parse(byte[] entry) throws Exception {
