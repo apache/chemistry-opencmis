@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.inmemory.TypeManager;
 
 /**
  * interface to a repository implementation. This interface is the entry point
@@ -142,5 +143,14 @@ public interface StoreManager {
      * @return repository information
      */
     RepositoryInfo getRepositoryInfo(String repositoryId);
+    
+    /**
+     * retrieve the type manager for a given repository
+     * @param repositoryId
+     *      id of repository
+     * @return
+     *      type manager for this repository or null if repository is unknown
+     */
+    TypeManager getTypeManager(String repositoryId);
 
 }
