@@ -95,7 +95,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             objectInfos.addObjectInfo(objectInfo);
         }
 
-        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         return od;
@@ -141,7 +142,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             objectInfos.addObjectInfo(objectInfo);
         }
 
-        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         return od;
@@ -218,8 +220,9 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             throw new RuntimeException("Object is not instance of a document (version series)");
 
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, latestVersionObject,
-                fStoreManager, requestedIds);
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, td, 
+                requestedIds);
 
         return props;
     }

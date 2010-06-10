@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -90,7 +91,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             List<VersionedDocument> checkedOuts = fStoreManager.getObjectStore(repositoryId).getCheckedOutDocuments(
                     orderBy);
             for (VersionedDocument checkedOut : checkedOuts) {
-                ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, checkedOut, filter, user,
+                TypeDefinition td = fStoreManager.getTypeById(repositoryId, checkedOut.getTypeId()).getTypeDefinition();
+                ObjectData od = PropertyCreationHelper.getObjectData(td, checkedOut, filter, user,
                         includeAllowableActions, includeRelationships, renditionFilter, false, false, extension);
                 if (context.isObjectInfoRequired()) {
                     ObjectInfoImpl objectInfo = new ObjectInfoImpl();
@@ -290,7 +292,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             if (includePathSegments != null && includePathSegments)
                 oifd.setPathSegment(spo.getName());
             if (includeAllowableActions != null && includeAllowableActions) {
-                AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(fs, spo, user);
+                AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
                 objectData.setAllowableActions(allowableActions);
             }
             if (includeRelationships != null && includeRelationships != IncludeRelationships.NONE) {
@@ -303,8 +305,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                                                   */);
             }
 
-            Properties props = PropertyCreationHelper.getPropertiesFromObject(repositoryId, spo, fStoreManager,
-                    requestedIds);
+            TypeDefinition td = fStoreManager.getTypeById(repositoryId, spo.getTypeId()).getTypeDefinition();
+            Properties props = PropertyCreationHelper.getPropertiesFromObject(spo, td, requestedIds);
             objectData.setProperties(props);
 
             oifd.setObject(objectData);
@@ -428,8 +430,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
     void copyFilteredProperties(String repositoryId, StoredObject so, String filter, ObjectDataImpl objData) {
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-        Properties props = PropertyCreationHelper
-                .getPropertiesFromObject(repositoryId, so, fStoreManager, requestedIds);
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds);
         objData.setProperties(props);
     }
 

@@ -116,8 +116,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter("*");
 
-        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(repositoryId, so, fStoreManager,
-                requestedIds);
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds);
 
         PropertiesImpl newPD = new PropertiesImpl();
         // copy all existing properties
@@ -223,7 +223,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // Make a call to getObject to convert the resulting id into an
         // ObjectData
-        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+        TypeDefinition td = typeDefC.getTypeDefinition();
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         if (context.isObjectInfoRequired()) {
@@ -317,7 +318,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
         String user = context.getUsername();
-        AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(objectStore, so, user);
+        AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
         LOG.debug("stop getAllowableActions()");
         return allowableActions;
     }
@@ -352,7 +353,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
         String user = context.getUsername();
-        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, user, includeAllowableActions,
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, filter, user, includeAllowableActions,
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
 
         if (context.isObjectInfoRequired()) {
@@ -379,7 +381,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException("Unknown path: " + path);
 
         String user = context.getUsername();
-        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, filter, user, includeAllowableActions,
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, filter, user, includeAllowableActions,
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
 
         LOG.debug("stop getObjectByPath()");
@@ -406,8 +409,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-        Properties props = PropertyCreationHelper
-                .getPropertiesFromObject(repositoryId, so, fStoreManager, requestedIds);
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds);
         LOG.debug("stop getProperties()");
         return props;
     }
@@ -475,8 +478,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         objectId.setValue(so.getId());
         LOG.debug("stop moveObject()");
 
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
         String user = context.getUsername();
-        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need
@@ -624,8 +628,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             // extension);
         }
 
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
         String user = context.getUsername();
-        ObjectData od = PropertyCreationHelper.getObjectData(fStoreManager, so, null, user, false,
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need
