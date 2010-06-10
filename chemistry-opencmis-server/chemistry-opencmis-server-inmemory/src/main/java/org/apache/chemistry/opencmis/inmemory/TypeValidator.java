@@ -310,6 +310,20 @@ public class TypeValidator {
             return true;
     }
 
+    public static boolean typeContainsPropertyWithQueryName(TypeDefinition typeDef, String propertyQueryName) {
+
+        Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
+        if (null == propDefs)
+            return false;
+
+        for (PropertyDefinition<?> propDef : propDefs.values()) {
+            if (propDef.getQueryName().equals(propertyQueryName))
+                return true;
+        }
+        
+        return false; // unknown property query name in this type
+    }
+
     @SuppressWarnings("unchecked")
     private static <T> PropertyDefinition<T> getPropertyDefinition(TypeDefinition typeDef, String propertyId) {
 

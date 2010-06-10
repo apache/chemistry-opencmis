@@ -349,4 +349,9 @@ public class StoreManagerImpl implements StoreManager {
         }
     }
 
+    public TypeManager getTypeManager(String repositoryId) {
+        TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
+        return typeManager;
+    }
+
 }

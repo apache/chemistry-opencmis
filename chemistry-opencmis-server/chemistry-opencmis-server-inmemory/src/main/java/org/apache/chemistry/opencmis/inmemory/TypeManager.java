@@ -64,6 +64,21 @@ public class TypeManager {
     }
 
     /**
+     * return a type definition from the type query name or null if not found
+     * 
+     * @param typeQueryName
+     *            query name of the type definition
+     * @return type definition for this query name
+     */
+    public TypeDefinition getTypeByQueryName(String typeQueryName) {
+        for (Entry<String, TypeDefinitionContainer> entry : fTypesMap.entrySet()) {
+            if (entry.getValue().getTypeDefinition().getQueryName().equals(typeQueryName))
+                return entry.getValue().getTypeDefinition();
+        }
+        return null;
+    }
+
+    /**
      * return a list of all types known in this repository
      * 
      * @return
@@ -162,6 +177,24 @@ public class TypeManager {
     public void clearTypeSystem() {
         fTypesMap.clear();
         createCmisDefaultTypes();
+    }
+    
+    /**
+     * retrieve the property id from a type for a given property query name 
+     * 
+     * @param typeDefinition
+     *      type definition containing query name
+     * @param propQueryName
+     *      query name of property
+     * @return
+     *      property id of property or null if not found
+     */
+    public String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName) {
+        for (PropertyDefinition<?> pd : typeDefinition.getPropertyDefinitions().values()) {
+            if (pd.getQueryName().equals(propQueryName))
+                return pd.getId();
+        }
+        return null;
     }
 
     private void addInheritedProperties(Map<String, PropertyDefinition<?>> propDefs, TypeDefinition typeDefinition) {
