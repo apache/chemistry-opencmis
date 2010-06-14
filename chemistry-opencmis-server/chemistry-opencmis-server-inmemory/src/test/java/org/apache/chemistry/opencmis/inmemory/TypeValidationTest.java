@@ -677,7 +677,7 @@ public class TypeValidationTest extends TestCase {
 
     private static TypeManager buildInheritedTypes() {
 
-        TypeManager tm = new TypeManager();
+        TypeManagerImpl tm = new TypeManagerImpl();
         tm.initTypeSystem(null); // create CMIS default types
 
         // create super type

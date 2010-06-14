@@ -37,7 +37,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDat
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Version;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;

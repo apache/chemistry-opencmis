@@ -42,6 +42,10 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
     public PropertiesImpl() {
     }
 
+    public PropertiesImpl(Map<String, PropertyData<?>> properties) {
+        fProperties = properties;
+    }
+    
     /**
      * Constructor.
      * 
