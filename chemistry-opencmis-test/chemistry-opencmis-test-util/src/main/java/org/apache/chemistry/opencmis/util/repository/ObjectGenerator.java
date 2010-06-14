@@ -118,8 +118,8 @@ public class ObjectGenerator {
     private static final String NAMEPROPVALPREFIXFOLDER = "My_Folder-";
     private static final String STRINGPROPVALPREFIXDOC = "My Doc StringProperty ";
     private static final String STRINGPROPVALPREFIXFOLDER = "My Folder StringProperty ";
-    private static int PROPVALCOUNTER_DOC_STRING_PROP = 0;
-    private static int PROPVALCOUNTER_FOLDER_STRING_PROP = 0;
+    private int propValCounterDocString = 0;
+    private int propValCounterFolderString = 0;
     /**
      * use UUIDs to generate folder and document names
      */
@@ -496,12 +496,12 @@ public class ObjectGenerator {
         return props;
     }
 
-    private static synchronized int incrementPropCounterDocStringProp() {
-        return PROPVALCOUNTER_DOC_STRING_PROP++;
+    private synchronized int incrementPropCounterDocStringProp() {
+        return propValCounterDocString++;
     }
 
-    private static synchronized int incrementPropCounterFolderStringProp() {
-        return PROPVALCOUNTER_FOLDER_STRING_PROP++;
+    private synchronized int incrementPropCounterFolderStringProp() {
+        return propValCounterFolderString++;
     }
 
     private String generateDocNameValue(int no, int level) {
@@ -518,11 +518,11 @@ public class ObjectGenerator {
             return NAMEPROPVALPREFIXFOLDER + level + "-" + no;
     }
 
-    private static String generateStringPropValueDoc() {
+    private String generateStringPropValueDoc() {
         return STRINGPROPVALPREFIXDOC + incrementPropCounterDocStringProp();
     }
 
-    private static String generateStringPropValueFolder() {
+    private String generateStringPropValueFolder() {
         return STRINGPROPVALPREFIXFOLDER + incrementPropCounterFolderStringProp();
     }
 
