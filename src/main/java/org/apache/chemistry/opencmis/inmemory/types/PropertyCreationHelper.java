@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.types;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,9 +31,9 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
@@ -43,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
@@ -55,8 +57,6 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -229,7 +229,51 @@ public class PropertyCreationHelper {
         return props;
     }
 
-    public static ObjectData getObjectData(TypeDefinition typeDef, StoredObject so, String filter, String user,
+    public static Properties getPropertiesFromObject(StoredObject so, TypeDefinition td,
+            Map<String, String> requestedIds, Map<String, String> requestedFuncs) {
+        // build properties collection
+
+        List<String> idList = new ArrayList<String>(requestedIds.keySet());
+        BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
+        Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
+        so.fillProperties(properties, objectFactory, idList);
+
+        String typeId = so.getTypeId();
+        if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, idList)) {
+            if (td == null) {
+                log.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
+                        + " is unknown");
+            } else {
+                String baseTypeId = td.getBaseTypeId().value();
+                properties.put(PropertyIds.BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID,
+                        baseTypeId));
+            }
+        }
+
+        // replace all ids with query names or alias:
+        Map<String, PropertyData<?>> mappedProperties = new HashMap<String, PropertyData<?>>();
+        for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
+            String key = requestedIds.get(prop.getKey());
+            if (key == null)
+                key = prop.getKey();
+            mappedProperties.put(key, prop.getValue());
+        }
+
+        // add functions:
+        BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
+        for (String func : requestedFuncs.keySet()) {
+            PropertyInteger pi = objFactory.createPropertyIntegerData(func, BigInteger.valueOf(100)); // fixed
+                                                                                                      // dummy
+                                                                                                      // value
+            mappedProperties.put(requestedFuncs.get(func), pi);
+
+        }
+
+        Properties props = new PropertiesImpl(mappedProperties);
+        return props;
+    }
+    
+   public static ObjectData getObjectData(TypeDefinition typeDef, StoredObject so, String filter, String user,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
@@ -263,8 +307,33 @@ public class PropertyCreationHelper {
         od.setProperties(props);
 
         // Note: do not set change event info for this call
-        log.debug("stop getObject()");
         return od;
     }
 
+    public static ObjectData getObjectDataQueryResult(TypeDefinition typeDef, StoredObject so, String user, 
+            Map<String, String> requestedProperties, Map<String, String> requestedFuncs,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter
+            ) {
+
+        ObjectDataImpl od = new ObjectDataImpl();
+
+        // build properties collection
+        Properties props = getPropertiesFromObject(so, typeDef, requestedProperties, requestedFuncs);
+
+        // fill output object
+        if (null != includeAllowableActions && includeAllowableActions) {
+            AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
+            od.setAllowableActions(allowableActions);
+        }
+        
+        if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE)
+            od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so));
+
+        if (renditionFilter != null && renditionFilter.length() > 0)
+            od.setRenditions(DataObjectCreator.fillRenditions(so));
+
+        od.setProperties(props);
+
+        return od;
+    }
 }

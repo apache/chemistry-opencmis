@@ -45,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeManager;
+import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 
@@ -61,7 +62,7 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * map from repository id to a type manager
      */
-    private Map<String, TypeManager> fMapRepositoryToTypeManager = new HashMap<String, TypeManager>();
+    private Map<String, TypeManagerImpl> fMapRepositoryToTypeManager = new HashMap<String, TypeManagerImpl>();
 
     /**
      * map from repository id to a object store
@@ -85,7 +86,7 @@ public class StoreManagerImpl implements StoreManager {
 
     public void initRepository(String repositoryId) {
         fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
-        fMapRepositoryToTypeManager.put(repositoryId, new TypeManager());
+        fMapRepositoryToTypeManager.put(repositoryId, new TypeManagerImpl());
     }
 
     public void createAndInitRepository(String repositoryId, String typeCreatorClassName) {
@@ -94,7 +95,7 @@ public class StoreManagerImpl implements StoreManager {
             throw new RuntimeException("Cannot add repository, repository " + repositoryId + " already exists.");
 
         fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
-        fMapRepositoryToTypeManager.put(repositoryId, new TypeManager());
+        fMapRepositoryToTypeManager.put(repositoryId, new TypeManagerImpl());
 
         // initialize the type system:
         initTypeSystem(repositoryId, typeCreatorClassName);
@@ -186,7 +187,7 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     public void clearTypeSystem(String repositoryId) {
-        TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
+        TypeManagerImpl typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager)
             throw new RuntimeException("Unknown repository " + repositoryId);
 
@@ -260,7 +261,7 @@ public class StoreManagerImpl implements StoreManager {
     private void initTypeSystem(String repositoryId, String typeCreatorClassName) {
 
         List<TypeDefinition> typeDefs = null;
-        TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
+        TypeManagerImpl typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager)
             throw new RuntimeException("Unknown repository " + repositoryId);
 

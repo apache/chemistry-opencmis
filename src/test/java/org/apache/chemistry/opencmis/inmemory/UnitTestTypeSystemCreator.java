@@ -42,6 +42,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDef
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 
 public class UnitTestTypeSystemCreator implements TypeCreator {
@@ -52,6 +53,24 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
     public static final String LEVEL2_TYPE = "DocumentLevel2";
     public static final String VERSION_DOCUMENT_TYPE_ID = "MyVersionedType";
     public static final String VERSION_PROPERTY_ID = "StringProp";
+    public static final String FOLDER_TYPE = "FolderType";
+    
+    public static final String PROP_ID_BOOLEAN = "BooleanProp";
+    public static final String PROP_ID_DATETIME = "DateTimeProp";
+    public static final String PROP_ID_DECIMAL = "DecimalProp";
+    public static final String PROP_ID_HTML = "HtmlProp";
+    public static final String PROP_ID_ID = "IdProp";
+    public static final String PROP_ID_INT = "IntProp";
+    public static final String PROP_ID_STRING = "StringProp";
+    public static final String PROP_ID_URI = "UriProp";
+    public static final String PROP_ID_BOOLEAN_MULTI_VALUE = "BooleanPropMV";
+    public static final String PROP_ID_DATETIME_MULTI_VALUE = "DateTimePropMV";
+    public static final String PROP_ID_DECIMAL_MULTI_VALUE = "DecimalPropMV";
+    public static final String PROP_ID_HTML_MULTI_VALUE = "HtmlPropMV";
+    public static final String PROP_ID_ID_MULTI_VALUE = "IdPropMV";
+    public static final String PROP_ID_INT_MULTI_VALUE = "IntPropMV";
+    public static final String PROP_ID_STRING_MULTI_VALUE = "StringPropMV";
+    public static final String PROP_ID_URI_MULTI_VALUE = "UriPropMV";
 
     /**
      * in the public interface of this class we return the singleton containing
@@ -143,57 +162,61 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
 
         Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
 
-        PropertyDefinition<Boolean> prop = PropertyCreationHelper.createBooleanDefinition("BooleanProp",
+        PropertyDefinition<Boolean> prop = PropertyCreationHelper.createBooleanDefinition(PROP_ID_BOOLEAN,
                 "Sample Boolean Property");
         propertyDefinitions.put(prop.getId(), prop);
 
-        prop = PropertyCreationHelper.createBooleanMultiDefinition("BooleanPropMV",
+        prop = PropertyCreationHelper.createBooleanMultiDefinition(PROP_ID_BOOLEAN_MULTI_VALUE,
                 "Sample Boolean multi-value Property");
         propertyDefinitions.put(prop.getId(), prop);
 
-        PropertyDateTimeDefinitionImpl prop2 = PropertyCreationHelper.createDateTimeDefinition("DateTimeProp",
+        PropertyDateTimeDefinitionImpl prop2 = PropertyCreationHelper.createDateTimeDefinition(PROP_ID_DATETIME,
                 "Sample DateTime Property");
         propertyDefinitions.put(prop2.getId(), prop2);
 
-        prop2 = PropertyCreationHelper.createDateTimeMultiDefinition("DateTimePropMV",
+        prop2 = PropertyCreationHelper.createDateTimeMultiDefinition(PROP_ID_DATETIME_MULTI_VALUE,
                 "Sample DateTime multi-value Property");
         propertyDefinitions.put(prop2.getId(), prop2);
 
-        PropertyDecimalDefinitionImpl prop3 = PropertyCreationHelper.createDecimalDefinition("DecimalProp",
+        PropertyDecimalDefinitionImpl prop3 = PropertyCreationHelper.createDecimalDefinition(PROP_ID_DECIMAL,
                 "Sample Decimal Property");
         propertyDefinitions.put(prop3.getId(), prop3);
 
-        prop3 = PropertyCreationHelper.createDecimalMultiDefinition("DecimalPropMV", "Sample Decimal multi-value Property");
+        prop3 = PropertyCreationHelper.createDecimalMultiDefinition(PROP_ID_DECIMAL_MULTI_VALUE, "Sample Decimal multi-value Property");
         propertyDefinitions.put(prop3.getId(), prop3);
 
-        PropertyHtmlDefinitionImpl prop4 = PropertyCreationHelper.createHtmlDefinition("HtmlProp",
+        PropertyHtmlDefinitionImpl prop4 = PropertyCreationHelper.createHtmlDefinition(PROP_ID_HTML,
                 "Sample Html Property");
         propertyDefinitions.put(prop4.getId(), prop4);
 
-        prop4 = PropertyCreationHelper.createHtmlDefinition("HtmlPropMV", "Sample Html multi-value Property");
+        prop4 = PropertyCreationHelper.createHtmlDefinition(PROP_ID_HTML_MULTI_VALUE, "Sample Html multi-value Property");
         propertyDefinitions.put(prop4.getId(), prop4);
 
-        PropertyIdDefinitionImpl prop5 = PropertyCreationHelper.createIdDefinition("IdProp", "Sample Id Property");
+        PropertyIdDefinitionImpl prop5 = PropertyCreationHelper.createIdDefinition(PROP_ID_ID, "Sample Id Property");
         propertyDefinitions.put(prop5.getId(), prop5);
 
-        prop5 = PropertyCreationHelper.createIdMultiDefinition("IdPropMV", "Sample Id Html multi-value Property");
+        prop5 = PropertyCreationHelper.createIdMultiDefinition(PROP_ID_ID_MULTI_VALUE, "Sample Id Html multi-value Property");
         propertyDefinitions.put(prop5.getId(), prop5);
 
-        PropertyIntegerDefinitionImpl prop6 = PropertyCreationHelper.createIntegerDefinition("IntProp",
+        PropertyIntegerDefinitionImpl prop6 = PropertyCreationHelper.createIntegerDefinition(PROP_ID_INT,
                 "Sample Int Property");
         propertyDefinitions.put(prop6.getId(), prop6);
 
-        prop6 = PropertyCreationHelper.createIntegerMultiDefinition("IntPropMV", "Sample Int multi-value Property");
+        prop6 = PropertyCreationHelper.createIntegerMultiDefinition(PROP_ID_INT_MULTI_VALUE, "Sample Int multi-value Property");
         propertyDefinitions.put(prop6.getId(), prop6);
 
-        PropertyStringDefinitionImpl prop7 = PropertyCreationHelper.createStringDefinition("StringProp",
+        PropertyStringDefinitionImpl prop7 = PropertyCreationHelper.createStringDefinition(PROP_ID_STRING,
                 "Sample String Property");
         propertyDefinitions.put(prop7.getId(), prop7);
 
-        PropertyUriDefinitionImpl prop8 = PropertyCreationHelper.createUriDefinition("UriProp", "Sample Uri Property");
+        prop7 = PropertyCreationHelper.createStringMultiDefinition(PROP_ID_STRING_MULTI_VALUE,
+        "Sample String multi-value Property");
+        propertyDefinitions.put(prop7.getId(), prop7);
+
+        PropertyUriDefinitionImpl prop8 = PropertyCreationHelper.createUriDefinition(PROP_ID_URI, "Sample Uri Property");
         propertyDefinitions.put(prop8.getId(), prop8);
 
-        prop8 = PropertyCreationHelper.createUriMultiDefinition("UriPropMV", "Sample Uri multi-value Property");
+        prop8 = PropertyCreationHelper.createUriMultiDefinition(PROP_ID_URI_MULTI_VALUE, "Sample Uri multi-value Property");
         propertyDefinitions.put(prop8.getId(), prop8);
 
         PropertyStringDefinitionImpl prop9 = PropertyCreationHelper.createStringDefinition("PickListProp",
@@ -270,11 +293,30 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
         cmisVersionedType.addCustomPropertyDefinitions(propertyDefinitions);
         cmisVersionedType.setIsVersionable(true); // make it a versionable type;
 
+        // create a folder type
+        // create a complex type with properties
+        InMemoryFolderTypeDefinition cmisFolderType = new InMemoryFolderTypeDefinition(FOLDER_TYPE,
+                "Folder type with properties", InMemoryFolderTypeDefinition.getRootFolderType());
+
+        // create a two property definitions for folder
+
+        propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+
+        prop6 = PropertyCreationHelper.createIntegerDefinition(PROP_ID_INT, "Sample Folder Int Property");
+        propertyDefinitions.put(prop6.getId(), prop6);
+
+        prop7 = PropertyCreationHelper.createStringDefinition(PROP_ID_STRING,
+            "Sample Folder String Property");
+        propertyDefinitions.put(prop7.getId(), prop7);
+        cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
+
+        
         // add type to types collection
         typesList.add(cmisDocTypeTopLevel);
         typesList.add(cmisDocTypeLevel1);
         typesList.add(cmisDocTypeLevel2);
         typesList.add(cmisVersionedType);
+        typesList.add(cmisFolderType);
 
         return typesList;
     }
