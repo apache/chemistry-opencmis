@@ -236,6 +236,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
         choiceList.add(elem);
         prop9.setChoices(choiceList);
         prop9.setDefaultValue(Collections.singletonList("blue"));
+        propertyDefinitions.put(prop9.getId(), prop9);
 
         /*
          * try short form: / PropertyCreationHelper.addElemToPicklist(prop9,
