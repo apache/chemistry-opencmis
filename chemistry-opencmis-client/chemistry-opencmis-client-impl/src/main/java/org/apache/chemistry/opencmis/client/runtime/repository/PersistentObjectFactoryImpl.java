@@ -544,7 +544,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
         if ((properties == null) || (properties.getProperties() == null)) {
             throw new IllegalArgumentException("Properties must be set!");
         }
-        return new ArrayList<PropertyData<?>>(properties.getProperties().values());
+        return new ArrayList<PropertyData<?>>(properties.getPropertyList());
     }
 
     // objects

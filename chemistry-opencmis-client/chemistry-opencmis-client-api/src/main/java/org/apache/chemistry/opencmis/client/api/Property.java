@@ -40,4 +40,5 @@ public interface Property<T> extends PropertyData<T> {
 
     String getValueAsString();
 
+    String getValuesAsString();
 }

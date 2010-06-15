@@ -269,7 +269,7 @@ public class PropertyCreationHelper {
 
         }
 
-        Properties props = new PropertiesImpl(mappedProperties);
+        Properties props = new PropertiesImpl(mappedProperties.values());
         return props;
     }
     

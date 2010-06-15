@@ -18,9 +18,19 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
+import java.util.List;
 import java.util.Map;
 
 public interface Properties extends ExtensionsData {
 
+    /**
+     * Returns a map of properties (property id => property). Should not be used
+     * with queries because some repositories don't set property ids.
+     */
     Map<String, PropertyData<?>> getProperties();
+
+    /**
+     * Returns the list of properties.
+     */
+    List<PropertyData<?>> getPropertyList();
 }

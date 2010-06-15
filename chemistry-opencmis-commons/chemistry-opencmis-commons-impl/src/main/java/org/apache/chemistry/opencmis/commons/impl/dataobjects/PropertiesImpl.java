@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,13 +30,11 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 
 /**
  * Properties data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertiesImpl extends AbstractExtensionData implements Properties {
 
-    Map<String, PropertyData<?>> fProperties = new LinkedHashMap<String, PropertyData<?>>();
+    List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
+    Map<String, PropertyData<?>> properties = new LinkedHashMap<String, PropertyData<?>>();
 
     /**
      * Constructor.
@@ -42,17 +42,13 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
     public PropertiesImpl() {
     }
 
-    public PropertiesImpl(Map<String, PropertyData<?>> properties) {
-        fProperties = properties;
-    }
-    
     /**
      * Constructor.
      * 
      * @param properties
-     *            initial list of properties
+     *            initial collection of properties
      */
-    public PropertiesImpl(List<PropertyData<?>> properties) {
+    public PropertiesImpl(Collection<PropertyData<?>> properties) {
         if (properties != null) {
             for (PropertyData<?> prop : properties) {
                 addProperty(prop);
@@ -61,7 +57,11 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
     }
 
     public Map<String, PropertyData<?>> getProperties() {
-        return Collections.unmodifiableMap(fProperties);
+        return Collections.unmodifiableMap(properties);
+    }
+
+    public List<PropertyData<?>> getPropertyList() {
+        return Collections.unmodifiableList(propertyList);
     }
 
     /**
@@ -75,17 +75,13 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
             return;
         }
 
-        fProperties.put(property.getId(), property);
+        propertyList.add(property);
+        properties.put(property.getId(), property);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Properties Data [properties=" + fProperties + "]" + super.toString();
+        return "Properties Data [properties=" + propertyList + "]" + super.toString();
     }
 
 }

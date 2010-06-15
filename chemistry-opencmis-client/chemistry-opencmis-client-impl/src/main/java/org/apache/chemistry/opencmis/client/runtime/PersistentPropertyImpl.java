@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.runtime;
 
 import java.io.Serializable;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.Property;
@@ -84,10 +85,39 @@ public class PersistentPropertyImpl<T> extends AbstractPropertyData<T> implement
         if (values.size() == 0) {
             return null;
         }
-        switch (propertyDefinition.getPropertyType()) {
-        default:
-            return values.get(0).toString();
+
+        return formatValue(values.get(0));
+    }
+
+    public String getValuesAsString() {
+        List<T> values = getValues();
+
+        StringBuilder result = new StringBuilder();
+        for (T value : values) {
+            if (result.length() > 0) {
+                result.append(", ");
+            }
+
+            result.append(formatValue(value));
         }
+
+        return "[" + result.toString() + "]";
+    }
+
+    private String formatValue(T value) {
+        String result;
+
+        if (value == null) {
+            return null;
+        }
+
+        if (value instanceof GregorianCalendar) {
+            result = ((GregorianCalendar) value).getTime().toString();
+        } else {
+            result = value.toString();
+        }
+
+        return result;
     }
 
     public boolean isMultiValued() {
