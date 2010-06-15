@@ -21,6 +21,8 @@ package org.apache.chemistry.opencmis.inmemory.query;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.TypeManager;
+import org.apache.chemistry.opencmis.inmemory.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
@@ -90,7 +93,9 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
     public ObjectList buildResultList(TypeManager tm, String user, 
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount) {
-        // TODO sort according to order by criteria
+        
+        sortMatches();
+
         ObjectListImpl res = new ObjectListImpl();
         List<ObjectData> objDataList = new ArrayList<ObjectData>();
         Map<String, String> props = queryObj.getRequestedProperties();
@@ -119,6 +124,45 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
             typeId = parentTD == null ? null : parentTD.getId();
         }
         return false;
+    }
+    
+    private void sortMatches() {
+        final List<SortSpec> orderBy = queryObj.getOrderBys();
+        if (orderBy.size() > 1)
+            LOG.warn("ORDER BY has more than one sort criterium, all but the first are ignored.");
+        class ResultComparator implements Comparator<StoredObject> {
+
+            public int compare(StoredObject so1, StoredObject so2) {
+                SortSpec s = orderBy.get(0);
+                CmisSelector sel = s.getSelector();
+                int result;
+                
+                if (sel instanceof ColumnReference) {
+                    String propId = ((ColumnReference)sel).getPropertyId();
+                    Object propVal1 = so1.getProperties().get(propId).getFirstValue();
+                    Object propVal2 = so2.getProperties().get(propId).getFirstValue();
+                    if (propVal1 == null && propVal2 == null)
+                        result = 0;
+                    else if (propVal1 == null)
+                        result = -1;
+                    else if (propVal2 == null)
+                        result = 1;
+                    else 
+                        result = ((Comparable)propVal1).compareTo(propVal2);                    
+                } else {
+                    String funcName = ((FunctionReference)sel).getName();
+                    // evaluate function here, currently ignore
+                    result = 0;
+                }
+                if (!s.isAscending())
+                    result = -result;
+                return result;
+            }
+        }
+
+        if (orderBy.size() > 0)
+            Collections.sort(matches, new ResultComparator());
+        
     }
 
     private void match(StoredObject so) {

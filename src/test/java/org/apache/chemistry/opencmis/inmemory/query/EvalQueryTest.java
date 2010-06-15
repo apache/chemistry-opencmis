@@ -365,6 +365,111 @@ public class EvalQueryTest extends AbstractServiceTst {
         assertTrue(resultContains("epsilon", res));        
     }
 
+    @Test
+    public void testOrderByString() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + UnitTestTypeSystemCreator.PROP_ID_STRING;
+        ObjectList res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("alpha", 0, res));
+        assertTrue(resultContainsAtPos("beta", 1, res));
+        assertTrue(resultContainsAtPos("delta", 2, res));
+        assertTrue(resultContainsAtPos("epsilon", 3, res));
+        assertTrue(resultContainsAtPos("gamma", 4, res));
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + UnitTestTypeSystemCreator.PROP_ID_STRING + " DESC";
+        res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("alpha", 4, res));
+        assertTrue(resultContainsAtPos("beta", 3, res));
+        assertTrue(resultContainsAtPos("delta", 2, res));
+        assertTrue(resultContainsAtPos("epsilon", 1, res));
+        assertTrue(resultContainsAtPos("gamma", 0, res));
+}
+
+    @Test
+    public void testOrderByInteger() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_INT;
+        ObjectList res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("alpha", 0, res));
+        assertTrue(resultContainsAtPos("beta", 1, res));
+        assertTrue(resultContainsAtPos("gamma", 2, res));
+        assertTrue(resultContainsAtPos("delta", 3, res));
+        assertTrue(resultContainsAtPos("epsilon", 4, res));
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_INT + " DESC";
+        res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("alpha", 4, res));
+        assertTrue(resultContainsAtPos("beta", 3, res));
+        assertTrue(resultContainsAtPos("gamma", 2, res));
+        assertTrue(resultContainsAtPos("delta", 1, res));
+        assertTrue(resultContainsAtPos("epsilon", 0, res));
+}
+
+    @Test
+    public void testOrderByDecimal() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_DECIMAL;
+        ObjectList res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("alpha", 0, res));
+        assertTrue(resultContainsAtPos("beta", 1, res));
+        assertTrue(resultContainsAtPos("delta", 2, res));
+        assertTrue(resultContainsAtPos("gamma", 3, res));
+        assertTrue(resultContainsAtPos("epsilon", 4, res));
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_DECIMAL + " DESC";
+        res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("alpha", 4, res));
+        assertTrue(resultContainsAtPos("beta", 3, res));
+        assertTrue(resultContainsAtPos("delta", 2, res));
+        assertTrue(resultContainsAtPos("gamma", 1, res));
+        assertTrue(resultContainsAtPos("epsilon", 0, res));
+    }
+
+    @Test
+    public void testOrderByDate() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_DATETIME;
+        ObjectList res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("beta", 0, res));
+        assertTrue(resultContainsAtPos("alpha", 1, res));
+        assertTrue(resultContainsAtPos("gamma", 2, res));
+        assertTrue(resultContainsAtPos("delta", 3, res));
+        assertTrue(resultContainsAtPos("epsilon", 4, res));
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_DATETIME + " DESC";
+        res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("beta", 4, res));
+        assertTrue(resultContainsAtPos("alpha", 3, res));
+        assertTrue(resultContainsAtPos("gamma", 2, res));
+        assertTrue(resultContainsAtPos("delta", 1, res));
+        assertTrue(resultContainsAtPos("epsilon", 0, res));
+    }
+
+    @Test
+    public void testOrderByBool() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_BOOLEAN;
+        ObjectList res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("beta", 0, res) || resultContainsAtPos("beta", 1, res));
+        assertTrue(resultContainsAtPos("epsilon", 0, res) || resultContainsAtPos("epsilon", 1, res));
+        assertTrue(resultContainsAtPos("alpha", 2, res) || resultContainsAtPos("alpha", 3, res) || resultContainsAtPos("alpha", 4, res));
+        assertTrue(resultContainsAtPos("gamma", 2, res) || resultContainsAtPos("gamma", 3, res) || resultContainsAtPos("gamma", 4, res));
+        assertTrue(resultContainsAtPos("delta", 2, res) || resultContainsAtPos("delta", 3, res) || resultContainsAtPos("delta", 4, res));
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_BOOLEAN + " DESC";
+        res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContainsAtPos("beta", 3, res) || resultContainsAtPos("beta", 4, res));
+        assertTrue(resultContainsAtPos("epsilon", 3, res) || resultContainsAtPos("epsilon", 4, res));
+        assertTrue(resultContainsAtPos("alpha", 2, res) || resultContainsAtPos("alpha", 1, res) || resultContainsAtPos("alpha", 0, res));
+        assertTrue(resultContainsAtPos("gamma", 2, res) || resultContainsAtPos("gamma", 1, res) || resultContainsAtPos("gamma", 0, res));
+        assertTrue(resultContainsAtPos("delta", 2, res) || resultContainsAtPos("delta", 1, res) || resultContainsAtPos("delta", 0, res));
+}
+
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
         ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,
@@ -382,5 +487,10 @@ public class EvalQueryTest extends AbstractServiceTst {
                 return true;
         }
         return false;
+    }
+
+    private boolean resultContainsAtPos(String name, int index, ObjectList results) {
+        String nameProp = (String) results.getObjects().get(index).getProperties().getProperties().get(PropertyIds.NAME).getFirstValue();
+        return name.equals(nameProp);
     }
 }
