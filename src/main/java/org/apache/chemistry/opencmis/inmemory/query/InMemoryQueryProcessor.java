@@ -40,6 +40,8 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.TypeManager;
 import org.apache.chemistry.opencmis.inmemory.query.QueryObject.SortSpec;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
@@ -522,11 +524,58 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
     }
 
     private boolean evalWhereInFolder(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
-        throw new RuntimeException("Operator IN_FOLDER not supported in InMemory server.");
+        if (null != colNode) {
+            getTableReference(colNode); 
+            // just for error checking we do not evaluate this, there is only one from without join support
+        }
+        Object lit = onLiteral(paramNode);
+        if (!(lit instanceof String))
+            throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
+        String folderId = (String) lit;
+        
+        // check if object is in folder
+        if (so instanceof Filing)
+            return hasParent((Filing)so, folderId);
+        else
+            return false;
     }
 
     private boolean evalWhereInTree(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
-        throw new RuntimeException("Operator IN_TREE not supported in InMemory server.");
+        if (null != colNode) {
+            getTableReference(colNode); 
+            // just for error checking we do not evaluate this, there is only one from without join support
+        }
+        Object lit = onLiteral(paramNode);
+        if (!(lit instanceof String))
+            throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
+        String folderId = (String) lit;
+        
+        // check if object is in folder
+        if (so instanceof Filing)
+            return hasAncestor((Filing) so, folderId);
+        else
+            return false;
+    }
+    
+    private boolean hasParent(Filing objInFolder, String folderId) {
+        List<Folder> parents = objInFolder.getParents();
+        
+        for (Folder folder : parents)
+            if (folderId.equals(folder.getId()))
+                return true;
+        return false;
+    }
+
+    private boolean hasAncestor(Filing objInFolder, String folderId) {
+        List<Folder> parents = objInFolder.getParents();
+        
+        for (Folder folder : parents)
+            if (folderId.equals(folder.getId()))
+                return true;
+        for (Folder folder : parents)
+            if (hasAncestor(folder, folderId))
+                return true;
+        return false;
     }
 
     private Object onLiteral(Tree node) {
@@ -627,6 +676,13 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
             throw new RuntimeException("Unexpected numerical value function in where clause");
     }
     
+    private String getTableReference(Tree tableNode) {
+        String typeQueryName = queryObj.getTypeQueryName(tableNode.getText());
+        if (null == typeQueryName)
+            throw new RuntimeException("Inavlid type in IN_FOLDER() or IN_TREE(), must be in FROM list: " + tableNode.getText());
+        return typeQueryName;
+    }
+
     private Object getPropertyValue(Tree columnNode, StoredObject so) {
         ColumnReference colRef = getColumnReference(columnNode);
         TypeDefinition td = colRef.getTypeDefinition();

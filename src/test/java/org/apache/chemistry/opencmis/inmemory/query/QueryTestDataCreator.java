@@ -80,6 +80,16 @@ public class QueryTestDataCreator {
         fObjSvc = objSvc;
     }
     
+    public String getFolder1() {
+        return folder1;
+    }
+    public String getFolder2() {
+        return folder2;
+    }
+    public String getFolder11() {
+        return folder11;
+    }
+    
     public void createBasicTestData() {
         createTestFolders();
         createBasicTestDocuments();
@@ -200,28 +210,28 @@ public class QueryTestDataCreator {
     }
     
     @SuppressWarnings("serial")
-    public void createLikeTestDocuments() {
+    public void createLikeTestDocuments(String folderId) {
 
         final Map<String, Object> propertyMap1 = 
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING, "ABCDEF");
             }};           
-        createDocument("likedoc1", rootFolderId, COMPLEX_TYPE, propertyMap1);
+        createDocument("likedoc1", folderId, COMPLEX_TYPE, propertyMap1);
 
         final Map<String, Object> propertyMap2 = 
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING, "ABC123");
             }};           
-        createDocument("likedoc2", rootFolderId, COMPLEX_TYPE, propertyMap2);
+        createDocument("likedoc2", folderId, COMPLEX_TYPE, propertyMap2);
         
         final Map<String, Object> propertyMap3 = 
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING, "123ABC");
             }};           
-        createDocument("likedoc3", rootFolderId, COMPLEX_TYPE, propertyMap3);
+        createDocument("likedoc3", folderId, COMPLEX_TYPE, propertyMap3);
     }
     
     private String createFolder(String folderName, String parentFolderId, String typeId, Map<String, Object> properties) {
