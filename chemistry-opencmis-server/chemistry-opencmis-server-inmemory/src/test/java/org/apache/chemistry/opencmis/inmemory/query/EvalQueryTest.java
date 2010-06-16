@@ -528,7 +528,7 @@ public class EvalQueryTest extends AbstractServiceTst {
     
     @Test
     public void testLike() {
-        dataCreator.createLikeTestDocuments();
+        dataCreator.createLikeTestDocuments(fRootFolderId);
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " LIKE 'ABC%'";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
@@ -555,7 +555,7 @@ public class EvalQueryTest extends AbstractServiceTst {
 
     @Test
     public void testNotLike() {
-        dataCreator.createLikeTestDocuments();
+        dataCreator.createLikeTestDocuments(fRootFolderId);
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " NOT LIKE 'ABC%'";
         ObjectList res = doQuery(statement);
         assertEquals(6, res.getObjects().size());
@@ -570,6 +570,51 @@ public class EvalQueryTest extends AbstractServiceTst {
         assertTrue(resultContains("epsilon", res));    
     }
     
+    @Test
+    public void testInFolder() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER('" + fRootFolderId + "')";
+        ObjectList res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContains("alpha", res));    
+        assertTrue(resultContains("beta", res));    
+        assertTrue(resultContains("gamma", res));    
+        assertTrue(resultContains("delta", res));    
+        assertTrue(resultContains("epsilon", res));    
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER('" + dataCreator.getFolder1() + "')";
+        res = doQuery(statement);
+        assertEquals(0, res.getObjects().size());
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER(" + COMPLEX_TYPE + ", '" + fRootFolderId + "')";
+        res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContains("alpha", res));    
+        assertTrue(resultContains("beta", res));    
+        assertTrue(resultContains("gamma", res));    
+        assertTrue(resultContains("delta", res));    
+        assertTrue(resultContains("epsilon", res));    
+    }
+
+    @Test
+    public void testInTree() {
+        dataCreator.createLikeTestDocuments(dataCreator.getFolder11());
+
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_TREE('" + dataCreator.getFolder1() + "')";
+        ObjectList res = doQuery(statement);
+        assertEquals(3, res.getObjects().size());
+        assertTrue(resultContains("likedoc1", res));    
+        assertTrue(resultContains("likedoc2", res));    
+        assertTrue(resultContains("likedoc3", res));
+        
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER(" + COMPLEX_TYPE + ", '" + dataCreator.getFolder1() + "')";
+        res = doQuery(statement);
+        assertEquals(0, res.getObjects().size());
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_TREE('" + dataCreator.getFolder2() + "')";
+        res = doQuery(statement);
+        assertEquals(0, res.getObjects().size());
+    }
+
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
         ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,
