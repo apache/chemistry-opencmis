@@ -42,6 +42,7 @@ import org.junit.Test;
 public class EvalQueryTest extends AbstractServiceTst {
     
     private static Log log = LogFactory.getLog(EvalQueryTest.class);
+    private QueryTestDataCreator dataCreator;
     
     @Before
     public void setUp() throws Exception {
@@ -50,8 +51,8 @@ public class EvalQueryTest extends AbstractServiceTst {
         super.setTypeCreatorClass(UnitTestTypeSystemCreator.class.getName());
         super.setUp();
         //create test data
-        QueryTestDataCreator dataCreator = new QueryTestDataCreator(fRepositoryId, fRootFolderId, fObjSvc );
-        dataCreator.createTestData();
+        dataCreator = new QueryTestDataCreator(fRepositoryId, fRootFolderId, fObjSvc );
+        dataCreator.createBasicTestData();
     }
 
     @After
@@ -470,6 +471,105 @@ public class EvalQueryTest extends AbstractServiceTst {
         assertTrue(resultContainsAtPos("delta", 2, res) || resultContainsAtPos("delta", 1, res) || resultContainsAtPos("delta", 0, res));
 }
 
+    @Test
+    public void testIsNull() {
+        dataCreator.createNullTestDocument();
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + " IS NULL";
+        ObjectList res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("nulldoc", res));        
+    }
+    
+    @Test
+    public void testIsNotNull() {
+        dataCreator.createNullTestDocument();
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + " IS NOT NULL";
+        ObjectList res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContains("alpha", res));        
+        assertTrue(resultContains("beta", res));        
+        assertTrue(resultContains("gamma", res));        
+        assertTrue(resultContains("delta", res));        
+        assertTrue(resultContains("epsilon", res));        
+    }
+    
+    @Test
+    public void patternTest() {
+        String res = InMemoryQueryProcessor.translatePattern("ABC%def");
+        assertEquals("ABC.*def", res);
+        res = InMemoryQueryProcessor.translatePattern("%abc");
+        assertEquals(".*abc", res);
+        res = InMemoryQueryProcessor.translatePattern("abc%");
+        assertEquals("abc.*", res);
+        res = InMemoryQueryProcessor.translatePattern("ABC\\%def");
+        assertEquals("ABC\\%def", res);
+        res = InMemoryQueryProcessor.translatePattern("\\%abc");
+        assertEquals("\\%abc", res);
+        res = InMemoryQueryProcessor.translatePattern("abc%def%ghi");
+        assertEquals("abc.*def.*ghi", res);
+        res = InMemoryQueryProcessor.translatePattern("abc%def\\%ghi%jkl");
+        assertEquals("abc.*def\\%ghi.*jkl", res);
+        
+        res = InMemoryQueryProcessor.translatePattern("ABC_def");
+        assertEquals("ABC.def", res);
+        res = InMemoryQueryProcessor.translatePattern("_abc");
+        assertEquals(".abc", res);
+        res = InMemoryQueryProcessor.translatePattern("abc_");
+        assertEquals("abc.", res);
+        res = InMemoryQueryProcessor.translatePattern("ABC\\_def");
+        assertEquals("ABC\\_def", res);
+        res = InMemoryQueryProcessor.translatePattern("\\_abc");
+        assertEquals("\\_abc", res);
+        res = InMemoryQueryProcessor.translatePattern("abc_def_ghi");
+        assertEquals("abc.def.ghi", res);
+        res = InMemoryQueryProcessor.translatePattern("abc_def\\_ghi_jkl");
+        assertEquals("abc.def\\_ghi.jkl", res);
+    }
+    
+    @Test
+    public void testLike() {
+        dataCreator.createLikeTestDocuments();
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " LIKE 'ABC%'";
+        ObjectList res = doQuery(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContains("likedoc1", res));        
+        assertTrue(resultContains("likedoc2", res));        
+        
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " LIKE '%ABC'";
+        res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("likedoc3", res));        
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " LIKE '%ABC%'";
+        res = doQuery(statement);
+        assertEquals(3, res.getObjects().size());
+        assertTrue(resultContains("likedoc1", res));        
+        assertTrue(resultContains("likedoc2", res));        
+        assertTrue(resultContains("likedoc3", res));
+        
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " LIKE 'AB_DEF'";
+        res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("likedoc1", res));        
+    }
+
+    @Test
+    public void testNotLike() {
+        dataCreator.createLikeTestDocuments();
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " NOT LIKE 'ABC%'";
+        ObjectList res = doQuery(statement);
+        assertEquals(6, res.getObjects().size());
+        assertTrue(resultContains("likedoc3", res));        
+        
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " NOT LIKE '%a'";
+        res = doQuery(statement);
+        assertEquals(4, res.getObjects().size());
+        assertTrue(resultContains("likedoc1", res));    
+        assertTrue(resultContains("likedoc1", res));    
+        assertTrue(resultContains("likedoc3", res));    
+        assertTrue(resultContains("epsilon", res));    
+    }
+    
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
         ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,

@@ -80,13 +80,13 @@ public class QueryTestDataCreator {
         fObjSvc = objSvc;
     }
     
-    public void createTestData() {
+    public void createBasicTestData() {
         createTestFolders();
-        createTestDocuments();
+        createBasicTestDocuments();
     }
 
     @SuppressWarnings("serial")
-    public void createTestDocuments() {
+    public void createBasicTestDocuments() {
 
         final GregorianCalendar gc1 = new GregorianCalendar(TZ);
         gc1.clear();
@@ -188,7 +188,42 @@ public class QueryTestDataCreator {
         folder11 = createFolder("Folder 11", folder1, FOLDER_TYPE, propertyMap3);
     }
     
+    @SuppressWarnings("serial")
+    public void createNullTestDocument() {
 
+        final Map<String, Object> propertyMap1 = 
+            new HashMap<String, Object>() {
+            { 
+                put(PROP_ID_STRING, "DocumentWithNulls");
+            }};           
+        createDocument("nulldoc", rootFolderId, COMPLEX_TYPE, propertyMap1);
+    }
+    
+    @SuppressWarnings("serial")
+    public void createLikeTestDocuments() {
+
+        final Map<String, Object> propertyMap1 = 
+            new HashMap<String, Object>() {
+            { 
+                put(PROP_ID_STRING, "ABCDEF");
+            }};           
+        createDocument("likedoc1", rootFolderId, COMPLEX_TYPE, propertyMap1);
+
+        final Map<String, Object> propertyMap2 = 
+            new HashMap<String, Object>() {
+            { 
+                put(PROP_ID_STRING, "ABC123");
+            }};           
+        createDocument("likedoc2", rootFolderId, COMPLEX_TYPE, propertyMap2);
+        
+        final Map<String, Object> propertyMap3 = 
+            new HashMap<String, Object>() {
+            { 
+                put(PROP_ID_STRING, "123ABC");
+            }};           
+        createDocument("likedoc3", rootFolderId, COMPLEX_TYPE, propertyMap3);
+    }
+    
     private String createFolder(String folderName, String parentFolderId, String typeId, Map<String, Object> properties) {
         Properties props = createFolderProperties(folderName, typeId, properties);
         String id = null;

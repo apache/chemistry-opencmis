@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -35,6 +36,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.TypeManager;
 import org.apache.chemistry.opencmis.inmemory.query.QueryObject.SortSpec;
@@ -481,19 +483,38 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
     }
 
     private boolean evalWhereIsNull(StoredObject so, Tree node, Tree child) {
-        throw new RuntimeException("Operator IS NULL not supported in InMemory server.");
+       Object propVal = getPropertyValue(child, so);
+       return null == propVal;
     }
 
     private boolean evalWhereIsNotNull(StoredObject so, Tree node, Tree child) {
-        throw new RuntimeException("Operator IS NOT NULL not supported in InMemory server.");
+        Object propVal = getPropertyValue(child, so);
+        return null != propVal;
     }
 
     private boolean evalWhereIsLike(StoredObject so, Tree node, Tree colNode, Tree StringNode) {
-        throw new RuntimeException("Operator LIKE not supported in InMemory server.");
+        Object rVal = onLiteral(StringNode);
+        if (!(rVal instanceof String))
+                throw new RuntimeException("LIKE operator requires String literal on right hand side.");
+        
+        ColumnReference colRef = getColumnReference(colNode);
+        TypeDefinition td = colRef.getTypeDefinition();
+        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+        PropertyType propType = pd.getPropertyType();
+        if (propType != PropertyType.STRING && propType != PropertyType.HTML &&  propType != PropertyType.ID &&
+                propType != PropertyType.URI)
+            throw new RuntimeException("Property type "+ propType.value() + " is not allowed FOR LIKE");
+        if (pd.getCardinality() != Cardinality.SINGLE)
+            throw new RuntimeException("LIKE is not allowed for multi-value properties ");
+        
+        String propVal = (String) so.getProperties().get(colRef.getPropertyId()).getFirstValue();
+        String pattern = translatePattern((String) rVal); // SQL to Java regex syntax
+        Pattern p = Pattern.compile(pattern);
+        return p.matcher(propVal).matches();
     }
 
     private boolean evalWhereIsNotLike(StoredObject so, Tree node, Tree colNode, Tree stringNode) {
-        throw new RuntimeException("Operator NOT LIKE not supported in InMemory server.");
+        return ! evalWhereIsLike(so, node, colNode, stringNode);
     }
 
     private boolean evalWhereContains(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
@@ -506,13 +527,6 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
 
     private boolean evalWhereInTree(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
         throw new RuntimeException("Operator IN_TREE not supported in InMemory server.");
-    }
-
-    private void checkLiteral(Tree node) {
-        int type = node.getType();
-        if (type != CMISQLLexerStrict.BOOL_LIT && type != CMISQLLexerStrict.NUM_LIT || type != CMISQLLexerStrict.STRING_LIT
-                || type != CMISQLLexerStrict.TIME_LIT)
-            throw new RuntimeException("Literal expected.");
     }
 
     private Object onLiteral(Tree node) {
@@ -539,24 +553,16 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
     
     private Integer compareTo(StoredObject so, Tree leftChild, Tree rightChild) {
         Object rVal = onLiteral(rightChild);
+        
         //log.debug("retrieve node from where: " + System.identityHashCode(leftChild) + " is " + leftChild);
-        CmisSelector sel = queryObj.getColumnReference(leftChild.getTokenStartIndex());
-        if (null == sel)
-            throw new RuntimeException("Unknown property query name " + leftChild.getChild(0));
-        else if (sel instanceof ColumnReference) {
-            ColumnReference colRef = (ColumnReference) sel;
-            TypeDefinition td = colRef.getTypeDefinition();
-            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
-            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-            if (null == lVal)
-                return null; // property is not set
-            else if (pd.getCardinality() == Cardinality.MULTI)
-                throw new RuntimeException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
-
+        ColumnReference colRef = getColumnReference(leftChild);
+        TypeDefinition td = colRef.getTypeDefinition();
+        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+        if (lVal instanceof List<?>)
+            throw new RuntimeException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
+        else
             return compareTo(pd, lVal, rVal);
-        } else {
-            throw new RuntimeException("Unexpected numerical value function in where clause");
-        }
     }
     
     private int compareTo(PropertyDefinition<?> td, PropertyData<?> lVal, Object rVal) {
@@ -609,6 +615,68 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
             break;
         }
         return 0;
+    }
+    
+    private ColumnReference getColumnReference(Tree columnNode) {
+        CmisSelector sel = queryObj.getColumnReference(columnNode.getTokenStartIndex());
+        if (null == sel)
+            throw new RuntimeException("Unknown property query name " + columnNode.getChild(0));
+        else if (sel instanceof ColumnReference)
+            return (ColumnReference) sel;
+        else
+            throw new RuntimeException("Unexpected numerical value function in where clause");
+    }
+    
+    private Object getPropertyValue(Tree columnNode, StoredObject so) {
+        ColumnReference colRef = getColumnReference(columnNode);
+        TypeDefinition td = colRef.getTypeDefinition();
+        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+        if (null == lVal)
+            return null;
+        else {
+            if (pd.getCardinality() == Cardinality.SINGLE)
+                return null == lVal ? null : lVal.getFirstValue();
+            else
+                return lVal.getValues();
+        }                
+    }
+    
+    // translate SQL wildcards %, _ to Java regex syntax
+    public static String translatePattern(String wildcardString) {
+        int index = 0;
+        int start = 0;
+        StringBuffer res = new StringBuffer();
+        
+        while (index >= 0) {
+            index = wildcardString.indexOf('%', start);
+            if (index < 0) 
+                res.append(wildcardString.substring(start));
+            else if (index == 0 || index > 0 && wildcardString.charAt(index-1) != '\\') {
+                res.append(wildcardString.substring(start, index));
+                res.append(".*");
+            } else 
+                res.append(wildcardString.substring(start, index+1));
+            start = index+1;
+        }
+        wildcardString = res.toString();
+        
+        index = 0;
+        start = 0;
+        res = new StringBuffer();
+        
+        while (index >= 0) {
+            index = wildcardString.indexOf('_', start);
+            if (index < 0) 
+                res.append(wildcardString.substring(start));
+            else if (index == 0 || index > 0 && wildcardString.charAt(index-1) != '\\') {
+                res.append(wildcardString.substring(start, index));
+                res.append(".");
+            } else 
+                res.append(wildcardString.substring(start, index+1));
+            start = index+1;
+        }
+        return res.toString();
     }
     
     private void throwIncompatibleTypesException(Object o1, Object o2) {
