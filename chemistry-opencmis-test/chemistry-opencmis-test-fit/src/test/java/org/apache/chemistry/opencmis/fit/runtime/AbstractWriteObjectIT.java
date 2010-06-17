@@ -169,7 +169,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertEquals("Neuer Name", document.getName());
     }
     
-    @Ignore
+    @Ignore  
     @Test
     public void updateSinglePropertyAndCheckName() {
         // verify content
@@ -177,9 +177,9 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         Document document = (Document) this.session.getObjectByPath(path);
         assertNotNull("Document not found: " + path, document);
 
-        String lastModifiedBy = UUID.randomUUID().toString();
+        String value = UUID.randomUUID().toString();
         Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(PropertyIds.LAST_MODIFIED_BY, lastModifiedBy);
+        properties.put(PropertyIds.CHECKIN_COMMENT, value);
 
         String id = document.getId();
         assertNotNull(id);
@@ -188,10 +188,20 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         ObjectId newId = document.updateProperties(properties);
         assertNotNull(newId);
         assertEquals(id, newId.getId());  // should not be a new version
+   
+        session.clear();
         
         // verify
-        assertEquals(lastModifiedBy, document.getLastModifiedBy());
-        assertEquals(FixtureData.DOCUMENT1_NAME, document.getName());
+        String s1 = FixtureData.DOCUMENT1_NAME.toString();
+        String s2 = document.getName();
+        assertEquals(s1, s2);
+
+        Property<String> p = document.getProperty(PropertyIds.NAME);
+        String s3 = p.getFirstValue();
+        assertEquals(s1, s3);
+        
+        Document document2 = (Document) this.session.getObjectByPath(path);
+        assertNotNull("Document not found: " + path, document2);
     }
 
     private String getContentAsString(ContentStream stream) throws IOException {
