@@ -255,7 +255,7 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
      * org.apache.opencmis.client.api.Document#getObjectOfLatestVersion(boolean)
      */
     public Document getObjectOfLatestVersion(boolean major) {
-        return getObjectOfLatestVersion(major, null);
+        return getObjectOfLatestVersion(major, getSession().getDefaultContext());
     }
 
     /*
