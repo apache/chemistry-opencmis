@@ -20,18 +20,18 @@ package org.apache.chemistry.opencmis.fit.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -166,7 +166,32 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         document.setProperty(PropertyIds.NAME, "Neuer Name");
         document.updateProperties();
-        assertTrue(true);
+        assertEquals("Neuer Name", document.getName());
+    }
+    
+    @Ignore
+    @Test
+    public void updateSinglePropertyAndCheckName() {
+        // verify content
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
+        Document document = (Document) this.session.getObjectByPath(path);
+        assertNotNull("Document not found: " + path, document);
+
+        String lastModifiedBy = UUID.randomUUID().toString();
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.LAST_MODIFIED_BY, lastModifiedBy);
+
+        String id = document.getId();
+        assertNotNull(id);
+
+        // update single property
+        ObjectId newId = document.updateProperties(properties);
+        assertNotNull(newId);
+        assertEquals(id, newId.getId());  // should not be a new version
+        
+        // verify
+        assertEquals(lastModifiedBy, document.getLastModifiedBy());
+        assertEquals(FixtureData.DOCUMENT1_NAME, document.getName());
     }
 
     private String getContentAsString(ContentStream stream) throws IOException {
@@ -304,7 +329,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
     }
 
     @Ignore
-    @Test(expected=CmisContentAlreadyExistsException.class)
+    @Test(expected = CmisContentAlreadyExistsException.class)
     public void createDocumentAndUpdateContentNoOverwrite() throws IOException {
         ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
