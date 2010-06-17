@@ -104,6 +104,7 @@
       <arg value="--convert-links" />
       <arg value="--include=/chemistry" />
       <arg value="--accept=opencmis*,index.html,css,js,gif,png,jpg" />
+      <arg value="--exclude-directories=javadoc" />
       <arg value="${doc.start}" />
     </exec>
 
