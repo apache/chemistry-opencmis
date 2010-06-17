@@ -51,6 +51,7 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -229,7 +230,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
             fObjSvc.setContentStream(fRepositoryId, idHolder, false, null, contentStream, null);
             fail("setContentStream with existing content and no overWriteFlag should fail");
         } catch (Exception e) {
-            assertTrue(e instanceof CmisConstraintException);
+            assertTrue(e instanceof CmisContentAlreadyExistsException);
         }
 
         // cleanup
