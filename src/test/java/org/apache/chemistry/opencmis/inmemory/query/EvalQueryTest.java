@@ -23,6 +23,7 @@ import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.P
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_DATETIME;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_DECIMAL;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_INT;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -593,26 +594,44 @@ public class EvalQueryTest extends AbstractServiceTst {
         assertTrue(resultContains("gamma", res));    
         assertTrue(resultContains("delta", res));    
         assertTrue(resultContains("epsilon", res));    
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER(UnknownType, '" + dataCreator.getFolder2() + "')";
+        try {
+            res = doQuery(statement);
+            fail("Unknown type in folder should throw exception");
+        } catch (Exception e) {
+            assertTrue(e.toString().contains("must be in FROM list"));
+            log.debug("expected Exception: " + e);
+        }
     }
 
     @Test
     public void testInTree() {
         dataCreator.createLikeTestDocuments(dataCreator.getFolder11());
 
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_TREE('" + dataCreator.getFolder1() + "')";
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_TREE(" + COMPLEX_TYPE + ", '" + dataCreator.getFolder1() + "')";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("likedoc1", res));    
         assertTrue(resultContains("likedoc2", res));    
         assertTrue(resultContains("likedoc3", res));
         
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER(" + COMPLEX_TYPE + ", '" + dataCreator.getFolder1() + "')";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER('" + dataCreator.getFolder1() + "')";
         res = doQuery(statement);
         assertEquals(0, res.getObjects().size());
 
         statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_TREE('" + dataCreator.getFolder2() + "')";
         res = doQuery(statement);
         assertEquals(0, res.getObjects().size());
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_TREE(UnknownType, '" + dataCreator.getFolder2() + "')";
+        try {
+            res = doQuery(statement);
+            fail("Unknown type in folder should throw exception");
+        } catch (Exception e) {
+            assertTrue(e.toString().contains("must be in FROM list"));
+            log.debug("expected Exception: " + e);
+        }
     }
 
     private ObjectList doQuery(String queryString) {
