@@ -321,8 +321,8 @@ public final class AtomPubUtils {
             entry.writeEditLink(cvUrl.toString());
         }
 
-        if (contentSrc != null) {
-            entry.writeEditMediaLink(contentSrc, info.getContentType());
+        if (info.getBaseType() == BaseTypeId.CMIS_DOCUMENT) {
+            entry.writeEditMediaLink(compileUrl(baseUrl, RESOURCE_CONTENT, info.getId()), info.getContentType());
         }
 
         if (info.getWorkingCopyId() != null) {

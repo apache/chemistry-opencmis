@@ -211,7 +211,6 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         return sbuf.toString();
     }
 
-    @Ignore
     @Test
     public void createDocumentAndSetContent() throws IOException {
         ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
