@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.inmemory.query;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class QueryObject {
     /** 
      * map from alias name to type query name
      */
-    private Map<String,String> froms = new HashMap<String,String>();
+    private Map<String,String> froms = new LinkedHashMap<String,String>();
 
     // where part
 //    private IdentityHashMap<Object, CmisSelector> columnReferences = new IdentityHashMap<Object, CmisSelector>(); 
