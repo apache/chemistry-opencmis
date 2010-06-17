@@ -2327,9 +2327,15 @@ public final class Converter {
         result.setMimeType(contentStream.getMimeType());
         if (contentStream.getStream() != null) {
             try {
-                if (contentStream.getStream() instanceof StreamingDataHandler) {
-                    result.setStream(((StreamingDataHandler) contentStream.getStream()).readOnce());
-                } else {
+                try {
+                    if (contentStream.getStream() instanceof StreamingDataHandler) {
+                        result.setStream(((StreamingDataHandler) contentStream.getStream()).readOnce());
+                    } else {
+                        result.setStream(contentStream.getStream().getInputStream());
+                    }
+                } catch (NoClassDefFoundError cnfe) {
+                    // Fallback in case the JAX-WS RI is not available (optional
+                    // resolution in OSGi)
                     result.setStream(contentStream.getStream().getInputStream());
                 }
             } catch (IOException e) {
