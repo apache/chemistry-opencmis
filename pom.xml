@@ -337,29 +337,6 @@
     </reporting>
 
     <profiles>
-        <profile>
-            <!--
-                bob profile used by local build infrastructure contact:
-                stephan.klevenz at sap.com
-            -->
-            <id>bob</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <distributionManagement>
-                <site>
-                    <id>opencmis.bob.site</id>
-                    <name>OpenCMIS Bob Site</name>
-                    <url>file:///C:/sharedfolder/www/davuploads/opencmis</url>
-                </site>
-            </distributionManagement>
-            <!--
-                <reporting> <plugins> <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                </plugin> </plugins> </reporting>
-            -->
-        </profile>
     </profiles>
 
 </project>
