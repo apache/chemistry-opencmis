@@ -43,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -520,7 +521,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new IllegalArgumentException("Content cannot be set on this object (must be document or version)");
 
         if (!overwriteFlag && content.getContent(0, -1) != null)
-            throw new CmisConstraintException("cannot overwrite existing content if overwrite flag is not set");
+            throw new CmisContentAlreadyExistsException("cannot overwrite existing content if overwrite flag is not set");
 
         content.setContent(contentStream, true);
         LOG.debug("stop setContentStream()");
