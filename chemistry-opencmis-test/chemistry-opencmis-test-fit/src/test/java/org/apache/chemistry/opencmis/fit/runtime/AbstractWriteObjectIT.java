@@ -30,11 +30,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
@@ -181,5 +184,168 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         }
         in2.close();
         return sbuf.toString();
+    }
+
+    @Ignore
+    @Test
+    public void createDocumentAndSetContent() throws IOException {
+        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        String folderName = UUID.randomUUID().toString();
+        String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, folderName);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+
+        String filename = UUID.randomUUID().toString();
+        String mimetype = "text/html; charset=UTF-8";
+        String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
+
+        byte[] buf1 = content1.getBytes("UTF-8");
+        ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
+        ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length,
+                mimetype, in1);
+        assertNotNull(contentStream);
+
+        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE, null, null, null);
+        assertNotNull(id);
+
+        // set and verify content
+        Document doc = (Document) this.session.getObject(id);
+        assertNotNull(doc);
+        doc.setContentStream(contentStream, true);
+
+        // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
+        // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
+        // Assert.assertEquals(filename, doc.getContentStreamFileName());
+        String content2 = this.getContentAsString(doc.getContentStream());
+        assertEquals(content1, content2);
+    }
+
+    @Ignore
+    @Test
+    public void createDocumentAndSetContentNoOverwrite() throws IOException {
+        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        String folderName = UUID.randomUUID().toString();
+        String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, folderName);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+
+        String filename = UUID.randomUUID().toString();
+        String mimetype = "text/html; charset=UTF-8";
+        String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
+
+        byte[] buf1 = content1.getBytes("UTF-8");
+        ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
+        ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length,
+                mimetype, in1);
+        assertNotNull(contentStream);
+
+        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE, null, null, null);
+        assertNotNull(id);
+
+        // set and verify content
+        Document doc = (Document) this.session.getObject(id);
+        assertNotNull(doc);
+        doc.setContentStream(contentStream, false);
+
+        // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
+        // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
+        // Assert.assertEquals(filename, doc.getContentStreamFileName());
+        String content2 = this.getContentAsString(doc.getContentStream());
+        assertEquals(content1, content2);
+    }
+
+    @Test
+    public void createDocumentAndUpdateContent() throws IOException {
+        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        String folderName = UUID.randomUUID().toString();
+        String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, folderName);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+
+        String filename1 = UUID.randomUUID().toString();
+        String mimetype = "text/html; charset=UTF-8";
+        String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
+
+        byte[] buf1 = content1.getBytes("UTF-8");
+        ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
+        ContentStream contentStream1 = this.session.getObjectFactory().createContentStream(filename1, buf1.length,
+                mimetype, in1);
+        assertNotNull(contentStream1);
+
+        ObjectId id = this.session.createDocument(properties, parentId, contentStream1, VersioningState.NONE, null,
+                null, null);
+        assertNotNull(id);
+
+        // set and verify content
+        String filename2 = UUID.randomUUID().toString();
+        String content2 = "abc";
+
+        byte[] buf2 = content2.getBytes("UTF-8");
+        ByteArrayInputStream in2 = new ByteArrayInputStream(buf2);
+        ContentStream contentStream2 = this.session.getObjectFactory().createContentStream(filename2, buf2.length,
+                mimetype, in2);
+        assertNotNull(contentStream2);
+
+        Document doc = (Document) this.session.getObject(id);
+        assertNotNull(doc);
+        doc.setContentStream(contentStream2, true);
+
+        // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
+        // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
+        // Assert.assertEquals(filename, doc.getContentStreamFileName());
+        String content3 = this.getContentAsString(doc.getContentStream());
+        assertEquals(content2, content3);
+    }
+
+    @Ignore
+    @Test(expected=CmisContentAlreadyExistsException.class)
+    public void createDocumentAndUpdateContentNoOverwrite() throws IOException {
+        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        String folderName = UUID.randomUUID().toString();
+        String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, folderName);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+
+        String filename1 = UUID.randomUUID().toString();
+        String mimetype = "text/html; charset=UTF-8";
+        String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
+
+        byte[] buf1 = content1.getBytes("UTF-8");
+        ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
+        ContentStream contentStream1 = this.session.getObjectFactory().createContentStream(filename1, buf1.length,
+                mimetype, in1);
+        assertNotNull(contentStream1);
+
+        ObjectId id = this.session.createDocument(properties, parentId, contentStream1, VersioningState.NONE, null,
+                null, null);
+        assertNotNull(id);
+
+        // set and verify content
+        String filename2 = UUID.randomUUID().toString();
+        String content2 = "abc";
+
+        byte[] buf2 = content2.getBytes("UTF-8");
+        ByteArrayInputStream in2 = new ByteArrayInputStream(buf2);
+        ContentStream contentStream2 = this.session.getObjectFactory().createContentStream(filename2, buf2.length,
+                mimetype, in2);
+        assertNotNull(contentStream2);
+
+        Document doc = (Document) this.session.getObject(id);
+        assertNotNull(doc);
+        doc.setContentStream(contentStream2, false);
+
+        // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
+        // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
+        // Assert.assertEquals(filename, doc.getContentStreamFileName());
+        String content3 = this.getContentAsString(doc.getContentStream());
+        assertEquals(content2, content3);
     }
 }
