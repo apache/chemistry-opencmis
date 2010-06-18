@@ -173,7 +173,7 @@ public class DocumentTypeCreationHelper {
 
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CHECKIN_COMMENT,
                 "CMIS Checkin Comment Property");
-        propId.setUpdatability(Updatability.READONLY); // Note: spec says
+        propS.setUpdatability(Updatability.READONLY); // Note: spec says
         // read-only, because
         // not set as property
         propertyDefinitions.put(propS.getId(), propS);
