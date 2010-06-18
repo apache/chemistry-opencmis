@@ -228,7 +228,7 @@ public class AtomEntryParser {
         }
 
         // overwrite cmis:name with Atom title
-        if ((fObject != null) && (fObject.getProperties() != null) && (atomTitle != null)) {
+        if ((fObject != null) && (fObject.getProperties() != null) && (atomTitle != null) && (atomTitle.length() > 0)) {
             PropertyString nameProperty = new PropertyStringImpl(PropertyIds.NAME, atomTitle);
             ((PropertiesImpl) fObject.getProperties()).addProperty(nameProperty);
         }

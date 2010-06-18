@@ -25,7 +25,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -169,7 +168,6 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertEquals("Neuer Name", document.getName());
     }
     
-    @Ignore  
     @Test
     public void updateSinglePropertyAndCheckName() {
         // verify content
