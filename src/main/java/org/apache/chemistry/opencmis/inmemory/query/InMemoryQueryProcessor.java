@@ -464,24 +464,107 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
         return matches1 || matches2;
     }
 
-    private boolean evalWhereIn(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
-        throw new RuntimeException("Operator IN not supported in InMemory server.");
+    private boolean evalWhereIn(StoredObject so, Tree node, Tree colNode, Tree listNode) {
+        ColumnReference colRef = getColumnReference(colNode);
+        TypeDefinition td = colRef.getTypeDefinition();
+        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+        List<Object> literals = onLiteralList(listNode);
+        if (pd.getCardinality() != Cardinality.SINGLE)
+            throw new RuntimeException("Operator IN only is allowed on single-value properties ");
+        else if (lVal == null)
+            return false;
+        else {
+            Object prop= lVal.getFirstValue();
+            if (literals.contains(prop))
+                return true;
+            else
+                return false;
+        }
     }
 
     private boolean evalWhereNotIn(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        throw new RuntimeException("Operator NOT IN not supported in InMemory server.");
+        // Note just return !evalWhereIn(so, node, colNode, listNode) is wrong, because
+        // then it evaluates to true for null values (not set properties).
+        ColumnReference colRef = getColumnReference(colNode);
+        TypeDefinition td = colRef.getTypeDefinition();
+        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+        List<Object> literals = onLiteralList(listNode);
+        if (pd.getCardinality() != Cardinality.SINGLE)
+            throw new RuntimeException("Operator IN only is allowed on single-value properties ");
+        else if (lVal == null)
+            return false;
+        else {
+            Object prop= lVal.getFirstValue();
+            if (literals.contains(prop))
+                return false;
+            else
+                return true;
+        }
     }
 
     private boolean evalWhereInAny(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        throw new RuntimeException("Operator IN ANY not supported in InMemory server.");
+        ColumnReference colRef = getColumnReference(colNode);
+        TypeDefinition td = colRef.getTypeDefinition();
+        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+        List<Object> literals = onLiteralList(listNode);
+        if (pd.getCardinality() != Cardinality.MULTI)
+            throw new RuntimeException("Operator ANY...IN only is allowed on multi-value properties ");
+        else if (lVal == null)
+            return false;
+        else {
+            List<?> props= lVal.getValues();
+            for (Object prop : props) {
+                LOG.debug("comparing with: " + prop);
+                if (literals.contains(prop))
+                    return true;
+            }
+            return false;
+        }
     }
 
     private boolean evalWhereNotInAny(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        throw new RuntimeException("Operator NOT IN ANY not supported in InMemory server.");
+        // Note just return !evalWhereInAny(so, node, colNode, listNode) is wrong, because
+        // then it evaluates to true for null values (not set properties).
+        ColumnReference colRef = getColumnReference(colNode);
+        TypeDefinition td = colRef.getTypeDefinition();
+        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+        List<Object> literals = onLiteralList(listNode);
+        if (pd.getCardinality() != Cardinality.MULTI)
+            throw new RuntimeException("Operator ANY...IN only is allowed on multi-value properties ");
+        else if (lVal == null)
+            return false;
+        else {
+            List<?> props= lVal.getValues();
+            for (Object prop : props) {
+                LOG.debug("comparing with: " + prop);
+                if (literals.contains(prop))
+                    return false;
+            }
+            return true;
+        }    
     }
 
-    private boolean evalWhereEqAny(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        throw new RuntimeException("Operator = ANY not supported in InMemory server.");
+    private boolean evalWhereEqAny(StoredObject so, Tree node, Tree literalNode, Tree colNode) {
+        ColumnReference colRef = getColumnReference(colNode);
+        TypeDefinition td = colRef.getTypeDefinition();
+        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+        Object literal = onLiteral(literalNode);
+        if (pd.getCardinality() != Cardinality.MULTI)
+            throw new RuntimeException("Operator = ANY only is allowed on multi-value properties ");
+        else if (lVal == null)
+            return false;
+        else {
+            List<?> props= lVal.getValues();
+            if (props.contains(literal))
+                return true;
+            else
+                return false;
+        }
     }
 
     private boolean evalWhereIsNull(StoredObject so, Tree node, Tree child) {
@@ -598,6 +681,15 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
             LOG.error("Unknown literal. " + node);
             return null;
         }
+    }
+ 
+    private List<Object> onLiteralList(Tree node) {
+        List<Object> res = new ArrayList<Object>(node.getChildCount());
+        for (int i=0; i<node.getChildCount(); i++) {
+            Tree literal =  node.getChild(i);
+            res.add(onLiteral(literal));
+        }
+        return res;
     }
     
     private Integer compareTo(StoredObject so, Tree leftChild, Tree rightChild) {

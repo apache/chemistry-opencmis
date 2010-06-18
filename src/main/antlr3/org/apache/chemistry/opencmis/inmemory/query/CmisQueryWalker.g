@@ -191,9 +191,6 @@ table_reference:
 
 table_join:
     ^(JOIN join_kind one_table join_specification?)
-    {
-      //throw new UnsupportedOperationException("JOIN");
-    }
     ;
 
 one_table:
@@ -236,7 +233,10 @@ search_condition
     | ^(NOT_LIKE search_condition search_condition)
     | ^(IS_NULL search_condition) 
     | ^(IS_NOT_NULL search_condition) 
-    | ^(EQ_ANY search_condition search_condition)
+    | ^(EQ_ANY literal column_reference)
+      {
+      	  queryObj.addSelectReference($column_reference.start, $column_reference.result);
+      }
     | ^(IN_ANY search_condition in_value_list )
     | ^(NOT_IN_ANY search_condition in_value_list)
     | ^(CONTAINS qualifier? text_search_expression)
@@ -244,9 +244,12 @@ search_condition
     | ^(IN_TREE qualifier? search_condition)
     | ^(IN column_reference in_value_list)
       {
-           LOG.debug("IN list: " + $in_value_list.inList);
+      	  queryObj.addSelectReference($column_reference.start, $column_reference.result);
       }
     | ^(NOT_IN column_reference in_value_list)
+      {
+      	  queryObj.addSelectReference($column_reference.start, $column_reference.result);
+      }
     | value_expression
       {
           LOG.debug("  add node to where: " + $value_expression.start + " id: " + System.identityHashCode($value_expression.start));
