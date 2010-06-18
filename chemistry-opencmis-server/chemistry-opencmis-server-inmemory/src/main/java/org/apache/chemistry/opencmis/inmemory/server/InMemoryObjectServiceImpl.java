@@ -597,6 +597,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             List<Folder> parents = ((Filing) so).getParents();
             if (so instanceof Folder && parents.isEmpty())
                 throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
+            if (newName == null || newName.equals(""))
+                throw new CmisConstraintException("updateProperties failed, name must not be empty.");
+                
             so.rename((String) pd.getFirstValue()); // note: this does persist
             hasUpdatedName = true;
         }
