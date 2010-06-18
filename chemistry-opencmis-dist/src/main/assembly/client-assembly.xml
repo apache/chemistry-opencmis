@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <!--
-        Lice nsed to the Apache Software Foundation (ASF) under one or
+        Licensed to the Apache Software Foundation (ASF) under one or
         more contributor license agreements. See the NOTICE file
         distributed with this work for additional information regarding
         copyright ownership. The ASF licenses this file to you under the
@@ -20,13 +20,26 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
     <!-- To build this, run "mvn package assembly:assembly" -->
-    <id>docs</id>
+    <id>client</id>
     <formats>
         <format>zip</format>
         <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
+        <dependencySet>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <useProjectArtifact>true</useProjectArtifact>
+            <includes>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-impl</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-api</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-bindings</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-commons-api</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-commons-impl</include>
+            </includes>
+            <outputDirectory></outputDirectory>
+            <unpack>false</unpack>
+        </dependencySet>
         <dependencySet>
             <includes>
                 <include>org.apache:apache-jar-resource-bundle</include>
@@ -42,20 +55,4 @@
             </unpackOptions>
         </dependencySet>
     </dependencySets>
-    <fileSets>
-        <fileSet>
-            <directory>${project.build.directory}/site/incubator.apache.org/chemistry</directory>
-            <outputDirectory>sitedocs</outputDirectory>
-            <includes>
-                <include>**</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.build.directory}/site/apidocs</directory>
-            <outputDirectory>javadocs</outputDirectory>
-            <includes>
-                <include>**</include>
-            </includes>
-        </fileSet>
-    </fileSets>
 </assembly>

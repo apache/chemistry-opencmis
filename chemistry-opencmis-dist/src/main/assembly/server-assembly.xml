@@ -16,37 +16,28 @@
         and limitations under the License.
     -->
 <assembly
-    xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+    xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
     <!-- To build this, run "mvn package assembly:assembly" -->
-    <id>with-dependencies</id>
+    <id>server</id>
     <formats>
         <format>zip</format>
         <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    <moduleSets>
-        <moduleSet>
+    <dependencySets>
+        <dependencySet>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <useTransitiveFiltering>false</useTransitiveFiltering>
+            <useProjectArtifact>true</useProjectArtifact>
             <includes>
                 <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-bindings</include>
                 <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-support</include>
             </includes>
-            <includeSubModules>true</includeSubModules>
-            <binaries>
-                <outputDirectory></outputDirectory>
-                <includeDependencies>true</includeDependencies>
-                <unpack>false</unpack>
-                <dependencySets>
-                    <dependencySet>
-                        <scope>runtime</scope>
-                        <outputDirectory></outputDirectory>
-                    </dependencySet>
-                </dependencySets>
-            </binaries>
-        </moduleSet>
-    </moduleSets>
-    <dependencySets>
+            <outputDirectory></outputDirectory>
+            <unpack>false</unpack>
+        </dependencySet>
         <dependencySet>
             <includes>
                 <include>org.apache:apache-jar-resource-bundle</include>
