@@ -633,7 +633,103 @@ public class EvalQueryTest extends AbstractServiceTst {
             log.debug("expected Exception: " + e);
         }
     }
+    
+    @Test
+    public void testIn() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " IN ('Alpha', 'Beta', 'Gamma')";
+        ObjectList res = doQuery(statement);
+        assertEquals(3, res.getObjects().size());
+        assertTrue(resultContains("alpha", res));    
+        assertTrue(resultContains("beta", res));    
+        assertTrue(resultContains("gamma", res));    
 
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " IN ('Theta', 'Pi', 'Rho')";
+        res = doQuery(statement);
+        assertEquals(0, res.getObjects().size());
+    }
+    
+    @Test
+    public void testNotIn() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " NOT IN ('Alpha', 'Beta', 'Gamma')";
+        ObjectList res = doQuery(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContains("delta", res));    
+        assertTrue(resultContains("epsilon", res));    
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " NOT IN ('Theta', 'Pi', 'Rho')";
+        res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        assertTrue(resultContains("alpha", res));    
+        assertTrue(resultContains("beta", res));    
+        assertTrue(resultContains("gamma", res));    
+        assertTrue(resultContains("delta", res));    
+        assertTrue(resultContains("epsilon", res));    
+    }
+    
+    @Test
+    public void testMultiValueInAny() {
+        dataCreator.createMultiValueDocuments();
+
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " IN ('red', 'black', 'grey')";
+        ObjectList res = doQuery(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContains("mv-alpha", res));    
+        assertTrue(resultContains("mv-beta", res));    
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " IN ('green', 'black', 'grey')";
+        res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("mv-alpha", res));    
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " IN ('white', 'black', 'grey')";
+        res = doQuery(statement);
+        assertEquals(0, res.getObjects().size());
+    }
+    
+    @Test
+    public void testMultiValueNotInAny() {
+        dataCreator.createMultiValueDocuments();
+
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " NOT IN ('red', 'black', 'grey')";
+        ObjectList res = doQuery(statement);
+        assertEquals(0, res.getObjects().size());
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " NOT IN ('green', 'black', 'grey')";
+        res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("mv-beta", res));    
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " NOT IN ('white', 'black', 'grey')";
+        res = doQuery(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContains("mv-alpha", res));    
+        assertTrue(resultContains("mv-beta", res));    
+    }
+
+    @Test
+    public void testMultiValueEqAny() {
+        dataCreator.createMultiValueDocuments();
+
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'red' = ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE ;
+        ObjectList res = doQuery(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContains("mv-alpha", res));    
+        assertTrue(resultContains("mv-beta", res));
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'black' = ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE ;
+        res = doQuery(statement);
+        assertEquals(0, res.getObjects().size());
+        
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'black' = ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING;
+        try {
+            res = doQuery(statement);
+            fail("Unknown = ANY with single value prop should throw exception");
+        } catch (Exception e) {
+            assertTrue(e.toString().contains("only is allowed on multi-value properties"));
+            log.debug("expected Exception: " + e);
+        }
+    }
+    
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
         ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,

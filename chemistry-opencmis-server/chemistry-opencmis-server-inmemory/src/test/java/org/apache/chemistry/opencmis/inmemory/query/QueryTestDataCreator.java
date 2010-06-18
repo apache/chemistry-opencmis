@@ -169,7 +169,42 @@ public class QueryTestDataCreator {
             }};           
         doc5 = createDocument("epsilon", rootFolderId, COMPLEX_TYPE, propertyMap5);
 
-}
+    }
+    
+    @SuppressWarnings("serial")
+    public void createMultiValueDocuments() {
+        final List<String> mvProps1 = 
+            new ArrayList<String>() {
+            { 
+                add("red");
+                add("green");
+                add("blue");
+            }};
+        
+        final Map<String, Object> propertyMap1 = 
+            new HashMap<String, Object>() {
+            { 
+                put(PROP_ID_STRING_MULTI_VALUE, mvProps1);
+                put(PROP_ID_INT, new Integer(100));
+            }};           
+        createDocument("mv-alpha", rootFolderId, COMPLEX_TYPE, propertyMap1);
+
+        final List<String> mvProps2 = 
+            new ArrayList<String>() {
+            { 
+                add("red");
+                add("pink");
+                add("violet");
+            }};
+        
+        final Map<String, Object> propertyMap2 = 
+            new HashMap<String, Object>() {
+            { 
+                put(PROP_ID_STRING_MULTI_VALUE, mvProps2);
+                put(PROP_ID_INT, new Integer(200));
+            }};           
+        createDocument("mv-beta", rootFolderId, COMPLEX_TYPE, propertyMap2);
+    }
     
     @SuppressWarnings("serial")
     public void createTestFolders() {
@@ -305,6 +340,7 @@ public class QueryTestDataCreator {
      * @param value
      * @return
      */
+    @SuppressWarnings("unchecked")
     private PropertyData<?> createPropertyData (String propId, Object value) {
         Class<?> clazz = value.getClass();
         if (clazz.equals(Boolean.class)) {
@@ -317,6 +353,20 @@ public class QueryTestDataCreator {
             return fFactory.createPropertyStringData(propId, (String)value);
         } else if (clazz.equals(GregorianCalendar.class)) {
             return fFactory.createPropertyDateTimeData(propId, (GregorianCalendar)value);
+        } else if (value instanceof List) {
+            clazz = ((List<?>)value).get(0).getClass();
+            if (clazz.equals(Boolean.class)) {
+                return fFactory.createPropertyBooleanData(propId, (List<Boolean>)value);
+            } else if (clazz.equals(Double.class)) {
+                return fFactory.createPropertyDecimalData(propId, (List<BigDecimal>)value);
+            } else if (clazz.equals(Integer.class)) {
+                return fFactory.createPropertyIntegerData(propId, (List<BigInteger>)value);
+            } else if (clazz.equals(String.class)) {
+                return fFactory.createPropertyStringData(propId, (List<String>)value);
+            } else if (clazz.equals(GregorianCalendar.class)) {
+                return fFactory.createPropertyDateTimeData(propId, (List<GregorianCalendar>)value);
+            } else
+                fail("unsupported type in propery value: " + clazz);
         } else
             fail("unsupported type in propery value: " + clazz);
         return null;
