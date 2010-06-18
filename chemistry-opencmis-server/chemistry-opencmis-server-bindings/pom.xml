@@ -15,10 +15,11 @@
 
     <parent>
         <groupId>org.apache.chemistry.opencmis</groupId>
-        <artifactId>chemistry-opencmis-server</artifactId>
+        <artifactId>chemistry-opencmis</artifactId>
         <version>0.1.0-incubating-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
+
 
     <artifactId>chemistry-opencmis-server-bindings</artifactId>
     <name>OpenCMIS Server Implementation</name>

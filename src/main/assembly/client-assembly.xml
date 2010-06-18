@@ -20,7 +20,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
     <!-- To build this, run "mvn package assembly:assembly" -->
-    <id>server-with-dependencies</id>
+    <id>with-dependencies</id>
     <formats>
         <format>zip</format>
         <format>tar.gz</format>
@@ -28,14 +28,11 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <moduleSets>
         <moduleSet>
+            <includeSubModules>true</includeSubModules>
             <includes>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-commons-api</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-commons-impl</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-api</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-impl</include>
                 <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-bindings</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-bindings</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-support</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-inmemory</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-fileshare</include>
             </includes>
             <binaries>
                 <outputDirectory></outputDirectory>
@@ -50,13 +47,21 @@
             </binaries>
         </moduleSet>
     </moduleSets>
-    <fileSets>
-        <fileSet>
-            <directory>.</directory>
+    <dependencySets>
+        <dependencySet>
             <includes>
-                <include>LICENSE.txt</include>
-                <include>NOTICE.txt</include>
+                <include>org.apache:apache-jar-resource-bundle</include>
             </includes>
-        </fileSet>
-    </fileSets>
+            <scope>provided</scope>
+            <outputDirectory>.</outputDirectory>
+            <unpack>true</unpack>
+            <unpackOptions>
+                <includes>
+                    <include>*/*.txt</include>
+                </includes>
+                <filtered>true</filtered>
+            </unpackOptions>
+        </dependencySet>
+    </dependencySets>
+
 </assembly>

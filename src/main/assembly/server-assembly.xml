@@ -19,34 +19,47 @@
     xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-    <id>sources</id>
+    <!-- To build this, run "mvn package assembly:assembly" -->
+    <id>with-dependencies</id>
     <formats>
         <format>zip</format>
         <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    <fileSets>
-        <fileSet>
-            <directory>${project.build.directory}/site/apidocs</directory>
+    <moduleSets>
+        <moduleSet>
             <includes>
-                <include>*</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-bindings</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-support</include>
             </includes>
-            <outputDirectory>javadoc</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.build.directory}/site/docs</directory>
+            <includeSubModules>true</includeSubModules>
+            <binaries>
+                <outputDirectory></outputDirectory>
+                <includeDependencies>true</includeDependencies>
+                <unpack>false</unpack>
+                <dependencySets>
+                    <dependencySet>
+                        <scope>runtime</scope>
+                        <outputDirectory></outputDirectory>
+                    </dependencySet>
+                </dependencySets>
+            </binaries>
+        </moduleSet>
+    </moduleSets>
+    <dependencySets>
+        <dependencySet>
             <includes>
-                <include>*</include>
+                <include>org.apache:apache-jar-resource-bundle</include>
             </includes>
-            <outputDirectory>docs</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>.</directory>
-            <includes>
-                <include>LICENSE.txt</include>
-                <include>NOTICE.txt</include>
-                <include>RELEASE-NOTES.txt</include>
-            </includes>
-        </fileSet>
-    </fileSets>
+            <scope>provided</scope>
+            <outputDirectory>.</outputDirectory>
+            <unpack>true</unpack>
+            <unpackOptions>
+                <includes>
+                    <include>*/*.txt</include>
+                </includes>
+                <filtered>true</filtered>
+            </unpackOptions>
+        </dependencySet>
+    </dependencySets>
 </assembly>

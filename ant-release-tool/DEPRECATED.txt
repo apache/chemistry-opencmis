@@ -1,0 +1,3 @@
+The Apache Ant build.xml release process is now deprecated in favor of standard Apache Maven based release process.
+
+See documentation https://cwiki.apache.org/confluence/display/CMIS/OpenCMIS+Maven+Release+Documentation for details.
