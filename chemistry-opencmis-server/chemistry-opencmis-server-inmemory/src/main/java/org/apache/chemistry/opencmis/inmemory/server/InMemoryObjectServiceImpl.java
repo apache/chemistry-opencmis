@@ -18,8 +18,11 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
@@ -39,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -659,9 +664,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         checkRepositoryId(repositoryId);
 
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-
+        Map<String, PropertyData<?>> propMap = properties.getProperties();
         // get name from properties
-        PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
+        PropertyData<?> pd = propMap.get(PropertyIds.NAME);
         String name = (String) pd.getFirstValue();
 
         // Validation stuff
@@ -694,6 +699,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         TypeValidator.validateVersionStateForCreate((DocumentTypeDefinition) typeDef, versioningState);
         TypeValidator.validateProperties(typeDef, properties, true);
+        
+        // set properties that are not set but have a default:
+        propMap = setDefaultProperties(typeDef, propMap);
 
         // set user, creation date, etc.
         if (user == null)
@@ -712,8 +720,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             // set parent in doc
             else
                 verDoc.persist();
-            version.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
-            version.setCustomProperties(properties.getProperties());
+            version.createSystemBasePropertiesWhenCreated(propMap, user);
+            version.setCustomProperties(propMap);
             version.persist();
             so = version; // return the version and not the version series to
             // caller
@@ -721,8 +729,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Document doc = fStoreManager.getObjectStore(repositoryId).createDocument(name);
             doc.setContent(contentStream, false);
             // add document to folder
-            doc.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
-            doc.setCustomProperties(properties.getProperties());
+            doc.createSystemBasePropertiesWhenCreated(propMap, user);
+            doc.setCustomProperties(propMap);
             if (null != folder)
                 folder.addChildDocument(doc); // add document to folder and set
             // parent in doc
@@ -869,4 +877,40 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         return csd;
     }
 
+    @SuppressWarnings("unchecked")
+    private Map<String, PropertyData<?>> setDefaultProperties(TypeDefinition typeDef, Map<String, PropertyData<?>> properties) {
+        Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
+        boolean hasCopied = false;
+        
+        for ( PropertyDefinition<?> propDef : propDefs.values()) {
+            String propId = propDef.getId();
+            List<?> defaultVal = propDef.getDefaultValue();
+            PropertyData<?> pd = null;
+            if (defaultVal != null && null == properties.get(propId)) {
+                if (!hasCopied) {
+                    properties = new HashMap<String, PropertyData<?>>(properties); // copy because it is an unmodified collection
+                    hasCopied = true;
+                }
+                if (propDef.getPropertyType() == PropertyType.BOOLEAN) 
+                    pd = fStoreManager.getObjectFactory().createPropertyBooleanData(propId, (List<Boolean>)defaultVal);
+                else if (propDef.getPropertyType() == PropertyType.DATETIME)
+                    pd = fStoreManager.getObjectFactory().createPropertyDateTimeData(propId, (List<GregorianCalendar>)defaultVal);
+                else if (propDef.getPropertyType() == PropertyType.DECIMAL)
+                    pd = fStoreManager.getObjectFactory().createPropertyDecimalData(propId, (List<BigDecimal>)defaultVal);
+                else if (propDef.getPropertyType() == PropertyType.HTML)
+                    pd = fStoreManager.getObjectFactory().createPropertyHtmlData(propId, (List<String>)defaultVal);
+                else if (propDef.getPropertyType() == PropertyType.ID)
+                    pd = fStoreManager.getObjectFactory().createPropertyIdData(propId, (List<String>)defaultVal);
+                else if (propDef.getPropertyType() == PropertyType.INTEGER)
+                    pd = fStoreManager.getObjectFactory().createPropertyIntegerData(propId, (List<BigInteger>)defaultVal);
+                else if (propDef.getPropertyType() == PropertyType.STRING)
+                    pd = fStoreManager.getObjectFactory().createPropertyStringData(propId, (List<String>)defaultVal);
+                else if (propDef.getPropertyType() == PropertyType.URI)
+                    pd = fStoreManager.getObjectFactory().createPropertyUriData(propId, (List<String>)defaultVal);
+                // set property:
+                properties.put(propId, pd);
+            }
+        }
+        return properties;
+    }
 }
