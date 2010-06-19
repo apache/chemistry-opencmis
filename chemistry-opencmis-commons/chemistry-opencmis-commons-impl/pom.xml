@@ -22,6 +22,7 @@
 
     <artifactId>chemistry-opencmis-commons-impl</artifactId>
     <name>OpenCMIS Commons Implementation</name>
+    <packaging>bundle</packaging>
 
     <build>
         <plugins>
@@ -47,6 +48,26 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                          org.apache.chemistry.opencmis.commons.*;version=${project.version}
+                        </Export-Package>
+                        <Import-Package>
+                          org.apache.commons.codec.*;version="[1.4,2.0)",
+                          org.apache.commons.logging.*;version="[1.1,2.0)",
+                          org.apache.chemistry.opencmis.commons.*;version="[0.1,0.2)",
+                          com.sun.xml.ws.*;version="[2.1.7,3.0)";resolution:=optional,
+                          *
+                        </Import-Package>
+                        <Bundle-DocURL>${project.url}</Bundle-DocURL>
+                    </instructions>
+                </configuration>
             </plugin>
         </plugins>
     </build>
