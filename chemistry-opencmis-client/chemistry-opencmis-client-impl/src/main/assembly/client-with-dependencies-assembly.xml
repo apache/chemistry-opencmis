@@ -14,12 +14,4 @@
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
-  <fileSets>
-    <fileSet>
-      <directory>${project.build.directory}</directory>
-      <includes>
-          <include>${project.build.finalName}.jar</include>
-      </includes>
-    </fileSet>
-  </fileSets>
 </assembly>
