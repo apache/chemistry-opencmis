@@ -18,11 +18,14 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.TypeManager;
 
@@ -152,5 +155,24 @@ public interface StoreManager {
      *      type manager for this repository or null if repository is unknown
      */
     TypeManager getTypeManager(String repositoryId);
+    
+    /**
+     * Execute a query against the repository (same parameter as the discovery service
+     * query method
+     * 
+     * @param user
+     * @param repositoryId
+     * @param statement
+     * @param searchAllVersions
+     * @param includeAllowableActions
+     * @param includeRelationships
+     * @param renditionFilter
+     * @param maxItems
+     * @param skipCount
+     * @return
+     */
+    ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            BigInteger maxItems, BigInteger skipCount);
 
 }

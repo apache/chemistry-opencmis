@@ -173,7 +173,7 @@ public class QueryObject {
         return td;
     }
     
-    Map<String, String> getRequestedProperties() {
+    public Map<String, String> getRequestedProperties() {
         Map<String, String> res = new HashMap<String, String> ();
         for (CmisSelector sel : selectReferences) {
             if (sel instanceof ColumnReference) {
@@ -188,7 +188,7 @@ public class QueryObject {
         return res;
     }
     
-    Map<String, String> getRequestedFuncs() {
+    public Map<String, String> getRequestedFuncs() {
         Map<String, String> res = new HashMap<String, String> ();
         for (CmisSelector sel : selectReferences) {
             if (sel instanceof FunctionReference) {
