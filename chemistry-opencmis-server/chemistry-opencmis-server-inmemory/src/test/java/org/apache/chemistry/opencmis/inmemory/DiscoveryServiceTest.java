@@ -77,19 +77,19 @@ public class DiscoveryServiceTest extends AbstractServiceTst {
         String statement = "SELECT * FROM " + TEST_DOCUMENT_TYPE_ID + " WHERE " + TEST_DOCUMENT_STRING_PROP_ID + "='My Doc StringProperty 1'";
         ObjectList res = fDiscSvc.query(fRepositoryId, statement, searchAllVersions, includeAllowableActions,
                 includeRelationships, renditionFilter, maxItems, skipCount, null);
-        assertEquals(BigInteger.valueOf(1), res.getNumItems());
+        assertEquals(1, res.getObjects().size());
         
         statement = "SELECT " + TEST_DOCUMENT_STRING_PROP_ID + " FROM " + TEST_DOCUMENT_TYPE_ID + " WHERE " + TEST_DOCUMENT_STRING_PROP_ID + "='My Doc StringProperty 1'";
         res = fDiscSvc.query(fRepositoryId, statement, searchAllVersions, includeAllowableActions,
                 includeRelationships, renditionFilter, maxItems, skipCount, null);
-        assertEquals(BigInteger.valueOf(1), res.getNumItems());
+        assertEquals(1, res.getObjects().size());
         assertEquals(1, res.getObjects().get(0).getProperties().getProperties().size()); // only one property should be delivered
 
         statement = "SELECT * FROM cmis:folder";
         res = fDiscSvc.query(fRepositoryId, statement, searchAllVersions, includeAllowableActions,
                 includeRelationships, renditionFilter, maxItems, skipCount, null);
         // root + 2 at level 1 + 2*2 at level 2 = 7
-        assertEquals(BigInteger.valueOf(7), res.getNumItems());
+        assertEquals(7, res.getObjects().size());
 
         /*        
         assertEquals(BigInteger.valueOf(9), res.getNumItems());

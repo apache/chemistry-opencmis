@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.inmemory.query;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -28,6 +31,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.TokenSource;
+import org.antlr.runtime.TokenStream;
+import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -42,7 +53,9 @@ import org.apache.chemistry.opencmis.inmemory.TypeManager;
 import org.apache.chemistry.opencmis.inmemory.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.commons.logging.Log;
@@ -64,12 +77,72 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
     private List<StoredObject> matches = new ArrayList<StoredObject>();
     private QueryObject queryObj;
     private Tree whereTree;
+    private CommonTree parserTree; // the ANTLR tree after parsing phase
+    private CommonTree walkerTree; // the ANTLR tree after walking phase
     
     public InMemoryQueryProcessor() {
     }
     
-    public void setQueryObject(QueryObject qo) {
-        queryObj = qo;
+    /**
+     * Main entry function to process a query from discovery service
+     */
+    public ObjectList query(TypeManager tm, ObjectStore objectStore, String user, String repositoryId, String statement, Boolean searchAllVersions,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            BigInteger maxItems, BigInteger skipCount) {
+
+        queryObj = new QueryObject(tm, this);
+        processQueryAndCatchExc(statement); // calls query processor
+
+        // iterate over all the objects and check for each if the query matches
+        for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
+            StoredObject so = objectStore.getObjectById(objectId);
+            checkMatch(so);
+        }
+
+        ObjectList objList = buildResultList(tm, user, includeAllowableActions, includeRelationships, renditionFilter,
+                maxItems, skipCount);
+        LOG.debug("Query result, number of matching objects: " + objList.getNumItems());
+        return objList;
+    }        
+
+    private CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+        CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
+        TokenSource lexer = new CMISQLLexerStrict(input);
+        TokenStream tokens = new CommonTokenStream(lexer);
+        CMISQLParserStrict parser = new CMISQLParserStrict(tokens);
+
+        CMISQLParserStrict.query_return parsedStatement = parser.query();
+        if (parser.errorMessage != null) {
+            throw new RuntimeException("Cannot parse query: " + statement + " (" + parser.errorMessage + ")");
+        }
+        parserTree = (CommonTree) parsedStatement.getTree();            
+
+        CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
+        nodes.setTokenStream(tokens);
+        CmisQueryWalker walker = new CmisQueryWalker(nodes);
+        return walker;
+    }
+
+    public CmisQueryWalker processQuery(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+        CmisQueryWalker walker = getWalker(statement);
+        walker.query(queryObj);
+        String errMsg = walker.getErrorMessageString();
+        if (null != errMsg) {
+            throw new RuntimeException("Walking of statement failed with error: \n   " + errMsg + 
+                    "\n   Statement was: " + statement);
+        }
+        walkerTree = (CommonTree) walker.getTreeNodeStream().getTreeSource();
+        return walker;
+    }
+
+    public CmisQueryWalker processQueryAndCatchExc(String statement) {
+        try {
+            return processQuery(statement);
+        } catch (RecognitionException e) {
+            throw new RuntimeException("Walking of statement failed with RecognitionException error: \n   " + e); 
+        } catch (Exception e) {
+            throw new RuntimeException("Walking of statement failed with other exception: \n   " + e); 
+        }
     }
     
     public void onStartProcessing(Tree node) {
@@ -101,6 +174,22 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
         sortMatches();
 
         ObjectListImpl res = new ObjectListImpl();
+        res.setNumItems(BigInteger.valueOf(matches.size()));
+        int start = 0;
+        if (maxItems != null) 
+            start = (int)maxItems.longValue();
+        if (start < 0)
+            start = 0;
+        if (start > matches.size())
+            start = matches.size();
+        int stop = 0;
+        if (skipCount != null) 
+            stop = (int)skipCount.longValue();
+        if (stop <= 0 || stop > matches.size())
+            stop = matches.size();
+        res.setHasMoreItems(stop < matches.size());
+        if (start > 0 || stop > 0)
+            matches = matches.subList(start, stop);
         List<ObjectData> objDataList = new ArrayList<ObjectData>();
         Map<String, String> props = queryObj.getRequestedProperties();
         Map<String, String> funcs = queryObj.getRequestedFuncs();
@@ -112,8 +201,6 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
             objDataList.add(od); 
         }
         res.setObjects(objDataList);
-        res.setNumItems(BigInteger.valueOf(objDataList.size()));
-        res.setHasMoreItems(false);
         return res;
     }
     
@@ -136,6 +223,7 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
             LOG.warn("ORDER BY has more than one sort criterium, all but the first are ignored.");
         class ResultComparator implements Comparator<StoredObject> {
 
+            @SuppressWarnings("unchecked")
             public int compare(StoredObject so1, StoredObject so2) {
                 SortSpec s = orderBy.get(0);
                 CmisSelector sel = s.getSelector();
@@ -284,13 +372,6 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
     }
     public void onScore(Tree node, Tree paramNode) { 
         
-    }
-
-    private void checkRoot(Tree root) {
-        if (root.getType() == CMISQLLexerStrict.WHERE)
-            LOG.debug("Found root with where node.");
-        else
-            LOG.debug("NOT Found root with where node!! " + root.toStringTree());        
     }
 
     /**

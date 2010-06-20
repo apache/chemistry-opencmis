@@ -18,23 +18,11 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.antlr.runtime.ANTLRInputStream;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.TokenSource;
-import org.antlr.runtime.TokenStream;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.CommonTreeNodeStream;
-import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
@@ -48,112 +36,13 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.chemistry.opencmis.inmemory.TypeManager;
-import org.apache.chemistry.opencmis.inmemory.query.CMISQLLexerStrict;
-import org.apache.chemistry.opencmis.inmemory.query.CMISQLParserStrict;
-import org.apache.chemistry.opencmis.inmemory.query.CmisQueryWalker;
-import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
-import org.apache.chemistry.opencmis.inmemory.query.QueryObject;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
-import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
     
-    private static Log log = LogFactory.getLog(InMemoryDiscoveryServiceImpl.class);
-    
-     private static class InMemoryQueryContext {
-        
-        public CommonTree parserTree; // the ANTLR tree after parsing phase
-        public CommonTree walkerTree; // the ANTLR tree after walking phase
-        private QueryObject queryObj;
-        
-        /**
-         * Main entry function to process a query from discovery service
-         */
-        public ObjectList query(StoreManager storeMgr, String user, String repositoryId, String statement, Boolean searchAllVersions,
-                Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-                BigInteger maxItems, BigInteger skipCount) {
-            
-            TypeManager tm = storeMgr.getTypeManager(repositoryId);
-            ObjectStore objectStore = storeMgr.getObjectStore(repositoryId);
-
-            InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor();
-            queryObj = new QueryObject(tm, queryProcessor);
-            queryProcessor.setQueryObject(queryObj);
-            processQueryAndCatchExc(statement); // calls query processor
-
-            // iterate over all the objects and check for each if the query matches
-            for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
-                StoredObject so = objectStore.getObjectById(objectId);
-                queryProcessor.checkMatch(so);
-            }
-
-            ObjectList objList = queryProcessor.buildResultList(tm, user, includeAllowableActions, includeRelationships, renditionFilter,
-                    maxItems, skipCount);
-            log.debug("Query result, number of matching objects: " + objList.getNumItems());
-            for (ObjectData od : objList.getObjects())
-                log.debug("Found matching object: " + od);
-            return objList;
-        }        
-        
-        private CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-            CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
-            TokenSource lexer = new CMISQLLexerStrict(input);
-            TokenStream tokens = new CommonTokenStream(lexer);
-            CMISQLParserStrict parser = new CMISQLParserStrict(tokens);
-
-            CMISQLParserStrict.query_return parsedStatement = parser.query();
-            if (parser.errorMessage != null) {
-                throw new RuntimeException("Cannot parse query: " + statement + " (" + parser.errorMessage + ")");
-            }
-            parserTree = (CommonTree) parsedStatement.getTree();            
-        
-            CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
-            nodes.setTokenStream(tokens);
-            CmisQueryWalker walker = new CmisQueryWalker(nodes);
-            return walker;
-        }
-
-        public CmisQueryWalker processQuery(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-            CmisQueryWalker walker = getWalker(statement);
-            walker.query(queryObj);
-            String errMsg = walker.getErrorMessageString();
-            if (null != errMsg) {
-                throw new RuntimeException("Walking of statement failed with error: \n   " + errMsg + 
-                        "\n   Statement was: " + statement);
-            }
-            walkerTree = (CommonTree) walker.getTreeNodeStream().getTreeSource();
-            return walker;
-        }
-
-        public CmisQueryWalker processQueryAndCatchExc(String statement) {
-            try {
-                return processQuery(statement);
-            } catch (RecognitionException e) {
-                throw new RuntimeException("Walking of statement failed with RecognitionException error: \n   " + e); 
-            } catch (Exception e) {
-                throw new RuntimeException("Walking of statement failed with other exception: \n   " + e); 
-            }
-        }
-        
-        private Tree getWhereTree(Tree root) {
-            int count = root.getChildCount();
-            for (int i=0; i<count; i++) {
-                Tree child = root.getChild(i);
-                if (child.getType() == CMISQLLexerStrict.WHERE) {
-                    return child;
-                }
-            }
-            return null;
-        }
-        
-    }
-
-    private static final Log LOG = LogFactory.getLog(InMemoryDiscoveryServiceImpl.class.getName());
+    private static Log LOG = LogFactory.getLog(InMemoryDiscoveryServiceImpl.class);
 
     AtomLinkInfoProvider fAtomLinkProvider;
     InMemoryNavigationServiceImpl fNavigationService; // real implementation of
@@ -217,13 +106,12 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
         LOG.debug("start query()");
         checkRepositoryId(repositoryId);
         String user = context.getUsername();
-
-        InMemoryQueryContext queryCtx  = new InMemoryQueryContext();
-        ObjectList objList =  queryCtx.query(fStoreManager, user, repositoryId, statement, searchAllVersions,
-                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount); 
-
+        ObjectList res;
+        
+        res = fStoreManager.query(user, repositoryId, statement, searchAllVersions, includeAllowableActions,
+                includeRelationships, renditionFilter, maxItems, skipCount);
         LOG.debug("stop query()");
-        return objList;
+        return res;
     }
 
 }

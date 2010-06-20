@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
@@ -35,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdate
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -46,8 +49,11 @@ import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeManager;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
+import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * factory to create objects that are stored in the InMemory store
@@ -56,6 +62,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
  */
 public class StoreManagerImpl implements StoreManager {
 
+    private static Log LOG = LogFactory.getLog(StoreManagerImpl.class);
+    
     protected BindingsObjectFactory fObjectFactory;
     protected RepositoryInfo fRepositoryInfo;
 
@@ -355,4 +363,18 @@ public class StoreManagerImpl implements StoreManager {
         return typeManager;
     }
 
+    public ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            BigInteger maxItems, BigInteger skipCount) {
+        TypeManager tm = getTypeManager(repositoryId);
+        ObjectStore objectStore = getObjectStore(repositoryId);
+
+        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor();
+        ObjectList objList = queryProcessor.query(tm, objectStore, user, repositoryId, statement, searchAllVersions,
+                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount);
+
+        LOG.debug("Query result, number of matching objects: " + objList.getNumItems());
+        return objList;
+    }
+    
 }
