@@ -176,15 +176,15 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
         ObjectListImpl res = new ObjectListImpl();
         res.setNumItems(BigInteger.valueOf(matches.size()));
         int start = 0;
-        if (maxItems != null) 
-            start = (int)maxItems.longValue();
+        if (skipCount != null) 
+            start = (int)skipCount.longValue();
         if (start < 0)
             start = 0;
         if (start > matches.size())
             start = matches.size();
         int stop = 0;
-        if (skipCount != null) 
-            stop = (int)skipCount.longValue();
+        if (maxItems != null) 
+            stop = start + (int)maxItems.longValue();
         if (stop <= 0 || stop > matches.size())
             stop = matches.size();
         res.setHasMoreItems(stop < matches.size());
