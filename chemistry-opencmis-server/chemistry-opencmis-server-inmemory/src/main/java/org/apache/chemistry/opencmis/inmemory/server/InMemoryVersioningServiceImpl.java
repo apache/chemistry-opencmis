@@ -102,7 +102,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         return od;
     }
 
-    public ObjectData checkOut(CallContext context, String repositoryId, Holder<String> objectId,
+    public void checkOut(CallContext context, String repositoryId, Holder<String> objectId,
             ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHandler objectInfos) {
 
         StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
@@ -138,15 +138,13 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         // additional information:
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, pwc, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
 
         TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
         ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
-
-        return od;
     }
 
     public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String versionSeriesId,
