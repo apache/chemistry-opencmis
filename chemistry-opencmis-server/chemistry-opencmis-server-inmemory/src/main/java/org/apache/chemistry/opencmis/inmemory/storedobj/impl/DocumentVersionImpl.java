@@ -94,6 +94,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
                 minorNo = 0;
             } else
                 ++minorNo;
+            if (ver == this)
+                break;
         }
         String label = "V " + majorNo + "." + minorNo;
         return label;
