@@ -51,10 +51,12 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.TypeManager;
 import org.apache.chemistry.opencmis.inmemory.query.QueryObject.SortSpec;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
@@ -96,7 +98,7 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
         // iterate over all the objects and check for each if the query matches
         for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
             StoredObject so = objectStore.getObjectById(objectId);
-            checkMatch(so);
+            match(so, searchAllVersions==null ? true : searchAllVersions.booleanValue());
         }
 
         ObjectList objList = buildResultList(tm, user, includeAllowableActions, includeRelationships, renditionFilter,
@@ -153,18 +155,6 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
 
     public void onStopProcessing() {
         // log.debug("onStopProcessing()");
-    }
-
-    /**
-     * Check for each object contained in the in-memory repository if it matches the current query
-     * expression. If yes add it to the list of matched objects.
-     * 
-     * @param so
-     *      object stored in the in-memory repository
-     */
-    public void checkMatch(StoredObject so) {
-        // log.debug("checkMatch() for object: " + so.getId());
-        match(so);
     }
 
     public ObjectList buildResultList(TypeManager tm, String user, 
@@ -257,14 +247,24 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
         
     }
 
-    private void match(StoredObject so) {
-        // log.debug("Tree is: " + (whereTree == null ? "(empty)" : whereTree.toStringTree()));
+    /**
+     * Check for each object contained in the in-memory repository if it matches the current query
+     * expression. If yes add it to the list of matched objects.
+     * 
+     * @param so
+     *      object stored in the in-memory repository
+     */
+    private void match(StoredObject so, boolean searchAllVersions) {
+        // log.debug("checkMatch() for object: " + so.getId());
         // first check if type is matching...
         String queryName = queryObj.getTypes().values().iterator().next(); // as we don't support JOINS take first type
         TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
+        boolean skip = so instanceof VersionedDocument; // we are only interested in versions not in the series
         boolean typeMatches = typeMatches(td, so);
+        if (!searchAllVersions && so instanceof DocumentVersion && ((DocumentVersion)so).getParentDocument().getLatestVersion(false) != so)
+            skip = true;
         // ... then check expression...
-        if (typeMatches)
+        if (typeMatches && !skip)
             evalWhereTree(whereTree, so);        
     }
     

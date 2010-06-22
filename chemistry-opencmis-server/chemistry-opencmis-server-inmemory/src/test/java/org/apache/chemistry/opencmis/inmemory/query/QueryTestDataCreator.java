@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.query;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
@@ -33,12 +34,20 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyId;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
+import org.apache.chemistry.opencmis.commons.spi.VersioningService;
+import org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator;
+import org.apache.chemistry.opencmis.inmemory.VersioningTest.VersionTestTypeSystemCreator;
+
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.*;
 
 /**
@@ -68,16 +77,18 @@ public class QueryTestDataCreator {
     private String rootFolderId;
     private String repositoryId;
     private ObjectService fObjSvc;
+    private VersioningService fVerSvc;
     private String doc1, doc2, doc3, doc4, doc5;
     private String folder1;
     private String folder2;
     private String folder11;
     private static final TimeZone TZ = TimeZone.getTimeZone("Zulu");
     
-    public QueryTestDataCreator(String repositoryId, String rootFolderId, ObjectService objSvc) {
+    public QueryTestDataCreator(String repositoryId, String rootFolderId, ObjectService objSvc, VersioningService verSvc) {
         this.rootFolderId = rootFolderId;
         this.repositoryId = repositoryId;
         fObjSvc = objSvc;
+        fVerSvc = verSvc;
     }
     
     public String getFolder1() {
@@ -269,6 +280,41 @@ public class QueryTestDataCreator {
         createDocument("likedoc3", folderId, COMPLEX_TYPE, propertyMap3);
     }
     
+    @SuppressWarnings("serial")
+    public String createVersionedDocument() {
+        final Map<String, Object> propertyMap1 = 
+            new HashMap<String, Object>() {
+            { 
+                put(VERSION_PROPERTY_ID, "ver123");
+            }};           
+        
+        String verIdV1 = createDocument("verdoc1", rootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID, propertyMap1, VersioningState.MAJOR);
+        ObjectData version = fObjSvc.getObject(repositoryId, verIdV1, "*", false, IncludeRelationships.NONE, null,
+                false, false, null);
+
+        // get version series id
+        String verIdSer = (String) version.getProperties().getProperties().get(PropertyIds.VERSION_SERIES_ID).getFirstValue();
+
+        // create second version 
+        final Map<String, Object> propertyMap2 = 
+            new HashMap<String, Object>() {
+            { 
+                put(VERSION_PROPERTY_ID, "ver456");
+            }};           
+        Properties propsV2 = createDocumentProperties("dummy", UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID, propertyMap2);
+
+        Holder<String> idHolder = new Holder<String>(verIdV1);
+        Holder<Boolean> contentCopied = new Holder<Boolean>(false);
+        fVerSvc.checkOut(repositoryId, idHolder, null, contentCopied);
+
+        idHolder = new Holder<String>(verIdV1);
+        // Test check-in and pass content and properties
+        String checkinComment = "Here comes next version.";
+        fVerSvc.checkIn(repositoryId, idHolder, true, propsV2, null, checkinComment, null, null, null, null);
+        // String verIdV2 = idHolder.getValue();
+        return verIdSer;
+    }
+    
     private String createFolder(String folderName, String parentFolderId, String typeId, Map<String, Object> properties) {
         Properties props = createFolderProperties(folderName, typeId, properties);
         String id = null;
@@ -283,6 +329,10 @@ public class QueryTestDataCreator {
     }
 
     private String createDocument(String name, String folderId, String typeId, Map<String, Object> properties) {
+        return createDocument(name, folderId, typeId, properties, VersioningState.NONE);
+    }
+
+    private String createDocument(String name, String folderId, String typeId, Map<String, Object> properties, VersioningState verState) {
         ContentStream contentStream = null;
         List<String> policies = null;
         Acl addACEs = null;
@@ -293,7 +343,7 @@ public class QueryTestDataCreator {
 
         String id = null;
         try {
-            id = fObjSvc.createDocument(repositoryId, props, folderId, contentStream, VersioningState.NONE, policies,
+            id = fObjSvc.createDocument(repositoryId, props, folderId, contentStream, verState, policies,
                     addACEs, removeACEs, extension);
             if (null == id)
                 fail("createDocument failed.");

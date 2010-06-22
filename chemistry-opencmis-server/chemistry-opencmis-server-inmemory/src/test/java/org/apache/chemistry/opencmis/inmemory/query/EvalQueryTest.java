@@ -23,10 +23,11 @@ import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.P
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_DATETIME;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_DECIMAL;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_INT;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -52,7 +53,7 @@ public class EvalQueryTest extends AbstractServiceTst {
         super.setTypeCreatorClass(UnitTestTypeSystemCreator.class.getName());
         super.setUp();
         //create test data
-        dataCreator = new QueryTestDataCreator(fRepositoryId, fRootFolderId, fObjSvc );
+        dataCreator = new QueryTestDataCreator(fRepositoryId, fRootFolderId, fObjSvc, fVerSvc);
         dataCreator.createBasicTestData();
     }
 
@@ -730,6 +731,24 @@ public class EvalQueryTest extends AbstractServiceTst {
         }
     }
     
+    @Test 
+    public void testVersionsWithQuery() {
+        String id = dataCreator.createVersionedDocument();
+        assertNotNull(id);
+        String statement = "SELECT * FROM " + UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID;
+        ObjectList res = doQueryAllVersions(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContains("ver123", UnitTestTypeSystemCreator.VERSION_PROPERTY_ID, res));
+        assertTrue(resultContains("ver456", UnitTestTypeSystemCreator.VERSION_PROPERTY_ID, res));
+        assertTrue(resultContains("V 1.0", PropertyIds.VERSION_LABEL, res));
+        assertTrue(resultContains("V 2.0", PropertyIds.VERSION_LABEL, res));
+        
+        res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertFalse(resultContains("V 1.0", PropertyIds.VERSION_LABEL, res));    
+        assertTrue(resultContains("V 2.0", PropertyIds.VERSION_LABEL, res));
+    }
+    
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
         ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,
@@ -740,13 +759,27 @@ public class EvalQueryTest extends AbstractServiceTst {
         return res;
     }
 
-    private boolean resultContains(String name, ObjectList results) {
+    private ObjectList doQueryAllVersions(String queryString) {
+        log.debug("\nExecuting query: " + queryString);
+        ObjectList res = fDiscSvc.query(fRepositoryId, queryString, true, false,
+                IncludeRelationships.NONE, null, null, null, null);
+        log.debug("Query result, number of matching objects: " + res.getNumItems());
+        for (ObjectData od : res.getObjects())
+            log.debug("Found matching object: " + od.getProperties().getProperties().get(PropertyIds.NAME).getFirstValue());
+        return res;
+    }
+
+    private boolean resultContains(String name, String propId, ObjectList results) {
         for (ObjectData od : results.getObjects()) {
-            String nameProp = (String) od.getProperties().getProperties().get(PropertyIds.NAME).getFirstValue();
+            String nameProp = (String) od.getProperties().getProperties().get(propId).getFirstValue();
             if (name.equals(nameProp))
                 return true;
         }
         return false;
+    }
+
+    private boolean resultContains(String name, ObjectList results) {
+        return resultContains(name, PropertyIds.NAME, results);
     }
 
     private boolean resultContainsAtPos(String name, int index, ObjectList results) {
