@@ -216,10 +216,13 @@ public class ObjectServiceTest extends AbstractServiceTst {
         // delete content again
         Holder<String> idHolder = new Holder<String>(id);
         fObjSvc.deleteContentStream(fRepositoryId, idHolder, null, null);
-        sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */, BigInteger
-                .valueOf(-1) /* length */, null);
-        assertNull(sd);
-
+        try {
+            sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */, BigInteger
+                    .valueOf(-1) /* length */, null);
+            fail("getContentStream with non existing content should raise a CmisConstraintException");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisConstraintException);
+        }
         // create content again in a second call
         ContentStream contentStream = createContent();
         fObjSvc.setContentStream(fRepositoryId, idHolder, true, null, contentStream, null);

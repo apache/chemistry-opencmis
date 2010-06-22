@@ -339,10 +339,14 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
 
         if (!(so instanceof Content))
-            throw new CmisObjectNotFoundException("Id" + objectId
+            throw new CmisConstraintException("Id" + objectId
                     + " does not refer to a document or version, but only those can have content");
 
         ContentStream csd = getContentStream(so, streamId, offset, length);
+        
+        if (null == csd)
+            throw new CmisConstraintException("Object " + so.getId() + " does not have content."); 
+
         LOG.debug("stop getContentStream()");
         return csd;
     }
