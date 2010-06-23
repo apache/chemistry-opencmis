@@ -69,7 +69,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         verDoc.cancelCheckOut(user);
     }
 
-    public ObjectData checkIn(CallContext context, String repositoryId, Holder<String> objectId, Boolean major,
+    public void checkIn(CallContext context, String repositoryId, Holder<String> objectId, Boolean major,
             Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
@@ -94,12 +94,6 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
-
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
-                IncludeRelationships.NONE, null, false, false, extension);
-
-        return od;
     }
 
     public void checkOut(CallContext context, String repositoryId, Holder<String> objectId,
@@ -141,10 +135,6 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, pwc, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
-
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
-                IncludeRelationships.NONE, null, false, false, extension);
     }
 
     public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String versionSeriesId,
