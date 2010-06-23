@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 
@@ -25,16 +26,13 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 
 /**
  * Content stream data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class ContentStreamImpl extends AbstractExtensionData implements ContentStream {
 
-    private String fFilename;
-    private BigInteger fLength;
-    private String fMimeType;
-    private InputStream fStream;
+    private String filename;
+    private BigInteger length;
+    private String mimeType;
+    private InputStream stream;
 
     /**
      * Constructor.
@@ -52,60 +50,58 @@ public class ContentStreamImpl extends AbstractExtensionData implements ContentS
         setStream(stream);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ContentStreamData#getFilename()
-     */
     public String getFileName() {
-        return fFilename;
+        return filename;
     }
 
     public void setFileName(String filename) {
-        fFilename = filename;
+        this.filename = filename;
     }
 
     public long getLength() {
-        return fLength == null ? -1 : fLength.longValue();
+        return length == null ? -1 : length.longValue();
     }
 
     public BigInteger getBigLength() {
-        return fLength;
+        return length;
     }
 
     public void setLength(BigInteger length) {
-        fLength = length;
+        this.length = length;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ContentStreamData#getMimeType()
-     */
     public String getMimeType() {
-        return fMimeType;
+        return mimeType;
     }
 
-    public void setMimeType(String mimetype) {
-        fMimeType = mimetype;
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ContentStreamData#getStream()
-     */
     public InputStream getStream() {
-        return fStream;
+        return stream;
     }
 
     public void setStream(InputStream stream) {
-        fStream = stream;
+        this.stream = stream;
     }
 
     @Override
     public String toString() {
-        return "ContentStream [filename=" + fFilename + ", length=" + fLength + ", MIME type=" + fMimeType
-                + ", has stream=" + (fStream != null) + "]" + super.toString();
+        return "ContentStream [filename=" + filename + ", length=" + length + ", MIME type=" + mimeType
+                + ", has stream=" + (stream != null) + "]" + super.toString();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            if (stream != null) {
+                // this stream must be closed to release the underlying network resources
+                stream.close();
+            }
+        } catch (IOException e) {
+        } finally {
+            super.finalize();
+        }
     }
 }

@@ -18,7 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -30,8 +31,6 @@ import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.sun.xml.ws.util.ByteArrayBuffer;
 
 public class CacheTest {
 
@@ -106,12 +105,12 @@ public class CacheTest {
             cache.put(obj, cacheKey);
         }
 
-        ByteArrayBuffer buffer = new ByteArrayBuffer();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(buffer);
         out.writeObject(cache);
         out.close();
 
-        ObjectInputStream in = new ObjectInputStream(buffer.newInputStream());
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         Cache cache2 = (Cache) in.readObject();
         in.close();
 
