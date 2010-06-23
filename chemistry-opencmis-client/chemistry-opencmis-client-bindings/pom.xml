@@ -16,7 +16,7 @@
     <parent>
         <groupId>org.apache.chemistry.opencmis</groupId>
         <artifactId>chemistry-opencmis</artifactId>
-        <version>0.1-incubating-SNAPSHOT</version>
+        <version>0.1.0-incubating-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -88,4 +88,15 @@
             <url>http://download.java.net/maven/2/</url>
         </pluginRepository>
     </pluginRepositories>
+    
+    
+    <build>
+        <testResources>
+            <!-- Added to avoid logging in the base project folder and filter log4j.properties  -->
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+    </build>
 </project>

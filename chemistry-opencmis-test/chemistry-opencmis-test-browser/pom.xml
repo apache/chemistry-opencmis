@@ -16,10 +16,10 @@
     <parent>
         <groupId>org.apache.chemistry.opencmis</groupId>
         <artifactId>chemistry-opencmis</artifactId>
-        <version>0.1-incubating-SNAPSHOT</version>
+        <version>0.1.0-incubating-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
+    
     <artifactId>chemistry-opencmis-test-browser</artifactId>
     <name>OpenCMIS Browser</name>
     <packaging>jar</packaging>

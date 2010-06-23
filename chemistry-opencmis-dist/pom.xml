@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <!--
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+        applicable law or agreed to in writing, software distributed
+        under the License is distributed on an "AS IS" BASIS, WITHOUT
+        WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions
+        and limitations under the License.
+    -->
+
+<project>
+
+    <parent>
+        <artifactId>chemistry-opencmis</artifactId>
+        <groupId>org.apache.chemistry.opencmis
+        </groupId>
+        <version>0.1.0-incubating-SNAPSHOT
+        </version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>chemistry-opencmis-dist</artifactId>
+    <name>Distribution project for OpenCmis assemblies
+    </name>
+    <packaging>pom</packaging>
+
+    <!-- These dependencies are used to be added in the assambly -->
+    <dependencies>
+    
+        <!-- Used for client-assembly.xml -->
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-client-impl</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-client-api</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-client-bindings</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-commons-api</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-commons-impl</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <!-- Used for server-assembly.xml -->
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <artifactId>chemistry-opencmis-server-support</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <!-- Used for server-webapps-assembly.xml -->
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-test-browser-app</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-server-fileshare</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-server-inmemory</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        
+    </dependencies>
+
+    <profiles>
+        <!--
+            Extending the default -Papache-release profile used *only*
+            during releases
+        -->
+        <profile>
+            <id>apache-release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>package-assemblies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                                <configuration>
+                                    <attach>true</attach>
+                                    <descriptors>
+                                        <descriptor>
+                                            src/main/assembly/server-assembly.xml
+                                        </descriptor>
+                                        <descriptor>
+                                            src/main/assembly/client-assembly.xml
+                                        </descriptor>
+                                        <descriptor>
+                                            src/main/assembly/server-webapps-assembly.xml
+                                        </descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
