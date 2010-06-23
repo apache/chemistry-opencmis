@@ -25,6 +25,13 @@
     <packaging>bundle</packaging>
 
     <build>
+        <testResources>
+            <!-- Added to avoid logging in the base project folder and filter log4j.properties  -->
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -46,6 +53,7 @@
                     </instructions>
                 </configuration>
             </plugin>
+            
         </plugins>
     </build>
 
@@ -90,13 +98,4 @@
     </pluginRepositories>
     
     
-    <build>
-        <testResources>
-            <!-- Added to avoid logging in the base project folder and filter log4j.properties  -->
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
-    </build>
 </project>
