@@ -47,7 +47,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         fAtomLinkProvider = new AtomLinkInfoProvider(storeMgr);
     }
 
-    public ObjectData addObjectToFolder(CallContext context, String repositoryId, String objectId, String folderId,
+    public void addObjectToFolder(CallContext context, String repositoryId, String objectId, String folderId,
             Boolean allVersions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("Begin addObjectToFolder()");
@@ -71,16 +71,10 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
             objectInfos.addObjectInfo(objectInfo);
         }
 
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        String user = context.getUsername();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
-                IncludeRelationships.NONE, null, false, false, extension);
-
         LOG.debug("End addObjectToFolder()");
-        return od;
     }
 
-    public ObjectData removeObjectFromFolder(CallContext context, String repositoryId, String objectId,
+    public void removeObjectFromFolder(CallContext context, String repositoryId, String objectId,
             String folderId, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("Begin removeObjectFromFolder()");
@@ -103,14 +97,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
             objectInfos.addObjectInfo(objectInfo);
         }
 
-        String user = context.getUsername();
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
-                IncludeRelationships.NONE, null, false, false, extension);
-
         LOG.debug("End removeObjectFromFolder()");
-
-        return od;
     }
 
     private StoredObject[] checkParams(String repositoryId, String objectId, String folderId) {

@@ -159,9 +159,9 @@ public class InMemoryService extends AbstractCmisService {
 
     public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState, List<String> policies, ExtensionsData extension) {
-        ObjectData od = fObjSvc.create(getCallContext(), repositoryId, properties, folderId, contentStream,
+        String id = fObjSvc.create(getCallContext(), repositoryId, properties, folderId, contentStream,
                 versioningState, policies, extension, this);
-        return od.getId();
+        return id;
 
     }
 

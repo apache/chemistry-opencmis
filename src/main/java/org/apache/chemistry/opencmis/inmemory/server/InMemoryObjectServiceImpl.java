@@ -193,7 +193,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
      * Also the ObjectInfoHandler needs to be filled.
      */
     @SuppressWarnings("unchecked")
-    public ObjectData create(CallContext context, String repositoryId, Properties properties, String folderId,
+    public String create(CallContext context, String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies,
             ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
@@ -238,7 +238,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, od, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
-        return od;
+        return so.getId();
     }
 
     public void deleteContentStream(CallContext context, String repositoryId, Holder<String> objectId,
@@ -536,7 +536,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("stop setContentStream()");
     }
 
-    public ObjectData updateProperties(CallContext context, String repositoryId, Holder<String> objectId,
+    public void updateProperties(CallContext context, String repositoryId, Holder<String> objectId,
             Holder<String> changeToken, Properties properties, Acl acl, ExtensionsData extension,
             ObjectInfoHandler objectInfos) {
 
@@ -655,8 +655,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         LOG.debug("stop updateProperties()");
-
-        return od;
     }
 
     // ///////////////////////////////////////////////////////
