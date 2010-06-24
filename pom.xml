@@ -13,9 +13,7 @@
         and limitations under the License.
     -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/maven-v4_0_0.xsd">
 
 
     <modelVersion>4.0.0</modelVersion>
@@ -31,7 +29,7 @@
     <groupId>org.apache.chemistry.opencmis</groupId>
     <artifactId>chemistry-opencmis</artifactId>
     <name>OpenCMIS</name>
-    <version>0.1.0-incubating-SNAPSHOT</version>
+    <version>0.1.0-incubating</version>
     <packaging>pom</packaging>
 
     <organization>
@@ -58,9 +56,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</connection>
-        <developerConnection>scn:svn:https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</developerConnection>
-        <url>http://svn.apache.org/viewvc/incubator/chemistry/opencmis/trunk</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/chemistry/opencmis/tags/chemistry-opencmis-0.1.0-incubating-RC1</connection>
+        <developerConnection>scn:svn:https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/tags/chemistry-opencmis-0.1.0-incubating-RC1</developerConnection>
+        <url>http://svn.apache.org/viewvc/incubator/chemistry/opencmis/tags/chemistry-opencmis-0.1.0-incubating-RC1</url>
     </scm>
 
     <distributionManagement>
@@ -225,6 +223,8 @@
                         site-deploy</goals>
                     <arguments>-Papache-release</arguments>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <username>${apache.username}</username>
+                    <password>${apache.password}</password>
                 </configuration>
             </plugin>
             <plugin>
