@@ -19,7 +19,7 @@
         <artifactId>chemistry-opencmis</artifactId>
         <groupId>org.apache.chemistry.opencmis
         </groupId>
-        <version>0.1.0-incubating
+        <version>0.2.0-incubating-SNAPSHOT
         </version>
     </parent>
 
