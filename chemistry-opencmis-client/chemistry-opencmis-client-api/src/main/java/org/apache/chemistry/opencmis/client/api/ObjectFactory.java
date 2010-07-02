@@ -45,6 +45,10 @@ public interface ObjectFactory {
 
     Acl convertAces(List<Ace> aces);
 
+    Acl createAcl(List<Ace> aces);
+    
+    Ace createAce(String principal, List<String> permissions);
+    
     // policies
 
     List<String> convertPolicies(List<Policy> policies);

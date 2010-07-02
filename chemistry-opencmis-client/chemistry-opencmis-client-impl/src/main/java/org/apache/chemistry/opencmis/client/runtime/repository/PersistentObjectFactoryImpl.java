@@ -137,6 +137,22 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
         return pof.createAccessControlList(providerAces);
     }
 
+    public Ace createAce(String principal, List<String> permissions) {
+        BindingsObjectFactory pof = getProviderObjectFactory();
+
+        Ace ace = pof.createAccessControlEntry(principal, permissions);
+
+        return ace;
+    }
+
+    public Acl createAcl(List<Ace> aces) {
+        BindingsObjectFactory pof = getProviderObjectFactory();
+
+        Acl acl = pof.createAccessControlList(aces);
+
+        return acl;
+    }
+
     // policies
 
     /*
@@ -593,4 +609,5 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
         return new QueryResultImpl(session, objectData);
     }
+
 }
