@@ -35,6 +35,8 @@ public interface Document extends FileableCmisObject {
     void deleteAllVersions();
 
     ContentStream getContentStream();
+    
+    ContentStream getContentStream(String streamId);
 
     ObjectId setContentStream(ContentStream contentStream, boolean overwrite);
 

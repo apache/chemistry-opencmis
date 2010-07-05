@@ -109,7 +109,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
     /**
      * Returns the bindings object factory.
      */
-    protected BindingsObjectFactory getProviderObjectFactory() {
+    protected BindingsObjectFactory getBindingsObjectFactory() {
         return session.getBinding().getObjectFactory();
     }
 
@@ -127,28 +127,28 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
             return null;
         }
 
-        BindingsObjectFactory pof = getProviderObjectFactory();
+        BindingsObjectFactory bof = getBindingsObjectFactory();
 
         List<Ace> providerAces = new ArrayList<Ace>();
         for (Ace ace : aces) {
-            providerAces.add(pof.createAccessControlEntry(ace.getPrincipalId(), ace.getPermissions()));
+            providerAces.add(bof.createAccessControlEntry(ace.getPrincipalId(), ace.getPermissions()));
         }
 
-        return pof.createAccessControlList(providerAces);
+        return bof.createAccessControlList(providerAces);
     }
 
     public Ace createAce(String principal, List<String> permissions) {
-        BindingsObjectFactory pof = getProviderObjectFactory();
+        BindingsObjectFactory bof = getBindingsObjectFactory();
 
-        Ace ace = pof.createAccessControlEntry(principal, permissions);
+        Ace ace = bof.createAccessControlEntry(principal, permissions);
 
         return ace;
     }
 
     public Acl createAcl(List<Ace> aces) {
-        BindingsObjectFactory pof = getProviderObjectFactory();
+        BindingsObjectFactory bof = getBindingsObjectFactory();
 
-        Acl acl = pof.createAccessControlList(aces);
+        Acl acl = bof.createAccessControlList(aces);
 
         return acl;
     }
@@ -228,7 +228,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
         BigInteger length = (contentStream.getLength() < 0 ? null : BigInteger.valueOf(contentStream.getLength()));
 
-        return getProviderObjectFactory().createContentStream(contentStream.getFileName(), length,
+        return getBindingsObjectFactory().createContentStream(contentStream.getFileName(), length,
                 contentStream.getMimeType(), contentStream.getStream());
     }
 
@@ -393,7 +393,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
         }
 
         // some preparation
-        BindingsObjectFactory pof = getProviderObjectFactory();
+        BindingsObjectFactory bof = getBindingsObjectFactory();
         List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
 
         // the big loop
@@ -464,41 +464,41 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
             if (definition instanceof PropertyStringDefinition) {
                 if (firstValue == null) {
-                    propertyData = pof.createPropertyStringData(id, (List<String>) null);
+                    propertyData = bof.createPropertyStringData(id, (List<String>) null);
                 } else if (firstValue instanceof String) {
-                    propertyData = pof.createPropertyStringData(id, (List<String>) values);
+                    propertyData = bof.createPropertyStringData(id, (List<String>) values);
                 } else {
                     throw new IllegalArgumentException("Property '" + id + "' is a String property!");
                 }
             } else if (definition instanceof PropertyIdDefinition) {
                 if (firstValue == null) {
-                    propertyData = pof.createPropertyIdData(id, (List<String>) null);
+                    propertyData = bof.createPropertyIdData(id, (List<String>) null);
                 } else if (firstValue instanceof String) {
-                    propertyData = pof.createPropertyIdData(id, (List<String>) values);
+                    propertyData = bof.createPropertyIdData(id, (List<String>) values);
                 } else {
                     throw new IllegalArgumentException("Property '" + id + "' is an Id property!");
                 }
             } else if (definition instanceof PropertyHtmlDefinition) {
                 if (firstValue == null) {
-                    propertyData = pof.createPropertyHtmlData(id, (List<String>) values);
+                    propertyData = bof.createPropertyHtmlData(id, (List<String>) values);
                 } else if (firstValue instanceof String) {
-                    propertyData = pof.createPropertyHtmlData(id, (List<String>) values);
+                    propertyData = bof.createPropertyHtmlData(id, (List<String>) values);
                 } else {
                     throw new IllegalArgumentException("Property '" + id + "' is a HTML property!");
                 }
             } else if (definition instanceof PropertyUriDefinition) {
                 if (firstValue == null) {
-                    propertyData = pof.createPropertyUriData(id, (List<String>) null);
+                    propertyData = bof.createPropertyUriData(id, (List<String>) null);
                 } else if (firstValue instanceof String) {
-                    propertyData = pof.createPropertyUriData(id, (List<String>) values);
+                    propertyData = bof.createPropertyUriData(id, (List<String>) values);
                 } else {
                     throw new IllegalArgumentException("Property '" + id + "' is an URI property!");
                 }
             } else if (definition instanceof PropertyIntegerDefinition) {
                 if (firstValue == null) {
-                    propertyData = pof.createPropertyIntegerData(id, (List<BigInteger>) null);
+                    propertyData = bof.createPropertyIntegerData(id, (List<BigInteger>) null);
                 } else if (firstValue instanceof BigInteger) {
-                    propertyData = pof.createPropertyIntegerData(id, (List<BigInteger>) values);
+                    propertyData = bof.createPropertyIntegerData(id, (List<BigInteger>) values);
                 } else if ((firstValue instanceof Byte) || (firstValue instanceof Short)
                         || (firstValue instanceof Integer) || (firstValue instanceof Long)) {
                     // we accept all kinds of integers
@@ -507,31 +507,31 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
                         list.add(BigInteger.valueOf(((Number) v).longValue()));
                     }
 
-                    propertyData = pof.createPropertyIntegerData(id, list);
+                    propertyData = bof.createPropertyIntegerData(id, list);
                 } else {
                     throw new IllegalArgumentException("Property '" + id + "' is an Integer property!");
                 }
             } else if (definition instanceof PropertyBooleanDefinition) {
                 if (firstValue == null) {
-                    propertyData = pof.createPropertyBooleanData(id, (List<Boolean>) null);
+                    propertyData = bof.createPropertyBooleanData(id, (List<Boolean>) null);
                 } else if (firstValue instanceof Boolean) {
-                    propertyData = pof.createPropertyBooleanData(id, (List<Boolean>) values);
+                    propertyData = bof.createPropertyBooleanData(id, (List<Boolean>) values);
                 } else {
                     throw new IllegalArgumentException("Property '" + id + "' is a Boolean property!");
                 }
             } else if (definition instanceof PropertyDecimalDefinition) {
                 if (firstValue == null) {
-                    propertyData = pof.createPropertyDecimalData(id, (List<BigDecimal>) null);
+                    propertyData = bof.createPropertyDecimalData(id, (List<BigDecimal>) null);
                 } else if (firstValue instanceof BigDecimal) {
-                    propertyData = pof.createPropertyDecimalData(id, (List<BigDecimal>) values);
+                    propertyData = bof.createPropertyDecimalData(id, (List<BigDecimal>) values);
                 } else {
                     throw new IllegalArgumentException("Property '" + id + "' is a Decimal property!");
                 }
             } else if (definition instanceof PropertyDateTimeDefinition) {
                 if (firstValue == null) {
-                    propertyData = pof.createPropertyDateTimeData(id, (List<GregorianCalendar>) null);
+                    propertyData = bof.createPropertyDateTimeData(id, (List<GregorianCalendar>) null);
                 } else if (firstValue instanceof GregorianCalendar) {
-                    propertyData = pof.createPropertyDateTimeData(id, (List<GregorianCalendar>) values);
+                    propertyData = bof.createPropertyDateTimeData(id, (List<GregorianCalendar>) values);
                 } else {
                     throw new IllegalArgumentException("Property '" + id + "' is a Decimal property!");
                 }
@@ -545,7 +545,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
             propertyList.add(propertyData);
         }
 
-        return pof.createPropertiesData(propertyList);
+        return bof.createPropertiesData(propertyList);
     }
 
     /*

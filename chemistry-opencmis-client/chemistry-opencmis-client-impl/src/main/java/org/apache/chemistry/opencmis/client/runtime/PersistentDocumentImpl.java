@@ -301,14 +301,25 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.opencmis.client.api.Document#getContentStream()
+     * @see org.apache.chemistry.opencmis.client.api.Document#getContentStream()
      */
     public ContentStream getContentStream() {
+        return getContentStream(null);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.chemistry.opencmis.client.api.Document#getContentStream(java
+     * .lang.String)
+     */
+    public ContentStream getContentStream(String streamId) {
         String objectId = getObjectId();
 
         // get the stream
         ContentStream contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), objectId,
-                null, null, null, null);
+                streamId, null, null, null);
 
         // TODO: what should happen if the length is not set?
         long length = (contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue());
