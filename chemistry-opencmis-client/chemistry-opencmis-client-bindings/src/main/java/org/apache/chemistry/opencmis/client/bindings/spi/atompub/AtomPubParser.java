@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFee
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.RepositoryWorkspace;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.ServiceDoc;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
@@ -47,6 +48,10 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyId;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDocumentDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeFolderDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypePolicyDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeRelationshipDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumPropertiesBase;
 
 /**
@@ -305,7 +310,17 @@ public class AtomPubParser implements CmisAtomPubConstants {
                     || TAG_RELATIVE_PATH_SEGMENT.equals(name.getLocalPart())) {
                 return parseText(parser);
             } else if (TAG_TYPE.equals(name.getLocalPart())) {
-                return unmarshalElement(parser, CmisTypeDefinitionType.class);
+                String typeAttr = parser.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance", "type");
+                if (typeAttr.endsWith("cmisTypeDocumentDefinitionType")) {
+                    return unmarshalElement(parser, CmisTypeDocumentDefinitionType.class);
+                } else if (typeAttr.endsWith("cmisTypeFolderDefinitionType")) {
+                    return unmarshalElement(parser, CmisTypeFolderDefinitionType.class);
+                } else if (typeAttr.endsWith("cmisTypeRelationshipDefinitionType")) {
+                    return unmarshalElement(parser, CmisTypeRelationshipDefinitionType.class);
+                } else if (typeAttr.endsWith("cmisTypePolicyDefinitionType")) {
+                    return unmarshalElement(parser, CmisTypePolicyDefinitionType.class);
+                }
+                throw new CmisRuntimeException("Cannot read type definition!");
             } else if (TAG_CHILDREN.equals(name.getLocalPart())) {
                 return parseChildren(parser);
             }
