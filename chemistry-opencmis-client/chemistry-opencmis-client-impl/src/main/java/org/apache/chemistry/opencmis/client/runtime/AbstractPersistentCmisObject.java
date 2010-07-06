@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +31,11 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
@@ -52,6 +53,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
@@ -71,6 +73,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     private Acl acl;
     private List<Policy> policies;
     private List<Relationship> relationships;
+    private Map<ExtensionLevel, List<Object>> extensions;
     private OperationContext creationContext;
     private boolean isChanged = false;
     private long refreshTimestamp;
@@ -98,6 +101,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
         this.session = session;
         this.objectType = objectType;
+        this.extensions = new HashMap<ExtensionLevel, List<Object>>();
         this.creationContext = new OperationContextImpl(context);
         this.refreshTimestamp = System.currentTimeMillis();
 
@@ -107,11 +111,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
             // handle properties
             if (objectData.getProperties() != null) {
                 this.properties = of.convertProperties(objectType, objectData.getProperties());
+                extensions.put(ExtensionLevel.PROPERTIES, objectData.getProperties().getExtensions());
             }
 
             // handle allowable actions
             if (objectData.getAllowableActions() != null) {
                 this.allowableActions = objectData.getAllowableActions();
+                extensions.put(ExtensionLevel.ALLOWABLE_ACTIONS, objectData.getAllowableActions().getExtensions());
             }
 
             // handle renditions
@@ -125,6 +131,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
             // handle ACL
             if (objectData.getAcl() != null) {
                 acl = objectData.getAcl();
+                extensions.put(ExtensionLevel.ACL, objectData.getAcl().getExtensions());
             }
 
             // handle policies
@@ -136,6 +143,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                         policies.add((Policy) policy);
                     }
                 }
+                extensions.put(ExtensionLevel.POLICIES, objectData.getPolicyIds().getExtensions());
             }
 
             // handle relationships
@@ -148,6 +156,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                     }
                 }
             }
+
+            extensions.put(ExtensionLevel.OBJECT, objectData.getExtensions());
         }
 
         isChanged = false;
@@ -761,6 +771,17 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                 };
             }
         });
+    }
+
+    // --- extensions ---
+
+    public List<Object> getExtensions(ExtensionLevel level) {
+        List<Object> ext = extensions.get(level);
+        if (ext == null) {
+            return null;
+        }
+
+        return Collections.unmodifiableList(ext);
     }
 
     // --- other ---

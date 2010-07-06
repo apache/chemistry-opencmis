@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 
 public class CmisObjectMock implements CmisObject, Serializable {
@@ -150,6 +151,10 @@ public class CmisObjectMock implements CmisObject, Serializable {
         return null;
     }
 
+    public List<Object> getExtensions(ExtensionLevel level) {
+        return null;
+    }
+    
     public boolean isChanged() {
         return false;
     }

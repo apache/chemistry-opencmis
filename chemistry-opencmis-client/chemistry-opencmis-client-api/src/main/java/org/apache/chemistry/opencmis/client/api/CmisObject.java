@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 
 /**
@@ -154,9 +155,9 @@ public interface CmisObject extends ObjectId {
 
     <T> void setPropertyMultivalue(String id, List<T> value);
 
-    // void saveProperties(); // flush buffered ...Propert...-calls
+    // extensions
 
-    // void saveAcl(); // flush buffered ...Acl...-calls
+    List<Object> getExtensions(ExtensionLevel level);
 
     // session handling
 
