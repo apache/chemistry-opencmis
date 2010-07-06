@@ -87,6 +87,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     private static final String TEST_DOCUMENT_MY_STRING_PROP_ID = "MyCustomDocumentStringProp";
     private static final String TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID = "MyCustomDocumentMultiStringProp";
     private static final String TEST_DOCUMENT_MY_INT_PROP_ID = "MyCustomDocumentIntProp";
+    private static final String TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT = "MyCustomDocumentIntPropMandatoryDefault";
     private static final String TEST_DOCUMENT_MY_SUB_STRING_PROP_ID = "MyInheritedStringProp";
     private static final String TEST_DOCUMENT_MY_SUB_INT_PROP_ID = "MyInheritedIntProp";
 
@@ -733,6 +734,13 @@ public class ObjectServiceTest extends AbstractServiceTst {
         assertNotNull(valueList);
         assertTrue(valueList.contains("Apache"));
         assertTrue(valueList.contains("CMIS"));
+        
+        pd =  props.get(TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT);
+        assertNotNull(pd);
+        bi = pd.getFirstValue();
+        assertNotNull(bi);
+        assertEquals(BigInteger.valueOf(100), bi);
+   
         log.info("... testDefaultProperties() finished.");
     }
     
@@ -1048,7 +1056,15 @@ public class ObjectServiceTest extends AbstractServiceTst {
             prop2.setDefaultValue(defVal);
             propertyDefinitions.put(prop2.getId(), prop2);
             
+            PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
+                    TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default");
+            prop3.setIsRequired(true);
+            List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
+            prop3.setDefaultValue(defVal2);
+            propertyDefinitions.put(prop3.getId(), prop3);          
+
             cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
+            
             return cmisDocumentType;
         }
 
