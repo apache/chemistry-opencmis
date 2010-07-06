@@ -117,7 +117,7 @@ public abstract class AbstractReadOnlyTypeIT extends AbstractSessionTest {
 
         for (ObjectType ot1 : pc) {
             ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
-            Assert.assertEquals(ot1, ot2);
+            Assert.assertEquals(ot1.getId(), ot2.getId());
         }
     }
 
@@ -132,7 +132,7 @@ public abstract class AbstractReadOnlyTypeIT extends AbstractSessionTest {
         ItemIterable<ObjectType> pcc = pc.skipTo(0).getPage(2);
         for (ObjectType ot1 : pcc) {
             ObjectType ot2 = this.session.getTypeDefinition(ot1.getId());
-            Assert.assertEquals(ot1, ot2);
+            Assert.assertEquals(ot1.getId(), ot2.getId());
         }
     }
 

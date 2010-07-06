@@ -190,4 +190,8 @@ public class Fixture {
         return this.testData.getTestRootId();
     }
 
+    public void setConnectionPath(String path) {
+        this.connectionPath = path;
+    }
+
 }

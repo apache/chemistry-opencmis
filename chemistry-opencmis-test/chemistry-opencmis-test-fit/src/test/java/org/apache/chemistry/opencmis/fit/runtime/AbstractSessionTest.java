@@ -81,9 +81,14 @@ public abstract class AbstractSessionTest {
     }
 
     /**
-     * test session
+     * default test session
      */
     protected Session session = null;
+
+    /**
+     * 2nd test session
+     */
+    protected Session session2 = null;
 
     /**
      * Test Fixture
@@ -101,6 +106,8 @@ public abstract class AbstractSessionTest {
         SessionFactory factory = this.fixture.getSessionFactory();
         this.session = factory.createSession(this.fixture.getParamter());
         this.fixture.setUpTestData(this.session);
+
+        this.session2 = factory.createSession(this.fixture.getParamter());
     }
 
     @After
