@@ -2554,8 +2554,8 @@ public final class Converter {
         }
 
         try {
-            Method m = source.getClass().getMethod("getAny", new Class<?>[0]);
-            List<Object> list = (List<Object>) m.invoke(source, new Object[0]);
+            Method m = target.getClass().getMethod("getAny", new Class<?>[0]);
+            List<Object> list = (List<Object>) m.invoke(target, new Object[0]);
 
             list.clear();
             if (source.getExtensions() != null) {
