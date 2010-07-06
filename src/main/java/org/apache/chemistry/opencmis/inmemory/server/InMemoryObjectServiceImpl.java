@@ -61,8 +61,8 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
-import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.TypeValidator;
+import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -700,11 +700,16 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
         TypeValidator.validateVersionStateForCreate((DocumentTypeDefinition) typeDef, versioningState);
-        TypeValidator.validateProperties(typeDef, properties, true);
         
         // set properties that are not set but have a default:
-        propMap = setDefaultProperties(typeDef, propMap);
+        Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
+        if (propMapNew != propMap) {
+            properties = new PropertiesImpl(propMapNew.values());
+            propMap = propMapNew;
+        }
 
+        TypeValidator.validateProperties(typeDef, properties, true);
+        
         // set user, creation date, etc.
         if (user == null)
             user = "unknown";
