@@ -18,9 +18,15 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import javax.xml.bind.annotation.XmlType;
+
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDocumentDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeFolderDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypePolicyDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeRelationshipDefinitionType;
+
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Constants for AtomPub.
  */
 public interface CmisAtomPubConstants {
 
@@ -54,6 +60,11 @@ public interface CmisAtomPubConstants {
     String TAG_CONTENT = "content";
     String TAG_CONTENT_MEDIATYPE = "mediatype";
     String TAG_CONTENT_BASE64 = "base64";
+
+    String ATTR_DOCUMENT_TYPE = CmisTypeDocumentDefinitionType.class.getAnnotation(XmlType.class).name();
+    String ATTR_FOLDER_TYPE = CmisTypeFolderDefinitionType.class.getAnnotation(XmlType.class).name();
+    String ATTR_RELATIONSHIP_TYPE = CmisTypeRelationshipDefinitionType.class.getAnnotation(XmlType.class).name();
+    String ATTR_POLICY_TYPE = CmisTypePolicyDefinitionType.class.getAnnotation(XmlType.class).name();
 
     // allowable actions
     String TAG_ALLOWABLEACTIONS = "allowableActions";

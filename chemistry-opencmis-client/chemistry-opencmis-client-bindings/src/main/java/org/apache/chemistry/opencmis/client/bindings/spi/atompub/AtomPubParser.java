@@ -56,9 +56,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumPropertiesBase;
 
 /**
  * AtomPub Parser.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AtomPubParser implements CmisAtomPubConstants {
 
@@ -310,14 +307,17 @@ public class AtomPubParser implements CmisAtomPubConstants {
                     || TAG_RELATIVE_PATH_SEGMENT.equals(name.getLocalPart())) {
                 return parseText(parser);
             } else if (TAG_TYPE.equals(name.getLocalPart())) {
-                String typeAttr = parser.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance", "type");
-                if (typeAttr.endsWith("cmisTypeDocumentDefinitionType")) {
+                // workaround for old Chemistry code - ignore the type namespace
+                String typeAttr = parser.getAttributeValue(Constants.NAMESPACE_XSI, "type");
+                if (typeAttr == null) {
+                    return unmarshalElement(parser, CmisTypeDefinitionType.class);
+                } else if (typeAttr.endsWith(ATTR_DOCUMENT_TYPE)) {
                     return unmarshalElement(parser, CmisTypeDocumentDefinitionType.class);
-                } else if (typeAttr.endsWith("cmisTypeFolderDefinitionType")) {
+                } else if (typeAttr.endsWith(ATTR_FOLDER_TYPE)) {
                     return unmarshalElement(parser, CmisTypeFolderDefinitionType.class);
-                } else if (typeAttr.endsWith("cmisTypeRelationshipDefinitionType")) {
+                } else if (typeAttr.endsWith(ATTR_RELATIONSHIP_TYPE)) {
                     return unmarshalElement(parser, CmisTypeRelationshipDefinitionType.class);
-                } else if (typeAttr.endsWith("cmisTypePolicyDefinitionType")) {
+                } else if (typeAttr.endsWith(ATTR_POLICY_TYPE)) {
                     return unmarshalElement(parser, CmisTypePolicyDefinitionType.class);
                 }
                 throw new CmisRuntimeException("Cannot read type definition!");
