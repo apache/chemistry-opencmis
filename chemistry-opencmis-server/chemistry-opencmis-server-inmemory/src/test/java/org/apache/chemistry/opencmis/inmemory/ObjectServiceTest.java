@@ -79,7 +79,8 @@ public class ObjectServiceTest extends AbstractServiceTst {
     private static Log log = LogFactory.getLog(ObjectServiceTest.class);
     public static final String TEST_FOLDER_TYPE_ID = "MyFolderType";
     public static final String TEST_DOCUMENT_TYPE_ID = "MyDocumentType";
-    public static final String TEST_DEFAULT_TYPE_ID = "DocumentTypeWithDefault";
+    public static final String TEST_DOC_TYPE_WITH_DEFAULTS_ID = "DocumentTypeWithDefault";
+    public static final String TEST_FOLDER_TYPE_WITH_DEFAULTS_ID = "FolderTypeWithDefault";
     public static final String TEST_FOLDER_STRING_PROP_ID = "MyFolderStringProp";
     public static final String TEST_DOCUMENT_STRING_PROP_ID = "MyDocumentStringProp";
     private static final String TEST_CUSTOM_DOCUMENT_TYPE_ID = "MyCustomDocumentType";
@@ -88,6 +89,9 @@ public class ObjectServiceTest extends AbstractServiceTst {
     private static final String TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID = "MyCustomDocumentMultiStringProp";
     private static final String TEST_DOCUMENT_MY_INT_PROP_ID = "MyCustomDocumentIntProp";
     private static final String TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT = "MyCustomDocumentIntPropMandatoryDefault";
+    private static final String TEST_FOLDER_MY_MULTI_STRING_PROP_ID = "MyCustomDocumentMultiStringProp";
+    private static final String TEST_FOLDER_MY_INT_PROP_ID = "MyCustomDocumentIntProp";
+    private static final String TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT = "MyCustomDocumentIntPropMandatoryDefault";
     private static final String TEST_DOCUMENT_MY_SUB_STRING_PROP_ID = "MyInheritedStringProp";
     private static final String TEST_DOCUMENT_MY_SUB_INT_PROP_ID = "MyInheritedIntProp";
 
@@ -715,9 +719,9 @@ public class ObjectServiceTest extends AbstractServiceTst {
     }
 
     @Test
-    public void testDefaultProperties() {
-        log.info("starting testDefaultProperties() ...");
-        String id = createDocument("DefPropDoc", fRootFolderId, TEST_DEFAULT_TYPE_ID, false);
+    public void testDefaultPropertiesDocument() {
+        log.info("starting testDefaultPropertiesDocument() ...");
+        String id = createDocument("DefPropDoc", fRootFolderId, TEST_DOC_TYPE_WITH_DEFAULTS_ID, false);
         if (id != null)
             log.info("createDocument succeeded with created id: " + id);
         ObjectData res = getDocumentObjectData(id);
@@ -741,9 +745,39 @@ public class ObjectServiceTest extends AbstractServiceTst {
         assertNotNull(bi);
         assertEquals(BigInteger.valueOf(100), bi);
    
-        log.info("... testDefaultProperties() finished.");
+        log.info("... testDefaultPropertiesDocument() finished.");
     }
     
+    @Test
+    public void testDefaultPropertiesFolder() {
+        log.info("starting testDefaultPropertiesFolder() ...");
+        String id = createFolder("DefPropFolder", fRootFolderId, TEST_FOLDER_TYPE_WITH_DEFAULTS_ID);
+        if (id != null)
+            log.info("createDocument succeeded with created id: " + id);
+        ObjectData res = getDocumentObjectData(id);
+        Map<String, PropertyData<?>> props = res.getProperties().getProperties();
+        PropertyData<?> pd =  props.get(TEST_FOLDER_MY_INT_PROP_ID);
+        assertNotNull(pd);
+        Object bi = pd.getFirstValue();
+        assertNotNull(bi);
+        assertEquals(BigInteger.valueOf(100), bi);
+        
+        pd =  props.get(TEST_FOLDER_MY_MULTI_STRING_PROP_ID);
+        assertNotNull(pd);
+        List<String> valueList = (List<String>) pd.getValues();
+        assertNotNull(valueList);
+        assertTrue(valueList.contains("Apache"));
+        assertTrue(valueList.contains("CMIS"));
+        
+        pd =  props.get(TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT);
+        assertNotNull(pd);
+        bi = pd.getFirstValue();
+        assertNotNull(bi);
+        assertEquals(BigInteger.valueOf(100), bi);
+   
+        log.info("... testDefaultPropertiesFolder() finished.");
+    }
+
     private void verifyAllowableActionsDocument(Set<Action> actions, boolean isVersioned, boolean hasContent) {
         assertTrue(actions.contains(Action.CAN_DELETE_OBJECT));
         assertTrue(actions.contains(Action.CAN_UPDATE_PROPERTIES));
@@ -995,7 +1029,8 @@ public class ObjectServiceTest extends AbstractServiceTst {
             typesList.add(cmisFolderType);
             typesList.add(customDocType);
             typesList.add(createCustomInheritedType(customDocType));
-            typesList.add(createTypeWithDefault());
+            typesList.add(createDocumentTypeWithDefault());
+            typesList.add(createFolderTypeWithDefault());
             return typesList;
         }
 
@@ -1037,9 +1072,9 @@ public class ObjectServiceTest extends AbstractServiceTst {
             return cmisDocumentType;
         }
         
-        private static InMemoryDocumentTypeDefinition createTypeWithDefault() {
+        private static InMemoryDocumentTypeDefinition createDocumentTypeWithDefault() {
             InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(
-                    TEST_DEFAULT_TYPE_ID, "Document Type With default values", InMemoryDocumentTypeDefinition
+                    TEST_DOC_TYPE_WITH_DEFAULTS_ID, "Document Type With default values", InMemoryDocumentTypeDefinition
                     .getRootDocumentType());
             Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringMultiDefinition(
@@ -1068,6 +1103,36 @@ public class ObjectServiceTest extends AbstractServiceTst {
             return cmisDocumentType;
         }
 
+        private static InMemoryFolderTypeDefinition createFolderTypeWithDefault() {
+            InMemoryFolderTypeDefinition cmisFolderType = new InMemoryFolderTypeDefinition(
+                    TEST_FOLDER_TYPE_WITH_DEFAULTS_ID, "Folder Type With default values", InMemoryFolderTypeDefinition.
+                    getRootFolderType());
+            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringMultiDefinition(
+                    TEST_FOLDER_MY_MULTI_STRING_PROP_ID, "Test Multi String Property");
+            prop.setIsRequired(false);
+            List<String> defValS = new ArrayList<String>() {{ add("Apache"); add("CMIS"); }};
+            prop.setDefaultValue(defValS);
+            propertyDefinitions.put(prop.getId(), prop);
+
+            PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
+                    TEST_FOLDER_MY_INT_PROP_ID, "Test Integer Property");
+            prop2.setIsRequired(false);
+            List<BigInteger> defVal = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
+            prop2.setDefaultValue(defVal);
+            propertyDefinitions.put(prop2.getId(), prop2);
+            
+            PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
+                    TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default");
+            prop3.setIsRequired(true);
+            List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
+            prop3.setDefaultValue(defVal2);
+            propertyDefinitions.put(prop3.getId(), prop3);          
+
+            cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
+            
+            return cmisFolderType;
+        }
     }
 
 }

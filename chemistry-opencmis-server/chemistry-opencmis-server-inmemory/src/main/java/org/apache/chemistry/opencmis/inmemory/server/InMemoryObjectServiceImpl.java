@@ -34,7 +34,6 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
-import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
@@ -372,6 +371,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
+        
+//        // fill an example extension
+//        List<Object> myExtensions = new ArrayList<Object>();
+//        myExtensions.add(new JAXBElement<ExtensionSample>(new QName("http://apache.org/chemistry/opencmis/extensions", "MyExtension"), ExtensionSample.class, new ExtensionSample()));
+//        od.setExtensions(myExtensions);
 
         LOG.debug("stop getObject()");
 
@@ -779,6 +783,13 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // check if the given type is a folder type
         if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_FOLDER))
             throw new RuntimeException("Cannot create a folder, with a non-folder type: " + typeDef.getId());
+
+        Map<String, PropertyData<?>> propMap = properties.getProperties();
+        Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
+        if (propMapNew != propMap) {
+            properties = new PropertiesImpl(propMapNew.values());
+            propMap = propMapNew;
+        }
 
         TypeValidator.validateProperties(typeDef, properties, true);
 
