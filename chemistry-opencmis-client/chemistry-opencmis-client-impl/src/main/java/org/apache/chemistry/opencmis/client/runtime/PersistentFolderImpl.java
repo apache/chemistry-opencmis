@@ -90,7 +90,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         if ((properties == null) || (properties.isEmpty())) {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
-        
+
         String objectId = getObjectId();
 
         ObjectFactory of = getObjectFactory();
@@ -181,7 +181,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         if ((properties == null) || (properties.isEmpty())) {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
-        
+
         String objectId = getObjectId();
 
         ObjectFactory of = getObjectFactory();
@@ -216,7 +216,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         if ((properties == null) || (properties.isEmpty())) {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
-        
+
         String objectId = getObjectId();
 
         ObjectFactory of = getObjectFactory();
@@ -309,8 +309,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                 // get checked out documents for this folder
                 ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), objectId, ctxt
                         .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger.valueOf(this.maxNumItems),
-                        BigInteger.valueOf(skipCount), null);
+                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger
+                        .valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert objects
                 List<Document> page = new ArrayList<Document>();
@@ -521,7 +521,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
             if (path == null) {
                 String objectId = getObjectId();
                 ObjectData objectData = getBinding().getObjectService().getObject(getRepositoryId(), objectId,
-                        PropertyIds.PATH, false, IncludeRelationships.NONE, "cmis:none", false, false, null);
+                        getPropertyQueryName(PropertyIds.PATH), false, IncludeRelationships.NONE, "cmis:none", false,
+                        false, null);
 
                 if ((objectData.getProperties() != null) && (objectData.getProperties().getProperties() != null)) {
                     PropertyData<?> pathProperty = objectData.getProperties().getProperties().get(PropertyIds.PATH);

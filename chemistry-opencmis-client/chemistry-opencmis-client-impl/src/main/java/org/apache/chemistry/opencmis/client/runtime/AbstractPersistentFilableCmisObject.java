@@ -43,15 +43,16 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.opencmis.client.api.FileableCmisObject#getParents()
+     * @see
+     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#getParents()
      */
     public List<Folder> getParents() {
         String objectId = getObjectId();
 
         // get object ids of the parent folders
-        List<ObjectParentData> providerParents = getBinding().getNavigationService()
-                .getObjectParents(getRepositoryId(), objectId, PropertyIds.OBJECT_ID, false, IncludeRelationships.NONE,
-                        null, false, null);
+        List<ObjectParentData> providerParents = getBinding().getNavigationService().getObjectParents(
+                getRepositoryId(), objectId, getPropertyQueryName(PropertyIds.OBJECT_ID), false,
+                IncludeRelationships.NONE, null, false, null);
 
         List<Folder> parents = new ArrayList<Folder>();
 
@@ -85,14 +86,16 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.opencmis.client.api.FileableCmisObject#getPaths()
+     * @see
+     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#getPaths()
      */
     public List<String> getPaths() {
         String objectId = getObjectId();
 
         // get object paths of the parent folders
         List<ObjectParentData> providerParents = getBinding().getNavigationService().getObjectParents(
-                getRepositoryId(), objectId, PropertyIds.PATH, false, IncludeRelationships.NONE, null, true, null);
+                getRepositoryId(), objectId, getPropertyQueryName(PropertyIds.PATH), false, IncludeRelationships.NONE,
+                null, true, null);
 
         List<String> paths = new ArrayList<String>();
 
@@ -125,8 +128,9 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.opencmis.client.api.FileableCmisObject#move(org.apache.opencmis
-     * .client.api.ObjectId, org.apache.opencmis.client.api.ObjectId)
+     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#move(org.
+     * apache.opencmis.client.api.ObjectId,
+     * org.apache.chemistry.opencmis.client.api.ObjectId)
      */
     public FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId) {
         String objectId = getObjectId();
@@ -159,8 +163,8 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.opencmis.client.api.FileableCmisObject#addToFolder(org.apache
-     * .opencmis.client.api .ObjectId, boolean)
+     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#addToFolder
+     * (org.apache.opencmis.client.api.ObjectId, boolean)
      */
     public void addToFolder(ObjectId folderId, boolean allVersions) {
         String objectId = getObjectId();
@@ -177,8 +181,8 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.opencmis.client.api.FileableCmisObject#removeFromFolder(org
-     * .apache.opencmis.client .api.ObjectId)
+     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#removeFromFolder
+     * (org .apache.opencmis.client.api.ObjectId)
      */
     public void removeFromFolder(ObjectId folderId) {
         String objectId = getObjectId();

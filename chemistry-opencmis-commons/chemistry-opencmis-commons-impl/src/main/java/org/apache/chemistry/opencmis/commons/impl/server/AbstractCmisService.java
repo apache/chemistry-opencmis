@@ -1050,6 +1050,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                 addObjectInfo(infoImpl);
                 info = infoImpl;
             } catch (Exception e) {
+                e.printStackTrace();
                 info = null;
             } finally {
                 addObjectInfos = true;
