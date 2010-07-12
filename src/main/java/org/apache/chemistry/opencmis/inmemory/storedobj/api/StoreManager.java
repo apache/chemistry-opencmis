@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.inmemory.TypeManager;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
  * interface to a repository implementation. This interface is the entry point

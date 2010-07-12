@@ -46,7 +46,11 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.chemistry.opencmis.server.support.query.CMISQLParser;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser;
+import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
+import org.apache.chemistry.opencmis.server.support.query.QueryObject;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_CmisBaseGrammar.query_return;
 
 public abstract class AbstractQueryTest {
 
@@ -76,14 +80,14 @@ public abstract class AbstractQueryTest {
 
     protected CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
         CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
-        TokenSource lexer = new CMISQLLexerStrict(input);
+        TokenSource lexer = new CmisQlStrictLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
-        CMISQLParserStrict parser = new CMISQLParserStrict(tokens);
+        CmisQlStrictParser parser = new CmisQlStrictParser(tokens);
 
-        CMISQLParserStrict.query_return parsedStatement = parser.query();
-        if (parser.errorMessage != null) {
-            throw new RuntimeException("Cannot parse query: " + statement + " (" + parser.errorMessage + ")");
-        }
+        query_return parsedStatement = parser.query();
+//        if (parser.errorMessage != null) {
+//            throw new RuntimeException("Cannot parse query: " + statement + " (" + parser.errorMessage + ")");
+//        }
         parserTree = (CommonTree) parsedStatement.getTree();            
         // printTree(tree);
 
@@ -121,7 +125,7 @@ public abstract class AbstractQueryTest {
         int count = root.getChildCount();
         for (int i=0; i<count; i++) {
             Tree child = root.getChild(i);
-            if (child.getType() == CMISQLLexerStrict.WHERE) {
+            if (child.getType() == CmisQlStrictLexer.WHERE) {
                 return child;
             }
         }

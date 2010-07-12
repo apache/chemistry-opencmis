@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory.query;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -31,14 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.antlr.runtime.ANTLRInputStream;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.TokenSource;
-import org.antlr.runtime.TokenStream;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -49,8 +41,6 @@ import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
-import org.apache.chemistry.opencmis.inmemory.TypeManager;
-import org.apache.chemistry.opencmis.inmemory.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
@@ -59,7 +49,15 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
+import org.apache.chemistry.opencmis.server.support.query.AbstractQueryConditionProcessor;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
+import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
+import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
+import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
+import org.apache.chemistry.opencmis.server.support.query.FunctionReference;
+import org.apache.chemistry.opencmis.server.support.query.QueryObject;
+import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -72,15 +70,13 @@ import org.apache.commons.logging.LogFactory;
  * @author Jens
  *
  */
-public class InMemoryQueryProcessor implements IQueryConditionProcessor {
+public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
 
     private static Log LOG = LogFactory.getLog(InMemoryQueryProcessor.class);
     
     private List<StoredObject> matches = new ArrayList<StoredObject>();
     private QueryObject queryObj;
     private Tree whereTree;
-    private CommonTree parserTree; // the ANTLR tree after parsing phase
-    private CommonTree walkerTree; // the ANTLR tree after walking phase
     
     public InMemoryQueryProcessor() {
     }
@@ -107,33 +103,15 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
         return objList;
     }        
 
-    private CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-        CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
-        TokenSource lexer = new CMISQLLexerStrict(input);
-        TokenStream tokens = new CommonTokenStream(lexer);
-        CMISQLParserStrict parser = new CMISQLParserStrict(tokens);
-
-        CMISQLParserStrict.query_return parsedStatement = parser.query();
-        if (parser.errorMessage != null) {
-            throw new RuntimeException("Cannot parse query: " + statement + " (" + parser.errorMessage + ")");
-        }
-        parserTree = (CommonTree) parsedStatement.getTree();            
-
-        CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
-        nodes.setTokenStream(tokens);
-        CmisQueryWalker walker = new CmisQueryWalker(nodes);
-        return walker;
-    }
-
     public CmisQueryWalker processQuery(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-        CmisQueryWalker walker = getWalker(statement);
+        CmisQueryWalker walker = AbstractQueryConditionProcessor.getWalker(statement);
         walker.query(queryObj);
         String errMsg = walker.getErrorMessageString();
         if (null != errMsg) {
             throw new RuntimeException("Walking of statement failed with error: \n   " + errMsg + 
                     "\n   Statement was: " + statement);
         }
-        walkerTree = (CommonTree) walker.getTreeNodeStream().getTreeSource();
+        /*CommonTree walkerTree = (CommonTree) */ walker.getTreeNodeStream().getTreeSource();
         return walker;
     }
 
@@ -388,85 +366,85 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
         boolean matches = true;
 
         switch (node.getType()) {
-        case CMISQLLexerStrict.WHERE:
+        case CmisQlStrictLexer.WHERE:
             matches = evalWhereNode(so, node.getChild(0));
             break; // ignore
-        case CMISQLLexerStrict.EQ:
+        case CmisQlStrictLexer.EQ:
             matches = evalWhereEquals(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.NEQ:
+        case CmisQlStrictLexer.NEQ:
             matches = evalWhereNotEquals(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.GT:
+        case CmisQlStrictLexer.GT:
             matches = evalWhereGreaterThan(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.GTEQ:
+        case CmisQlStrictLexer.GTEQ:
             matches = evalWhereGreaterOrEquals(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.LT:
+        case CmisQlStrictLexer.LT:
             matches = evalWhereLessThan(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.LTEQ:
+        case CmisQlStrictLexer.LTEQ:
             matches = evalWhereLessOrEquals(so, node, node.getChild(0), node.getChild(1));
             break;
 
-        case CMISQLLexerStrict.NOT:
+        case CmisQlStrictLexer.NOT:
             matches = evalWhereNot(so, node, node.getChild(0));
             break;
-        case CMISQLLexerStrict.AND:
+        case CmisQlStrictLexer.AND:
             matches = evalWhereAnd(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.OR:
+        case CmisQlStrictLexer.OR:
             matches = evalWhereOr(so, node, node.getChild(0), node.getChild(1));
             break;
 
         // Multi-value:
-        case CMISQLLexerStrict.IN:
+        case CmisQlStrictLexer.IN:
             matches = evalWhereIn(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.NOT_IN:
+        case CmisQlStrictLexer.NOT_IN:
             matches = evalWhereNotIn(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.IN_ANY:
+        case CmisQlStrictLexer.IN_ANY:
             matches = evalWhereInAny(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.NOT_IN_ANY:
+        case CmisQlStrictLexer.NOT_IN_ANY:
             matches = evalWhereNotInAny(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.EQ_ANY:
+        case CmisQlStrictLexer.EQ_ANY:
             matches = evalWhereEqAny(so, node, node.getChild(0), node.getChild(1));
             break;
 
         // Null comparisons:
-        case CMISQLLexerStrict.IS_NULL:
+        case CmisQlStrictLexer.IS_NULL:
             matches = evalWhereIsNull(so, node, node.getChild(0));
             break;
-        case CMISQLLexerStrict.IS_NOT_NULL:
+        case CmisQlStrictLexer.IS_NOT_NULL:
             matches = evalWhereIsNotNull(so, node, node.getChild(0));
             break;
 
         // String matching
-        case CMISQLLexerStrict.LIKE:
+        case CmisQlStrictLexer.LIKE:
             matches = evalWhereIsLike(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.NOT_LIKE:
+        case CmisQlStrictLexer.NOT_LIKE:
             matches = evalWhereIsNotLike(so, node, node.getChild(0), node.getChild(1));
             break;
 
         // Functions
-        case CMISQLLexerStrict.CONTAINS:
+        case CmisQlStrictLexer.CONTAINS:
             if (node.getChildCount() == 1)
                 matches = evalWhereContains(so, node, null, node.getChild(0));
             else
                 matches = evalWhereContains(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.IN_FOLDER:
+        case CmisQlStrictLexer.IN_FOLDER:
             if (node.getChildCount() == 1)
                 matches = evalWhereInFolder(so, node, null, node.getChild(0));
             else
                 matches = evalWhereInFolder(so, node, node.getChild(0), node.getChild(1));
             break;
-        case CMISQLLexerStrict.IN_TREE:
+        case CmisQlStrictLexer.IN_TREE:
             if (node.getChildCount() == 1)
                 matches = evalWhereInTree(so, node, null, node.getChild(0));
             else
@@ -742,37 +720,6 @@ public class InMemoryQueryProcessor implements IQueryConditionProcessor {
         return false;
     }
 
-    private Object onLiteral(Tree node) {
-        int type = node.getType();
-        String text = node.getText();
-        switch (type) {
-        case CMISQLLexerStrict.BOOL_LIT:
-            return Boolean.parseBoolean(node.getText());
-        case CMISQLLexerStrict.NUM_LIT:
-            if (text.contains(".") || text.contains("e") || text.contains("E"))
-                return Double.parseDouble(text);
-            else    
-                return Long.parseLong(text);
-        case CMISQLLexerStrict.STRING_LIT:
-            return text.substring(1, text.length()-1);
-        case CMISQLLexerStrict.TIME_LIT:
-            GregorianCalendar gc = CalendarHelper.fromString(text.substring(text.indexOf('\'')+1, text.lastIndexOf('\'')));
-            return gc; 
-        default:
-            LOG.error("Unknown literal. " + node);
-            return null;
-        }
-    }
- 
-    private List<Object> onLiteralList(Tree node) {
-        List<Object> res = new ArrayList<Object>(node.getChildCount());
-        for (int i=0; i<node.getChildCount(); i++) {
-            Tree literal =  node.getChild(i);
-            res.add(onLiteral(literal));
-        }
-        return res;
-    }
-    
     private Integer compareTo(StoredObject so, Tree leftChild, Tree rightChild) {
         Object rVal = onLiteral(rightChild);
         

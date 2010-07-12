@@ -60,7 +60,6 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
-import org.apache.chemistry.opencmis.inmemory.TypeValidator;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
@@ -76,6 +75,7 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.server.support.TypeValidator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
