@@ -31,7 +31,14 @@ import org.antlr.runtime.MismatchedTokenException;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
-import org.apache.chemistry.opencmis.inmemory.query.QueryObject.SortSpec;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
+import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
+import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
+import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
+import org.apache.chemistry.opencmis.server.support.query.FunctionReference;
+import org.apache.chemistry.opencmis.server.support.query.QueryObject;
+import org.apache.chemistry.opencmis.server.support.query.FunctionReference.CmisQlFunction;
+import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -521,80 +528,80 @@ public class QueryParseTest extends AbstractQueryTest {
        
     private String printNode(Tree node) {
         switch (node.getType()) {
-        case CMISQLLexerStrict.TABLE:
+        case CmisQlStrictLexer.TABLE:
             return "#TABLE";
-        case CMISQLLexerStrict.COL:
+        case CmisQlStrictLexer.COL:
             return "#COL";
-        case CMISQLLexerStrict.IN_LIST:
+        case CmisQlStrictLexer.IN_LIST:
             return "#IN_LIST";
-        case CMISQLLexerStrict.SEL_LIST:
+        case CmisQlStrictLexer.SEL_LIST:
             return "#SEL_LIST";
-        case CMISQLLexerStrict.EQ_ANY:
+        case CmisQlStrictLexer.EQ_ANY:
             return "#EQ_ANY";
-        case CMISQLLexerStrict.NOT_LIKE:
+        case CmisQlStrictLexer.NOT_LIKE:
             return "#NOT_LIKE";
-        case CMISQLLexerStrict.NOT_IN:
+        case CmisQlStrictLexer.NOT_IN:
             return "#NOT_IN";
-        case CMISQLLexerStrict.IN_ANY:
+        case CmisQlStrictLexer.IN_ANY:
             return "#IN_ANY";
-        case CMISQLLexerStrict.NOT_IN_ANY:
+        case CmisQlStrictLexer.NOT_IN_ANY:
             return "#NOT_IN_ANY";
-        case CMISQLLexerStrict.IS_NULL:
+        case CmisQlStrictLexer.IS_NULL:
             return "#IS_NULL";
-        case CMISQLLexerStrict.IS_NOT_NULL:
+        case CmisQlStrictLexer.IS_NOT_NULL:
             return "#IS_NOT_NULL";
-        case CMISQLLexerStrict.ORDER_BY:
+        case CmisQlStrictLexer.ORDER_BY:
             return "#ORDER_BY";
           
-        case CMISQLLexerStrict.WHERE:;
-        case CMISQLLexerStrict.LT:
-        case CMISQLLexerStrict.STAR:
-        case CMISQLLexerStrict.BOOL_LIT:
-        case CMISQLLexerStrict.INNER:
-        case CMISQLLexerStrict.TIME_LIT:
-        case CMISQLLexerStrict.ORDER:
-        case CMISQLLexerStrict.STRING_LIT:
-        case CMISQLLexerStrict.CONTAINS:
-        case CMISQLLexerStrict.ExactNumLit:
-        case CMISQLLexerStrict.LTEQ:
-        case CMISQLLexerStrict.NOT:
-        case CMISQLLexerStrict.ID:
-        case CMISQLLexerStrict.AND:
-        case CMISQLLexerStrict.EOF:
-        case CMISQLLexerStrict.AS:
-        case CMISQLLexerStrict.IN:
-        case CMISQLLexerStrict.LPAR:
-        case CMISQLLexerStrict.Digits:
-        case CMISQLLexerStrict.COMMA:
-        case CMISQLLexerStrict.IS:
-        case CMISQLLexerStrict.LEFT:
-        case CMISQLLexerStrict.Sign:
-        case CMISQLLexerStrict.EQ:
-        case CMISQLLexerStrict.DOT:
-        case CMISQLLexerStrict.NUM_LIT:
-        case CMISQLLexerStrict.SELECT:
-        case CMISQLLexerStrict.LIKE:
-        case CMISQLLexerStrict.OUTER:
-        case CMISQLLexerStrict.BY:
-        case CMISQLLexerStrict.ASC:
-        case CMISQLLexerStrict.NULL:
-        case CMISQLLexerStrict.ON:
-        case CMISQLLexerStrict.RIGHT:
-        case CMISQLLexerStrict.GTEQ:
-        case CMISQLLexerStrict.ApproxNumLit:
-        case CMISQLLexerStrict.JOIN:
-        case CMISQLLexerStrict.IN_FOLDER:
-        case CMISQLLexerStrict.WS:
-        case CMISQLLexerStrict.NEQ:
-        case CMISQLLexerStrict.ANY:
-        case CMISQLLexerStrict.SCORE:
-        case CMISQLLexerStrict.IN_TREE:
-        case CMISQLLexerStrict.OR:
-        case CMISQLLexerStrict.GT:
-        case CMISQLLexerStrict.RPAR:
-        case CMISQLLexerStrict.DESC:
-        case CMISQLLexerStrict.FROM:
-        case CMISQLLexerStrict.TIMESTAMP:
+        case CmisQlStrictLexer.WHERE:;
+        case CmisQlStrictLexer.LT:
+        case CmisQlStrictLexer.STAR:
+        case CmisQlStrictLexer.BOOL_LIT:
+        case CmisQlStrictLexer.INNER:
+        case CmisQlStrictLexer.TIME_LIT:
+        case CmisQlStrictLexer.ORDER:
+        case CmisQlStrictLexer.STRING_LIT:
+        case CmisQlStrictLexer.CONTAINS:
+        case CmisQlStrictLexer.ExactNumLit:
+        case CmisQlStrictLexer.LTEQ:
+        case CmisQlStrictLexer.NOT:
+        case CmisQlStrictLexer.ID:
+        case CmisQlStrictLexer.AND:
+        case CmisQlStrictLexer.EOF:
+        case CmisQlStrictLexer.AS:
+        case CmisQlStrictLexer.IN:
+        case CmisQlStrictLexer.LPAR:
+        case CmisQlStrictLexer.Digits:
+        case CmisQlStrictLexer.COMMA:
+        case CmisQlStrictLexer.IS:
+        case CmisQlStrictLexer.LEFT:
+        case CmisQlStrictLexer.Sign:
+        case CmisQlStrictLexer.EQ:
+        case CmisQlStrictLexer.DOT:
+        case CmisQlStrictLexer.NUM_LIT:
+        case CmisQlStrictLexer.SELECT:
+        case CmisQlStrictLexer.LIKE:
+        case CmisQlStrictLexer.OUTER:
+        case CmisQlStrictLexer.BY:
+        case CmisQlStrictLexer.ASC:
+        case CmisQlStrictLexer.NULL:
+        case CmisQlStrictLexer.ON:
+        case CmisQlStrictLexer.RIGHT:
+        case CmisQlStrictLexer.GTEQ:
+        case CmisQlStrictLexer.ApproxNumLit:
+        case CmisQlStrictLexer.JOIN:
+        case CmisQlStrictLexer.IN_FOLDER:
+        case CmisQlStrictLexer.WS:
+        case CmisQlStrictLexer.NEQ:
+        case CmisQlStrictLexer.ANY:
+        case CmisQlStrictLexer.SCORE:
+        case CmisQlStrictLexer.IN_TREE:
+        case CmisQlStrictLexer.OR:
+        case CmisQlStrictLexer.GT:
+        case CmisQlStrictLexer.RPAR:
+        case CmisQlStrictLexer.DESC:
+        case CmisQlStrictLexer.FROM:
+        case CmisQlStrictLexer.TIMESTAMP:
             return node.toString();
         default:
             return "[Unknown token: " + node.toString() + "]";
@@ -606,101 +613,101 @@ public class QueryParseTest extends AbstractQueryTest {
     private void evaluateWhereNode(Tree node) {
         System.out.println("evaluating node: " + node.toString());
         switch (node.getType()) {
-        case CMISQLLexerStrict.WHERE:;
+        case CmisQlStrictLexer.WHERE:;
             break; // ignore
-        case CMISQLLexerStrict.COL:
+        case CmisQlStrictLexer.COL:
             evalColumn(node);
-        case CMISQLLexerStrict.IN_LIST:
+        case CmisQlStrictLexer.IN_LIST:
             evalInList(node);
             break;
-        case CMISQLLexerStrict.IN_ANY:
+        case CmisQlStrictLexer.IN_ANY:
             evalInAny(node);
             break;
-        case CMISQLLexerStrict.EQ_ANY:
+        case CmisQlStrictLexer.EQ_ANY:
             evalEqAny(node);
             break;
-        case CMISQLLexerStrict.NOT_LIKE:
+        case CmisQlStrictLexer.NOT_LIKE:
             evalNotLike(node);
             break;
-        case CMISQLLexerStrict.NOT_IN:
+        case CmisQlStrictLexer.NOT_IN:
             evalNotIn(node);
             break;
-        case CMISQLLexerStrict.IS_NULL:
+        case CmisQlStrictLexer.IS_NULL:
             evalIsNull(node);
             break;
-        case CMISQLLexerStrict.IS_NOT_NULL:
+        case CmisQlStrictLexer.IS_NOT_NULL:
             evalIsNotNull(node);
             break;
-        case CMISQLLexerStrict.LT:
+        case CmisQlStrictLexer.LT:
             evalLessThan(node);
             break;
-        case CMISQLLexerStrict.BOOL_LIT:
+        case CmisQlStrictLexer.BOOL_LIT:
             evalBooleanLiteral(node);
             break;
-        case CMISQLLexerStrict.TIME_LIT:
+        case CmisQlStrictLexer.TIME_LIT:
             evalTimeLiteral(node);
             break;
-        case CMISQLLexerStrict.STRING_LIT:
+        case CmisQlStrictLexer.STRING_LIT:
             evalStringLiteral(node);
             break;
-        case CMISQLLexerStrict.CONTAINS:
+        case CmisQlStrictLexer.CONTAINS:
             evalContains(node);
             break;
-        case CMISQLLexerStrict.ExactNumLit:
+        case CmisQlStrictLexer.ExactNumLit:
             evalExactNumLiteral(node);
             break;
-        case CMISQLLexerStrict.LTEQ:
+        case CmisQlStrictLexer.LTEQ:
             evalLessOrEqual(node);
             break;
-        case CMISQLLexerStrict.NOT:
+        case CmisQlStrictLexer.NOT:
             evalNot(node);
             break;
-        case CMISQLLexerStrict.ID:
+        case CmisQlStrictLexer.ID:
             evalId(node);
             break;
-        case CMISQLLexerStrict.AND:
+        case CmisQlStrictLexer.AND:
             evalAnd(node);
             break;
-        case CMISQLLexerStrict.IN:
+        case CmisQlStrictLexer.IN:
             evalIn(node);
             break;
-        case CMISQLLexerStrict.EQ:
+        case CmisQlStrictLexer.EQ:
             evalEquals(node);
             break;
-        case CMISQLLexerStrict.NUM_LIT:
+        case CmisQlStrictLexer.NUM_LIT:
             evalNumLiteral(node);
             break;
-        case CMISQLLexerStrict.LIKE:
+        case CmisQlStrictLexer.LIKE:
             evalLike(node);
             break;
-        case CMISQLLexerStrict.NULL:
+        case CmisQlStrictLexer.NULL:
             evalNull(node);
             break;
-        case CMISQLLexerStrict.GTEQ:
+        case CmisQlStrictLexer.GTEQ:
             evalGreaterThan(node);
             break;
-        case CMISQLLexerStrict.ApproxNumLit:
+        case CmisQlStrictLexer.ApproxNumLit:
             evalApproxNumLiteral(node);
             break;
-        case CMISQLLexerStrict.IN_FOLDER:
+        case CmisQlStrictLexer.IN_FOLDER:
             evalInFolder(node);
             break;
-        case CMISQLLexerStrict.NEQ:
+        case CmisQlStrictLexer.NEQ:
             evalNotEquals(node);
             break;
-        case CMISQLLexerStrict.SCORE:
+        case CmisQlStrictLexer.SCORE:
             evalScore(node);
             break;
-        case CMISQLLexerStrict.IN_TREE:
+        case CmisQlStrictLexer.IN_TREE:
             evalInTree(node);
             break;
-        case CMISQLLexerStrict.OR:
+        case CmisQlStrictLexer.OR:
             evalOr(node);
             break;
-        case CMISQLLexerStrict.GT:
+        case CmisQlStrictLexer.GT:
             evalGreaterThan(node);
             break;
-        case CMISQLLexerStrict.TIMESTAMP:
+        case CmisQlStrictLexer.TIMESTAMP:
             evalTimeLiteral(node);
             break;
         default:
@@ -713,7 +720,7 @@ public class QueryParseTest extends AbstractQueryTest {
 
     private void evalColumn(Tree node) {
         assertEquals(1, node.getChildCount());
-        assertEquals(CMISQLLexerStrict.ID, node.getChild(0).getType());
+        assertEquals(CmisQlStrictLexer.ID, node.getChild(0).getType());
     }
 
     private void evalEquals(Tree node) {

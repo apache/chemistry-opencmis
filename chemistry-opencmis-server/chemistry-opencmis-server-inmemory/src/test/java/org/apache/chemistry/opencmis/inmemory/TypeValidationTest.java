@@ -49,6 +49,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinit
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
+import org.apache.chemistry.opencmis.server.support.TypeValidator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

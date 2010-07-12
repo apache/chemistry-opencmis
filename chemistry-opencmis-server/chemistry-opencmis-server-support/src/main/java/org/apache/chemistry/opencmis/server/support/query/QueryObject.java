@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.inmemory.query;
+package org.apache.chemistry.opencmis.server.support.query;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,9 +28,8 @@ import java.util.Map;
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.inmemory.TypeManager;
-import org.apache.chemistry.opencmis.inmemory.TypeValidator;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
+import org.apache.chemistry.opencmis.server.support.TypeValidator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,7 +52,7 @@ public class QueryObject {
     private List<CmisSelector> whereReferences = new ArrayList<CmisSelector> ();
     private List<CmisSelector> joinReferences = new ArrayList<CmisSelector> (); // --> Join not implemented yet
     private Map<String, CmisSelector> colOrFuncAlias = new HashMap<String, CmisSelector>();
-    private IQueryConditionProcessor queryProcessor;
+    private QueryConditionProcessor queryProcessor;
     
     // from part
     /** 
@@ -62,7 +61,6 @@ public class QueryObject {
     private Map<String,String> froms = new LinkedHashMap<String,String>();
 
     // where part
-//    private IdentityHashMap<Object, CmisSelector> columnReferences = new IdentityHashMap<Object, CmisSelector>(); 
     private Map<Integer, CmisSelector> columnReferences = new HashMap<Integer, CmisSelector>(); 
 
     // order by part
@@ -89,7 +87,7 @@ public class QueryObject {
     public QueryObject() {
     }
     
-    public QueryObject(TypeManager tm, IQueryConditionProcessor wp) {
+    public QueryObject(TypeManager tm, QueryConditionProcessor wp) {
         typeMgr = tm;        
         queryProcessor = wp;
     }
@@ -101,7 +99,6 @@ public class QueryObject {
     public CmisSelector getColumnReference (Integer token) {
         return columnReferences.get(token);
     }
-    
     
     /////////////////////////////////////////////////////////
     // SELECT part
@@ -174,6 +171,15 @@ public class QueryObject {
         return td;
     }
     
+    /**
+     * return a map of all columns that have been requested in the SELECT
+     * part of the statement.
+     * 
+     * @return
+     *      a map with a String as a key and value. key is the query name
+     *      of the property, value is the alias if an alias was given or 
+     *      the query name otherwise.
+     */
     public Map<String, String> getRequestedProperties() {
         Map<String, String> res = new HashMap<String, String> ();
         for (CmisSelector sel : selectReferences) {
@@ -189,6 +195,15 @@ public class QueryObject {
         return res;
     }
     
+    /**
+     * return a map of all functions that have been requested in the SELECT
+     * part of the statement.
+     * 
+     * @return
+     *      a map with a String as a key and value. key is the function name
+     *      of the property, value is the alias if an alias was given or 
+     *      the function name otherwise.
+     */
     public Map<String, String> getRequestedFuncs() {
         Map<String, String> res = new HashMap<String, String> ();
         for (CmisSelector sel : selectReferences) {
@@ -411,7 +426,7 @@ public class QueryObject {
     /////////////////////////////////////////////////////////
     // Processing the WHERE clause
     
-    void evalWhereNode(Tree node) {
+    private void evalWhereNode(Tree node) {
         // Ensure that we receive only valid tokens and nodes in the where clause:
             LOG.debug("evaluating node: " + node.toString());
             switch (node.getType()) {
