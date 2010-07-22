@@ -93,7 +93,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
             throw new IllegalArgumentException("Object type must be set!");
         }
 
-        if (objectType.getPropertyDefinitions().size() < 9) {
+        if ((objectType.getPropertyDefinitions() == null) || objectType.getPropertyDefinitions().size() < 9) {
             // there must be at least the 9 standard properties that all objects
             // have
             throw new IllegalArgumentException("Object type must have property defintions!");
@@ -276,7 +276,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#updateProperties()
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#updateProperties()
      */
     public ObjectId updateProperties() {
         readLock();
@@ -314,7 +315,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.chemistry.opencmis.client.api.CmisObject#updateProperties(java.util.Map)
+     * org.apache.chemistry.opencmis.client.api.CmisObject#updateProperties(
+     * java.util.Map)
      */
     public ObjectId updateProperties(Map<String, ?> properties) {
         if ((properties == null) || (properties.isEmpty())) {
@@ -403,7 +405,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#getCreationDate()
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getCreationDate()
      */
     public GregorianCalendar getCreationDate() {
         return getPropertyValue(PropertyIds.CREATION_DATE);
@@ -421,7 +424,9 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#getLastModificationDate()
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getLastModificationDate
+     * ()
      */
     public GregorianCalendar getLastModificationDate() {
         return getPropertyValue(PropertyIds.LAST_MODIFICATION_DATE);
@@ -430,7 +435,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#getLastModifiedBy()
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getLastModifiedBy()
      */
     public String getLastModifiedBy() {
         return getPropertyValue(PropertyIds.LAST_MODIFIED_BY);
@@ -463,7 +469,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.chemistry.opencmis.client.api.CmisObject#getProperty(java.lang.String)
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getProperty(java.
+     * lang.String)
      */
     @SuppressWarnings("unchecked")
     public <T> Property<T> getProperty(String id) {
@@ -479,8 +486,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.chemistry.opencmis.client.api.CmisObject#getPropertyMultivalue(java.
-     * lang.String)
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getPropertyMultivalue
+     * (java. lang.String)
      */
     public <T> List<T> getPropertyMultivalue(String id) {
         Property<T> property = getProperty(id);
@@ -495,8 +502,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.chemistry.opencmis.client.api.CmisObject#getPropertyValue(java.lang.
-     * String)
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getPropertyValue(
+     * java.lang. String)
      */
     public <T> T getPropertyValue(String id) {
         Property<T> property = getProperty(id);
@@ -510,7 +517,9 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#setName(java.lang.String)
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#setName(java.lang
+     * .String)
      */
     public void setName(String name) {
         setProperty(PropertyIds.NAME, name);
@@ -520,8 +529,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.chemistry.opencmis.client.api.CmisObject#setProperty(java.lang.String,
-     * java.lang.Object)
+     * org.apache.chemistry.opencmis.client.api.CmisObject#setProperty(java.
+     * lang.String, java.lang.Object)
      */
     @SuppressWarnings("unchecked")
     public <T> void setProperty(String id, T value) {
@@ -549,8 +558,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.chemistry.opencmis.client.api.CmisObject#setPropertyMultivalue(java.
-     * lang.String, java.util.List)
+     * org.apache.chemistry.opencmis.client.api.CmisObject#setPropertyMultivalue
+     * (java. lang.String, java.util.List)
      */
     @SuppressWarnings("unchecked")
     public <T> void setPropertyMultivalue(String id, List<T> value) {
@@ -593,7 +602,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#getAllowableActions()
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getAllowableActions()
      */
     public AllowableActions getAllowableActions() {
         readLock();
@@ -635,8 +645,9 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#applyAcl(java.util.List,
-     * java.util.List, org.apache.opencmis.commons.enums.AclPropagation)
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#applyAcl(java.util
+     * .List, java.util.List, org.apache.opencmis.commons.enums.AclPropagation)
      */
     public Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation) {
         String objectId = getObjectId();
@@ -650,8 +661,9 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#addAcl(java.util.List,
-     * org.apache.opencmis.commons.enums.AclPropagation)
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#addAcl(java.util.
+     * List, org.apache.opencmis.commons.enums.AclPropagation)
      */
     public void addAcl(List<Ace> addAces, AclPropagation aclPropagation) {
         applyAcl(addAces, null, aclPropagation);
@@ -660,8 +672,9 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#removeAcl(java.util.List,
-     * org.apache.opencmis.commons.enums.AclPropagation)
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#removeAcl(java.util
+     * .List, org.apache.opencmis.commons.enums.AclPropagation)
      */
     public void removeAcl(List<Ace> removeAces, AclPropagation aclPropagation) {
         applyAcl(null, removeAces, aclPropagation);
@@ -687,8 +700,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.chemistry.opencmis.client.api.CmisObject#applyPolicy(org.apache.opencmis
-     * .client.api.ObjectId)
+     * org.apache.chemistry.opencmis.client.api.CmisObject#applyPolicy(org.apache
+     * .opencmis .client.api.ObjectId)
      */
     public void applyPolicy(ObjectId policyId) {
         if ((policyId == null) || (policyId.getId() == null)) {
@@ -703,8 +716,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.chemistry.opencmis.client.api.CmisObject#removePolicy(org.apache.opencmis
-     * .client.api.ObjectId)
+     * org.apache.chemistry.opencmis.client.api.CmisObject#removePolicy(org.
+     * apache.opencmis .client.api.ObjectId)
      */
     public void removePolicy(ObjectId policyId) {
         if ((policyId == null) || (policyId.getId() == null)) {
@@ -734,7 +747,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#getRelationships()
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getRelationships()
      */
     public List<Relationship> getRelationships() {
         readLock();
@@ -748,8 +762,9 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#getRelationships(boolean,
-     * org.apache.opencmis.commons.enums.RelationshipDirection,
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getRelationships(
+     * boolean, org.apache.opencmis.commons.enums.RelationshipDirection,
      * org.apache.chemistry.opencmis.client.api.objecttype.ObjectType,
      * org.apache.chemistry.opencmis.client.api.OperationContext, int)
      */
@@ -832,7 +847,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.chemistry.opencmis.client.api.CmisObject#getRefreshTimestamp()
+     * @see
+     * org.apache.chemistry.opencmis.client.api.CmisObject#getRefreshTimestamp()
      */
     public long getRefreshTimestamp() {
         readLock();
@@ -847,8 +863,8 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
      * (non-Javadoc)
      * 
      * @see
-     * org.apache.chemistry.opencmis.client.api.CmisObject#refresh(org.apache.opencmis
-     * .client.api.OperationContext )
+     * org.apache.chemistry.opencmis.client.api.CmisObject#refresh(org.apache
+     * .opencmis .client.api.OperationContext )
      */
     public void refresh() {
         writeLock();

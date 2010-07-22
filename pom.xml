@@ -347,7 +347,7 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.13</version>
+            <version>1.2.16</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -444,6 +444,7 @@
                     <!-- Assemblies the doc package -->
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.2-beta-5</version>
                         <inherited>false</inherited>
                         <configuration>
                             <attach>true</attach>

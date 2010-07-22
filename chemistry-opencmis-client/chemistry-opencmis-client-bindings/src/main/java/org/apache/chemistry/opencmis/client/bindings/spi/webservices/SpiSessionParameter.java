@@ -19,12 +19,11 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Web Services session parameter.
  */
 public final class SpiSessionParameter {
 
-    public static final String PORTS = "org.apache.chemistry.opencmis.binding.webservices.ports";
+    public static final String SERVICES = "org.apache.chemistry.opencmis.binding.webservices.services";
 
     private SpiSessionParameter() {
     }
