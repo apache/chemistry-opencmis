@@ -301,8 +301,8 @@ public class InMemoryService extends AbstractCmisService {
 
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
-        return fVerSvc.getAllVersions(getCallContext(), repositoryId, versionSeriesId, filter, includeAllowableActions,
-                extension, this);
+        return fVerSvc.getAllVersions(getCallContext(), repositoryId, versionSeriesId==null ? objectId : versionSeriesId, 
+                filter, includeAllowableActions, extension, this);
     }
 
     // --- discovery service ---
