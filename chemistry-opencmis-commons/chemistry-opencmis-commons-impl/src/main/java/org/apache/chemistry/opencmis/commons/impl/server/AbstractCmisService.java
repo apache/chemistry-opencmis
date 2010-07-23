@@ -1,4 +1,5 @@
 package org.apache.chemistry.opencmis.commons.impl.server;
+
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +20,6 @@ package org.apache.chemistry.opencmis.commons.impl.server;
  * under the License.
  *
  */
-
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -925,7 +925,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                 infoImpl.setWorkingCopyId(null);
                 infoImpl.setWorkingCopyOriginalId(null);
 
-                infoImpl.setVersionSeriesId(getStringProperty(object, PropertyIds.VERSION_SERIES_ID));
+                infoImpl.setVersionSeriesId(getIdProperty(object, PropertyIds.VERSION_SERIES_ID));
                 if (infoImpl.getVersionSeriesId() != null) {
                     Boolean isLatest = getBooleanProperty(object, PropertyIds.IS_LATEST_VERSION);
                     infoImpl.setIsCurrentVersion(isLatest == null ? true : isLatest.booleanValue());
@@ -936,7 +936,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
 
                         // get latest version
                         List<ObjectData> versions = getAllVersions(repositoryId, objectId, infoImpl
-                                .getVersionSeriesId(), PropertyIds.OBJECT_ID, Boolean.FALSE, null);
+                                .getVersionSeriesId(), null, Boolean.FALSE, null);
                         if (versions != null && versions.size() > 0) {
                             infoImpl.setWorkingCopyOriginalId(versions.get(0).getId());
                         }
@@ -946,7 +946,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                 // content
                 String fileName = getStringProperty(object, PropertyIds.CONTENT_STREAM_FILE_NAME);
                 String mimeType = getStringProperty(object, PropertyIds.CONTENT_STREAM_MIME_TYPE);
-                String streamId = getStringProperty(object, PropertyIds.CONTENT_STREAM_ID);
+                String streamId = getIdProperty(object, PropertyIds.CONTENT_STREAM_ID);
                 BigInteger length = getIntegerProperty(object, PropertyIds.CONTENT_STREAM_LENGTH);
                 boolean hasContent = fileName != null || mimeType != null || streamId != null || length != null;
                 if (hasContent) {
@@ -960,8 +960,8 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                 }
 
                 // parent
-                List<ObjectParentData> parents = getObjectParents(repositoryId, objectId, PropertyIds.OBJECT_ID,
-                        Boolean.FALSE, IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, null);
+                List<ObjectParentData> parents = getObjectParents(repositoryId, objectId, null, Boolean.FALSE,
+                        IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, null);
                 infoImpl.setHasParent(parents.size() > 0);
 
                 // policies and relationships
