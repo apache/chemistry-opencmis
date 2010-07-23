@@ -315,7 +315,8 @@ public class StoredObjectImpl implements StoredObject {
         // add custom properties of type definition to the collection
         if (null != fProperties) {
             for (Entry<String, PropertyData<?>> prop : fProperties.entrySet()) {
-                properties.put(prop.getKey(), prop.getValue());
+                if (FilterParser.isContainedInFilter(prop.getKey(), requestedIds))
+                    properties.put(prop.getKey(), prop.getValue());
             }
         }
     }

@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
@@ -250,15 +251,24 @@ public class PropertyCreationHelper {
             }
         }
 
-        // replace all ids with query names or alias:
         Map<String, PropertyData<?>> mappedProperties = new HashMap<String, PropertyData<?>>();
-        for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
-            String key = requestedIds.get(prop.getKey());
-            if (key == null)
-                key = prop.getKey();
-            mappedProperties.put(key, prop.getValue());
+        if (requestedIds.containsKey("*")) {
+            for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
+                // map property id to property query name
+                String queryName = td.getPropertyDefinitions().get(prop.getKey()).getQueryName();
+                AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a bit dirty
+                ad.setQueryName(queryName);
+                mappedProperties.put(queryName, prop.getValue());
+            }
+        } else {
+            // replace all ids with query names or alias:
+            for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
+                String queryNameOrAlias = requestedIds.get(prop.getKey());
+                AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a bit dirty
+                ad.setQueryName(queryNameOrAlias);
+                mappedProperties.put(queryNameOrAlias, prop.getValue());
+            }
         }
-
         // add functions:
         BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
         for (String func : requestedFuncs.keySet()) {
