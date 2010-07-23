@@ -61,6 +61,7 @@ public class DataObjectCreator {
         if (so instanceof Version) {
             isCheckedOut = ((Version) so).isPwc();
             canCheckIn = isCheckedOut && ((Version) so).getParentDocument().getCheckedOutBy().equals(user);
+            canCheckOut = !((Version) so).getParentDocument().isCheckedOut();
         } else if (so instanceof VersionedDocument) {
             isCheckedOut = ((VersionedDocument) so).isCheckedOut();
             canCheckOut = !((VersionedDocument) so).isCheckedOut();
@@ -115,9 +116,7 @@ public class DataObjectCreator {
         }
 
         if (isDocument) {
-            if (!isVersioned || canCheckIn) {
-                set.add(Action.CAN_SET_CONTENT_STREAM);
-            }
+            set.add(Action.CAN_SET_CONTENT_STREAM);
         }
 
         allowableActions.setAllowableActions(set);

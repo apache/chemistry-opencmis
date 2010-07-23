@@ -23,6 +23,7 @@ import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
@@ -154,7 +155,7 @@ public class InMemoryAbstractServiceImpl {
 
     protected void checkHasUser(String user) {
         if (null == user || user.length() == 0)
-            throw new CmisUpdateConflictException("Object can't be checked-in, no user is given.");
+            throw new CmisPermissionDeniedException("Object can't be checked-in, no user is given.");
     }
 
     protected void testCheckedOutByCurrentUser(String user, VersionedDocument verDoc) {
