@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.client.runtime.objecttype;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.RelationshipType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
@@ -42,6 +42,8 @@ public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl impleme
 
     public RelationshipTypeImpl(Session session, RelationshipTypeDefinition typeDefinition) {
         initialize(typeDefinition);
+        setAllowedSourceTypes(typeDefinition.getAllowedSourceTypeIds());
+        setAllowedTargetTypes(typeDefinition.getAllowedTargetTypeIds());
         helper = new ObjectTypeHelper(session, this);
     }
 

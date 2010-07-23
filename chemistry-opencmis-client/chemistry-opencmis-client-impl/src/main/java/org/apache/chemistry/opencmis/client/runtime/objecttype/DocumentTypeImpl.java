@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.client.runtime.objecttype;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.DocumentType;
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
@@ -39,6 +39,8 @@ public class DocumentTypeImpl extends DocumentTypeDefinitionImpl implements Docu
 
     public DocumentTypeImpl(Session session, DocumentTypeDefinition typeDefinition) {
         initialize(typeDefinition);
+        setContentStreamAllowed(typeDefinition.getContentStreamAllowed());
+        setIsVersionable(typeDefinition.isVersionable());
         helper = new ObjectTypeHelper(session, this);
     }
 
