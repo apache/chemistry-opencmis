@@ -52,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
@@ -719,6 +720,24 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             user = "unknown";
 
         StoredObject so = null;
+        
+        // check if content stream parameters are set and if not set some defaults
+        if (null != contentStream && (contentStream.getFileName() == null || contentStream.getFileName().length() == 0 ||
+            contentStream.getMimeType() == null || contentStream.getMimeType().length() == 0)) {
+            ContentStreamImpl cs = new ContentStreamImpl();
+            cs.setStream(contentStream.getStream());
+            if (contentStream.getFileName() == null || contentStream.getFileName().length() == 0)
+                cs.setFileName(name);
+            else
+                cs.setFileName(contentStream.getFileName());
+            cs.setLength(contentStream.getBigLength());
+            if (contentStream.getMimeType() == null || contentStream.getMimeType().length() == 0)
+                cs.setMimeType("application/octet-stream");
+            else
+                cs.setMimeType(contentStream.getMimeType());
+            cs.setExtensions(contentStream.getExtensions());
+            contentStream = cs;
+        }
 
         // Now we are sure to have document type definition:
         if (((DocumentTypeDefinition) typeDef).isVersionable()) {
