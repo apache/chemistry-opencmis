@@ -140,6 +140,9 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
     public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String versionSeriesId,
             String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
+        if (null == versionSeriesId)
+            throw new RuntimeException("getAllVersions requires a version series id, but ist was null.");
+
         StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
 
         if (!(so instanceof VersionedDocument))
