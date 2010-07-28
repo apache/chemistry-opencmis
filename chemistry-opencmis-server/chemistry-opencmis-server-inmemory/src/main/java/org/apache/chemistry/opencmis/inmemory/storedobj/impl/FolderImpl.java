@@ -30,6 +30,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
@@ -63,7 +64,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
             String name = folder.getName();
             hasChild = hasChild(name);
             if (hasChild)
-                throw new RuntimeException("Cannot create folder " + name + ". Name already exists in parent folder");
+                throw new CmisNameConstraintViolationException("Cannot create folder " + name + ". Name already exists in parent folder");
             folder.setParent(this);
             folder.persist();
         } finally {
@@ -96,14 +97,14 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
             boolean hasChild;
             hasChild = hasChild(name);
             if (hasChild)
-                throw new RuntimeException("Cannot create document " + name + ". Name already exists in parent folder");
+                throw new CmisNameConstraintViolationException("Cannot create object: " + name + ". Name already exists in parent folder");
 
             if (so instanceof SingleFiling)
                 ((SingleFiling) so).setParent(this);
             else if (so instanceof MultiFiling)
                 ((MultiFiling) so).addParent(this);
             else
-                throw new RuntimeException("Cannot create document, object is not fileable.");
+                throw new CmisInvalidArgumentException("Cannot create document, object is not fileable.");
             
             so.persist();
         } finally {

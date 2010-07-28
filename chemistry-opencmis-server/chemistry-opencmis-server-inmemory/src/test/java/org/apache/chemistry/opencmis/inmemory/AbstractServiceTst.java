@@ -147,10 +147,9 @@ public class AbstractServiceTst /* extends TestCase */{
     }
 
     protected String createFolder(String folderName, String parentFolderId, String typeId) {
-        Properties props = createFolderProperties(folderName, typeId);
         String id = null;
         try {
-            id = fObjSvc.createFolder(fRepositoryId, props, parentFolderId, null, null, null, null);
+            id = createFolderNoCatch(folderName, parentFolderId, typeId);
             if (null == id)
                 fail("createFolder failed.");
         } catch (Exception e) {
@@ -159,7 +158,13 @@ public class AbstractServiceTst /* extends TestCase */{
         return id;
     }
 
-    protected String createDocument(String name, String folderId, String typeId, VersioningState versioningState,
+    protected String createFolderNoCatch(String folderName, String parentFolderId, String typeId) {
+        Properties props = createFolderProperties(folderName, typeId);
+        String id = fObjSvc.createFolder(fRepositoryId, props, parentFolderId, null, null, null, null);
+        return id;
+    }
+
+    protected String createDocumentNoCatch(String name, String folderId, String typeId, VersioningState versioningState,
             boolean withContent) {
         ContentStream contentStream = null;
         List<String> policies = null;
@@ -172,17 +177,22 @@ public class AbstractServiceTst /* extends TestCase */{
         if (withContent)
             contentStream = createContent();
 
+        String id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies,
+                addACEs, removeACEs, extension);
+        return id;
+    }
+
+    protected String createDocument(String name, String folderId, String typeId, VersioningState versioningState,
+            boolean withContent) {
         String id = null;
         try {
-            id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies,
-                    addACEs, removeACEs, extension);
+            id = createDocumentNoCatch(name , folderId, typeId, versioningState, withContent);
             if (null == id)
                 fail("createDocument failed.");
         } catch (Exception e) {
             fail("createDocument() failed with exception: " + e);
         }
         return id;
-
     }
 
     protected String createDocument(String name, String folderId, String typeId, boolean withContent) {
