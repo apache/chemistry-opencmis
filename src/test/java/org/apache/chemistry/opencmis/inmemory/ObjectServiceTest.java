@@ -50,8 +50,8 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -144,6 +144,70 @@ public class ObjectServiceTest extends AbstractServiceTst {
         }
     }
 
+    @Test
+    public void testCreateDocumentInvalidNames() {
+        try {
+            createDocumentNoCatch(null, fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
+            fail("Document creation with null name should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisInvalidArgumentException);
+        }
+        
+        try {
+            createDocumentNoCatch("", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
+            fail("Document creation with empty name should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisInvalidArgumentException);
+        }
+ 
+        try {
+            createDocumentNoCatch("/(%#$§", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
+            fail("Document creation with ilegal name should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisInvalidArgumentException);
+        }
+
+        try {
+            createDocumentNoCatch("DuplicatedName", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
+            createDocumentNoCatch("DuplicatedName", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
+            fail("Document creation with existing name should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisNameConstraintViolationException);
+        }
+    }
+    
+    @Test
+    public void testCreateFolderInvalidNames() {
+        try {
+            createFolderNoCatch(null, fRootFolderId, FOLDER_TYPE_ID);
+            fail("Folder creation with null name should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisInvalidArgumentException);
+        }
+        
+        try {
+            createFolderNoCatch("", fRootFolderId, FOLDER_TYPE_ID);
+            fail("Folder creation with empty name should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisInvalidArgumentException);
+        }
+ 
+        try {
+            createFolderNoCatch("/(%#$§", fRootFolderId, FOLDER_TYPE_ID);
+            fail("Folder creation with ilegal name should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisInvalidArgumentException);
+        }
+
+        try {
+            createFolderNoCatch("DuplicatedName", fRootFolderId, FOLDER_TYPE_ID);
+            createFolderNoCatch("DuplicatedName", fRootFolderId, FOLDER_TYPE_ID);
+            fail("Folder creation with existing name should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisNameConstraintViolationException);
+        }
+    }
+     
     @Test
     public void testGetObject() {
         log.info("starting testGetObject() ...");

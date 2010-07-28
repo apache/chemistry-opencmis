@@ -825,20 +825,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         else
             throw new CmisInvalidArgumentException("Can't create folder, folderId does not refer to a folder: "
                     + folderId);
-        try {
-            ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-            Folder newFolder = objStore.createFolder(folderName);
-            // set default system attributes
-            if (user == null)
-                user = "unknown";
-            newFolder.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
-            newFolder.setCustomProperties(properties.getProperties());
-            parent.addChildFolder(newFolder);
-            LOG.debug("stop createFolder()");
-            return newFolder;
-        } catch (Exception e) {
-            throw new CmisInvalidArgumentException("Failed to create child folder.", e);
-        }
+
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        Folder newFolder = objStore.createFolder(folderName);
+        // set default system attributes
+        if (user == null)
+            user = "unknown";
+        newFolder.createSystemBasePropertiesWhenCreated(properties.getProperties(), user);
+        newFolder.setCustomProperties(properties.getProperties());
+        parent.addChildFolder(newFolder);
+        LOG.debug("stop createFolder()");
+        return newFolder;
     }
 
     private StoredObject createPolicyIntern(String repositoryId, Properties properties, String folderId,

@@ -32,6 +32,9 @@ public class NameValidator {
      *            string to verify
      */
     static public boolean isValidId(String s) {
+        if (null == s || s.length() == 0)
+            return false;
+        
         if (s.startsWith("cmis:"))
             s = s.substring(5);
 
