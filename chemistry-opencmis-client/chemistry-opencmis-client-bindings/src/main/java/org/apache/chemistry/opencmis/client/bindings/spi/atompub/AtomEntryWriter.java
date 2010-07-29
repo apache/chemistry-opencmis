@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
@@ -39,9 +40,6 @@ import org.apache.commons.codec.binary.Base64;
 
 /**
  * Writes a CMIS Atom entry to an output stream.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AtomEntryWriter implements CmisAtomPubConstants {
 
@@ -159,7 +157,9 @@ public class AtomEntryWriter implements CmisAtomPubConstants {
     }
 
     private String getUpdated() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         return sdf.format(new Date());
     }
 
