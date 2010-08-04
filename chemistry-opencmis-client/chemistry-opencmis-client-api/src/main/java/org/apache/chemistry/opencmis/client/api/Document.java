@@ -26,37 +26,97 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
+ * CMIS Document.
+ * 
  * Domain Model 2.4
  */
 public interface Document extends FileableCmisObject {
 
     // object service
 
+    /**
+     * Deletes this document and all its versions.
+     */
     void deleteAllVersions();
 
+    /**
+     * Retrieves the content stream of this document.
+     */
     ContentStream getContentStream();
-    
+
+    /**
+     * Retrieves the content stream that is associated with the given stream id.
+     * This is usually a rendition of the document.
+     */
     ContentStream getContentStream(String streamId);
 
+    /**
+     * Sets a new content stream for the document.
+     */
     ObjectId setContentStream(ContentStream contentStream, boolean overwrite);
 
+    /**
+     * Removes the current content stream from the document.
+     */
     ObjectId deleteContentStream();
 
     // versioning service
 
+    /**
+     * Checks out the document and returns the object id of the PWC (private
+     * working copy).
+     * 
+     * @return PWC id
+     */
     ObjectId checkOut(); // returns the PWC id
 
+    /**
+     * If this is a PWC (private working copy) the check out will be reversed.
+     * If this is not a PWC it an exception will be thrown.
+     */
     void cancelCheckOut();
 
+    /**
+     * If this is a PWC (private working copy) it performs a check in. If this
+     * is not a PWC it an exception will be thrown.
+     * 
+     * @return new document id
+     */
     ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
 
+    /**
+     * Fetches the latest major or minor version of this document.
+     * 
+     * @param major
+     *            if <code>true</code> the latest major version will be
+     *            returned, otherwise the very last version will be returned
+     * 
+     * @return the latest document object
+     */
     Document getObjectOfLatestVersion(boolean major);
 
+    /**
+     * Fetches the latest major or minor version of this document using the
+     * given {@link OperationContext}.
+     * 
+     * @param major
+     *            if <code>true</code> the latest major version will be
+     *            returned, otherwise the very last version will be returned
+     * 
+     * @return the latest document object
+     */
     Document getObjectOfLatestVersion(boolean major, OperationContext context);
 
+    /**
+     * Fetches all versions of this document.
+     */
     List<Document> getAllVersions();
 
+    /**
+     * Fetches all versions of this document using the given
+     * {@link OperationContext}.
+     */
     List<Document> getAllVersions(OperationContext context);
 
     // document specific properties
@@ -90,14 +150,7 @@ public interface Document extends FileableCmisObject {
     String getContentStreamId(); // cmis:contentStreamId
 
     /**
-     * Shortcut for ObjectFactory.createDocumentFromSource(this, ...).
-     * 
-     * @param properties
-     * @param versioningState
-     * @param policies
-     * @param addACEs
-     * @param removeACEs
-     * @return
+     * Creates a (content) copy of this document.
      */
     Document copy(List<Property<?>> properties, VersioningState versioningState, List<Policy> policies,
             List<Ace> addACEs, List<Ace> removeACEs);

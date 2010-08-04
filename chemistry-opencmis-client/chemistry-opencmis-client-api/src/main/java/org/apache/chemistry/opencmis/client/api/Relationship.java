@@ -19,17 +19,31 @@
 package org.apache.chemistry.opencmis.client.api;
 
 /**
+ * CMIS Relationship.
+ * 
  * Domain Model 2.6
  */
 public interface Relationship extends CmisObject {
 
     // relationship specific properties
 
+    /**
+     * Gets the source object.
+     */
     CmisObject getSource(); // cmis:sourceId
 
+    /**
+     * Gets the source object using the given {@link OperationContext}.
+     */
     CmisObject getSource(OperationContext context);
 
+    /**
+     * Gets the target object.
+     */
     CmisObject getTarget(); // cmis:targetId
 
+    /**
+     * Gets the target object using the given {@link OperationContext}.
+     */
     CmisObject getTarget(OperationContext context);
 }

@@ -23,22 +23,35 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 
 /**
- * {@see org.apache.opencmis.client.api.CMISObject#getProperties()}, {@see
- * org.apache.opencmis.client.api.Session#createProperty(String, Object)} and
- * {@see org.apache.opencmis.client.api.Session#createPropertyMultivalue(String,
- * List)}. Domain Model 2.2.1
+ * CMIS Property.
  * 
- * @param <T>
+ * Domain Model 2.2.1
  */
 public interface Property<T> extends PropertyData<T> {
 
+    /**
+     * Returns if the property is a multi-value property.
+     */
     boolean isMultiValued();
 
+    /**
+     * Returns the property data type.
+     */
     PropertyType getType();
 
+    /**
+     * Returns the property definition.
+     */
     PropertyDefinition<T> getDefinition();
 
+    /**
+     * Returns a human readable representation of the property value. If the
+     * property is multi-value property, only the first value will be returned.
+     */
     String getValueAsString();
 
+    /**
+     * Returns a human readable representation of the property values.
+     */
     String getValuesAsString();
 }

@@ -19,10 +19,15 @@
 package org.apache.chemistry.opencmis.client.api;
 
 /**
+ * CMIS Policy.
+ * 
  * Domain Model 2.7
  */
 public interface Policy extends FileableCmisObject {
 
+    /**
+     * Returns the policy text.
+     */
     public String getPolicyText(); // cmis:policyText
 
 }

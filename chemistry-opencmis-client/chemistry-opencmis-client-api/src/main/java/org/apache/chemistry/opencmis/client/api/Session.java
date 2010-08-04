@@ -28,51 +28,76 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
- * A session is associated with a specific connection to a CMIS repository. A
- * session belongs to one authenticated user and
+ * A session is a connection to a CMIS repository with a specific authenticated
+ * user.
+ * 
+ * <p>
+ * Not all operations are supported by the connected repository. Either OpenCMIS
+ * or the repository will throw an exception if an unsupported operation is
+ * called. The capabilities of the repository can be discover by evaluating the
+ * repository info (see {@link #getRepositoryInfo()}).
+ * </p>
+ * 
+ * <p>
+ * Almost all methods might throw exceptions derived from
+ * {@link CmisBaseException} which is a runtime exception!
+ * </p>
+ * 
+ * <p>
+ * (Please refer to the <a
+ * href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS specification</a>
+ * for details about the domain model, terms, concepts, base types, properties,
+ * ids and query names, query language, etc.)
+ * </p>
  */
 public interface Session {
 
     /**
-     * Clear all cached data. This implies that all data will be reloaded from
+     * Clears all cached data. This implies that all data will be reloaded from
      * the repository (depending on the implementation, reloading might be done
      * immediately or be deferred).
      */
     void clear();
 
     /**
-     * Save all pending actions for this session. Corresponds to a
+     * Saves all pending actions for this session. Corresponds to a
      * <code>commit</code> if the CMIS provider supports transactions. If
      * transactions are not supported by the CMIS provider, changes might be
      * applied only partially.
+     * 
+     * <em>Not all session implementations require this method!</em>
      */
     void save();
 
     /**
-     * Cancel all pending actions for this session. Corresponds to a
+     * Cancels all pending actions for this session. Corresponds to a
      * <code>rollback</code> if the CMIS provider supports transactions. If
      * transactions are not supported by the CMIS provider, some changes might
      * already be applied and therefore not rolled back.
+     * 
+     * <em>Not all session implementations require this method!</em>
      */
     void cancel();
 
     // session context
 
     /**
-     * Gets the underlying binding object.
+     * Returns the underlying binding object.
      */
     CmisBinding getBinding();
 
     /**
-     * Get the current default operation parameters for filtering and paging.
+     * Returns the current default operation parameters for filtering, paging
+     * and caching.
      */
     OperationContext getDefaultContext();
 
     /**
-     * Set the current session parameters for filtering and paging.
+     * Sets the current session parameters for filtering, paging and caching.
      * 
      * @param context
      *            the <code>OperationContext</code> to be used for the session;
@@ -81,19 +106,21 @@ public interface Session {
     void setDefaultContext(OperationContext context);
 
     /**
-     * Creates a default operation context object.
+     * Creates a new operation context object.
      */
     OperationContext createOperationContext();
-    
+
     /**
-     * Creates an operation context object.
+     * Creates a new operation context object with the given properties.
+     * 
+     * @see OperationContext
      */
     OperationContext createOperationContext(Set<String> filter, boolean includeAcls, boolean includeAllowableActions,
             boolean includePolicies, IncludeRelationships includeRelationships, Set<String> renditionFilter,
             boolean includePathSegments, String orderBy, boolean cacheEnabled, int maxItemsPerPage);
 
     /**
-     * Creates an object id.
+     * Creates an object id from a String.
      */
     ObjectId createObjectId(String id);
 
@@ -107,14 +134,14 @@ public interface Session {
     // services
 
     /**
-     * Repository service <code>getRepositoryInfo()</code>.
+     * Returns the repository info of the repository associated with this
+     * session.
      */
     RepositoryInfo getRepositoryInfo();
 
     /**
-     * Access to the object services <code>create</code><i>...</i>, plus factory
-     * methods to create <code>Acl</code>s, <code>Ace</code>s, and
-     * <code>ContentStream</code>.
+     * Gets a factory object that provides methods to create the objects used by
+     * this API.
      */
     ObjectFactory getObjectFactory();
 
@@ -138,63 +165,156 @@ public interface Session {
     // navigation
 
     /**
-     * Gets the root folder for the repository.
+     * Gets the root folder of the repository.
      */
     Folder getRootFolder();
 
+    /**
+     * Gets the root folder of the repository with the given
+     * {@link OperationContext}.
+     */
     Folder getRootFolder(OperationContext context);
 
     /**
      * Returns all checked out documents.
      * 
-     * @see Folder#getCheckedOutDocs(int)
+     * @see Folder#getCheckedOutDocs()
      */
     ItemIterable<Document> getCheckedOutDocs();
 
+    /**
+     * Returns all checked out documents with the given {@link OperationContext}
+     * .
+     * 
+     * @see Folder#getCheckedOutDocs(OperationContext)
+     */
     ItemIterable<Document> getCheckedOutDocs(OperationContext context);
 
     /**
-     * Object service <code>getObject</code>.
+     * Returns a CMIS object from the session cache. If the object is not in the
+     * cache or the cache is turned off per default {@link OperationContext}, it
+     * will load the object from the repository and puts it into the cache.
+     * 
+     * @param objectId
+     *            the object id
      */
     CmisObject getObject(ObjectId objectId);
 
+    /**
+     * Returns a CMIS object from the session cache. If the object is not in the
+     * cache or the given {@link OperationContext} has caching turned off, it
+     * will load the object from the repository and puts it into the cache.
+     * 
+     * @param objectId
+     *            the object id
+     * @param context
+     *            the {@link OperationContext} to use
+     */
     CmisObject getObject(ObjectId objectId, OperationContext context);
 
     /**
-     * Object service <code>getObjectByPath</code>.
+     * Returns a CMIS object from the session cache. If the object is not in the
+     * cache or the cache is turned off per default {@link OperationContext}, it
+     * will load the object from the repository and puts it into the cache.
+     * 
+     * @param path
+     *            the object path
      */
     CmisObject getObjectByPath(String path);
 
+    /**
+     * Returns a CMIS object from the session cache. If the object is not in the
+     * cache or the given {@link OperationContext} has caching turned off, it
+     * will load the object from the repository and puts it into the cache.
+     * 
+     * @param path
+     *            the object path
+     * @param context
+     *            the {@link OperationContext} to use
+     */
     CmisObject getObjectByPath(String path, OperationContext context);
 
     // discovery
 
     /**
-     * Discovery service <code>query</code>.
+     * Sends a query to the repository. (See CMIS spec "2.1.10 Query".)
+     * 
+     * @param statement
+     *            the query statement (CMIS query language)
+     * @param searchAllVersions
+     *            specifies if the latest and non-latest versions of document
+     *            objects should be included
      */
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions);
 
+    /**
+     * Sends a query to the repository using the given {@link OperationContext}.
+     * (See CMIS spec "2.1.10 Query".)
+     * 
+     * @param statement
+     *            the query statement (CMIS query language)
+     * @param searchAllVersions
+     *            specifies if the latest and non-latest versions of document
+     *            objects should be included
+     * @param context
+     *            the OperationContext
+     */
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context);
 
     /**
-     * Discovery service <code>getContentChanges</code>.
+     * Returns the content changes. (See CMIS spec "2.1.11 Change Log".)
      */
     ItemIterable<ChangeEvent> getContentChanges(String changeLogToken);
 
     // create
 
+    /**
+     * Creates a new document.
+     * 
+     * @return the object id of the new document
+     * 
+     * @see Folder#createDocument(Map, ContentStream, VersioningState, List,
+     *      List, List, OperationContext)
+     */
     ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
 
+    /**
+     * Creates a new document from a source document.
+     * 
+     * @return the object id of the new document
+     * 
+     * @see Folder#createDocumentFromSource(ObjectId, Map, VersioningState,
+     *      List, List, List, OperationContext)
+     */
     ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
 
+    /**
+     * Creates a new folder.
+     * 
+     * @return the object id of the new folder
+     * 
+     * @see Folder#createFolder(Map, List, List, List, OperationContext)
+     */
     ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces);
 
+    /**
+     * Creates a new policy.
+     * 
+     * @return the object id of the new policy
+     * 
+     * @see Folder#createPolicy(Map, List, List, List, OperationContext)
+     */
     ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces);
 
+    /**
+     * Creates a new relationship.
+     * 
+     * @return the object id of the new relationship
+     */
     ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces);
 }

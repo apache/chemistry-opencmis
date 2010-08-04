@@ -64,7 +64,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setCacheEnabled(false);
         generateCacheKey();
 
-        setMaxItemsPerPage(100);  // default
+        setMaxItemsPerPage(100); // default
     }
 
     /**
@@ -83,7 +83,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
         generateCacheKey();
 
         setMaxItemsPerPage(source.getMaxItemsPerPage());
-}
+    }
 
     /**
      * Constructor with parameters.
@@ -101,15 +101,10 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setOrderBy(orderBy);
         setCacheEnabled(cacheEnabled);
         generateCacheKey();
-        
+
         setMaxItemsPerPage(maxItemsPerPage);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.OperationContext#getFilter()
-     */
     public Set<String> getFilter() {
         if (this.filter == null) {
             return null;
@@ -118,12 +113,6 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return Collections.unmodifiableSet(this.filter);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setFilter(java.util.Set)
-     */
     public void setFilter(Set<String> propertyFilter) {
         if (propertyFilter != null) {
             TreeSet<String> tempSet = new TreeSet<String>();
@@ -161,13 +150,6 @@ public class OperationContextImpl implements OperationContext, Serializable {
         generateCacheKey();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setFilter(java.lang.String
-     * )
-     */
     public void setFilterString(String propertyFilter) {
         if (propertyFilter == null) {
             setFilter(null);
@@ -183,11 +165,6 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setFilter(tempSet);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.OperationContext#getFilterString()
-     */
     public String getFilterString() {
         if (this.filter == null) {
             return null;
@@ -214,97 +191,42 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return sb.toString();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.OperationContext#isIncludeAcls()
-     */
     public boolean isIncludeAcls() {
         return includeAcls;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setIncludeAcls(boolean)
-     */
     public void setIncludeAcls(boolean include) {
         this.includeAcls = include;
         generateCacheKey();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#isIncludeAllowableActions
-     * ()
-     */
     public boolean isIncludeAllowableActions() {
         return this.includeAllowableActions;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setIncludeAllowableActions
-     * (boolean)
-     */
     public void setIncludeAllowableActions(boolean include) {
         this.includeAllowableActions = include;
         generateCacheKey();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.OperationContext#isIncludePolicies()
-     */
     public boolean isIncludePolicies() {
         return this.includePolicies;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setIncludePolicies(boolean
-     * )
-     */
     public void setIncludePolicies(boolean include) {
         this.includePolicies = include;
         generateCacheKey();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#getIncludeRelationships()
-     */
     public IncludeRelationships getIncludeRelationships() {
         return this.includeRelationships;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setIncludeRelationships
-     * (org.apache.opencmis .commons.enums.IncludeRelationships)
-     */
     public void setIncludeRelationships(IncludeRelationships include) {
         this.includeRelationships = include;
         generateCacheKey();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.OperationContext#getRenditionFilter()
-     */
     public Set<String> getRenditionFilter() {
         if (this.renditionFilter == null) {
             return null;
@@ -313,13 +235,6 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return Collections.unmodifiableSet(this.renditionFilter);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setRenditionFilter(java
-     * .util.Set)
-     */
     public void setRenditionFilter(Set<String> renditionFilter) {
         TreeSet<String> tempSet = new TreeSet<String>();
 
@@ -351,13 +266,6 @@ public class OperationContextImpl implements OperationContext, Serializable {
         generateCacheKey();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setRenditionFilterString
-     * (java.lang.String)
-     */
     public void setRenditionFilterString(String renditionFilter) {
         if (renditionFilter == null) {
             setRenditionFilter(null);
@@ -373,13 +281,6 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setRenditionFilter(tempSet);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#getRenditionFilterString
-     * ()
-     */
     public String getRenditionFilterString() {
         if (this.renditionFilter == null) {
             return null;
@@ -398,71 +299,30 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return sb.toString();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#isIncludePathSegments()
-     */
     public boolean isIncludePathSegments() {
         return includePathSegments;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setIncludePathSegments
-     * (boolean)
-     */
     public void setIncludePathSegments(boolean include) {
         this.includePathSegments = include;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.OperationContext#getOrderBy()
-     */
     public String getOrderBy() {
         return this.orderBy;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setOrderBy(java.lang.
-     * String)
-     */
     public void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.OperationContext#isCacheEnabled()
-     */
     public boolean isCacheEnabled() {
         return cacheEnabled;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.OperationContext#setCacheEnabled(boolean)
-     */
     public void setCacheEnabled(boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.OperationContext#getCacheKey()
-     */
     public String getCacheKey() {
         return cacheKey;
     }
@@ -493,7 +353,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
     }
 
     public int getMaxItemsPerPage() {
-        return this.maxItemsPerPage ;
+        return this.maxItemsPerPage;
     }
 
     public void setMaxItemsPerPage(int maxItemsPerPage) {

@@ -20,14 +20,24 @@ package org.apache.chemistry.opencmis.commons.data;
 
 import java.util.List;
 
-
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Access Control List (ACL).
  */
 public interface Acl extends ExtensionsData {
 
+    /**
+     * Returns the list of ACEs.
+     */
     List<Ace> getAces();
 
+    /**
+     * Indicates if this ACL expresses all permissions.
+     * 
+     * @return if <code>true</code> then the ACL expresses the exact permission
+     *         set, if <code>false</code> then there are other permission rules
+     *         that cannot be expressed through ACEs, if <code>null</code> then
+     *         it this in unknown (the repository did not provide this
+     *         information)
+     */
     Boolean isExact();
 }

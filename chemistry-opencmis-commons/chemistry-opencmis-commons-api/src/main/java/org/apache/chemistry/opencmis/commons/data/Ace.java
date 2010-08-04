@@ -20,18 +20,31 @@ package org.apache.chemistry.opencmis.commons.data;
 
 import java.util.List;
 
-
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Access Control Entry (ACE).
  */
 public interface Ace extends ExtensionsData {
 
+    /**
+     * Returns the ACE principal.
+     */
     Principal getPrincipal();
 
+    /**
+     * Returns the ACE principal id.
+     * 
+     * Shortcut for <code>getPrincipal().getId()</code>.
+     */
     String getPrincipalId();
 
+    /**
+     * Returns the permissions granted to the principal.
+     */
     List<String> getPermissions();
 
+    /**
+     * Indicates if the ACE was directly applied to the object or has been
+     * inherited from another object (e.g. from the folder it resides in).
+     */
     boolean isDirect();
 }

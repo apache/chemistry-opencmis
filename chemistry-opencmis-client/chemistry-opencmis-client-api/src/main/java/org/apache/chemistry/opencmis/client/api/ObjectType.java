@@ -68,7 +68,7 @@ public interface ObjectType extends TypeDefinition {
      * this type on {@code getParent()}).
      * 
      * @return a {@code List} of types which are directly derived from this
-     *         type. @
+     *         type.
      */
     ItemIterable<ObjectType> getChildren();
 
@@ -78,7 +78,7 @@ public interface ObjectType extends TypeDefinition {
      * @param depth
      *            the depth to which the derived types should be resolved.
      * @return a {@code Tree} of types which are derived from this type (direct
-     *         and via their parents). @
+     *         and via their parents).
      */
     List<Tree<ObjectType>> getDescendants(int depth);
 

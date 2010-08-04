@@ -19,11 +19,12 @@
 package org.apache.chemistry.opencmis.commons.data;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * ACE Principal.
  */
 public interface Principal extends ExtensionsData {
 
+    /**
+     * Returns the principal id.
+     */
     String getId();
-
 }

@@ -40,12 +40,6 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 public abstract class AbstractPersistentFilableCmisObject extends AbstractPersistentCmisObject implements
         FileableCmisObject {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#getParents()
-     */
     public List<Folder> getParents() {
         String objectId = getObjectId();
 
@@ -83,12 +77,6 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
         return parents;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#getPaths()
-     */
     public List<String> getPaths() {
         String objectId = getObjectId();
 
@@ -124,14 +112,6 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
         return paths;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#move(org.
-     * apache.opencmis.client.api.ObjectId,
-     * org.apache.chemistry.opencmis.client.api.ObjectId)
-     */
     public FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId) {
         String objectId = getObjectId();
         Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -159,13 +139,6 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
         return (FileableCmisObject) movedObject;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#addToFolder
-     * (org.apache.opencmis.client.api.ObjectId, boolean)
-     */
     public void addToFolder(ObjectId folderId, boolean allVersions) {
         String objectId = getObjectId();
 
@@ -177,13 +150,6 @@ public abstract class AbstractPersistentFilableCmisObject extends AbstractPersis
                 allVersions, null);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.chemistry.opencmis.client.api.FileableCmisObject#removeFromFolder
-     * (org .apache.opencmis.client.api.ObjectId)
-     */
     public void removeFromFolder(ObjectId folderId) {
         String objectId = getObjectId();
 

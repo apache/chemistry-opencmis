@@ -21,16 +21,47 @@ package org.apache.chemistry.opencmis.commons.data;
 import java.io.InputStream;
 import java.math.BigInteger;
 
-
+/**
+ * Content stream.
+ */
 public interface ContentStream extends ExtensionsData {
 
+    /**
+     * Returns the length of stream.
+     * 
+     * @return the length of the stream in bytes or <code>-1</code> if the
+     *         length is unknown
+     */
     long getLength();
 
+    /**
+     * Returns the length of stream.
+     * 
+     * @return the length of the stream in bytes or <code>null</code> if the
+     *         length is unknown
+     */
     BigInteger getBigLength();
 
+    /**
+     * Returns the MIME type of the stream.
+     * 
+     * @return the MIME type of the stream or <code>null</code> if the MIME type
+     *         is unknown
+     */
     String getMimeType();
 
+    /**
+     * Returns the file name of the stream.
+     * 
+     * @return the file name of the stream or <code>null</code> if the file name
+     *         is unknown
+     */
     String getFileName();
 
+    /**
+     * Returns the stream.
+     * 
+     * It is important to close this stream properly!
+     */
     InputStream getStream();
 }

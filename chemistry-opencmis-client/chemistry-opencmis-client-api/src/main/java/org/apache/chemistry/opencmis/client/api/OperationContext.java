@@ -22,12 +22,33 @@ import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
+/**
+ * An <code>OperationContext</code> object defines the filtering, paging and
+ * caching of an operation.
+ */
 public interface OperationContext {
 
+    /**
+     * Returns the current filter.
+     * 
+     * @return a set of <em>query names</em>
+     */
     Set<String> getFilter();
 
+    /**
+     * Sets the current filter.
+     * 
+     * @param propertyFilter
+     *            a set of <em>query names</em>
+     */
     void setFilter(Set<String> propertyFilter);
 
+    /**
+     * Sets the current filter.
+     * 
+     * @param propertyFilter
+     *            a comma separated list of <em>query names</em>
+     */
     void setFilterString(String propertyFilter);
 
     /**
@@ -36,45 +57,134 @@ public interface OperationContext {
      */
     String getFilterString();
 
+    /**
+     * Returns if allowable actions should returned.
+     */
     boolean isIncludeAllowableActions();
 
+    /**
+     * Sets if allowable actions should returned.
+     */
     void setIncludeAllowableActions(boolean include);
 
+    /**
+     * Returns if ACLs should returned.
+     */
     boolean isIncludeAcls();
 
+    /**
+     * Sets if ACLs should returned.
+     */
     void setIncludeAcls(boolean include);
 
+    /**
+     * Returns which relationships should be returned.
+     */
     IncludeRelationships getIncludeRelationships();
 
+    /**
+     * Sets which relationships should be returned.
+     */
     void setIncludeRelationships(IncludeRelationships include);
 
+    /**
+     * Returns if policies should returned.
+     */
     boolean isIncludePolicies();
 
+    /**
+     * Sets if policies should returned.
+     */
     void setIncludePolicies(boolean include);
 
+    /**
+     * Returns the current rendition filter. (See CMIS spec
+     * "2.2.1.2.4.1 Rendition Filter Grammar")
+     * 
+     * @return a set of rendition filter terms
+     */
     Set<String> getRenditionFilter();
 
+    /**
+     * Sets the current rendition filter. (See CMIS spec
+     * "2.2.1.2.4.1 Rendition Filter Grammar")
+     * 
+     * @param renditionFilter
+     *            a set of rendition filter terms
+     */
     void setRenditionFilter(Set<String> renditionFilter);
 
+    /**
+     * Sets the current rendition filter. (See CMIS spec
+     * "2.2.1.2.4.1 Rendition Filter Grammar")
+     * 
+     * @param renditionFilter
+     *            a comma separated list of rendition filter terms
+     */
     void setRenditionFilterString(String renditionFilter);
 
+    /**
+     * Returns the current rendition filter. (See CMIS spec
+     * "2.2.1.2.4.1 Rendition Filter Grammar")
+     * 
+     * @return a comma separated list of rendition filter terms
+     */
     String getRenditionFilterString();
 
+    /**
+     * Returns if path segments should returned.
+     */
     boolean isIncludePathSegments();
 
+    /**
+     * Sets if path segments should returned.
+     */
     void setIncludePathSegments(boolean include);
 
+    /**
+     * Returns the order by rule for operations that return lists.
+     * 
+     * @return a comma-separated list of <em>query names</em> and the ascending
+     *         modifier "ASC" or the descending modifier "DESC" for each query
+     *         name
+     */
     String getOrderBy();
 
+    /**
+     * Sets the order by rule for operations that return lists.
+     * 
+     * @param orderBy
+     *            a comma-separated list of <em>query names</em> and the
+     *            ascending modifier "ASC" or the descending modifier "DESC" for
+     *            each query name
+     */
     void setOrderBy(String orderBy);
 
+    /**
+     * Return if caching is enabled.
+     */
     boolean isCacheEnabled();
 
+    /**
+     * Enables or disables the cache.
+     */
     void setCacheEnabled(boolean cacheEnabled);
 
+    /**
+     * Returns a key for this OperationContext object that is used for caching.
+     */
     String getCacheKey();
-    
+
+    /**
+     * Set the max number of items per page for operations that return lists.
+     * 
+     * @param maxItemsPerPage
+     *            max number of items (must be >0)
+     */
     void setMaxItemsPerPage(int maxItemsPerPage);
 
+    /**
+     * Returns the current max number of items per page.
+     */
     int getMaxItemsPerPage();
 }

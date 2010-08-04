@@ -28,23 +28,65 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
  */
 public interface QueryResult {
 
+    /**
+     * Returns a list of all properties in this query result.
+     */
     List<PropertyData<?>> getProperties();
 
+    /**
+     * Returns a property by id.
+     * 
+     * Since repositories are not obligated to add property ids to their query
+     * result properties, this method might not always work as expected with
+     * some repositories. Use {@link #getPropertyByQueryName(String)} instead.
+     */
     <T> PropertyData<T> getPropertyById(String id);
 
+    /**
+     * Returns a property by query name or alias.
+     */
     <T> PropertyData<T> getPropertyByQueryName(String queryName);
 
+    /**
+     * Returns a property (single) value by id.
+     * 
+     * @see #getPropertyById(String)
+     */
     <T> T getPropertyValueById(String id);
 
+    /**
+     * Returns a property (single) value by query name or alias.
+     * 
+     * @see #getPropertyByQueryName(String)
+     */
     <T> T getPropertyValueByQueryName(String queryName);
 
+    /**
+     * Returns a property multi-value by id.
+     * 
+     * @see #getPropertyById(String)
+     */
     <T> List<T> getPropertyMultivalueById(String id);
 
+    /**
+     * Returns a property multi-value by query name or alias.
+     * 
+     * @see #getPropertyByQueryName(String)
+     */
     <T> List<T> getPropertyMultivalueByQueryName(String queryName);
 
+    /**
+     * Returns the allowable actions if they were requested.
+     */
     AllowableActions getAllowableActions();
 
+    /**
+     * Returns the relationships if they were requested.
+     */
     List<Relationship> getRelationships();
 
+    /**
+     * Returns the renditions if they were requested.
+     */
     List<Rendition> getRenditions();
 }

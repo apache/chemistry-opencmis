@@ -36,24 +36,22 @@ The OpenCMIS client API depends on the OpenCMIS commons API.
 </p>
 <p>
 To use the OpenCMIS client API, a client needs to get a reference to the entry interface
-{@link org.opencmis.client.api.SessionFactory} and then connect to the CMIS repository
-by obtaining a session to the repository from  the {@code SessionFactory}.
-The way to get an instance of a {@code SessionFactory} depends on the clients runtime:
-Usually this will be done via JNDI lookup in a J2E runtime or a service lookup in a OSGi Runtime.
+{@link org.apache.chemistry.opencmis.client.api.SessionFactory} and then connect to the 
+CMIS repository by obtaining a session to the repository from  the {@code SessionFactory}.
+The way to get a {@code SessionFactory} instance depends on the clients runtime:
+Usually this will be done via JNDI lookup in a J2EE runtime or a service lookup in a OSGi Runtime.
 </p>
 <p>
-Note: A session is not thread-safe, thus either multiple sessions should be used or some
-kind of synchronization has to be used. <br/>
 All operations that require a round-trip to the back-end will do that synchronously,
 causing the client to be blocked during that call.</p>
 
 <h2>Usage of the API</h2>
 <p>
-See <a href="http://cwiki.apache.org/CMIS/opencmis-client-api.html">OpenCMIS Wiki</a>.
+See <a href="http://incubator.apache.org/chemistry/opencmis.html">OpenCMIS Wiki</a>.
 </p>
 <p>
-@see org.opencmis.client.api.SessionFactory
-@see org.opencmis.client.api.Session
+@see org.apache.chemistry.opencmis.client.api.SessionFactory
+@see org.apache.chemistry.opencmis.client.api.Session
 </p>
 </body>
 </html>

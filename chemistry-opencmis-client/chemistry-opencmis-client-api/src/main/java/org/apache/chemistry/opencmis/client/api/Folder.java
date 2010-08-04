@@ -27,56 +27,127 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
+ * CMIS Folder.
+ * 
  * Domain Model 2.5
  */
 public interface Folder extends FileableCmisObject {
 
     // object service
+
+    /**
+     * Creates a new document in this folder.
+     * 
+     * @return the new document object or <code>null</code> if the parameter
+     *         <code>context</code> was set to <code>null</code>
+     */
     Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
 
+    /**
+     * Creates a new document from a source document in this folder.
+     * 
+     * @return the new document object or <code>null</code> if the parameter
+     *         <code>context</code> was set to <code>null</code>
+     */
     Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
 
+    /**
+     * Creates a new subfolder in this folder.
+     * 
+     * @return the new folder object or <code>null</code> if the parameter
+     *         <code>context</code> was set to <code>null</code>
+     */
     Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context);
 
+    /**
+     * Creates a new policy in this folder.
+     * 
+     * @return the new policy object or <code>null</code> if the parameter
+     *         <code>context</code> was set to <code>null</code>
+     */
     Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context);
 
     /**
-     * @return list of object ids which failed to be deleted
+     * Deletes this folder and all subfolders.
+     * 
+     * @return a list of object ids which failed to be deleted
      */
     List<String> deleteTree(boolean allversions, UnfileObject unfile, boolean continueOnFailure);
 
     // navigation service
 
+    /**
+     * Gets the folder tree starting with this folder.
+     */
     List<Tree<FileableCmisObject>> getFolderTree(int depth);
 
+    /**
+     * Gets the folder tree starting with this folder using the given
+     * {@link OperationContext}.
+     */
     List<Tree<FileableCmisObject>> getFolderTree(int depth, OperationContext context);
 
+    /**
+     * Gets the folder descendants starting with this folder.
+     */
     List<Tree<FileableCmisObject>> getDescendants(int depth);
 
+    /**
+     * Gets the folder descendants starting with this folder using the given
+     * {@link OperationContext}.
+     */
     List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context);
 
+    /**
+     * Returns the children of this folder.
+     */
     ItemIterable<CmisObject> getChildren();
 
+    /**
+     * Returns the children of this folder using the given
+     * {@link OperationContext}.
+     */
     ItemIterable<CmisObject> getChildren(OperationContext context);
 
+    /**
+     * Returns if the folder is the root folder.
+     */
     boolean isRootFolder();
 
+    /**
+     * Gets the parent folder object
+     * 
+     * @return the parent folder object or <code>null</code> if the folder is
+     *         the root folder.
+     */
     Folder getFolderParent();
 
+    /**
+     * Returns the path of the folder.
+     */
     String getPath();
 
     /**
-     * Returns all checked out documents of this folder.
+     * Returns all checked out documents in this folder.
      */
     ItemIterable<Document> getCheckedOutDocs();
 
+    /**
+     * Returns all checked out documents in this folder using the given
+     * {@link OperationContext}.
+     */
     ItemIterable<Document> getCheckedOutDocs(OperationContext context);
 
     // folder specific properties
 
+    /**
+     * If the children object types are restricted, it returns all allowed
+     * object types. If the list is empty or <code>null</code> all object types
+     * are allowed.
+     */
     List<ObjectType> getAllowedChildObjectTypes(); // cmis:allowedChildObjectTypeIds
 }
