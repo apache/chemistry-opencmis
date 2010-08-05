@@ -460,7 +460,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
             // assemble property
             PropertyData<?> propertyData = null;
-            Object firstValue = (values == null ? null : values.get(0));
+            Object firstValue = (values == null || values.isEmpty() ? null : values.get(0));
 
             if (definition instanceof PropertyStringDefinition) {
                 if (firstValue == null) {
