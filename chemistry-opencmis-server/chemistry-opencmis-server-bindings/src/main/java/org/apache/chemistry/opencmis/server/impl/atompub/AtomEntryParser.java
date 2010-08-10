@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +56,6 @@ import org.apache.commons.codec.binary.Base64;
 
 /**
  * Parser for Atom Entries.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AtomEntryParser {
 
@@ -266,16 +264,22 @@ public class AtomEntryParser {
             }
         }
 
+        byte[] bytes = null;
         if (type.equals("text") || type.equals("html")) {
-            fAtomContentStream.setStream(new ByteArrayInputStream(readText(parser).getBytes("UTF-8")));
+            bytes = readText(parser).getBytes("UTF-8");
         } else if (type.equals("xhtml")) {
-            fAtomContentStream.setStream(copy(parser));
+            bytes = copy(parser);
         } else if (type.endsWith("/xml") || type.endsWith("+xml")) {
-            fAtomContentStream.setStream(copy(parser));
+            bytes = copy(parser);
         } else if (type.startsWith("text/")) {
-            fAtomContentStream.setStream(new ByteArrayInputStream(readText(parser).getBytes("UTF-8")));
+            bytes = readText(parser).getBytes("UTF-8");
         } else {
-            fAtomContentStream.setStream(new ByteArrayInputStream(Base64.decodeBase64(readText(parser))));
+            bytes = Base64.decodeBase64(readText(parser));
+        }
+
+        if (bytes != null) {
+            fAtomContentStream.setStream(new ByteArrayInputStream(bytes));
+            fAtomContentStream.setLength(BigInteger.valueOf(bytes.length));
         }
     }
 
@@ -297,7 +301,9 @@ public class AtomEntryParser {
                     if (TAG_MEDIATYPE.equals(name.getLocalPart())) {
                         fCmisContentStream.setMimeType(readText(parser));
                     } else if (TAG_BASE64.equals(name.getLocalPart())) {
-                        fCmisContentStream.setStream(new ByteArrayInputStream(Base64.decodeBase64(readText(parser))));
+                        byte[] bytes = Base64.decodeBase64(readText(parser));
+                        fCmisContentStream.setStream(new ByteArrayInputStream(bytes));
+                        fCmisContentStream.setLength(BigInteger.valueOf(bytes.length));
                     } else {
                         skip(parser);
                     }
@@ -350,7 +356,7 @@ public class AtomEntryParser {
     /**
      * Copies a subtree into a stream.
      */
-    private InputStream copy(XMLStreamReader parser) throws Exception {
+    private byte[] copy(XMLStreamReader parser) throws Exception {
         // create a writer
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
@@ -385,7 +391,7 @@ public class AtomEntryParser {
 
         next(parser);
 
-        return new ByteArrayInputStream(out.toByteArray());
+        return out.toByteArray();
     }
 
     /**
