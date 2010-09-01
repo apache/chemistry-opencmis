@@ -26,22 +26,6 @@
         <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    <dependencySets>
-        <dependencySet>
-            <includes>
-                <include>org.apache:apache-jar-resource-bundle</include>
-            </includes>
-            <scope>provided</scope>
-            <outputDirectory>.</outputDirectory>
-            <unpack>true</unpack>
-            <unpackOptions>
-                <includes>
-                    <include>*/*.txt</include>
-                </includes>
-                <filtered>true</filtered>
-            </unpackOptions>
-        </dependencySet>
-    </dependencySets>
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/site/incubator.apache.org/chemistry</directory>
@@ -56,6 +40,15 @@
             <includes>
                 <include>**</include>
             </includes>
+        </fileSet>
+        <!-- license, readme, etc. calculated at build time -->
+        <fileSet>
+            <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
+            <outputDirectory>/</outputDirectory>
+            <excludes>
+                <exclude>DEPENDENCIES</exclude>
+                <exclude>NOTICE</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
 </assembly>

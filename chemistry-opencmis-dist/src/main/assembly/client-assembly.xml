@@ -29,7 +29,6 @@
     <dependencySets>
         <dependencySet>
             <useTransitiveDependencies>true</useTransitiveDependencies>
-            <useProjectArtifact>true</useProjectArtifact>
             <includes>
                 <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-impl</include>
                 <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-api</include>
@@ -40,19 +39,24 @@
             <outputDirectory></outputDirectory>
             <unpack>false</unpack>
         </dependencySet>
-        <dependencySet>
-            <includes>
-                <include>org.apache:apache-jar-resource-bundle</include>
-            </includes>
-            <scope>provided</scope>
-            <outputDirectory>.</outputDirectory>
-            <unpack>true</unpack>
-            <unpackOptions>
-                <includes>
-                    <include>*/*.txt</include>
-                </includes>
-                <filtered>true</filtered>
-            </unpackOptions>
-        </dependencySet>
     </dependencySets>
+    <fileSets>
+        <!-- standard license and disclaimer -->
+        <fileSet>
+            <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
+            <outputDirectory>/</outputDirectory>
+            <excludes>
+                <exclude>DEPENDENCIES</exclude>
+                <exclude>NOTICE</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>DEPENDENCIES</include>
+                <include>NOTICE</include>
+            </includes>
+        </fileSet>
+    </fileSets>
 </assembly>
