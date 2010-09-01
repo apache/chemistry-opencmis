@@ -41,9 +41,9 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisFaultType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumServiceException;
-import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 
@@ -57,11 +57,11 @@ public abstract class AbstractService {
     /**
      * Returns the services factory.
      */
-    protected AbstractServiceFactory getServiceFactory(WebServiceContext wsContext) {
+    protected CmisServiceFactory getServiceFactory(WebServiceContext wsContext) {
         ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
                 MessageContext.SERVLET_CONTEXT);
 
-        return (AbstractServiceFactory) servletContext.getAttribute(CmisRepositoryContextListener.SERVICES_FACTORY);
+        return (CmisServiceFactory) servletContext.getAttribute(CmisRepositoryContextListener.SERVICES_FACTORY);
     }
 
     /**
@@ -86,7 +86,7 @@ public abstract class AbstractService {
      * Returns the {@link CmisService} object.
      */
     protected CmisService getService(WebServiceContext wsContext, String repositoryId) {
-        AbstractServiceFactory factory = getServiceFactory(wsContext);
+        CmisServiceFactory factory = getServiceFactory(wsContext);
         CallContext context = createContext(wsContext, repositoryId);
         return factory.getService(context);
     }

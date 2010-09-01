@@ -28,7 +28,7 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,7 +46,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent sce) {
         // create services factory
-        AbstractServiceFactory factory = createServiceFactory(CONFIG_FILENAME);
+        CmisServiceFactory factory = createServiceFactory(CONFIG_FILENAME);
 
         // set the services factory into the servlet context
         sce.getServletContext().setAttribute(SERVICES_FACTORY, factory);
@@ -54,7 +54,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
 
     public void contextDestroyed(ServletContextEvent sce) {
         // destroy services factory
-        AbstractServiceFactory factory = (AbstractServiceFactory) sce.getServletContext()
+        CmisServiceFactory factory = (CmisServiceFactory) sce.getServletContext()
                 .getAttribute(SERVICES_FACTORY);
         if (factory != null) {
             factory.destroy();
@@ -64,7 +64,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
     /**
      * Creates a service factory.
      */
-    private AbstractServiceFactory createServiceFactory(String filename) {
+    private CmisServiceFactory createServiceFactory(String filename) {
         // load properties
         InputStream stream = this.getClass().getResourceAsStream(filename);
 
@@ -97,11 +97,11 @@ public class CmisRepositoryContextListener implements ServletContextListener {
             return null;
         }
 
-        if (!(object instanceof AbstractServiceFactory)) {
-            log.warn("The provided class is not a sub class of AbstractServiceFactory!");
+        if (!(object instanceof CmisServiceFactory)) {
+            log.warn("The provided class is not an instance of CmisServiceFactory!");
         }
 
-        AbstractServiceFactory factory = (AbstractServiceFactory) object;
+        CmisServiceFactory factory = (CmisServiceFactory) object;
 
         // initialize factory instance
         Map<String, String> parameters = new HashMap<String, String>();

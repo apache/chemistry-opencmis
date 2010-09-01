@@ -42,9 +42,9 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
-import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.commons.logging.Log;
@@ -185,7 +185,7 @@ public class CmisAtomPubServlet extends HttpServlet {
         CmisService service = null;
         try {
             // get services factory
-            AbstractServiceFactory factory = (AbstractServiceFactory) getServletContext().getAttribute(
+            CmisServiceFactory factory = (CmisServiceFactory) getServletContext().getAttribute(
                     CmisRepositoryContextListener.SERVICES_FACTORY);
 
             // get the service
