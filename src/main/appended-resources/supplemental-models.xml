@@ -192,6 +192,7 @@
             <groupId>javax.xml.stream</groupId>
             <artifactId>stax-api</artifactId>
             <version>1.0</version>
+            <url>http://stax.codehaus.org</url>
             <name>Streaming API for XML</name>
             <organization>
                 <name>BEA Systems</name>
@@ -202,6 +203,78 @@
                     <url>https://glassfish.dev.java.net/public/CDDL+GPL.html</url>
                 </license>
             </licenses>
+        </project>
+    </supplement>
+    <supplement>
+        <project>
+            <groupId>org.jvnet.staxex</groupId>
+            <artifactId>stax-ex</artifactId>
+            <version>1.2</version>
+            <organization>
+                <name>Java.net</name>
+                <url>http://dev.java.net</url>
+            </organization>
+        </project>
+    </supplement>
+    <supplement>
+        <project>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <version>1.0.1</version>
+            <organization>
+                <name>Codehaus</name>
+                <url>http://codehaus.org</url>
+            </organization>
+        </project>
+    </supplement>
+    <supplement>
+        <project>
+            <groupId>antlr</groupId>
+            <artifactId>antlr</artifactId>
+            <version>2.7.7</version>
+            <organization>
+                <name>ANTLR</name>
+                <url>http://www.antlr.org/</url>
+            </organization>
+        </project>
+    </supplement>
+    <supplement>
+        <project>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>3.2</version>
+            <organization>
+                <name>ANTLR</name>
+                <url>http://www.antlr.org/</url>
+            </organization>
+            <licenses>
+                <license>
+                    <name>BSD licence</name>
+                    <url>http://antlr.org/license.html</url>
+                </license>
+            </licenses>
+        </project>
+    </supplement>
+    <supplement>
+        <project>
+            <groupId>org.antlr</groupId>
+            <artifactId>stringtemplate</artifactId>
+            <version>3.2</version>
+            <organization>
+                <name>ANTLR</name>
+                <url>http://www.antlr.org/</url>
+            </organization>
+        </project>
+    </supplement>
+     <supplement>
+        <project>
+            <groupId>net.sf.jopt-simple</groupId>
+            <artifactId>jopt-simple</artifactId>
+            <version>3.2</version>
+            <organization>
+                <name>Sourceforge</name>
+                <url>http://www.sourceforge.net/</url>
+            </organization>
         </project>
     </supplement>
 </supplementalDataModels>
