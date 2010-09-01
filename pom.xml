@@ -23,6 +23,9 @@
     <name>OpenCMIS InMemory Server Implementation</name>
     <packaging>war</packaging>
 
+    <properties>
+        <parentBasedir>../../</parentBasedir>
+    </properties>
 
     <build>
         <plugins>
