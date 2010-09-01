@@ -21,4 +21,11 @@
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
+  <fileSets>
+        <!-- license, readme, etc. calculated at build time -->
+        <fileSet>
+            <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+    </fileSets>
 </assembly>
