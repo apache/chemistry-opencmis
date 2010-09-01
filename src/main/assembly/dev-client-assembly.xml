@@ -26,7 +26,7 @@
         <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    SS<moduleSets>
+    <moduleSets>
         <moduleSet>
             <includes>
                 <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-api</include>
