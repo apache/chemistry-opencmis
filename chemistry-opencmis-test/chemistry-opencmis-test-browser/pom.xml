@@ -23,6 +23,10 @@
     <name>OpenCMIS Browser</name>
     <packaging>jar</packaging>
 
+    <properties>
+        <parentBasedir>../../</parentBasedir>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>

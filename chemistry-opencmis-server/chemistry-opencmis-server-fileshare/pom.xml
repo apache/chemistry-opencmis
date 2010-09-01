@@ -22,6 +22,10 @@
     <artifactId>chemistry-opencmis-server-fileshare</artifactId>
     <name>OpenCMIS FileShare Server Implementation</name>
     <packaging>war</packaging>
+    
+    <properties>
+        <parentBasedir>../../</parentBasedir>
+    </properties>
 
     <build>
         <plugins>

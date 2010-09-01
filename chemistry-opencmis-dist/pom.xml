@@ -17,18 +17,20 @@
 
     <parent>
         <artifactId>chemistry-opencmis</artifactId>
-        <groupId>org.apache.chemistry.opencmis
-        </groupId>
-        <version>0.1.0-incubating-SNAPSHOT
-        </version>
+        <groupId>org.apache.chemistry.opencmis</groupId>
+        <version>0.1.0-incubating-SNAPSHOT</version>
+        <relativePath>../</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>chemistry-opencmis-dist</artifactId>
-    <name>Distribution project for OpenCmis assemblies
-    </name>
+    <name>Distribution project for OpenCmis assemblies</name>
     <packaging>pom</packaging>
+    
+    <properties>
+        <parentBasedir>../</parentBasedir>
+    </properties>
 
     <!-- These dependencies are used to be added in the assambly -->
     <dependencies>

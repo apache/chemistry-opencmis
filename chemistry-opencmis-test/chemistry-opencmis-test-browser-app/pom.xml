@@ -23,6 +23,11 @@
     <artifactId>chemistry-opencmis-test-browser-app</artifactId>
     <name>OpenCMIS Browser Application</name>
     <packaging>war</packaging>
+    
+    <properties>
+        <parentBasedir>../../</parentBasedir>
+    </properties>
+    
 
     <build>
         <plugins>

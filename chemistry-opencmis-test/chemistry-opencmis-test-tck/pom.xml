@@ -19,8 +19,12 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-
     <artifactId>chemistry-opencmis-test-tck</artifactId>
     <name>OpenCMIS Test Compatibility Kit</name>
+    
+    <properties>
+        <parentBasedir>../../</parentBasedir>
+    </properties>
+    
 
 </project>

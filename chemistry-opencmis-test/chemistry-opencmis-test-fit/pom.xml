@@ -27,6 +27,11 @@
     <artifactId>chemistry-opencmis-test-fit</artifactId>
     <name>OpenCMIS Full Integration Tests</name>
     <packaging>war</packaging>
+    
+    <properties>
+        <parentBasedir>../../</parentBasedir>
+    </properties>
+    
 
     <build>
         <testResources>

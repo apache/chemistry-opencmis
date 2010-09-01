@@ -21,6 +21,11 @@
 
     <artifactId>chemistry-opencmis-test-tools</artifactId>
     <name>OpenCMIS Tools</name>
+    
+    <properties>
+        <parentBasedir>../../</parentBasedir>
+    </properties>
+    
 
     <dependencies>
         <dependency>
