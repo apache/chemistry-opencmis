@@ -45,9 +45,9 @@ public class DummyService extends AbstractCmisService {
 	public DummyService(String id, String name) {
 		fRepInfo = new RepositoryInfoImpl();
 
-		fRepInfo.setRepositoryId(id);
-		fRepInfo.setRepositoryName(name);
-		fRepInfo.setRepositoryDescription(name);
+		fRepInfo.setId(id);
+		fRepInfo.setName(name);
+		fRepInfo.setDescription(name);
 		fRepInfo.setCmisVersionSupported("1.0");
 		fRepInfo.setRootFolder("root");
 

@@ -97,11 +97,11 @@ public class RepositoryServiceTest extends AbstractServiceTst {
             caps.setSupportsVersionSpecificFiling(false);
 
             RepositoryInfoImpl repositoryInfo = new RepositoryInfoImpl();
-            repositoryInfo.setRepositoryId(REPOSITORY_ID);
-            repositoryInfo.setRepositoryName("InMemory Repository");
-            repositoryInfo.setRepositoryDescription("InMemory Test Repository");
+            repositoryInfo.setId(REPOSITORY_ID);
+            repositoryInfo.setName("InMemory Repository");
+            repositoryInfo.setDescription("InMemory Test Repository");
             repositoryInfo.setCmisVersionSupported("0.7");
-            repositoryInfo.setRepositoryCapabilities(caps);
+            repositoryInfo.setCapabilities(caps);
             repositoryInfo.setRootFolder("/");
             repositoryInfo.setAclCapabilities(null);
             repositoryInfo.setPrincipalAnonymous("anonymous");

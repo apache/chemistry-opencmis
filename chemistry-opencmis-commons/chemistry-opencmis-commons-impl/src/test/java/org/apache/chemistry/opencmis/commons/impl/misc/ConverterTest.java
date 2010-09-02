@@ -79,9 +79,9 @@ public class ConverterTest extends TestCase {
         obj1.setPrincipalAnyone("principalAnyone");
         obj1.setProductName("productName");
         obj1.setProductVersion("productVersion");
-        obj1.setRepositoryDescription("description");
-        obj1.setRepositoryId("id");
-        obj1.setRepositoryName("name");
+        obj1.setDescription("description");
+        obj1.setId("id");
+        obj1.setName("name");
         obj1.setRootFolder("rootFolderId");
         obj1.setThinClientUri("thinClientUri");
         obj1.setVendorName("vendorName");
@@ -101,7 +101,7 @@ public class ConverterTest extends TestCase {
         cap1.setSupportsMultifiling(Boolean.TRUE);
         cap1.setSupportsUnfiling(Boolean.TRUE);
         cap1.setSupportsVersionSpecificFiling(Boolean.TRUE);
-        obj1.setRepositoryCapabilities(cap1);
+        obj1.setCapabilities(cap1);
 
         AclCapabilitiesDataImpl acl1 = new AclCapabilitiesDataImpl();
         acl1.setAclPropagation(AclPropagation.PROPAGATE);

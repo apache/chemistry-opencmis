@@ -27,30 +27,27 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Repository info data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RepositoryInfoImpl extends AbstractExtensionData implements RepositoryInfo {
 
     private static final long serialVersionUID = 1L;
 
-    private String fId;
-    private String fName;
-    private String fDescription;
-    private String fVersionSupported;
-    private RepositoryCapabilities fCapabilities;
-    private String fRootFolderId;
-    private AclCapabilities fAclCapabilities;
-    private String fPrincipalAnonymous;
-    private String fPrincipalAnyone;
-    private String fThinClientUri;
-    private Boolean fChangesIncomplete;
-    private List<BaseTypeId> fChangesOnType;
-    private String fLatestChangeLogToken;
-    private String fVendorName;
-    private String fProductName;
-    private String fProductVersion;
+    private String id;
+    private String name;
+    private String description;
+    private String versionSupported;
+    private RepositoryCapabilities capabilities;
+    private String rootFolderId;
+    private AclCapabilities aclCapabilities;
+    private String principalAnonymous;
+    private String principalAnyone;
+    private String thinClientUri;
+    private Boolean changesIncomplete;
+    private List<BaseTypeId> changesOnType;
+    private String latestChangeLogToken;
+    private String vendorName;
+    private String productName;
+    private String productVersion;
 
     /**
      * Constructor.
@@ -59,161 +56,161 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
     }
 
     public RepositoryInfoImpl(RepositoryInfo data) {
-        fId = data.getId();
-        fName = data.getName();
-        fDescription = data.getDescription();
-        fVersionSupported = data.getCmisVersionSupported();
-        fCapabilities = data.getCapabilities();
-        fRootFolderId = data.getRootFolderId();
-        fAclCapabilities = data.getAclCapabilities();
-        fPrincipalAnonymous = data.getPrincipalIdAnonymous();
-        fPrincipalAnyone = data.getPrincipalIdAnyone();
-        fThinClientUri = data.getThinClientUri();
-        fChangesIncomplete = data.getChangesIncomplete();
-        fChangesOnType = data.getChangesOnType();
-        fLatestChangeLogToken = data.getLatestChangeLogToken();
-        fVendorName = data.getVendorName();
-        fProductName = data.getProductName();
-        fProductVersion = data.getProductVersion();
+        id = data.getId();
+        name = data.getName();
+        description = data.getDescription();
+        versionSupported = data.getCmisVersionSupported();
+        capabilities = data.getCapabilities();
+        rootFolderId = data.getRootFolderId();
+        aclCapabilities = data.getAclCapabilities();
+        principalAnonymous = data.getPrincipalIdAnonymous();
+        principalAnyone = data.getPrincipalIdAnyone();
+        thinClientUri = data.getThinClientUri();
+        changesIncomplete = data.getChangesIncomplete();
+        changesOnType = data.getChangesOnType();
+        latestChangeLogToken = data.getLatestChangeLogToken();
+        vendorName = data.getVendorName();
+        productName = data.getProductName();
+        productVersion = data.getProductVersion();
     }
 
     public String getId() {
-        return fId;
+        return id;
     }
 
-    public void setRepositoryId(String id) {
-        fId = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
-        return fName;
+        return name;
     }
 
-    public void setRepositoryName(String name) {
-        fName = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
-        return fDescription;
+        return description;
     }
 
-    public void setRepositoryDescription(String description) {
-        fDescription = description;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getCmisVersionSupported() {
-        return fVersionSupported;
+        return versionSupported;
     }
 
     public void setCmisVersionSupported(String versionSupported) {
-        fVersionSupported = versionSupported;
+        this.versionSupported = versionSupported;
     }
 
     public RepositoryCapabilities getCapabilities() {
-        return fCapabilities;
+        return capabilities;
     }
 
-    public void setRepositoryCapabilities(RepositoryCapabilities capabilities) {
-        fCapabilities = capabilities;
+    public void setCapabilities(RepositoryCapabilities capabilities) {
+        this.capabilities = capabilities;
     }
 
     public String getRootFolderId() {
-        return fRootFolderId;
+        return rootFolderId;
     }
 
     public void setRootFolder(String rootFolderId) {
-        fRootFolderId = rootFolderId;
+        this.rootFolderId = rootFolderId;
     }
 
     public AclCapabilities getAclCapabilities() {
-        return fAclCapabilities;
+        return aclCapabilities;
     }
 
     public void setAclCapabilities(AclCapabilities aclCapabilities) {
-        fAclCapabilities = aclCapabilities;
+        this.aclCapabilities = aclCapabilities;
     }
 
     public String getPrincipalIdAnonymous() {
-        return fPrincipalAnonymous;
+        return principalAnonymous;
     }
 
     public void setPrincipalAnonymous(String principalAnonymous) {
-        fPrincipalAnonymous = principalAnonymous;
+        this.principalAnonymous = principalAnonymous;
     }
 
     public String getPrincipalIdAnyone() {
-        return fPrincipalAnyone;
+        return principalAnyone;
     }
 
     public void setPrincipalAnyone(String principalAnyone) {
-        fPrincipalAnyone = principalAnyone;
+        this.principalAnyone = principalAnyone;
     }
 
     public String getThinClientUri() {
-        return fThinClientUri;
+        return thinClientUri;
     }
 
     public void setThinClientUri(String thinClientUri) {
-        fThinClientUri = thinClientUri;
+        this.thinClientUri = thinClientUri;
     }
 
     public Boolean getChangesIncomplete() {
-        return fChangesIncomplete;
+        return changesIncomplete;
     }
 
     public void setChangesIncomplete(Boolean changesIncomplete) {
-        fChangesIncomplete = changesIncomplete;
+        this.changesIncomplete = changesIncomplete;
     }
 
     public List<BaseTypeId> getChangesOnType() {
-        return fChangesOnType;
+        return changesOnType;
     }
 
     public void setChangesOnType(List<BaseTypeId> changesOnType) {
-        fChangesOnType = changesOnType;
+        this.changesOnType = changesOnType;
     }
 
     public String getLatestChangeLogToken() {
-        return fLatestChangeLogToken;
+        return latestChangeLogToken;
     }
 
     public void setLatestChangeLogToken(String latestChangeLogToken) {
-        fLatestChangeLogToken = latestChangeLogToken;
+        this.latestChangeLogToken = latestChangeLogToken;
     }
 
     public String getVendorName() {
-        return fVendorName;
+        return vendorName;
     }
 
     public void setVendorName(String vendorName) {
-        fVendorName = vendorName;
+        this.vendorName = vendorName;
     }
 
     public String getProductName() {
-        return fProductName;
+        return productName;
     }
 
     public void setProductName(String productName) {
-        fProductName = productName;
+        this.productName = productName;
     }
 
     public String getProductVersion() {
-        return fProductVersion;
+        return productVersion;
     }
 
     public void setProductVersion(String productVersion) {
-        fProductVersion = productVersion;
+        this.productVersion = productVersion;
     }
 
     @Override
     public String toString() {
-        return "Repository Info [id=" + fId + ", name=" + fName + ", description=" + fDescription + ", capabilities="
-                + fCapabilities + ", ACL capabilities=" + fAclCapabilities + ", changes incomplete="
-                + fChangesIncomplete + ", changes on type=" + fChangesOnType + ", latest change log token="
-                + fLatestChangeLogToken + ", principal anonymous=" + fPrincipalAnonymous + ", principal anyone="
-                + fPrincipalAnyone + ", vendor name=" + fVendorName + ", product name=" + fProductName
-                + ", product version=" + fProductVersion + ", root folder id=" + fRootFolderId + ", thin client URI="
-                + fThinClientUri + ", version supported=" + fVersionSupported + "]" + super.toString();
+        return "Repository Info [id=" + id + ", name=" + name + ", description=" + description + ", capabilities="
+                + capabilities + ", ACL capabilities=" + aclCapabilities + ", changes incomplete=" + changesIncomplete
+                + ", changes on type=" + changesOnType + ", latest change log token=" + latestChangeLogToken
+                + ", principal anonymous=" + principalAnonymous + ", principal anyone=" + principalAnyone
+                + ", vendor name=" + vendorName + ", product name=" + productName + ", product version="
+                + productVersion + ", root folder id=" + rootFolderId + ", thin client URI=" + thinClientUri
+                + ", version supported=" + versionSupported + "]" + super.toString();
     }
 
 }

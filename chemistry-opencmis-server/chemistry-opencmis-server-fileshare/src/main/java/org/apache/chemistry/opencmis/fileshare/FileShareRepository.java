@@ -194,9 +194,9 @@ public class FileShareRepository {
         // compile repository info
         fRepositoryInfo = new RepositoryInfoImpl();
 
-        fRepositoryInfo.setRepositoryId(fRepositoryId);
-        fRepositoryInfo.setRepositoryName(fRepositoryId);
-        fRepositoryInfo.setRepositoryDescription(fRepositoryId);
+        fRepositoryInfo.setId(fRepositoryId);
+        fRepositoryInfo.setName(fRepositoryId);
+        fRepositoryInfo.setDescription(fRepositoryId);
 
         fRepositoryInfo.setCmisVersionSupported("1.0");
 
@@ -224,7 +224,7 @@ public class FileShareRepository {
         capabilities.setSupportsGetFolderTree(true);
         capabilities.setCapabilityRendition(CapabilityRenditions.NONE);
 
-        fRepositoryInfo.setRepositoryCapabilities(capabilities);
+        fRepositoryInfo.setCapabilities(capabilities);
 
         AclCapabilitiesDataImpl aclCapability = new AclCapabilitiesDataImpl();
         aclCapability.setSupportedPermissions(SupportedPermissions.BASIC);

@@ -266,10 +266,10 @@ public final class Converter {
         result.setPrincipalAnyone(repositoryInfo.getPrincipalAnyone());
         result.setProductName(repositoryInfo.getProductName());
         result.setProductVersion(repositoryInfo.getProductVersion());
-        result.setRepositoryCapabilities(convert(repositoryInfo.getCapabilities()));
-        result.setRepositoryDescription(repositoryInfo.getRepositoryDescription());
-        result.setRepositoryId(repositoryInfo.getRepositoryId());
-        result.setRepositoryName(repositoryInfo.getRepositoryName());
+        result.setCapabilities(convert(repositoryInfo.getCapabilities()));
+        result.setDescription(repositoryInfo.getRepositoryDescription());
+        result.setId(repositoryInfo.getRepositoryId());
+        result.setName(repositoryInfo.getRepositoryName());
         result.setRootFolder(repositoryInfo.getRootFolderId());
         result.setThinClientUri(repositoryInfo.getThinClientURI());
         result.setVendorName(repositoryInfo.getVendorName());
