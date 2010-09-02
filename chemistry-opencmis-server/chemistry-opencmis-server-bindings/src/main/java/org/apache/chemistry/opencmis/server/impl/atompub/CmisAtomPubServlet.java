@@ -88,12 +88,11 @@ public class CmisAtomPubServlet extends HttpServlet {
         dispatcher = new Dispatcher();
 
         try {
-            dispatcher
-                    .addResource(AtomPubUtils.RESOURCE_TYPES, METHOD_GET, RepositoryService.class, "getTypeChildren");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_TYPES, METHOD_GET, RepositoryService.class, "getTypeChildren");
             dispatcher.addResource(AtomPubUtils.RESOURCE_TYPESDESC, METHOD_GET, RepositoryService.class,
                     "getTypeDescendants");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_TYPE, METHOD_GET, RepositoryService.class,
-                    "getTypeDefinition");
+            dispatcher
+                    .addResource(AtomPubUtils.RESOURCE_TYPE, METHOD_GET, RepositoryService.class, "getTypeDefinition");
             dispatcher.addResource(AtomPubUtils.RESOURCE_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");
             dispatcher.addResource(AtomPubUtils.RESOURCE_DESCENDANTS, METHOD_GET, NavigationService.class,
                     "getDescendants");
@@ -118,8 +117,7 @@ public class CmisAtomPubServlet extends HttpServlet {
                     "createRelationship");
             dispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, METHOD_PUT, ObjectService.class, "updateProperties");
             dispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, METHOD_DELETE, ObjectService.class, "deleteObject");
-            dispatcher
-                    .addResource(AtomPubUtils.RESOURCE_DESCENDANTS, METHOD_DELETE, ObjectService.class, "deleteTree");
+            dispatcher.addResource(AtomPubUtils.RESOURCE_DESCENDANTS, METHOD_DELETE, ObjectService.class, "deleteTree");
             dispatcher.addResource(AtomPubUtils.RESOURCE_CHECKEDOUT, METHOD_POST, VersioningService.class, "checkOut");
             dispatcher.addResource(AtomPubUtils.RESOURCE_VERSIONS, METHOD_GET, VersioningService.class,
                     "getAllVersions");
@@ -187,6 +185,10 @@ public class CmisAtomPubServlet extends HttpServlet {
             // get services factory
             CmisServiceFactory factory = (CmisServiceFactory) getServletContext().getAttribute(
                     CmisRepositoryContextListener.SERVICES_FACTORY);
+
+            if (factory == null) {
+                throw new CmisRuntimeException("Service factory not available! Configuration problem?");
+            }
 
             // get the service
             service = factory.getService(context);

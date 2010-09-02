@@ -41,12 +41,19 @@ public class CmisRepositoryContextListener implements ServletContextListener {
 
     private static final Log log = LogFactory.getLog(CmisRepositoryContextListener.class.getName());
 
+    private static final String CONFIG_INIT_PARAM = "org.apache.chemistry.opencmis.REPOSITORY_CONFIG_FILE";
     private static final String CONFIG_FILENAME = "/repository.properties";
     private static final String PROPERTY_CLASS = "class";
 
     public void contextInitialized(ServletContextEvent sce) {
+        // get config file name or use default
+        String configFilename = sce.getServletContext().getInitParameter(CONFIG_INIT_PARAM);
+        if (configFilename == null) {
+            configFilename = CONFIG_FILENAME;
+        }
+
         // create services factory
-        CmisServiceFactory factory = createServiceFactory(CONFIG_FILENAME);
+        CmisServiceFactory factory = createServiceFactory(configFilename);
 
         // set the services factory into the servlet context
         sce.getServletContext().setAttribute(SERVICES_FACTORY, factory);
@@ -54,8 +61,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
 
     public void contextDestroyed(ServletContextEvent sce) {
         // destroy services factory
-        CmisServiceFactory factory = (CmisServiceFactory) sce.getServletContext()
-                .getAttribute(SERVICES_FACTORY);
+        CmisServiceFactory factory = (CmisServiceFactory) sce.getServletContext().getAttribute(SERVICES_FACTORY);
         if (factory != null) {
             factory.destroy();
         }

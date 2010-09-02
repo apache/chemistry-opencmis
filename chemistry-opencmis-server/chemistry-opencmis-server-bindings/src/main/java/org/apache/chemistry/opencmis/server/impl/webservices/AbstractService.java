@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolat
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
@@ -61,7 +62,15 @@ public abstract class AbstractService {
         ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
                 MessageContext.SERVLET_CONTEXT);
 
-        return (CmisServiceFactory) servletContext.getAttribute(CmisRepositoryContextListener.SERVICES_FACTORY);
+        // get services factory
+        CmisServiceFactory factory = (CmisServiceFactory) servletContext
+                .getAttribute(CmisRepositoryContextListener.SERVICES_FACTORY);
+
+        if (factory == null) {
+            throw new CmisRuntimeException("Service factory not available! Configuration problem?");
+        }
+
+        return factory;
     }
 
     /**
