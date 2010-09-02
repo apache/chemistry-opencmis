@@ -285,11 +285,11 @@ public class StoreManagerImpl implements StoreManager {
         // repository info
         RepositoryInfoImpl repoInfo;
         repoInfo = new RepositoryInfoImpl();
-        repoInfo.setRepositoryId(repositoryId == null ? "inMem" : repositoryId);
-        repoInfo.setRepositoryName("InMemory Repository");
-        repoInfo.setRepositoryDescription("InMemory Test Repository");
+        repoInfo.setId(repositoryId == null ? "inMem" : repositoryId);
+        repoInfo.setName("InMemory Repository");
+        repoInfo.setDescription("InMemory Test Repository");
         repoInfo.setCmisVersionSupported("1.0");
-        repoInfo.setRepositoryCapabilities(null);
+        repoInfo.setCapabilities(null);
         repoInfo.setRootFolder(rootFolderId);
         repoInfo.setPrincipalAnonymous("anonymous");
         repoInfo.setPrincipalAnyone("anyone");
@@ -319,7 +319,7 @@ public class StoreManagerImpl implements StoreManager {
         caps.setSupportsMultifiling(true);
         caps.setSupportsUnfiling(true);
         caps.setSupportsVersionSpecificFiling(false);
-        repoInfo.setRepositoryCapabilities(caps);
+        repoInfo.setCapabilities(caps);
 
         // AclCapabilitiesDataImpl aclCaps = new AclCapabilitiesDataImpl();
         // aclCaps.setACLPropagation(AclPropagation.REPOSITORYDETERMINED);
