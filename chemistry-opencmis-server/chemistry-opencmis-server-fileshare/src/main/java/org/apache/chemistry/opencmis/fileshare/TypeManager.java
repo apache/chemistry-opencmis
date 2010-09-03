@@ -59,9 +59,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Type Manager.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class TypeManager {
     public final static String DOCUMENT_TYPE_ID = "cmis:document";
@@ -396,10 +396,7 @@ public class TypeManager {
      */
     public TypeDefinitionList getTypesChildren(CallContext context, String typeId, boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount) {
-        TypeDefinitionListImpl result = new TypeDefinitionListImpl();
-        result.setList(new ArrayList<TypeDefinition>());
-        result.setHasMoreItems(false);
-        result.setNumItems(BigInteger.valueOf(0));
+        TypeDefinitionListImpl result = new TypeDefinitionListImpl(new ArrayList<TypeDefinition>());
 
         int skip = (skipCount == null ? 0 : skipCount.intValue());
         if (skip < 0) {

@@ -26,7 +26,6 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class TypeDefinitionListImpl extends AbstractExtensionData implements TypeDefinitionList {
 
@@ -34,11 +33,23 @@ public class TypeDefinitionListImpl extends AbstractExtensionData implements Typ
     private Boolean fHasMoreItems = Boolean.FALSE;
     private BigInteger fNumItems;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.TypeDefintionList#getList()
+    /**
+     * Default constructor.
      */
+    public TypeDefinitionListImpl() {
+    }
+
+    /**
+     * Constructor from a list.
+     *
+     * @param list the initial list
+     */
+    public TypeDefinitionListImpl(List<TypeDefinition> list) {
+        fList = list;
+        fHasMoreItems = Boolean.FALSE;
+        fNumItems = BigInteger.valueOf(list.size());
+    }
+
     public List<TypeDefinition> getList() {
         return fList;
     }
@@ -47,11 +58,6 @@ public class TypeDefinitionListImpl extends AbstractExtensionData implements Typ
         fList = list;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.TypeDefintionList#hasMoreItems()
-     */
     public Boolean hasMoreItems() {
         return fHasMoreItems;
     }
@@ -60,11 +66,6 @@ public class TypeDefinitionListImpl extends AbstractExtensionData implements Typ
         fHasMoreItems = hasMoreItems;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.TypeDefintionList#getNumItems()
-     */
     public BigInteger getNumItems() {
         return fNumItems;
     }
@@ -73,11 +74,6 @@ public class TypeDefinitionListImpl extends AbstractExtensionData implements Typ
         fNumItems = numItems;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "Type Definition List [list=" + fList + ", has more items=" + fHasMoreItems + ", num items=" + fNumItems
