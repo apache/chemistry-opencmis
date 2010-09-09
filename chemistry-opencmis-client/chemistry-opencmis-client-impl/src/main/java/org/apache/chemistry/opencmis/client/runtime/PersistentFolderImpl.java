@@ -75,15 +75,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         initialize(session, objectType, objectData, context);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#createDocument(java.util.Map,
-     * org.apache.opencmis.client.api.ContentStream,
-     * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-     * java.util.List, java.util.List,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context) {
@@ -114,16 +105,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return (Document) object;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Folder#createDocumentFromSource(org.apache
-     * .opencmis.client.api .ObjectId, java.util.Map,
-     * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-     * java.util.List, java.util.List,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context) {
@@ -169,13 +150,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return (Document) object;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#createFolder(java.util.Map,
-     * java.util.List, java.util.List, java.util.List,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces, OperationContext context) {
         if ((properties == null) || (properties.isEmpty())) {
@@ -204,13 +178,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return (Folder) object;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#createPolicy(java.util.Map,
-     * java.util.List, java.util.List, java.util.List,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces, OperationContext context) {
         if ((properties == null) || (properties.isEmpty())) {
@@ -239,12 +206,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return (Policy) object;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#deleteTree(boolean,
-     * org.apache.opencmis.commons.enums.UnfileObjects, boolean)
-     */
     public List<String> deleteTree(boolean allVersions, UnfileObject unfile, boolean continueOnFailure) {
         String repositoryId = getRepositoryId();
         String objectId = getObjectId();
@@ -255,11 +216,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return failed.getIds();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#getAllowedChildObjectTypes()
-     */
     public List<ObjectType> getAllowedChildObjectTypes() {
         List<ObjectType> result = new ArrayList<ObjectType>();
 
@@ -280,21 +236,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#getCheckedOutDocs(int)
-     */
     public ItemIterable<Document> getCheckedOutDocs() {
         return getCheckedOutDocs(getSession().getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.api.Folder#getCheckedOutDocs(org.apache.
-     * opencmis.client.api. OperationContext, int)
-     */
     public ItemIterable<Document> getCheckedOutDocs(OperationContext context) {
         final String objectId = getObjectId();
         final NavigationService navigationService = getBinding().getNavigationService();
@@ -333,22 +278,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#getChildren(int)
-     */
     public ItemIterable<CmisObject> getChildren() {
         return getChildren(getSession().getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Folder#getChildren(org.apache.opencmis
-     * .client.api.OperationContext , int)
-     */
     public ItemIterable<CmisObject> getChildren(OperationContext context) {
         final String objectId = getObjectId();
         final NavigationService navigationService = getBinding().getNavigationService();
@@ -384,21 +317,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#getDescendants(int)
-     */
     public List<Tree<FileableCmisObject>> getDescendants(int depth) {
         return getDescendants(depth, getSession().getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#getDescendants(int,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context) {
         String objectId = getObjectId();
 
@@ -411,21 +333,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return convertProviderContainer(providerContainerList, context);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#getFolderTree(int)
-     */
     public List<Tree<FileableCmisObject>> getFolderTree(int depth) {
         return getFolderTree(depth, getSession().getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#getFolderTree(int,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public List<Tree<FileableCmisObject>> getFolderTree(int depth, OperationContext context) {
         String objectId = getObjectId();
 
@@ -474,11 +385,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#isRootFolder()
-     */
     public boolean isRootFolder() {
         String objectId = getObjectId();
         String rootFolderId = getSession().getRepositoryInfo().getRootFolderId();
@@ -486,11 +392,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return objectId.equals(rootFolderId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#getFolderParent()
-     */
     public Folder getFolderParent() {
         if (isRootFolder()) {
             return null;
@@ -504,11 +405,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return parents.get(0);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Folder#getPath()
-     */
     public String getPath() {
         String path;
 
@@ -544,13 +440,6 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         return path;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.runtime.AbstractPersistentFilableCmisObject
-     * #getPaths()
-     */
     @Override
     public List<String> getPaths() {
         return Collections.singletonList(getPath());

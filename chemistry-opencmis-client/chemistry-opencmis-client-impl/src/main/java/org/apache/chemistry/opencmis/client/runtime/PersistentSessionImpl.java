@@ -187,11 +187,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         return locale;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#clear()
-     */
     public void clear() {
         fLock.writeLock().lock();
         try {
@@ -220,30 +215,14 @@ public class PersistentSessionImpl implements Session, Serializable {
         throw new UnsupportedOperationException("cancel");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#getObjectFactory()
-     */
     public ObjectFactory getObjectFactory() {
         return this.objectFactory;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#getCheckedOutDocs(int)
-     */
     public ItemIterable<Document> getCheckedOutDocs() {
         return getCheckedOutDocs(getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.api.Session#getCheckedOutDocs(org.apache.
-     * opencmis.client.api. OperationContext, int)
-     */
     public ItemIterable<Document> getCheckedOutDocs(OperationContext context) {
         final NavigationService navigationService = getBinding().getNavigationService();
         final ObjectFactory objectFactory = getObjectFactory();
@@ -281,22 +260,10 @@ public class PersistentSessionImpl implements Session, Serializable {
         });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#getContentChanges(java.lang.String
-     * , int)
-     */
     public ItemIterable<ChangeEvent> getContentChanges(String changeLogToken) {
         throw new CmisRuntimeException("not implemented");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#getDefaultContext()
-     */
     public OperationContext getDefaultContext() {
         fLock.readLock().lock();
         try {
@@ -306,12 +273,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.api.Session#setDefaultContext(org.apache.
-     * opencmis.client.api. OperationContext)
-     */
     public void setDefaultContext(OperationContext context) {
         fLock.writeLock().lock();
         try {
@@ -321,15 +282,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#createOperationContext(java.util
-     * .Set, boolean, boolean, boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.util.Set,
-     * boolean, java.lang.String, boolean)
-     */
     public OperationContext createOperationContext(Set<String> filter, boolean includeAcls,
             boolean includeAllowableActions, boolean includePolicies, IncludeRelationships includeRelationships,
             Set<String> renditionFilter, boolean includePathSegments, String orderBy, boolean cacheEnabled,
@@ -338,22 +290,10 @@ public class PersistentSessionImpl implements Session, Serializable {
                 includeRelationships, renditionFilter, includePathSegments, orderBy, cacheEnabled, maxItemsPerPage);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.chemistry.opencmis.client.api.Session#createOperationContext()
-     */
     public OperationContext createOperationContext() {
         return new OperationContextImpl();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#createObjectId(java.lang.String)
-     */
     public ObjectId createObjectId(String id) {
         return new ObjectIdImpl(id);
     }
@@ -362,21 +302,10 @@ public class PersistentSessionImpl implements Session, Serializable {
         return this.locale;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#getObject(java.lang.String)
-     */
     public CmisObject getObject(ObjectId objectId) {
         return getObject(objectId, getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#getObject(java.lang.String,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public CmisObject getObject(ObjectId objectId, OperationContext context) {
         if ((objectId == null) || (objectId.getId() == null)) {
             throw new IllegalArgumentException("Object Id must be set!");
@@ -410,23 +339,10 @@ public class PersistentSessionImpl implements Session, Serializable {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#getObjectByPath(java.lang.String)
-     */
     public CmisObject getObjectByPath(String path) {
         return getObjectByPath(path, getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#getObjectByPath(java.lang.String,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public CmisObject getObjectByPath(String path, OperationContext context) {
         if (path == null) {
             throw new IllegalArgumentException("Path must be set!");
@@ -460,11 +376,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#getRepositoryInfo()
-     */
     public RepositoryInfo getRepositoryInfo() {
         fLock.readLock().lock();
         try {
@@ -474,34 +385,10 @@ public class PersistentSessionImpl implements Session, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#getRootFolder()
-     */
     public Folder getRootFolder() {
         return getRootFolder(getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * @seeorg.apache.opencmis.client.api.Session#getRootFolder(org.apache.opencmis
-     * .client.api. OperationContext)
-     */
     public Folder getRootFolder(OperationContext context) {
         String rootFolderId = getRepositoryInfo().getRootFolderId();
 
@@ -513,13 +400,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         return (Folder) rootFolder;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#getTypeChildren(java.lang.String,
-     * boolean, int)
-     */
     public ItemIterable<ObjectType> getTypeChildren(final String typeId, final boolean includePropertyDefinitions) {
         final RepositoryService repositoryService = getBinding().getRepositoryService();
         final ObjectFactory objectFactory = this.getObjectFactory();
@@ -547,26 +427,12 @@ public class PersistentSessionImpl implements Session, Serializable {
         });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#getTypeDefinition(java.lang.String
-     * )
-     */
     public ObjectType getTypeDefinition(String typeId) {
         TypeDefinition typeDefinition = getBinding().getRepositoryService().getTypeDefinition(getRepositoryId(),
                 typeId, null);
         return objectFactory.convertTypeDefinition(typeDefinition);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#getTypeDescendants(java.lang.String
-     * , int, boolean)
-     */
     public List<Tree<ObjectType>> getTypeDescendants(String typeId, int depth, boolean includePropertyDefinitions) {
         List<TypeDefinitionContainer> descendants = getBinding().getRepositoryService().getTypeDescendants(
                 getRepositoryId(), typeId, BigInteger.valueOf(depth), includePropertyDefinitions, null);
@@ -591,22 +457,10 @@ public class PersistentSessionImpl implements Session, Serializable {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#query(java.lang.String,
-     * boolean, int)
-     */
     public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions) {
         return query(statement, searchAllVersions, getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#query(java.lang.String,
-     * boolean, org.apache.opencmis.client.api.OperationContext, int)
-     */
     public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions,
             OperationContext context) {
 
@@ -676,11 +530,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#getBinding()
-     */
     public CmisBinding getBinding() {
         fLock.readLock().lock();
         try {
@@ -708,15 +557,6 @@ public class PersistentSessionImpl implements Session, Serializable {
 
     // creates
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#createDocument(java.util.Map,
-     * org.apache.opencmis.client.api.ObjectId,
-     * org.apache.opencmis.client.api.ContentStream,
-     * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-     * java.util.List, java.util.List)
-     */
     public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
         if ((folderId != null) && (folderId.getId() == null)) {
@@ -739,16 +579,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         return createObjectId(newId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#createDocumentFromSource(org.apache
-     * .opencmis.client. api.ObjectId, java.util.Map,
-     * org.apache.opencmis.client.api.ObjectId,
-     * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-     * java.util.List, java.util.List)
-     */
     public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
         // get the type of the source document
@@ -776,13 +606,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         return createObjectId(newId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#createFolder(java.util.Map,
-     * org.apache.opencmis.client.api.ObjectId, java.util.List, java.util.List,
-     * java.util.List)
-     */
     public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
             List<Ace> addAces, List<Ace> removeAces) {
         if ((folderId != null) && (folderId.getId() == null)) {
@@ -804,13 +627,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         return createObjectId(newId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Session#createPolicy(java.util.Map,
-     * org.apache.opencmis.client.api.ObjectId, java.util.List, java.util.List,
-     * java.util.List)
-     */
     public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
             List<Ace> addAces, List<Ace> removeAces) {
         if ((folderId != null) && (folderId.getId() == null)) {
@@ -832,13 +648,6 @@ public class PersistentSessionImpl implements Session, Serializable {
         return createObjectId(newId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Session#createRelationship(java.util.Map,
-     * java.util.List, java.util.List, java.util.List)
-     */
     public ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces) {
         if ((properties == null) || (properties.isEmpty())) {
