@@ -47,7 +47,7 @@ import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
-import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
+import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -585,7 +585,7 @@ public class PersistentSessionImpl implements Session, Serializable {
             ObjectType objectType = objectFactory.convertTypeDefinition(container.getTypeDefinition());
             List<Tree<ObjectType>> children = convertTypeDescendants(container.getChildren());
 
-            result.add(new ContainerImpl<ObjectType>(objectType, children));
+            result.add(new TreeImpl<ObjectType>(objectType, children));
         }
 
         return result;

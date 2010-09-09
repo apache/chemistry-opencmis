@@ -39,7 +39,7 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
-import org.apache.chemistry.opencmis.client.runtime.util.ContainerImpl;
+import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -468,7 +468,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
             List<Tree<FileableCmisObject>> children = convertProviderContainer(oifc.getChildren(), context);
 
             // add both to current container
-            result.add(new ContainerImpl<FileableCmisObject>((FileableCmisObject) object, children));
+            result.add(new TreeImpl<FileableCmisObject>((FileableCmisObject) object, children));
         }
 
         return result;
