@@ -272,8 +272,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                 }
 
                 return new AbstractPageFetch.PageFetchResult<Document>(page, checkedOutDocs.getNumItems(),
-                        checkedOutDocs.hasMoreItems()) {
-                };
+                        checkedOutDocs.hasMoreItems());
             }
         });
     }
@@ -311,8 +310,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                 }
 
                 return new AbstractPageFetch.PageFetchResult<CmisObject>(page, children.getNumItems(), children
-                        .hasMoreItems()) {
-                };
+                        .hasMoreItems());
             }
         });
     }

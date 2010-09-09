@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * Abstract page fetch.
- * 
+ *
  * @param <T>
  */
 public abstract class AbstractPageFetch<T> {
@@ -33,18 +33,17 @@ public abstract class AbstractPageFetch<T> {
     public AbstractPageFetch(long maxNumItems) {
         this.maxNumItems = maxNumItems;
     }
-    
+
     /**
      * Fetches the given page from the server.
-     * 
-     * @param pageNumber
-     *            number of the page (>= 0).
+     *
+     * @param skipCount initial offset where to start fetching
      */
     protected abstract PageFetchResult<T> fetchPage(long skipCount);
 
     // --- fetch result class ---
 
-    protected static class PageFetchResult<T> {
+    public static class PageFetchResult<T> {
         private List<T> page;
         private BigInteger totalItems;
         private Boolean hasMoreItems;

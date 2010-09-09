@@ -604,8 +604,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                 }
 
                 return new AbstractPageFetch.PageFetchResult<Relationship>(page, relList.getNumItems(), relList
-                        .hasMoreItems()) {
-                };
+                        .hasMoreItems());
             }
         });
     }

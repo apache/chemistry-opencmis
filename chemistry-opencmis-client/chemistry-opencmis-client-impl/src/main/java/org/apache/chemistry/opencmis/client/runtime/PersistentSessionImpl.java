@@ -254,8 +254,7 @@ public class PersistentSessionImpl implements Session, Serializable {
                 }
 
                 return new AbstractPageFetch.PageFetchResult<Document>(page, checkedOutDocs.getNumItems(),
-                        checkedOutDocs.hasMoreItems()) {
-                };
+                        checkedOutDocs.hasMoreItems());
             }
         });
     }
@@ -491,8 +490,7 @@ public class PersistentSessionImpl implements Session, Serializable {
                 }
 
                 return new AbstractPageFetch.PageFetchResult<QueryResult>(page, resultList.getNumItems(), resultList
-                        .hasMoreItems()) {
-                };
+                        .hasMoreItems());
             }
         });
 
