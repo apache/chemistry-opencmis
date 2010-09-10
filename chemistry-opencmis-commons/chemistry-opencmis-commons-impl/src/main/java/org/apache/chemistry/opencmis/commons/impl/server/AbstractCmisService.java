@@ -888,172 +888,206 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      */
     public ObjectInfo getObjectInfo(String repositoryId, String objectId) {
         Map<String, ObjectInfo> oim = getObjectInfoMap();
-
         ObjectInfo info = oim.get(objectId);
         if (info == null) {
             // object info has not been found -> create one
-            ObjectInfoImpl infoImpl = new ObjectInfoImpl();
-
             try {
                 // switch off object info collection to avoid side effects
                 addObjectInfos = false;
 
-                // get the object
+                // get the object and its info
                 ObjectData object = getObject(repositoryId, objectId, null, Boolean.TRUE, IncludeRelationships.BOTH,
                         "*", Boolean.TRUE, Boolean.FALSE, null);
-
-                // if the object has no properties, stop here
-                if (object.getProperties() == null || object.getProperties().getProperties() == null) {
-                    throw new Exception("No properties!");
-                }
-
-                // get the repository info
-                RepositoryInfo repositoryInfo = getRepositoryInfo(repositoryId, null);
-
-                // general properties
-                infoImpl.setObject(object);
-                infoImpl.setId(object.getId());
-                infoImpl.setName(getStringProperty(object, PropertyIds.NAME));
-                infoImpl.setCreatedBy(getStringProperty(object, PropertyIds.CREATED_BY));
-                infoImpl.setCreationDate(getDateTimeProperty(object, PropertyIds.CREATED_BY));
-                infoImpl.setLastModificationDate(getDateTimeProperty(object, PropertyIds.LAST_MODIFICATION_DATE));
-                infoImpl.setTypeId(getIdProperty(object, PropertyIds.OBJECT_TYPE_ID));
-                infoImpl.setBaseType(object.getBaseTypeId());
-
-                // versioning
-                infoImpl.setIsCurrentVersion(object.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT);
-                infoImpl.setWorkingCopyId(null);
-                infoImpl.setWorkingCopyOriginalId(null);
-
-                infoImpl.setVersionSeriesId(getIdProperty(object, PropertyIds.VERSION_SERIES_ID));
-                if (infoImpl.getVersionSeriesId() != null) {
-                    Boolean isLatest = getBooleanProperty(object, PropertyIds.IS_LATEST_VERSION);
-                    infoImpl.setIsCurrentVersion(isLatest == null ? true : isLatest.booleanValue());
-
-                    Boolean isCheckedOut = getBooleanProperty(object, PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
-                    if (isCheckedOut != null && isCheckedOut.booleanValue()) {
-                        infoImpl.setWorkingCopyId(getIdProperty(object, PropertyIds.VERSION_SERIES_CHECKED_OUT_ID));
-
-                        // get latest version
-                        List<ObjectData> versions = getAllVersions(repositoryId, objectId, infoImpl
-                                .getVersionSeriesId(), null, Boolean.FALSE, null);
-                        if (versions != null && versions.size() > 0) {
-                            infoImpl.setWorkingCopyOriginalId(versions.get(0).getId());
-                        }
-                    }
-                }
-
-                // content
-                String fileName = getStringProperty(object, PropertyIds.CONTENT_STREAM_FILE_NAME);
-                String mimeType = getStringProperty(object, PropertyIds.CONTENT_STREAM_MIME_TYPE);
-                String streamId = getIdProperty(object, PropertyIds.CONTENT_STREAM_ID);
-                BigInteger length = getIntegerProperty(object, PropertyIds.CONTENT_STREAM_LENGTH);
-                boolean hasContent = fileName != null || mimeType != null || streamId != null || length != null;
-                if (hasContent) {
-                    infoImpl.setHasContent(hasContent);
-                    infoImpl.setContentType(mimeType);
-                    infoImpl.setFileName(fileName);
-                } else {
-                    infoImpl.setHasContent(false);
-                    infoImpl.setContentType(null);
-                    infoImpl.setFileName(null);
-                }
-
-                // parent
-                List<ObjectParentData> parents = getObjectParents(repositoryId, objectId, null, Boolean.FALSE,
-                        IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, null);
-                infoImpl.setHasParent(parents.size() > 0);
-
-                // policies and relationships
-                infoImpl.setSupportsRelationships(false);
-                infoImpl.setSupportsPolicies(false);
-
-                TypeDefinitionList baseTypesList = getTypeChildren(repositoryId, null, Boolean.FALSE, BigInteger
-                        .valueOf(4), BigInteger.ZERO, null);
-                for (TypeDefinition type : baseTypesList.getList()) {
-                    if (BaseTypeId.CMIS_RELATIONSHIP.value().equals(type.getId())) {
-                        infoImpl.setSupportsRelationships(true);
-                    } else if (BaseTypeId.CMIS_POLICY.value().equals(type.getId())) {
-                        infoImpl.setSupportsPolicies(true);
-                    }
-                }
-
-                // renditions
-                infoImpl.setRenditionInfos(null);
-
-                List<RenditionData> renditions = object.getRenditions();
-                if (renditions != null && renditions.size() > 0) {
-                    List<RenditionInfo> renditionInfos = new ArrayList<RenditionInfo>();
-
-                    for (RenditionData rendition : renditions) {
-                        RenditionInfoImpl renditionInfo = new RenditionInfoImpl();
-                        renditionInfo.setId(rendition.getStreamId());
-                        renditionInfo.setKind(rendition.getKind());
-                        renditionInfo.setContentType(rendition.getMimeType());
-                        renditionInfo.setTitle(rendition.getTitle());
-                        renditionInfo.setLength(rendition.getBigLength());
-
-                        renditionInfos.add(renditionInfo);
-                    }
-
-                    infoImpl.setRenditionInfos(renditionInfos);
-                }
-
-                // relationships
-                infoImpl.setRelationshipSourceIds(null);
-                infoImpl.setRelationshipTargetIds(null);
-
-                List<ObjectData> relationships = object.getRelationships();
-                if (relationships != null && relationships.size() > 0) {
-                    List<String> sourceIds = new ArrayList<String>();
-                    List<String> targetIds = new ArrayList<String>();
-
-                    for (ObjectData relationship : relationships) {
-                        String sourceId = getIdProperty(relationship, PropertyIds.SOURCE_ID);
-                        String targetId = getIdProperty(relationship, PropertyIds.TARGET_ID);
-
-                        if (object.getId().equals(sourceId)) {
-                            sourceIds.add(relationship.getId());
-                        }
-                        if (object.getId().equals(targetId)) {
-                            targetIds.add(relationship.getId());
-                        }
-                    }
-
-                    if (sourceIds.size() > 0) {
-                        infoImpl.setRelationshipSourceIds(sourceIds);
-                    }
-                    if (targetIds.size() > 0) {
-                        infoImpl.setRelationshipTargetIds(targetIds);
-                    }
-                }
-
-                // global settings
-                infoImpl.setHasAcl(false);
-                infoImpl.setSupportsDescendants(false);
-                infoImpl.setSupportsFolderTree(false);
-
-                RepositoryCapabilities capabilities = repositoryInfo.getCapabilities();
-                if (capabilities != null) {
-                    infoImpl.setHasAcl(capabilities.getAclCapability() == CapabilityAcl.DISCOVER
-                            || capabilities.getAclCapability() == CapabilityAcl.MANAGE);
-                    if (object.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
-                        infoImpl.setSupportsDescendants(Boolean.TRUE.equals(capabilities.isGetDescendantsSupported()));
-                        infoImpl.setSupportsFolderTree(Boolean.TRUE.equals(capabilities.isGetFolderTreeSupported()));
-                    }
-                }
+                info = getObjectInfoIntern(repositoryId, object);
 
                 // switch on object info collection
                 addObjectInfos = true;
 
                 // add object info
-                addObjectInfo(infoImpl);
-                info = infoImpl;
+                addObjectInfo(info);
             } catch (Exception e) {
                 e.printStackTrace();
                 info = null;
             } finally {
                 addObjectInfos = true;
+            }
+        }
+        return info;
+    }
+
+    /**
+     * Gets the {@link ObjectInfo} about an object, checking the cache first.
+     *
+     * @param repositoryId the repository id
+     * @param object the object
+     * @return the object info
+     */
+    protected ObjectInfo getObjectInfo(String repositoryId, ObjectData object) {
+        Map<String, ObjectInfo> oim = getObjectInfoMap();
+        ObjectInfo info = oim.get(object.getId());
+        if (info == null) {
+            try {
+                // switch off object info collection to avoid side effects
+                addObjectInfos = false;
+
+                // get the object info
+                info = getObjectInfoIntern(repositoryId, object);
+
+                // switch on object info collection
+                addObjectInfos = true;
+
+                // add object info
+                addObjectInfo(info);
+            } catch (Exception e) {
+                e.printStackTrace();
+                info = null;
+            } finally {
+                addObjectInfos = true;
+            }
+        }
+        return info;
+    }
+
+    /**
+     * Collects the {@link ObjectInfo} about an object.
+     *
+     * @param repositoryId the repository id
+     * @param object the object
+     * @return the collected object info
+     */
+    protected ObjectInfo getObjectInfoIntern(String repositoryId, ObjectData object) {
+        // if the object has no properties, stop here
+        if (object.getProperties() == null || object.getProperties().getProperties() == null) {
+            throw new CmisRuntimeException("No properties!");
+        }
+
+        ObjectInfoImpl info = new ObjectInfoImpl();
+
+        // get the repository info
+        RepositoryInfo repositoryInfo = getRepositoryInfo(repositoryId, null);
+
+        // general properties
+        info.setObject(object);
+        info.setId(object.getId());
+        info.setName(getStringProperty(object, PropertyIds.NAME));
+        info.setCreatedBy(getStringProperty(object, PropertyIds.CREATED_BY));
+        info.setCreationDate(getDateTimeProperty(object, PropertyIds.CREATED_BY));
+        info.setLastModificationDate(getDateTimeProperty(object, PropertyIds.LAST_MODIFICATION_DATE));
+        info.setTypeId(getIdProperty(object, PropertyIds.OBJECT_TYPE_ID));
+        info.setBaseType(object.getBaseTypeId());
+
+        // versioning
+        info.setIsCurrentVersion(object.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT);
+        info.setWorkingCopyId(null);
+        info.setWorkingCopyOriginalId(null);
+
+        info.setVersionSeriesId(getIdProperty(object, PropertyIds.VERSION_SERIES_ID));
+        if (info.getVersionSeriesId() != null) {
+            Boolean isLatest = getBooleanProperty(object, PropertyIds.IS_LATEST_VERSION);
+            info.setIsCurrentVersion(isLatest == null ? true : isLatest.booleanValue());
+
+            Boolean isCheckedOut = getBooleanProperty(object, PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
+            if (isCheckedOut != null && isCheckedOut.booleanValue()) {
+                info.setWorkingCopyId(getIdProperty(object, PropertyIds.VERSION_SERIES_CHECKED_OUT_ID));
+
+                // get latest version
+                List<ObjectData> versions = getAllVersions(repositoryId, object.getId(), info.getVersionSeriesId(),
+                        null, Boolean.FALSE, null);
+                if (versions != null && versions.size() > 0) {
+                    info.setWorkingCopyOriginalId(versions.get(0).getId());
+                }
+            }
+        }
+
+        // content
+        String fileName = getStringProperty(object, PropertyIds.CONTENT_STREAM_FILE_NAME);
+        String mimeType = getStringProperty(object, PropertyIds.CONTENT_STREAM_MIME_TYPE);
+        String streamId = getIdProperty(object, PropertyIds.CONTENT_STREAM_ID);
+        BigInteger length = getIntegerProperty(object, PropertyIds.CONTENT_STREAM_LENGTH);
+        boolean hasContent = fileName != null || mimeType != null || streamId != null || length != null;
+        if (hasContent) {
+            info.setHasContent(hasContent);
+            info.setContentType(mimeType);
+            info.setFileName(fileName);
+        } else {
+            info.setHasContent(false);
+            info.setContentType(null);
+            info.setFileName(null);
+        }
+
+        // parent
+        List<ObjectParentData> parents = getObjectParents(repositoryId, object.getId(), null, Boolean.FALSE,
+                IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, null);
+        info.setHasParent(parents.size() > 0);
+
+        // policies and relationships
+        info.setSupportsRelationships(false);
+        info.setSupportsPolicies(false);
+
+        TypeDefinitionList baseTypesList = getTypeChildren(repositoryId, null, Boolean.FALSE, BigInteger.valueOf(4),
+                BigInteger.ZERO, null);
+        for (TypeDefinition type : baseTypesList.getList()) {
+            if (BaseTypeId.CMIS_RELATIONSHIP.value().equals(type.getId())) {
+                info.setSupportsRelationships(true);
+            } else if (BaseTypeId.CMIS_POLICY.value().equals(type.getId())) {
+                info.setSupportsPolicies(true);
+            }
+        }
+
+        // renditions
+        info.setRenditionInfos(null);
+        List<RenditionData> renditions = object.getRenditions();
+        if (renditions != null && renditions.size() > 0) {
+            List<RenditionInfo> renditionInfos = new ArrayList<RenditionInfo>();
+            for (RenditionData rendition : renditions) {
+                RenditionInfoImpl renditionInfo = new RenditionInfoImpl();
+                renditionInfo.setId(rendition.getStreamId());
+                renditionInfo.setKind(rendition.getKind());
+                renditionInfo.setContentType(rendition.getMimeType());
+                renditionInfo.setTitle(rendition.getTitle());
+                renditionInfo.setLength(rendition.getBigLength());
+                renditionInfos.add(renditionInfo);
+            }
+            info.setRenditionInfos(renditionInfos);
+        }
+
+        // relationships
+        info.setRelationshipSourceIds(null);
+        info.setRelationshipTargetIds(null);
+        List<ObjectData> relationships = object.getRelationships();
+        if (relationships != null && relationships.size() > 0) {
+            List<String> sourceIds = new ArrayList<String>();
+            List<String> targetIds = new ArrayList<String>();
+            for (ObjectData relationship : relationships) {
+                String sourceId = getIdProperty(relationship, PropertyIds.SOURCE_ID);
+                String targetId = getIdProperty(relationship, PropertyIds.TARGET_ID);
+                if (object.getId().equals(sourceId)) {
+                    sourceIds.add(relationship.getId());
+                }
+                if (object.getId().equals(targetId)) {
+                    targetIds.add(relationship.getId());
+                }
+            }
+            if (sourceIds.size() > 0) {
+                info.setRelationshipSourceIds(sourceIds);
+            }
+            if (targetIds.size() > 0) {
+                info.setRelationshipTargetIds(targetIds);
+            }
+        }
+
+        // global settings
+        info.setHasAcl(false);
+        info.setSupportsDescendants(false);
+        info.setSupportsFolderTree(false);
+
+        RepositoryCapabilities capabilities = repositoryInfo.getCapabilities();
+        if (capabilities != null) {
+            info.setHasAcl(capabilities.getAclCapability() == CapabilityAcl.DISCOVER
+                    || capabilities.getAclCapability() == CapabilityAcl.MANAGE);
+            if (object.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
+                info.setSupportsDescendants(Boolean.TRUE.equals(capabilities.isGetDescendantsSupported()));
+                info.setSupportsFolderTree(Boolean.TRUE.equals(capabilities.isGetFolderTreeSupported()));
             }
         }
 
