@@ -28,7 +28,7 @@
 
     <groupId>org.apache.chemistry.opencmis</groupId>
     <artifactId>chemistry-opencmis</artifactId>
-    <name>OpenCMIS</name>
+    <name>Apache Chemistry OpenCMIS</name>
     <version>0.1.0-incubating-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -44,7 +44,7 @@
     </ciManagement>
     <inceptionYear>2009</inceptionYear>
     <description>
-        OpenCMIS is an open source implementation of the OASIS CMIS specification.
+        Apache Chemistry OpenCMIS is an open source implementation of the OASIS CMIS specification.
     </description>
 
     <licenses>
