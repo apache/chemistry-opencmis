@@ -212,6 +212,7 @@
             <groupId>org.jvnet.staxex</groupId>
             <artifactId>stax-ex</artifactId>
             <version>1.2</version>
+            <name>StAX-Ex Project</name>
             <organization>
                 <name>Java.net</name>
                 <url>http://dev.java.net</url>

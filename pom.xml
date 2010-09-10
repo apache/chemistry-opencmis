@@ -214,6 +214,14 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <archiveClasses>true</archiveClasses>
+                    <attachClasses>true</attachClasses>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.0</version>
                 <configuration>
@@ -358,16 +366,6 @@
             <type>jar</type>
             <scope>test</scope>
         </dependency>
-        <!--
-            Added to gather the latest Apache licenses to be added in
-            assemblies
-        -->
-        <dependency>
-            <groupId>org.apache</groupId>
-            <artifactId>apache-jar-resource-bundle</artifactId>
-            <version>1.4</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <reporting>
@@ -383,14 +381,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>2.0.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <archiveClasses>true</archiveClasses>
-                    <attachClasses>true</attachClasses>
-                </configuration>
             </plugin>
         </plugins>
     </reporting>
@@ -477,6 +467,7 @@
                                 </goals>
                                 <configuration>
                                     <resourceBundles>
+                                        <resourceBundle>org.apache.chemistry.resources:chemistry-jar-resource-bundle:1.0-SNAPSHOT</resourceBundle>
                                         <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
                                         <resourceBundle>org.apache:apache-incubator-disclaimer-resource-bundle:1.1</resourceBundle>
                                     </resourceBundles>
