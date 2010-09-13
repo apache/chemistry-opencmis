@@ -321,12 +321,19 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
         ContentStream contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), objectId,
                 streamId, null, null, null);
 
+        // the AtomPub binding doesn't return a file name
+        // -> get the file name from properties, if present
+        String filename = contentStream.getFileName();
+        if (filename == null) {
+            filename = getContentStreamFileName();
+        }
+
         // TODO: what should happen if the length is not set?
         long length = (contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue());
 
         // convert and return stream object
-        return getSession().getObjectFactory().createContentStream(contentStream.getFileName(), length,
-                contentStream.getMimeType(), contentStream.getStream());
+        return getSession().getObjectFactory().createContentStream(filename, length, contentStream.getMimeType(),
+                contentStream.getStream());
     }
 
     /*
