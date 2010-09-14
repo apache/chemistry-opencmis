@@ -20,40 +20,26 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 
 /**
  * Abstract extension data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractExtensionData implements ExtensionsData {
 
-    private List<Object> fExtensions;
+    private List<CmisExtensionElement> extensions;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ExtensionsData#getExtensions()
-     */
-    public List<Object> getExtensions() {
-        return fExtensions;
+    public List<CmisExtensionElement> getExtensions() {
+        return extensions;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ExtensionsData#setExtensions(java
-     * .util.List)
-     */
-    public void setExtensions(List<Object> extensions) {
-        fExtensions = extensions;
+    public void setExtensions(List<CmisExtensionElement> extensions) {
+        this.extensions = extensions;
     }
 
     @Override
     public String toString() {
-        return "[extensions=" + fExtensions + "]";
+        return "[extensions=" + extensions + "]";
     }
 }

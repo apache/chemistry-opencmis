@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
@@ -48,11 +49,11 @@ public class CmisObjectMock implements CmisObject, Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
-    
+
     public CmisObjectMock(String id) {
         this.id = id;
     }
-    
+
     public void addAcl(List<Ace> addAces, AclPropagation aclPropagation) {
     }
 
@@ -151,39 +152,39 @@ public class CmisObjectMock implements CmisObject, Serializable {
         return null;
     }
 
-    public List<Object> getExtensions(ExtensionLevel level) {
+    public List<CmisExtensionElement> getExtensions(ExtensionLevel level) {
         return null;
     }
-    
+
     public boolean isChanged() {
         return false;
     }
 
     public void refresh() {
-        
+
     }
 
     public void refreshIfOld(long durationInMillis) {
-        
+
     }
 
     public void removeAcl(List<Ace> removeAces, AclPropagation aclPropagation) {
-        
+
     }
 
     public void removePolicy(ObjectId policyId) {
-        
+
     }
 
     public void setName(String name) {
-        
+
     }
 
     public <T> void setProperty(String id, T value) {
     }
 
     public <T> void setPropertyMultivalue(String id, List<T> value) {
-        
+
     }
 
     public ObjectId updateProperties() {
@@ -197,5 +198,5 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public String getId() {
         return this.id;
     }
-    
+
 };

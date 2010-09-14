@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 
 public class ContentStreamDataImpl implements ContentStream {
@@ -112,11 +113,11 @@ public class ContentStreamDataImpl implements ContentStream {
         return clone;
     }
 
-    public List<Object> getExtensions() {
+    public List<CmisExtensionElement> getExtensions() {
         return null;
     }
 
-    public void setExtensions(List<Object> extensions) {
+    public void setExtensions(List<CmisExtensionElement> extensions) {
         // not implemented
     }
 }

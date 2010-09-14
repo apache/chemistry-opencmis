@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
@@ -75,8 +76,8 @@ public interface CmisObject extends ObjectId {
     GregorianCalendar getLastModificationDate();
 
     /**
-     * Get the object's base type (maintained by the repository). {@code
-     * Property<String> 'cmis:baseTypeId'}
+     * Get the object's base type (maintained by the repository).
+     * {@code Property<String> 'cmis:baseTypeId'}
      */
     ObjectType getBaseType();
 
@@ -261,7 +262,7 @@ public interface CmisObject extends ObjectId {
 
     // extensions
 
-    List<Object> getExtensions(ExtensionLevel level);
+    List<CmisExtensionElement> getExtensions(ExtensionLevel level);
 
     // session handling
 

@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
@@ -73,7 +74,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     private Acl acl;
     private List<Policy> policies;
     private List<Relationship> relationships;
-    private Map<ExtensionLevel, List<Object>> extensions;
+    private Map<ExtensionLevel, List<CmisExtensionElement>> extensions;
     private OperationContext creationContext;
     private boolean isChanged = false;
     private long refreshTimestamp;
@@ -101,7 +102,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
         this.session = session;
         this.objectType = objectType;
-        this.extensions = new HashMap<ExtensionLevel, List<Object>>();
+        this.extensions = new HashMap<ExtensionLevel, List<CmisExtensionElement>>();
         this.creationContext = new OperationContextImpl(context);
         this.refreshTimestamp = System.currentTimeMillis();
 
@@ -588,9 +589,9 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
                 // fetch the relationships
                 ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(), objectId,
-                        includeSubRelationshipTypes, relationshipDirection, typeId, ctxt.getFilterString(), ctxt
-                                .isIncludeAllowableActions(), BigInteger.valueOf(this.maxNumItems), BigInteger
-                                .valueOf(skipCount), null);
+                        includeSubRelationshipTypes, relationshipDirection, typeId, ctxt.getFilterString(),
+                        ctxt.isIncludeAllowableActions(), BigInteger.valueOf(this.maxNumItems),
+                        BigInteger.valueOf(skipCount), null);
 
                 // convert relationship objects
                 List<Relationship> page = new ArrayList<Relationship>();
@@ -603,16 +604,16 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                     }
                 }
 
-                return new AbstractPageFetch.PageFetchResult<Relationship>(page, relList.getNumItems(), relList
-                        .hasMoreItems());
+                return new AbstractPageFetch.PageFetchResult<Relationship>(page, relList.getNumItems(),
+                        relList.hasMoreItems());
             }
         });
     }
 
     // --- extensions ---
 
-    public List<Object> getExtensions(ExtensionLevel level) {
-        List<Object> ext = extensions.get(level);
+    public List<CmisExtensionElement> getExtensions(ExtensionLevel level) {
+        List<CmisExtensionElement> ext = extensions.get(level);
         if (ext == null) {
             return null;
         }
@@ -658,10 +659,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
             String objectId = getObjectId();
 
             // get the latest data from the repository
-            ObjectData objectData = getSession().getBinding().getObjectService().getObject(getRepositoryId(), objectId,
-                    creationContext.getFilterString(), creationContext.isIncludeAllowableActions(),
-                    creationContext.getIncludeRelationships(), creationContext.getRenditionFilterString(),
-                    creationContext.isIncludePolicies(), creationContext.isIncludeAcls(), null);
+            ObjectData objectData = getSession()
+                    .getBinding()
+                    .getObjectService()
+                    .getObject(getRepositoryId(), objectId, creationContext.getFilterString(),
+                            creationContext.isIncludeAllowableActions(), creationContext.getIncludeRelationships(),
+                            creationContext.getRenditionFilterString(), creationContext.isIncludePolicies(),
+                            creationContext.isIncludeAcls(), null);
 
             // reset this object
             initialize(getSession(), getObjectType(), objectData, this.creationContext);

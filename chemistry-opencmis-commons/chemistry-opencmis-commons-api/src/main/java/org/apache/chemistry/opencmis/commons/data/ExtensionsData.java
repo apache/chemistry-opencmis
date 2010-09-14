@@ -22,13 +22,10 @@ import java.util.List;
 
 /**
  * Holds extension data either set by the CMIS repository or the client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public interface ExtensionsData {
 
-    List<Object> getExtensions();
+    List<CmisExtensionElement> getExtensions();
 
-    void setExtensions(List<Object> extensions);
+    void setExtensions(List<CmisExtensionElement> extensions);
 }

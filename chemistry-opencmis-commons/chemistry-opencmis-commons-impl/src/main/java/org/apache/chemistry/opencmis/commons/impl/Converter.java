@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +38,14 @@ import javax.activation.DataSource;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -111,6 +115,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDat
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ExtensionDataImpl;
@@ -222,16 +227,19 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumSupportedPermissions;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumTypeOfChanges;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUpdatability;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.sun.xml.ws.developer.StreamingDataHandler;
 
 /**
  * Contains converter methods.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public final class Converter {
+
+    private static final String DEFAULT_EXTENSION_NS = "http://apache.org/chemistry/opencmis";
 
     /**
      * Private constructor.
@@ -293,8 +301,8 @@ public final class Converter {
         result.setAllVersionsSearchable(capabilities.isCapabilityAllVersionsSearchable());
         result.setCapabilityAcl(convert(CapabilityAcl.class, capabilities.getCapabilityACL()));
         result.setCapabilityChanges(convert(CapabilityChanges.class, capabilities.getCapabilityChanges()));
-        result.setCapabilityContentStreamUpdates(convert(CapabilityContentStreamUpdates.class, capabilities
-                .getCapabilityContentStreamUpdatability()));
+        result.setCapabilityContentStreamUpdates(convert(CapabilityContentStreamUpdates.class,
+                capabilities.getCapabilityContentStreamUpdatability()));
         result.setCapabilityJoin(convert(CapabilityJoin.class, capabilities.getCapabilityJoin()));
         result.setCapabilityQuery(convert(CapabilityQuery.class, capabilities.getCapabilityQuery()));
         result.setCapabilityRendition(convert(CapabilityRenditions.class, capabilities.getCapabilityRenditions()));
@@ -407,8 +415,8 @@ public final class Converter {
         result.setCapabilityACL(convert(EnumCapabilityACL.class, capabilities.getAclCapability()));
         result.setCapabilityAllVersionsSearchable(capabilities.isAllVersionsSearchableSupported());
         result.setCapabilityChanges(convert(EnumCapabilityChanges.class, capabilities.getChangesCapability()));
-        result.setCapabilityContentStreamUpdatability(convert(EnumCapabilityContentStreamUpdates.class, capabilities
-                .getContentStreamUpdatesCapability()));
+        result.setCapabilityContentStreamUpdatability(convert(EnumCapabilityContentStreamUpdates.class,
+                capabilities.getContentStreamUpdatesCapability()));
         result.setCapabilityGetDescendants(capabilities.isGetDescendantsSupported());
         result.setCapabilityGetFolderTree(capabilities.isGetFolderTreeSupported());
         result.setCapabilityJoin(convert(EnumCapabilityJoin.class, capabilities.getJoinCapability()));
@@ -436,8 +444,8 @@ public final class Converter {
 
         CmisACLCapabilityType result = new CmisACLCapabilityType();
 
-        result.setSupportedPermissions(convert(EnumSupportedPermissions.class, aclCapabilities
-                .getSupportedPermissions()));
+        result.setSupportedPermissions(convert(EnumSupportedPermissions.class,
+                aclCapabilities.getSupportedPermissions()));
 
         result.setPropagation(convert(EnumACLPropagation.class, aclCapabilities.getAclPropagation()));
 
@@ -1388,19 +1396,19 @@ public final class Converter {
         PropertyData<?> result = null;
 
         if (property instanceof CmisPropertyString) {
-            result = new PropertyStringImpl(property.getPropertyDefinitionId(), ((CmisPropertyString) property)
-                    .getValue());
+            result = new PropertyStringImpl(property.getPropertyDefinitionId(),
+                    ((CmisPropertyString) property).getValue());
         } else if (property instanceof CmisPropertyId) {
             result = new PropertyIdImpl(property.getPropertyDefinitionId(), ((CmisPropertyId) property).getValue());
         } else if (property instanceof CmisPropertyInteger) {
-            result = new PropertyIntegerImpl(property.getPropertyDefinitionId(), ((CmisPropertyInteger) property)
-                    .getValue());
+            result = new PropertyIntegerImpl(property.getPropertyDefinitionId(),
+                    ((CmisPropertyInteger) property).getValue());
         } else if (property instanceof CmisPropertyDecimal) {
-            result = new PropertyDecimalImpl(property.getPropertyDefinitionId(), ((CmisPropertyDecimal) property)
-                    .getValue());
+            result = new PropertyDecimalImpl(property.getPropertyDefinitionId(),
+                    ((CmisPropertyDecimal) property).getValue());
         } else if (property instanceof CmisPropertyBoolean) {
-            result = new PropertyBooleanImpl(property.getPropertyDefinitionId(), ((CmisPropertyBoolean) property)
-                    .getValue());
+            result = new PropertyBooleanImpl(property.getPropertyDefinitionId(),
+                    ((CmisPropertyBoolean) property).getValue());
         } else if (property instanceof CmisPropertyDateTime) {
             result = new PropertyDateTimeImpl(property.getPropertyDefinitionId(),
                     convertXMLCalendar(((CmisPropertyDateTime) property).getValue()));
@@ -2400,8 +2408,8 @@ public final class Converter {
         CmisExtensionType result = new CmisExtensionType();
 
         if (extension.getExtensions() != null) {
-            for (Object obj : extension.getExtensions()) {
-                result.getAny().add(obj);
+            for (CmisExtensionElement ext : extension.getExtensions()) {
+                result.getAny().add(convertCmisExtensionElementToNode(ext));
             }
         }
 
@@ -2435,12 +2443,12 @@ public final class Converter {
             return;
         }
 
-        List<Object> list = new ArrayList<Object>();
+        List<CmisExtensionElement> list = new ArrayList<CmisExtensionElement>();
         target.setExtensions(list);
 
         if (!source.value.getAny().isEmpty()) {
             for (Object obj : source.value.getAny()) {
-                list.add(obj);
+                list.add(convertDomToCmisExtensionElement(obj));
             }
         }
     }
@@ -2470,8 +2478,8 @@ public final class Converter {
         }
 
         if (source.getExtensions() != null) {
-            for (Object ext : source.getExtensions()) {
-                target.value.getAny().add(ext);
+            for (CmisExtensionElement ext : source.getExtensions()) {
+                target.value.getAny().add(convertCmisExtensionElementToNode(ext));
             }
         }
     }
@@ -2537,7 +2545,12 @@ public final class Converter {
             List<Object> list = (List<Object>) m.invoke(source, new Object[0]);
 
             if (!list.isEmpty()) {
-                target.setExtensions(list);
+                List<CmisExtensionElement> extensions = new ArrayList<CmisExtensionElement>();
+                for (Object obj : list) {
+                    extensions.add(convertDomToCmisExtensionElement(obj));
+                }
+
+                target.setExtensions(extensions);
             } else {
                 target.setExtensions(null);
             }
@@ -2559,7 +2572,9 @@ public final class Converter {
 
             list.clear();
             if (source.getExtensions() != null) {
-                list.addAll(source.getExtensions());
+                for (CmisExtensionElement ext : source.getExtensions()) {
+                    list.add(convertCmisExtensionElementToNode(ext));
+                }
             }
         } catch (NoSuchMethodException e) {
         } catch (Exception e) {
@@ -2576,9 +2591,139 @@ public final class Converter {
         }
 
         ExtensionDataImpl result = new ExtensionDataImpl();
-        result.setExtensions(extension.getAny());
+        List<CmisExtensionElement> extensions = new ArrayList<CmisExtensionElement>();
+        result.setExtensions(extensions);
+
+        for (Object obj : extension.getAny()) {
+            extensions.add(convertDomToCmisExtensionElement(obj));
+        }
 
         return result;
+    }
+
+    /**
+     * Converts a DOM node to a CMIS extension element
+     */
+    private static CmisExtensionElement convertDomToCmisExtensionElement(Object source) {
+        // if it's not a Node, skip it
+        if (!(source instanceof Node)) {
+            return null;
+        }
+
+        Node node = (Node) source;
+        if (node.getNodeType() != Node.ELEMENT_NODE) {
+            return null;
+        }
+
+        String name = node.getLocalName();
+        String namespace = node.getNamespaceURI();
+
+        CmisExtensionElement result = null;
+        List<CmisExtensionElement> cmisChildren = new ArrayList<CmisExtensionElement>();
+        StringBuilder value = new StringBuilder();
+
+        NodeList children = node.getChildNodes();
+
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                CmisExtensionElement cimsChild = convertDomToCmisExtensionElement(child);
+                if (cimsChild != null) {
+                    cmisChildren.add(cimsChild);
+                }
+            } else if (child.getNodeType() == Node.TEXT_NODE) {
+                value.append(child.getNodeValue());
+            }
+        }
+
+        Map<String, String> attributes = null;
+        if (node.getAttributes() != null) {
+            attributes = new HashMap<String, String>();
+            for (int i = 0; i < node.getAttributes().getLength(); i++) {
+                Node attrNode = node.getAttributes().item(i);
+                attributes.put(attrNode.getLocalName(), attrNode.getNodeValue());
+            }
+        }
+
+        if (cmisChildren.isEmpty()) {
+            result = new CmisExtensionElementImpl(namespace, name, attributes, value.toString());
+        } else {
+            result = new CmisExtensionElementImpl(namespace, name, attributes, cmisChildren);
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts a CMIS extension element to a DOM node.
+     */
+    private static Node convertCmisExtensionElementToNode(CmisExtensionElement source) {
+        if (source == null) {
+            return null;
+        }
+
+        Document doc = null;
+
+        try {
+            DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+            doc = docBuilder.newDocument();
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Unable to convert extensions!", e);
+        }
+
+        Element root = doc.createElementNS(
+                (source.getNamespace() == null ? DEFAULT_EXTENSION_NS : source.getNamespace()), source.getName());
+        doc.appendChild(root);
+
+        if (source.getValue() != null) {
+            root.appendChild(doc.createTextNode(source.getValue()));
+        } else {
+            for (CmisExtensionElement child : source.getChildren()) {
+                root.appendChild(convertCmisExtensionElementToNode(child, root, doc));
+            }
+        }
+
+        // set attributes
+        if (source.getAttributes() != null) {
+            for (Map.Entry<String, String> e : source.getAttributes().entrySet()) {
+                root.setAttributeNS((source.getNamespace() == null ? DEFAULT_EXTENSION_NS : source.getNamespace()),
+                        e.getKey(), e.getValue());
+            }
+        }
+
+        return root;
+    }
+
+    /**
+     * Converts a CMIS extension element to a DOM node.
+     */
+    private static Node convertCmisExtensionElementToNode(CmisExtensionElement source, Element parent, Document doc) {
+        if (source == null) {
+            return null;
+        }
+
+        Element element = doc.createElementNS(
+                (source.getNamespace() == null ? DEFAULT_EXTENSION_NS : source.getNamespace()), source.getName());
+
+        if (source.getValue() != null) {
+            element.appendChild(doc.createTextNode(source.getValue()));
+        } else {
+            for (CmisExtensionElement child : source.getChildren()) {
+                element.appendChild(convertCmisExtensionElementToNode(child, element, doc));
+            }
+        }
+
+        // set attributes
+        if (source.getAttributes() != null) {
+            for (Map.Entry<String, String> e : source.getAttributes().entrySet()) {
+                element.setAttributeNS((source.getNamespace() == null ? DEFAULT_EXTENSION_NS : source.getNamespace()),
+                        e.getKey(), e.getValue());
+            }
+        }
+
+        return element;
     }
 
     private static boolean convertBoolean(Boolean value, boolean def) {
