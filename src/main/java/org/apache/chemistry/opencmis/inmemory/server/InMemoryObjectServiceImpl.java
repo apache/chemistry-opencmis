@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.inmemory.server;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -52,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
@@ -378,6 +381,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 //        myExtensions.add(new JAXBElement<ExtensionSample>(new QName("http://apache.org/chemistry/opencmis/extensions", "MyExtension"), ExtensionSample.class, new ExtensionSample()));
 //        od.setExtensions(myExtensions);
 
+        String ns = "http://apache.org/opencmis/inmemory";
+        List<CmisExtensionElement> extElements = new ArrayList<CmisExtensionElement>();
+        
+        Map<String, String> attr = new HashMap<String, String>();
+        attr.put("type", so.getTypeId());
+        
+        extElements.add(new CmisExtensionElementImpl(ns, "objectId", attr, objectId));
+        extElements.add(new CmisExtensionElementImpl(ns, "name", null, so.getName()));
+        od.setExtensions(Collections.singletonList(
+                (CmisExtensionElement) new CmisExtensionElementImpl(ns, "exampleExtension",null,  extElements)));
+        
         LOG.debug("stop getObject()");
 
         return od;
