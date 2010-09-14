@@ -41,9 +41,15 @@ public interface QueryConditionProcessor {
     void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode);
 
     // Boolean operators
+    void onPreNot(Tree opNode, Tree leftNode);
     void onNot(Tree opNode, Tree leftNode);
+    void onPostNot(Tree opNode, Tree leftNode);
+    void onPreAnd(Tree opNode, Tree leftNode, Tree rightNode);
     void onAnd(Tree opNode, Tree leftNode, Tree rightNode);
+    void onPostAnd(Tree opNode, Tree leftNode, Tree rightNode);
+    void onPreOr(Tree opNode, Tree leftNode, Tree rightNode);
     void onOr(Tree opNode, Tree leftNode, Tree rightNode);
+    void onPostOr(Tree opNode, Tree leftNode, Tree rightNode);
 
     // Multi-value:
     void onIn(Tree node, Tree colNode, Tree listNode);
@@ -64,5 +70,5 @@ public interface QueryConditionProcessor {
     void onContains(Tree node, Tree colNode, Tree paramNode);
     void onInFolder(Tree node, Tree colNode, Tree paramNode);
     void onInTree(Tree node, Tree colNode, Tree paramNode);
-    void onScore(Tree node, Tree paramNode);
+    void onScore(Tree node);
 }

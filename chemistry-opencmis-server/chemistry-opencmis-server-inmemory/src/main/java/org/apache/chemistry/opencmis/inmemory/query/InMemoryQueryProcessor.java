@@ -348,7 +348,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
     public void onInTree(Tree node, Tree colNode, Tree paramNode) {
         
     }
-    public void onScore(Tree node, Tree paramNode) { 
+    public void onScore(Tree node) { 
         
     }
 

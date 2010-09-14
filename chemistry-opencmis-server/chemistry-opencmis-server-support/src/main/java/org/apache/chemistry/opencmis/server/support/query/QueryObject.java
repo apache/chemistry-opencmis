@@ -418,8 +418,8 @@ public class QueryObject {
         int count = root.getChildCount();
         for (int i=0; i<count; i++) {
             Tree child = root.getChild(i);
-            processWhereNode(child);
-            evalWhereNode(child); // recursive descent
+            evalWhereNode(child);
+//            processWhereNode(child);  // recursive descent
         }
     }
     
@@ -433,88 +433,139 @@ public class QueryObject {
             case CmisQlStrictLexer.WHERE:;
                 break; // ignore
             case CmisQlStrictLexer.EQ:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onEquals(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.NEQ:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onNotEquals(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.GT:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onGreaterThan(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.GTEQ:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onGreaterOrEquals(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.LT:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onLessThan(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.LTEQ:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onLessOrEquals(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
                 
             case CmisQlStrictLexer.NOT:
-                queryProcessor.onNot(node, node.getChild(0));
+                queryProcessor.onPreNot(node, node.getChild(0));
+                queryProcessor.onNot(node, node.getChild(0));                
+                evalWhereNode(node.getChild(0));
+                queryProcessor.onPostNot(node, node.getChild(0));
                 break;
             case CmisQlStrictLexer.AND:
+                queryProcessor.onPreAnd(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onAnd(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
+                queryProcessor.onPostAnd(node, node.getChild(0), node.getChild(1));
                 break;
             case CmisQlStrictLexer.OR:
+                queryProcessor.onPreOr(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onOr(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
+                queryProcessor.onPostOr(node, node.getChild(0), node.getChild(1));
                 break;
                 
             // Multi-value:
             case CmisQlStrictLexer.IN:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onIn(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.NOT_IN:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onNotIn(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.IN_ANY:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onInAny(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.NOT_IN_ANY:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onNotInAny(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.EQ_ANY:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onEqAny(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
 
             // Null comparisons:
             case CmisQlStrictLexer.IS_NULL:
                 queryProcessor.onIsNull(node, node.getChild(0));
+                evalWhereNode(node.getChild(0));
                 break;
             case CmisQlStrictLexer.IS_NOT_NULL:
                 queryProcessor.onIsNotNull(node, node.getChild(0));
+                evalWhereNode(node.getChild(0));
                 break;
 
                 // String matching
             case CmisQlStrictLexer.LIKE:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onIsLike(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
             case CmisQlStrictLexer.NOT_LIKE:
+                evalWhereNode(node.getChild(0));
                 queryProcessor.onIsNotLike(node, node.getChild(0), node.getChild(1));
+                evalWhereNode(node.getChild(1));
                 break;
 
                 // Functions
             case CmisQlStrictLexer.CONTAINS:
-                if (node.getChildCount()==1)
+                if (node.getChildCount()==1) {
                     queryProcessor.onContains(node, null, node.getChild(0));
-                else
+                    evalWhereNode(node.getChild(0));
+                } else {
+                    evalWhereNode(node.getChild(0));
                     queryProcessor.onContains(node, node.getChild(0), node.getChild(1));
+                    evalWhereNode(node.getChild(1));
+                } 
                 break;
             case CmisQlStrictLexer.IN_FOLDER:
-                if (node.getChildCount()==1)
+                if (node.getChildCount()==1) {
                     queryProcessor.onInFolder(node, null, node.getChild(0));
-                else
+                    evalWhereNode(node.getChild(0));
+                } else {
+                    evalWhereNode(node.getChild(0));
                     queryProcessor.onInFolder(node, node.getChild(0), node.getChild(1));
+                    evalWhereNode(node.getChild(1));
+                } 
                 break;
             case CmisQlStrictLexer.IN_TREE:
-                if (node.getChildCount()==1)
+                if (node.getChildCount()==1) {
                     queryProcessor.onInTree(node, null, node.getChild(0));
-                else
+                    evalWhereNode(node.getChild(0));
+                } else {
+                    evalWhereNode(node.getChild(0));
                     queryProcessor.onInTree(node, node.getChild(0), node.getChild(1));
+                    evalWhereNode(node.getChild(1));
+                } 
                 break;
             case CmisQlStrictLexer.SCORE:
-                queryProcessor.onScore(node, node.getChild(0));
+                queryProcessor.onScore(node);
                 break;
                 
             default:

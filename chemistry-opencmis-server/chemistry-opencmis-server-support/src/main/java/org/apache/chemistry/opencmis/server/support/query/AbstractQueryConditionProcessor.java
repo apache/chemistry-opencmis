@@ -55,9 +55,21 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
     abstract public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode);
 
     // Boolean operators
+    public void onPreNot(Tree opNode, Tree leftNode) {        
+    }
     abstract public void onNot(Tree opNode, Tree leftNode);
+    public void onPostNot(Tree opNode, Tree leftNode) {        
+    }
+    public void onPreAnd(Tree opNode, Tree leftNode, Tree rightNode) {        
+    }
     abstract public void onAnd(Tree opNode, Tree leftNode, Tree rightNode);
+    public void onPostAnd(Tree opNode, Tree leftNode, Tree rightNode) {        
+    }
+    public void onPreOr(Tree opNode, Tree leftNode, Tree rightNode) {        
+    }
     abstract public void onOr(Tree opNode, Tree leftNode, Tree rightNode);
+    public void onPostOr(Tree opNode, Tree leftNode, Tree rightNode) {        
+    }
 
     // Multi-value:
     abstract public void onIn(Tree node, Tree colNode, Tree listNode);
@@ -78,7 +90,7 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
     abstract public void onContains(Tree node, Tree colNode, Tree paramNode);
     abstract public void onInFolder(Tree node, Tree colNode, Tree paramNode);
     abstract public void onInTree(Tree node, Tree colNode, Tree paramNode);
-    abstract public void onScore(Tree node, Tree paramNode);
+    abstract public void onScore(Tree node);
 
     // convenience method because everybody needs this piece of code
     static public CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {

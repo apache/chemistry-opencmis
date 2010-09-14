@@ -43,13 +43,13 @@ import org.junit.Test;
 
 public class ProcessQueryTest extends AbstractQueryTest {
     
+    private static Log log = LogFactory.getLog(ProcessQueryTest.class);
+    
     static private class TestQueryProcessor implements QueryConditionProcessor {
 
-        private static Log log = LogFactory.getLog(ProcessQueryTest.class);
-        
         private static final String ON_START = "onStartWasCalled";
         private static final String ON_STOP = "onStopWasCalled";
-        private static final String ON_EQUALS_WASCALLED = "onEqualsWasCalled";
+        private static final String ON_EQUALS = "onEqualsWasCalled";
         private static final String ON_NOT_EQUALS = "onNotEqualsWasCalled";
         private static final String ON_GREATER_THAN = "onGreaterThanWasCalled";
         private static final String ON_GREATER_OR_EQUALS ="onGreaterOrEqualsWasCalled";
@@ -73,61 +73,64 @@ public class ProcessQueryTest extends AbstractQueryTest {
         private static final String ON_SCORE = "onScoreWasCalled";
 
         
-        final Map<String, Boolean> rulesTrackerMap = 
-            new HashMap<String, Boolean>() {
+        final Map<String, Integer> rulesTrackerMap = 
+            new HashMap<String, Integer>() {
                 private static final long serialVersionUID = 1L;
             { 
-                put(ON_START, false);
-                put(ON_STOP, false);
-                put(ON_EQUALS_WASCALLED, false);
-                put(ON_NOT_EQUALS, false);
-                put(ON_GREATER_THAN, false);
-                put(ON_GREATER_OR_EQUALS, false);
-                put(ON_LESS_THAN, false);
-                put(ON_LESS_OR_EQUALS, false);
-                put(ON_NOT, false);
-                put(ON_AND, false);
-                put(ON_OR, false);
-                put(ON_IN, false);
-                put(ON_NOT_IN, false);
-                put(ON_IN_ANY, false);
-                put(ON_NOT_IN_ANY, false);
-                put(ON_EQ_ANY, false);
-                put(ON_IS_NULL, false);
-                put(ON_IS_NOT_NULL, false);
-                put(ON_IS_LIKE, false);
-                put(ON_IS_NOT_LIKE, false);
-                put(ON_CONTAINS, false);
-                put(ON_IN_FOLDER, false);
-                put(ON_IN_TREE, false);
-                put(ON_SCORE, false);
+                put(ON_START, 0);
+                put(ON_STOP, 0);
+                put(ON_EQUALS, 0);
+                put(ON_NOT_EQUALS, 0);
+                put(ON_GREATER_THAN, 0);
+                put(ON_GREATER_OR_EQUALS, 0);
+                put(ON_LESS_THAN, 0);
+                put(ON_LESS_OR_EQUALS, 0);
+                put(ON_NOT, 0);
+                put(ON_AND, 0);
+                put(ON_OR, 0);
+                put(ON_IN, 0);
+                put(ON_NOT_IN, 0);
+                put(ON_IN_ANY, 0);
+                put(ON_NOT_IN_ANY, 0);
+                put(ON_EQ_ANY, 0);
+                put(ON_IS_NULL, 0);
+                put(ON_IS_NOT_NULL, 0);
+                put(ON_IS_LIKE, 0);
+                put(ON_IS_NOT_LIKE, 0);
+                put(ON_CONTAINS, 0);
+                put(ON_IN_FOLDER, 0);
+                put(ON_IN_TREE, 0);
+                put(ON_SCORE, 0);
            }};
+           
+           private int counter;
         
        public TestQueryProcessor() {
-        }
+           counter = 1;
+       }
         
 
        public void onStartProcessing(Tree node) {
             log.debug("TestQueryProcessor:onStartProcessing()");
-            rulesTrackerMap.put(ON_START, true);
+            rulesTrackerMap.put(ON_START, counter++);
             assertEquals(CmisQlStrictLexer.WHERE, node.getType());
        }
 
        public void onStopProcessing() {
            log.debug("TestQueryProcessor:onStopProcessing()");
-           rulesTrackerMap.put(ON_STOP, true);
+           rulesTrackerMap.put(ON_STOP, counter++);
        }
 
 
        public void onEquals(Tree eqNode, Tree leftNode, Tree rightNode) {
-           rulesTrackerMap.put(ON_EQUALS_WASCALLED, true);
+           rulesTrackerMap.put(ON_EQUALS, counter++);
            assertEquals(CmisQlStrictLexer.EQ, eqNode.getType());
            assertTrue(CmisQlStrictLexer.COL==leftNode.getType() || CmisQlStrictLexer.SCORE==leftNode.getType());
            assertTrue(isLiteral(rightNode));
        }
 
        public void onNotEquals(Tree neNode, Tree leftNode, Tree rightNode) {
-           rulesTrackerMap.put(ON_NOT_EQUALS, true);
+           rulesTrackerMap.put(ON_NOT_EQUALS, counter++);
            assertEquals(CmisQlStrictLexer.NEQ, neNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
@@ -136,7 +139,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode) {
-           rulesTrackerMap.put(ON_LESS_OR_EQUALS, true);
+           rulesTrackerMap.put(ON_LESS_OR_EQUALS, counter++);
            assertEquals(CmisQlStrictLexer.LTEQ, leqNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
@@ -145,7 +148,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        public void onLessThan(Tree ltNode, Tree leftNode, Tree rightNode) {
-           rulesTrackerMap.put(ON_LESS_THAN, true);
+           rulesTrackerMap.put(ON_LESS_THAN, counter++);
            assertEquals(CmisQlStrictLexer.LT, ltNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
@@ -154,7 +157,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        public void onGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode) {
-           rulesTrackerMap.put(ON_GREATER_OR_EQUALS, true);
+           rulesTrackerMap.put(ON_GREATER_OR_EQUALS, counter++);
            assertEquals(CmisQlStrictLexer.GTEQ, geNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
@@ -163,7 +166,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        public void onGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode) {
-           rulesTrackerMap.put(ON_GREATER_THAN, true);
+           rulesTrackerMap.put(ON_GREATER_THAN, counter++);
            assertEquals(CmisQlStrictLexer.GT, gtNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
@@ -172,18 +175,18 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        public void onNot(Tree opNode, Tree leftNode) {
-           rulesTrackerMap.put(ON_NOT, true);
+           rulesTrackerMap.put(ON_NOT, counter++);
            assertEquals(CmisQlStrictLexer.NOT, opNode.getType());
        }
 
        public void onAnd(Tree opNode, Tree leftNode, Tree rightNode) {
            assertEquals(CmisQlStrictLexer.AND, opNode.getType());
-           rulesTrackerMap.put(ON_AND, true);
+           rulesTrackerMap.put(ON_AND, counter++);
        }
 
        public void onOr(Tree opNode, Tree leftNode, Tree rightNode) {
            assertEquals(CmisQlStrictLexer.OR, opNode.getType());
-           rulesTrackerMap.put(ON_OR, true);
+           rulesTrackerMap.put(ON_OR, counter++);
        }
 
        public void onIn(Tree opNode, Tree colNode, Tree listNode) {
@@ -194,7 +197,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals("'Joe'", value);            
            value=onLiteral(listNode.getChild(1), String.class);
            assertEquals("'Jim'", value);            
-           rulesTrackerMap.put(ON_IN, true);
+           rulesTrackerMap.put(ON_IN, counter++);
        }
 
        public void onNotIn(Tree node, Tree colNode, Tree listNode) {
@@ -205,7 +208,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals("'Joe'", value);            
            value=onLiteral(listNode.getChild(1), String.class);
            assertEquals("'Jim'", value);            
-           rulesTrackerMap.put(ON_NOT_IN, true);
+           rulesTrackerMap.put(ON_NOT_IN, counter++);
        }
 
        public void onEqAny(Tree node, Tree literalNode, Tree colNode) {
@@ -214,7 +217,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertTrue(isLiteral(literalNode));
            Object value=onLiteral(literalNode, String.class);
            assertEquals("'Joe'", value);            
-           rulesTrackerMap.put(ON_EQ_ANY, true);
+           rulesTrackerMap.put(ON_EQ_ANY, counter++);
        }
 
        public void onInAny(Tree node, Tree colNode, Tree listNode) {
@@ -225,7 +228,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals("'Joe'", value);            
            value=onLiteral(listNode.getChild(1), String.class);
            assertEquals("'Jim'", value);            
-           rulesTrackerMap.put(ON_IN_ANY, true);
+           rulesTrackerMap.put(ON_IN_ANY, counter++);
        }
 
        public void onNotInAny(Tree node, Tree colNode, Tree listNode) {
@@ -236,19 +239,19 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals("'Joe'", value);            
            value=onLiteral(listNode.getChild(1), String.class);
            assertEquals("'Jim'", value);            
-           rulesTrackerMap.put(ON_NOT_IN_ANY, true);
+           rulesTrackerMap.put(ON_NOT_IN_ANY, counter++);
        }
 
        public void onIsNull(Tree nullNode, Tree colNode) {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IS_NULL, nullNode.getType());
-           rulesTrackerMap.put(ON_IS_NULL, true);
+           rulesTrackerMap.put(ON_IS_NULL, counter++);
        }
 
        public void onIsNotNull(Tree notNullNode, Tree colNode) {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IS_NOT_NULL, notNullNode.getType());
-           rulesTrackerMap.put(ON_IS_NOT_NULL, true);
+           rulesTrackerMap.put(ON_IS_NOT_NULL, counter++);
        }
 
        public void onIsLike(Tree node, Tree colNode, Tree stringNode) {
@@ -256,8 +259,8 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, stringNode.getType());
            Object value=onLiteral(stringNode, String.class);
-           assertEquals("'Harry*'", value);            
-           rulesTrackerMap.put(ON_IS_LIKE, true);
+           assertEquals("'Harry%'", value);            
+           rulesTrackerMap.put(ON_IS_LIKE, counter++);
        }
 
        public void onIsNotLike(Tree node, Tree colNode, Tree stringNode) {
@@ -265,34 +268,34 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, stringNode.getType());
            Object value=onLiteral(stringNode, String.class);
-           assertEquals("'Harry*'", value);            
-           rulesTrackerMap.put(ON_IS_NOT_LIKE, true);
+           assertEquals("'Harry%'", value);            
+           rulesTrackerMap.put(ON_IS_NOT_LIKE, counter++);
        }
 
        public void onContains(Tree node, Tree colNode, Tree paramNode) {
            assertEquals(CmisQlStrictLexer.CONTAINS, node.getType());
            assertTrue(colNode==null || CmisQlStrictLexer.STRING_LIT == paramNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, paramNode.getType());
-           rulesTrackerMap.put(ON_CONTAINS, true);
+           rulesTrackerMap.put(ON_CONTAINS, counter++);
        }
 
        public void onInFolder(Tree node, Tree colNode, Tree paramNode) {
            assertEquals(CmisQlStrictLexer.IN_FOLDER, node.getType());
            assertTrue(colNode==null || CmisQlStrictLexer.STRING_LIT == paramNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, paramNode.getType());
-           rulesTrackerMap.put(ON_IN_FOLDER, true);
+           rulesTrackerMap.put(ON_IN_FOLDER, counter++);
        }
 
        public void onInTree(Tree node, Tree colNode, Tree paramNode) {
            assertEquals(CmisQlStrictLexer.IN_TREE, node.getType());
            assertTrue(colNode==null || CmisQlStrictLexer.STRING_LIT == paramNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, paramNode.getType());
-           rulesTrackerMap.put(ON_IN_TREE, true);
+           rulesTrackerMap.put(ON_IN_TREE, counter++);
        }
 
-       public void onScore(Tree node, Tree paramNode) {
+       public void onScore(Tree node) {
            assertEquals(CmisQlStrictLexer.SCORE, node.getType());
-           rulesTrackerMap.put(ON_SCORE, true);
+           rulesTrackerMap.put(ON_SCORE, counter++);
        }
 
 
@@ -331,6 +334,42 @@ public class ProcessQueryTest extends AbstractQueryTest {
            }
        }
 
+
+    public void onPostAnd(Tree opNode, Tree leftNode, Tree rightNode) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    public void onPostNot(Tree opNode, Tree leftNode) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    public void onPostOr(Tree opNode, Tree leftNode, Tree rightNode) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    public void onPreAnd(Tree opNode, Tree leftNode, Tree rightNode) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    public void onPreNot(Tree opNode, Tree leftNode) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    public void onPreOr(Tree opNode, Tree leftNode, Tree rightNode) {
+        // TODO Auto-generated method stub
+        
+    }
+
     }
 
     private TypeManagerImpl tm;
@@ -361,14 +400,14 @@ public class ProcessQueryTest extends AbstractQueryTest {
     public void testStartStopProcessing() {
         String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100"; 
         traverseStatementAndCatchExc(statement); // calls query processor
-        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_START));
-        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_STOP));
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_START) > 0);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_STOP) > 0);
     }
 
     @Test
     public void testEq() {
         String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100"; 
-        testStatement(statement, TestQueryProcessor.ON_EQUALS_WASCALLED);
+        testStatement(statement, TestQueryProcessor.ON_EQUALS);
     }
 
     @Test
@@ -409,14 +448,24 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
     @Test
     public void testAnd() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100 AND Title='Harry'"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100 AND Title LIKE 'Harry%'"; 
         testStatementMultiRule(statement, TestQueryProcessor.ON_AND);
-    }
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_START) == 1);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_EQUALS) == 2);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_AND) == 3);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_IS_LIKE) == 4);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_STOP) == 5);
+    }    
 
     @Test
     public void testOr() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100 OR Title='Harry'"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100 OR Title LIKE 'Harry%'"; 
         testStatementMultiRule(statement,TestQueryProcessor.ON_OR);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_START) == 1);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_EQUALS) == 2);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_OR) == 3);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_IS_LIKE) == 4);
+        assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_STOP) == 5);
     }
 
     @Test
@@ -463,13 +512,13 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
     @Test
     public void testOnLikeWasCalled() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author LIKE 'Harry*'"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author LIKE 'Harry%'"; 
         testStatement(statement, TestQueryProcessor.ON_IS_LIKE);        
     }
 
     @Test
     public void testOnNotLikeWasCalled() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author NOT LIKE 'Harry*'"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author NOT LIKE 'Harry%'"; 
         testStatement(statement, TestQueryProcessor.ON_IS_NOT_LIKE);        
     }
 
@@ -520,7 +569,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
     private void testStatementMultiRule(String statement, String ruleAssertion) {
         traverseStatementAndCatchExc(statement); // calls query processor
         Tree whereRoot = getWhereTree(parserTree);
-        assertTrue(queryProcessor.rulesTrackerMap.get(ruleAssertion));
+        assertTrue(queryProcessor.rulesTrackerMap.get(ruleAssertion) > 0);
     }
 
     private void testStatement(String statement, String ruleAssertion) {
@@ -529,12 +578,12 @@ public class ProcessQueryTest extends AbstractQueryTest {
     }
 
     private void checkOtherRulesNotCalled(String ruleAssertion) {
-        for (Entry<String, Boolean> e : queryProcessor.rulesTrackerMap.entrySet()) {
+        for (Entry<String, Integer> e : queryProcessor.rulesTrackerMap.entrySet()) {
             if (!e.getKey().equals(ruleAssertion) && !e.getKey().equals("onPropertyValueWasCalled")
                     && !e.getKey().equals(TestQueryProcessor.ON_START) && !e.getKey().equals(TestQueryProcessor.ON_STOP)
                     && !e.getKey().contains("Literal"))
                 assertFalse("Rule " + e.getKey() + " was expected not to be executed, but was executed.", 
-                        queryProcessor.rulesTrackerMap.get(e.getKey()));
+                        queryProcessor.rulesTrackerMap.get(e.getKey()) > 0);
         }
     }
 
