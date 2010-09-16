@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class AbstractExtensionTestIT {
@@ -60,11 +61,13 @@ public abstract class AbstractExtensionTestIT {
      * Simple extension test.
      */
     @Test
+    @Ignore
     public void testExtensions() {
         Folder rootFolder = getSession().getRootFolder();
 
         // only test getting extensions without check
         // (the InMemory repository does not expose extensions yet)
+        @SuppressWarnings("unused")
         List<CmisExtensionElement> extensions = null;
         extensions = rootFolder.getExtensions(ExtensionLevel.OBJECT);
         extensions = rootFolder.getExtensions(ExtensionLevel.PROPERTIES);
