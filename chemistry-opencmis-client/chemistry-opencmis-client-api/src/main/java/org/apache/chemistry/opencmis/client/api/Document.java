@@ -86,6 +86,14 @@ public interface Document extends FileableCmisObject {
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
 
     /**
+     * If this is a PWC (private working copy) it performs a check in. If this
+     * is not a PWC it an exception will be thrown.
+     * 
+     * @return new document id
+     */
+    ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment);
+
+    /**
      * Fetches the latest major or minor version of this document.
      * 
      * @param major
@@ -154,5 +162,9 @@ public interface Document extends FileableCmisObject {
      */
     Document copy(List<Property<?>> properties, VersioningState versioningState, List<Policy> policies,
             List<Ace> addACEs, List<Ace> removeACEs);
+    /**
+     * Creates a (content) copy of this document.
+     */
+    Document copy(List<Property<?>> properties, VersioningState versioningState);
 
 }

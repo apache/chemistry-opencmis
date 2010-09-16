@@ -442,4 +442,22 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     public List<String> getPaths() {
         return Collections.singletonList(getPath());
     }
+
+    public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
+            VersioningState versioningState, OperationContext context) {
+        return this.createDocument(properties, contentStream, versioningState, null, null, null, context);
+    }
+
+    public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties,
+            VersioningState versioningState, OperationContext context) {
+        return this.createDocumentFromSource(source, properties, versioningState, null, null, null, context);
+    }
+
+    public Folder createFolder(Map<String, ?> properties, OperationContext context) {
+        return this.createFolder(properties, null, null, null, context);
+    }
+
+    public Policy createPolicy(Map<String, ?> properties, OperationContext context) {
+        return this.createPolicy(properties, null, null, null, context);
+    }
 }

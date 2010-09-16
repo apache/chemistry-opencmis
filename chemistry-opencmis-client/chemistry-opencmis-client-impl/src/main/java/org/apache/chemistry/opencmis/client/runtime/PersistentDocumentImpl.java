@@ -395,4 +395,12 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
         return getSession().createObjectId(objectIdHolder.getValue());
     }
+
+    public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment) {
+        return this.checkIn(major, properties, contentStream, checkinComment, null, null, null);
+    }
+
+    public Document copy(List<Property<?>> properties, VersioningState versioningState) {
+        return this.copy(properties, versioningState, null, null, null);
+    }
 }

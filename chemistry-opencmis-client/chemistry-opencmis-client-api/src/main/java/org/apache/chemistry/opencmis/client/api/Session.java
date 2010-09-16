@@ -280,6 +280,17 @@ public interface Session {
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
 
     /**
+     * Creates a new document.
+     * 
+     * @return the object id of the new document
+     * 
+     * @see Folder#createDocument(Map, ContentStream, VersioningState, List,
+     *      List, List, OperationContext)
+     */
+    ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
+            VersioningState versioningState);
+
+    /**
      * Creates a new document from a source document.
      * 
      * @return the object id of the new document
@@ -289,6 +300,17 @@ public interface Session {
      */
     ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
+
+    /**
+     * Creates a new document from a source document.
+     * 
+     * @return the object id of the new document
+     * 
+     * @see Folder#createDocumentFromSource(ObjectId, Map, VersioningState,
+     *      List, List, List, OperationContext)
+     */
+    ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
+            VersioningState versioningState);
 
     /**
      * Creates a new folder.
@@ -301,6 +323,15 @@ public interface Session {
             List<Ace> removeAces);
 
     /**
+     * Creates a new folder.
+     * 
+     * @return the object id of the new folder
+     * 
+     * @see Folder#createFolder(Map, List, List, List, OperationContext)
+     */
+    ObjectId createFolder(Map<String, ?> properties, ObjectId folderId);
+
+    /**
      * Creates a new policy.
      * 
      * @return the object id of the new policy
@@ -311,10 +342,26 @@ public interface Session {
             List<Ace> removeAces);
 
     /**
+     * Creates a new policy.
+     * 
+     * @return the object id of the new policy
+     * 
+     * @see Folder#createPolicy(Map, List, List, List, OperationContext)
+     */
+    ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId);
+
+    /**
      * Creates a new relationship.
      * 
      * @return the object id of the new relationship
      */
     ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces);
+
+    /**
+     * Creates a new relationship.
+     * 
+     * @return the object id of the new relationship
+     */
+    ObjectId createRelationship(Map<String, ?> properties);
 }

@@ -51,7 +51,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         properties.put(PropertyIds.NAME, folderName);
         properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
 
-        ObjectId id = this.session.createFolder(properties, parentId, null, null, null);
+        ObjectId id = this.session.createFolder(properties, parentId);
         assertNotNull(id);
     }
 
@@ -75,8 +75,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
                 mimetype, in1);
         assertNotNull(contentStream);
 
-        ObjectId id = this.session.createDocument(properties, parentId, contentStream, VersioningState.NONE, null,
-                null, null);
+        ObjectId id = this.session.createDocument(properties, parentId, contentStream, VersioningState.NONE);
         assertNotNull(id);
 
         // verify content
@@ -105,7 +104,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
             properties.put(PropertyIds.NAME, name);
 
             ObjectId dstDocumentId = this.session.createDocumentFromSource(srcDocument, properties, parentFolder,
-                    VersioningState.NONE, null, null, null);
+                    VersioningState.NONE);
             assertNotNull(dstDocumentId);
             Document dstDocument = (Document) this.session.getObject(dstDocumentId);
             String dstContent = this.getContentAsString(dstDocument.getContentStream());
@@ -239,7 +238,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
                 mimetype, in1);
         assertNotNull(contentStream);
 
-        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE, null, null, null);
+        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE);
         assertNotNull(id);
 
         // set and verify content
@@ -275,7 +274,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
                 mimetype, in1);
         assertNotNull(contentStream);
 
-        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE, null, null, null);
+        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE);
         assertNotNull(id);
 
         // set and verify content
@@ -310,8 +309,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
                 mimetype, in1);
         assertNotNull(contentStream1);
 
-        ObjectId id = this.session.createDocument(properties, parentId, contentStream1, VersioningState.NONE, null,
-                null, null);
+        ObjectId id = this.session.createDocument(properties, parentId, contentStream1, VersioningState.NONE);
         assertNotNull(id);
 
         // set and verify content
@@ -356,8 +354,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
                 mimetype, in1);
         assertNotNull(contentStream1);
 
-        ObjectId id = this.session.createDocument(properties, parentId, contentStream1, VersioningState.NONE, null,
-                null, null);
+        ObjectId id = this.session.createDocument(properties, parentId, contentStream1, VersioningState.NONE);
         assertNotNull(id);
 
         // set and verify content

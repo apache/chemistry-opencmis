@@ -664,4 +664,26 @@ public class PersistentSessionImpl implements Session, Serializable {
         return createObjectId(newId);
     }
 
+    public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
+            VersioningState versioningState) {
+        return this.createDocument(properties, folderId, contentStream, versioningState, null, null, null);
+    }
+
+    public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
+            VersioningState versioningState) {
+        return this.createDocumentFromSource(source, properties, folderId, versioningState, null, null, null);
+    }
+
+    public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId) {
+        return this.createFolder(properties, folderId, null, null, null);
+    }
+
+    public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId) {
+        return this.createPolicy(properties, folderId, null, null, null);
+    }
+
+    public ObjectId createRelationship(Map<String, ?> properties) {
+        return this.createRelationship(properties, null, null, null);
+    }
+
 }

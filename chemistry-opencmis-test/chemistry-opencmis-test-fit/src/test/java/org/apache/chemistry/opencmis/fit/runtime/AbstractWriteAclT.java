@@ -66,7 +66,7 @@ public abstract class AbstractWriteAclT extends AbstractSessionTest {
         aces.add(this.session.getObjectFactory().createAce("everyone", permissions));
 
         // create document
-        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE, null, null, null);
+        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE);
         assertNotNull(id);
 
         // get document for id

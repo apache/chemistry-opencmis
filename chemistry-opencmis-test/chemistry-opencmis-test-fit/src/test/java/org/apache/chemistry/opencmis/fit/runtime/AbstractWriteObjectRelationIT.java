@@ -53,7 +53,7 @@ public abstract class AbstractWriteObjectRelationIT extends AbstractSessionTest 
         properties.put(PropertyIds.SOURCE_ID, document1.getId());
         properties.put(PropertyIds.TARGET_ID, document2.getId());
 
-        ObjectId id = this.session.createRelationship(properties, null, null, null);
+        ObjectId id = this.session.createRelationship(properties);
 
         ObjectType ot = document1.getType();
         ItemIterable<Relationship> relations = document1.getRelationships(true, RelationshipDirection.EITHER, ot,

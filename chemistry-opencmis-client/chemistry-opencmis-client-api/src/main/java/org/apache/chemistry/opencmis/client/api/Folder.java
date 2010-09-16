@@ -45,6 +45,15 @@ public interface Folder extends FileableCmisObject {
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
 
     /**
+     * Creates a new document in this folder.
+     * 
+     * @return the new document object or <code>null</code> if the parameter
+     *         <code>context</code> was set to <code>null</code>
+     */
+    Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState,
+            OperationContext context);
+
+    /**
      * Creates a new document from a source document in this folder.
      * 
      * @return the new document object or <code>null</code> if the parameter
@@ -52,6 +61,15 @@ public interface Folder extends FileableCmisObject {
      */
     Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
+
+    /**
+     * Creates a new document from a source document in this folder.
+     * 
+     * @return the new document object or <code>null</code> if the parameter
+     *         <code>context</code> was set to <code>null</code>
+     */
+    Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState,
+            OperationContext context);
 
     /**
      * Creates a new subfolder in this folder.
@@ -63,6 +81,14 @@ public interface Folder extends FileableCmisObject {
             OperationContext context);
 
     /**
+     * Creates a new subfolder in this folder.
+     * 
+     * @return the new folder object or <code>null</code> if the parameter
+     *         <code>context</code> was set to <code>null</code>
+     */
+    Folder createFolder(Map<String, ?> properties, OperationContext context);
+
+    /**
      * Creates a new policy in this folder.
      * 
      * @return the new policy object or <code>null</code> if the parameter
@@ -70,6 +96,14 @@ public interface Folder extends FileableCmisObject {
      */
     Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context);
+
+    /**
+     * Creates a new policy in this folder.
+     * 
+     * @return the new policy object or <code>null</code> if the parameter
+     *         <code>context</code> was set to <code>null</code>
+     */
+    Policy createPolicy(Map<String, ?> properties, OperationContext context);
 
     /**
      * Deletes this folder and all subfolders.
