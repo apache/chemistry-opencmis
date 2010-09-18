@@ -201,7 +201,7 @@ public final class AtomPubUtils {
     @SuppressWarnings("unchecked")
     public static <T> T getEnumParameter(HttpServletRequest request, String name, Class<T> clazz) {
         String value = getStringParameter(request, name);
-        if (value == null) {
+        if ((value == null) || (value.length() == 0)) {
             return null;
         }
 
@@ -335,8 +335,8 @@ public final class AtomPubUtils {
 
         if (info.getRenditionInfos() != null) {
             for (RenditionInfo ri : info.getRenditionInfos()) {
-                entry.writeAlternateLink(compileUrl(baseUrl, RESOURCE_CONTENT, ri.getId()), ri.getContenType(), ri
-                        .getKind(), ri.getTitle(), ri.getLength());
+                entry.writeAlternateLink(compileUrl(baseUrl, RESOURCE_CONTENT, ri.getId()), ri.getContenType(),
+                        ri.getKind(), ri.getTitle(), ri.getLength());
             }
         }
 
@@ -386,8 +386,8 @@ public final class AtomPubUtils {
         feed.startFeed(false);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(), folderInfo
-                .getLastModificationDate(), null, null);
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
+                folderInfo.getLastModificationDate(), null, null);
 
         // write links
         feed.writeServiceLink(baseUrl.toString(), repositoryId);

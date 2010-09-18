@@ -187,14 +187,16 @@ public final class RepositoryService {
 
                 // - folder tree
                 if (supportsFolderTree) {
-                    serviceDoc.writeLink(Constants.REP_REL_FOLDERTREE, compileUrl(baseUrl, RESOURCE_FOLDERTREE,
-                            infoData.getRootFolderId()), Constants.MEDIATYPE_DESCENDANTS, null);
+                    serviceDoc.writeLink(Constants.REP_REL_FOLDERTREE,
+                            compileUrl(baseUrl, RESOURCE_FOLDERTREE, infoData.getRootFolderId()),
+                            Constants.MEDIATYPE_DESCENDANTS, null);
                 }
 
                 // - root descendants
                 if (supportsRootDescendants) {
-                    serviceDoc.writeLink(Constants.REP_REL_ROOTDESC, compileUrl(baseUrl, RESOURCE_DESCENDANTS, infoData
-                            .getRootFolderId()), Constants.MEDIATYPE_DESCENDANTS, infoData.getRootFolderId());
+                    serviceDoc.writeLink(Constants.REP_REL_ROOTDESC,
+                            compileUrl(baseUrl, RESOURCE_DESCENDANTS, infoData.getRootFolderId()),
+                            Constants.MEDIATYPE_DESCENDANTS, infoData.getRootFolderId());
                 }
 
                 // - changes
@@ -207,12 +209,12 @@ public final class RepositoryService {
 
                 // - object by id
                 String url = compileUrl(baseUrl, RESOURCE_OBJECTBYID, null)
-                        + "?id={id}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}";
+                        + "?id={id}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}&includePolicyIds={includePolicyIds}&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
                 serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_OBJECT_BY_ID, Constants.MEDIATYPE_ENTRY);
 
                 // - object by path
                 url = compileUrl(baseUrl, RESOURCE_OBJECTBYPATH, null)
-                        + "?path={path}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}";
+                        + "?path={path}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}&includePolicyIds={includePolicyIds}&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
                 serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_OBJECT_BY_PATH, Constants.MEDIATYPE_ENTRY);
 
                 // - type by id
