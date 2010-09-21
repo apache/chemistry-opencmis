@@ -28,22 +28,36 @@ public interface Relationship extends CmisObject {
     // relationship specific properties
 
     /**
-     * Gets the source object.
+     * Gets the source object. If the source object id is invalid,
+     * <code>null</code> will be returned.
      */
-    CmisObject getSource(); // cmis:sourceId
+    CmisObject getSource();
 
     /**
-     * Gets the source object using the given {@link OperationContext}.
+     * Gets the source object using the given {@link OperationContext}. If the
+     * source object id is invalid, <code>null</code> will be returned.
      */
     CmisObject getSource(OperationContext context);
 
     /**
-     * Gets the target object.
+     * Gets the source object id.
      */
-    CmisObject getTarget(); // cmis:targetId
+    ObjectId getSourceId(); // cmis:sourceId
 
     /**
-     * Gets the target object using the given {@link OperationContext}.
+     * Gets the target object. If the target object id is invalid,
+     * <code>null</code> will be returned.
+     */
+    CmisObject getTarget();
+
+    /**
+     * Gets the target object using the given {@link OperationContext}. If the
+     * target object id is invalid, <code>null</code> will be returned.
      */
     CmisObject getTarget(OperationContext context);
+
+    /**
+     * Gets the target object id.
+     */
+    ObjectId getTargetId(); // cmis:targetId
 }

@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.runtime;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Relationship;
@@ -35,60 +36,57 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
         initialize(session, objectType, objectData, context);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Relationship#getSource()
-     */
     public CmisObject getSource() {
         return getSource(getSession().getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Relationship#getSource()
-     */
     public CmisObject getSource(OperationContext context) {
         readLock();
         try {
-            String sourceId = getPropertyValue(PropertyIds.SOURCE_ID);
+            ObjectId sourceId = getSourceId();
             if (sourceId == null) {
                 return null;
             }
 
-            return getSession().getObject(getSession().createObjectId(sourceId), context);
+            return getSession().getObject(sourceId, context);
         } finally {
             readUnlock();
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Relationship#getTarget()
-     */
+    public ObjectId getSourceId() {
+        String sourceId = getPropertyValue(PropertyIds.SOURCE_ID);
+        if ((sourceId == null) || (sourceId.length() == 0)) {
+            return null;
+        }
+
+        return getSession().createObjectId(sourceId);
+    }
+
     public CmisObject getTarget() {
         return getTarget(getSession().getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Relationship#getTarget()
-     */
     public CmisObject getTarget(OperationContext context) {
         readLock();
         try {
-            String targetId = getPropertyValue(PropertyIds.TARGET_ID);
+            ObjectId targetId = getTargetId();
             if (targetId == null) {
                 return null;
             }
 
-            return getSession().getObject(getSession().createObjectId(targetId), context);
+            return getSession().getObject(targetId, context);
         } finally {
             readUnlock();
         }
     }
 
+    public ObjectId getTargetId() {
+        String targetId = getPropertyValue(PropertyIds.TARGET_ID);
+        if ((targetId == null) || (targetId.length() == 0)) {
+            return null;
+        }
+
+        return getSession().createObjectId(targetId);
+    }
 }
