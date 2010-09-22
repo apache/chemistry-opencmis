@@ -20,9 +20,6 @@ package org.apache.chemistry.opencmis.commons;
 
 /**
  * Collection of CMIS property ids.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public final class PropertyIds {
 
