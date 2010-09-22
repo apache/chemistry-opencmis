@@ -61,6 +61,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
     public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId, String typeId,
             Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
+        boolean inclPropDefs = includePropertyDefinitions == null ? false : includePropertyDefinitions;
         getRepositoryInfoFromStoreManager(repositoryId); // just to check if
         // repository
         // exists
@@ -75,7 +76,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
             children = fStoreManager.getRootTypes(repositoryId);
         } else {
             children = getTypeDescendants(context, repositoryId, typeId, BigInteger.valueOf(1),
-                    includePropertyDefinitions, null);
+                    inclPropDefs, null);
         }
         result.setNumItems(BigInteger.valueOf(children.size()));
         result.setHasMoreItems(children.size() > max - skip);
@@ -110,7 +111,8 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         getRepositoryInfoFromStoreManager(repositoryId); // just to check if
         // repository
         // exists
-
+        boolean inclPropDefs = includePropertyDefinitions == null ? false : includePropertyDefinitions;
+        
         if (depth != null && depth.intValue() == 0)
             throw new CmisInvalidArgumentException("depth == 0 is illegal in getTypeDescendants");
 
@@ -118,10 +120,10 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         if (typeId == null) {
             // spec says that depth must be ignored in this case
             Collection<TypeDefinitionContainer> tmp = fStoreManager.getTypeDefinitionList(repositoryId,
-                    includePropertyDefinitions);
+                    inclPropDefs);
             result = new ArrayList<TypeDefinitionContainer>(tmp);
         } else {
-            TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId, includePropertyDefinitions,
+            TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId, inclPropDefs,
                     depth == null ? -1 : depth.intValue());
             if (tc == null)
                 throw new CmisInvalidArgumentException("unknown type id: " + typeId);
