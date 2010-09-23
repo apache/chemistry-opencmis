@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,12 +72,37 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
      *            the property
      */
     public void addProperty(PropertyData<?> property) {
-        if (property == null) {
+        if ((property == null) || (property.getId() == null)) {
             return;
         }
 
+        removeProperty(property.getId());
+
         propertyList.add(property);
         properties.put(property.getId(), property);
+    }
+
+    /**
+     * Removes a property.
+     * 
+     * @param id
+     *            the property id
+     */
+    public void removeProperty(String id) {
+        if (id == null) {
+            return;
+        }
+
+        Iterator<PropertyData<?>> iterator = propertyList.iterator();
+        while (iterator.hasNext()) {
+            PropertyData<?> property = iterator.next();
+            if (id.equals(property.getId())) {
+                iterator.remove();
+                break;
+            }
+        }
+
+        properties.remove(id);
     }
 
     @Override
