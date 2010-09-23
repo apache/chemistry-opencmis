@@ -178,23 +178,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         return so == null ? null : so.getId();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.opencmis.server.spi.CmisObjectService#create(org.opencmis.server.
-     * spi.CallContext, java.lang.String,
-     * org.opencmis.client.provider.PropertiesData, java.lang.String,
-     * org.opencmis.client.provider.ContentStreamData,
-     * org.opencmis.commons.enums.VersioningState,
-     * org.opencmis.client.provider.ExtensionsData,
-     * org.opencmis.server.spi.ObjectInfoHandler)
-     * 
-     * An additional create call compared to the ObjectService from the CMIS
-     * spec. This one is needed because the Atom binding in the server
-     * implementation does not know what kind of object needs to be created.
-     * Also the ObjectInfoHandler needs to be filled.
-     */
     @SuppressWarnings("unchecked")
     public String create(CallContext context, String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies,
@@ -346,9 +329,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     + " does not refer to a document or version, but only those can have content");
 
         ContentStream csd = getContentStream(so, streamId, offset, length);
-        
+
         if (null == csd)
-            throw new CmisConstraintException("Object " + so.getId() + " does not have content."); 
+            throw new CmisConstraintException("Object " + so.getId() + " does not have content.");
 
         LOG.debug("stop getContentStream()");
         return csd;
@@ -375,7 +358,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
-        
+
 //        // fill an example extension
 //        List<Object> myExtensions = new ArrayList<Object>();
 //        myExtensions.add(new JAXBElement<ExtensionSample>(new QName("http://apache.org/chemistry/opencmis/extensions", "MyExtension"), ExtensionSample.class, new ExtensionSample()));
@@ -383,15 +366,15 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         String ns = "http://apache.org/opencmis/inmemory";
         List<CmisExtensionElement> extElements = new ArrayList<CmisExtensionElement>();
-        
+
         Map<String, String> attr = new HashMap<String, String>();
         attr.put("type", so.getTypeId());
-        
+
         extElements.add(new CmisExtensionElementImpl(ns, "objectId", attr, objectId));
         extElements.add(new CmisExtensionElementImpl(ns, "name", null, so.getName()));
         od.setExtensions(Collections.singletonList(
                 (CmisExtensionElement) new CmisExtensionElementImpl(ns, "exampleExtension",null,  extElements)));
-        
+
         LOG.debug("stop getObject()");
 
         return od;
@@ -627,7 +610,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
             if (newName == null || newName.equals(""))
                 throw new CmisConstraintException("updateProperties failed, name must not be empty.");
-                
+
             so.rename((String) pd.getFirstValue()); // note: this does persist
             hasUpdatedName = true;
         }
@@ -719,7 +702,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
 
         TypeValidator.validateVersionStateForCreate((DocumentTypeDefinition) typeDef, versioningState);
-        
+
         // set properties that are not set but have a default:
         Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
         if (propMapNew != propMap) {
@@ -728,13 +711,13 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         TypeValidator.validateProperties(typeDef, properties, true);
-        
+
         // set user, creation date, etc.
         if (user == null)
             user = "unknown";
 
         StoredObject so = null;
-        
+
         // check if content stream parameters are set and if not set some defaults
         if (null != contentStream && (contentStream.getFileName() == null || contentStream.getFileName().length() == 0 ||
             contentStream.getMimeType() == null || contentStream.getMimeType().length() == 0)) {
@@ -883,7 +866,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     /**
      * Recursively delete a tree by traversing it and first deleting all
      * children and then the object itself
-     * 
+     *
      * @param folderStore
      * @param parentFolder
      * @param continueOnFailure
@@ -929,7 +912,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private Map<String, PropertyData<?>> setDefaultProperties(TypeDefinition typeDef, Map<String, PropertyData<?>> properties) {
         Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
         boolean hasCopied = false;
-        
+
         for ( PropertyDefinition<?> propDef : propDefs.values()) {
             String propId = propDef.getId();
             List<?> defaultVal = propDef.getDefaultValue();
@@ -939,7 +922,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     properties = new HashMap<String, PropertyData<?>>(properties); // copy because it is an unmodified collection
                     hasCopied = true;
                 }
-                if (propDef.getPropertyType() == PropertyType.BOOLEAN) 
+                if (propDef.getPropertyType() == PropertyType.BOOLEAN)
                     pd = fStoreManager.getObjectFactory().createPropertyBooleanData(propId, (List<Boolean>)defaultVal);
                 else if (propDef.getPropertyType() == PropertyType.DATETIME)
                     pd = fStoreManager.getObjectFactory().createPropertyDateTimeData(propId, (List<GregorianCalendar>)defaultVal);
