@@ -62,9 +62,8 @@ import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
 /**
  * Object Service AtomPub client.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectService {
 
@@ -75,18 +74,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         setSession(session);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createDocument(java
-     * .lang.String, org.apache.opencmis.client.provider.PropertiesData,
-     * java.lang.String, org.apache.opencmis.client.provider.ContentStreamData,
-     * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
@@ -133,35 +120,12 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return entry.getId();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createDocumentFromSource
-     * (java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.PropertiesData, java.lang.String,
-     * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addACEs, Acl removeACEs,
             ExtensionsData extension) {
         throw new CmisNotSupportedException("createDocumentFromSource is not supported by the AtomPub binding!");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createFolder(java.lang
-     * .String, org.apache.opencmis.client.provider.PropertiesData,
-     * java.lang.String, java.util.List,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         checkCreateProperties(properties);
@@ -198,17 +162,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return entry.getId();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createPolicy(java.lang
-     * .String, org.apache.opencmis.client.provider.PropertiesData,
-     * java.lang.String, java.util.List,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         checkCreateProperties(properties);
@@ -245,16 +198,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return entry.getId();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createRelationship(
-     * java.lang.String, org.apache.opencmis.client.provider.PropertiesData,
-     * java.util.List, org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         checkCreateProperties(properties);
@@ -302,16 +245,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return entry.getId();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#updateProperties(java
-     * .lang.String, org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.PropertiesData,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         // we need an object id
@@ -395,14 +328,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#deleteObject(java.lang
-     * .String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
 
         // find the link
@@ -418,15 +343,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         delete(url);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#deleteTree(java.lang
-     * .String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.UnfileObject, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
 
@@ -453,14 +369,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getAllowableActions
-     * (java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         // find the link
         String link = loadLink(repositoryId, objectId, Constants.REL_ALLOWABLEACTIONS,
@@ -480,14 +388,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return convert(allowableActions.getAllowableActions());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getContentStream(java
-     * .lang.String, java.lang.String, java.lang.String, java.math.BigInteger,
-     * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
         ContentStreamImpl result = new ContentStreamImpl();
@@ -518,16 +418,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getObject(java.lang
-     * .String, java.lang.String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.lang.Boolean, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeACL, ExtensionsData extension) {
@@ -536,16 +426,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
                 includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeACL, extension);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getObjectByPath(java
-     * .lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.lang.Boolean, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeACL, ExtensionsData extension) {
@@ -554,14 +434,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
                 includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeACL, extension);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getProperties(java.
-     * lang.String, java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         ObjectData object = getObjectInternal(repositoryId, IdentifierType.ID, objectId, ReturnVersion.THIS, filter,
                 Boolean.FALSE, IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, extension);
@@ -569,14 +441,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return object.getProperties();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getRenditions(java.
-     * lang.String, java.lang.String, java.lang.String, java.math.BigInteger,
-     * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         ObjectData object = getObjectInternal(repositoryId, IdentifierType.ID, objectId, ReturnVersion.THIS,
@@ -591,14 +455,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#moveObject(java.lang
-     * .String, org.apache.opencmis.client.provider.Holder, java.lang.String,
-     * java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
@@ -636,16 +492,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         objectId.setValue(entry.getId());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#setContentStream(java
-     * .lang.String, org.apache.opencmis.client.provider.Holder,
-     * java.lang.Boolean, org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.ContentStreamData,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         // we need an object id
@@ -698,15 +544,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#deleteContentStream
-     * (java.lang.String, org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         // we need an object id
