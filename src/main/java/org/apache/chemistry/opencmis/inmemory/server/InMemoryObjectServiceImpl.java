@@ -901,7 +901,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     private ContentStream getContentStream(StoredObject so, String streamId, BigInteger offset, BigInteger length) {
-
+        if (streamId != null) {
+            return null;
+        }
         long lOffset = offset == null ? 0 : offset.longValue();
         long lLength = length == null ? -1 : length.longValue();
         ContentStream csd = ((Content) so).getContent(lOffset, lLength);
