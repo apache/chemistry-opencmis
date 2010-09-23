@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
@@ -260,8 +261,14 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
         String objectId = getObjectId();
 
         // get the stream
-        ContentStream contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), objectId,
-                streamId, null, null, null);
+        ContentStream contentStream;
+        try {
+            contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), objectId, streamId,
+                    null, null, null);
+        } catch (CmisConstraintException e) {
+            // no content stream
+            return null;
+        }
 
         // the AtomPub binding doesn't return a file name
         // -> get the file name from properties, if present

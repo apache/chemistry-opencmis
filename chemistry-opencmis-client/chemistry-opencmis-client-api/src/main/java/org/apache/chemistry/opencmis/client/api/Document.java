@@ -41,12 +41,16 @@ public interface Document extends FileableCmisObject {
 
     /**
      * Retrieves the content stream of this document.
+     * 
+     * @return the content stream, or {@code null}
      */
     ContentStream getContentStream();
 
     /**
      * Retrieves the content stream that is associated with the given stream id.
      * This is usually a rendition of the document.
+     * 
+     * @return the content stream, or {@code null}
      */
     ContentStream getContentStream(String streamId);
 

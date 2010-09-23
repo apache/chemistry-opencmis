@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -396,7 +397,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         String link = loadLink(repositoryId, objectId, AtomPubParser.LINK_REL_CONTENT, null);
 
         if (link == null) {
-            throwLinkException(repositoryId, objectId, AtomPubParser.LINK_REL_CONTENT, null);
+            throw new CmisConstraintException("No content stream");
         }
 
         UrlBuilder url = new UrlBuilder(link);

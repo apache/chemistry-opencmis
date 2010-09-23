@@ -51,6 +51,10 @@ public abstract class AbstractReadOnlyContentStreamIT extends AbstractSessionTes
 
         Assert.assertNotNull(b);
         Assert.assertTrue(b.length > 0);
+
+        // unknown content stream -> null
+        s = document.getContentStream("nosuchstream");
+        Assert.assertNull(s);
     }
 
 }
