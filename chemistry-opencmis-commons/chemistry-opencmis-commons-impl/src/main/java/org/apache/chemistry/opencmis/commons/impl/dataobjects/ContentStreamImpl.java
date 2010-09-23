@@ -18,8 +18,10 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -48,6 +50,23 @@ public class ContentStreamImpl extends AbstractExtensionData implements ContentS
         setMimeType(mimetype);
         setFileName(filename);
         setStream(stream);
+    }
+
+    /**
+     * Convenience constructor for tests.
+     */
+    public ContentStreamImpl(String filename, String mimetype, String string) {
+        byte[] bytes;
+        try {
+            bytes = string.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // cannot happen
+            bytes = string.getBytes();
+        }
+        setLength(BigInteger.valueOf(bytes.length));
+        setMimeType(mimetype);
+        setFileName(filename);
+        setStream(new ByteArrayInputStream(bytes));
     }
 
     public String getFileName() {
