@@ -118,22 +118,12 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
         throw new CmisRuntimeException("not implemented");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Document#deleteAllVersions()
-     */
     public void deleteAllVersions() {
         delete(true);
     }
 
     // versioning
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Document#checkOut()
-     */
     public ObjectId checkOut() {
         String objectId = getObjectId();
         Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -147,24 +137,12 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
         return getSession().createObjectId(objectIdHolder.getValue());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Document#cancelCheckOut()
-     */
     public void cancelCheckOut() {
         String objectId = getObjectId();
 
         getBinding().getVersioningService().cancelCheckOut(getRepositoryId(), objectId, null);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Document#checkIn(boolean,
-     * java.util.Map, org.apache.opencmis.client.api.ContentStream,
-     * java.lang.String, java.util.List, java.util.List, java.util.List)
-     */
     public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream,
             String checkinComment, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
         String objectId;
@@ -199,21 +177,10 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Document#getAllVersions()
-     */
     public List<Document> getAllVersions() {
         return getAllVersions(getSession().getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.api.Document#getAllVersions(org.apache.
-     * opencmis.client.api. OperationContext)
-     */
     public List<Document> getAllVersions(OperationContext context) {
         String objectId;
         String versionSeriesId;
@@ -248,23 +215,10 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Document#getObjectOfLatestVersion(boolean)
-     */
     public Document getObjectOfLatestVersion(boolean major) {
         return getObjectOfLatestVersion(major, getSession().getDefaultContext());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.Document#getObjectOfLatestVersion(boolean,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public Document getObjectOfLatestVersion(boolean major, OperationContext context) {
         String objectId;
         String versionSeriesId;
@@ -298,22 +252,10 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
     // content operations
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.chemistry.opencmis.client.api.Document#getContentStream()
-     */
     public ContentStream getContentStream() {
         return getContentStream(null);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.chemistry.opencmis.client.api.Document#getContentStream(java
-     * .lang.String)
-     */
     public ContentStream getContentStream(String streamId) {
         String objectId = getObjectId();
 
@@ -336,12 +278,6 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
                 contentStream.getStream());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Document#setContentStream(boolean,
-     * org.apache.opencmis.client.api.ContentStream)
-     */
     public ObjectId setContentStream(ContentStream contentStream, boolean overwrite) {
         String objectId;
         String changeToken;
@@ -367,11 +303,6 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
         return getSession().createObjectId(objectIdHolder.getValue());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.Document#deleteContentStream()
-     */
     public ObjectId deleteContentStream() {
         String objectId;
         String changeToken;
