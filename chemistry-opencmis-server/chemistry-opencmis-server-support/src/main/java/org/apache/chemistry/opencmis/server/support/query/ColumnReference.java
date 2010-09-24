@@ -52,7 +52,7 @@ public class ColumnReference extends CmisSelector {
         return propQueryName;
     }
 
-    void setTypeDefinition(String propertyId, TypeDefinition typeDef) {
+    public void setTypeDefinition(String propertyId, TypeDefinition typeDef) {
         this.typeDef = typeDef;
         this.propertyId = propertyId;
     }
@@ -65,6 +65,7 @@ public class ColumnReference extends CmisSelector {
         return propertyId;
     }
 
+    @Override
     public String toString() {
         return "Column Reference for column " + propQueryName + " in type " + typeQueryName;
     }
