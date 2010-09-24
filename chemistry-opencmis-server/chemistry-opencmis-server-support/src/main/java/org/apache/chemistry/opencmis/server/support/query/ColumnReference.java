@@ -24,11 +24,11 @@ public class ColumnReference extends CmisSelector {
 
     private String typeQueryName;  // type query name coming from query statement
     private String propQueryName;  // property query name coming from query statement
-    
+
     // The following fields are set when the types are resolved:
-    private String propertyId; 
-    private TypeDefinition typeDef;  
-    
+    private String propertyId;
+    private TypeDefinition typeDef;
+
     public ColumnReference(String typeQueryName, String propQueryName) {
         this.typeQueryName = typeQueryName;
         this.propQueryName = propQueryName;
@@ -38,11 +38,11 @@ public class ColumnReference extends CmisSelector {
         this.typeQueryName = null;
         this.propQueryName = propQueryName;
     }
-       
+
     public String getTypeQueryName() {
         return typeQueryName;
     }
-    
+
     public String getPropertyQueryName() {
         return propQueryName;
     }
@@ -51,20 +51,20 @@ public class ColumnReference extends CmisSelector {
     public String getName() {
         return propQueryName;
     }
-    
+
     void setTypeDefinition(String propertyId, TypeDefinition typeDef) {
         this.typeDef = typeDef;
         this.propertyId = propertyId;
     }
-    
+
     public TypeDefinition getTypeDefinition() {
         return typeDef;
     }
-    
+
     public String getPropertyId() {
         return propertyId;
     }
-    
+
     public String toString() {
         return "Column Reference for column " + propQueryName + " in type " + typeQueryName;
     }
