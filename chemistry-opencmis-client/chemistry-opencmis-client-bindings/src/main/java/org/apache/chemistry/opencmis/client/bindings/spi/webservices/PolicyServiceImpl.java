@@ -117,13 +117,14 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
             List<CmisObjectType> policyList = port.getAppliedPolicies(repositoryId, objectId, filter,
                     convert(extension));
 
+            List<ObjectData> result = new ArrayList<ObjectData>();
+            
             // no list?
             if (policyList == null) {
-                return null;
+                return result;
             }
 
             // convert list
-            List<ObjectData> result = new ArrayList<ObjectData>();
             for (CmisObjectType policy : policyList) {
                 result.add(convert(policy));
             }

@@ -151,7 +151,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
     }
 
     public void setFilterString(String propertyFilter) {
-        if (propertyFilter == null) {
+        if ((propertyFilter == null) || (propertyFilter.trim().length() == 0)) {
             setFilter(null);
             return;
         }
@@ -267,7 +267,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
     }
 
     public void setRenditionFilterString(String renditionFilter) {
-        if (renditionFilter == null) {
+        if ((renditionFilter == null) || (renditionFilter.trim().length() == 0)) {
             setRenditionFilter(null);
             return;
         }

@@ -345,7 +345,7 @@ public final class AtomPubUtils {
         }
 
         if (info.supportsPolicies()) {
-            entry.writeAclLink(compileUrl(baseUrl, RESOURCE_POLICIES, info.getId()));
+            entry.writePoliciesLink(compileUrl(baseUrl, RESOURCE_POLICIES, info.getId()));
         }
 
         if (info.supportsRelationships()) {
