@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.inmemory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -290,25 +291,14 @@ public class RepositoryServiceTest extends AbstractServiceTst {
         String typeId = BaseTypeId.CMIS_DOCUMENT.value();
 
         // get types
-        List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, typeId, BigInteger.valueOf(-1),
+        List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, typeId, null,
                 false, null);
         assertNotNull(types);
         log.info("Repository " + repositoryId + " contains " + types.size() + " type(s).");
 
-        TypeDefinitionContainer typeWithProps = null;
         for (TypeDefinitionContainer type : types) {
-            if (type.getTypeDefinition().getId().equals(RepositoryTestTypeSystemCreator.COMPLEX_TYPE)) {
-                typeWithProps = type;
-                break;
-            }
+            assertNull(type.getTypeDefinition().getPropertyDefinitions());
         }
-        assertNotNull(typeWithProps);
-        TypeDefinition typeDef = typeWithProps.getTypeDefinition();
-        Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
-        log.info("Found type: " + typeDef.getId() + ", display name is: " + typeDef.getDisplayName());
-        log.info("  Base type is: " + typeDef.getBaseTypeId());
-        log.info("  Number of properties is: " + (propDefs == null ? 0 : propDefs.size()));
-        assertTrue(propDefs == null || propDefs.size() == 0);
         log.info("... testGetTypesWithoutProperties() finished.");
     }
 
@@ -348,6 +338,27 @@ public class RepositoryServiceTest extends AbstractServiceTst {
         log.info("... testGetTypeChildren() finished.");
     }
 
+    @Test
+    public void testGetTypeChildrenNoProperties() {
+        log.info("");
+        log.info("starting testGetTypeChildrenNoProperties()...");
+        String repositoryId = getRepositoryId();
+        String typeId = "cmis:document";
+
+        // get all children
+        BigInteger maxItems = BigInteger.valueOf(1000);
+        BigInteger skipCount = BigInteger.valueOf(0);
+        TypeDefinitionList children = fRepSvc.getTypeChildren(repositoryId, typeId, null, maxItems, skipCount, null);
+
+        children = fRepSvc.getTypeChildren(repositoryId, typeId, null, maxItems, null, null);
+
+        for (TypeDefinition type : children.getList()) {
+            assertNull(type.getPropertyDefinitions());
+        }
+
+        log.info("... testGetTypeChildrenNoProperties() finished.");
+    }
+    
     @Test
     public void testGetWrongParameters() {
         log.info("");
