@@ -159,13 +159,14 @@ public class StoreManagerImpl implements StoreManager {
         if (includePropertyDefinitions) {
             result = typeColl;
         } else {
-            result = new ArrayList<TypeDefinitionContainer>(typeColl);
+            result = new ArrayList<TypeDefinitionContainer>(typeColl.size());
             // copy list and omit properties
-            for (TypeDefinitionContainer c : result) {
+            for (TypeDefinitionContainer c : typeColl) {
                 AbstractTypeDefinition td = ((AbstractTypeDefinition) c.getTypeDefinition()).clone();
                 TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
                 tdc.setChildren(c.getChildren());
                 td.setPropertyDefinitions(null);
+                result.add(tdc);
             }
         }
         return result;
