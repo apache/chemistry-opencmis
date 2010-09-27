@@ -41,15 +41,12 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * HTTP helper methods.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class HttpUtils {
 
     private static final Log log = LogFactory.getLog(HttpUtils.class);
 
-    private static final int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 2 * 1024 * 1024;
 
     private HttpUtils() {
     }
@@ -128,6 +125,7 @@ public class HttpUtils {
 
             // send data
             if (writer != null) {
+                conn.setChunkedStreamingMode(BUFFER_SIZE);
                 OutputStream out = new BufferedOutputStream(conn.getOutputStream(), BUFFER_SIZE);
                 writer.write(out);
                 out.flush();
@@ -144,16 +142,15 @@ public class HttpUtils {
             }
 
             // get the response
-            return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream, conn
-                    .getErrorStream());
+            return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream,
+                    conn.getErrorStream());
         } catch (Exception e) {
             throw new CmisConnectionException("Cannot access " + url + ": " + e.getMessage(), e);
         }
     }
 
     /**
-     * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
-     * 
+     * HTTP Response.
      */
     public static class Response {
         private int fResponseCode;

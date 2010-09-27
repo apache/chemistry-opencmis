@@ -89,6 +89,50 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
     }
 
     @Test
+    @Ignore
+    public void createHugeDocument() throws IOException {
+        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        String folderName = UUID.randomUUID().toString();
+        String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, folderName);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+
+        String filename = UUID.randomUUID().toString();
+        String mimetype = "application/octet-stream";
+
+        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE);
+        assertNotNull(id);
+
+        // verify content
+        Document doc = (Document) this.session.getObject(id);
+        assertNotNull(doc);
+
+        final int size = 1 * 1024 * 1024 * 1024; // 2GB
+
+        InputStream in = new InputStream() {
+
+            private int counter = -1;
+
+            @Override
+            public int read() throws IOException {
+                counter++;
+                if (counter >= size) {
+                    return -1;
+                }
+
+                return '0' + (counter / 10);
+            }
+        };
+
+        ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, size, mimetype, in);
+        assertNotNull(contentStream);
+
+        doc.setContentStream(contentStream, true);
+    }
+
+    @Test
     public void createDocumentFromSource() throws IOException {
         try {
             // verify content
@@ -166,7 +210,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         document.updateProperties();
         assertEquals("Neuer Name", document.getName());
     }
-    
+
     @Test
     public void updateSinglePropertyAndCheckName() {
         // verify content
@@ -184,10 +228,10 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         // update single property
         ObjectId newId = document.updateProperties(properties);
         assertNotNull(newId);
-        assertEquals(id, newId.getId());  // should not be a new version
-   
+        assertEquals(id, newId.getId()); // should not be a new version
+
         session.clear();
-        
+
         // verify
         String s1 = FixtureData.DOCUMENT1_NAME.toString();
         String s2 = document.getName();
@@ -196,7 +240,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         Property<String> p = document.getProperty(PropertyIds.NAME);
         String s3 = p.getFirstValue();
         assertEquals(s1, s3);
-        
+
         Document document2 = (Document) this.session.getObjectByPath(path);
         assertNotNull("Document not found: " + path, document2);
     }
