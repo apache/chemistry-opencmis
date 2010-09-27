@@ -45,7 +45,7 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
 
     abstract public void onStartProcessing(Tree whereNode);
     abstract public void onStopProcessing();
-    
+
     // Compare operators
     abstract public void onEquals(Tree eqNode, Tree leftNode, Tree rightNode);
     abstract public void onNotEquals(Tree neNode, Tree leftNode, Tree rightNode);
@@ -55,20 +55,20 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
     abstract public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode);
 
     // Boolean operators
-    public void onPreNot(Tree opNode, Tree leftNode) {        
+    public void onPreNot(Tree opNode, Tree leftNode) {
     }
     abstract public void onNot(Tree opNode, Tree leftNode);
-    public void onPostNot(Tree opNode, Tree leftNode) {        
+    public void onPostNot(Tree opNode, Tree leftNode) {
     }
-    public void onPreAnd(Tree opNode, Tree leftNode, Tree rightNode) {        
+    public void onPreAnd(Tree opNode, Tree leftNode, Tree rightNode) {
     }
     abstract public void onAnd(Tree opNode, Tree leftNode, Tree rightNode);
-    public void onPostAnd(Tree opNode, Tree leftNode, Tree rightNode) {        
+    public void onPostAnd(Tree opNode, Tree leftNode, Tree rightNode) {
     }
-    public void onPreOr(Tree opNode, Tree leftNode, Tree rightNode) {        
+    public void onPreOr(Tree opNode, Tree leftNode, Tree rightNode) {
     }
     abstract public void onOr(Tree opNode, Tree leftNode, Tree rightNode);
-    public void onPostOr(Tree opNode, Tree leftNode, Tree rightNode) {        
+    public void onPostOr(Tree opNode, Tree leftNode, Tree rightNode) {
     }
 
     // Multi-value:
@@ -104,7 +104,7 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
 //        if (parser.errorMessage != null) {
 //            throw new RuntimeException("Cannot parse query: " + statement + " (" + parser.errorMessage + ")");
 //        }
-        parserTree = (CommonTree) parsedStatement.getTree();            
+        parserTree = (CommonTree) parsedStatement.getTree();
 
         CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
         nodes.setTokenStream(tokens);
@@ -113,7 +113,7 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
     }
 
     // helper functions that are needed by most query tree walkers
-    
+
     protected Object onLiteral(Tree node) {
         int type = node.getType();
         String text = node.getText();
@@ -123,18 +123,18 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
         case CmisQlStrictLexer.NUM_LIT:
             if (text.contains(".") || text.contains("e") || text.contains("E"))
                 return Double.parseDouble(text);
-            else    
+            else
                 return Long.parseLong(text);
         case CmisQlStrictLexer.STRING_LIT:
             return text.substring(1, text.length()-1);
         case CmisQlStrictLexer.TIME_LIT:
             GregorianCalendar gc = CalendarHelper.fromString(text.substring(text.indexOf('\'')+1, text.lastIndexOf('\'')));
-            return gc; 
+            return gc;
         default:
             throw new RuntimeException("Unknown literal. " + node);
         }
     }
- 
+
     protected List<Object> onLiteralList(Tree node) {
         List<Object> res = new ArrayList<Object>(node.getChildCount());
         for (int i=0; i<node.getChildCount(); i++) {
@@ -143,5 +143,5 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
         }
         return res;
     }
-    
+
 }

@@ -28,10 +28,10 @@ import org.antlr.runtime.tree.Tree;
  *
  */
 public interface QueryConditionProcessor {
-    
+
     void onStartProcessing(Tree whereNode);
     void onStopProcessing();
-    
+
     // Compare operators
     void onEquals(Tree eqNode, Tree leftNode, Tree rightNode);
     void onNotEquals(Tree neNode, Tree leftNode, Tree rightNode);
