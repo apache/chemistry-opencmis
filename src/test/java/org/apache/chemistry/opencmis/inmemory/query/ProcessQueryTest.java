@@ -42,9 +42,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ProcessQueryTest extends AbstractQueryTest {
-    
+
     private static Log log = LogFactory.getLog(ProcessQueryTest.class);
-    
+
     static private class TestQueryProcessor implements QueryConditionProcessor {
 
         private static final String ON_START = "onStartWasCalled";
@@ -72,11 +72,11 @@ public class ProcessQueryTest extends AbstractQueryTest {
         private static final String ON_IN_TREE  = "onInTreeWasCalled";
         private static final String ON_SCORE = "onScoreWasCalled";
 
-        
-        final Map<String, Integer> rulesTrackerMap = 
+
+        final Map<String, Integer> rulesTrackerMap =
             new HashMap<String, Integer>() {
                 private static final long serialVersionUID = 1L;
-            { 
+            {
                 put(ON_START, 0);
                 put(ON_STOP, 0);
                 put(ON_EQUALS, 0);
@@ -102,13 +102,13 @@ public class ProcessQueryTest extends AbstractQueryTest {
                 put(ON_IN_TREE, 0);
                 put(ON_SCORE, 0);
            }};
-           
+
            private int counter;
-        
+
        public TestQueryProcessor() {
            counter = 1;
        }
-        
+
 
        public void onStartProcessing(Tree node) {
             log.debug("TestQueryProcessor:onStartProcessing()");
@@ -135,7 +135,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
            Object value=onLiteral(rightNode, Integer.class);
-           assertEquals(100, value);            
+           assertEquals(100, value);
        }
 
        public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode) {
@@ -144,7 +144,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
            Object value=onLiteral(rightNode, Integer.class);
-           assertEquals(100, value);            
+           assertEquals(100, value);
        }
 
        public void onLessThan(Tree ltNode, Tree leftNode, Tree rightNode) {
@@ -153,7 +153,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
            Object value=onLiteral(rightNode, Integer.class);
-           assertEquals(100, value);            
+           assertEquals(100, value);
        }
 
        public void onGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode) {
@@ -162,7 +162,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
            Object value=onLiteral(rightNode, Integer.class);
-           assertEquals(100, value);            
+           assertEquals(100, value);
        }
 
        public void onGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode) {
@@ -171,7 +171,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
            assertTrue(isLiteral(rightNode));
            Object value=onLiteral(rightNode, Integer.class);
-           assertEquals(100, value);            
+           assertEquals(100, value);
        }
 
        public void onNot(Tree opNode, Tree leftNode) {
@@ -194,9 +194,9 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IN_LIST, listNode.getType());
            Object value=onLiteral(listNode.getChild(0), String.class);
-           assertEquals("'Joe'", value);            
+           assertEquals("'Joe'", value);
            value=onLiteral(listNode.getChild(1), String.class);
-           assertEquals("'Jim'", value);            
+           assertEquals("'Jim'", value);
            rulesTrackerMap.put(ON_IN, counter++);
        }
 
@@ -205,9 +205,9 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IN_LIST, listNode.getType());
            Object value=onLiteral(listNode.getChild(0), String.class);
-           assertEquals("'Joe'", value);            
+           assertEquals("'Joe'", value);
            value=onLiteral(listNode.getChild(1), String.class);
-           assertEquals("'Jim'", value);            
+           assertEquals("'Jim'", value);
            rulesTrackerMap.put(ON_NOT_IN, counter++);
        }
 
@@ -216,7 +216,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertTrue(isLiteral(literalNode));
            Object value=onLiteral(literalNode, String.class);
-           assertEquals("'Joe'", value);            
+           assertEquals("'Joe'", value);
            rulesTrackerMap.put(ON_EQ_ANY, counter++);
        }
 
@@ -225,9 +225,9 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IN_LIST, listNode.getType());
            Object value=onLiteral(listNode.getChild(0), String.class);
-           assertEquals("'Joe'", value);            
+           assertEquals("'Joe'", value);
            value=onLiteral(listNode.getChild(1), String.class);
-           assertEquals("'Jim'", value);            
+           assertEquals("'Jim'", value);
            rulesTrackerMap.put(ON_IN_ANY, counter++);
        }
 
@@ -236,9 +236,9 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IN_LIST, listNode.getType());
            Object value=onLiteral(listNode.getChild(0), String.class);
-           assertEquals("'Joe'", value);            
+           assertEquals("'Joe'", value);
            value=onLiteral(listNode.getChild(1), String.class);
-           assertEquals("'Jim'", value);            
+           assertEquals("'Jim'", value);
            rulesTrackerMap.put(ON_NOT_IN_ANY, counter++);
        }
 
@@ -259,7 +259,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, stringNode.getType());
            Object value=onLiteral(stringNode, String.class);
-           assertEquals("'Harry%'", value);            
+           assertEquals("'Harry%'", value);
            rulesTrackerMap.put(ON_IS_LIKE, counter++);
        }
 
@@ -268,7 +268,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, stringNode.getType());
            Object value=onLiteral(stringNode, String.class);
-           assertEquals("'Harry%'", value);            
+           assertEquals("'Harry%'", value);
            rulesTrackerMap.put(ON_IS_NOT_LIKE, counter++);
        }
 
@@ -327,7 +327,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            case CmisQlStrictLexer.STRING_LIT:
                return clazz==String.class ? node.getText() : null;
            case CmisQlStrictLexer.TIME_LIT:
-               return clazz==GregorianCalendar.class ?  CalendarHelper.fromString(node.getText()) : null; 
+               return clazz==GregorianCalendar.class ?  CalendarHelper.fromString(node.getText()) : null;
            default:
                log.error("Unknown literal. " + node);
                return null;
@@ -337,37 +337,37 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
     public void onPostAnd(Tree opNode, Tree leftNode, Tree rightNode) {
         // TODO Auto-generated method stub
-        
+
     }
 
 
     public void onPostNot(Tree opNode, Tree leftNode) {
         // TODO Auto-generated method stub
-        
+
     }
 
 
     public void onPostOr(Tree opNode, Tree leftNode, Tree rightNode) {
         // TODO Auto-generated method stub
-        
+
     }
 
 
     public void onPreAnd(Tree opNode, Tree leftNode, Tree rightNode) {
         // TODO Auto-generated method stub
-        
+
     }
 
 
     public void onPreNot(Tree opNode, Tree leftNode) {
         // TODO Auto-generated method stub
-        
+
     }
 
 
     public void onPreOr(Tree opNode, Tree leftNode, Tree rightNode) {
         // TODO Auto-generated method stub
-        
+
     }
 
     }
@@ -398,7 +398,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
     @Test
     public void testStartStopProcessing() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100";
         traverseStatementAndCatchExc(statement); // calls query processor
         assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_START) > 0);
         assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_STOP) > 0);
@@ -406,60 +406,60 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
     @Test
     public void testEq() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100";
         testStatement(statement, TestQueryProcessor.ON_EQUALS);
     }
 
     @Test
     public void testNeq() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN <> 100"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN <> 100";
         testStatement(statement, TestQueryProcessor.ON_NOT_EQUALS);
     }
 
     @Test
     public void testLt() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN < 100"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN < 100";
         testStatement(statement, TestQueryProcessor.ON_LESS_THAN);
     }
 
     @Test
     public void testLteq() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN <= 100"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN <= 100";
         testStatement(statement, TestQueryProcessor.ON_LESS_OR_EQUALS);
     }
 
     @Test
     public void testGt() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN > 100"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN > 100";
         testStatement(statement, TestQueryProcessor.ON_GREATER_THAN);
     }
 
     @Test
     public void testGteq() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN >= 100"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN >= 100";
         testStatement(statement, TestQueryProcessor.ON_GREATER_OR_EQUALS);
     }
 
     @Test
     public void testNot() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE NOT ISBN = 100"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE NOT ISBN = 100";
         testStatementMultiRule(statement, TestQueryProcessor.ON_NOT);
     }
 
     @Test
     public void testAnd() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100 AND Title LIKE 'Harry%'"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100 AND Title LIKE 'Harry%'";
         testStatementMultiRule(statement, TestQueryProcessor.ON_AND);
         assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_START) == 1);
         assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_EQUALS) == 2);
         assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_AND) == 3);
         assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_IS_LIKE) == 4);
         assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_STOP) == 5);
-    }    
+    }
 
     @Test
     public void testOr() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100 OR Title LIKE 'Harry%'"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100 OR Title LIKE 'Harry%'";
         testStatementMultiRule(statement,TestQueryProcessor.ON_OR);
         assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_START) == 1);
         assertTrue(queryProcessor.rulesTrackerMap.get(TestQueryProcessor.ON_EQUALS) == 2);
@@ -470,98 +470,98 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
     @Test
     public void testIn() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author IN ('Joe', 'Jim')"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author IN ('Joe', 'Jim')";
         testStatement(statement, TestQueryProcessor.ON_IN);
     }
 
     @Test
     public void testNotIn() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author NOT IN ('Joe', 'Jim')"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author NOT IN ('Joe', 'Jim')";
         testStatement(statement, TestQueryProcessor.ON_NOT_IN);
     }
 
     @Test
     public void testEqAny() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE 'Joe' = ANY Author"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE 'Joe' = ANY Author";
         testStatement(statement, TestQueryProcessor.ON_EQ_ANY);
     }
 
     @Test
     public void testInAny() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ANY Author IN ('Joe', 'Jim')"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ANY Author IN ('Joe', 'Jim')";
         testStatement(statement, TestQueryProcessor.ON_IN_ANY);
     }
 
     @Test
     public void testNotInAny() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ANY Author NOT IN ('Joe', 'Jim')"; 
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ANY Author NOT IN ('Joe', 'Jim')";
         testStatement(statement, TestQueryProcessor.ON_NOT_IN_ANY);
     }
 
     @Test
     public void testOnIsNullWasCalled() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author IS NULL"; 
-        testStatement(statement, TestQueryProcessor.ON_IS_NULL);        
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author IS NULL";
+        testStatement(statement, TestQueryProcessor.ON_IS_NULL);
     }
 
     @Test
     public void testOnIsNotNullWasCalled() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author IS NOT NULL"; 
-        testStatement(statement, TestQueryProcessor.ON_IS_NOT_NULL);        
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author IS NOT NULL";
+        testStatement(statement, TestQueryProcessor.ON_IS_NOT_NULL);
     }
 
     @Test
     public void testOnLikeWasCalled() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author LIKE 'Harry%'"; 
-        testStatement(statement, TestQueryProcessor.ON_IS_LIKE);        
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author LIKE 'Harry%'";
+        testStatement(statement, TestQueryProcessor.ON_IS_LIKE);
     }
 
     @Test
     public void testOnNotLikeWasCalled() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author NOT LIKE 'Harry%'"; 
-        testStatement(statement, TestQueryProcessor.ON_IS_NOT_LIKE);        
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE Author NOT LIKE 'Harry%'";
+        testStatement(statement, TestQueryProcessor.ON_IS_NOT_LIKE);
     }
 
     @Test
     public void testOnContainsWasCalled1() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE CONTAINS('Hello')"; 
-        testStatement(statement, TestQueryProcessor.ON_CONTAINS);        
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE CONTAINS('Hello')";
+        testStatement(statement, TestQueryProcessor.ON_CONTAINS);
     }
 
     @Test
     public void testOnContainsWasCalled2() {
         String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE CONTAINS(BookType, 'Harry')";
-        testStatement(statement, TestQueryProcessor.ON_CONTAINS);        
+        testStatement(statement, TestQueryProcessor.ON_CONTAINS);
     }
 
     @Test
     public void testOnInFolderWasCalled1() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE IN_FOLDER('ID1234')"; 
-        testStatement(statement, TestQueryProcessor.ON_IN_FOLDER);        
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE IN_FOLDER('ID1234')";
+        testStatement(statement, TestQueryProcessor.ON_IN_FOLDER);
     }
 
     @Test
     public void testOnInFolderWasCalled2() {
         String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE IN_FOLDER(BookType, 'ID1234')";
-        testStatement(statement, TestQueryProcessor.ON_IN_FOLDER);        
+        testStatement(statement, TestQueryProcessor.ON_IN_FOLDER);
     }
 
     @Test
     public void testOnInTreeWasCalled1() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE IN_Tree('ID1234')"; 
-        testStatement(statement, TestQueryProcessor.ON_IN_TREE);        
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE IN_Tree('ID1234')";
+        testStatement(statement, TestQueryProcessor.ON_IN_TREE);
     }
 
     @Test
     public void testOnInTreeWasCalled2() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE IN_Tree(BookType, 'ID1234')"; 
-        testStatement(statement, TestQueryProcessor.ON_IN_TREE);        
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE IN_Tree(BookType, 'ID1234')";
+        testStatement(statement, TestQueryProcessor.ON_IN_TREE);
     }
 
     @Test
     public void testOnScoreCalled() {
-        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE SCORE()=100"; 
-        testStatementMultiRule(statement, TestQueryProcessor.ON_SCORE);        
+        String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE SCORE()=100";
+        testStatementMultiRule(statement, TestQueryProcessor.ON_SCORE);
     }
 
     // private helper functions
@@ -582,7 +582,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
             if (!e.getKey().equals(ruleAssertion) && !e.getKey().equals("onPropertyValueWasCalled")
                     && !e.getKey().equals(TestQueryProcessor.ON_START) && !e.getKey().equals(TestQueryProcessor.ON_STOP)
                     && !e.getKey().contains("Literal"))
-                assertFalse("Rule " + e.getKey() + " was expected not to be executed, but was executed.", 
+                assertFalse("Rule " + e.getKey() + " was expected not to be executed, but was executed.",
                         queryProcessor.rulesTrackerMap.get(e.getKey()) > 0);
         }
     }
