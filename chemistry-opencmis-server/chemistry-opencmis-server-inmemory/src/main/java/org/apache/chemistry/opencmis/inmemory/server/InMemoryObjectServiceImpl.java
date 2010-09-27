@@ -250,7 +250,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("start deleteObject()");
         checkStandardParameters(repositoryId, objectId);
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-        LOG.info("delete object for id: " + objectId);
+        LOG.debug("delete object for id: " + objectId);
 
         // check if it is the root folder
         if (objectId.equals(objectStore.getRootFolder().getId()))
@@ -630,7 +630,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             objectId.setValue(so.getId()); // might have a new id
             if (null != changeToken) {
                 String changeTokenVal = so.getChangeToken();
-                LOG.info("updateProperties(), new change token is: " + changeTokenVal);
+                LOG.debug("updateProperties(), new change token is: " + changeTokenVal);
                 changeToken.setValue(changeTokenVal);
             }
         }
@@ -811,7 +811,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // create folder
         try {
-            LOG.info("get folder for id: " + folderId);
+            LOG.debug("get folder for id: " + folderId);
             so = fs.getObjectById(folderId);
         } catch (Exception e) {
             throw new CmisObjectNotFoundException("Failed to retrieve folder.", e);
@@ -849,7 +849,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         String sourceId = sourceFolder.getId();
         String targetId = targetFolder.getId();
         while (targetId != null) {
-            // log.info("comparing source id " + sourceId + " with predecessor "
+            // log.debug("comparing source id " + sourceId + " with predecessor "
             // +
             // targetId);
             if (targetId.equals(sourceId))

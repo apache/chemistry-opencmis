@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.fit.runtime;
 
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -26,6 +27,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.junit.Test;
 
@@ -197,5 +199,21 @@ public abstract class AbstractReadOnlyNavigationIT extends AbstractSessionTest {
 
         CmisObject firstObject = pl.iterator().next();
         Assert.assertNotNull(firstObject);
+    }
+
+    @Test
+    public void rootParent() {
+        Folder root = session.getRootFolder();
+        Assert.assertNotNull(root);
+        Assert.assertNotNull(root.getName());
+        Assert.assertNotNull(root.getId());
+        Assert.assertNotNull(root.getType());
+        List<Property<?>> props = root.getProperties();
+        Assert.assertNotNull(props);
+        Assert.assertTrue(props.size() > 0);
+        Assert.assertEquals("/", root.getPath());
+        Assert.assertEquals(Collections.singletonList("/"), root.getPaths());
+        Assert.assertNull(root.getFolderParent());
+        Assert.assertEquals(Collections.emptyList(), root.getParents());
     }
 }

@@ -260,7 +260,8 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         String link = loadLink(repositoryId, objectId, Constants.REL_UP, Constants.MEDIATYPE_FEED);
 
         if (link == null) {
-            throwLinkException(repositoryId, objectId, Constants.REL_UP, Constants.MEDIATYPE_FEED);
+            // root and unfiled objects have no UP link
+            return result;
         }
 
         UrlBuilder url = new UrlBuilder(link);
