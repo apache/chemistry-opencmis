@@ -52,9 +52,8 @@ import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 
 /**
  * Navigation Service AtomPub client.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class NavigationServiceImpl extends AbstractAtomPubService implements NavigationService {
 
@@ -65,17 +64,6 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         setSession(session);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.NavigationService#getChildren(java
-     * .lang.String, java.lang.String, java.lang.String, java.lang.String,
-     * java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.lang.Boolean, java.math.BigInteger, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -151,16 +139,6 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.NavigationService#getDescendants(
-     * java.lang.String, java.lang.String, java.math.BigInteger,
-     * java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -191,14 +169,6 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.NavigationService#getFolderParent
-     * (java.lang.String, java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
         ObjectData result = null;
 
@@ -251,16 +221,6 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.NavigationService#getFolderTree(java
-     * .lang.String, java.lang.String, java.math.BigInteger, java.lang.String,
-     * java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -291,15 +251,6 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.NavigationService#getObjectParents
-     * (java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
@@ -380,17 +331,6 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.NavigationService#getCheckedOutDocs
-     * (java.lang.String, java.lang.String, java.lang.String, java.lang.String,
-     * java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.math.BigInteger, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
