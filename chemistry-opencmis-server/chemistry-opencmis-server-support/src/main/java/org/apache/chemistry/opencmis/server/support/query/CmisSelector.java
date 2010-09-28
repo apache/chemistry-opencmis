@@ -19,14 +19,29 @@
 package org.apache.chemistry.opencmis.server.support.query;
 
 public abstract class CmisSelector {
-    private String aliasName;      // Alias name for a column (only in SELECT part set)
+
+    /** Alias name for a column (only in SELECT part set). */
+    public String aliasName;
+
+    /** Arbitrary info for this selector (used by servers during parsing). */
+    public Object info;
 
     public void setAliasName(String alias) {
         aliasName = alias;
     }
-    
+
     public String getAliasName() {
         return aliasName;
     }
+
+    public void setInfo(Object info) {
+        this.info = info;
+    }
+
+    public Object getInfo() {
+        return info;
+    }
+
     public abstract String getName();
+
 }

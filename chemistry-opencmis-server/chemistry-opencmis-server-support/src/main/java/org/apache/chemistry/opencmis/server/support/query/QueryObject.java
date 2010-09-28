@@ -47,29 +47,29 @@ public class QueryObject {
     // For error handling see:
     // http://www.antlr.org/pipermail/antlr-interest/2008-April/027600.html
     // select part
-    private TypeManager typeMgr;
-    private List<CmisSelector> selectReferences = new ArrayList<CmisSelector>();
-    private List<CmisSelector> whereReferences = new ArrayList<CmisSelector>();
-    private List<CmisSelector> joinReferences = new ArrayList<CmisSelector>();
+    protected TypeManager typeMgr;
+    protected List<CmisSelector> selectReferences = new ArrayList<CmisSelector>();
+    protected List<CmisSelector> whereReferences = new ArrayList<CmisSelector>();
+    protected List<CmisSelector> joinReferences = new ArrayList<CmisSelector>();
     // --> Join not implemented yet
-    private Map<String, CmisSelector> colOrFuncAlias = new HashMap<String, CmisSelector>();
-    private QueryConditionProcessor queryProcessor;
+    protected Map<String, CmisSelector> colOrFuncAlias = new HashMap<String, CmisSelector>();
+    protected QueryConditionProcessor queryProcessor;
 
     // from part
     /**
      * map from alias name to type query name
      */
-    private Map<String, String> froms = new LinkedHashMap<String, String>();
+    protected Map<String, String> froms = new LinkedHashMap<String, String>();
 
     // where part
-    private Map<Integer, CmisSelector> columnReferences = new HashMap<Integer, CmisSelector>();
+    protected Map<Integer, CmisSelector> columnReferences = new HashMap<Integer, CmisSelector>();
 
     // order by part
-    private List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
+    protected List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
 
     public class SortSpec {
-        private boolean ascending;
-        private Integer colRefKey; // key in columnReferencesMap point to column
+        public boolean ascending;
+        public Integer colRefKey; // key in columnReferencesMap point to column
                                     // descriptions
 
         public SortSpec(Integer key, boolean ascending) {
@@ -110,12 +110,12 @@ public class QueryObject {
         return selectReferences;
     }
 
-    void addSelectReference(Object node, CmisSelector selRef) {
+    public void addSelectReference(Tree node, CmisSelector selRef) {
         selectReferences.add(selRef);
-        columnReferences.put(((Tree) node).getTokenStartIndex(), selRef);
+        columnReferences.put(node.getTokenStartIndex(), selRef);
     }
 
-    void addAlias(String aliasName, CmisSelector aliasRef) {
+    public void addAlias(String aliasName, CmisSelector aliasRef) {
         LOG.debug("add alias: " + aliasName + " for: " + aliasRef);
         if (colOrFuncAlias.containsKey(aliasName)) {
             throw new CmisInvalidArgumentException("You cannot use name " + aliasName
@@ -126,14 +126,14 @@ public class QueryObject {
         }
     }
 
-    CmisSelector getSelectAlias(String aliasName) {
+    public CmisSelector getSelectAlias(String aliasName) {
         return colOrFuncAlias.get(aliasName);
     }
 
     // ///////////////////////////////////////////////////////
     // FROM part
 
-    void addType(String aliasName, String typeQueryName) {
+    public void addType(String aliasName, String typeQueryName) {
         LOG.debug("add alias: " + aliasName + " for: " + typeQueryName);
         if (froms.containsKey(aliasName)) {
             throw new CmisInvalidArgumentException("You cannot use name " + aliasName
@@ -223,8 +223,8 @@ public class QueryObject {
     // ///////////////////////////////////////////////////////
     // JOINS
 
-    void addJoinReference(Object node, CmisSelector reference) {
-        columnReferences.put(((Tree) node).getTokenStartIndex(), reference);
+    public void addJoinReference(Tree node, CmisSelector reference) {
+        columnReferences.put(node.getTokenStartIndex(), reference);
         joinReferences.add(reference);
     }
 
@@ -235,10 +235,10 @@ public class QueryObject {
     // ///////////////////////////////////////////////////////
     // WHERE part
 
-    void addWhereReference(Object node, CmisSelector reference) {
+    public void addWhereReference(Tree node, CmisSelector reference) {
         LOG.debug("add node to where: " + System.identityHashCode(node));
 
-        columnReferences.put(((Tree) node).getTokenStartIndex(), reference);
+        columnReferences.put(node.getTokenStartIndex(), reference);
         whereReferences.add(reference);
     }
 
@@ -325,7 +325,7 @@ public class QueryObject {
         }
     }
 
-    private void resolveTypeForAlias(ColumnReference colRef) {
+    protected void resolveTypeForAlias(ColumnReference colRef) {
         String aliasName = colRef.getAliasName();
 
         if (colOrFuncAlias.containsKey(aliasName)) {
@@ -345,7 +345,7 @@ public class QueryObject {
     }
 
     // for a select x from y, z ... find the type in type manager for x
-    private void resolveTypeForColumnReference(ColumnReference colRef) {
+    protected void resolveTypeForColumnReference(ColumnReference colRef) {
         String propName = colRef.getPropertyQueryName();
         boolean isStar = propName.equals("*");
 
@@ -378,7 +378,7 @@ public class QueryObject {
 
     // for a select x.y from x ... check that x has property y and that x is in
     // from
-    private void validateColumnReferenceAndResolveType(ColumnReference colRef) {
+    protected void validateColumnReferenceAndResolveType(ColumnReference colRef) {
         // either same name or mapped alias
         String typeQueryName = getReferencedTypeQueryName(colRef.getTypeQueryName());
         TypeDefinition td = typeMgr.getTypeByQueryName(typeQueryName);
@@ -389,7 +389,7 @@ public class QueryObject {
         validateColumnReferenceAndResolveType(td, colRef);
     }
 
-    private void validateColumnReferenceAndResolveType(TypeDefinition td, ColumnReference colRef) {
+    protected void validateColumnReferenceAndResolveType(TypeDefinition td, ColumnReference colRef) {
 
         // type found, check if property exists
         boolean hasProp;
@@ -406,7 +406,7 @@ public class QueryObject {
 
     // return type query name for a referenced column (which can be the name
     // itself or an alias
-    private String getReferencedTypeQueryName(String typeQueryNameOrAlias) {
+    protected String getReferencedTypeQueryName(String typeQueryNameOrAlias) {
         String typeQueryName = froms.get(typeQueryNameOrAlias);
         if (null == typeQueryName) {
             // if an alias was defined but still the original is used we have to
@@ -428,7 +428,7 @@ public class QueryObject {
         }
     }
 
-    private void processWhereNode(Tree root) {
+    protected void processWhereNode(Tree root) {
         int count = root.getChildCount();
         for (int i = 0; i < count; i++) {
             Tree child = root.getChild(i);
@@ -440,7 +440,7 @@ public class QueryObject {
     // ///////////////////////////////////////////////////////
     // Processing the WHERE clause
 
-    private void evalWhereNode(Tree node) {
+    protected void evalWhereNode(Tree node) {
         // Ensure that we receive only valid tokens and nodes in the where
         // clause:
         LOG.debug("evaluating node: " + node.toString());
