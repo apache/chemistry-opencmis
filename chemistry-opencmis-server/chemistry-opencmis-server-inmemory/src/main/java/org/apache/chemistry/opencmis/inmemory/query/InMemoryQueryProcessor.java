@@ -62,31 +62,32 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A processor for a CMIS query for the In-Memory server. During tree traversal conditions
- * are checked against the data contained in the central hash map with all objects. In a first 
- * pass one time setup is performed, in a custom walk across the query expression tree an object
- * is checked if it matches. In case of a match it is appended to a list of matching objects.
- * 
+ * A processor for a CMIS query for the In-Memory server. During tree traversal
+ * conditions are checked against the data contained in the central hash map
+ * with all objects. In a first pass one time setup is performed, in a custom
+ * walk across the query expression tree an object is checked if it matches. In
+ * case of a match it is appended to a list of matching objects.
+ *
  * @author Jens
  *
  */
 public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
 
     private static Log LOG = LogFactory.getLog(InMemoryQueryProcessor.class);
-    
+
     private List<StoredObject> matches = new ArrayList<StoredObject>();
     private QueryObject queryObj;
     private Tree whereTree;
-    
+
     public InMemoryQueryProcessor() {
     }
-    
+
     /**
      * Main entry function to process a query from discovery service
      */
-    public ObjectList query(TypeManager tm, ObjectStore objectStore, String user, String repositoryId, String statement, Boolean searchAllVersions,
-            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-            BigInteger maxItems, BigInteger skipCount) {
+    public ObjectList query(TypeManager tm, ObjectStore objectStore, String user, String repositoryId,
+            String statement, Boolean searchAllVersions, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
 
         queryObj = new QueryObject(tm, this);
         processQueryAndCatchExc(statement); // calls query processor
@@ -94,24 +95,25 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         // iterate over all the objects and check for each if the query matches
         for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
             StoredObject so = objectStore.getObjectById(objectId);
-            match(so, searchAllVersions==null ? true : searchAllVersions.booleanValue());
+            match(so, searchAllVersions == null ? true : searchAllVersions.booleanValue());
         }
 
         ObjectList objList = buildResultList(tm, user, includeAllowableActions, includeRelationships, renditionFilter,
                 maxItems, skipCount);
         LOG.debug("Query result, number of matching objects: " + objList.getNumItems());
         return objList;
-    }        
+    }
 
-    public CmisQueryWalker processQuery(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+    public CmisQueryWalker processQuery(String statement) throws UnsupportedEncodingException, IOException,
+            RecognitionException {
         CmisQueryWalker walker = AbstractQueryConditionProcessor.getWalker(statement);
         walker.query(queryObj);
         String errMsg = walker.getErrorMessageString();
         if (null != errMsg) {
-            throw new RuntimeException("Walking of statement failed with error: \n   " + errMsg + 
-                    "\n   Statement was: " + statement);
+            throw new RuntimeException("Walking of statement failed with error: \n   " + errMsg
+                    + "\n   Statement was: " + statement);
         }
-        /*CommonTree walkerTree = (CommonTree) */ walker.getTreeNodeStream().getTreeSource();
+        /* CommonTree walkerTree = (CommonTree) */walker.getTreeNodeStream().getTreeSource();
         return walker;
     }
 
@@ -119,12 +121,12 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         try {
             return processQuery(statement);
         } catch (RecognitionException e) {
-            throw new RuntimeException("Walking of statement failed with RecognitionException error: \n   " + e); 
+            throw new RuntimeException("Walking of statement failed with RecognitionException error: \n   " + e);
         } catch (Exception e) {
-            throw new RuntimeException("Walking of statement failed with other exception: \n   " + e); 
+            throw new RuntimeException("Walking of statement failed with other exception: \n   " + e);
         }
     }
-    
+
     public void onStartProcessing(Tree node) {
         // log.debug("onStartProcessing()");
         // checkRoot(node);
@@ -135,24 +137,23 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         // log.debug("onStopProcessing()");
     }
 
-    public ObjectList buildResultList(TypeManager tm, String user, 
-            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-            BigInteger maxItems, BigInteger skipCount) {
-        
+    public ObjectList buildResultList(TypeManager tm, String user, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
+
         sortMatches();
 
         ObjectListImpl res = new ObjectListImpl();
         res.setNumItems(BigInteger.valueOf(matches.size()));
         int start = 0;
-        if (skipCount != null) 
-            start = (int)skipCount.longValue();
+        if (skipCount != null)
+            start = (int) skipCount.longValue();
         if (start < 0)
             start = 0;
         if (start > matches.size())
             start = matches.size();
         int stop = 0;
-        if (maxItems != null) 
-            stop = start + (int)maxItems.longValue();
+        if (maxItems != null)
+            stop = start + (int) maxItems.longValue();
         if (stop <= 0 || stop > matches.size())
             stop = matches.size();
         res.setHasMoreItems(stop < matches.size());
@@ -163,15 +164,15 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         Map<String, String> funcs = queryObj.getRequestedFuncs();
         for (StoredObject so : matches) {
             TypeDefinition td = tm.getTypeById(so.getTypeId()).getTypeDefinition();
-            ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(td, so, user, 
-                    props, funcs, includeAllowableActions, includeRelationships, renditionFilter);
-            
-            objDataList.add(od); 
+            ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(td, so, user, props, funcs,
+                    includeAllowableActions, includeRelationships, renditionFilter);
+
+            objDataList.add(od);
         }
         res.setObjects(objDataList);
         return res;
     }
-    
+
     private boolean typeMatches(TypeDefinition td, StoredObject so) {
         String typeId = so.getTypeId();
         while (typeId != null) {
@@ -184,7 +185,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         }
         return false;
     }
-    
+
     private void sortMatches() {
         final List<SortSpec> orderBy = queryObj.getOrderBys();
         if (orderBy.size() > 1)
@@ -196,9 +197,9 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
                 SortSpec s = orderBy.get(0);
                 CmisSelector sel = s.getSelector();
                 int result;
-                
+
                 if (sel instanceof ColumnReference) {
-                    String propId = ((ColumnReference)sel).getPropertyId();
+                    String propId = ((ColumnReference) sel).getPropertyId();
                     Object propVal1 = so1.getProperties().get(propId).getFirstValue();
                     Object propVal2 = so2.getProperties().get(propId).getFirstValue();
                     if (propVal1 == null && propVal2 == null)
@@ -207,10 +208,10 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
                         result = -1;
                     else if (propVal2 == null)
                         result = 1;
-                    else 
-                        result = ((Comparable)propVal1).compareTo(propVal2);                    
+                    else
+                        result = ((Comparable) propVal1).compareTo(propVal2);
                 } else {
-                    String funcName = ((FunctionReference)sel).getName();
+                    String funcName = ((FunctionReference) sel).getName();
                     // evaluate function here, currently ignore
                     result = 0;
                 }
@@ -222,145 +223,158 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
 
         if (orderBy.size() > 0)
             Collections.sort(matches, new ResultComparator());
-        
+
     }
 
     /**
-     * Check for each object contained in the in-memory repository if it matches the current query
-     * expression. If yes add it to the list of matched objects.
-     * 
+     * Check for each object contained in the in-memory repository if it matches
+     * the current query expression. If yes add it to the list of matched
+     * objects.
+     *
      * @param so
-     *      object stored in the in-memory repository
+     *            object stored in the in-memory repository
      */
     private void match(StoredObject so, boolean searchAllVersions) {
         // log.debug("checkMatch() for object: " + so.getId());
         // first check if type is matching...
-        String queryName = queryObj.getTypes().values().iterator().next(); // as we don't support JOINS take first type
+        String queryName = queryObj.getTypes().values().iterator().next(); // as
+                                                                            // we
+                                                                            // don't
+                                                                            // support
+                                                                            // JOINS
+                                                                            // take
+                                                                            // first
+                                                                            // type
         TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
-        boolean skip = so instanceof VersionedDocument; // we are only interested in versions not in the series
+        boolean skip = so instanceof VersionedDocument; // we are only
+                                                        // interested in
+                                                        // versions not in the
+                                                        // series
         boolean typeMatches = typeMatches(td, so);
-        if (!searchAllVersions && so instanceof DocumentVersion && ((DocumentVersion)so).getParentDocument().getLatestVersion(false) != so)
+        if (!searchAllVersions && so instanceof DocumentVersion
+                && ((DocumentVersion) so).getParentDocument().getLatestVersion(false) != so)
             skip = true;
         // ... then check expression...
         if (typeMatches && !skip)
-            evalWhereTree(whereTree, so);        
+            evalWhereTree(whereTree, so);
     }
-    
+
     private void evalWhereTree(Tree node, StoredObject so) {
-        boolean match=true;
+        boolean match = true;
         if (null != node)
             match = evalWhereNode(so, node.getChild(0));
         if (match)
             matches.add(so); // add to list
     }
 
-    // Standard expression evaluator for single pass walking. This is used as first
+    // Standard expression evaluator for single pass walking. This is used as
+    // first
     // pass walk in this object for one-time setup tasks (e.g. setup maps)
     public void onEquals(Tree eqNode, Tree leftNode, Tree rightNode) {
-        
+
     }
-    
+
     public void onNotEquals(Tree neNode, Tree leftNode, Tree rightNode) {
-        
+
     }
-    
+
     public void onGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode) {
-        
+
     }
-    
+
     public void onGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode) {
-        
+
     }
-    
+
     public void onLessThan(Tree ltNode, Tree leftNode, Tree rightNode) {
-        
+
     }
-    
-    public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode) { 
-        
+
+    public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode) {
+
     }
 
     // Boolean operators
     public void onNot(Tree opNode, Tree leftNode) {
-        
+
     }
-    
+
     public void onAnd(Tree opNode, Tree leftNode, Tree rightNode) {
-        
+
     }
-    
+
     public void onOr(Tree opNode, Tree leftNode, Tree rightNode) {
-        
+
     }
 
     // Multi-value:
     public void onIn(Tree node, Tree colNode, Tree listNode) {
-        
+
     }
-    
+
     public void onNotIn(Tree nod, Tree colNode, Tree listNode) {
-        
+
     }
-    
+
     public void onNotInList(Tree node) {
-        
+
     }
-    
+
     public void onInAny(Tree node, Tree colNode, Tree listNode) {
-        
+
     }
-    
+
     public void onNotInAny(Tree node, Tree colNode, Tree listNode) {
-        
+
     }
-    
+
     public void onEqAny(Tree node, Tree literalNode, Tree colNode) {
-        
+
     }
 
     // Null comparisons:
     public void onIsNull(Tree nullNode, Tree colNode) {
-        
+
     }
-    
+
     public void onIsNotNull(Tree notNullNode, Tree colNode) {
-        
+
     }
 
     // String matching:
     public void onIsLike(Tree node, Tree colNode, Tree stringNode) {
-        
+
     }
-    
+
     public void onIsNotLike(Tree node, Tree colNode, Tree stringNode) {
-        
+
     }
 
     // Functions:
     public void onContains(Tree node, Tree colNode, Tree paramNode) {
-        
+
     }
-    
+
     public void onInFolder(Tree node, Tree colNode, Tree paramNode) {
-        
+
     }
-    
+
     public void onInTree(Tree node, Tree colNode, Tree paramNode) {
-        
+
     }
-    public void onScore(Tree node) { 
-        
+
+    public void onScore(Tree node) {
+
     }
 
     /**
-     * For each object check if it matches and append it to match-list if it does.
-     * We do here our own walking mechanism so that we can pass additional parameters
-     * and define the return types.
-     *   
+     * For each object check if it matches and append it to match-list if it
+     * does. We do here our own walking mechanism so that we can pass additional
+     * parameters and define the return types.
+     *
      * @param node
-     *      node in where clause
-     * @return
-     *      true if it matches, false if it not matches
+     *            node in where clause
+     * @return true if it matches, false if it not matches
      */
     boolean evalWhereNode(StoredObject so, Tree node) {
         boolean matches = true;
@@ -513,13 +527,13 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
 
     private boolean evalWhereAnd(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
         boolean matches1 = evalWhereNode(so, leftChild);
-        boolean matches2 = evalWhereNode(so, rightChild);        
+        boolean matches2 = evalWhereNode(so, rightChild);
         return matches1 && matches2;
     }
 
     private boolean evalWhereOr(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
         boolean matches1 = evalWhereNode(so, leftChild);
-        boolean matches2 = evalWhereNode(so, rightChild);        
+        boolean matches2 = evalWhereNode(so, rightChild);
         return matches1 || matches2;
     }
 
@@ -534,7 +548,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         else if (lVal == null)
             return false;
         else {
-            Object prop= lVal.getFirstValue();
+            Object prop = lVal.getFirstValue();
             if (literals.contains(prop))
                 return true;
             else
@@ -543,7 +557,8 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
     }
 
     private boolean evalWhereNotIn(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        // Note just return !evalWhereIn(so, node, colNode, listNode) is wrong, because
+        // Note just return !evalWhereIn(so, node, colNode, listNode) is wrong,
+        // because
         // then it evaluates to true for null values (not set properties).
         ColumnReference colRef = getColumnReference(colNode);
         TypeDefinition td = colRef.getTypeDefinition();
@@ -555,7 +570,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         else if (lVal == null)
             return false;
         else {
-            Object prop= lVal.getFirstValue();
+            Object prop = lVal.getFirstValue();
             if (literals.contains(prop))
                 return false;
             else
@@ -574,7 +589,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         else if (lVal == null)
             return false;
         else {
-            List<?> props= lVal.getValues();
+            List<?> props = lVal.getValues();
             for (Object prop : props) {
                 LOG.debug("comparing with: " + prop);
                 if (literals.contains(prop))
@@ -585,7 +600,8 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
     }
 
     private boolean evalWhereNotInAny(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        // Note just return !evalWhereInAny(so, node, colNode, listNode) is wrong, because
+        // Note just return !evalWhereInAny(so, node, colNode, listNode) is
+        // wrong, because
         // then it evaluates to true for null values (not set properties).
         ColumnReference colRef = getColumnReference(colNode);
         TypeDefinition td = colRef.getTypeDefinition();
@@ -597,14 +613,14 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         else if (lVal == null)
             return false;
         else {
-            List<?> props= lVal.getValues();
+            List<?> props = lVal.getValues();
             for (Object prop : props) {
                 LOG.debug("comparing with: " + prop);
                 if (literals.contains(prop))
                     return false;
             }
             return true;
-        }    
+        }
     }
 
     private boolean evalWhereEqAny(StoredObject so, Tree node, Tree literalNode, Tree colNode) {
@@ -618,7 +634,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         else if (lVal == null)
             return false;
         else {
-            List<?> props= lVal.getValues();
+            List<?> props = lVal.getValues();
             if (props.contains(literal))
                 return true;
             else
@@ -627,8 +643,8 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
     }
 
     private boolean evalWhereIsNull(StoredObject so, Tree node, Tree child) {
-       Object propVal = getPropertyValue(child, so);
-       return null == propVal;
+        Object propVal = getPropertyValue(child, so);
+        return null == propVal;
     }
 
     private boolean evalWhereIsNotNull(StoredObject so, Tree node, Tree child) {
@@ -639,26 +655,27 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
     private boolean evalWhereIsLike(StoredObject so, Tree node, Tree colNode, Tree StringNode) {
         Object rVal = onLiteral(StringNode);
         if (!(rVal instanceof String))
-                throw new RuntimeException("LIKE operator requires String literal on right hand side.");
-        
+            throw new RuntimeException("LIKE operator requires String literal on right hand side.");
+
         ColumnReference colRef = getColumnReference(colNode);
         TypeDefinition td = colRef.getTypeDefinition();
         PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
         PropertyType propType = pd.getPropertyType();
-        if (propType != PropertyType.STRING && propType != PropertyType.HTML &&  propType != PropertyType.ID &&
-                propType != PropertyType.URI)
-            throw new RuntimeException("Property type "+ propType.value() + " is not allowed FOR LIKE");
+        if (propType != PropertyType.STRING && propType != PropertyType.HTML && propType != PropertyType.ID
+                && propType != PropertyType.URI)
+            throw new RuntimeException("Property type " + propType.value() + " is not allowed FOR LIKE");
         if (pd.getCardinality() != Cardinality.SINGLE)
             throw new RuntimeException("LIKE is not allowed for multi-value properties ");
-        
+
         String propVal = (String) so.getProperties().get(colRef.getPropertyId()).getFirstValue();
-        String pattern = translatePattern((String) rVal); // SQL to Java regex syntax
+        String pattern = translatePattern((String) rVal); // SQL to Java regex
+                                                            // syntax
         Pattern p = Pattern.compile(pattern);
         return p.matcher(propVal).matches();
     }
 
     private boolean evalWhereIsNotLike(StoredObject so, Tree node, Tree colNode, Tree stringNode) {
-        return ! evalWhereIsLike(so, node, colNode, stringNode);
+        return !evalWhereIsLike(so, node, colNode, stringNode);
     }
 
     private boolean evalWhereContains(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
@@ -667,41 +684,43 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
 
     private boolean evalWhereInFolder(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
         if (null != colNode) {
-            getTableReference(colNode); 
-            // just for error checking we do not evaluate this, there is only one from without join support
+            getTableReference(colNode);
+            // just for error checking we do not evaluate this, there is only
+            // one from without join support
         }
         Object lit = onLiteral(paramNode);
         if (!(lit instanceof String))
             throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
         String folderId = (String) lit;
-        
+
         // check if object is in folder
         if (so instanceof Filing)
-            return hasParent((Filing)so, folderId);
+            return hasParent((Filing) so, folderId);
         else
             return false;
     }
 
     private boolean evalWhereInTree(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
         if (null != colNode) {
-            getTableReference(colNode); 
-            // just for error checking we do not evaluate this, there is only one from without join support
+            getTableReference(colNode);
+            // just for error checking we do not evaluate this, there is only
+            // one from without join support
         }
         Object lit = onLiteral(paramNode);
         if (!(lit instanceof String))
             throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
         String folderId = (String) lit;
-        
+
         // check if object is in folder
         if (so instanceof Filing)
             return hasAncestor((Filing) so, folderId);
         else
             return false;
     }
-    
+
     private boolean hasParent(Filing objInFolder, String folderId) {
         List<Folder> parents = objInFolder.getParents();
-        
+
         for (Folder folder : parents)
             if (folderId.equals(folder.getId()))
                 return true;
@@ -710,7 +729,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
 
     private boolean hasAncestor(Filing objInFolder, String folderId) {
         List<Folder> parents = objInFolder.getParents();
-        
+
         for (Folder folder : parents)
             if (folderId.equals(folder.getId()))
                 return true;
@@ -722,8 +741,9 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
 
     private Integer compareTo(StoredObject so, Tree leftChild, Tree rightChild) {
         Object rVal = onLiteral(rightChild);
-        
-        //log.debug("retrieve node from where: " + System.identityHashCode(leftChild) + " is " + leftChild);
+
+        // log.debug("retrieve node from where: " +
+        // System.identityHashCode(leftChild) + " is " + leftChild);
         ColumnReference colRef = getColumnReference(leftChild);
         TypeDefinition td = colRef.getTypeDefinition();
         PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
@@ -733,59 +753,60 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         else
             return compareTo(pd, lVal, rVal);
     }
-    
+
     private int compareTo(PropertyDefinition<?> td, PropertyData<?> lVal, Object rVal) {
         Object lValue = lVal.getFirstValue();
         switch (td.getPropertyType()) {
         case BOOLEAN:
             if (rVal instanceof Boolean)
-                return ((Boolean)lValue).compareTo((Boolean)rVal);
-            else 
+                return ((Boolean) lValue).compareTo((Boolean) rVal);
+            else
                 throwIncompatibleTypesException(lValue, rVal);
             break;
-        case INTEGER: 
-        { 
-            Long lLongValue = ((BigInteger)lVal.getFirstValue()).longValue();
+        case INTEGER: {
+            Long lLongValue = ((BigInteger) lVal.getFirstValue()).longValue();
             if (rVal instanceof Long)
-                return (lLongValue).compareTo((Long)rVal);
+                return (lLongValue).compareTo((Long) rVal);
             else if (rVal instanceof Double)
-                return Double.valueOf(((Integer)lValue).doubleValue()).compareTo((Double)rVal);
-            else 
+                return Double.valueOf(((Integer) lValue).doubleValue()).compareTo((Double) rVal);
+            else
                 throwIncompatibleTypesException(lValue, rVal);
             break;
         }
         case DATETIME:
             if (rVal instanceof GregorianCalendar) {
-                // LOG.debug("left:" + CalendarHelper.toString((GregorianCalendar)lValue) + " right: " + CalendarHelper.toString((GregorianCalendar)rVal));
-                return ((GregorianCalendar)lValue).compareTo((GregorianCalendar)rVal);
-            } else 
+                // LOG.debug("left:" +
+                // CalendarHelper.toString((GregorianCalendar)lValue) +
+                // " right: " +
+                // CalendarHelper.toString((GregorianCalendar)rVal));
+                return ((GregorianCalendar) lValue).compareTo((GregorianCalendar) rVal);
+            } else
                 throwIncompatibleTypesException(lValue, rVal);
             break;
-        case DECIMAL:
-        { 
-            Double lDoubleValue = ((BigDecimal)lVal.getFirstValue()).doubleValue();
+        case DECIMAL: {
+            Double lDoubleValue = ((BigDecimal) lVal.getFirstValue()).doubleValue();
             if (rVal instanceof Double)
-                return lDoubleValue.compareTo((Double)rVal);
+                return lDoubleValue.compareTo((Double) rVal);
             else if (rVal instanceof Long)
-                return Double.valueOf(((Integer)lValue).doubleValue()).compareTo((Double)rVal);
-            else 
+                return Double.valueOf(((Integer) lValue).doubleValue()).compareTo((Double) rVal);
+            else
                 throwIncompatibleTypesException(lValue, rVal);
             break;
         }
         case HTML:
         case STRING:
-        case URI:   
-        case ID: 
+        case URI:
+        case ID:
             if (rVal instanceof String) {
                 LOG.debug("compare strings: " + lValue + " with " + rVal);
-                return ((String)lValue).compareTo((String)rVal);
-            } else 
+                return ((String) lValue).compareTo((String) rVal);
+            } else
                 throwIncompatibleTypesException(lValue, rVal);
             break;
         }
         return 0;
     }
-    
+
     private ColumnReference getColumnReference(Tree columnNode) {
         CmisSelector sel = queryObj.getColumnReference(columnNode.getTokenStartIndex());
         if (null == sel)
@@ -795,11 +816,12 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         else
             throw new RuntimeException("Unexpected numerical value function in where clause");
     }
-    
+
     private String getTableReference(Tree tableNode) {
         String typeQueryName = queryObj.getTypeQueryName(tableNode.getText());
         if (null == typeQueryName)
-            throw new RuntimeException("Inavlid type in IN_FOLDER() or IN_TREE(), must be in FROM list: " + tableNode.getText());
+            throw new RuntimeException("Inavlid type in IN_FOLDER() or IN_TREE(), must be in FROM list: "
+                    + tableNode.getText());
         return typeQueryName;
     }
 
@@ -815,46 +837,46 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
                 return null == lVal ? null : lVal.getFirstValue();
             else
                 return lVal.getValues();
-        }                
+        }
     }
-    
+
     // translate SQL wildcards %, _ to Java regex syntax
     public static String translatePattern(String wildcardString) {
         int index = 0;
         int start = 0;
         StringBuffer res = new StringBuffer();
-        
+
         while (index >= 0) {
             index = wildcardString.indexOf('%', start);
-            if (index < 0) 
+            if (index < 0)
                 res.append(wildcardString.substring(start));
-            else if (index == 0 || index > 0 && wildcardString.charAt(index-1) != '\\') {
+            else if (index == 0 || index > 0 && wildcardString.charAt(index - 1) != '\\') {
                 res.append(wildcardString.substring(start, index));
                 res.append(".*");
-            } else 
-                res.append(wildcardString.substring(start, index+1));
-            start = index+1;
+            } else
+                res.append(wildcardString.substring(start, index + 1));
+            start = index + 1;
         }
         wildcardString = res.toString();
-        
+
         index = 0;
         start = 0;
         res = new StringBuffer();
-        
+
         while (index >= 0) {
             index = wildcardString.indexOf('_', start);
-            if (index < 0) 
+            if (index < 0)
                 res.append(wildcardString.substring(start));
-            else if (index == 0 || index > 0 && wildcardString.charAt(index-1) != '\\') {
+            else if (index == 0 || index > 0 && wildcardString.charAt(index - 1) != '\\') {
                 res.append(wildcardString.substring(start, index));
                 res.append(".");
-            } else 
-                res.append(wildcardString.substring(start, index+1));
-            start = index+1;
+            } else
+                res.append(wildcardString.substring(start, index + 1));
+            start = index + 1;
         }
         return res.toString();
     }
-    
+
     private void throwIncompatibleTypesException(Object o1, Object o2) {
         throw new RuntimeException("Incompatible Types to compare: " + o1 + " and " + o2);
     }
