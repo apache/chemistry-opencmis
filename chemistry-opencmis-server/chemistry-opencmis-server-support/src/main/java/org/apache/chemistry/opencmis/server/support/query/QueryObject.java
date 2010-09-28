@@ -63,6 +63,7 @@ public class QueryObject {
 
     // where part
     protected Map<Integer, CmisSelector> columnReferences = new HashMap<Integer, CmisSelector>();
+    protected Tree whereTree;
 
     // order by part
     protected List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
@@ -234,6 +235,11 @@ public class QueryObject {
 
     // ///////////////////////////////////////////////////////
     // WHERE part
+
+
+    public Tree getWhereTree() {
+        return whereTree;
+    }
 
     public void addWhereReference(Tree node, CmisSelector reference) {
         LOG.debug("add node to where: " + System.identityHashCode(node));
@@ -421,6 +427,7 @@ public class QueryObject {
     }
 
     public void processWhereClause(Tree whereRoot) {
+        this.whereTree = whereRoot;
         if (null != queryProcessor && null != whereRoot) {
             queryProcessor.onStartProcessing(whereRoot);
             processWhereNode(whereRoot);
