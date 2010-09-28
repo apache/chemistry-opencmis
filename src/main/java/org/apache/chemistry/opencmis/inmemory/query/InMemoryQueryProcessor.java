@@ -56,6 +56,7 @@ import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.query.AbstractQueryConditionProcessor;
 import org.apache.chemistry.opencmis.server.support.query.AbstractClauseWalker;
+import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
@@ -72,7 +73,7 @@ import org.apache.commons.logging.LogFactory;
  * walk across the query expression tree an object is checked if it matches. In
  * case of a match it is appended to a list of matching objects.
  */
-public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
+public class InMemoryQueryProcessor {
 
     private static Log LOG = LogFactory.getLog(InMemoryQueryProcessor.class);
 
@@ -90,7 +91,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
             String statement, Boolean searchAllVersions, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
 
-        queryObj = new QueryObject(tm, this);
+        queryObj = new QueryObject(tm, null);
         processQueryAndCatchExc(statement); // calls query processor
 
         // iterate over all the objects and check for each if the query matches
@@ -114,7 +115,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
             throw new RuntimeException("Walking of statement failed with error: \n   " + errMsg
                     + "\n   Statement was: " + statement);
         }
-        /* CommonTree walkerTree = (CommonTree) */walker.getTreeNodeStream().getTreeSource();
+        whereTree = queryObj.getWhereTree();
         return walker;
     }
 
@@ -126,16 +127,6 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         } catch (Exception e) {
             throw new RuntimeException("Walking of statement failed with other exception: \n   " + e);
         }
-    }
-
-    public void onStartProcessing(Tree node) {
-        // log.debug("onStartProcessing()");
-        // checkRoot(node);
-        whereTree = node;
-    }
-
-    public void onStopProcessing() {
-        // log.debug("onStopProcessing()");
     }
 
     public ObjectList buildResultList(TypeManager tm, String user, Boolean includeAllowableActions,
@@ -266,106 +257,6 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
             match = evalWhereNode(so, node.getChild(0));
         if (match)
             matches.add(so); // add to list
-    }
-
-    // Standard expression evaluator for single pass walking. This is used as
-    // first
-    // pass walk in this object for one-time setup tasks (e.g. setup maps)
-    public void onEquals(Tree eqNode, Tree leftNode, Tree rightNode) {
-
-    }
-
-    public void onNotEquals(Tree neNode, Tree leftNode, Tree rightNode) {
-
-    }
-
-    public void onGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode) {
-
-    }
-
-    public void onGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode) {
-
-    }
-
-    public void onLessThan(Tree ltNode, Tree leftNode, Tree rightNode) {
-
-    }
-
-    public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode) {
-
-    }
-
-    // Boolean operators
-    public void onNot(Tree opNode, Tree leftNode) {
-
-    }
-
-    public void onAnd(Tree opNode, Tree leftNode, Tree rightNode) {
-
-    }
-
-    public void onOr(Tree opNode, Tree leftNode, Tree rightNode) {
-
-    }
-
-    // Multi-value:
-    public void onIn(Tree node, Tree colNode, Tree listNode) {
-
-    }
-
-    public void onNotIn(Tree nod, Tree colNode, Tree listNode) {
-
-    }
-
-    public void onNotInList(Tree node) {
-
-    }
-
-    public void onInAny(Tree node, Tree colNode, Tree listNode) {
-
-    }
-
-    public void onNotInAny(Tree node, Tree colNode, Tree listNode) {
-
-    }
-
-    public void onEqAny(Tree node, Tree literalNode, Tree colNode) {
-
-    }
-
-    // Null comparisons:
-    public void onIsNull(Tree nullNode, Tree colNode) {
-
-    }
-
-    public void onIsNotNull(Tree notNullNode, Tree colNode) {
-
-    }
-
-    // String matching:
-    public void onIsLike(Tree node, Tree colNode, Tree stringNode) {
-
-    }
-
-    public void onIsNotLike(Tree node, Tree colNode, Tree stringNode) {
-
-    }
-
-    // Functions:
-    public void onContains(Tree node, Tree colNode, Tree paramNode) {
-
-    }
-
-    public void onInFolder(Tree node, Tree colNode, Tree paramNode) {
-
-    }
-
-    public void onInTree(Tree node, Tree colNode, Tree paramNode) {
-
-    }
-
-    public void onScore(Tree node) {
-
     }
 
     /**
@@ -541,7 +432,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
             TypeDefinition td = colRef.getTypeDefinition();
             PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-            Object literal = onLiteral(literalNode);
+            Object literal = walkValue(literalNode);
             if (pd.getCardinality() != Cardinality.MULTI)
                 throw new RuntimeException("Operator = ANY only is allowed on multi-value properties ");
             else if (lVal == null)
@@ -569,7 +460,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
 
         @Override
         public boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
-            Object rVal = onLiteral(stringNode);
+            Object rVal = walkValue(stringNode);
             if (!(rVal instanceof String))
                 throw new RuntimeException("LIKE operator requires String literal on right hand side.");
 
@@ -608,7 +499,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
                 // just for error checking we do not evaluate this, there is
                 // only one from without join support
             }
-            Object lit = onLiteral(paramNode);
+            Object lit = walkValue(paramNode);
             if (!(lit instanceof String))
                 throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
             String folderId = (String) lit;
@@ -628,7 +519,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
                 // only
                 // one from without join support
             }
-            Object lit = onLiteral(paramNode);
+            Object lit = walkValue(paramNode);
             if (!(lit instanceof String))
                 throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
             String folderId = (String) lit;
@@ -640,8 +531,48 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
                 return false;
         }
 
+        @Override
+        public Object walkBoolean(Tree node) {
+            String s = node.getText();
+            return Boolean.valueOf(s);
+        }
+
+        @Override
+        public Object walkNumber(Tree node) {
+            String s = node.getText();
+            if (s.contains(".") || s.contains("e") || s.contains("E")) {
+                return Double.valueOf(s);
+            } else {
+                return Long.valueOf(s);
+            }
+        }
+
+        @Override
+        public Object walkString(Tree node) {
+            String s = node.getText();
+            s = s.substring(1, s.length() - 1);
+            s = s.replace("''", "'"); // unescape quotes
+            return s;
+        }
+
+        @Override
+        public Object walkTimestamp(Tree node) {
+            String s = node.getText();
+            s = s.substring(s.indexOf('\'') + 1, s.length() - 1);
+            return CalendarHelper.fromString(s);
+        }
+
+        @Override
+        public Object walkInList(Tree node) {
+            List<Object> res = new ArrayList<Object>(node.getChildCount());
+            for (int i = 0; i < node.getChildCount(); i++) {
+                res.add(walkValue(node.getChild(i)));
+            }
+            return res;
+        }
+
         protected Integer compareTo(Tree leftChild, Tree rightChild) {
-            Object rVal = onLiteral(rightChild);
+            Object rVal = walkValue(rightChild);
 
             // log.debug("retrieve node from where: " +
             // System.identityHashCode(leftChild) + " is " + leftChild);
@@ -653,6 +584,11 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
                 throw new RuntimeException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
             else
                 return InMemoryQueryProcessor.this.compareTo(pd, lVal, rVal);
+        }
+
+        @SuppressWarnings("unchecked")
+        public List<Object> onLiteralList(Tree node) {
+            return (List<Object>) walkValue(node);
         }
     }
 
