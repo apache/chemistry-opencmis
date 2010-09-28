@@ -31,9 +31,9 @@ import java.util.Map.Entry;
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
+import org.apache.chemistry.opencmis.server.support.query.AbstractQueryConditionProcessor;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
-import org.apache.chemistry.opencmis.server.support.query.QueryConditionProcessor;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +45,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
     private static Log log = LogFactory.getLog(ProcessQueryTest.class);
 
-    static private class TestQueryProcessor implements QueryConditionProcessor {
+    static private class TestQueryProcessor extends AbstractQueryConditionProcessor {
 
         private static final String ON_START = "onStartWasCalled";
         private static final String ON_STOP = "onStopWasCalled";
@@ -333,42 +333,6 @@ public class ProcessQueryTest extends AbstractQueryTest {
                return null;
            }
        }
-
-
-    public void onPostAnd(Tree opNode, Tree leftNode, Tree rightNode) {
-        // TODO Auto-generated method stub
-
-    }
-
-
-    public void onPostNot(Tree opNode, Tree leftNode) {
-        // TODO Auto-generated method stub
-
-    }
-
-
-    public void onPostOr(Tree opNode, Tree leftNode, Tree rightNode) {
-        // TODO Auto-generated method stub
-
-    }
-
-
-    public void onPreAnd(Tree opNode, Tree leftNode, Tree rightNode) {
-        // TODO Auto-generated method stub
-
-    }
-
-
-    public void onPreNot(Tree opNode, Tree leftNode) {
-        // TODO Auto-generated method stub
-
-    }
-
-
-    public void onPreOr(Tree opNode, Tree leftNode, Tree rightNode) {
-        // TODO Auto-generated method stub
-
-    }
 
     }
 

@@ -15,6 +15,10 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
+ * Contributors:
+ *     Jens Huebel
+ *     Florent Guillaume, Nuxeo
  */
 package org.apache.chemistry.opencmis.inmemory.query;
 
@@ -51,7 +55,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.query.AbstractQueryConditionProcessor;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
+import org.apache.chemistry.opencmis.server.support.query.AbstractClauseWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
@@ -67,9 +71,6 @@ import org.apache.commons.logging.LogFactory;
  * with all objects. In a first pass one time setup is performed, in a custom
  * walk across the query expression tree an object is checked if it matches. In
  * case of a match it is appended to a list of matching objects.
- *
- * @author Jens
- *
  */
 public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
 
@@ -377,345 +378,282 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
      * @return true if it matches, false if it not matches
      */
     boolean evalWhereNode(StoredObject so, Tree node) {
-        boolean matches = true;
+        return new InMemoryWhereClauseWalker(so).walkClause(node);
+    }
 
-        switch (node.getType()) {
-        case CmisQlStrictLexer.WHERE:
-            matches = evalWhereNode(so, node.getChild(0));
-            break; // ignore
-        case CmisQlStrictLexer.EQ:
-            matches = evalWhereEquals(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.NEQ:
-            matches = evalWhereNotEquals(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.GT:
-            matches = evalWhereGreaterThan(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.GTEQ:
-            matches = evalWhereGreaterOrEquals(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.LT:
-            matches = evalWhereLessThan(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.LTEQ:
-            matches = evalWhereLessOrEquals(so, node, node.getChild(0), node.getChild(1));
-            break;
+    public class InMemoryWhereClauseWalker extends AbstractClauseWalker {
 
-        case CmisQlStrictLexer.NOT:
-            matches = evalWhereNot(so, node, node.getChild(0));
-            break;
-        case CmisQlStrictLexer.AND:
-            matches = evalWhereAnd(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.OR:
-            matches = evalWhereOr(so, node, node.getChild(0), node.getChild(1));
-            break;
+        protected StoredObject so;
 
-        // Multi-value:
-        case CmisQlStrictLexer.IN:
-            matches = evalWhereIn(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.NOT_IN:
-            matches = evalWhereNotIn(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.IN_ANY:
-            matches = evalWhereInAny(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.NOT_IN_ANY:
-            matches = evalWhereNotInAny(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.EQ_ANY:
-            matches = evalWhereEqAny(so, node, node.getChild(0), node.getChild(1));
-            break;
-
-        // Null comparisons:
-        case CmisQlStrictLexer.IS_NULL:
-            matches = evalWhereIsNull(so, node, node.getChild(0));
-            break;
-        case CmisQlStrictLexer.IS_NOT_NULL:
-            matches = evalWhereIsNotNull(so, node, node.getChild(0));
-            break;
-
-        // String matching
-        case CmisQlStrictLexer.LIKE:
-            matches = evalWhereIsLike(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.NOT_LIKE:
-            matches = evalWhereIsNotLike(so, node, node.getChild(0), node.getChild(1));
-            break;
-
-        // Functions
-        case CmisQlStrictLexer.CONTAINS:
-            if (node.getChildCount() == 1)
-                matches = evalWhereContains(so, node, null, node.getChild(0));
-            else
-                matches = evalWhereContains(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.IN_FOLDER:
-            if (node.getChildCount() == 1)
-                matches = evalWhereInFolder(so, node, null, node.getChild(0));
-            else
-                matches = evalWhereInFolder(so, node, node.getChild(0), node.getChild(1));
-            break;
-        case CmisQlStrictLexer.IN_TREE:
-            if (node.getChildCount() == 1)
-                matches = evalWhereInTree(so, node, null, node.getChild(0));
-            else
-                matches = evalWhereInTree(so, node, node.getChild(0), node.getChild(1));
-            break;
-
-        default:
-            // do nothing;
+        public InMemoryWhereClauseWalker(StoredObject so) {
+            this.so = so;
         }
 
-        return matches;
-    }
+        @Override
+        public boolean walkNot(Tree opNode, Tree node) {
+            boolean matches = walkClause(node);
+            return !matches;
+        }
 
-    private boolean evalWhereEquals(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
-        Integer cmp = compareTo(so, leftChild, rightChild);
-        if (null == cmp)
-            return false; // property is not set
-        else
-            return cmp == 0;
-    }
+        @Override
+        public boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode) {
+            boolean matches1 = walkClause(leftNode);
+            boolean matches2 = walkClause(rightNode);
+            return matches1 && matches2;
+        }
 
-    private boolean evalWhereNotEquals(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
-        Integer cmp = compareTo(so, leftChild, rightChild);
-        if (null == cmp)
-            return false; // property is not set
-        else
-            return cmp != 0;
-    }
+        @Override
+        public boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode) {
+            boolean matches1 = walkClause(leftNode);
+            boolean matches2 = walkClause(rightNode);
+            return matches1 || matches2;
+        }
 
-    private boolean evalWhereGreaterThan(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
-        Integer cmp = compareTo(so, leftChild, rightChild);
-        if (null == cmp)
-            return false; // property is not set
-        else
-            return cmp > 0;
-    }
+        @Override
+        public boolean walkEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+            Integer cmp = compareTo(leftNode, rightNode);
+            return cmp == null ? false : cmp == 0;
+        }
 
-    private boolean evalWhereGreaterOrEquals(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
-        Integer cmp = compareTo(so, leftChild, rightChild);
-        if (null == cmp)
-            return false; // property is not set
-        else
-            return cmp >= 0;
-    }
+        @Override
+        public boolean walkNotEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+            Integer cmp = compareTo(leftNode, rightNode);
+            return cmp == null ? false : cmp != 0;
+        }
 
-    private boolean evalWhereLessThan(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
-        Integer cmp = compareTo(so, leftChild, rightChild);
-        if (null == cmp)
-            return false; // property is not set
-        else
-            return cmp < 0;
-    }
+        @Override
+        public boolean walkGreaterThan(Tree opNode, Tree leftNode, Tree rightNode) {
+            Integer cmp = compareTo(leftNode, rightNode);
+            return cmp == null ? false : cmp > 0;
+        }
 
-    private boolean evalWhereLessOrEquals(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
-        Integer cmp = compareTo(so, leftChild, rightChild);
-        if (null == cmp)
-            return false; // property is not set
-        else
-            return cmp <= 0;
-    }
+        @Override
+        public boolean walkGreaterOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+            Integer cmp = compareTo(leftNode, rightNode);
+            return cmp == null ? false : cmp >= 0;
+        }
 
-    private boolean evalWhereNot(StoredObject so, Tree node, Tree child) {
-        boolean matches = evalWhereNode(so, child);
-        return !matches;
-    }
+        @Override
+        public boolean walkLessThan(Tree opNode, Tree leftNode, Tree rightNode) {
+            Integer cmp = compareTo(leftNode, rightNode);
+            return cmp == null ? false : cmp < 0;
+        }
 
-    private boolean evalWhereAnd(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
-        boolean matches1 = evalWhereNode(so, leftChild);
-        boolean matches2 = evalWhereNode(so, rightChild);
-        return matches1 && matches2;
-    }
+        @Override
+        public boolean walkLessOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+            Integer cmp = compareTo(leftNode, rightNode);
+            return cmp == null ? false : cmp <= 0;
+        }
 
-    private boolean evalWhereOr(StoredObject so, Tree node, Tree leftChild, Tree rightChild) {
-        boolean matches1 = evalWhereNode(so, leftChild);
-        boolean matches2 = evalWhereNode(so, rightChild);
-        return matches1 || matches2;
-    }
-
-    private boolean evalWhereIn(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        ColumnReference colRef = getColumnReference(colNode);
-        TypeDefinition td = colRef.getTypeDefinition();
-        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
-        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-        List<Object> literals = onLiteralList(listNode);
-        if (pd.getCardinality() != Cardinality.SINGLE)
-            throw new RuntimeException("Operator IN only is allowed on single-value properties ");
-        else if (lVal == null)
-            return false;
-        else {
-            Object prop = lVal.getFirstValue();
-            if (literals.contains(prop))
-                return true;
-            else
+        @Override
+        public boolean walkIn(Tree opNode, Tree colNode, Tree listNode) {
+            ColumnReference colRef = getColumnReference(colNode);
+            TypeDefinition td = colRef.getTypeDefinition();
+            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+            List<Object> literals = onLiteralList(listNode);
+            if (pd.getCardinality() != Cardinality.SINGLE)
+                throw new RuntimeException("Operator IN only is allowed on single-value properties ");
+            else if (lVal == null)
                 return false;
-        }
-    }
-
-    private boolean evalWhereNotIn(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        // Note just return !evalWhereIn(so, node, colNode, listNode) is wrong,
-        // because
-        // then it evaluates to true for null values (not set properties).
-        ColumnReference colRef = getColumnReference(colNode);
-        TypeDefinition td = colRef.getTypeDefinition();
-        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
-        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-        List<Object> literals = onLiteralList(listNode);
-        if (pd.getCardinality() != Cardinality.SINGLE)
-            throw new RuntimeException("Operator IN only is allowed on single-value properties ");
-        else if (lVal == null)
-            return false;
-        else {
-            Object prop = lVal.getFirstValue();
-            if (literals.contains(prop))
-                return false;
-            else
-                return true;
-        }
-    }
-
-    private boolean evalWhereInAny(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        ColumnReference colRef = getColumnReference(colNode);
-        TypeDefinition td = colRef.getTypeDefinition();
-        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
-        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-        List<Object> literals = onLiteralList(listNode);
-        if (pd.getCardinality() != Cardinality.MULTI)
-            throw new RuntimeException("Operator ANY...IN only is allowed on multi-value properties ");
-        else if (lVal == null)
-            return false;
-        else {
-            List<?> props = lVal.getValues();
-            for (Object prop : props) {
-                LOG.debug("comparing with: " + prop);
+            else {
+                Object prop = lVal.getFirstValue();
                 if (literals.contains(prop))
                     return true;
-            }
-            return false;
-        }
-    }
-
-    private boolean evalWhereNotInAny(StoredObject so, Tree node, Tree colNode, Tree listNode) {
-        // Note just return !evalWhereInAny(so, node, colNode, listNode) is
-        // wrong, because
-        // then it evaluates to true for null values (not set properties).
-        ColumnReference colRef = getColumnReference(colNode);
-        TypeDefinition td = colRef.getTypeDefinition();
-        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
-        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-        List<Object> literals = onLiteralList(listNode);
-        if (pd.getCardinality() != Cardinality.MULTI)
-            throw new RuntimeException("Operator ANY...IN only is allowed on multi-value properties ");
-        else if (lVal == null)
-            return false;
-        else {
-            List<?> props = lVal.getValues();
-            for (Object prop : props) {
-                LOG.debug("comparing with: " + prop);
-                if (literals.contains(prop))
+                else
                     return false;
             }
-            return true;
         }
-    }
 
-    private boolean evalWhereEqAny(StoredObject so, Tree node, Tree literalNode, Tree colNode) {
-        ColumnReference colRef = getColumnReference(colNode);
-        TypeDefinition td = colRef.getTypeDefinition();
-        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
-        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-        Object literal = onLiteral(literalNode);
-        if (pd.getCardinality() != Cardinality.MULTI)
-            throw new RuntimeException("Operator = ANY only is allowed on multi-value properties ");
-        else if (lVal == null)
-            return false;
-        else {
-            List<?> props = lVal.getValues();
-            if (props.contains(literal))
+        @Override
+        public boolean walkNotIn(Tree opNode, Tree colNode, Tree listNode) {
+            // Note just return !walkIn(node, colNode, listNode) is wrong,
+            // because
+            // then it evaluates to true for null values (not set properties).
+            ColumnReference colRef = getColumnReference(colNode);
+            TypeDefinition td = colRef.getTypeDefinition();
+            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+            List<Object> literals = onLiteralList(listNode);
+            if (pd.getCardinality() != Cardinality.SINGLE)
+                throw new RuntimeException("Operator IN only is allowed on single-value properties ");
+            else if (lVal == null)
+                return false;
+            else {
+                Object prop = lVal.getFirstValue();
+                if (literals.contains(prop))
+                    return false;
+                else
+                    return true;
+            }
+        }
+
+        @Override
+        public boolean walkInAny(Tree opNode, Tree colNode, Tree listNode) {
+            ColumnReference colRef = getColumnReference(colNode);
+            TypeDefinition td = colRef.getTypeDefinition();
+            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+            List<Object> literals = onLiteralList(listNode);
+            if (pd.getCardinality() != Cardinality.MULTI)
+                throw new RuntimeException("Operator ANY...IN only is allowed on multi-value properties ");
+            else if (lVal == null)
+                return false;
+            else {
+                List<?> props = lVal.getValues();
+                for (Object prop : props) {
+                    LOG.debug("comparing with: " + prop);
+                    if (literals.contains(prop))
+                        return true;
+                }
+                return false;
+            }
+        }
+
+        @Override
+        public boolean walkNotInAny(Tree opNode, Tree colNode, Tree listNode) {
+            // Note just return !walkNotInAny(node, colNode, listNode) is
+            // wrong, because
+            // then it evaluates to true for null values (not set properties).
+            ColumnReference colRef = getColumnReference(colNode);
+            TypeDefinition td = colRef.getTypeDefinition();
+            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+            List<Object> literals = onLiteralList(listNode);
+            if (pd.getCardinality() != Cardinality.MULTI)
+                throw new RuntimeException("Operator ANY...IN only is allowed on multi-value properties ");
+            else if (lVal == null)
+                return false;
+            else {
+                List<?> props = lVal.getValues();
+                for (Object prop : props) {
+                    LOG.debug("comparing with: " + prop);
+                    if (literals.contains(prop))
+                        return false;
+                }
                 return true;
+            }
+        }
+
+        @Override
+        public boolean walkEqAny(Tree opNode, Tree literalNode, Tree colNode) {
+            ColumnReference colRef = getColumnReference(colNode);
+            TypeDefinition td = colRef.getTypeDefinition();
+            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+            Object literal = onLiteral(literalNode);
+            if (pd.getCardinality() != Cardinality.MULTI)
+                throw new RuntimeException("Operator = ANY only is allowed on multi-value properties ");
+            else if (lVal == null)
+                return false;
+            else {
+                List<?> props = lVal.getValues();
+                if (props.contains(literal))
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        @Override
+        public boolean walkIsNull(Tree opNode, Tree colNode) {
+            Object propVal = getPropertyValue(colNode, so);
+            return propVal == null;
+        }
+
+        @Override
+        public boolean walkIsNotNull(Tree opNode, Tree colNode) {
+            Object propVal = getPropertyValue(colNode, so);
+            return propVal != null;
+        }
+
+        @Override
+        public boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
+            Object rVal = onLiteral(stringNode);
+            if (!(rVal instanceof String))
+                throw new RuntimeException("LIKE operator requires String literal on right hand side.");
+
+            ColumnReference colRef = getColumnReference(colNode);
+            TypeDefinition td = colRef.getTypeDefinition();
+            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyType propType = pd.getPropertyType();
+            if (propType != PropertyType.STRING && propType != PropertyType.HTML && propType != PropertyType.ID
+                    && propType != PropertyType.URI)
+                throw new RuntimeException("Property type " + propType.value() + " is not allowed FOR LIKE");
+            if (pd.getCardinality() != Cardinality.SINGLE)
+                throw new RuntimeException("LIKE is not allowed for multi-value properties ");
+
+            String propVal = (String) so.getProperties().get(colRef.getPropertyId()).getFirstValue();
+            String pattern = translatePattern((String) rVal); // SQL to Java
+                                                                // regex
+                                                                // syntax
+            Pattern p = Pattern.compile(pattern);
+            return p.matcher(propVal).matches();
+        }
+
+        @Override
+        public boolean walkNotLike(Tree opNode, Tree colNode, Tree stringNode) {
+            return !walkLike(opNode, colNode, stringNode);
+        }
+
+        @Override
+        public boolean walkContains(Tree opNode, Tree colNode, Tree queryNode) {
+            throw new RuntimeException("Operator CONTAINS not supported in InMemory server.");
+        }
+
+        @Override
+        public boolean walkInFolder(Tree opNode, Tree colNode, Tree paramNode) {
+            if (null != colNode) {
+                getTableReference(colNode);
+                // just for error checking we do not evaluate this, there is
+                // only one from without join support
+            }
+            Object lit = onLiteral(paramNode);
+            if (!(lit instanceof String))
+                throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
+            String folderId = (String) lit;
+
+            // check if object is in folder
+            if (so instanceof Filing)
+                return hasParent((Filing) so, folderId);
             else
                 return false;
         }
-    }
 
-    private boolean evalWhereIsNull(StoredObject so, Tree node, Tree child) {
-        Object propVal = getPropertyValue(child, so);
-        return null == propVal;
-    }
+        @Override
+        public boolean walkInTree(Tree opNode, Tree colNode, Tree paramNode) {
+            if (null != colNode) {
+                getTableReference(colNode);
+                // just for error checking we do not evaluate this, there is
+                // only
+                // one from without join support
+            }
+            Object lit = onLiteral(paramNode);
+            if (!(lit instanceof String))
+                throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
+            String folderId = (String) lit;
 
-    private boolean evalWhereIsNotNull(StoredObject so, Tree node, Tree child) {
-        Object propVal = getPropertyValue(child, so);
-        return null != propVal;
-    }
-
-    private boolean evalWhereIsLike(StoredObject so, Tree node, Tree colNode, Tree StringNode) {
-        Object rVal = onLiteral(StringNode);
-        if (!(rVal instanceof String))
-            throw new RuntimeException("LIKE operator requires String literal on right hand side.");
-
-        ColumnReference colRef = getColumnReference(colNode);
-        TypeDefinition td = colRef.getTypeDefinition();
-        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
-        PropertyType propType = pd.getPropertyType();
-        if (propType != PropertyType.STRING && propType != PropertyType.HTML && propType != PropertyType.ID
-                && propType != PropertyType.URI)
-            throw new RuntimeException("Property type " + propType.value() + " is not allowed FOR LIKE");
-        if (pd.getCardinality() != Cardinality.SINGLE)
-            throw new RuntimeException("LIKE is not allowed for multi-value properties ");
-
-        String propVal = (String) so.getProperties().get(colRef.getPropertyId()).getFirstValue();
-        String pattern = translatePattern((String) rVal); // SQL to Java regex
-                                                            // syntax
-        Pattern p = Pattern.compile(pattern);
-        return p.matcher(propVal).matches();
-    }
-
-    private boolean evalWhereIsNotLike(StoredObject so, Tree node, Tree colNode, Tree stringNode) {
-        return !evalWhereIsLike(so, node, colNode, stringNode);
-    }
-
-    private boolean evalWhereContains(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
-        throw new RuntimeException("Operator CONTAINS not supported in InMemory server.");
-    }
-
-    private boolean evalWhereInFolder(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
-        if (null != colNode) {
-            getTableReference(colNode);
-            // just for error checking we do not evaluate this, there is only
-            // one from without join support
+            // check if object is in folder
+            if (so instanceof Filing)
+                return hasAncestor((Filing) so, folderId);
+            else
+                return false;
         }
-        Object lit = onLiteral(paramNode);
-        if (!(lit instanceof String))
-            throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
-        String folderId = (String) lit;
 
-        // check if object is in folder
-        if (so instanceof Filing)
-            return hasParent((Filing) so, folderId);
-        else
-            return false;
-    }
+        protected Integer compareTo(Tree leftChild, Tree rightChild) {
+            Object rVal = onLiteral(rightChild);
 
-    private boolean evalWhereInTree(StoredObject so, Tree node, Tree colNode, Tree paramNode) {
-        if (null != colNode) {
-            getTableReference(colNode);
-            // just for error checking we do not evaluate this, there is only
-            // one from without join support
+            // log.debug("retrieve node from where: " +
+            // System.identityHashCode(leftChild) + " is " + leftChild);
+            ColumnReference colRef = getColumnReference(leftChild);
+            TypeDefinition td = colRef.getTypeDefinition();
+            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+            if (lVal instanceof List<?>)
+                throw new RuntimeException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
+            else
+                return InMemoryQueryProcessor.this.compareTo(pd, lVal, rVal);
         }
-        Object lit = onLiteral(paramNode);
-        if (!(lit instanceof String))
-            throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
-        String folderId = (String) lit;
-
-        // check if object is in folder
-        if (so instanceof Filing)
-            return hasAncestor((Filing) so, folderId);
-        else
-            return false;
     }
 
     private boolean hasParent(Filing objInFolder, String folderId) {
@@ -739,22 +677,7 @@ public class InMemoryQueryProcessor extends AbstractQueryConditionProcessor {
         return false;
     }
 
-    private Integer compareTo(StoredObject so, Tree leftChild, Tree rightChild) {
-        Object rVal = onLiteral(rightChild);
-
-        // log.debug("retrieve node from where: " +
-        // System.identityHashCode(leftChild) + " is " + leftChild);
-        ColumnReference colRef = getColumnReference(leftChild);
-        TypeDefinition td = colRef.getTypeDefinition();
-        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
-        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-        if (lVal instanceof List<?>)
-            throw new RuntimeException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
-        else
-            return compareTo(pd, lVal, rVal);
-    }
-
-    private int compareTo(PropertyDefinition<?> td, PropertyData<?> lVal, Object rVal) {
+    protected int compareTo(PropertyDefinition<?> td, PropertyData<?> lVal, Object rVal) {
         Object lValue = lVal.getFirstValue();
         switch (td.getPropertyType()) {
         case BOOLEAN:
