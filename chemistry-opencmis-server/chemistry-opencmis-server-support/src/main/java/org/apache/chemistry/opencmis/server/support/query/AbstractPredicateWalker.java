@@ -21,17 +21,20 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
- * Basic implementation walking a WHERE clause in lexical order.
+ * Basic implementation walking a predicate in lexical order.
  * <p>
  * The {@code walkXYZ} methods can be overridden to change the walking order.
  */
-public abstract class AbstractClauseWalker implements ClauseWalker {
+public abstract class AbstractPredicateWalker implements PredicateWalker {
 
-    public boolean walkClause(Tree node) {
+    public boolean walkPredicate(Tree node) {
         switch (node.getType()) {
         case CmisQlStrictLexer.NOT:
             return walkNot(node, node.getChild(0));
@@ -88,33 +91,33 @@ public abstract class AbstractClauseWalker implements ClauseWalker {
                 return walkInTree(node, node.getChild(0), node.getChild(1));
             }
         default:
-            return walkOtherClause(node);
+            return walkOtherPredicate(node);
         }
     }
 
     /** For extensibility. */
-    protected boolean walkOtherClause(Tree node) {
+    protected boolean walkOtherPredicate(Tree node) {
         throw new CmisRuntimeException("Unknown node type: " + node.getType() + " (" + node.getText() + ")");
     }
 
     public boolean walkNot(Tree opNode, Tree node) {
-        walkClause(node);
+        walkPredicate(node);
         return false;
     }
 
     public boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode) {
-        walkClause(leftNode);
-        walkClause(rightNode);
+        walkPredicate(leftNode);
+        walkPredicate(rightNode);
         return false;
     }
 
     public boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode) {
-        walkClause(leftNode);
-        walkClause(rightNode);
+        walkPredicate(leftNode);
+        walkPredicate(rightNode);
         return false;
     }
 
-    public Object walkValue(Tree node) {
+    public Object walkExpr(Tree node) {
         switch (node.getType()) {
         case CmisQlStrictLexer.BOOL_LIT:
             return walkBoolean(node);
@@ -125,143 +128,162 @@ public abstract class AbstractClauseWalker implements ClauseWalker {
         case CmisQlStrictLexer.TIME_LIT:
             return walkTimestamp(node);
         case CmisQlStrictLexer.IN_LIST:
-            return walkInList(node);
+            return walkList(node);
         case CmisQlStrictLexer.COL:
             return walkCol(node);
         default:
-            return walkOtherValue(node);
+            return walkOtherExpr(node);
         }
     }
 
     /** For extensibility. */
-    protected Object walkOtherValue(Tree node) {
+    protected Object walkOtherExpr(Tree node) {
         throw new CmisRuntimeException("Unknown node type: " + node.getType() + " (" + node.getText() + ")");
     }
 
     public boolean walkEquals(Tree opNode, Tree leftNode, Tree rightNode) {
-        walkValue(leftNode);
-        walkValue(rightNode);
+        walkExpr(leftNode);
+        walkExpr(rightNode);
         return false;
     }
 
     public boolean walkNotEquals(Tree opNode, Tree leftNode, Tree rightNode) {
-        walkValue(leftNode);
-        walkValue(rightNode);
+        walkExpr(leftNode);
+        walkExpr(rightNode);
         return false;
     }
 
     public boolean walkGreaterThan(Tree opNode, Tree leftNode, Tree rightNode) {
-        walkValue(leftNode);
-        walkValue(rightNode);
+        walkExpr(leftNode);
+        walkExpr(rightNode);
         return false;
     }
 
     public boolean walkGreaterOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
-        walkValue(leftNode);
-        walkValue(rightNode);
+        walkExpr(leftNode);
+        walkExpr(rightNode);
         return false;
     }
 
     public boolean walkLessThan(Tree opNode, Tree leftNode, Tree rightNode) {
-        walkValue(leftNode);
-        walkValue(rightNode);
+        walkExpr(leftNode);
+        walkExpr(rightNode);
         return false;
     }
 
     public boolean walkLessOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
-        walkValue(leftNode);
-        walkValue(rightNode);
+        walkExpr(leftNode);
+        walkExpr(rightNode);
         return false;
     }
 
     public boolean walkIn(Tree opNode, Tree colNode, Tree listNode) {
-        walkValue(colNode);
-        walkValue(listNode);
+        walkExpr(colNode);
+        walkExpr(listNode);
         return false;
     }
 
     public boolean walkNotIn(Tree opNode, Tree colNode, Tree listNode) {
-        walkValue(colNode);
-        walkValue(listNode);
+        walkExpr(colNode);
+        walkExpr(listNode);
         return false;
     }
 
     public boolean walkInAny(Tree opNode, Tree colNode, Tree listNode) {
-        walkValue(colNode);
-        walkValue(listNode);
+        walkExpr(colNode);
+        walkExpr(listNode);
         return false;
     }
 
     public boolean walkNotInAny(Tree opNode, Tree colNode, Tree listNode) {
-        walkValue(colNode);
-        walkValue(listNode);
+        walkExpr(colNode);
+        walkExpr(listNode);
         return false;
     }
 
     public boolean walkEqAny(Tree opNode, Tree literalNode, Tree colNode) {
-        walkValue(literalNode);
-        walkValue(colNode);
+        walkExpr(literalNode);
+        walkExpr(colNode);
         return false;
     }
 
     public boolean walkIsNull(Tree opNode, Tree colNode) {
-        walkValue(colNode);
+        walkExpr(colNode);
         return false;
     }
 
     public boolean walkIsNotNull(Tree opNode, Tree colNode) {
-        walkValue(colNode);
+        walkExpr(colNode);
         return false;
     }
 
     public boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
-        walkValue(colNode);
-        walkValue(stringNode);
+        walkExpr(colNode);
+        walkExpr(stringNode);
         return false;
     }
 
     public boolean walkNotLike(Tree opNode, Tree colNode, Tree stringNode) {
-        walkValue(colNode);
-        walkValue(stringNode);
+        walkExpr(colNode);
+        walkExpr(stringNode);
         return false;
     }
 
-    public boolean walkContains(Tree opNode, Tree colNode, Tree queryNode) {
-        walkValue(colNode);
-        walkValue(queryNode);
+    public boolean walkContains(Tree opNode, Tree qualNode, Tree queryNode) {
+        if (qualNode != null)
+            walkExpr(qualNode);
+        walkExpr(queryNode);
         return false;
     }
 
-    public boolean walkInFolder(Tree opNode, Tree colNode, Tree paramNode) {
-        walkValue(colNode);
-        walkValue(paramNode);
+    public boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
+        if (qualNode != null)
+            walkExpr(qualNode);
+        walkExpr(paramNode);
         return false;
     }
 
-    public boolean walkInTree(Tree opNode, Tree colNode, Tree paramNode) {
-        walkValue(colNode);
-        walkValue(paramNode);
+    public boolean walkInTree(Tree opNode, Tree qualNode, Tree paramNode) {
+        if (qualNode != null)
+            walkExpr(qualNode);
+        walkExpr(paramNode);
         return false;
+    }
+
+    public Object walkList(Tree node) {
+        int n = node.getChildCount();
+        List<Object> res = new ArrayList<Object>(n);
+        for (int i = 0; i < n; i++) {
+            res.add(walkExpr(node.getChild(i)));
+        }
+        return res;
     }
 
     public Object walkBoolean(Tree node) {
-        return null;
+        String s = node.getText();
+        return Boolean.valueOf(s);
     }
 
     public Object walkNumber(Tree node) {
-        return null;
+        String s = node.getText();
+        if (s.contains(".") || s.contains("e") || s.contains("E")) {
+            return Double.valueOf(s);
+        } else {
+            return Long.valueOf(s);
+        }
     }
 
     public Object walkString(Tree node) {
-        return null;
+        String s = node.getText();
+        s = s.substring(1, s.length() - 1);
+        s = s.replace("''", "'"); // unescape quotes
+        return s;
     }
 
     public Object walkTimestamp(Tree node) {
-        return null;
-    }
-
-    public Object walkInList(Tree node) {
-        return null;
+        String s = node.getText();
+        s = s.substring(s.indexOf('\'') + 1, s.length() - 1);
+        return CalendarHelper.fromString(s);
     }
 
     public Object walkCol(Tree node) {

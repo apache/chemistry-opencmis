@@ -31,9 +31,9 @@ import org.antlr.runtime.tree.Tree;
  * <p>
  * The method {@link walkClause} is the entry point.
  */
-public interface ClauseWalker {
+public interface PredicateWalker {
 
-    boolean walkClause(Tree node);
+    boolean walkPredicate(Tree node);
 
     boolean walkNot(Tree opNode, Tree leftNode);
 
@@ -41,7 +41,7 @@ public interface ClauseWalker {
 
     boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode);
 
-    Object walkValue(Tree node);
+    Object walkExpr(Tree node);
 
     boolean walkEquals(Tree eqNode, Tree leftNode, Tree rightNode);
 
@@ -73,11 +73,13 @@ public interface ClauseWalker {
 
     boolean walkNotLike(Tree node, Tree colNode, Tree stringNode);
 
-    boolean walkContains(Tree node, Tree colNode, Tree paramNode);
+    boolean walkContains(Tree node, Tree qualNode, Tree paramNode);
 
-    boolean walkInFolder(Tree node, Tree colNode, Tree paramNode);
+    boolean walkInFolder(Tree node, Tree qualNode, Tree paramNode);
 
-    boolean walkInTree(Tree node, Tree colNode, Tree paramNode);
+    boolean walkInTree(Tree node, Tree qualNode, Tree paramNode);
+
+    Object walkList(Tree node);
 
     Object walkBoolean(Tree node);
 
@@ -86,8 +88,6 @@ public interface ClauseWalker {
     Object walkString(Tree node);
 
     Object walkTimestamp(Tree node);
-
-    Object walkInList(Tree node);
 
     Object walkCol(Tree node);
 
