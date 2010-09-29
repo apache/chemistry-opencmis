@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.commons.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
@@ -137,23 +138,57 @@ public class UrlBuilder {
      * @param pathSegment
      *            the path segment.
      */
-    public void addPath(String pathSegment) {
-        if ((pathSegment == null) || (pathSegment.length() == 0)) {
+    public void addPathSegment(String pathSegment) {
+        addPathPart(pathSegment, true);
+    }
+
+    /**
+     * Adds a path to the URL.
+     *
+     * @param path the path
+     */
+    public void addPath(String path) {
+        addPathPart(path, false);
+    }
+
+    protected void addPathPart(String part, boolean quoteSlash) {
+        if (part == null || part.length() == 0) {
             return;
         }
-
         if (fUrl.charAt(fUrl.length() - 1) != '/') {
             fUrl.append('/');
         }
-
-        if (pathSegment.charAt(0) == '/') {
-            pathSegment = pathSegment.substring(1);
+        if (part.charAt(0) == '/') {
+            part = part.substring(1);
         }
+        fUrl.append(quoteURIPathComponent(part, quoteSlash));
+    }
 
+    public static char[] RFC7232_RESERVED = ";?:@&=+$,[]".toCharArray();
+
+    public static String quoteURIPathComponent(String s, boolean quoteSlash) {
+        if (s.length() == 0) {
+            return s;
+        }
+        // reuse the URI class which knows a lot about escaping
+        URI uri;
         try {
-            fUrl.append(URLEncoder.encode(pathSegment, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
+            // fake scheme so that a colon is not mistaken as a scheme
+            uri = new URI("x", s, null);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Illegal characters in: " + s, e);
         }
+        String r = uri.toASCIIString().substring(2); // remove x:
+        // quote some additional reserved characters to be safe
+        for (char c : RFC7232_RESERVED) {
+            if (r.indexOf(c) >= 0) {
+                r = r.replace(""+c, "%" + Integer.toHexString(c));
+            }
+        }
+        if (quoteSlash && r.indexOf('/') >= 0) {
+            r = r.replace("/", "%2F");
+        }
+        return r;
     }
 
     /**

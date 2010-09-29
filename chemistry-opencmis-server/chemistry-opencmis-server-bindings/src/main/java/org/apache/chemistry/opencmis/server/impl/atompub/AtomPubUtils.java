@@ -15,6 +15,10 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
+ * Contributors:
+ *     Florian Mueller
+ *     Florent Guillaume, Nuxeo
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
@@ -90,7 +94,7 @@ public final class AtomPubUtils {
         url.addPath(request.getServletPath());
 
         if (repositoryId != null) {
-            url.addPath(repositoryId);
+            url.addPathSegment(repositoryId);
         }
 
         return url;
@@ -108,7 +112,7 @@ public final class AtomPubUtils {
      */
     public static UrlBuilder compileUrlBuilder(UrlBuilder baseUrl, String resource, String id) {
         UrlBuilder url = new UrlBuilder(baseUrl);
-        url.addPath(resource);
+        url.addPathSegment(resource);
 
         if (id != null) {
             url.addParameter("id", id);
@@ -277,7 +281,7 @@ public final class AtomPubUtils {
         if (info.hasContent()) {
             UrlBuilder contentSrcBuilder = compileUrlBuilder(baseUrl, RESOURCE_CONTENT, info.getId());
             if (info.getFileName() != null) {
-                contentSrcBuilder.addPath(info.getFileName());
+                contentSrcBuilder.addPathSegment(info.getFileName());
             }
 
             contentSrc = contentSrcBuilder.toString();
