@@ -1,4 +1,5 @@
 package org.apache.chemistry.opencmis.server.support;
+
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,10 +21,10 @@ package org.apache.chemistry.opencmis.server.support;
  *
  */
 
-
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -35,6 +36,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -206,6 +208,29 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     protected void checkProperties(Properties properties) {
         if (properties == null) {
             throw new CmisInvalidArgumentException("Properties must be set!");
+        }
+    }
+
+    /**
+     * Throws an exception if the given property isn't set or of the wrong type.
+     */
+    protected void checkProperty(Properties properties, String propertyId, Class<?> clazz) {
+        if (properties.getProperties() == null) {
+            throw new CmisInvalidArgumentException("Property " + propertyId + " must be set!");
+        }
+
+        PropertyData<?> property = properties.getProperties().get(propertyId);
+        if (property == null) {
+            throw new CmisInvalidArgumentException("Property " + propertyId + " must be set!");
+        }
+
+        Object value = property.getFirstValue();
+        if (value == null) {
+            throw new CmisInvalidArgumentException("Property " + propertyId + " must have a value!");
+        }
+
+        if (clazz.isAssignableFrom(value.getClass())) {
+            throw new CmisInvalidArgumentException("Property " + propertyId + " has the wrong type!");
         }
     }
 
@@ -618,6 +643,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
             VersioningState versioningState, List<String> policies, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkProperties(properties);
+        checkProperty(properties, PropertyIds.OBJECT_TYPE_ID, String.class);
         versioningState = getDefault(versioningState);
 
         try {
@@ -633,6 +659,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
             Acl removeAces, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkProperties(properties);
+        checkProperty(properties, PropertyIds.OBJECT_TYPE_ID, String.class);
         versioningState = getDefault(versioningState);
 
         try {
@@ -662,6 +689,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkProperties(properties);
+        checkProperty(properties, PropertyIds.OBJECT_TYPE_ID, String.class);
         checkId("Folder Id", folderId);
 
         try {
@@ -675,6 +703,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkProperties(properties);
+        checkProperty(properties, PropertyIds.OBJECT_TYPE_ID, String.class);
 
         try {
             return service.createPolicy(repositoryId, properties, folderId, policies, addAces, removeAces, extension);
@@ -687,6 +716,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
             Acl removeAces, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkProperties(properties);
+        checkProperty(properties, PropertyIds.OBJECT_TYPE_ID, String.class);
 
         try {
             return service.createRelationship(repositoryId, properties, policies, addAces, removeAces, extension);

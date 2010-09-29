@@ -277,18 +277,18 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         }
 
         // check object type id
-        PropertyData<?> baseTypeIdProperty = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
-        if (baseTypeIdProperty == null || !(baseTypeIdProperty.getFirstValue() instanceof String)) {
+        PropertyData<?> obbjectTypeIdProperty = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
+        if (obbjectTypeIdProperty == null || !(obbjectTypeIdProperty.getFirstValue() instanceof String)) {
             throw new CmisInvalidArgumentException("Property '" + PropertyIds.OBJECT_TYPE_ID + "' must be set!");
         }
 
         // get the type
-        String baseTypeId = baseTypeIdProperty.getFirstValue().toString();
-        TypeDefinition baseType = getTypeDefinition(repositoryId, baseTypeId, null);
+        String objectTypeId = obbjectTypeIdProperty.getFirstValue().toString();
+        TypeDefinition type = getTypeDefinition(repositoryId, objectTypeId, null);
 
         // create object
         String newId = null;
-        switch (baseType.getBaseTypeId()) {
+        switch (type.getBaseTypeId()) {
         case CMIS_DOCUMENT:
             newId = createDocument(repositoryId, properties, folderId, contentStream, versioningState, policies, null,
                     null, extension);
