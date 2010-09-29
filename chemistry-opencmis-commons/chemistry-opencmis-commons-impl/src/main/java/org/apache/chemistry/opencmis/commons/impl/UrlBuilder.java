@@ -29,9 +29,8 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
  * Utility class that helps building URLs.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class UrlBuilder {
 
@@ -40,7 +39,7 @@ public class UrlBuilder {
 
     /**
      * Constructor.
-     * 
+     *
      * @param url
      *            initial URL
      */
@@ -65,7 +64,7 @@ public class UrlBuilder {
 
     /**
      * Constructor.
-     * 
+     *
      * @param scheme
      *            scheme
      * @param host
@@ -108,7 +107,7 @@ public class UrlBuilder {
 
     /**
      * Adds a parameter to the URL.
-     * 
+     *
      * @param name
      *            parameter name
      * @param value
@@ -134,7 +133,7 @@ public class UrlBuilder {
 
     /**
      * Adds a path segment to the URL.
-     * 
+     *
      * @param pathSegment
      *            the path segment.
      */

@@ -24,9 +24,8 @@ import junit.framework.TestCase;
 
 /**
  * Tests miscellaneous details.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class MiscTest extends TestCase {
 
