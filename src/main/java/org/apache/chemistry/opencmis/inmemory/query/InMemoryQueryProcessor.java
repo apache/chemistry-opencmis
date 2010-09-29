@@ -55,7 +55,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.query.AbstractQueryConditionProcessor;
-import org.apache.chemistry.opencmis.server.support.query.AbstractClauseWalker;
+import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalker;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
@@ -269,10 +269,10 @@ public class InMemoryQueryProcessor {
      * @return true if it matches, false if it not matches
      */
     boolean evalWhereNode(StoredObject so, Tree node) {
-        return new InMemoryWhereClauseWalker(so).walkClause(node);
+        return new InMemoryWhereClauseWalker(so).walkPredicate(node);
     }
 
-    public class InMemoryWhereClauseWalker extends AbstractClauseWalker {
+    public class InMemoryWhereClauseWalker extends AbstractPredicateWalker {
 
         protected StoredObject so;
 
@@ -282,21 +282,21 @@ public class InMemoryQueryProcessor {
 
         @Override
         public boolean walkNot(Tree opNode, Tree node) {
-            boolean matches = walkClause(node);
+            boolean matches = walkPredicate(node);
             return !matches;
         }
 
         @Override
         public boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode) {
-            boolean matches1 = walkClause(leftNode);
-            boolean matches2 = walkClause(rightNode);
+            boolean matches1 = walkPredicate(leftNode);
+            boolean matches2 = walkPredicate(rightNode);
             return matches1 && matches2;
         }
 
         @Override
         public boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode) {
-            boolean matches1 = walkClause(leftNode);
-            boolean matches2 = walkClause(rightNode);
+            boolean matches1 = walkPredicate(leftNode);
+            boolean matches2 = walkPredicate(rightNode);
             return matches1 || matches2;
         }
 
@@ -432,7 +432,7 @@ public class InMemoryQueryProcessor {
             TypeDefinition td = colRef.getTypeDefinition();
             PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-            Object literal = walkValue(literalNode);
+            Object literal = walkExpr(literalNode);
             if (pd.getCardinality() != Cardinality.MULTI)
                 throw new RuntimeException("Operator = ANY only is allowed on multi-value properties ");
             else if (lVal == null)
@@ -460,7 +460,7 @@ public class InMemoryQueryProcessor {
 
         @Override
         public boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
-            Object rVal = walkValue(stringNode);
+            Object rVal = walkExpr(stringNode);
             if (!(rVal instanceof String))
                 throw new RuntimeException("LIKE operator requires String literal on right hand side.");
 
@@ -488,18 +488,18 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public boolean walkContains(Tree opNode, Tree colNode, Tree queryNode) {
+        public boolean walkContains(Tree qualNode, Tree colNode, Tree queryNode) {
             throw new RuntimeException("Operator CONTAINS not supported in InMemory server.");
         }
 
         @Override
-        public boolean walkInFolder(Tree opNode, Tree colNode, Tree paramNode) {
-            if (null != colNode) {
-                getTableReference(colNode);
+        public boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
+            if (null != qualNode) {
+                getTableReference(qualNode);
                 // just for error checking we do not evaluate this, there is
                 // only one from without join support
             }
-            Object lit = walkValue(paramNode);
+            Object lit = walkExpr(paramNode);
             if (!(lit instanceof String))
                 throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
             String folderId = (String) lit;
@@ -512,14 +512,13 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public boolean walkInTree(Tree opNode, Tree colNode, Tree paramNode) {
-            if (null != colNode) {
-                getTableReference(colNode);
+        public boolean walkInTree(Tree opNode, Tree qualNode, Tree paramNode) {
+            if (null != qualNode) {
+                getTableReference(qualNode);
                 // just for error checking we do not evaluate this, there is
-                // only
-                // one from without join support
+                // only one from without join support
             }
-            Object lit = walkValue(paramNode);
+            Object lit = walkExpr(paramNode);
             if (!(lit instanceof String))
                 throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
             String folderId = (String) lit;
@@ -531,48 +530,8 @@ public class InMemoryQueryProcessor {
                 return false;
         }
 
-        @Override
-        public Object walkBoolean(Tree node) {
-            String s = node.getText();
-            return Boolean.valueOf(s);
-        }
-
-        @Override
-        public Object walkNumber(Tree node) {
-            String s = node.getText();
-            if (s.contains(".") || s.contains("e") || s.contains("E")) {
-                return Double.valueOf(s);
-            } else {
-                return Long.valueOf(s);
-            }
-        }
-
-        @Override
-        public Object walkString(Tree node) {
-            String s = node.getText();
-            s = s.substring(1, s.length() - 1);
-            s = s.replace("''", "'"); // unescape quotes
-            return s;
-        }
-
-        @Override
-        public Object walkTimestamp(Tree node) {
-            String s = node.getText();
-            s = s.substring(s.indexOf('\'') + 1, s.length() - 1);
-            return CalendarHelper.fromString(s);
-        }
-
-        @Override
-        public Object walkInList(Tree node) {
-            List<Object> res = new ArrayList<Object>(node.getChildCount());
-            for (int i = 0; i < node.getChildCount(); i++) {
-                res.add(walkValue(node.getChild(i)));
-            }
-            return res;
-        }
-
         protected Integer compareTo(Tree leftChild, Tree rightChild) {
-            Object rVal = walkValue(rightChild);
+            Object rVal = walkExpr(rightChild);
 
             // log.debug("retrieve node from where: " +
             // System.identityHashCode(leftChild) + " is " + leftChild);
@@ -588,7 +547,7 @@ public class InMemoryQueryProcessor {
 
         @SuppressWarnings("unchecked")
         public List<Object> onLiteralList(Tree node) {
-            return (List<Object>) walkValue(node);
+            return (List<Object>) walkExpr(node);
         }
     }
 
