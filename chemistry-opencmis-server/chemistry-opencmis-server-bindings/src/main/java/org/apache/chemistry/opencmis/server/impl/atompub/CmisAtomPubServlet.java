@@ -57,7 +57,7 @@ public class CmisAtomPubServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String PARAM_CALL_CONTEXT_HANDLER = "callContextHandler";
+    public static final String PARAM_CALL_CONTEXT_HANDLER = "callContextHandler";
 
     private static final String METHOD_GET = "GET";
     private static final String METHOD_POST = "POST";
