@@ -229,7 +229,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
             throw new CmisInvalidArgumentException("Property " + propertyId + " must have a value!");
         }
 
-        if (clazz.isAssignableFrom(value.getClass())) {
+        if (!clazz.isAssignableFrom(value.getClass())) {
             throw new CmisInvalidArgumentException("Property " + propertyId + " has the wrong type!");
         }
     }
