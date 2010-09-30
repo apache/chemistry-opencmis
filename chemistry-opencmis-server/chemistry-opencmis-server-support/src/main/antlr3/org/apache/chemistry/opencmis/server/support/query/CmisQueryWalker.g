@@ -125,8 +125,6 @@ query [QueryObject qo]
 select_list:
       STAR
       {
-            //queryObj.addSelectReference($STAR.getToken(), new ColumnReference($STAR.text));
-            // LOG.debug("Adding * to col refs: " + $STAR);
             queryObj.addSelectReference($STAR, new ColumnReference($STAR.text));
       }
     | ^(SEL_LIST select_sublist+)
@@ -146,8 +144,6 @@ select_sublist
       }
     | s=qualifier DOT STAR
       {
-            // queryObj.addSelectReference($STAR.getToken(), new ColumnReference($qualifier.value, $STAR.text));
-            //  LOG.debug("Adding x.* to col refs: " + $s.start);
             queryObj.addSelectReference($s.start, new ColumnReference($qualifier.value, $STAR.text));
       }
     ;
@@ -171,8 +167,12 @@ column_reference returns [ColumnReference result]:
       }
     ;
 
-// multi_valued_column_reference returns [Object value]:
-//    ^(COL qualifier? column_name)
+multi_valued_column_reference returns [ColumnReference result]:
+    ^(COL qualifier? column_name)
+      {
+          $result = new ColumnReference($qualifier.value, $column_name.text);
+      }
+    ;
 
 qualifier returns [String value]:
       table_name
@@ -234,22 +234,28 @@ search_condition
     | ^(NOT_LIKE search_condition search_condition)
     | ^(IS_NULL search_condition)
     | ^(IS_NOT_NULL search_condition)
-    | ^(EQ_ANY literal column_reference)
+    | ^(EQ_ANY literal mvcr=multi_valued_column_reference)
       {
-            queryObj.addSelectReference($column_reference.start, $column_reference.result);
+            queryObj.addWhereReference($mvcr.start, $mvcr.result);
       }
-    | ^(IN_ANY search_condition in_value_list )
-    | ^(NOT_IN_ANY search_condition in_value_list)
+    | ^(IN_ANY mvcr=multi_valued_column_reference in_value_list )
+      {
+            queryObj.addWhereReference($mvcr.start, $mvcr.result);
+      }
+    | ^(NOT_IN_ANY mvcr=multi_valued_column_reference in_value_list)
+      {
+            queryObj.addWhereReference($mvcr.start, $mvcr.result);
+      }
     | ^(CONTAINS qualifier? text_search_expression)
     | ^(IN_FOLDER qualifier? search_condition)
     | ^(IN_TREE qualifier? search_condition)
     | ^(IN column_reference in_value_list)
       {
-            queryObj.addSelectReference($column_reference.start, $column_reference.result);
+            queryObj.addWhereReference($column_reference.start, $column_reference.result);
       }
     | ^(NOT_IN column_reference in_value_list)
       {
-            queryObj.addSelectReference($column_reference.start, $column_reference.result);
+            queryObj.addWhereReference($column_reference.start, $column_reference.result);
       }
     | value_expression
       {
