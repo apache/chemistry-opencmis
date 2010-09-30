@@ -86,56 +86,56 @@ import org.apache.chemistry.opencmis.server.support.query.*;
             errorMessage = hdr + " " + msg;
         }
     }
-    
+
     public String getErrorMessageString() {
         return errorMessage;
     }
-    
-	protected void mismatch(IntStream input, int ttype, BitSet follow)
-		throws RecognitionException
-	{
-		throw new MismatchedTokenException(ttype, input);
-	}
-	
-	public void recoverFromMismatchedSet(IntStream input, RecognitionException e, antlr.collections.impl.BitSet follow)
-		throws RecognitionException
-	{
-		throw e;
-	}
+
+    protected void mismatch(IntStream input, int ttype, BitSet follow)
+        throws RecognitionException
+    {
+        throw new MismatchedTokenException(ttype, input);
+    }
+
+    public void recoverFromMismatchedSet(IntStream input, RecognitionException e, antlr.collections.impl.BitSet follow)
+        throws RecognitionException
+    {
+        throw e;
+    }
 }
 
 // For CMIS SQL it will be sufficient to stop on first error:
 @rulecatch {
-	catch (RecognitionException e) {
-		throw e;
-	}
+    catch (RecognitionException e) {
+        throw e;
+    }
 }
 
 query [QueryObject qo]
-	@init {
-		queryObj = qo;
-	}:
+    @init {
+        queryObj = qo;
+    }:
     ^(SELECT select_list from_clause order_by_clause? where_clause)
     {
-    	queryObj.resolveTypes();
-    	queryObj.processWhereClause($where_clause.tree);
+        queryObj.resolveTypes();
+        queryObj.processWhereClause($where_clause.tree);
     }
     ;
 
 select_list:
       STAR
       {
-      	  //queryObj.addSelectReference($STAR.getToken(), new ColumnReference($STAR.text));
-      	  // LOG.debug("Adding * to col refs: " + $STAR);
-      	  queryObj.addSelectReference($STAR, new ColumnReference($STAR.text));
+            //queryObj.addSelectReference($STAR.getToken(), new ColumnReference($STAR.text));
+            // LOG.debug("Adding * to col refs: " + $STAR);
+            queryObj.addSelectReference($STAR, new ColumnReference($STAR.text));
       }
     | ^(SEL_LIST select_sublist+)
     ;
 
 select_sublist
-	scope { String current; }
-	:
-      value_expression column_name? 
+    scope { String current; }
+    :
+      value_expression column_name?
       {
           // add selector
           queryObj.addSelectReference($value_expression.start, $value_expression.result);
@@ -143,16 +143,16 @@ select_sublist
           if ($column_name.text != null) {
              queryObj.addAlias($column_name.text, $value_expression.result);
           }
-	  }
+      }
     | s=qualifier DOT STAR
       {
-      	  // queryObj.addSelectReference($STAR.getToken(), new ColumnReference($qualifier.value, $STAR.text));
-      	  //  LOG.debug("Adding x.* to col refs: " + $s.start);
-      	  queryObj.addSelectReference($s.start, new ColumnReference($qualifier.value, $STAR.text));
+            // queryObj.addSelectReference($STAR.getToken(), new ColumnReference($qualifier.value, $STAR.text));
+            //  LOG.debug("Adding x.* to col refs: " + $s.start);
+            queryObj.addSelectReference($s.start, new ColumnReference($qualifier.value, $STAR.text));
       }
     ;
-    
-    
+
+
 value_expression returns [CmisSelector result]:
       column_reference
       {
@@ -232,11 +232,11 @@ search_condition
     | ^(LTEQ search_condition search_condition)
     | ^(LIKE search_condition search_condition)
     | ^(NOT_LIKE search_condition search_condition)
-    | ^(IS_NULL search_condition) 
-    | ^(IS_NOT_NULL search_condition) 
+    | ^(IS_NULL search_condition)
+    | ^(IS_NOT_NULL search_condition)
     | ^(EQ_ANY literal column_reference)
       {
-      	  queryObj.addSelectReference($column_reference.start, $column_reference.result);
+            queryObj.addSelectReference($column_reference.start, $column_reference.result);
       }
     | ^(IN_ANY search_condition in_value_list )
     | ^(NOT_IN_ANY search_condition in_value_list)
@@ -245,16 +245,16 @@ search_condition
     | ^(IN_TREE qualifier? search_condition)
     | ^(IN column_reference in_value_list)
       {
-      	  queryObj.addSelectReference($column_reference.start, $column_reference.result);
+            queryObj.addSelectReference($column_reference.start, $column_reference.result);
       }
     | ^(NOT_IN column_reference in_value_list)
       {
-      	  queryObj.addSelectReference($column_reference.start, $column_reference.result);
+            queryObj.addSelectReference($column_reference.start, $column_reference.result);
       }
     | value_expression
       {
           LOG.debug("  add node to where: " + $value_expression.start + " id: " + System.identityHashCode($value_expression.start));
-          queryObj.addWhereReference($value_expression.start, $value_expression.result);      
+          queryObj.addWhereReference($value_expression.start, $value_expression.result);
       }
     | literal
     ;
@@ -264,8 +264,8 @@ in_value_list returns [Object inList]
     List<Object> inLiterals = new ArrayList<Object>();
 }:
     ^(IN_LIST (l=literal {inLiterals.add($l.value);})+ )
-    { 
-    	$inList = inLiterals; 
+    {
+        $inList = inLiterals;
     }
     ;
 
@@ -308,11 +308,11 @@ order_by_clause:
     ;
 
 sort_specification:
-    column_reference ASC 
+    column_reference ASC
     {
        queryObj.addSortCriterium($column_reference.start, $column_reference.result, true);
     }
-    | column_reference DESC 
+    | column_reference DESC
     {
        queryObj.addSortCriterium($column_reference.start, $column_reference.result, false);
     }
