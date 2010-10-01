@@ -72,6 +72,21 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
      *            the property
      */
     public void addProperty(PropertyData<?> property) {
+        if (property == null) {
+            return;
+        }
+
+        propertyList.add(property);
+        properties.put(property.getId(), property);
+    }
+
+    /**
+     * Replaces a property.
+     * 
+     * @param property
+     *            the property
+     */
+    public void replaceProperty(PropertyData<?> property) {
         if ((property == null) || (property.getId() == null)) {
             return;
         }
