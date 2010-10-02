@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
@@ -46,9 +47,9 @@ public interface ObjectFactory {
     Acl convertAces(List<Ace> aces);
 
     Acl createAcl(List<Ace> aces);
-    
+
     Ace createAce(String principal, List<String> permissions);
-    
+
     // policies
 
     List<String> convertPolicies(List<Policy> policies);
@@ -86,4 +87,8 @@ public interface ObjectFactory {
     CmisObject convertObject(ObjectData objectData, OperationContext context);
 
     QueryResult convertQueryResult(ObjectData objectData);
+
+    ChangeEvent convertChangeEvent(ObjectData objectData);
+
+    ChangeEvents convertChangeEvents(String changeLogToken, ObjectList objectList);
 }

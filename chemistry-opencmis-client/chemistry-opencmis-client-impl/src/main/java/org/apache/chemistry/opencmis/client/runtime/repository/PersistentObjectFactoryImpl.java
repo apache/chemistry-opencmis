@@ -25,11 +25,14 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.chemistry.opencmis.client.api.ChangeEvent;
+import org.apache.chemistry.opencmis.client.api.ChangeEvents;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
@@ -38,6 +41,8 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Rendition;
+import org.apache.chemistry.opencmis.client.runtime.ChangeEventImpl;
+import org.apache.chemistry.opencmis.client.runtime.ChangeEventsImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentDocumentImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentFolderImpl;
 import org.apache.chemistry.opencmis.client.runtime.PersistentPolicyImpl;
@@ -55,6 +60,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
@@ -74,6 +80,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
@@ -115,13 +122,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     // ACL and ACE
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#convertAces(java
-     * .util.List)
-     */
     public Acl convertAces(List<Ace> aces) {
         if (aces == null) {
             return null;
@@ -155,13 +155,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     // policies
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#convertPolicies
-     * (java.util.List)
-     */
     public List<String> convertPolicies(List<Policy> policies) {
         if (policies == null) {
             return null;
@@ -180,13 +173,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     // renditions
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#convertRendition
-     * (java.lang.String, org.apache.opencmis.commons.provider.RenditionData)
-     */
     public Rendition convertRendition(String objectId, RenditionData rendition) {
         if (rendition == null) {
             throw new IllegalArgumentException("Rendition must be set!");
@@ -203,24 +189,10 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     // content stream
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#createContentStream
-     * (java.lang.String, long, java.lang.String, java.io.InputStream)
-     */
     public ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream) {
         return new ContentStreamImpl(filename, BigInteger.valueOf(length), mimetype, stream);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#convertContentStream
-     * (org.apache.opencmis .client.api.ContentStream)
-     */
     public ContentStream convertContentStream(ContentStream contentStream) {
         if (contentStream == null) {
             return null;
@@ -234,13 +206,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     // types
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#convertTypeDefinition
-     * (org.apache.opencmis .commons.api.TypeDefinition)
-     */
     public ObjectType convertTypeDefinition(TypeDefinition typeDefinition) {
         if (typeDefinition instanceof DocumentTypeDefinition) {
             return new DocumentTypeImpl(this.session, (DocumentTypeDefinition) typeDefinition);
@@ -255,13 +220,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#getTypeFromObjectData
-     * (org.apache.opencmis .commons.provider.ObjectData)
-     */
     public ObjectType getTypeFromObjectData(ObjectData objectData) {
         if ((objectData == null) || (objectData.getProperties() == null)
                 || (objectData.getProperties().getProperties() == null)) {
@@ -278,36 +236,14 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     // properties
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#createProperty
-     * (org.apache.opencmis. commons.api.PropertyDefinition, java.lang.Object)
-     */
     public <T> Property<T> createProperty(PropertyDefinition<?> type, T value) {
         return new PersistentPropertyImpl<T>(type, value);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.api.repository.ObjectFactory#
-     * createPropertyMultivalue(org.apache
-     * .opencmis.commons.api.PropertyDefinition, java.util.List)
-     */
     public <T> Property<T> createPropertyMultivalue(PropertyDefinition<?> type, List<T> values) {
         return new PersistentPropertyImpl<T>(type, values);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#convertProperties
-     * (org.apache.opencmis .client.api.objecttype.ObjectType,
-     * org.apache.opencmis.commons.provider.PropertiesData)
-     */
     @SuppressWarnings("unchecked")
     public Map<String, Property<?>> convertProperties(ObjectType objectType, Properties properties) {
         // check input
@@ -367,14 +303,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#convertProperties
-     * (java.util.Map, org.apache.opencmis.client.api.objecttype.ObjectType,
-     * java.util.Set)
-     */
     @SuppressWarnings("unchecked")
     public Properties convertProperties(Map<String, ?> properties, ObjectType type, Set<Updatability> updatabilityFilter) {
         // check input
@@ -548,13 +476,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
         return bof.createPropertiesData(propertyList);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.api.repository.ObjectFactory#
-     * convertQueryProperties(org.apache.opencmis
-     * .commons.provider.PropertiesData)
-     */
     public List<PropertyData<?>> convertQueryProperties(Properties properties) {
         // check input
         if ((properties == null) || (properties.getProperties() == null)) {
@@ -565,14 +486,6 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     // objects
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#convertObject
-     * (org.apache.opencmis.commons .provider.ObjectData,
-     * org.apache.opencmis.client.api.OperationContext)
-     */
     public CmisObject convertObject(ObjectData objectData, OperationContext context) {
         if (objectData == null) {
             throw new IllegalArgumentException("Object data is null!");
@@ -595,19 +508,72 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.repository.ObjectFactory#convertQueryResult
-     * (org.apache.opencmis .commons.provider.ObjectData)
-     */
     public QueryResult convertQueryResult(ObjectData objectData) {
         if (objectData == null) {
             throw new IllegalArgumentException("Object data is null!");
         }
 
         return new QueryResultImpl(session, objectData);
+    }
+
+    public ChangeEvent convertChangeEvent(ObjectData objectData) {
+        ChangeType changeType = null;
+        GregorianCalendar changeTime = null;
+        String objectId = null;
+        Map<String, List<?>> properties = null;
+        List<String> policyIds = null;
+        Acl acl = null;
+
+        if (objectData.getChangeEventInfo() != null) {
+            changeType = objectData.getChangeEventInfo().getChangeType();
+            changeTime = objectData.getChangeEventInfo().getChangeTime();
+        }
+
+        if ((objectData.getProperties() != null) && (objectData.getProperties().getPropertyList() != null)) {
+            properties = new HashMap<String, List<?>>();
+
+            for (PropertyData<?> property : objectData.getProperties().getPropertyList()) {
+                properties.put(property.getId(), property.getValues());
+            }
+
+            if (properties.containsKey(PropertyIds.OBJECT_ID)) {
+                List<?> objectIdList = properties.get(PropertyIds.OBJECT_ID);
+                if ((objectIdList != null) && (!objectIdList.isEmpty()))
+                    objectId = objectIdList.get(0).toString();
+            }
+
+            if ((objectData.getPolicyIds() != null) && (objectData.getPolicyIds().getPolicyIds() != null)) {
+                policyIds = objectData.getPolicyIds().getPolicyIds();
+            }
+
+            if (objectData.getAcl() != null) {
+                acl = objectData.getAcl();
+            }
+        }
+
+        return new ChangeEventImpl(changeType, changeTime, objectId, properties, policyIds, acl);
+    }
+
+    public ChangeEvents convertChangeEvents(String changeLogToken, ObjectList objectList) {
+        if (objectList == null) {
+            return null;
+        }
+
+        List<ChangeEvent> events = new ArrayList<ChangeEvent>();
+        if (objectList.getObjects() != null) {
+            for (ObjectData objectData : objectList.getObjects()) {
+                if (objectData == null) {
+                    continue;
+                }
+
+                events.add(convertChangeEvent(objectData));
+            }
+        }
+
+        boolean hasMoreItems = (objectList.hasMoreItems() == null ? false : objectList.hasMoreItems().booleanValue());
+        long totalNumItems = (objectList.getNumItems() == null ? -1 : objectList.getNumItems().longValue());
+
+        return new ChangeEventsImpl(changeLogToken, events, hasMoreItems, totalNumItems);
     }
 
 }

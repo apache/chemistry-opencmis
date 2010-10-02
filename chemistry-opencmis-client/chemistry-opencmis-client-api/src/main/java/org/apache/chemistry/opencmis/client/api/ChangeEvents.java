@@ -16,34 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.client.api;
 
-import java.util.GregorianCalendar;
+import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
-import org.apache.chemistry.opencmis.commons.enums.ChangeType;
+public interface ChangeEvents {
 
-/**
- * Change event.
- */
-public class ChangeEventInfoDataImpl extends AbstractExtensionData implements ChangeEventInfo {
+    String getlatestChangeLogToken();
 
-    private GregorianCalendar changeTime;
-    private ChangeType changeType;
+    List<ChangeEvent> getChangeEvents();
 
-    public GregorianCalendar getChangeTime() {
-        return changeTime;
-    }
-
-    public void setChangeTime(GregorianCalendar changeTime) {
-        this.changeTime = changeTime;
-    }
-
-    public ChangeType getChangeType() {
-        return changeType;
-    }
-
-    public void setChangeType(ChangeType changeType) {
-        this.changeType = changeType;
-    }
+    boolean getHasMoreItems();
+    
+    long getTotalNumItems();
 }

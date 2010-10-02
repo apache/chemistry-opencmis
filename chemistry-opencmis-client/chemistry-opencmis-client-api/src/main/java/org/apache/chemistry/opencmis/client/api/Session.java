@@ -262,9 +262,33 @@ public interface Session {
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context);
 
     /**
-     * Returns the content changes. (See CMIS spec "2.1.11 Change Log".)
+     * Returns the content changes.
+     * 
+     * @param changeLogToken
+     *            the change log token to start from or <code>null</code>
+     * @param includeProperties
+     *            indicates if changed properties should be included in the
+     *            result
+     * @param maxNumItems
+     *            maximum numbers of events
      */
-    ItemIterable<ChangeEvent> getContentChanges(String changeLogToken);
+    ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems);
+
+    /**
+     * Returns the content changes.
+     * 
+     * @param changeLogToken
+     *            the change log token to start from or <code>null</code>
+     * @param includeProperties
+     *            indicates if changed properties should be included in the
+     *            result
+     * @param maxNumItems
+     *            maximum numbers of events
+     * @param context
+     *            the OperationContext
+     */
+    ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems,
+            OperationContext context);
 
     // create
 

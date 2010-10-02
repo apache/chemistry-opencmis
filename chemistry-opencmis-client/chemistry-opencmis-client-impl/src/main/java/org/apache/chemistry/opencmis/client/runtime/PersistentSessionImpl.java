@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.chemistry.opencmis.client.api.ChangeEvent;
+import org.apache.chemistry.opencmis.client.api.ChangeEvents;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ExtensionHandler;
@@ -64,6 +64,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.commons.logging.Log;
@@ -234,10 +235,10 @@ public class PersistentSessionImpl implements Session, Serializable {
             protected AbstractPageFetch.PageFetchResult<Document> fetchPage(long skipCount) {
 
                 // get all checked out documents
-                ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), null, ctxt
-                        .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger
-                        .valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
+                ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), null,
+                        ctxt.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(),
+                        ctxt.getIncludeRelationships(), ctxt.getRenditionFilterString(),
+                        BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert objects
                 List<Document> page = new ArrayList<Document>();
@@ -259,8 +260,24 @@ public class PersistentSessionImpl implements Session, Serializable {
         });
     }
 
-    public ItemIterable<ChangeEvent> getContentChanges(String changeLogToken) {
-        throw new CmisRuntimeException("not implemented");
+    public ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems) {
+        return getContentChanges(changeLogToken, includeProperties, maxNumItems, getDefaultContext());
+    }
+
+    public ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems,
+            OperationContext context) {
+        fLock.readLock().lock();
+        try {
+            Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
+
+            ObjectList objectList = getBinding().getDiscoveryService().getContentChanges(getRepositoryInfo().getId(),
+                    changeLogTokenHolder, includeProperties, context.getFilterString(), context.isIncludePolicies(),
+                    context.isIncludeAcls(), BigInteger.valueOf(maxNumItems), null);
+
+            return objectFactory.convertChangeEvents(changeLogTokenHolder.getValue(), objectList);
+        } finally {
+            fLock.readLock().unlock();
+        }
     }
 
     public OperationContext getDefaultContext() {
@@ -411,8 +428,8 @@ public class PersistentSessionImpl implements Session, Serializable {
 
                 // fetch the data
                 TypeDefinitionList tdl = repositoryService.getTypeChildren(
-                        PersistentSessionImpl.this.getRepositoryId(), typeId, includePropertyDefinitions, BigInteger
-                                .valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
+                        PersistentSessionImpl.this.getRepositoryId(), typeId, includePropertyDefinitions,
+                        BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert type definitions
                 List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
@@ -473,9 +490,10 @@ public class PersistentSessionImpl implements Session, Serializable {
             protected AbstractPageFetch.PageFetchResult<QueryResult> fetchPage(long skipCount) {
 
                 // fetch the data
-                ObjectList resultList = discoveryService.query(getRepositoryId(), statement, searchAllVersions, ctxt
-                        .isIncludeAllowableActions(), ctxt.getIncludeRelationships(), ctxt.getRenditionFilterString(),
-                        BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
+                ObjectList resultList = discoveryService.query(getRepositoryId(), statement, searchAllVersions,
+                        ctxt.isIncludeAllowableActions(), ctxt.getIncludeRelationships(),
+                        ctxt.getRenditionFilterString(), BigInteger.valueOf(this.maxNumItems),
+                        BigInteger.valueOf(skipCount), null);
 
                 // convert type definitions
                 List<QueryResult> page = new ArrayList<QueryResult>();
@@ -489,8 +507,8 @@ public class PersistentSessionImpl implements Session, Serializable {
                     }
                 }
 
-                return new AbstractPageFetch.PageFetchResult<QueryResult>(page, resultList.getNumItems(), resultList
-                        .hasMoreItems());
+                return new AbstractPageFetch.PageFetchResult<QueryResult>(page, resultList.getNumItems(),
+                        resultList.hasMoreItems());
             }
         });
 
@@ -508,8 +526,8 @@ public class PersistentSessionImpl implements Session, Serializable {
      * Connect session object to the provider. This is the very first call after
      * a session is created.
      * <p>
-     * In dependency of the parameter set an {@code AtomPub}, a {@code
-     * WebService} or an {@code InMemory} provider is selected.
+     * In dependency of the parameter set an {@code AtomPub}, a
+     * {@code WebService} or an {@code InMemory} provider is selected.
      */
     public void connect() {
         fLock.writeLock().lock();
