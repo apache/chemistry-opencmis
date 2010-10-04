@@ -42,9 +42,9 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyString;
 
 /**
  * Minimal test for AtomEntryWriter and AtomPubParser.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class AtomParserTest extends TestCase {
 
@@ -85,9 +85,6 @@ public class AtomParserTest extends TestCase {
 
         byte[] entryContent = bao.toByteArray();
         assertTrue(entryContent.length > 0);
-
-        String entryContentStr = new String(entryContent, "UTF-8");
-        System.out.println(entryContentStr);
 
         // parse it
         AtomPubParser parser = new AtomPubParser(new ByteArrayInputStream(entryContent));

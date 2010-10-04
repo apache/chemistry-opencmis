@@ -25,7 +25,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>chemistry-opencmis-dist</artifactId>
-    <name>Distribution project for OpenCmis assemblies</name>
+    <name>OpenCMIS Assemblies Distribution</name>
     <packaging>pom</packaging>
     
     <properties>

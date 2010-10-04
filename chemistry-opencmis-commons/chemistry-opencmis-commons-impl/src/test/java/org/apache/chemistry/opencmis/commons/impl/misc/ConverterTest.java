@@ -56,9 +56,9 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl
 
 /**
  * Tests converter methods.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class ConverterTest extends TestCase {
 
@@ -175,7 +175,6 @@ public class ConverterTest extends TestCase {
      * Asserts OpenCMIS data objects.
      */
     protected void assertDataObjectsEquals(String name, Object expected, Object actual) throws Exception {
-        System.out.println(name);
 
         if ((expected == null) && (actual == null)) {
             return;

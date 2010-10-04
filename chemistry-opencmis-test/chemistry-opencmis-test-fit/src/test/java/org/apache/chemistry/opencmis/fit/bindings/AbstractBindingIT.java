@@ -36,9 +36,9 @@ import org.junit.BeforeClass;
 /**
  * Base class for binding layer tests. It makes sure that the provider object is
  * only created once and that there is a test folder.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public abstract class AbstractBindingIT {
     public static String FOLDER_TYPE = "cmis:folder";
@@ -81,7 +81,7 @@ public abstract class AbstractBindingIT {
     public void setUpTest() {
         // only the first test creates the test environment
         if (binding == null) {
-            System.out.println("Creating provider...");
+            // System.out.println("Creating provider...");
 
             binding = createBinding();
             fRepositoryId = getRepositoryId();
@@ -99,7 +99,7 @@ public abstract class AbstractBindingIT {
      * Creates a folder that will be used by all read-write tests.
      */
     private void createTestFolder() {
-        System.out.println("Creating test folder...");
+        // System.out.println("Creating test folder...");
 
         // get root folder id
         RepositoryInfo ri = getBinding().getRepositoryService().getRepositoryInfo(fRepositoryId, null);
@@ -129,7 +129,7 @@ public abstract class AbstractBindingIT {
             return;
         }
 
-        System.out.println("Deleting test folder...");
+        // System.out.println("Deleting test folder...");
 
         // delete the whole tree
         getBinding().getObjectService().deleteTree(fRepositoryId, fTestFolderId, true, UnfileObject.DELETE, true, null);

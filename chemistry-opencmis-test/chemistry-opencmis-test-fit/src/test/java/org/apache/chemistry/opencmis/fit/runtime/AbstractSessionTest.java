@@ -62,7 +62,7 @@ public abstract class AbstractSessionTest {
 
     @BeforeClass
     public static void classSetup() {
-        AbstractSessionTest.initializeLogging();
+        // AbstractSessionTest.initializeLogging();
         Fixture.logHeader();
 
     }
