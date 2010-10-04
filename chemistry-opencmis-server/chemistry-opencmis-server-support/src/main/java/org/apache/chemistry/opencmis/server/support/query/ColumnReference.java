@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 
 public class ColumnReference extends CmisSelector {
@@ -59,6 +60,10 @@ public class ColumnReference extends CmisSelector {
 
     public TypeDefinition getTypeDefinition() {
         return typeDef;
+    }
+
+    public PropertyDefinition<?> getPropertyDefinition() {
+        return typeDef.getPropertyDefinitions().get(getPropertyId());
     }
 
     public String getPropertyId() {
