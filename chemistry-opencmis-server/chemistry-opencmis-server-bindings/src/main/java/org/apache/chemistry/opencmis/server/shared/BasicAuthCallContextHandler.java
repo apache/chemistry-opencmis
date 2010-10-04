@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.server.impl.atompub;
+package org.apache.chemistry.opencmis.server.shared;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +28,6 @@ import org.apache.commons.codec.binary.Base64;
 
 /**
  * Call Context handler that handles basic authentication.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class BasicAuthCallContextHandler implements CallContextHandler {
 
@@ -40,12 +37,6 @@ public class BasicAuthCallContextHandler implements CallContextHandler {
     public BasicAuthCallContextHandler() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.server.impl.atompub.CallContextHandler#
-     * getCallContextMap(javax.servlet.http. HttpServletRequest)
-     */
     public Map<String, String> getCallContextMap(HttpServletRequest request) {
         Map<String, String> result = null;
 

@@ -25,6 +25,7 @@ public interface CallContext {
 
     String BINDING_ATOMPUB = "atompub";
     String BINDING_WEBSERVICES = "webservices";
+    String BINDING_BROWSER = "browser";
     String BINDING_LOCAL = "local";
 
     String REPOSITORY_ID = "repositoryId";
@@ -36,8 +37,9 @@ public interface CallContext {
 
     /**
      * Returns the binding. Usually it returns
-     * {@link CallContext#BINDING_ATOMPUB} or
-     * {@link CallContext#BINDING_WEBSERVICES}.
+     * {@link CallContext#BINDING_ATOMPUB},
+     * {@link CallContext#BINDING_WEBSERVICES},
+     * {@link CallContext#BINDING_BROWSER} or {@link CallContext#BINDING_LOCAL}.
      */
     String getBinding();
 

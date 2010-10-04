@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.server.impl.atompub;
+package org.apache.chemistry.opencmis.server.shared;
 
 import java.util.Map;
 

@@ -19,8 +19,6 @@
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -45,8 +43,9 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
-import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
+import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
+import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -149,7 +148,7 @@ public class CmisAtomPubServlet extends HttpServlet {
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
-            context = createContext(request);
+            context = HttpUtils.createContext(request, CallContext.BINDING_ATOMPUB, callContextHandler);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {
@@ -194,7 +193,7 @@ public class CmisAtomPubServlet extends HttpServlet {
             service = factory.getService(context);
 
             // analyze the path
-            String[] pathFragments = splitPath(request);
+            String[] pathFragments = HttpUtils.splitPath(request);
 
             if (pathFragments.length < 2) {
                 // root -> service document
@@ -220,79 +219,6 @@ public class CmisAtomPubServlet extends HttpServlet {
                 service.close();
             }
         }
-    }
-
-    /**
-     * Decodes basic auth and creates a {@link CallContext} object.
-     */
-    protected CallContext createContext(HttpServletRequest request) {
-        String[] pathFragments = splitPath(request);
-
-        String repositoryId = null;
-        if (pathFragments.length > 0) {
-            repositoryId = pathFragments[0];
-        }
-
-        CallContextImpl context = new CallContextImpl(CallContext.BINDING_ATOMPUB, repositoryId, true);
-
-        // call call context handler
-        if (callContextHandler != null) {
-            Map<String, String> callContextMap = callContextHandler.getCallContextMap(request);
-            if (callContextMap != null) {
-                for (Map.Entry<String, String> e : callContextMap.entrySet()) {
-                    context.put(e.getKey(), e.getValue());
-                }
-            }
-        }
-
-        // decode range
-        String rangeHeader = request.getHeader("Range");
-        if (rangeHeader != null) {
-            rangeHeader = rangeHeader.trim();
-            BigInteger offset = null;
-            BigInteger length = null;
-
-            int eq = rangeHeader.indexOf('=');
-            int ds = rangeHeader.indexOf('-');
-            if ((eq > 0) && (ds > eq)) {
-                String offsetStr = rangeHeader.substring(eq + 1, ds).trim();
-                if (offsetStr.length() > 0) {
-                    offset = new BigInteger(offsetStr);
-                }
-
-                if (ds < rangeHeader.length()) {
-                    String lengthStr = rangeHeader.substring(ds + 1).trim();
-                    if (lengthStr.length() > 0) {
-                        if (offset == null) {
-                            length = new BigInteger(lengthStr);
-                        } else {
-                            length = (new BigInteger(lengthStr)).subtract(offset);
-                        }
-                    }
-
-                    if (offset != null) {
-                        context.put(CallContext.OFFSET, offset.toString());
-                    }
-                    if (length != null) {
-                        context.put(CallContext.LENGTH, length.toString());
-                    }
-                }
-            }
-        }
-
-        return context;
-    }
-
-    /**
-     * Splits the path into its fragments.
-     */
-    private String[] splitPath(HttpServletRequest request) {
-        String p = request.getPathInfo();
-        if (p == null) {
-            return new String[0];
-        }
-
-        return p.substring(1).split("/");
     }
 
     /**
