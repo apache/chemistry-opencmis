@@ -339,8 +339,7 @@ public class InMemoryQueryProcessor {
         @Override
         public boolean walkIn(Tree opNode, Tree colNode, Tree listNode) {
             ColumnReference colRef = getColumnReference(colNode);
-            TypeDefinition td = colRef.getTypeDefinition();
-            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.SINGLE)
@@ -362,8 +361,7 @@ public class InMemoryQueryProcessor {
             // because
             // then it evaluates to true for null values (not set properties).
             ColumnReference colRef = getColumnReference(colNode);
-            TypeDefinition td = colRef.getTypeDefinition();
-            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.SINGLE)
@@ -382,8 +380,7 @@ public class InMemoryQueryProcessor {
         @Override
         public boolean walkInAny(Tree opNode, Tree colNode, Tree listNode) {
             ColumnReference colRef = getColumnReference(colNode);
-            TypeDefinition td = colRef.getTypeDefinition();
-            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.MULTI)
@@ -407,8 +404,7 @@ public class InMemoryQueryProcessor {
             // wrong, because
             // then it evaluates to true for null values (not set properties).
             ColumnReference colRef = getColumnReference(colNode);
-            TypeDefinition td = colRef.getTypeDefinition();
-            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.MULTI)
@@ -429,8 +425,7 @@ public class InMemoryQueryProcessor {
         @Override
         public boolean walkEqAny(Tree opNode, Tree literalNode, Tree colNode) {
             ColumnReference colRef = getColumnReference(colNode);
-            TypeDefinition td = colRef.getTypeDefinition();
-            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             Object literal = walkExpr(literalNode);
             if (pd.getCardinality() != Cardinality.MULTI)
@@ -465,8 +460,7 @@ public class InMemoryQueryProcessor {
                 throw new RuntimeException("LIKE operator requires String literal on right hand side.");
 
             ColumnReference colRef = getColumnReference(colNode);
-            TypeDefinition td = colRef.getTypeDefinition();
-            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyType propType = pd.getPropertyType();
             if (propType != PropertyType.STRING && propType != PropertyType.HTML && propType != PropertyType.ID
                     && propType != PropertyType.URI)
@@ -536,8 +530,7 @@ public class InMemoryQueryProcessor {
             // log.debug("retrieve node from where: " +
             // System.identityHashCode(leftChild) + " is " + leftChild);
             ColumnReference colRef = getColumnReference(leftChild);
-            TypeDefinition td = colRef.getTypeDefinition();
-            PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+            PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             if (lVal instanceof List<?>)
                 throw new RuntimeException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
@@ -645,8 +638,7 @@ public class InMemoryQueryProcessor {
 
     private Object getPropertyValue(Tree columnNode, StoredObject so) {
         ColumnReference colRef = getColumnReference(columnNode);
-        TypeDefinition td = colRef.getTypeDefinition();
-        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(colRef.getPropertyId());
+        PropertyDefinition<?> pd = colRef.getPropertyDefinition();
         PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
         if (null == lVal)
             return null;
