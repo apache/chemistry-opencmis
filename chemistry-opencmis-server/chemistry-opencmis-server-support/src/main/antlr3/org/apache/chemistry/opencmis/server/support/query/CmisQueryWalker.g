@@ -192,23 +192,30 @@ table_reference:
 
 table_join:
     ^(JOIN join_kind one_table join_specification?)
+    {
+        boolean hasSpec = $join_specification.tree != null;
+        queryObj.addJoin($join_kind.kind, $one_table.alias, hasSpec);
+    }
     ;
 
-one_table:
+one_table returns [String alias]:
     ^(TABLE table_name correlation_name?)
       {
-          queryObj.addType($correlation_name.text, $table_name.text);
+          $alias = queryObj.addType($correlation_name.text, $table_name.text);
       }
     ;
 
-join_kind:
-    INNER | LEFT | OUTER;
+join_kind returns [String kind]:
+      INNER { $kind = "INNER"; }
+    | LEFT  { $kind = "LEFT"; }
+    | RIGHT { $kind = "RIGHT"; }
+    ;
 
 join_specification:
     ^(ON cr1=column_reference EQ cr2=column_reference)
     {
-          queryObj.addJoinReference($cr1.start, $cr1.result);
-          queryObj.addJoinReference($cr2.start, $cr2.result);
+        queryObj.addJoinReference($cr1.start, $cr1.result);
+        queryObj.addJoinReference($cr2.start, $cr2.result);
     }
     ;
 

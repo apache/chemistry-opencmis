@@ -72,6 +72,9 @@ public class ColumnReference extends CmisSelector {
 
     @Override
     public String toString() {
-        return "Column Reference for column " + propQueryName + " in type " + typeQueryName;
+        return "ColumnReference("
+                + (typeQueryName == null ? "" : typeQueryName + ".")
+                + propQueryName + (aliasName == null ? "" : " AS " + aliasName)
+                + ")";
     }
 }

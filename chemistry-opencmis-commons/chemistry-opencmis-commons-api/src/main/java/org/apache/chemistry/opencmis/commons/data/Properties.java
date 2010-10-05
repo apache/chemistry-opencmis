@@ -25,7 +25,10 @@ public interface Properties extends ExtensionsData {
 
     /**
      * Returns a map of properties (property id => property). Should not be used
-     * with queries because some repositories don't set property ids.
+     * with queries because some repositories don't set property ids, and
+     * because when dealing with queries the proper key is usually the query
+     * name (when using JOINs, several properties with the same id may be
+     * returned).
      */
     Map<String, PropertyData<?>> getProperties();
 

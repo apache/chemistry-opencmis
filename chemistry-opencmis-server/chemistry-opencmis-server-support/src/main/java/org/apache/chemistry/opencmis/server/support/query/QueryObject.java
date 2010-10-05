@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -56,10 +57,13 @@ public class QueryObject {
     protected QueryConditionProcessor queryProcessor;
 
     // from part
-    /**
-     * map from alias name to type query name
-     */
+    /** map from alias name to type query name */
     protected Map<String, String> froms = new LinkedHashMap<String, String>();
+
+    /** main from alias name */
+    protected String from = null;
+
+    protected List<JoinSpec> joinSpecs = new LinkedList<JoinSpec>();
 
     // where part
     protected Map<Integer, CmisSelector> columnReferences = new HashMap<Integer, CmisSelector>();
@@ -67,6 +71,35 @@ public class QueryObject {
 
     // order by part
     protected List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
+
+    public static class JoinSpec {
+
+        /** INNER / LEFT / RIGHT */
+        public String kind;
+
+        /** Alias or full table type */
+        public String alias;
+
+        public ColumnReference onLeft;
+
+        public ColumnReference onRight;
+
+        public JoinSpec(String kind, String alias) {
+            this.kind = kind;
+            this.alias = alias;
+        }
+
+        public void setSelectors(ColumnReference onLeft, ColumnReference onRight) {
+            this.onLeft = onLeft;
+            this.onRight = onRight;
+        }
+
+        @Override
+        public String toString() {
+            return "JoinReference(" + kind + "," + alias + "," + onLeft + ","
+                    + onRight + ")";
+        }
+    }
 
     public class SortSpec {
         public boolean ascending;
@@ -134,17 +167,24 @@ public class QueryObject {
     // ///////////////////////////////////////////////////////
     // FROM part
 
-    public void addType(String aliasName, String typeQueryName) {
+    public String addType(String aliasName, String typeQueryName) {
         LOG.debug("add alias: " + aliasName + " for: " + typeQueryName);
         if (froms.containsKey(aliasName)) {
             throw new CmisInvalidArgumentException("You cannot use name " + aliasName
                     + " more than once as alias in a from part.");
-        } else {
-            if (null != aliasName)
-                froms.put(aliasName, typeQueryName);
-            else
-                froms.put(typeQueryName, typeQueryName);
         }
+        if (aliasName == null) {
+            aliasName = typeQueryName;
+        }
+        froms.put(aliasName, typeQueryName);
+        if (from == null) {
+            from = aliasName;
+        }
+        return aliasName;
+    }
+
+    public String getMainTypeAlias() {
+        return from;
     }
 
     public Map<String, String> getTypes() {
@@ -231,6 +271,22 @@ public class QueryObject {
 
     public List<CmisSelector> getJoinReferences() {
         return Collections.unmodifiableList(joinReferences);
+    }
+
+    public void addJoin(String kind, String alias, boolean hasSpec) {
+        JoinSpec join = new JoinSpec(kind, alias);
+        if (hasSpec) {
+            // get columns from last added references
+            int n = joinReferences.size();
+            ColumnReference onLeft = (ColumnReference) joinReferences.get(n - 2);
+            ColumnReference onRight = (ColumnReference) joinReferences.get(n - 1);
+            join.setSelectors(onLeft, onRight);
+        }
+        joinSpecs.add(join);
+    }
+
+    public List<JoinSpec> getJoins() {
+        return joinSpecs;
     }
 
     // ///////////////////////////////////////////////////////

@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.server.support.query;
 public class FunctionReference extends CmisSelector {
 
     public enum CmisQlFunction { SCORE, };
-    
+
     private CmisQlFunction function;
 
     public FunctionReference(CmisQlFunction func) {
@@ -32,8 +32,9 @@ public class FunctionReference extends CmisSelector {
         return function;
     }
 
+    @Override
     public String toString() {
-        return "FunctionReference for " + function.toString();
+        return "FunctionReference(" + function.toString() + ")";
     }
 
     @Override
