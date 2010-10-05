@@ -269,7 +269,7 @@ public final class AtomPubUtils {
 
         ObjectInfo info = service.getObjectInfo(repositoryId, object.getId());
         if (info == null) {
-            throw new CmisRuntimeException("Object Info not found!");
+            throw new CmisRuntimeException("Object Info not found for: " + object.getId());
         }
 
         // start
