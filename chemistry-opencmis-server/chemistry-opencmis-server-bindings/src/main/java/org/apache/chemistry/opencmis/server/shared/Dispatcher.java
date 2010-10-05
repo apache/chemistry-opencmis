@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.server.impl.atompub;
+package org.apache.chemistry.opencmis.server.shared;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,16 +34,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Dispatcher for the AtomPub servlet.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Dispatcher for the AtomPub and Browser binding servlet.
  */
 public class Dispatcher {
+    public static final String METHOD_GET = "GET";
+    public static final String METHOD_POST = "POST";
+    public static final String METHOD_PUT = "PUT";
+    public static final String METHOD_DELETE = "DELETE";
 
     private static final Log LOG = LogFactory.getLog(Dispatcher.class.getName());
 
-    private Map<String, Method> fMethodMap = new HashMap<String, Method>();
+    private Map<String, Method> methodMap = new HashMap<String, Method>();
 
     public Dispatcher() {
     }
@@ -57,7 +58,7 @@ public class Dispatcher {
         Method m = clazz.getMethod(classmethod, CallContext.class, CmisService.class, String.class,
                 HttpServletRequest.class, HttpServletResponse.class);
 
-        fMethodMap.put(getKey(resource, httpMethod), m);
+        methodMap.put(getKey(resource, httpMethod), m);
     }
 
     /**
@@ -68,7 +69,7 @@ public class Dispatcher {
      */
     public boolean dispatch(String resource, String httpMethod, CallContext context, CmisService service,
             String repositoryId, HttpServletRequest request, HttpServletResponse response) {
-        Method m = fMethodMap.get(getKey(resource, httpMethod));
+        Method m = methodMap.get(getKey(resource, httpMethod));
         if (m == null) {
             return false;
         }

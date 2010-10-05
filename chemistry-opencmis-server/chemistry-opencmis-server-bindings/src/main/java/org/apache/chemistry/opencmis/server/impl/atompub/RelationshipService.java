@@ -22,11 +22,11 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RES
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getBigIntegerParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getEnumParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getStringParameter;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.math.BigInteger;
 
@@ -87,8 +87,8 @@ public class RelationshipService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(), objectInfo
-                .getLastModificationDate(), null, relationships.getNumItems());
+        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(),
+                objectInfo.getLastModificationDate(), null, relationships.getNumItems());
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);

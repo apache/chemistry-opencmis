@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ENTRY;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getStringParameter;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

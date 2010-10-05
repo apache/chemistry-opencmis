@@ -23,7 +23,7 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RES
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getStringParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.util.List;
 
@@ -75,8 +75,8 @@ public class PolicyService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(), objectInfo
-                .getLastModificationDate(), null, null);
+        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(),
+                objectInfo.getLastModificationDate(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);

@@ -35,10 +35,10 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.TYP
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getBigIntegerParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getStringParameter;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeTypeEntry;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.math.BigInteger;
 import java.util.Collections;

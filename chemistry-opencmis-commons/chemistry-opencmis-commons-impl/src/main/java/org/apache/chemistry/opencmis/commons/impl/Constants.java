@@ -112,6 +112,7 @@ public final class Constants {
     public static final String PARAM_ID = "id";
     public static final String PARAM_MAJOR = "major";
     public static final String PARAM_MAX_ITEMS = "maxItems";
+    public static final String PARAM_OBJECT_ID = "objectId";
     public static final String PARAM_ONLY_BASIC_PERMISSIONS = "onlyBasicPermissions";
     public static final String PARAM_ORDER_BY = "orderBy";
     public static final String PARAM_OVERWRITE_FLAG = "overwriteFlag";

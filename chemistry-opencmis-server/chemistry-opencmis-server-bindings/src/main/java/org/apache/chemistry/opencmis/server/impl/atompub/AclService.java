@@ -19,9 +19,9 @@
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getEnumParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getStringParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

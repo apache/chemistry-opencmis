@@ -22,11 +22,9 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
@@ -34,12 +32,9 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.data.Properties;
-import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
@@ -119,138 +114,6 @@ public final class AtomPubUtils {
         }
 
         return url;
-    }
-
-    // -------------------------------------------------------------------------
-    // --- parameters ---
-    // -------------------------------------------------------------------------
-
-    /**
-     * Extracts a string parameter.
-     */
-    @SuppressWarnings("unchecked")
-    public static String getStringParameter(HttpServletRequest request, String name) {
-        if (name == null) {
-            return null;
-        }
-
-        Map<String, String[]> parameters = (Map<String, String[]>) request.getParameterMap();
-        for (Map.Entry<String, String[]> parameter : parameters.entrySet()) {
-            if (name.equalsIgnoreCase(parameter.getKey())) {
-                if (parameter.getValue() == null) {
-                    return null;
-                }
-                return parameter.getValue()[0];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Extracts a boolean parameter (with default).
-     */
-    public static boolean getBooleanParameter(HttpServletRequest request, String name, boolean def) {
-        String value = getStringParameter(request, name);
-        if (value == null) {
-            return def;
-        }
-
-        return Boolean.valueOf(value);
-    }
-
-    /**
-     * Extracts a boolean parameter.
-     */
-    public static Boolean getBooleanParameter(HttpServletRequest request, String name) {
-        String value = getStringParameter(request, name);
-        if (value == null) {
-            return null;
-        }
-
-        return Boolean.valueOf(value);
-    }
-
-    /**
-     * Extracts an integer parameter (with default).
-     */
-    public static BigInteger getBigIntegerParameter(HttpServletRequest request, String name, long def) {
-        BigInteger result = getBigIntegerParameter(request, name);
-        if (result == null) {
-            result = BigInteger.valueOf(def);
-        }
-
-        return result;
-    }
-
-    /**
-     * Extracts an integer parameter.
-     */
-    public static BigInteger getBigIntegerParameter(HttpServletRequest request, String name) {
-        String value = getStringParameter(request, name);
-        if (value == null) {
-            return null;
-        }
-
-        try {
-            return new BigInteger(value);
-        } catch (Exception e) {
-            throw new CmisInvalidArgumentException("Invalid parameter '" + name + "'!");
-        }
-    }
-
-    /**
-     * Extracts an enum parameter.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T getEnumParameter(HttpServletRequest request, String name, Class<T> clazz) {
-        String value = getStringParameter(request, name);
-        if ((value == null) || (value.length() == 0)) {
-            return null;
-        }
-
-        try {
-            Method m = clazz.getMethod("fromValue", new Class[] { String.class });
-            return (T) m.invoke(null, new Object[] { value });
-        } catch (Exception e) {
-            if (e instanceof IllegalArgumentException) {
-                throw new CmisInvalidArgumentException("Invalid parameter '" + name + "'!");
-            }
-
-            throw new CmisRuntimeException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Extracts a property from an object.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T getProperty(ObjectData object, String name, Class<T> clazz) {
-        if (object == null) {
-            return null;
-        }
-
-        Properties propData = object.getProperties();
-        if (propData == null) {
-            return null;
-        }
-
-        Map<String, PropertyData<?>> properties = propData.getProperties();
-        if (properties == null) {
-            return null;
-        }
-
-        PropertyData<?> property = properties.get(name);
-        if (property == null) {
-            return null;
-        }
-
-        Object value = property.getFirstValue();
-        if (!clazz.isInstance(value)) {
-            return null;
-        }
-
-        return (T) value;
     }
 
     // -------------------------------------------------------------------------

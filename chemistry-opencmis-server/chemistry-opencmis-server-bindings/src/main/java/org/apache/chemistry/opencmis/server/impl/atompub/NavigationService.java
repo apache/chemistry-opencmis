@@ -33,11 +33,11 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RES
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getBigIntegerParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getEnumParameter;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getStringParameter;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
@@ -108,8 +108,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(), folderInfo
-                .getLastModificationDate(), null, children.getNumItems());
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
+                folderInfo.getLastModificationDate(), null, children.getNumItems());
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -139,8 +139,8 @@ public final class NavigationService {
 
         if (folderInfo.getRenditionInfos() != null) {
             for (RenditionInfo ri : folderInfo.getRenditionInfos()) {
-                feed.writeAlternateLink(compileUrl(baseUrl, RESOURCE_CONTENT, ri.getId()), ri.getContenType(), ri
-                        .getKind(), ri.getTitle(), ri.getLength());
+                feed.writeAlternateLink(compileUrl(baseUrl, RESOURCE_CONTENT, ri.getId()), ri.getContenType(),
+                        ri.getKind(), ri.getTitle(), ri.getLength());
             }
         }
 
@@ -225,8 +225,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(), folderInfo
-                .getLastModificationDate(), null, null);
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
+                folderInfo.getLastModificationDate(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -300,8 +300,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(), folderInfo
-                .getLastModificationDate(), null, null);
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
+                folderInfo.getLastModificationDate(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -375,8 +375,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(), objectInfo
-                .getLastModificationDate(), null, null);
+        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(),
+                objectInfo.getLastModificationDate(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -392,8 +392,8 @@ public final class NavigationService {
                 if ((object == null) || (object.getObject() == null)) {
                     continue;
                 }
-                writeObjectEntry(service, entry, object.getObject(), null, repositoryId, null, object
-                        .getRelativePathSegment(), baseUrl, false);
+                writeObjectEntry(service, entry, object.getObject(), null, repositoryId, null,
+                        object.getRelativePathSegment(), baseUrl, false);
             }
         }
 
@@ -456,8 +456,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(), folderInfo
-                .getLastModificationDate(), null, checkedOut.getNumItems());
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
+                folderInfo.getLastModificationDate(), null, checkedOut.getNumItems());
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);

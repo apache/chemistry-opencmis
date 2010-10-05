@@ -30,17 +30,15 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
  * Utility class that helps building URLs.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  */
 public class UrlBuilder {
 
-    private StringBuilder fUrl;
-    private StringBuilder fQuery;
+    private StringBuilder urlPart;
+    private StringBuilder queryPart;
 
     /**
      * Constructor.
-     *
+     * 
      * @param url
      *            initial URL
      */
@@ -49,23 +47,23 @@ public class UrlBuilder {
             throw new IllegalArgumentException("URL must be set");
         }
 
-        fUrl = new StringBuilder();
-        fQuery = new StringBuilder();
+        urlPart = new StringBuilder();
+        queryPart = new StringBuilder();
 
         int qm = url.indexOf('?');
         if (qm == -1) {
-            fUrl.append(url);
+            urlPart.append(url);
         } else {
-            fUrl.append(url.substring(0, qm));
+            urlPart.append(url.substring(0, qm));
             if (qm < url.length()) {
-                fQuery.append(url.substring(qm + 1));
+                queryPart.append(url.substring(qm + 1));
             }
         }
     }
 
     /**
      * Constructor.
-     *
+     * 
      * @param scheme
      *            scheme
      * @param host
@@ -84,17 +82,17 @@ public class UrlBuilder {
             port = -1;
         }
 
-        fUrl = new StringBuilder();
-        fQuery = new StringBuilder();
+        urlPart = new StringBuilder();
+        queryPart = new StringBuilder();
 
-        fUrl.append(scheme);
-        fUrl.append("://");
-        fUrl.append(host);
+        urlPart.append(scheme);
+        urlPart.append("://");
+        urlPart.append(host);
         if (port > 0) {
-            fUrl.append(":" + port);
+            urlPart.append(":" + port);
         }
         if (path != null) {
-            fUrl.append(path);
+            urlPart.append(path);
         }
     }
 
@@ -102,66 +100,71 @@ public class UrlBuilder {
      * Copy constructor.
      */
     public UrlBuilder(UrlBuilder urlBuilder) {
-        fUrl = new StringBuilder(urlBuilder.fUrl);
-        fQuery = new StringBuilder(urlBuilder.fQuery);
+        urlPart = new StringBuilder(urlBuilder.urlPart);
+        queryPart = new StringBuilder(urlBuilder.queryPart);
     }
 
     /**
      * Adds a parameter to the URL.
-     *
+     * 
      * @param name
      *            parameter name
      * @param value
      *            parameter value
      */
-    public void addParameter(String name, Object value) {
+    public UrlBuilder addParameter(String name, Object value) {
         if ((name == null) || (value == null)) {
-            return;
+            return this;
         }
 
         String valueStr = normalizeParameter(value);
 
-        if (fQuery.length() > 0) {
-            fQuery.append('&');
+        if (queryPart.length() > 0) {
+            queryPart.append('&');
         }
-        fQuery.append(name);
-        fQuery.append("=");
+        queryPart.append(name);
+        queryPart.append("=");
         try {
-            fQuery.append(URLEncoder.encode(valueStr, "UTF-8"));
+            queryPart.append(URLEncoder.encode(valueStr, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
         }
+
+        return this;
     }
 
     /**
      * Adds a path segment to the URL.
-     *
+     * 
      * @param pathSegment
      *            the path segment.
      */
-    public void addPathSegment(String pathSegment) {
-        addPathPart(pathSegment, true);
+    public UrlBuilder addPathSegment(String pathSegment) {
+        return addPathPart(pathSegment, true);
     }
 
     /**
      * Adds a path to the URL.
-     *
-     * @param path the path
+     * 
+     * @param path
+     *            the path
      */
-    public void addPath(String path) {
-        addPathPart(path, false);
+    public UrlBuilder addPath(String path) {
+        return addPathPart(path, false);
     }
 
-    protected void addPathPart(String part, boolean quoteSlash) {
+    protected UrlBuilder addPathPart(String part, boolean quoteSlash) {
         if (part == null || part.length() == 0) {
-            return;
+            return this;
         }
-        if (fUrl.charAt(fUrl.length() - 1) != '/') {
-            fUrl.append('/');
+        if (urlPart.charAt(urlPart.length() - 1) != '/') {
+            urlPart.append('/');
         }
         if (part.charAt(0) == '/') {
             part = part.substring(1);
         }
-        fUrl.append(quoteURIPathComponent(part, quoteSlash));
+        urlPart.append(quoteURIPathComponent(part, quoteSlash));
+
+        return this;
     }
 
     public static char[] RFC7232_RESERVED = ";?:@&=+$,[]".toCharArray();
@@ -182,7 +185,7 @@ public class UrlBuilder {
         // quote some additional reserved characters to be safe
         for (char c : RFC7232_RESERVED) {
             if (r.indexOf(c) >= 0) {
-                r = r.replace(""+c, "%" + Integer.toHexString(c));
+                r = r.replace("" + c, "%" + Integer.toHexString(c));
             }
         }
         if (quoteSlash && r.indexOf('/') >= 0) {
@@ -216,6 +219,6 @@ public class UrlBuilder {
 
     @Override
     public String toString() {
-        return fUrl.toString() + (fQuery.length() == 0 ? "" : "?" + fQuery.toString());
+        return urlPart.toString() + (queryPart.length() == 0 ? "" : "?" + queryPart.toString());
     }
 }
