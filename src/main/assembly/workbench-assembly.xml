@@ -20,31 +20,53 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
     <!-- To build this, run "mvn package assembly:assembly" -->
-    <id>dev-client</id>
+    <id>workbench</id>
     <formats>
         <format>zip</format>
         <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
+    
+    <fileSets>
+        <fileSet>
+            <directory>chemistry-opencmis-workbench/chemistry-opencmis-workbench/target/classes/META-INF</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>README*</include>
+                <include>LICENSE*</include>
+                <include>NOTICE*</include>
+                <include>DEPENDENCIES*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>chemistry-opencmis-workbench/chemistry-opencmis-workbench/target/start</directory>
+            <outputDirectory></outputDirectory>
+            <fileMode>0755</fileMode>
+        </fileSet>
+    </fileSets>
+  
     <moduleSets>
         <moduleSet>
             <includes>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-api</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-impl</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-commons-api</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-commons-impl</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-client-bindings</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-workbench</include>
             </includes>
             <binaries>
-                <outputDirectory></outputDirectory>
+                <outputDirectory>lib</outputDirectory>
                 <includeDependencies>true</includeDependencies>
-                <unpack>false</unpack>
+                <unpack>false</unpack>              
                 <dependencySets>
                     <dependencySet>
                         <scope>runtime</scope>
+                        <excludes>
+                            <exclude>${project.groupId}:chemistry-opencmis-test-util</exclude>
+                            <exclude>junit:junit</exclude>                       
+                            <exclude>org.apache.felix:org.osgi.core</exclude>
+                            <exclude>net.sf.jopt-simple:jopt-simple</exclude>
+                         </excludes>
                     </dependencySet>
                 </dependencySets>
-            </binaries>  
+            </binaries>
         </moduleSet>
     </moduleSets>
+
 </assembly>

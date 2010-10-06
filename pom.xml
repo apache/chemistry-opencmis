@@ -173,7 +173,8 @@
         <module>chemistry-opencmis-test/chemistry-opencmis-test-tools</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-util</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-browser</module>
-        <module>chemistry-opencmis-test/chemistry-opencmis-test-browser-app</module>
+        <module>chemistry-opencmis-test/chemistry-opencmis-test-browser-app</module>        
+        <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench</module>
         <module>chemistry-opencmis-dist</module>
     </modules>
 
@@ -335,6 +336,7 @@
                 <configuration>
                     <descriptors>
                         <descriptor>src/main/assembly/dev-client-assembly.xml</descriptor>
+                        <descriptor>src/main/assembly/workbench-assembly.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>

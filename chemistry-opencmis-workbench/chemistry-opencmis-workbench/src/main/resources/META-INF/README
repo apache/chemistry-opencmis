@@ -1,0 +1,47 @@
+CMIS Workbench
+
+This is a simple Content Management Interoperability Services (CMIS) client based on Swing and 
+Apache Chemistry OpenCMIS (http://incubator.apache.org/chemistry/opencmis.html).
+
+This CMIS client is distributed under the Apache License, version 2.0.
+Please see the NOTICE and LICENSE files for details.
+
+
+
+System properties reference
+---------------------------
+
+Login dialog:
+
+cmis.workbench.url            - preset URL
+cmis.workbench.user           - preset user name
+cmis.workbench.password       - preset password
+cmis.workbench.binding        - preset binding (atompub/webservices)
+cmis.workbench.authentication - preset authentication method (none/standard/ntlm)
+
+
+Folder operation context:
+
+cmis.workbench.folder.filter
+cmis.workbench.folder.includeAcls
+cmis.workbench.folder.includeAllowableActions
+cmis.workbench.folder.includePolicies
+cmis.workbench.folder.includeRelationships
+cmis.workbench.folder.renditionFilter
+cmis.workbench.folder.orderBy
+cmis.workbench.folder.maxItemsPerPage
+
+
+Object operation context:
+
+cmis.workbench.object.filter
+cmis.workbench.object.includeAcls
+cmis.workbench.object.includeAllowableActions
+cmis.workbench.object.includePolicies
+cmis.workbench.object.includeRelationships
+cmis.workbench.object.renditionFilter
+
+
+Others:
+
+cmis.workbench.acceptSelfSignedCertificates - disable SSL certificate check (true/false)
