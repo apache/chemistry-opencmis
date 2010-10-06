@@ -117,7 +117,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         // get the type of the source document
         ObjectType type = null;
         if (source instanceof CmisObject) {
-            type = ((CmisObject) source).getBaseType();
+            type = ((CmisObject) source).getType();
         } else {
             CmisObject sourceObj = getSession().getObject(source);
             type = sourceObj.getType();

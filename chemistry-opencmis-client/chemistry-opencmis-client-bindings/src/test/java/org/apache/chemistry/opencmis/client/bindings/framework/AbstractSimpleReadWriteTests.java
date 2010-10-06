@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
@@ -37,9 +38,8 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 /**
  * Simple read-write test.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase {
 
@@ -50,6 +50,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     public static final String TEST_UPDATE_PROPERTIES = "updateProperties";
     public static final String TEST_DELETE_TREE = "deleteTree";
     public static final String TEST_MOVE_OBJECT = "moveObject";
+    public static final String TEST_COPY_OBJECT = "copyObject";
     public static final String TEST_VERSIONING = "versioning";
 
     private static final byte[] CONTENT = "My document test content!".getBytes();
@@ -324,6 +325,44 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
         assertTrue(existsObject(docIdHolder.getValue()));
         getChild(folder2, docIdHolder.getValue());
+
+        deleteTree(folder1);
+        deleteTree(folder2);
+    }
+
+    /**
+     * Tests copy object.
+     */
+    public void testCopyObject() throws Exception {
+        if (!isEnabled(TEST_COPY_OBJECT)) {
+            return;
+        }
+
+        // create folders
+        String folder1 = createDefaultFolder(getTestRootFolder(), "folder1");
+        String folder2 = createDefaultFolder(getTestRootFolder(), "folder2");
+
+        // create document
+        String docId = createDefaultDocument(folder1, "testdoc.txt",
+                CONTENT_TYPE, CONTENT);
+
+        // copy it with new properties
+        List<PropertyData<?>> updatePropList = new ArrayList<PropertyData<?>>();
+        updatePropList.add(getObjectFactory().createPropertyStringData(
+                PropertyIds.NAME, "newdocname"));
+        Properties updateProperties = getObjectFactory().createPropertiesData(
+                updatePropList);
+
+        String copyId = getBinding().getObjectService().createDocumentFromSource(
+                getTestRepositoryId(), docId, updateProperties, folder2, null,
+                null, null, null, null);
+        assertNotNull(copyId);
+
+        assertTrue(existsObject(copyId));
+        ObjectInFolderData copy = getChild(folder2, copyId);
+        String updatedName = (String) copy.getObject().getProperties().getProperties().get(
+                PropertyIds.NAME).getFirstValue();
+        assertEquals("newdocname", updatedName);
 
         deleteTree(folder1);
         deleteTree(folder2);

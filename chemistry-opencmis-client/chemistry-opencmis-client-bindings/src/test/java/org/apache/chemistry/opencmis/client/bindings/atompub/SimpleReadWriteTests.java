@@ -26,7 +26,6 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class SimpleReadWriteTests extends AbstractSimpleReadWriteTests {
 
@@ -40,6 +39,7 @@ public class SimpleReadWriteTests extends AbstractSimpleReadWriteTests {
         fTests.add(TEST_UPDATE_PROPERTIES);
         fTests.add(TEST_DELETE_TREE);
         fTests.add(TEST_MOVE_OBJECT);
+        // fTests.add(TEST_COPY_OBJECT);
         fTests.add(TEST_VERSIONING);
     }
 

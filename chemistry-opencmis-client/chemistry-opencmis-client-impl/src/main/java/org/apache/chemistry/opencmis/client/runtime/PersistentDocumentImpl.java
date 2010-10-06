@@ -32,7 +32,6 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
-import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -40,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
@@ -114,9 +114,37 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
     // operations
 
-    public Document copy(List<Property<?>> properties, VersioningState versioningState, List<Policy> policies,
-            List<Ace> addACEs, List<Ace> removeACEs) {
-        throw new CmisRuntimeException("not implemented");
+    public Document copy(ObjectId targetFolderId, Map<String, ?> properties,
+            VersioningState versioningState, List<Policy> policies,
+            List<Ace> addACEs, List<Ace> removeACEs, OperationContext context) {
+        if (targetFolderId == null || targetFolderId.getId() == null) {
+            throw new CmisInvalidArgumentException("Target must be set");
+        }
+
+        ObjectFactory factory = getObjectFactory();
+        Set<Updatability> updatability = new HashSet<Updatability>();
+        updatability.add(Updatability.READWRITE);
+
+        String newId = getBinding().getObjectService().createDocumentFromSource(
+                getRepositoryId(), getId(),
+                factory.convertProperties(properties, getType(), updatability),
+                targetFolderId.getId(), versioningState, factory.convertPolicies(policies),
+                factory.convertAces(addACEs), factory.convertAces(removeACEs), null);
+
+        // if no context is provided the object will not be fetched
+        if (context == null || newId == null) {
+            return null;
+        }
+        // get the new object
+        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        if (!(object instanceof Document)) {
+            throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
+        }
+        return (Document) object;    }
+
+    public Document copy(ObjectId targetFolderId) {
+        return copy(targetFolderId, null, null, null, null, null,
+                getSession().getDefaultContext());
     }
 
     public void deleteAllVersions() {
@@ -336,9 +364,5 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
     public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment) {
         return this.checkIn(major, properties, contentStream, checkinComment, null, null, null);
-    }
-
-    public Document copy(List<Property<?>> properties, VersioningState versioningState) {
-        return this.copy(properties, versioningState, null, null, null);
     }
 }
