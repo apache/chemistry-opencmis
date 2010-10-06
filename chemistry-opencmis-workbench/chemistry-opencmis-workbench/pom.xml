@@ -36,6 +36,11 @@
     </properties>
 
     <build>
+        <resources>
+          <resource>
+            <directory>${project.build.directory}/generated-resources</directory>
+          </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -93,7 +98,7 @@
                                  <property name="workbench.jar" value="${project.build.finalName}" />
                                  
                                  <!-- build timestamp -->
-                                 <echo file="${basedir}/src/main/resources/META-INF/build-timestamp.txt">Version: ${version} / Build: ${timestamp}</echo>
+                                 <echo file="${targetdir}/generated-resources/META-INF/build-timestamp.txt">Version: ${version} / Build: ${timestamp}</echo>
                                  
                                  <!-- start scripts -->
                                  <mkdir dir="${targetdir}/start"/>
