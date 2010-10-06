@@ -200,6 +200,7 @@ public abstract class AbstractReadOnlyNavigationIT extends AbstractSessionTest {
         CmisObject firstObject = pl.iterator().next();
         Assert.assertNotNull(firstObject);
     }
+    
 
     @Test
     public void rootParent() {
