@@ -40,7 +40,7 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
+import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
@@ -582,10 +582,10 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         final RelationshipService relationshipService = getBinding().getRelationshipService();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new CollectionIterable<Relationship>(new AbstractPageFetch<Relationship>(ctxt.getMaxItemsPerPage()) {
+        return new CollectionIterable<Relationship>(new AbstractPageFetcher<Relationship>(ctxt.getMaxItemsPerPage()) {
 
             @Override
-            protected AbstractPageFetch.PageFetchResult<Relationship> fetchPage(long skipCount) {
+            protected AbstractPageFetcher.Page<Relationship> fetchPage(long skipCount) {
 
                 // fetch the relationships
                 ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(), objectId,
@@ -604,7 +604,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                     }
                 }
 
-                return new AbstractPageFetch.PageFetchResult<Relationship>(page, relList.getNumItems(),
+                return new AbstractPageFetcher.Page<Relationship>(page, relList.getNumItems(),
                         relList.hasMoreItems());
             }
         });

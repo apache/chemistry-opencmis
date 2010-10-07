@@ -20,41 +20,41 @@ package org.apache.chemistry.opencmis.client.runtime.util;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageFetchResult;
+import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher.Page;
 
 /**
- * Iterator for iterating over all items in a CMIS Collection. 
- * 
+ * Iterator for iterating over all items in a CMIS Collection.
+ *
  * @param <T>
  */
 public class CollectionIterator<T> extends AbstractIterator<T> {
 
     /**
      * Construct
-     * 
+     *
      * @param skipCount
-     * @param pageFetch
+     * @param pageFetcher
      */
-    public CollectionIterator(long skipCount, AbstractPageFetch<T> pageFetch) {
-        super(skipCount, pageFetch);
+    public CollectionIterator(long skipCount, AbstractPageFetcher<T> pageFetcher) {
+        super(skipCount, pageFetcher);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Iterator#hasNext()
      */
     public boolean hasNext() {
-        PageFetchResult<T> page = getCurrentPage();
+        Page<T> page = getCurrentPage();
         if (page == null) {
             return false;
         }
-        
-        List<T> items = page.getPage();
+
+        List<T> items = page.getItems();
         if (items != null && getSkipOffset() < items.size()) {
             return true;
         }
-        
+
         if (!getHasMoreItems()) {
             return false;
         }
@@ -70,23 +70,23 @@ public class CollectionIterator<T> extends AbstractIterator<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Iterator#next()
      */
     public T next() {
-        PageFetchResult<T> page = getCurrentPage();
+        Page<T> page = getCurrentPage();
         if (page == null) {
             return null;
         }
 
-        List<T> items = page.getPage();
+        List<T> items = page.getItems();
         if (items == null || items.isEmpty()) {
             return null;
         }
 
         if (getSkipOffset() == items.size()) {
             page = incrementPage();
-            items = page == null ? null : page.getPage();
+            items = page == null ? null : page.getItems();
         }
 
         if (items == null || items.isEmpty() || getSkipOffset() == items.size()) {

@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Tree;
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
+import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -246,10 +246,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         final ObjectFactory objectFactory = getSession().getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new CollectionIterable<Document>(new AbstractPageFetch<Document>(ctxt.getMaxItemsPerPage()) {
+        return new CollectionIterable<Document>(new AbstractPageFetcher<Document>(ctxt.getMaxItemsPerPage()) {
 
             @Override
-            protected AbstractPageFetch.PageFetchResult<Document> fetchPage(long skipCount) {
+            protected AbstractPageFetcher.Page<Document> fetchPage(long skipCount) {
 
                 // get checked out documents for this folder
                 ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), objectId, ctxt
@@ -271,7 +271,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                     }
                 }
 
-                return new AbstractPageFetch.PageFetchResult<Document>(page, checkedOutDocs.getNumItems(),
+                return new AbstractPageFetcher.Page<Document>(page, checkedOutDocs.getNumItems(),
                         checkedOutDocs.hasMoreItems());
             }
         });
@@ -287,10 +287,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         final ObjectFactory objectFactory = getSession().getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new CollectionIterable<CmisObject>(new AbstractPageFetch<CmisObject>(ctxt.getMaxItemsPerPage()) {
+        return new CollectionIterable<CmisObject>(new AbstractPageFetcher<CmisObject>(ctxt.getMaxItemsPerPage()) {
 
             @Override
-            protected AbstractPageFetch.PageFetchResult<CmisObject> fetchPage(long skipCount) {
+            protected AbstractPageFetcher.Page<CmisObject> fetchPage(long skipCount) {
 
                 // get the children
                 ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId, ctxt
@@ -309,7 +309,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                     }
                 }
 
-                return new AbstractPageFetch.PageFetchResult<CmisObject>(page, children.getNumItems(), children
+                return new AbstractPageFetcher.Page<CmisObject>(page, children.getNumItems(), children
                         .hasMoreItems());
             }
         });

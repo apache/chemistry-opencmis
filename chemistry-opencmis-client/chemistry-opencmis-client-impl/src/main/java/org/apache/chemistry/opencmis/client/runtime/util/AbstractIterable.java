@@ -18,126 +18,82 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.util;
 
-import java.util.Iterator;
-
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 
 /**
  * Abstract <code>ItemIterable</code> implementation.
- * 
- * @param <T>
+ *
+ * @param <T> the type returned by the iterable's iterator
  */
 public abstract class AbstractIterable<T> implements ItemIterable<T> {
 
-    private AbstractPageFetch<T> pageFetch;
+    private AbstractPageFetcher<T> pageFetcher;
     private long skipCount;
     private AbstractIterator<T> iterator;
 
-    /**
-     * Construct
-     * 
-     * @param pageFetch
-     */
-    public AbstractIterable(AbstractPageFetch<T> pageFetch) {
-        this(0, pageFetch);
+    public AbstractIterable(AbstractPageFetcher<T> pageFetcher) {
+        this(0, pageFetcher);
     }
 
-    /**
-     * Construct
-     * 
-     * @param position
-     * @param pageFetch
-     */
-    protected AbstractIterable(long position, AbstractPageFetch<T> pageFetch) {
-        this.pageFetch = pageFetch;
+    protected AbstractIterable(long position, AbstractPageFetcher<T> pageFetcher) {
+        this.pageFetcher = pageFetcher;
         this.skipCount = position;
     }
 
     /**
-     * Gets skip count
+     * Gets the skip count
+     *
      * @return  skip count
      */
     protected long getSkipCount() {
         return skipCount;
     }
-    
+
     /**
      * Gets the page fetcher
-     * 
+     *
      * @return  page fetcher
      */
-    protected AbstractPageFetch<T> getPageFetch() {
-        return pageFetch;
+    protected AbstractPageFetcher<T> getPageFetcher() {
+        return pageFetcher;
     }
-    
+
     /**
-     * Construct Iterator
-     * 
+     * Construct the iterator
+     *
      * @return  iterator
      */
     protected abstract AbstractIterator<T> createIterator();
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Iterable#iterator()
-     */
-    public Iterator<T> iterator() {
+
+    public AbstractIterator<T> iterator() {
         return getIterator();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.chemistry.opencmis.client.api.util.PagingIterable#skipTo(long)
-     */
     public ItemIterable<T> skipTo(long position) {
-        return new CollectionIterable<T>(position, pageFetch);
+        return new CollectionIterable<T>(position, pageFetcher);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.chemistry.opencmis.client.api.ItemIterable#getPage()
-     */
     public ItemIterable<T> getPage() {
-        return new CollectionPageIterable<T>(skipCount, pageFetch);
+        return new CollectionPageIterable<T>(skipCount, pageFetcher);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.chemistry.opencmis.client.api.ItemIterable#getPage(int)
-     */
     public ItemIterable<T> getPage(int maxNumItems) {
-        this.pageFetch.setMaxNumItems(maxNumItems);
-        return new CollectionPageIterable<T>(skipCount, pageFetch);
+        this.pageFetcher.setMaxNumItems(maxNumItems);
+        return new CollectionPageIterable<T>(skipCount, pageFetcher);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.ItemIterable#getPageNumItems()
-     */
     public long getPageNumItems() {
         return getIterator().getPageNumItems();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.ItemIterable#getHasMoreItems()
-     */
     public boolean getHasMoreItems() {
         return getIterator().getHasMoreItems();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.ItemIterable#getTotalNumItems()
-     */
     public long getTotalNumItems() {
         return getIterator().getTotalNumItems();
     }
-    
+
     private AbstractIterator<T> getIterator() {
         if (this.iterator == null) {
             this.iterator = createIterator();

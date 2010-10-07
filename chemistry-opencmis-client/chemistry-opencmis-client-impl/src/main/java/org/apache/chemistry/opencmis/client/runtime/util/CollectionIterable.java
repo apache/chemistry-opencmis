@@ -26,25 +26,25 @@ public class CollectionIterable<T> extends AbstractIterable<T> {
 
     /**
      * Construct
-     * 
-     * @param pageFetch
+     *
+     * @param pageFetcher
      */
-    public CollectionIterable(AbstractPageFetch<T> pageFetch) {
-        this(0, pageFetch);
+    public CollectionIterable(AbstractPageFetcher<T> pageFetcher) {
+        this(0, pageFetcher);
     }
 
     /**
      * Construct
-     * 
+     *
      * @param position
-     * @param pageFetch
+     * @param pageFetcher
      */
-    protected CollectionIterable(long position, AbstractPageFetch<T> pageFetch) {
-        super(position, pageFetch);
+    protected CollectionIterable(long position, AbstractPageFetcher<T> pageFetcher) {
+        super(position, pageFetcher);
     }
 
     @Override
     protected AbstractIterator<T> createIterator() {
-        return new CollectionIterator<T>(getSkipCount(), getPageFetch());
+        return new CollectionIterator<T>(getSkipCount(), getPageFetcher());
     }
 }

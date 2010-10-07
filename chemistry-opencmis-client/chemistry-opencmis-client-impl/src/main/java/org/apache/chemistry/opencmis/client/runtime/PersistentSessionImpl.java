@@ -45,7 +45,7 @@ import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
+import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -229,10 +229,10 @@ public class PersistentSessionImpl implements Session, Serializable {
         final ObjectFactory objectFactory = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new CollectionIterable<Document>(new AbstractPageFetch<Document>(ctxt.getMaxItemsPerPage()) {
+        return new CollectionIterable<Document>(new AbstractPageFetcher<Document>(ctxt.getMaxItemsPerPage()) {
 
             @Override
-            protected AbstractPageFetch.PageFetchResult<Document> fetchPage(long skipCount) {
+            protected AbstractPageFetcher.Page<Document> fetchPage(long skipCount) {
 
                 // get all checked out documents
                 ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), null,
@@ -254,7 +254,7 @@ public class PersistentSessionImpl implements Session, Serializable {
                     }
                 }
 
-                return new AbstractPageFetch.PageFetchResult<Document>(page, checkedOutDocs.getNumItems(),
+                return new AbstractPageFetcher.Page<Document>(page, checkedOutDocs.getNumItems(),
                         checkedOutDocs.hasMoreItems());
             }
         });
@@ -420,11 +420,11 @@ public class PersistentSessionImpl implements Session, Serializable {
         final RepositoryService repositoryService = getBinding().getRepositoryService();
         final ObjectFactory objectFactory = this.getObjectFactory();
 
-        return new CollectionIterable<ObjectType>(new AbstractPageFetch<ObjectType>(this.getDefaultContext()
+        return new CollectionIterable<ObjectType>(new AbstractPageFetcher<ObjectType>(this.getDefaultContext()
                 .getMaxItemsPerPage()) {
 
             @Override
-            protected AbstractPageFetch.PageFetchResult<ObjectType> fetchPage(long skipCount) {
+            protected AbstractPageFetcher.Page<ObjectType> fetchPage(long skipCount) {
 
                 // fetch the data
                 TypeDefinitionList tdl = repositoryService.getTypeChildren(
@@ -437,7 +437,7 @@ public class PersistentSessionImpl implements Session, Serializable {
                     page.add(objectFactory.convertTypeDefinition(typeDefinition));
                 }
 
-                return new AbstractPageFetch.PageFetchResult<ObjectType>(page, tdl.getNumItems(), tdl.hasMoreItems()) {
+                return new AbstractPageFetcher.Page<ObjectType>(page, tdl.getNumItems(), tdl.hasMoreItems()) {
                 };
             }
         });
@@ -484,10 +484,10 @@ public class PersistentSessionImpl implements Session, Serializable {
         final ObjectFactory objectFactory = this.getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new CollectionIterable<QueryResult>(new AbstractPageFetch<QueryResult>(ctxt.getMaxItemsPerPage()) {
+        return new CollectionIterable<QueryResult>(new AbstractPageFetcher<QueryResult>(ctxt.getMaxItemsPerPage()) {
 
             @Override
-            protected AbstractPageFetch.PageFetchResult<QueryResult> fetchPage(long skipCount) {
+            protected AbstractPageFetcher.Page<QueryResult> fetchPage(long skipCount) {
 
                 // fetch the data
                 ObjectList resultList = discoveryService.query(getRepositoryId(), statement, searchAllVersions,
@@ -507,7 +507,7 @@ public class PersistentSessionImpl implements Session, Serializable {
                     }
                 }
 
-                return new AbstractPageFetch.PageFetchResult<QueryResult>(page, resultList.getNumItems(),
+                return new AbstractPageFetcher.Page<QueryResult>(page, resultList.getNumItems(),
                         resultList.hasMoreItems());
             }
         });

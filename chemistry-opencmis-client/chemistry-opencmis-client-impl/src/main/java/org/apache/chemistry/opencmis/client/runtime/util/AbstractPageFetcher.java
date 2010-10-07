@@ -22,15 +22,15 @@ import java.math.BigInteger;
 import java.util.List;
 
 /**
- * Abstract page fetch.
+ * Abstract page fetcher.
  *
- * @param <T>
+ * @param <T> the type of items fetched
  */
-public abstract class AbstractPageFetch<T> {
+public abstract class AbstractPageFetcher<T> {
 
     protected long maxNumItems;
 
-    public AbstractPageFetch(long maxNumItems) {
+    public AbstractPageFetcher(long maxNumItems) {
         this.maxNumItems = maxNumItems;
     }
 
@@ -39,27 +39,37 @@ public abstract class AbstractPageFetch<T> {
      *
      * @param skipCount initial offset where to start fetching
      */
-    protected abstract PageFetchResult<T> fetchPage(long skipCount);
+    protected abstract Page<T> fetchPage(long skipCount);
 
-    // --- fetch result class ---
-
-    public static class PageFetchResult<T> {
-        private List<T> page;
-        private BigInteger totalItems;
+    /**
+     * A fetched page.
+     *
+     * @param <T> the type of items fetched
+     */
+    public static class Page<T> {
+        private List<T> items;
+        private Long totalNumItems;
         private Boolean hasMoreItems;
 
-        public PageFetchResult(List<T> page, BigInteger totalItems, Boolean hasMoreItems) {
-            this.page = page;
-            this.totalItems = totalItems;
+        public Page(List<T> items, BigInteger totalNumItems, Boolean hasMoreItems) {
+            this.items = items;
+            this.totalNumItems = totalNumItems == null ? null
+                    : Long.valueOf(totalNumItems.longValue());
             this.hasMoreItems = hasMoreItems;
         }
 
-        public List<T> getPage() {
-            return page;
+        public Page(List<T> items, long totalNumItems, boolean hasMoreItems) {
+            this.items = items;
+            this.totalNumItems = Long.valueOf(totalNumItems);
+            this.hasMoreItems = Boolean.valueOf(hasMoreItems);
         }
 
-        public BigInteger getTotalItems() {
-            return totalItems;
+        public List<T> getItems() {
+            return items;
+        }
+
+        public Long getTotalNumItems() {
+            return totalNumItems;
         }
 
         public Boolean getHasMoreItems() {

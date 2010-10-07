@@ -21,124 +21,101 @@ package org.apache.chemistry.opencmis.client.runtime.util;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch.PageFetchResult;
-
+import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher.Page;
 
 /**
  * Abstract <code>Iterator</code> implementation.
- * 
- * @param <T>
+ *
+ * @param <T> the type returned by the iterator
  */
 public abstract class AbstractIterator<T> implements Iterator<T> {
 
     private long skipCount;
     private int skipOffset;
-    private AbstractPageFetch<T> pageFetch;
+    private AbstractPageFetcher<T> pageFetcher;
 
-    private PageFetchResult<T> page = null;
-    private Long totalItems = null;
+    private Page<T> page = null;
+    private Long totalNumItems = null;
     private Boolean hasMoreItems = null;
 
     /**
      * Construct
-     * 
+     *
      * @param skipCount
-     * @param pageFetch
+     * @param pageFetcher
      */
-    public AbstractIterator(long skipCount, AbstractPageFetch<T> pageFetch) {
+    public AbstractIterator(long skipCount, AbstractPageFetcher<T> pageFetcher) {
         this.skipCount = skipCount;
-        this.pageFetch = pageFetch;
+        this.pageFetcher = pageFetcher;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.chemistry.opencmis.client.api.util.PagingIterator#getPosition
-     * ()
-     */
     public long getPosition() {
         return skipCount + skipOffset;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.ItemIterator#getPageNumItems()
-     */
     public long getPageNumItems() {
-        PageFetchResult<T> page = getCurrentPage();
+        Page<T> page = getCurrentPage();
         if (page != null) {
-            List<T> items = page.getPage();
+            List<T> items = page.getItems();
             if (items != null) {
                 return items.size();
             }
         }
         return 0L;
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.ItemIterator#getTotalNumItems()
-     */
+
     public long getTotalNumItems() {
-        if (totalItems == null) {
-            totalItems = -1L;
-            PageFetchResult<T> page = getCurrentPage();
+        if (totalNumItems == null) {
+            totalNumItems = Long.valueOf(-1);
+            Page<T> page = getCurrentPage();
             if (page != null) {
                 // set number of items
-                if (page.getTotalItems() != null) {
-                    totalItems = page.getTotalItems().longValue();
+                if (page.getTotalNumItems() != null) {
+                    totalNumItems = page.getTotalNumItems();
                 }
             }
         }
-        return totalItems;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.apache.chemistry.opencmis.client.api.ItemIterator#getHasMoreItems()
-     */
-    public boolean getHasMoreItems() {
-        if (hasMoreItems == null) {
-            hasMoreItems = false;
-            PageFetchResult<T> page = getCurrentPage();
-            if (page != null) {
-                if (page.getHasMoreItems() != null) {
-                    hasMoreItems = page.getHasMoreItems().booleanValue();
-                }
-            }
-        }
-        return hasMoreItems;
+        return totalNumItems.longValue();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see java.util.Iterator#remove()
-     */
+    public boolean getHasMoreItems() {
+        if (hasMoreItems == null) {
+            hasMoreItems = Boolean.FALSE;
+            Page<T> page = getCurrentPage();
+            if (page != null) {
+                if (page.getHasMoreItems() != null) {
+                    hasMoreItems = page.getHasMoreItems();
+                }
+            }
+        }
+        return hasMoreItems.booleanValue();
+    }
+
     public void remove() {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Gets current skip count
-     * 
+     *
      * @return skip count
      */
     protected long getSkipCount() {
         return skipCount;
     }
-    
+
     /**
      * Gets current skip offset (from skip count)
-     * 
+     *
      * @return skip offset
      */
     protected int getSkipOffset() {
         return skipOffset;
     }
-    
+
     /**
      * Increment the skip offset by one
-     * 
+     *
      * @return incremented skip offset
      */
     protected int incrementSkipOffset() {
@@ -147,27 +124,27 @@ public abstract class AbstractIterator<T> implements Iterator<T> {
 
     /**
      * Gets the current page of items within collection
-     * 
+     *
      * @return current page
      */
-    protected PageFetchResult<T> getCurrentPage() {
+    protected Page<T> getCurrentPage() {
         if (page == null) {
-            page = pageFetch.fetchPage(skipCount);
+            page = pageFetcher.fetchPage(skipCount);
         }
         return page;
     }
 
     /**
      * Skip to the next page of items within collection
-     * 
+     *
      * @return next page
      */
-    protected PageFetchResult<T> incrementPage() {
+    protected Page<T> incrementPage() {
         skipCount += skipOffset;
         skipOffset = 0;
-        totalItems = null;
+        totalNumItems = null;
         hasMoreItems = null;
-        page = pageFetch.fetchPage(skipCount);
+        page = pageFetcher.fetchPage(skipCount);
         return page;
     }
 

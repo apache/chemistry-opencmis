@@ -23,14 +23,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetch;
+import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,11 +54,11 @@ public class ItemIterableTest {
     private String[] data0 = {};
 
     private ItemIterable<String> getIterable(final String[] data, long pageSize) {
-        return new CollectionIterable<String>(new AbstractPageFetch<String>(pageSize) {
+        return new CollectionIterable<String>(new AbstractPageFetcher<String>(pageSize) {
 
             @Override
-            protected PageFetchResult<String> fetchPage(long skipCount) {
-                Boolean hasMoreItems = Boolean.TRUE;
+            protected Page<String> fetchPage(long skipCount) {
+                boolean hasMoreItems = true;
                 List<String> page = new ArrayList<String>();
 
                 ItemIterableTest.log.info("(" + skipCount + "|" + this.maxNumItems + ") ");
@@ -69,7 +68,7 @@ public class ItemIterableTest {
 
                 if (to >= data.length) {
                     to = data.length;
-                    hasMoreItems = Boolean.FALSE;
+                    hasMoreItems = false;
                 }
 
                 // . simulate rolling total number of items (for repositories
@@ -80,8 +79,8 @@ public class ItemIterableTest {
                     page.add(data[i]);
                 }
 
-                PageFetchResult<String> result = new AbstractPageFetch.PageFetchResult<String>(page, BigInteger
-                        .valueOf(totalItems), hasMoreItems);
+                Page<String> result = new AbstractPageFetcher.Page<String>(
+                        page, totalItems, hasMoreItems);
 
                 return result;
             }
