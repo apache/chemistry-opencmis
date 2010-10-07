@@ -105,7 +105,7 @@ class CMIS {
                     (PropertyIds.NAME): name
                 ]
         
-        return parentFolder.createFolder(properties, session.getDefaultContext())
+        return parentFolder.createFolder(properties)
     }
     
     Document createTextDocument(parent, String name, String content, String type = "cmis:document", 
@@ -120,8 +120,7 @@ class CMIS {
         def stream = new ByteArrayInputStream(content.bytes)
         def contentStream = new ContentStreamImpl(name, content.bytes.length, "text/plain", stream)
         
-        return parentFolder.createDocument(properties, contentStream, 
-        versioningState, session.getDefaultContext())
+        return parentFolder.createDocument(properties, contentStream, versioningState)
     }
     
     Document createDocumentFromFile(parent, File file, String type = "cmis:document", 
@@ -138,8 +137,7 @@ class CMIS {
         
         def contentStream = new ContentStreamImpl(name, file.size(), mimetype, new FileInputStream(file))
         
-        return parentFolder.createDocument(properties, contentStream,
-        versioningState, session.getDefaultContext())
+        return parentFolder.createDocument(properties, contentStream, versioningState)
     }
     
     void delete(id) {
