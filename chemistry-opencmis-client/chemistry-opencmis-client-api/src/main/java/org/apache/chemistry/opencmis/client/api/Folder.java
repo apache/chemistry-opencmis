@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
  * CMIS Folder.
- * 
+ *
  * Domain Model 2.5
  */
 public interface Folder extends FileableCmisObject {
@@ -37,7 +37,7 @@ public interface Folder extends FileableCmisObject {
 
     /**
      * Creates a new document in this folder.
-     * 
+     *
      * @return the new document object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
      */
@@ -46,16 +46,14 @@ public interface Folder extends FileableCmisObject {
 
     /**
      * Creates a new document in this folder.
-     * 
-     * @return the new document object or <code>null</code> if the parameter
-     *         <code>context</code> was set to <code>null</code>
+     *
+     * @return the new document object
      */
-    Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState,
-            OperationContext context);
+    Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState);
 
     /**
      * Creates a new document from a source document in this folder.
-     * 
+     *
      * @return the new document object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
      */
@@ -64,16 +62,14 @@ public interface Folder extends FileableCmisObject {
 
     /**
      * Creates a new document from a source document in this folder.
-     * 
-     * @return the new document object or <code>null</code> if the parameter
-     *         <code>context</code> was set to <code>null</code>
+     *
+     * @return the new document object
      */
-    Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState,
-            OperationContext context);
+    Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState);
 
     /**
      * Creates a new subfolder in this folder.
-     * 
+     *
      * @return the new folder object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
      */
@@ -82,15 +78,14 @@ public interface Folder extends FileableCmisObject {
 
     /**
      * Creates a new subfolder in this folder.
-     * 
-     * @return the new folder object or <code>null</code> if the parameter
-     *         <code>context</code> was set to <code>null</code>
+     *
+     * @return the new folder object
      */
-    Folder createFolder(Map<String, ?> properties, OperationContext context);
+    Folder createFolder(Map<String, ?> properties);
 
     /**
      * Creates a new policy in this folder.
-     * 
+     *
      * @return the new policy object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
      */
@@ -99,15 +94,14 @@ public interface Folder extends FileableCmisObject {
 
     /**
      * Creates a new policy in this folder.
-     * 
-     * @return the new policy object or <code>null</code> if the parameter
-     *         <code>context</code> was set to <code>null</code>
+     *
+     * @return the new policy object
      */
-    Policy createPolicy(Map<String, ?> properties, OperationContext context);
+    Policy createPolicy(Map<String, ?> properties);
 
     /**
      * Deletes this folder and all subfolders.
-     * 
+     *
      * @return a list of object ids which failed to be deleted
      */
     List<String> deleteTree(boolean allversions, UnfileObject unfile, boolean continueOnFailure);
@@ -154,7 +148,7 @@ public interface Folder extends FileableCmisObject {
 
     /**
      * Gets the parent folder object
-     * 
+     *
      * @return the parent folder object or <code>null</code> if the folder is
      *         the root folder.
      */
