@@ -38,8 +38,6 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 /**
  * Simple read-write test.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  */
 public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase {
 
@@ -172,7 +170,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     }
 
     /**
-     * Tests property updates.
+     * Tests setting and deleting content stream.
      */
     public void testSetAndDeleteContent() throws Exception {
         if (!isEnabled(TEST_SET_AND_DELETE_CONTENT)) {
@@ -186,10 +184,10 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
         String docId = createDefaultDocument(getTestRootFolder(), "testcontent.txt", CONTENT_TYPE, CONTENT);
 
         // if a check out is required, do it
+        Holder<String> docIdHolder = new Holder<String>(docId);
         if (requiresCheckOut) {
             if (isVersionable) {
-                getBinding().getVersioningService().checkOut(getTestRepositoryId(), new Holder<String>(docId), null,
-                        null);
+                getBinding().getVersioningService().checkOut(getTestRepositoryId(), docIdHolder, null, null);
             } else {
                 warning("Default document type is not versionable!");
                 delete(docId, true);
@@ -197,8 +195,9 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
             }
         }
 
+        String docIdWorkingCopy = docIdHolder.getValue();
+
         // delete content
-        Holder<String> docIdHolder = new Holder<String>(docId);
         try {
             getBinding().getObjectService().deleteContentStream(getTestRepositoryId(), docIdHolder, null, null);
         } catch (CmisNotSupportedException e) {
@@ -208,15 +207,13 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
         // set content
         ContentStream contentStream2 = createContentStreamData(CONTENT_TYPE, CONTENT2);
 
-        docIdHolder = new Holder<String>(docId);
+        docIdHolder = new Holder<String>(docIdWorkingCopy);
         getBinding().getObjectService().setContentStream(getTestRepositoryId(), docIdHolder, true, null,
                 contentStream2, null);
 
         // read and assert content
-        if (docIdHolder.getValue() != null) {
-            docId = docIdHolder.getValue();
-        }
-        ContentStream contentStream3 = getContent(docId, null);
+        String newVersionDocId = (docIdHolder.getValue() == null ? docIdWorkingCopy : docIdHolder.getValue());
+        ContentStream contentStream3 = getContent(newVersionDocId, null);
         assertMimeType(CONTENT_TYPE, contentStream3.getMimeType());
         if (contentStream3.getBigLength() != null) {
             assertEquals(CONTENT2.length, contentStream3.getBigLength().intValue());
@@ -227,7 +224,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
         // if it has been checked out, cancel that
         if (requiresCheckOut) {
-            getBinding().getVersioningService().cancelCheckOut(getTestRepositoryId(), docId, null);
+            getBinding().getVersioningService().cancelCheckOut(getTestRepositoryId(), docIdWorkingCopy, null);
         }
 
         // delete document
@@ -343,25 +340,21 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
         String folder2 = createDefaultFolder(getTestRootFolder(), "folder2");
 
         // create document
-        String docId = createDefaultDocument(folder1, "testdoc.txt",
-                CONTENT_TYPE, CONTENT);
+        String docId = createDefaultDocument(folder1, "testdoc.txt", CONTENT_TYPE, CONTENT);
 
         // copy it with new properties
         List<PropertyData<?>> updatePropList = new ArrayList<PropertyData<?>>();
-        updatePropList.add(getObjectFactory().createPropertyStringData(
-                PropertyIds.NAME, "newdocname"));
-        Properties updateProperties = getObjectFactory().createPropertiesData(
-                updatePropList);
+        updatePropList.add(getObjectFactory().createPropertyStringData(PropertyIds.NAME, "newdocname"));
+        Properties updateProperties = getObjectFactory().createPropertiesData(updatePropList);
 
-        String copyId = getBinding().getObjectService().createDocumentFromSource(
-                getTestRepositoryId(), docId, updateProperties, folder2, null,
-                null, null, null, null);
+        String copyId = getBinding().getObjectService().createDocumentFromSource(getTestRepositoryId(), docId,
+                updateProperties, folder2, null, null, null, null, null);
         assertNotNull(copyId);
 
         assertTrue(existsObject(copyId));
         ObjectInFolderData copy = getChild(folder2, copyId);
-        String updatedName = (String) copy.getObject().getProperties().getProperties().get(
-                PropertyIds.NAME).getFirstValue();
+        String updatedName = (String) copy.getObject().getProperties().getProperties().get(PropertyIds.NAME)
+                .getFirstValue();
         assertEquals("newdocname", updatedName);
 
         deleteTree(folder1);
@@ -434,8 +427,8 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
 
     private boolean isCheckedOut(String docId) {
         ObjectData object = getObject(docId);
-        PropertyData<?> isCheckedOut = object.getProperties().getProperties().get(
-                PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
+        PropertyData<?> isCheckedOut = object.getProperties().getProperties()
+                .get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
         assertNotNull(isCheckedOut);
         assertTrue(isCheckedOut.getFirstValue() instanceof Boolean);
 
