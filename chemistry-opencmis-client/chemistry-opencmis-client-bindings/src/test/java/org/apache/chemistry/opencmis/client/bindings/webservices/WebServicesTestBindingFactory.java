@@ -26,8 +26,7 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Web Services Binding Factory.
  */
 public class WebServicesTestBindingFactory {
 
@@ -42,6 +41,8 @@ public class WebServicesTestBindingFactory {
         } else if (urlLower.endsWith(".xml")) {
             isPrefix = false;
         } else if (urlLower.endsWith(".aspx")) {
+            isPrefix = false;
+        } else if (urlLower.endsWith("/wsdl")) {
             isPrefix = false;
         }
 
