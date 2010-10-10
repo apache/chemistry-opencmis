@@ -18,26 +18,42 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
+import javax.swing.Spring;
+import javax.swing.SpringLayout;
+import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
@@ -53,6 +69,7 @@ public class LoginDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
+    private JTabbedPane loginTabs;
     private JTextField urlField;
     private JRadioButton bindingAtomButton;
     private JRadioButton bindingWebServicesButton;
@@ -61,9 +78,12 @@ public class LoginDialog extends JDialog {
     private JRadioButton authenticationNoneButton;
     private JRadioButton authenticationStandardButton;
     private JRadioButton authenticationNTLMButton;
-    private JButton connectButton;
+    private JTextArea sessionParameterTextArea;
+    private JButton loadRepositoryButton;
     private JButton loginButton;
     private JComboBox repositoryBox;
+
+    private boolean expertLogin = false;
 
     private boolean canceled = true;
 
@@ -75,33 +95,62 @@ public class LoginDialog extends JDialog {
     }
 
     private void createGUI() {
-        setPreferredSize(new Dimension(520, 280));
+        setMinimumSize(new Dimension(600, 350));
+        setPreferredSize(new Dimension(600, 350));
 
         Container pane = getContentPane();
+        pane.setLayout(new BorderLayout());
 
-        pane.setLayout(new GridBagLayout());
+        loginTabs = new JTabbedPane();
+        add(loginTabs, BorderLayout.CENTER);
 
-        urlField = createTextField(pane, "URL:", 1);
+        // basic panel
+        JPanel basicPanel = new JPanel(new SpringLayout());
+
+        urlField = createTextField(basicPanel, "URL:");
         urlField.setText(System.getProperty(SYSPROP_URL, ""));
 
-        createBindingButtons(pane, 2);
+        createBindingButtons(basicPanel);
 
-        usernameField = createTextField(pane, "Username:", 3);
+        usernameField = createTextField(basicPanel, "Username:");
         usernameField.setText(System.getProperty(SYSPROP_USER, ""));
 
-        passwordField = createPasswordField(pane, "Password:", 4);
+        passwordField = createPasswordField(basicPanel, "Password:");
         passwordField.setText(System.getProperty(SYSPROP_PASSWORD, ""));
 
-        createAuthenticationButtons(pane, 5);
+        createAuthenticationButtons(basicPanel);
 
-        connectButton = createButton(pane, "Connect", 6);
+        makeCompactGrid(basicPanel, 5, 2, 5, 10, 5, 5);
 
-        createRepositoryBox(pane, 7);
+        loginTabs.addTab("Basic", basicPanel);
 
-        loginButton = createButton(pane, "Login", 8);
+        // expert panel
+        final JPanel expertPanel = new JPanel(new BorderLayout());
+        expertPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+
+        sessionParameterTextArea = new JTextArea();
+        sessionParameterTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        expertPanel.add(new JScrollPane(sessionParameterTextArea), BorderLayout.CENTER);
+
+        loginTabs.addTab("Expert", expertPanel);
+
+        // repository
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+        add(buttonPanel, BorderLayout.PAGE_END);
+
+        loadRepositoryButton = createButton("Load Repositories");
+        buttonPanel.add(loadRepositoryButton);
+
+        createRepositoryBox(buttonPanel);
+
+        loginButton = createButton("Login");
+        buttonPanel.add(loginButton);
         loginButton.setEnabled(false);
 
-        connectButton.addActionListener(new ActionListener() {
+        // listeners
+        loadRepositoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 repositoryBox.removeAllItems();
 
@@ -113,7 +162,7 @@ public class LoginDialog extends JDialog {
                     if (repositories.size() > 0) {
 
                         for (Repository repository : repositories) {
-                            repositoryBox.addItem(repository.getName() + " (" + repository.getId() + ")");
+                            repositoryBox.addItem(repository);
                         }
 
                         repositoryBox.setEnabled(true);
@@ -136,6 +185,8 @@ public class LoginDialog extends JDialog {
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
                     clientSession.createSession(repositoryBox.getSelectedIndex());
                     canceled = false;
                     hideDialog();
@@ -144,6 +195,28 @@ public class LoginDialog extends JDialog {
                     loginButton.setEnabled(false);
 
                     ClientHelper.showError(getOwner(), ex);
+
+                } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
+
+        loginTabs.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                expertLogin = (loginTabs.getSelectedComponent() == expertPanel);
+
+                if (expertLogin) {
+                    StringBuilder sb = new StringBuilder();
+                    for (Map.Entry<String, String> parameter : createBasicSessionParameters().entrySet()) {
+                        sb.append(parameter.getKey());
+                        sb.append("=");
+                        sb.append(parameter.getValue());
+                        sb.append("\n");
+                    }
+
+                    sessionParameterTextArea.setText(sb.toString());
+                    sessionParameterTextArea.setCaretPosition(0);
                 }
             }
         });
@@ -153,43 +226,31 @@ public class LoginDialog extends JDialog {
         setLocationRelativeTo(null);
     }
 
-    private JTextField createTextField(Container pane, String label, int row) {
+    private JTextField createTextField(Container pane, String label) {
         JTextField textField = new JTextField(60);
-        JLabel textLabel = new JLabel(label);
+        JLabel textLabel = new JLabel(label, JLabel.TRAILING);
         textLabel.setLabelFor(textField);
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.anchor = GridBagConstraints.LINE_START;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = row;
-        pane.add(textLabel, c);
-        c.gridx = 1;
-        c.ipadx = 400;
-        pane.add(textField, c);
+        pane.add(textLabel);
+        pane.add(textField);
 
         return textField;
     }
 
-    private JPasswordField createPasswordField(Container pane, String label, int row) {
+    private JPasswordField createPasswordField(Container pane, String label) {
         JPasswordField textField = new JPasswordField(60);
-        JLabel textLabel = new JLabel(label);
+        JLabel textLabel = new JLabel(label, JLabel.TRAILING);
         textLabel.setLabelFor(textField);
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.anchor = GridBagConstraints.LINE_START;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = row;
-        pane.add(textLabel, c);
-        c.gridx = 1;
-        pane.add(textField, c);
+        pane.add(textLabel);
+        pane.add(textField);
 
         return textField;
     }
 
-    private void createBindingButtons(Container pane, int row) {
+    private void createBindingButtons(Container pane) {
         JPanel bindingContainer = new JPanel();
+        bindingContainer.setLayout(new BoxLayout(bindingContainer, BoxLayout.LINE_AXIS));
         boolean atom = (System.getProperty(SYSPROP_BINDING, "atom").toLowerCase().charAt(0) == 'a');
         bindingAtomButton = new JRadioButton("AtomPub", atom);
         bindingWebServicesButton = new JRadioButton("Web Services", !atom);
@@ -197,20 +258,17 @@ public class LoginDialog extends JDialog {
         bindingGroup.add(bindingAtomButton);
         bindingGroup.add(bindingWebServicesButton);
         bindingContainer.add(bindingAtomButton);
+        bindingContainer.add(Box.createRigidArea(new Dimension(10, 0)));
         bindingContainer.add(bindingWebServicesButton);
-        JLabel bindingLabel = new JLabel("Binding:");
+        JLabel bindingLabel = new JLabel("Binding:", JLabel.TRAILING);
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.anchor = GridBagConstraints.LINE_START;
-        c.gridx = 0;
-        c.gridy = row;
-        pane.add(bindingLabel, c);
-        c.gridx = 1;
-        pane.add(bindingContainer, c);
+        pane.add(bindingLabel);
+        pane.add(bindingContainer);
     }
 
-    private void createAuthenticationButtons(Container pane, int row) {
+    private void createAuthenticationButtons(Container pane) {
         JPanel authenticationContainer = new JPanel();
+        authenticationContainer.setLayout(new BoxLayout(authenticationContainer, BoxLayout.LINE_AXIS));
         boolean standard = (System.getProperty(SYSPROP_AUTHENTICATION, "standard").toLowerCase().equals("standard"));
         boolean ntlm = (System.getProperty(SYSPROP_AUTHENTICATION, "").toLowerCase().equals("ntlm"));
         boolean none = !standard && !ntlm;
@@ -222,49 +280,76 @@ public class LoginDialog extends JDialog {
         authenticationGroup.add(authenticationStandardButton);
         authenticationGroup.add(authenticationNTLMButton);
         authenticationContainer.add(authenticationNoneButton);
+        authenticationContainer.add(Box.createRigidArea(new Dimension(10, 0)));
         authenticationContainer.add(authenticationStandardButton);
+        authenticationContainer.add(Box.createRigidArea(new Dimension(10, 0)));
         authenticationContainer.add(authenticationNTLMButton);
-        JLabel authenticatioLabel = new JLabel("Authentication:");
+        JLabel authenticatioLabel = new JLabel("Authentication:", JLabel.TRAILING);
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.anchor = GridBagConstraints.LINE_START;
-        c.gridx = 0;
-        c.gridy = row;
-        pane.add(authenticatioLabel, c);
-        c.gridx = 1;
-        pane.add(authenticationContainer, c);
+        pane.add(authenticatioLabel);
+        pane.add(authenticationContainer);
     }
 
-    private JButton createButton(Container pane, String label, int row) {
-        JButton button = new JButton(label);
-
-        GridBagConstraints c = new GridBagConstraints();
-        c.anchor = GridBagConstraints.CENTER;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
-        c.gridy = row;
-        pane.add(button, c);
+    private JButton createButton(String title) {
+        JButton button = new JButton(title);
+        button.setPreferredSize(new Dimension(Short.MAX_VALUE, 30));
+        button.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         return button;
     }
 
-    private void createRepositoryBox(Container pane, int row) {
+    private void createRepositoryBox(Container pane) {
         repositoryBox = new JComboBox();
         repositoryBox.setEnabled(false);
-        JLabel boxLabel = new JLabel("Repository:");
-        boxLabel.setLabelFor(repositoryBox);
+        repositoryBox.setRenderer(new RepositoryRenderer());
+        repositoryBox.setPreferredSize(new Dimension(Short.MAX_VALUE, 60));
+        repositoryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.anchor = GridBagConstraints.LINE_START;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = row;
-        pane.add(boxLabel, c);
-        c.gridx = 1;
-        pane.add(repositoryBox, c);
+        pane.add(repositoryBox);
     }
 
-    public void createClientSession() {
+    private SpringLayout.Constraints getConstraintsForCell(int row, int col, Container parent, int cols) {
+        SpringLayout layout = (SpringLayout) parent.getLayout();
+        Component c = parent.getComponent(row * cols + col);
+        return layout.getConstraints(c);
+    }
+
+    private void makeCompactGrid(Container parent, int rows, int cols, int initialX, int initialY, int xPad, int yPad) {
+        SpringLayout layout = (SpringLayout) parent.getLayout();
+
+        Spring x = Spring.constant(initialX);
+        for (int c = 0; c < cols; c++) {
+            Spring width = Spring.constant(0);
+            for (int r = 0; r < rows; r++) {
+                width = Spring.max(width, getConstraintsForCell(r, c, parent, cols).getWidth());
+            }
+            for (int r = 0; r < rows; r++) {
+                SpringLayout.Constraints constraints = getConstraintsForCell(r, c, parent, cols);
+                constraints.setX(x);
+                constraints.setWidth(width);
+            }
+            x = Spring.sum(x, Spring.sum(width, Spring.constant(xPad)));
+        }
+
+        Spring y = Spring.constant(initialY);
+        for (int r = 0; r < rows; r++) {
+            Spring height = Spring.constant(0);
+            for (int c = 0; c < cols; c++) {
+                height = Spring.max(height, getConstraintsForCell(r, c, parent, cols).getHeight());
+            }
+            for (int c = 0; c < cols; c++) {
+                SpringLayout.Constraints constraints = getConstraintsForCell(r, c, parent, cols);
+                constraints.setY(y);
+                constraints.setHeight(height);
+            }
+            y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
+        }
+
+        layout.getConstraints(parent).setConstraint(SpringLayout.EAST, x);
+    }
+
+    private Map<String, String> createBasicSessionParameters() {
         String url = urlField.getText();
         BindingType binding = bindingAtomButton.isSelected() ? BindingType.ATOMPUB : BindingType.WEBSERVICES;
         String username = usernameField.getText();
@@ -277,7 +362,35 @@ public class LoginDialog extends JDialog {
             authentication = ClientSession.Authentication.NTLM;
         }
 
-        clientSession = new ClientSession(url, binding, username, password, authentication);
+        return ClientSession.createSessionParameters(url, binding, username, password, authentication);
+    }
+
+    private Map<String, String> createExpertSessionParameters() {
+        Map<String, String> result = new HashMap<String, String>();
+
+        for (String line : sessionParameterTextArea.getText().split("\n")) {
+            line = line.trim();
+            if (line.startsWith("#") || (line.length() == 0)) {
+                continue;
+            }
+
+            int x = line.indexOf('=');
+            if (x < 0) {
+                result.put(line.trim(), "");
+            } else {
+                result.put(line.substring(0, x).trim(), line.substring(x + 1).trim());
+            }
+        }
+
+        return result;
+    }
+
+    public void createClientSession() {
+        if (expertLogin) {
+            clientSession = new ClientSession(createExpertSessionParameters());
+        } else {
+            clientSession = new ClientSession(createBasicSessionParameters());
+        }
     }
 
     public void showDialog() {
@@ -288,6 +401,7 @@ public class LoginDialog extends JDialog {
         repositoryBox.setEnabled(false);
         loginButton.setEnabled(false);
 
+        setLocationRelativeTo(getOwner());
         setVisible(true);
     }
 
@@ -301,5 +415,59 @@ public class LoginDialog extends JDialog {
 
     public boolean isCanceled() {
         return canceled;
+    }
+
+    class RepositoryRenderer extends JPanel implements ListCellRenderer {
+        private static final long serialVersionUID = 1L;
+
+        private JLabel nameLabel;
+        private JLabel idLabel;
+        private JLabel descriptionLabel;
+
+        public RepositoryRenderer() {
+            super();
+            setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+            setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+            Font labelFont = UIManager.getFont("Label.font");
+
+            nameLabel = new JLabel();
+            nameLabel.setFont(labelFont.deriveFont(Font.BOLD));
+            add(nameLabel);
+
+            idLabel = new JLabel();
+            add(idLabel);
+
+            descriptionLabel = new JLabel();
+            add(descriptionLabel);
+
+            //setPreferredSize(new Dimension(500, 48));
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+                boolean cellHasFocus) {
+            Repository repository = (Repository) value;
+
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            } else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+
+            if (repository == null) {
+                nameLabel.setText("");
+                idLabel.setText("");
+                descriptionLabel.setText("");
+            } else {
+                nameLabel.setText(repository.getName());
+                idLabel.setText(repository.getId());
+                descriptionLabel.setText(repository.getDescription());
+            }
+
+            return this;
+        }
     }
 }

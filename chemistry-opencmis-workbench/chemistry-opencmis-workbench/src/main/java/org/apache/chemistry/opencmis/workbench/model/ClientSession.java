@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.workbench.model;
 
 import java.net.Authenticator;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -76,8 +76,17 @@ public class ClientSession {
     private OperationContext objectOperationContext;
     private OperationContext folderOperationContext;
 
-    public ClientSession(String url, BindingType binding, String username, String password, Authentication authenticaion) {
-        Map<String, String> parameters = new HashMap<String, String>();
+    public ClientSession(Map<String, String> sessionParameters) {
+        if (sessionParameters == null) {
+            throw new IllegalArgumentException("Parameters must not be null!");
+        }
+
+        connect(sessionParameters);
+    }
+
+    public static Map<String, String> createSessionParameters(String url, BindingType binding, String username,
+            String password, Authentication authentication) {
+        Map<String, String> parameters = new LinkedHashMap<String, String>();
 
         if (binding == BindingType.WEBSERVICES) {
             parameters.put(SessionParameter.BINDING_TYPE, BindingType.WEBSERVICES.value());
@@ -95,7 +104,7 @@ public class ClientSession {
             parameters.put(SessionParameter.ATOMPUB_URL, url);
         }
 
-        switch (authenticaion) {
+        switch (authentication) {
         case STANDARD:
             parameters.put(SessionParameter.USER, username);
             parameters.put(SessionParameter.PASSWORD, password);
@@ -116,15 +125,7 @@ public class ClientSession {
             }
         }
 
-        connect(parameters);
-    }
-
-    public ClientSession(Map<String, String> sessionParameters) {
-        if (sessionParameters == null) {
-            throw new IllegalArgumentException("Parameters must not be null!");
-        }
-
-        connect(sessionParameters);
+        return parameters;
     }
 
     private void connect(Map<String, String> sessionParameters) {

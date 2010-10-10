@@ -26,8 +26,11 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.prefs.Preferences;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -52,7 +56,7 @@ import org.apache.chemistry.opencmis.workbench.details.DetailsTabs;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 
-public class ClientFrame extends JFrame {
+public class ClientFrame extends JFrame implements WindowListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -69,8 +73,16 @@ public class ClientFrame extends JFrame {
     private static final int BUTTON_LOG = 8;
     private static final int BUTTON_INFO = 9;
 
+    private static final String PREFS_X = "x";
+    private static final String PREFS_Y = "y";
+    private static final String PREFS_WIDTH = "width";
+    private static final String PREFS_HEIGHT = "height";
+    private static final String PREFS_DIV = "div";
+
     private static final String GROOVY_SCRIPT_FOLDER = "/scripts/";
     private static final String GROOVY_SCRIPT_LIBRARY = "script-library.properties";
+
+    private Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 
     private LoginDialog loginDialog;
     private LogFrame logFrame;
@@ -80,6 +92,7 @@ public class ClientFrame extends JFrame {
     private JButton[] toolbarButton;
     private JPopupMenu toolbarConsolePopup;
 
+    private JSplitPane split;
     private FolderPanel folderPanel;
     private DetailsTabs detailsTabs;
 
@@ -95,8 +108,6 @@ public class ClientFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE);
-        setPreferredSize(new Dimension(1000, 600));
-        setMinimumSize(new Dimension(200, 60));
 
         ImageIcon icon = ClientHelper.getIcon("icon.png");
         if (icon != null) {
@@ -238,16 +249,26 @@ public class ClientFrame extends JFrame {
         folderPanel = new FolderPanel(model);
         detailsTabs = new DetailsTabs(model);
 
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, folderPanel, new JScrollPane(detailsTabs));
+        split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, folderPanel, new JScrollPane(detailsTabs));
 
         pane.add(split, BorderLayout.CENTER);
+
+        addWindowListener(this);
+
+        setPreferredSize(new Dimension(prefs.getInt(PREFS_WIDTH, 1000), prefs.getInt(PREFS_HEIGHT, 600)));
+        setMinimumSize(new Dimension(200, 60));
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
 
-        split.setDividerLocation(500);
+        split.setDividerLocation(prefs.getInt(PREFS_DIV, 500));
 
-        setLocationRelativeTo(null);
+        if (prefs.getInt(PREFS_X, Integer.MAX_VALUE) == Integer.MAX_VALUE) {
+            setLocationRelativeTo(null);
+        } else {
+            setLocation(prefs.getInt(PREFS_X, 0), prefs.getInt(PREFS_Y, 0));
+        }
+
         setVisible(true);
     }
 
@@ -429,5 +450,32 @@ public class ClientFrame extends JFrame {
         public int compareTo(CmisScript o) {
             return name.compareToIgnoreCase(o.getName());
         }
+    }
+
+    public void windowOpened(WindowEvent e) {
+    }
+
+    public void windowClosing(WindowEvent e) {
+        Point p = getLocation();
+        prefs.putInt(PREFS_X, p.x);
+        prefs.putInt(PREFS_Y, p.y);
+        prefs.putInt(PREFS_WIDTH, getWidth());
+        prefs.putInt(PREFS_HEIGHT, getHeight());
+        prefs.putInt(PREFS_DIV, split.getDividerLocation());
+    }
+
+    public void windowClosed(WindowEvent e) {
+    }
+
+    public void windowIconified(WindowEvent e) {
+    }
+
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    public void windowActivated(WindowEvent e) {
+    }
+
+    public void windowDeactivated(WindowEvent e) {
     }
 }
