@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 
 /**
  * Base CMIS object.
- * 
+ *
  * See CMIS Domain Model - section 2.1.2.
  */
 public interface CmisObject extends ObjectId {
@@ -88,7 +88,7 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Get the type's base type id.
-     * 
+     *
      * @return
      */
     BaseTypeId getBaseTypeId();
@@ -110,36 +110,25 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Returns a property by id.
-     * 
+     *
      * @param id
      *            the property id
-     * 
+     *
      * @return the property or <code>null</code> if the property does not exist
      *         or is not available
      */
     <T> Property<T> getProperty(String id);
 
     /**
-     * Returns a property (single) value by id.
-     * 
+     * Returns a property value by id.
+     *
      * @param id
      *            the property id
-     * 
+     *
      * @return the property value or <code>null</code> if the property does not
      *         exist or is not available
      */
     <T> T getPropertyValue(String id);
-
-    /**
-     * Returns a property multi-value by id.
-     * 
-     * @param id
-     *            the property id
-     * 
-     * @return the list of values or <code>null</code> if the property does not
-     *         exist or is not available
-     */
-    <T> List<T> getPropertyMultivalue(String id);
 
     /**
      * Returns the allowable actions if they have been fetched for this object.
@@ -160,7 +149,7 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Deletes this object.
-     * 
+     *
      * @param allVersions
      *            if this object is a document this parameter defines if just
      *            this version or all versions should be deleted
@@ -169,9 +158,8 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Updates the properties that have been set with
-     * {@link #setProperty(String, Object)} or
-     * {@link #setPropertyMultivalue(String, List)}.
-     * 
+     * {@link #setProperty(String, Object)}.
+     *
      * @return the object id of the updated object (a repository might have
      *         created a new object)
      */
@@ -179,10 +167,10 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Updates the properties that are provided.
-     * 
+     *
      * @param properties
      *            the properties to update
-     * 
+     *
      * @return the object id of the updated object (a repository might have
      *         created a new object)
      */
@@ -229,7 +217,7 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Adds and removes ACEs to the object.
-     * 
+     *
      * @return the new ACL of this object
      */
     Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
@@ -247,18 +235,13 @@ public interface CmisObject extends ObjectId {
     // buffered stuff
 
     /**
-     * Sets a new property single value.
-     * 
+     * Sets a new property value.
+     * <p>
+     * The value may be a single value or a list.
+     *
      * Use {@link #updateProperties()} to store the new value in the repository.
      */
-    <T> void setProperty(String id, T value);
-
-    /**
-     * Sets a new property multi value.
-     * 
-     * Use {@link #updateProperties()} to store the new value in the repository.
-     */
-    <T> void setPropertyMultivalue(String id, List<T> value);
+    <T> void setProperty(String id, Object value);
 
     // extensions
 

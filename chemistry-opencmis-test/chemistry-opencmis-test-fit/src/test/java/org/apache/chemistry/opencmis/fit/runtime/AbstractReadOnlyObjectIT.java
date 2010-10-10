@@ -262,8 +262,11 @@ public abstract class AbstractReadOnlyObjectIT extends AbstractSessionTest {
             List<String> v1 = p.getValues();
             Assert.assertNotNull(v1);
             Assert.assertFalse(v1.isEmpty());
+            v1 = p.getValue();
+            Assert.assertNotNull(v1);
+            Assert.assertFalse(v1.isEmpty());
 
-            List<String> v2 = document.getPropertyMultivalue(FixtureData.PROPERTY_NAME_STRING_MULTI_VALUED.toString());
+            List<String> v2 = document.getPropertyValue(FixtureData.PROPERTY_NAME_STRING_MULTI_VALUED.toString());
             Assert.assertNotNull(v2);
             Assert.assertFalse(v2.isEmpty());
             Assert.assertEquals(v1, v2);

@@ -44,30 +44,16 @@ public class PersistentPropertyImpl<T> extends AbstractPropertyData<T> implement
     }
 
     /**
-     * Constructs a single-value property.
+     * Constructs a property from a list of values.
      */
-    @SuppressWarnings("unchecked")
-    public PersistentPropertyImpl(PropertyDefinition<?> pd, T value) {
+    public PersistentPropertyImpl(PropertyDefinition<T> pd, List<T> values) {
         if (pd == null) {
             throw new IllegalArgumentException("Type must be set!");
         }
-        if (value == null) {
+        if (values == null) {
             throw new IllegalArgumentException("Value must be set!");
         }
-        propertyDefinition = (PropertyDefinition<T>) pd;
-        initialize(pd);
-        setValue(value);
-    }
-
-    /**
-     * Constructs a multi-value property.
-     */
-    @SuppressWarnings("unchecked")
-    public PersistentPropertyImpl(PropertyDefinition<?> pd, List<T> values) {
-        if (pd == null) {
-            throw new IllegalArgumentException("Type must be set!");
-        }
-        propertyDefinition = (PropertyDefinition<T>) pd;
+        propertyDefinition = pd;
         initialize(pd);
         setValues(values);
     }
@@ -78,6 +64,16 @@ public class PersistentPropertyImpl<T> extends AbstractPropertyData<T> implement
 
     public PropertyType getType() {
         return propertyDefinition.getPropertyType();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <U> U getValue() {
+        List<T> values = getValues();
+        if (propertyDefinition.getCardinality() == Cardinality.SINGLE) {
+            return values.size() == 0 ? null : (U) values.get(0);
+        } else {
+            return (U) values;
+        }
     }
 
     public String getValueAsString() {

@@ -404,22 +404,14 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         }
     }
 
-    public <T> List<T> getPropertyMultivalue(String id) {
-        Property<T> property = getProperty(id);
-        if (property == null) {
-            return null;
-        }
-
-        return property.getValues();
-    }
-
+    @SuppressWarnings("unchecked")
     public <T> T getPropertyValue(String id) {
         Property<T> property = getProperty(id);
         if (property == null) {
             return null;
         }
-
-        return property.getFirstValue();
+        // explicit cast needed by the Sun compiler
+        return (T) property.getValue();
     }
 
     public void setName(String name) {
@@ -427,39 +419,22 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> void setProperty(String id, T value) {
-        PropertyDefinition<?> propertyDefinition = checkProperty(id, value);
-
+    public <T> void setProperty(String id, Object value) {
+        PropertyDefinition<T> propertyDefinition = (PropertyDefinition<T>) getObjectType().getPropertyDefinitions().get(
+                id);
+        if (propertyDefinition == null) {
+            throw new IllegalArgumentException("Unknown property '" + id + "'!");
+        }
         // check updatability
         if (propertyDefinition.getUpdatability() == Updatability.READONLY) {
             throw new IllegalArgumentException("Property is read-only!");
         }
 
-        // create property
-        Property<T> newProperty = (Property<T>) getObjectFactory().createProperty(
-                (PropertyDefinition<T>) propertyDefinition, value);
-
-        writeLock();
-        try {
-            setChanged();
-            this.properties.put(id, newProperty);
-        } finally {
-            writeUnlock();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> void setPropertyMultivalue(String id, List<T> value) {
-        PropertyDefinition<?> propertyDefinition = checkProperty(id, value);
-
-        // check updatability
-        if (propertyDefinition.getUpdatability() == Updatability.READONLY) {
-            throw new IllegalArgumentException("Property is read-only!");
-        }
+        List<T> values = checkProperty(propertyDefinition, value);
 
         // create property
-        Property<T> newProperty = (Property<T>) getObjectFactory().createPropertyMultivalue(
-                (PropertyDefinition<T>) propertyDefinition, value);
+        Property<T> newProperty = getObjectFactory().createProperty(
+                propertyDefinition, values);
 
         writeLock();
         try {
@@ -689,29 +664,29 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     /**
      * Checks if a value matches a property definition.
+     * <p>
+     * Returns a list of values.
      */
-    private PropertyDefinition<?> checkProperty(String id, Object value) {
-        PropertyDefinition<?> propertyDefinition = getObjectType().getPropertyDefinitions().get(id);
-        if (propertyDefinition == null) {
-            throw new IllegalArgumentException("Unknown property '" + id + "'!");
-        }
+    @SuppressWarnings("unchecked")
+    private <T> List<T> checkProperty(PropertyDefinition<T> propertyDefinition,
+            Object value) {
 
         // null values are ok for updates
         if (value == null) {
-            return propertyDefinition;
+            return null;
         }
 
         // single and multi value check
-        List<?> values = null;
+        List<T> values = null;
         if (value instanceof List<?>) {
             if (propertyDefinition.getCardinality() != Cardinality.MULTI) {
                 throw new IllegalArgumentException("Property '" + propertyDefinition.getId()
                         + "' is not a multi value property!");
             }
 
-            values = (List<?>) value;
+            values = (List<T>) value;
             if (values.isEmpty()) {
-                return propertyDefinition;
+                return values;
             }
         } else {
             if (propertyDefinition.getCardinality() != Cardinality.SINGLE) {
@@ -719,7 +694,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                         + "' is not a single value property!");
             }
 
-            values = Collections.singletonList(value);
+            values = Collections.singletonList((T) value);
         }
 
         // check if list contains null values
@@ -760,6 +735,6 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
                     + "' does not match property type!");
         }
 
-        return propertyDefinition;
+        return values;
     }
 }

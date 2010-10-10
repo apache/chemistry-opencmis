@@ -221,7 +221,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
         readLock();
         try {
-            List<String> otids = getPropertyMultivalue(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS);
+            List<String> otids = getPropertyValue(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS);
             if (otids == null) {
                 return result;
             }

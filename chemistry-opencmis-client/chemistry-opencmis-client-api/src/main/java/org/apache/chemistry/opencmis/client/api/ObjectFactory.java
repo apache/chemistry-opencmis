@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 
 /**
  * A factory to create CMIS objects.
- * 
+ *
  * @see org.apache.chemistry.opencmis.client.api.Session#getObjectFactory()
  */
 public interface ObjectFactory {
@@ -72,9 +72,7 @@ public interface ObjectFactory {
 
     // properties
 
-    <T> Property<T> createProperty(PropertyDefinition<?> type, T value);
-
-    <T> Property<T> createPropertyMultivalue(PropertyDefinition<?> type, List<T> values);
+    <T> Property<T> createProperty(PropertyDefinition<T> type, List<T> values);
 
     Map<String, Property<?>> convertProperties(ObjectType objectType, Properties properties);
 

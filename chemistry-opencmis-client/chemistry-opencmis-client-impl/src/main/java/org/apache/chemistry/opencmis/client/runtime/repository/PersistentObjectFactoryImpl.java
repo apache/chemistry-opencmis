@@ -236,15 +236,23 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
     // properties
 
-    public <T> Property<T> createProperty(PropertyDefinition<?> type, T value) {
-        return new PersistentPropertyImpl<T>(type, value);
-    }
-
-    public <T> Property<T> createPropertyMultivalue(PropertyDefinition<?> type, List<T> values) {
+    public <T> Property<T> createProperty(PropertyDefinition<T> type, List<T> values) {
         return new PersistentPropertyImpl<T>(type, values);
     }
 
     @SuppressWarnings("unchecked")
+    protected <T> Property<T> convertProperty(ObjectType objectType,
+            PropertyData<T> pd) {
+        PropertyDefinition<T> definition = (PropertyDefinition<T>) objectType.getPropertyDefinitions().get(
+                pd.getId());
+        if (definition == null) {
+            // property without definition
+            throw new CmisRuntimeException("Property '" + pd.getId()
+                    + "' doesn't exist!");
+        }
+        return createProperty(definition, pd.getValues());
+    }
+
     public Map<String, Property<?>> convertProperties(ObjectType objectType, Properties properties) {
         // check input
         if (objectType == null) {
@@ -261,43 +269,10 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
 
         // iterate through properties and convert them
         Map<String, Property<?>> result = new LinkedHashMap<String, Property<?>>();
-        for (Map.Entry<String, PropertyData<?>> property : properties.getProperties().entrySet()) {
+        for (Map.Entry<String, PropertyData<?>> entry : properties.getProperties().entrySet()) {
             // find property definition
-            PropertyDefinition<?> definition = objectType.getPropertyDefinitions().get(property.getKey());
-            if (definition == null) {
-                // property without definition
-                throw new CmisRuntimeException("Property '" + property.getKey() + "' doesn't exist!");
-            }
-
-            Property<?> apiProperty = null;
-
-            if (definition instanceof PropertyStringDefinition) {
-                apiProperty = createPropertyMultivalue((PropertyStringDefinition) definition, (List<String>) property
-                        .getValue().getValues());
-            } else if (definition instanceof PropertyIdDefinition) {
-                apiProperty = createPropertyMultivalue((PropertyIdDefinition) definition, (List<String>) property
-                        .getValue().getValues());
-            } else if (definition instanceof PropertyHtmlDefinition) {
-                apiProperty = createPropertyMultivalue((PropertyHtmlDefinition) definition, (List<String>) property
-                        .getValue().getValues());
-            } else if (definition instanceof PropertyUriDefinition) {
-                apiProperty = createPropertyMultivalue((PropertyUriDefinition) definition, (List<String>) property
-                        .getValue().getValues());
-            } else if (definition instanceof PropertyIntegerDefinition) {
-                apiProperty = createPropertyMultivalue((PropertyIntegerDefinition) definition,
-                        (List<BigInteger>) property.getValue().getValues());
-            } else if (definition instanceof PropertyBooleanDefinition) {
-                apiProperty = createPropertyMultivalue((PropertyBooleanDefinition) definition, (List<Boolean>) property
-                        .getValue().getValues());
-            } else if (definition instanceof PropertyDecimalDefinition) {
-                apiProperty = createPropertyMultivalue((PropertyDecimalDefinition) definition,
-                        (List<BigDecimal>) property.getValue().getValues());
-            } else if (definition instanceof PropertyDateTimeDefinition) {
-                apiProperty = createPropertyMultivalue((PropertyDateTimeDefinition) definition,
-                        (List<GregorianCalendar>) property.getValue().getValues());
-            }
-
-            result.put(property.getKey(), apiProperty);
+            Property<?> apiProperty = convertProperty(objectType, entry.getValue());
+            result.put(entry.getKey(), apiProperty);
         }
 
         return result;

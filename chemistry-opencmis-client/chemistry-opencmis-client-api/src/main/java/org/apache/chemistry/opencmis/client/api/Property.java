@@ -24,7 +24,7 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 
 /**
  * CMIS Property.
- * 
+ *
  * Domain Model 2.2.1
  */
 public interface Property<T> extends PropertyData<T> {
@@ -43,6 +43,11 @@ public interface Property<T> extends PropertyData<T> {
      * Returns the property definition.
      */
     PropertyDefinition<T> getDefinition();
+
+    /**
+     * Returns the property value (single or multiple).
+     */
+    <U> U getValue();
 
     /**
      * Returns a human readable representation of the property value. If the

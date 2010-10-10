@@ -44,7 +44,7 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 public class CmisObjectMock implements CmisObject, Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
@@ -123,10 +123,6 @@ public class CmisObjectMock implements CmisObject, Serializable {
         return null;
     }
 
-    public <T> List<T> getPropertyMultivalue(String id) {
-        return null;
-    }
-
     public <T> T getPropertyValue(String id) {
         return null;
     }
@@ -180,11 +176,7 @@ public class CmisObjectMock implements CmisObject, Serializable {
 
     }
 
-    public <T> void setProperty(String id, T value) {
-    }
-
-    public <T> void setPropertyMultivalue(String id, List<T> value) {
-
+    public <T> void setProperty(String id, Object value) {
     }
 
     public ObjectId updateProperties() {
