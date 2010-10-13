@@ -22,7 +22,7 @@ import java.util.List;
 
 public interface ChangeEvents {
 
-    String getlatestChangeLogToken();
+    String getLatestChangeLogToken();
 
     List<ChangeEvent> getChangeEvents();
 

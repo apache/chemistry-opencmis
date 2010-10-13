@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -188,7 +189,11 @@ public class ClientHelper {
         }
 
         File tempFile = ClientHelper.createTempFile(filename);
-        storeStream(content.getStream(), tempFile);
+        try {
+            storeStream(content.getStream(), tempFile);
+        } catch (CmisConstraintException e) {
+            // there is no content - leave the temp file empty
+        }
 
         return tempFile;
     }

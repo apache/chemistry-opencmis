@@ -440,8 +440,6 @@ public class LoginDialog extends JDialog {
 
             descriptionLabel = new JLabel();
             add(descriptionLabel);
-
-            //setPreferredSize(new Dimension(500, 48));
         }
 
         @Override

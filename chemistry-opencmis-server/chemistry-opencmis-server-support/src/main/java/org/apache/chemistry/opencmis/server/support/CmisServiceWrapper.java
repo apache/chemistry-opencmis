@@ -717,6 +717,8 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
         checkRepositoryId(repositoryId);
         checkProperties(properties);
         checkProperty(properties, PropertyIds.OBJECT_TYPE_ID, String.class);
+        // checkProperty(properties, PropertyIds.SOURCE_ID, String.class);
+        // checkProperty(properties, PropertyIds.TARGET_ID, String.class);
 
         try {
             return service.createRelationship(repositoryId, properties, policies, addAces, removeAces, extension);

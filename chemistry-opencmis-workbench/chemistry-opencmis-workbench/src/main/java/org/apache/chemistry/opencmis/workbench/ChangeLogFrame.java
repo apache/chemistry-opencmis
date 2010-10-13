@@ -97,8 +97,8 @@ public class ChangeLogFrame extends JFrame {
                 }
 
                 changeLogTable.setChangeEvents(events.getChangeEvents());
-                changeLogTokenField.setText(events.getlatestChangeLogToken() == null ? "" : events
-                        .getlatestChangeLogToken());
+                changeLogTokenField.setText(events.getLatestChangeLogToken() == null ? "" : events
+                        .getLatestChangeLogToken());
             }
         });
         inputPanel.add(loadButton, BorderLayout.LINE_END);

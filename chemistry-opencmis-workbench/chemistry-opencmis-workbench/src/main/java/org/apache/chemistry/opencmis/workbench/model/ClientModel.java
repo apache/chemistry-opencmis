@@ -43,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -115,12 +116,15 @@ public class ClientModel {
 
     public synchronized boolean supportsChangeLog() {
         try {
-            return (getRepositoryInfo().getChangesOnType() != null)
-                    && (!getRepositoryInfo().getChangesOnType().isEmpty());
+            RepositoryCapabilities cap = getRepositoryInfo().getCapabilities();
+            if (cap == null) {
+                return true;
+            }
+
+            return (cap.getChangesCapability() != null) && (cap.getChangesCapability() != CapabilityChanges.NONE);
         } catch (Exception e) {
             return false;
         }
-
     }
 
     public synchronized void loadFolder(String folderId, boolean byPath) throws Exception {
