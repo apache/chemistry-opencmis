@@ -1120,7 +1120,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
 
     // --- helpers ---
 
-    private String getStringProperty(ObjectData object, String name) {
+    protected String getStringProperty(ObjectData object, String name) {
         PropertyData<?> property = object.getProperties().getProperties().get(name);
         if (property instanceof PropertyString) {
             return ((PropertyString) property).getFirstValue();
@@ -1128,7 +1128,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         return null;
     }
 
-    private String getIdProperty(ObjectData object, String name) {
+    protected String getIdProperty(ObjectData object, String name) {
         PropertyData<?> property = object.getProperties().getProperties().get(name);
         if (property instanceof PropertyId) {
             return ((PropertyId) property).getFirstValue();
@@ -1136,7 +1136,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         return null;
     }
 
-    private GregorianCalendar getDateTimeProperty(ObjectData object, String name) {
+    protected GregorianCalendar getDateTimeProperty(ObjectData object, String name) {
         PropertyData<?> property = object.getProperties().getProperties().get(name);
         if (property instanceof PropertyDateTime) {
             return ((PropertyDateTime) property).getFirstValue();
@@ -1144,7 +1144,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         return null;
     }
 
-    private Boolean getBooleanProperty(ObjectData object, String name) {
+    protected Boolean getBooleanProperty(ObjectData object, String name) {
         PropertyData<?> property = object.getProperties().getProperties().get(name);
         if (property instanceof PropertyBoolean) {
             return ((PropertyBoolean) property).getFirstValue();
@@ -1152,7 +1152,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         return null;
     }
 
-    private BigInteger getIntegerProperty(ObjectData object, String name) {
+    protected BigInteger getIntegerProperty(ObjectData object, String name) {
         PropertyData<?> property = object.getProperties().getProperties().get(name);
         if (property instanceof PropertyInteger) {
             return ((PropertyInteger) property).getFirstValue();
