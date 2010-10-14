@@ -21,7 +21,7 @@ import org.apache.chemistry.opencmis.commons.data.*
 import org.apache.chemistry.opencmis.commons.enums.*
 import org.apache.chemistry.opencmis.client.api.*
 
-CMIS cmis = new scripts.CMIS(session)
+cmis = new scripts.CMIS(session)
 
 // destination folder
 Folder destFolder = cmis.getFolder("/")
@@ -47,6 +47,12 @@ VersioningState versioningState = VersioningState.MAJOR) {
 
 def doUpload(Folder parent, File folder, String folderType, String documentType, VersioningState versioningState) {
     folder.eachFile {
+        
+        if (it.getName().startsWith(".")) {
+            println "Skipping " + it.getName()
+            return;
+        }
+
         println it.getName()
         
         if(it.isFile()) {
