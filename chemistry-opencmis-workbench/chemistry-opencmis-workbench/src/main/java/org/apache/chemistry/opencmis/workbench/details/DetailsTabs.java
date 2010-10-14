@@ -37,6 +37,7 @@ public class DetailsTabs extends JTabbedPane {
     private ACLTable aclTable;
     private PolicyTable policyTable;
     private VersionTable versionTable;
+    private TypesPanel typesPanel;
     private ExtensionsPanel extensionsPanel;
 
     public DetailsTabs(ClientModel model) {
@@ -55,6 +56,7 @@ public class DetailsTabs extends JTabbedPane {
         aclTable = new ACLTable(model);
         policyTable = new PolicyTable(model);
         versionTable = new VersionTable(model);
+        typesPanel = new TypesPanel(model);
         extensionsPanel = new ExtensionsPanel(model);
 
         addTab("Object", objectPanel);
@@ -65,6 +67,7 @@ public class DetailsTabs extends JTabbedPane {
         addTab("ACL", new JScrollPane(aclTable));
         addTab("Policies", new JScrollPane(policyTable));
         addTab("Versions", new JScrollPane(versionTable));
+        addTab("Type", new JScrollPane(typesPanel));
         addTab("Extensions", new JScrollPane(extensionsPanel));
     }
 }

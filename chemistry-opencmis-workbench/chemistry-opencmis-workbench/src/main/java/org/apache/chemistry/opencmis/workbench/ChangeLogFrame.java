@@ -73,6 +73,10 @@ public class ChangeLogFrame extends JFrame {
         inputPanel.add(new JLabel("Change Log Token:"), BorderLayout.LINE_START);
 
         changeLogTokenField = new JTextField();
+        try {
+            changeLogTokenField.setText(model.getRepositoryInfo().getLatestChangeLogToken());
+        } catch (Exception e1) {
+        }
         inputPanel.add(changeLogTokenField, BorderLayout.CENTER);
 
         JButton loadButton = new JButton("Load");
