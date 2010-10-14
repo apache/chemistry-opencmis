@@ -23,7 +23,7 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RES
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_QUERY;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeContentChangesObjectEntry;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
@@ -259,7 +259,7 @@ public class DiscoveryService {
                 if (object == null) {
                     continue;
                 }
-                writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
+                writeContentChangesObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
             }
         }
 

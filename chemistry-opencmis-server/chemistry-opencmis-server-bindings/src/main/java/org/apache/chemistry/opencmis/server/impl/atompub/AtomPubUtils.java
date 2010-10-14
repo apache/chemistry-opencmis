@@ -241,6 +241,39 @@ public final class AtomPubUtils {
     }
 
     /**
+     * Writes the a object entry in a content changes list.
+     * 
+     * Content changes objects need special treatment because some of them could
+     * have been deleted and an object info cannot be generated.
+     */
+    public static void writeContentChangesObjectEntry(CmisService service, AtomEntry entry, ObjectData object,
+            List<ObjectInFolderContainer> children, String repositoryId, String pathSegment,
+            String relativePathSegment, UrlBuilder baseUrl, boolean isRoot) throws XMLStreamException, JAXBException {
+        if (object == null) {
+            throw new CmisRuntimeException("Object not set!");
+        }
+
+        ObjectInfo info = service.getObjectInfo(repositoryId, object.getId());
+        if (info != null) {
+            writeObjectEntry(service, entry, object, children, repositoryId, pathSegment, relativePathSegment, baseUrl,
+                    isRoot);
+            return;
+        }
+
+        // start delete object entry
+        entry.startEntry(isRoot);
+
+        // write object
+        entry.writeDeletedObject(object);
+
+        // write links
+        entry.writeServiceLink(baseUrl.toString(), repositoryId);
+
+        // we are done
+        entry.endEntry();
+    }
+
+    /**
      * Writes an objects entry children feed.
      */
     public static void writeObjectChildren(CmisService service, AtomEntry entry, ObjectInfo folderInfo,

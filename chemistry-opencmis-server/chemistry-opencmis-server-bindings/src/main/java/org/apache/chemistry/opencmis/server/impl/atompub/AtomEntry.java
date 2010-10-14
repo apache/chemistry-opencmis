@@ -34,9 +34,6 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 
 /**
  * Atom Entry class.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AtomEntry extends AtomDocumentBase {
 
@@ -98,6 +95,26 @@ public class AtomEntry extends AtomDocumentBase {
 
         writePathSegment(pathSegment);
         writeRelativePathSegment(relativePathSegment);
+    }
+
+    /**
+     * Writes a delete object.
+     */
+    public void writeDeletedObject(ObjectData object) throws XMLStreamException, JAXBException {
+        CmisObjectType objectJaxb = convert(object);
+        if (objectJaxb == null) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        
+        writeAuthor(DEFAULT_AUTHOR);
+        writeId(generateAtomId(object.getId()));
+        writePublished(now);
+        writeTitle(object.getId());
+        writeUpdated(now);
+
+        JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(objectJaxb), getWriter(), true);
     }
 
     /**
