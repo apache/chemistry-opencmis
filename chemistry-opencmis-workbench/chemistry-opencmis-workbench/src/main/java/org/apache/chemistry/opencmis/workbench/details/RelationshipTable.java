@@ -23,42 +23,40 @@ import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class RelationshipTable extends AbstractDetailsTable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String[] COLUMN_NAMES = { "Name", "Type", "Source",
-			"Target" };
-	private static final int[] COLUMN_WIDTHS = { 200, 200, 200, 200 };
+    private static final String[] COLUMN_NAMES = { "Name", "Type", "Source", "Target" };
+    private static final int[] COLUMN_WIDTHS = { 200, 200, 200, 200 };
 
-	public RelationshipTable(ClientModel model) {
-		super();
-		init(model, COLUMN_NAMES, COLUMN_WIDTHS);
-	}
+    public RelationshipTable(ClientModel model) {
+        super();
+        init(model, COLUMN_NAMES, COLUMN_WIDTHS);
+    }
 
-	@Override
-	public int getDetailRowCount() {
-		if (getObject().getRelationships() == null) {
-			return 0;
-		}
+    @Override
+    public int getDetailRowCount() {
+        if (getObject().getRelationships() == null) {
+            return 0;
+        }
 
-		return getObject().getRelationships().size();
-	}
+        return getObject().getRelationships().size();
+    }
 
-	@Override
-	public Object getDetailValueAt(int rowIndex, int columnIndex) {
-		Relationship relationship = getObject().getRelationships()
-				.get(rowIndex);
+    @Override
+    public Object getDetailValueAt(int rowIndex, int columnIndex) {
+        Relationship relationship = getObject().getRelationships().get(rowIndex);
 
-		switch (columnIndex) {
-		case 0:
-			return relationship.getName();
-		case 1:
-			return relationship.getType().getId();
-		case 2:
-			return relationship.getSourceId();
-		case 3:
-			return relationship.getTargetId();
-		}
+        switch (columnIndex) {
+        case 0:
+            return relationship.getName();
+        case 1:
+            return relationship.getType().getId();
+        case 2:
+            return (relationship.getSourceId() == null ? "?" : relationship.getSourceId().getId());
+        case 3:
+            return (relationship.getTarget() == null ? "?" : relationship.getTarget().getId());
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

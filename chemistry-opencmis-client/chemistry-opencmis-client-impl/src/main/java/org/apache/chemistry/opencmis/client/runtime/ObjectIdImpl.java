@@ -53,4 +53,9 @@ public class ObjectIdImpl implements ObjectId {
 
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "Object Id: " + id;
+    }
 }

@@ -253,7 +253,13 @@ public final class AtomPubUtils {
             throw new CmisRuntimeException("Object not set!");
         }
 
-        ObjectInfo info = service.getObjectInfo(repositoryId, object.getId());
+        ObjectInfo info = null;
+        try {
+            info = service.getObjectInfo(repositoryId, object.getId());
+        } catch (Exception e) {
+            // ignore all exceptions
+        }
+
         if (info != null) {
             writeObjectEntry(service, entry, object, children, repositoryId, pathSegment, relativePathSegment, baseUrl,
                     isRoot);
