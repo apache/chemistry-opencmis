@@ -38,12 +38,20 @@
                 <include>DEPENDENCIES*</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <directory>chemistry-opencmis-workbench/chemistry-opencmis-workbench/target/start</directory>
-            <outputDirectory></outputDirectory>
-            <fileMode>0755</fileMode>
-        </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>chemistry-opencmis-workbench/chemistry-opencmis-workbench/target/start/workbench.sh</source>
+            <outputDirectory></outputDirectory>
+            <lineEnding>unix</lineEnding>
+            <fileMode>0755</fileMode>
+        </file>        
+        <file>
+            <source>chemistry-opencmis-workbench/chemistry-opencmis-workbench/target/start/workbench.bat</source>
+            <outputDirectory></outputDirectory>
+            <lineEnding>dos</lineEnding>
+        </file>
+    </files>
   
     <moduleSets>
         <moduleSet>

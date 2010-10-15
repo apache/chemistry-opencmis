@@ -18,4 +18,8 @@ rem @version@
 
 cd %~dp0
 
+if exist "lib\@workbench.jar@" goto run
+move /Y lib\chemistry-opencmis-workbench*.jar lib\@workbench.jar@
+
+:run
 start /B javaw -jar lib\@workbench.jar@

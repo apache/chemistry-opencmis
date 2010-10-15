@@ -33,4 +33,9 @@ fi
 SCRIPT_DIR=$(dirname $0)
 cd $SCRIPT_DIR
 
-exec $JAVA -jar ./lib/@workbench.jar@ &
+if ! [ -f lib/@workbench.jar@ ];
+then
+mv -f lib/chemistry-opencmis-workbench*.jar lib/@workbench.jar@
+fi
+
+exec $JAVA -jar lib/@workbench.jar@ &
