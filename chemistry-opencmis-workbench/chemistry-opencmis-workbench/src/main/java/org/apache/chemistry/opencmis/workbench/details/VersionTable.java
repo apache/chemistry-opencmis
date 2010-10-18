@@ -57,7 +57,6 @@ public class VersionTable extends AbstractDetailsTable {
         } else {
             ClientHelper.open(this.getParent(), getVersions().get(rowIndex), null);
         }
-
     }
 
     @Override

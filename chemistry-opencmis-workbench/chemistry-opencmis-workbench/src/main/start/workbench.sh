@@ -30,8 +30,8 @@ else
 fi
 
 
-SCRIPT_DIR=$(dirname $0)
-cd $SCRIPT_DIR
+SCRIPT_DIR=$(dirname "$0")
+cd "$SCRIPT_DIR"
 
 if ! [ -f lib/@workbench.jar@ ];
 then

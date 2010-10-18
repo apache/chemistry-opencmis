@@ -40,7 +40,12 @@ public class RenditionTable extends AbstractDetailsTable {
     @Override
     public void doubleClickAction(MouseEvent e, int rowIndex) {
         String streamId = getObject().getRenditions().get(rowIndex).getStreamId();
-        ClientHelper.download(this, (Document) getObject(), streamId);
+        
+        if (e.isShiftDown()) {
+            ClientHelper.download(this.getParent(), (Document) getObject(), streamId);
+        } else {
+            ClientHelper.open(this.getParent(), (Document) getObject(), streamId);
+        }
     }
 
     @Override
