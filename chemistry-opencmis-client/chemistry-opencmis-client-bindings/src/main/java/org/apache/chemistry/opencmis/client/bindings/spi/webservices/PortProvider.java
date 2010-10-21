@@ -77,7 +77,7 @@ public class PortProvider {
     public static final String OBJECT_SERVICE = "ObjectService";
     public static final String DISCOVERY_SERVICE = "DiscoveryService";
     public static final String NAVIGATION_SERVICE = "NavigationService";
-    public static final String MULTIFILING_SERVICE = "MulifilingService";
+    public static final String MULTIFILING_SERVICE = "MultiFilingService";
     public static final String VERSIONING_SERVICE = "VersioningService";
     public static final String RELATIONSHIP_SERVICE = "RelationshipService";
     public static final String POLICY_SERVICE = "PolicyService";
