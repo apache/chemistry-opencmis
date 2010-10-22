@@ -51,7 +51,7 @@ public class QueryParseTest extends AbstractQueryTest {
     @Before
     public void setUp() throws Exception {
         // initialize query object, we do not need a type manager for just testing parsing
-        super.setUp(new QueryObject(null, null));
+        super.setUp(new QueryObject(null), null);
     }
 
     @After
@@ -64,8 +64,7 @@ public class QueryParseTest extends AbstractQueryTest {
         String statement = "SELECT SCORE() FROM cmis:document";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject select = walker.queryObj;
-        List<CmisSelector> selects = select.getSelectReferences();
+        List<CmisSelector> selects = queryObj.getSelectReferences();
         assertTrue(1 == selects.size());
         assertTrue(selects.get(0) instanceof FunctionReference);
         FunctionReference funcRef = ((FunctionReference)selects.get(0));
@@ -76,11 +75,10 @@ public class QueryParseTest extends AbstractQueryTest {
     public void simpleSelectTest2() throws Exception {
         String statement = "SELECT abc FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject select = walker.queryObj;
         List<CmisSelector> selects = queryObj.getSelectReferences();
         assertTrue(1 == selects.size());
         // nothing should be in where references
-        assertTrue(0 == select.getWhereReferences().size());
+        assertTrue(0 == queryObj.getWhereReferences().size());
 
         ColumnReference colRef = ((ColumnReference)selects.get(0));
         assertTrue(selects.get(0) instanceof ColumnReference);
@@ -92,11 +90,10 @@ public class QueryParseTest extends AbstractQueryTest {
     public void simpleSelectTest3() throws Exception {
         String statement = "SELECT t1.abc FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject select = walker.queryObj;
-        List<CmisSelector> selects = select.getSelectReferences();
+        List<CmisSelector> selects = queryObj.getSelectReferences();
         assertTrue(1 == selects.size());
         // nothing should be in where references
-        assertTrue(0 == select.getWhereReferences().size());
+        assertTrue(0 == queryObj.getWhereReferences().size());
         assertTrue(selects.get(0) instanceof ColumnReference);
         ColumnReference colRef = ((ColumnReference)selects.get(0));
         assertEquals("t1", colRef.getTypeQueryName());
@@ -108,11 +105,10 @@ public class QueryParseTest extends AbstractQueryTest {
     public void simpleSelectTest4() throws Exception {
         String statement = "SELECT * FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject select = walker.queryObj;
-        List<CmisSelector> selects = select.getSelectReferences();
+        List<CmisSelector> selects = queryObj.getSelectReferences();
         assertTrue(1 == selects.size());
         // nothing should be in where references
-        assertTrue(0 == select.getWhereReferences().size());
+        assertTrue(0 == queryObj.getWhereReferences().size());
         ColumnReference colRef = ((ColumnReference)selects.get(0));
         assertTrue(selects.get(0) instanceof ColumnReference);
         assertEquals(null, colRef.getTypeQueryName());
@@ -125,11 +121,10 @@ public class QueryParseTest extends AbstractQueryTest {
     public void simpleSelectTest5() throws Exception {
         String statement = "SELECT t1.* FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject select = walker.queryObj;
-        List<CmisSelector> selects = select.getSelectReferences();
+        List<CmisSelector> selects = queryObj.getSelectReferences();
         assertTrue(1 == selects.size());
         // nothing should be in where references
-        assertTrue(0 == select.getWhereReferences().size());
+        assertTrue(0 == queryObj.getWhereReferences().size());
         assertTrue(selects.get(0) instanceof ColumnReference);
         ColumnReference colRef = ((ColumnReference)selects.get(0));
         assertEquals("t1", colRef.getTypeQueryName());
@@ -141,11 +136,10 @@ public class QueryParseTest extends AbstractQueryTest {
     public void simpleSelectTest6() throws Exception {
         String statement = "SELECT t2.aaa myalias FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject select = walker.queryObj;
-        List<CmisSelector> selects = select.getSelectReferences();
+        List<CmisSelector> selects = queryObj.getSelectReferences();
         assertTrue(1 == selects.size());
         // nothing should be in where references
-        assertTrue(0 == select.getWhereReferences().size());
+        assertTrue(0 == queryObj.getWhereReferences().size());
         assertTrue(selects.get(0) instanceof ColumnReference);
         ColumnReference colRef = ((ColumnReference)selects.get(0));
         assertEquals("t2", colRef.getTypeQueryName());
@@ -171,8 +165,7 @@ public class QueryParseTest extends AbstractQueryTest {
         String statement = "SELECT * FROM MyType MyAlias";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject from = walker.queryObj;
-        Map<String,String> types = from.getTypes();
+        Map<String,String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
         String key = types.keySet().iterator().next();
         assertEquals("MyAlias", key);
@@ -183,8 +176,7 @@ public class QueryParseTest extends AbstractQueryTest {
     public void simpleFromTest2() throws Exception {
         String statement = "SELECT * FROM MyType";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject from = walker.queryObj;
-        Map<String,String> types = from.getTypes();
+        Map<String,String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
         String key = types.keySet().iterator().next();
         assertEquals("MyType", key);
@@ -196,8 +188,7 @@ public class QueryParseTest extends AbstractQueryTest {
     public void simpleFromTest3() throws Exception {
         String statement = "SELECT t2.aaa FROM MyType abc123";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject from = walker.queryObj;
-        Map<String,String> types = from.getTypes();
+        Map<String,String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
         String key = types.keySet().iterator().next();
         assertEquals("abc123", key);
@@ -209,15 +200,14 @@ public class QueryParseTest extends AbstractQueryTest {
         String statement = "SELECT * FROM MyType WHERE MyProp1=123";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject qo = walker.queryObj;
-        List<CmisSelector> whereRefs = qo.getWhereReferences();
-        Map<Integer, CmisSelector> colRefs = qo.getColumnReferences();
+        List<CmisSelector> whereRefs = queryObj.getWhereReferences();
+        Map<Integer, CmisSelector> colRefs = queryObj.getColumnReferences();
         assertTrue(1 == whereRefs.size());
         CmisSelector value = whereRefs.iterator().next();
         assertTrue(value instanceof ColumnReference);
         assertEquals("MyProp1", ((ColumnReference)value).getPropertyQueryName());
         // only "*" should be in select references
-        assertTrue(1 == qo.getSelectReferences().size());
+        assertTrue(1 == queryObj.getSelectReferences().size());
 
         CommonTree tree = (CommonTree) walker.getTreeNodeStream().getTreeSource();
 
@@ -269,7 +259,7 @@ public class QueryParseTest extends AbstractQueryTest {
         String statement = "SELECT * FROM MyType ORDER BY abc.def ASC";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        List<SortSpec> orderBys = walker.queryObj.getOrderBys();
+        List<SortSpec> orderBys = queryObj.getOrderBys();
         assertTrue(1 == orderBys.size());
         SortSpec sp = orderBys.get(0);
         assertTrue(sp.isAscending());
@@ -283,7 +273,7 @@ public class QueryParseTest extends AbstractQueryTest {
     public void simpleSortTest2() throws Exception {
         String statement = "SELECT * FROM MyType ORDER BY def DESC";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        List<SortSpec> orderBys = walker.queryObj.getOrderBys();
+        List<SortSpec> orderBys = queryObj.getOrderBys();
         assertTrue(1 == orderBys.size());
         SortSpec sp = orderBys.get(0);
         assertFalse(sp.isAscending());
@@ -456,7 +446,7 @@ public class QueryParseTest extends AbstractQueryTest {
         String statement = "SELECT * FROM MyType JOIN YourType WHERE a='1'";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
-        QueryObject from = walker.queryObj;
+        QueryObject from = queryObj;
         Map<String,String> types = from.getTypes();
         assertTrue(2 == types.size());
     }

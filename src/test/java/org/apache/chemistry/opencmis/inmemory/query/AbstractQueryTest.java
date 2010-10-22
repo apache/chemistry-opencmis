@@ -49,6 +49,7 @@ import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
+import org.apache.chemistry.opencmis.server.support.query.PredicateWalkerBase;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_CmisBaseGrammar.query_return;
 
@@ -57,6 +58,7 @@ public abstract class AbstractQueryTest {
     protected CommonTree parserTree; // the ANTLR tree after parsing phase
     protected CommonTree walkerTree; // the ANTLR tree after walking phase
     protected QueryObject queryObj;
+    PredicateWalkerBase predicateWalker;
     protected TypeDefinition myType, myTypeCopy, bookType;
 
     protected static final String MY_DOC_TYPE = "MyDocType";
@@ -71,8 +73,9 @@ public abstract class AbstractQueryTest {
     protected static final String ISBN_PROP = "ISBN";
     protected static final String PUB_DATE_PROP = "PublishingDate";
     
-    protected void setUp(QueryObject qo) throws Exception {
+    protected void setUp(QueryObject qo, PredicateWalkerBase pw) throws Exception {
             queryObj = qo;
+            predicateWalker = pw;
     }
 
     protected void tearDown() throws Exception {
@@ -99,7 +102,7 @@ public abstract class AbstractQueryTest {
 
     protected CmisQueryWalker traverseStatement(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
         CmisQueryWalker walker = getWalker(statement);
-        walker.query(queryObj);
+        walker.query(queryObj, predicateWalker);
         String errMsg = walker.getErrorMessageString();
         if (null != errMsg) {
             fail("Walking of statement failed with error: \n   " + errMsg + 
