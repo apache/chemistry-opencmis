@@ -31,7 +31,6 @@ import java.util.Map.Entry;
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
-import org.apache.chemistry.opencmis.server.support.query.AbstractQueryConditionProcessor;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
@@ -43,7 +42,7 @@ import org.junit.Test;
 
 public class ProcessQueryTest extends AbstractQueryTest {
 
-    private static Log log = LogFactory.getLog(ProcessQueryTest.class);
+    private static Log LOG = LogFactory.getLog(ProcessQueryTest.class);
 
     static private class TestQueryProcessor extends AbstractQueryConditionProcessor {
 
@@ -111,13 +110,13 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
 
        public void onStartProcessing(Tree node) {
-            log.debug("TestQueryProcessor:onStartProcessing()");
+            LOG.debug("TestQueryProcessor:onStartProcessing()");
             rulesTrackerMap.put(ON_START, counter++);
-            assertEquals(CmisQlStrictLexer.WHERE, node.getType());
+            assertEquals(CmisQlStrictLexer.WHERE, node.getParent().getType());
        }
 
        public void onStopProcessing() {
-           log.debug("TestQueryProcessor:onStopProcessing()");
+           LOG.debug("TestQueryProcessor:onStopProcessing()");
            rulesTrackerMap.put(ON_STOP, counter++);
        }
 
@@ -329,7 +328,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
            case CmisQlStrictLexer.TIME_LIT:
                return clazz==GregorianCalendar.class ?  CalendarHelper.fromString(node.getText()) : null;
            default:
-               log.error("Unknown literal. " + node);
+               LOG.error("Unknown literal. " + node);
                return null;
            }
        }
@@ -351,8 +350,8 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
         // initialize query object with type manager
         queryProcessor = new TestQueryProcessor();
-        QueryObject qo = new QueryObject(tm, queryProcessor);
-        super.setUp(qo);
+        QueryObject qo = new QueryObject(tm);
+        super.setUp(qo, queryProcessor);
     }
 
     @After
@@ -532,7 +531,6 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
     private void testStatementMultiRule(String statement, String ruleAssertion) {
         traverseStatementAndCatchExc(statement); // calls query processor
-        Tree whereRoot = getWhereTree(parserTree);
         assertTrue(queryProcessor.rulesTrackerMap.get(ruleAssertion) > 0);
     }
 

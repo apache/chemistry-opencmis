@@ -54,15 +54,14 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
-import org.apache.chemistry.opencmis.server.support.query.AbstractQueryConditionProcessor;
 import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalker;
-import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
 import org.apache.chemistry.opencmis.server.support.query.FunctionReference;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
+import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -91,7 +90,7 @@ public class InMemoryQueryProcessor {
             String statement, Boolean searchAllVersions, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
 
-        queryObj = new QueryObject(tm, null);
+        queryObj = new QueryObject(tm);
         processQueryAndCatchExc(statement); // calls query processor
 
         // iterate over all the objects and check for each if the query matches
@@ -108,14 +107,14 @@ public class InMemoryQueryProcessor {
 
     public CmisQueryWalker processQuery(String statement) throws UnsupportedEncodingException, IOException,
             RecognitionException {
-        CmisQueryWalker walker = AbstractQueryConditionProcessor.getWalker(statement);
-        walker.query(queryObj);
+        CmisQueryWalker walker = QueryUtil.getWalker(statement);
+        walker.query(queryObj, null);
         String errMsg = walker.getErrorMessageString();
         if (null != errMsg) {
             throw new RuntimeException("Walking of statement failed with error: \n   " + errMsg
                     + "\n   Statement was: " + statement);
         }
-        whereTree = queryObj.getWhereTree();
+        whereTree = walker.getWherePredicateTree();
         return walker;
     }
 
@@ -222,7 +221,7 @@ public class InMemoryQueryProcessor {
      * Check for each object contained in the in-memory repository if it matches
      * the current query expression. If yes add it to the list of matched
      * objects.
-     *
+     * 
      * @param so
      *            object stored in the in-memory repository
      */
@@ -230,13 +229,13 @@ public class InMemoryQueryProcessor {
         // log.debug("checkMatch() for object: " + so.getId());
         // first check if type is matching...
         String queryName = queryObj.getTypes().values().iterator().next(); // as
-                                                                            // we
-                                                                            // don't
-                                                                            // support
-                                                                            // JOINS
-                                                                            // take
-                                                                            // first
-                                                                            // type
+                                                                           // we
+                                                                           // don't
+                                                                           // support
+                                                                           // JOINS
+                                                                           // take
+                                                                           // first
+                                                                           // type
         TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
         boolean skip = so instanceof VersionedDocument; // we are only
                                                         // interested in
@@ -254,7 +253,7 @@ public class InMemoryQueryProcessor {
     private void evalWhereTree(Tree node, StoredObject so) {
         boolean match = true;
         if (null != node)
-            match = evalWhereNode(so, node.getChild(0));
+            match = evalWhereNode(so, node);
         if (match)
             matches.add(so); // add to list
     }
@@ -263,7 +262,7 @@ public class InMemoryQueryProcessor {
      * For each object check if it matches and append it to match-list if it
      * does. We do here our own walking mechanism so that we can pass additional
      * parameters and define the return types.
-     *
+     * 
      * @param node
      *            node in where clause
      * @return true if it matches, false if it not matches
@@ -281,63 +280,63 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public boolean walkNot(Tree opNode, Tree node) {
+        public Boolean walkNot(Tree opNode, Tree node) {
             boolean matches = walkPredicate(node);
             return !matches;
         }
 
         @Override
-        public boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode) {
+        public Boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode) {
             boolean matches1 = walkPredicate(leftNode);
             boolean matches2 = walkPredicate(rightNode);
             return matches1 && matches2;
         }
 
         @Override
-        public boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode) {
+        public Boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode) {
             boolean matches1 = walkPredicate(leftNode);
             boolean matches2 = walkPredicate(rightNode);
             return matches1 || matches2;
         }
 
         @Override
-        public boolean walkEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+        public Boolean walkEquals(Tree opNode, Tree leftNode, Tree rightNode) {
             Integer cmp = compareTo(leftNode, rightNode);
             return cmp == null ? false : cmp == 0;
         }
 
         @Override
-        public boolean walkNotEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+        public Boolean walkNotEquals(Tree opNode, Tree leftNode, Tree rightNode) {
             Integer cmp = compareTo(leftNode, rightNode);
             return cmp == null ? false : cmp != 0;
         }
 
         @Override
-        public boolean walkGreaterThan(Tree opNode, Tree leftNode, Tree rightNode) {
+        public Boolean walkGreaterThan(Tree opNode, Tree leftNode, Tree rightNode) {
             Integer cmp = compareTo(leftNode, rightNode);
             return cmp == null ? false : cmp > 0;
         }
 
         @Override
-        public boolean walkGreaterOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+        public Boolean walkGreaterOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
             Integer cmp = compareTo(leftNode, rightNode);
             return cmp == null ? false : cmp >= 0;
         }
 
         @Override
-        public boolean walkLessThan(Tree opNode, Tree leftNode, Tree rightNode) {
+        public Boolean walkLessThan(Tree opNode, Tree leftNode, Tree rightNode) {
             Integer cmp = compareTo(leftNode, rightNode);
             return cmp == null ? false : cmp < 0;
         }
 
         @Override
-        public boolean walkLessOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+        public Boolean walkLessOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
             Integer cmp = compareTo(leftNode, rightNode);
             return cmp == null ? false : cmp <= 0;
         }
 
         @Override
-        public boolean walkIn(Tree opNode, Tree colNode, Tree listNode) {
+        public Boolean walkIn(Tree opNode, Tree colNode, Tree listNode) {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
@@ -356,7 +355,7 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public boolean walkNotIn(Tree opNode, Tree colNode, Tree listNode) {
+        public Boolean walkNotIn(Tree opNode, Tree colNode, Tree listNode) {
             // Note just return !walkIn(node, colNode, listNode) is wrong,
             // because
             // then it evaluates to true for null values (not set properties).
@@ -378,7 +377,7 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public boolean walkInAny(Tree opNode, Tree colNode, Tree listNode) {
+        public Boolean walkInAny(Tree opNode, Tree colNode, Tree listNode) {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
@@ -399,7 +398,7 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public boolean walkNotInAny(Tree opNode, Tree colNode, Tree listNode) {
+        public Boolean walkNotInAny(Tree opNode, Tree colNode, Tree listNode) {
             // Note just return !walkNotInAny(node, colNode, listNode) is
             // wrong, because
             // then it evaluates to true for null values (not set properties).
@@ -423,7 +422,7 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public boolean walkEqAny(Tree opNode, Tree literalNode, Tree colNode) {
+        public Boolean walkEqAny(Tree opNode, Tree literalNode, Tree colNode) {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
@@ -442,19 +441,19 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public boolean walkIsNull(Tree opNode, Tree colNode) {
+        public Boolean walkIsNull(Tree opNode, Tree colNode) {
             Object propVal = getPropertyValue(colNode, so);
             return propVal == null;
         }
 
         @Override
-        public boolean walkIsNotNull(Tree opNode, Tree colNode) {
+        public Boolean walkIsNotNull(Tree opNode, Tree colNode) {
             Object propVal = getPropertyValue(colNode, so);
             return propVal != null;
         }
 
         @Override
-        public boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
+        public Boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
             Object rVal = walkExpr(stringNode);
             if (!(rVal instanceof String))
                 throw new RuntimeException("LIKE operator requires String literal on right hand side.");
@@ -470,24 +469,24 @@ public class InMemoryQueryProcessor {
 
             String propVal = (String) so.getProperties().get(colRef.getPropertyId()).getFirstValue();
             String pattern = translatePattern((String) rVal); // SQL to Java
-                                                                // regex
-                                                                // syntax
+                                                              // regex
+                                                              // syntax
             Pattern p = Pattern.compile(pattern);
             return p.matcher(propVal).matches();
         }
 
         @Override
-        public boolean walkNotLike(Tree opNode, Tree colNode, Tree stringNode) {
+        public Boolean walkNotLike(Tree opNode, Tree colNode, Tree stringNode) {
             return !walkLike(opNode, colNode, stringNode);
         }
 
         @Override
-        public boolean walkContains(Tree qualNode, Tree colNode, Tree queryNode) {
+        public Boolean walkContains(Tree qualNode, Tree colNode, Tree queryNode) {
             throw new RuntimeException("Operator CONTAINS not supported in InMemory server.");
         }
 
         @Override
-        public boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
+        public Boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
             if (null != qualNode) {
                 getTableReference(qualNode);
                 // just for error checking we do not evaluate this, there is
@@ -506,7 +505,7 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public boolean walkInTree(Tree opNode, Tree qualNode, Tree paramNode) {
+        public Boolean walkInTree(Tree opNode, Tree qualNode, Tree paramNode) {
             if (null != qualNode) {
                 getTableReference(qualNode);
                 // just for error checking we do not evaluate this, there is

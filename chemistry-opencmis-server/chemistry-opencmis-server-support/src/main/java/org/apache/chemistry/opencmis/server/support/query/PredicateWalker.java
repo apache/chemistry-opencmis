@@ -31,53 +31,51 @@ import org.antlr.runtime.tree.Tree;
  * <p>
  * The method {@link walkClause} is the entry point.
  */
-public interface PredicateWalker {
+public interface PredicateWalker extends PredicateWalkerBase {
 
-    boolean walkPredicate(Tree node);
+    Boolean walkNot(Tree opNode, Tree leftNode);
 
-    boolean walkNot(Tree opNode, Tree leftNode);
+    Boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode);
 
-    boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode);
-
-    boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode);
+    Boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode);
 
     Object walkExpr(Tree node);
 
-    boolean walkEquals(Tree eqNode, Tree leftNode, Tree rightNode);
+    Boolean walkEquals(Tree eqNode, Tree leftNode, Tree rightNode);
 
-    boolean walkNotEquals(Tree neNode, Tree leftNode, Tree rightNode);
+    Boolean walkNotEquals(Tree neNode, Tree leftNode, Tree rightNode);
 
-    boolean walkGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode);
+    Boolean walkGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode);
 
-    boolean walkGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode);
+    Boolean walkGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode);
 
-    boolean walkLessThan(Tree ltNode, Tree leftNode, Tree rightNode);
+    Boolean walkLessThan(Tree ltNode, Tree leftNode, Tree rightNode);
 
-    boolean walkLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode);
+    Boolean walkLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode);
 
-    boolean walkIn(Tree node, Tree colNode, Tree listNode);
+    Boolean walkIn(Tree node, Tree colNode, Tree listNode);
 
-    boolean walkNotIn(Tree node, Tree colNode, Tree listNode);
+    Boolean walkNotIn(Tree node, Tree colNode, Tree listNode);
 
-    boolean walkInAny(Tree node, Tree colNode, Tree listNode);
+    Boolean walkInAny(Tree node, Tree colNode, Tree listNode);
 
-    boolean walkNotInAny(Tree node, Tree colNode, Tree listNode);
+    Boolean walkNotInAny(Tree node, Tree colNode, Tree listNode);
 
-    boolean walkEqAny(Tree node, Tree literalNode, Tree colNode);
+    Boolean walkEqAny(Tree node, Tree literalNode, Tree colNode);
 
-    boolean walkIsNull(Tree nullNode, Tree colNode);
+    Boolean walkIsNull(Tree nullNode, Tree colNode);
 
-    boolean walkIsNotNull(Tree notNullNode, Tree colNode);
+    Boolean walkIsNotNull(Tree notNullNode, Tree colNode);
 
-    boolean walkLike(Tree node, Tree colNode, Tree stringNode);
+    Boolean walkLike(Tree node, Tree colNode, Tree stringNode);
 
-    boolean walkNotLike(Tree node, Tree colNode, Tree stringNode);
+    Boolean walkNotLike(Tree node, Tree colNode, Tree stringNode);
 
-    boolean walkContains(Tree node, Tree qualNode, Tree paramNode);
+    Boolean walkContains(Tree node, Tree qualNode, Tree paramNode);
 
-    boolean walkInFolder(Tree node, Tree qualNode, Tree paramNode);
+    Boolean walkInFolder(Tree node, Tree qualNode, Tree paramNode);
 
-    boolean walkInTree(Tree node, Tree qualNode, Tree paramNode);
+    Boolean walkInTree(Tree node, Tree qualNode, Tree paramNode);
 
     Object walkList(Tree node);
 

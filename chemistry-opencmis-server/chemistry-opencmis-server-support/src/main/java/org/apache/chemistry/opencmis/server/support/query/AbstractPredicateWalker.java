@@ -34,7 +34,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
  */
 public abstract class AbstractPredicateWalker implements PredicateWalker {
 
-    public boolean walkPredicate(Tree node) {
+    public Boolean walkPredicate(Tree node) {
         switch (node.getType()) {
         case CmisQlStrictLexer.NOT:
             return walkNot(node, node.getChild(0));
@@ -96,22 +96,22 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
     }
 
     /** For extensibility. */
-    protected boolean walkOtherPredicate(Tree node) {
+    protected Boolean walkOtherPredicate(Tree node) {
         throw new CmisRuntimeException("Unknown node type: " + node.getType() + " (" + node.getText() + ")");
     }
 
-    public boolean walkNot(Tree opNode, Tree node) {
+    public Boolean walkNot(Tree opNode, Tree node) {
         walkPredicate(node);
         return false;
     }
 
-    public boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode) {
+    public Boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode) {
         walkPredicate(leftNode);
         walkPredicate(rightNode);
         return false;
     }
 
-    public boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode) {
+    public Boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode) {
         walkPredicate(leftNode);
         walkPredicate(rightNode);
         return false;
@@ -141,109 +141,109 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         throw new CmisRuntimeException("Unknown node type: " + node.getType() + " (" + node.getText() + ")");
     }
 
-    public boolean walkEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+    public Boolean walkEquals(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
-    public boolean walkNotEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+    public Boolean walkNotEquals(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
-    public boolean walkGreaterThan(Tree opNode, Tree leftNode, Tree rightNode) {
+    public Boolean walkGreaterThan(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
-    public boolean walkGreaterOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+    public Boolean walkGreaterOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
-    public boolean walkLessThan(Tree opNode, Tree leftNode, Tree rightNode) {
+    public Boolean walkLessThan(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
-    public boolean walkLessOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
+    public Boolean walkLessOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
-    public boolean walkIn(Tree opNode, Tree colNode, Tree listNode) {
+    public Boolean walkIn(Tree opNode, Tree colNode, Tree listNode) {
         walkExpr(colNode);
         walkExpr(listNode);
         return false;
     }
 
-    public boolean walkNotIn(Tree opNode, Tree colNode, Tree listNode) {
+    public Boolean walkNotIn(Tree opNode, Tree colNode, Tree listNode) {
         walkExpr(colNode);
         walkExpr(listNode);
         return false;
     }
 
-    public boolean walkInAny(Tree opNode, Tree colNode, Tree listNode) {
+    public Boolean walkInAny(Tree opNode, Tree colNode, Tree listNode) {
         walkExpr(colNode);
         walkExpr(listNode);
         return false;
     }
 
-    public boolean walkNotInAny(Tree opNode, Tree colNode, Tree listNode) {
+    public Boolean walkNotInAny(Tree opNode, Tree colNode, Tree listNode) {
         walkExpr(colNode);
         walkExpr(listNode);
         return false;
     }
 
-    public boolean walkEqAny(Tree opNode, Tree literalNode, Tree colNode) {
+    public Boolean walkEqAny(Tree opNode, Tree literalNode, Tree colNode) {
         walkExpr(literalNode);
         walkExpr(colNode);
         return false;
     }
 
-    public boolean walkIsNull(Tree opNode, Tree colNode) {
+    public Boolean walkIsNull(Tree opNode, Tree colNode) {
         walkExpr(colNode);
         return false;
     }
 
-    public boolean walkIsNotNull(Tree opNode, Tree colNode) {
+    public Boolean walkIsNotNull(Tree opNode, Tree colNode) {
         walkExpr(colNode);
         return false;
     }
 
-    public boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
-        walkExpr(colNode);
-        walkExpr(stringNode);
-        return false;
-    }
-
-    public boolean walkNotLike(Tree opNode, Tree colNode, Tree stringNode) {
+    public Boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
         walkExpr(colNode);
         walkExpr(stringNode);
         return false;
     }
 
-    public boolean walkContains(Tree opNode, Tree qualNode, Tree queryNode) {
+    public Boolean walkNotLike(Tree opNode, Tree colNode, Tree stringNode) {
+        walkExpr(colNode);
+        walkExpr(stringNode);
+        return false;
+    }
+
+    public Boolean walkContains(Tree opNode, Tree qualNode, Tree queryNode) {
         if (qualNode != null)
             walkExpr(qualNode);
         walkExpr(queryNode);
         return false;
     }
 
-    public boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
+    public Boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
         if (qualNode != null)
             walkExpr(qualNode);
         walkExpr(paramNode);
         return false;
     }
 
-    public boolean walkInTree(Tree opNode, Tree qualNode, Tree paramNode) {
+    public Boolean walkInTree(Tree opNode, Tree qualNode, Tree paramNode) {
         if (qualNode != null)
             walkExpr(qualNode);
         walkExpr(paramNode);

@@ -74,9 +74,14 @@ import org.apache.chemistry.opencmis.server.support.query.*;
 @members {
     private static Log LOG = LogFactory.getLog(CmisQueryWalker.class);
 
-    public QueryObject queryObj;
+    private QueryObject queryObj;
+    private Tree wherePredicateTree;
     public String errorMessage;
 
+    public Tree getWherePredicateTree() {
+    	return wherePredicateTree;
+    }
+    
     @Override
     public void displayRecognitionError(String[] tokenNames,
             RecognitionException e) {
@@ -111,14 +116,16 @@ import org.apache.chemistry.opencmis.server.support.query.*;
     }
 }
 
-query [QueryObject qo]
+query [QueryObject qo, PredicateWalkerBase pw]
     @init {
         queryObj = qo;
     }:
     ^(SELECT select_list from_clause order_by_clause? where_clause)
     {
+        wherePredicateTree = $where_clause.tree==null ? null : $where_clause.tree.getChild(0);
         queryObj.resolveTypes();
-        queryObj.processWhereClause($where_clause.tree);
+        if (null != pw && null != $where_clause.tree)
+            pw.walkPredicate(wherePredicateTree);
     }
     ;
 
