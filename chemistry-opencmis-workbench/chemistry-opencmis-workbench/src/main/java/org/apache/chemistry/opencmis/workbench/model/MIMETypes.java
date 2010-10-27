@@ -385,6 +385,6 @@ public class MIMETypes {
         mimeType = mimeType.trim().toLowerCase();
 
         String extension = MIME2EXT.get(mimeType);
-        return (extension == null ? "" : "." + extension);
+        return ((extension == null || extension.length() == 0) ? "" : "." + extension);
     }
 }
