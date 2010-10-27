@@ -31,7 +31,7 @@ import org.junit.Assert;
 
 public class JUnitHelper {
 
-    public static final String JUNIT_PARAMETERS = "org.apache.chemistry.tck.junit.parameters";
+    public static final String JUNIT_PARAMETERS = "org.apache.chemistry.opencmis.tck.junit.parameters";
 
     private JUnitHelper() {
     }
