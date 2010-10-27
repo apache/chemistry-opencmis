@@ -186,12 +186,12 @@ public abstract class AbstractRunner {
             throw new Exception("Not a CmisTestGroup or CmisTest class!");
         }
 
-        group.init(parameters);
         addGroup(group);
     }
 
-    public void addGroup(CmisTestGroup group) {
+    public void addGroup(CmisTestGroup group) throws Exception {
         if (group != null) {
+            group.init(parameters);
             groups.add(group);
         }
     }

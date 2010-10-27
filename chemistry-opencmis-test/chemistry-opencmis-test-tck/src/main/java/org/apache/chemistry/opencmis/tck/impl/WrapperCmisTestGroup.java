@@ -40,7 +40,7 @@ public class WrapperCmisTestGroup extends AbstractCmisTestGroup {
     public void init(Map<String, String> parameters) throws Exception {
         super.init(parameters);
 
-        setName("Wrapper Group: " + test.getName());
         addTest(test);
+        setName("Wrapper Group: " + test.getName());
     }
 }

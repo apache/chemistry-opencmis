@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
+import org.junit.Test;
 
 /**
  * Base class for tests.
@@ -64,6 +65,11 @@ public abstract class AbstractCmisTest implements CmisTest {
     }
 
     public abstract void run() throws Exception;
+
+    @Test
+    public void junit() {
+        JUnitHelper.run(this);
+    }
 
     public List<CmisTestResult> getResults() {
         return results;

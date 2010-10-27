@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestProgressMonitor;
+import org.junit.Test;
 
 /**
  * Base class for test groups.
@@ -120,6 +121,11 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
         if (progressMonitor != null) {
             progressMonitor.endGroup(this);
         }
+    }
+
+    @Test
+    public void junit() {
+        JUnitHelper.run(this);
     }
 
     protected void preRun() {
