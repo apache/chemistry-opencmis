@@ -30,9 +30,11 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
+import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -42,6 +44,8 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 
@@ -100,9 +104,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return ri;
     }
 
-    // --- checks ----
+    // --- reusable checks ----
 
-    protected CmisTestResult checkObject(CmisObject object, String message) {
+    protected CmisTestResult checkObject(CmisObject object, String[] properties, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
         CmisTestResult f;
@@ -115,30 +119,51 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             addResult(results, assertStringNotEmpty(object.getId(), null, f));
 
             // properties
-            Property<?> prop;
-            prop = object.getProperty(PropertyIds.OBJECT_ID);
-            addResult(results, checkProperty(prop, "Property " + PropertyIds.OBJECT_ID));
+            for (String propId : properties) {
+                Property<?> prop = object.getProperty(propId);
 
-            prop = object.getProperty(PropertyIds.BASE_TYPE_ID);
-            addResult(results, checkProperty(prop, "Property " + PropertyIds.BASE_TYPE_ID));
+                // values of non-spec properties are not checked here
+                PropertyCheckEnum propertyCheck = PropertyCheckEnum.NO_VALUE_CHECK;
 
-            prop = object.getProperty(PropertyIds.OBJECT_TYPE_ID);
-            addResult(results, checkProperty(prop, "Property " + PropertyIds.OBJECT_TYPE_ID));
+                // known properties that are strings and must be set
+                if (PropertyIds.OBJECT_ID.equals(propId) || PropertyIds.BASE_TYPE_ID.equals(propId)
+                        || PropertyIds.OBJECT_TYPE_ID.equals(propId) || PropertyIds.CREATED_BY.equals(propId)
+                        || PropertyIds.LAST_MODIFIED_BY.equals(propId) || PropertyIds.CHANGE_TOKEN.equals(propId)
+                        || PropertyIds.PATH.equals(propId)) {
+                    propertyCheck = PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY;
+                }
 
-            prop = object.getProperty(PropertyIds.NAME);
-            addResult(results, checkProperty(prop, "Property " + PropertyIds.NAME));
+                // known properties that are strings and should be set
+                if (PropertyIds.NAME.equals(propId) || PropertyIds.SOURCE_ID.equals(propId)
+                        || PropertyIds.TARGET_ID.equals(propId)) {
+                    propertyCheck = PropertyCheckEnum.STRING_SHOULD_NOT_BE_EMPTY;
+                }
 
-            prop = object.getProperty(PropertyIds.CREATED_BY);
-            addResult(results, checkProperty(prop, "Property " + PropertyIds.CREATED_BY));
+                // known properties that are not strings and must be set
+                if (PropertyIds.CREATION_DATE.equals(propId) || PropertyIds.LAST_MODIFICATION_DATE.equals(propId)
+                        || PropertyIds.IS_IMMUTABLE.equals(propId)) {
+                    propertyCheck = PropertyCheckEnum.MUST_BE_SET;
+                }
 
-            prop = object.getProperty(PropertyIds.CREATION_DATE);
-            addResult(results, checkProperty(prop, "Property " + PropertyIds.CREATION_DATE));
+                // special cases
+                if (PropertyIds.PARENT_ID.equals(propId)) {
+                    if (object instanceof Folder) {
+                        if (((Folder) object).isRootFolder()) {
+                            propertyCheck = PropertyCheckEnum.MUST_NOT_BE_SET;
+                        } else {
+                            propertyCheck = PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY;
+                        }
+                    } else {
+                        addResult(
+                                results,
+                                createResult(FAILURE, "Property " + PropertyIds.PARENT_ID
+                                        + " is only defined for folders!"));
+                    }
+                }
 
-            prop = object.getProperty(PropertyIds.LAST_MODIFIED_BY);
-            addResult(results, checkProperty(prop, "Property " + PropertyIds.LAST_MODIFIED_BY));
-
-            prop = object.getProperty(PropertyIds.LAST_MODIFICATION_DATE);
-            addResult(results, checkProperty(prop, "Property " + PropertyIds.LAST_MODIFICATION_DATE));
+                // check property
+                addResult(results, checkProperty(prop, "Property " + propId, propertyCheck));
+            }
 
             // allowable actions
             f = createResult(FAILURE, "Object has no CAN_GET_PROPERTIES allowable action!");
@@ -173,7 +198,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return failure;
     }
 
-    protected CmisTestResult checkProperty(Property<?> property, String message) {
+    protected CmisTestResult checkProperty(Property<?> property, String message, PropertyCheckEnum propertyCheck) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
         CmisTestResult f;
@@ -193,6 +218,49 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             f = createResult(WARNING, "Local name is not set!");
             addResult(results, assertNotNull(property.getLocalName(), null, f));
+
+            if ((propertyCheck == PropertyCheckEnum.MUST_BE_SET)
+                    || (propertyCheck == PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY)
+                    || (propertyCheck == PropertyCheckEnum.STRING_SHOULD_NOT_BE_EMPTY)) {
+                f = createResult(FAILURE, "Property has no value!");
+                addResult(results, assertIsTrue(property.getValues().size() > 0, null, f));
+            } else if (propertyCheck == PropertyCheckEnum.MUST_NOT_BE_SET) {
+                f = createResult(FAILURE, "Property has a value!");
+                addResult(results, assertIsTrue(property.getValues().size() == 0, null, f));
+            }
+
+            boolean isString = ((property.getDefinition().getPropertyType() == PropertyType.STRING)
+                    || (property.getDefinition().getPropertyType() == PropertyType.ID)
+                    || (property.getDefinition().getPropertyType() == PropertyType.URI) || (property.getDefinition()
+                    .getPropertyType() == PropertyType.HTML));
+            for (Object value : property.getValues()) {
+                if (value == null) {
+                    addResult(results, createResult(FAILURE, "Property values contain a null value!"));
+                    break;
+                } else if (isString) {
+                    if (propertyCheck == PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY) {
+                        f = createResult(FAILURE, "Property values contain an empty string!");
+                        addResult(results, assertStringNotEmpty(value.toString(), null, f));
+                    } else if (propertyCheck == PropertyCheckEnum.STRING_SHOULD_NOT_BE_EMPTY) {
+                        f = createResult(WARNING, "Property values contain an empty string!");
+                        addResult(results, assertStringNotEmpty(value.toString(), null, f));
+                    }
+                }
+            }
+
+            if (property.getDefinition().getCardinality() == Cardinality.SINGLE) {
+                f = createResult(FAILURE, "Property cardinality is SINGLE but property has more than one value!");
+                addResult(results, assertIsTrue(property.getValues().size() <= 1, null, f));
+            }
+
+            if (property.getDefinition().isRequired() == null) {
+                addResult(results, createResult(FAILURE, "Property definition doesn't contain the required flag!!"));
+            } else {
+                if (property.getDefinition().isRequired().booleanValue()) {
+                    f = createResult(FAILURE, "Property is required but has no value!");
+                    addResult(results, assertIsTrue(property.getValues().size() > 0, null, f));
+                }
+            }
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
@@ -210,10 +278,24 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         addResult(results, assertNotNull(folder, null, f));
 
         if (folder != null) {
-            for (CmisObject child : folder.getChildren()) {
-                addResult(results, checkObject(folder, "Child check: " + (child == null ? "?" : child.getId())));
+            OperationContext oc = new OperationContextImpl();
+            oc.setFilterString("*");
+            oc.setCacheEnabled(false);
+            oc.setIncludeAllowableActions(true);
 
-                if (child != null) {
+            for (CmisObject child : folder.getChildren(oc)) {
+                if (child == null) {
+                    addResult(results, createResult(FAILURE, "Folder contains a null child!"));
+                } else {
+                    String[] propertiesToCheck = new String[child.getType().getPropertyDefinitions().size()];
+
+                    int i = 0;
+                    for (String propId : child.getType().getPropertyDefinitions().keySet()) {
+                        propertiesToCheck[i++] = propId;
+                    }
+
+                    addResult(results, checkObject(folder, propertiesToCheck, "Child check: " + child.getId()));
+
                     f = createResult(FAILURE, "Child is not fileable! Id: " + child.getId() + " / Type: "
                             + child.getType().getId());
                     addResult(results, assertIsTrue(child instanceof FileableCmisObject, null, f));

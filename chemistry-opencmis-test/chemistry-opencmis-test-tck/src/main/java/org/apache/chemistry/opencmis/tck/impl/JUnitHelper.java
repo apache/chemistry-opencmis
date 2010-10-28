@@ -25,6 +25,8 @@ import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestProgressMonitor;
 import org.apache.chemistry.opencmis.tck.CmisTestReport;
+import org.apache.chemistry.opencmis.tck.CmisTestResult;
+import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 import org.apache.chemistry.opencmis.tck.report.TextReport;
 import org.apache.chemistry.opencmis.tck.runner.AbstractRunner;
 import org.junit.Assert;
@@ -60,8 +62,22 @@ public class JUnitHelper {
 
             CmisTestReport report = new TextReport();
             report.createReport(runner.getParameters(), runner.getGroups(), new PrintWriter(System.out));
+
+            checkForFailures(runner);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
+        }
+    }
+
+    private static void checkForFailures(JUnitRunner runner) {
+        for (CmisTestGroup group : runner.getGroups()) {
+            for (CmisTest test : group.getTests()) {
+                for (CmisTestResult result : test.getResults()) {
+                    if (result.getStatus().getLevel() >= CmisTestResultStatus.FAILURE.getLevel()) {
+                        Assert.fail(result.getMessage());
+                    }
+                }
+            }
         }
     }
 

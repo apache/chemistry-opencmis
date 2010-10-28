@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -57,7 +58,11 @@ public class RootFolderTest extends AbstractSessionTest {
         // get the root folder
         Folder rootFolder = session.getRootFolder();
 
-        addResult(checkObject(rootFolder, "Root folder object spec compliance"));
+        String[] propertiesToCheck = new String[] { PropertyIds.OBJECT_ID, PropertyIds.OBJECT_TYPE_ID,
+                PropertyIds.BASE_TYPE_ID, PropertyIds.NAME, PropertyIds.CREATED_BY, PropertyIds.CREATION_DATE,
+                PropertyIds.LAST_MODIFIED_BY, PropertyIds.LAST_MODIFICATION_DATE };
+
+        addResult(checkObject(rootFolder, propertiesToCheck, "Root folder object spec compliance"));
 
         if (rootFolder == null) {
             return;
