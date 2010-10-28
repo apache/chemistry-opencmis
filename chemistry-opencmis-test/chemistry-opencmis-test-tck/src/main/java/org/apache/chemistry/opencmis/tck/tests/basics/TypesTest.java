@@ -50,7 +50,7 @@ public class TypesTest extends AbstractSessionTest {
         // document
         try {
             TypeDefinition documentType = session.getTypeDefinition(BaseTypeId.CMIS_DOCUMENT.value());
-            addResult(checkTypeDefinition(documentType, "Document type spec compliance."));
+            addResult(checkTypeDefinition(session, documentType, "Document type spec compliance."));
 
             failure = createResult(FAILURE, "Document type has the wrong base type: " + documentType.getBaseTypeId());
             addResult(assertEquals(BaseTypeId.CMIS_DOCUMENT, documentType.getBaseTypeId(), null, failure));
@@ -62,7 +62,7 @@ public class TypesTest extends AbstractSessionTest {
         try {
             TypeDefinition folderType = session.getTypeDefinition(BaseTypeId.CMIS_FOLDER.value());
 
-            addResult(checkTypeDefinition(folderType, "Folder type spec compliance."));
+            addResult(checkTypeDefinition(session, folderType, "Folder type spec compliance."));
 
             failure = createResult(FAILURE, "Folder type has the wrong base type: " + folderType.getBaseTypeId());
             addResult(assertEquals(BaseTypeId.CMIS_FOLDER, folderType.getBaseTypeId(), null, failure));
@@ -73,7 +73,7 @@ public class TypesTest extends AbstractSessionTest {
         // relationship
         try {
             TypeDefinition relationshipType = session.getTypeDefinition(BaseTypeId.CMIS_RELATIONSHIP.value());
-            addResult(checkTypeDefinition(relationshipType, "Relationship type spec compliance."));
+            addResult(checkTypeDefinition(session, relationshipType, "Relationship type spec compliance."));
 
             failure = createResult(FAILURE,
                     "Relationship type has the wrong base type: " + relationshipType.getBaseTypeId());
@@ -85,7 +85,7 @@ public class TypesTest extends AbstractSessionTest {
         // policy
         try {
             TypeDefinition policyType = session.getTypeDefinition(BaseTypeId.CMIS_POLICY.value());
-            addResult(checkTypeDefinition(policyType, "Policy type spec compliance."));
+            addResult(checkTypeDefinition(session, policyType, "Policy type spec compliance."));
 
             failure = createResult(FAILURE, "Policy type has the wrong base type: " + policyType.getBaseTypeId());
             addResult(assertEquals(BaseTypeId.CMIS_POLICY, policyType.getBaseTypeId(), null, failure));
@@ -93,10 +93,10 @@ public class TypesTest extends AbstractSessionTest {
             addResult(createResult(WARNING, "Policy type not available!", e, false));
         }
 
-        runTypeChecks(session.getTypeDescendants(null, -1, true));
+        runTypeChecks(session, session.getTypeDescendants(null, -1, true));
     }
 
-    private void runTypeChecks(List<Tree<ObjectType>> types) {
+    private void runTypeChecks(Session session, List<Tree<ObjectType>> types) {
         if (types == null) {
             return;
         }
@@ -108,10 +108,10 @@ public class TypesTest extends AbstractSessionTest {
             addResult(assertNotNull(tree, null, failure));
 
             if (tree != null) {
-                addResult(checkTypeDefinition(tree.getItem(), "Type spec compliance: " + tree.getItem().getId()));
-                runTypeChecks(tree.getChildren());
+                addResult(checkTypeDefinition(session, tree.getItem(), "Type spec compliance: "
+                        + tree.getItem().getId()));
+                runTypeChecks(session, tree.getChildren());
             }
         }
     }
-
 }

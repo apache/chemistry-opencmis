@@ -39,13 +39,17 @@ import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 
@@ -129,13 +133,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 if (PropertyIds.OBJECT_ID.equals(propId) || PropertyIds.BASE_TYPE_ID.equals(propId)
                         || PropertyIds.OBJECT_TYPE_ID.equals(propId) || PropertyIds.CREATED_BY.equals(propId)
                         || PropertyIds.LAST_MODIFIED_BY.equals(propId) || PropertyIds.CHANGE_TOKEN.equals(propId)
-                        || PropertyIds.PATH.equals(propId)) {
+                        || PropertyIds.PATH.equals(propId) || PropertyIds.SOURCE_ID.equals(propId)
+                        || PropertyIds.TARGET_ID.equals(propId) || PropertyIds.POLICY_TEXT.equals(propId)) {
                     propertyCheck = PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY;
                 }
 
                 // known properties that are strings and should be set
-                if (PropertyIds.NAME.equals(propId) || PropertyIds.SOURCE_ID.equals(propId)
-                        || PropertyIds.TARGET_ID.equals(propId)) {
+                if (PropertyIds.NAME.equals(propId)) {
                     propertyCheck = PropertyCheckEnum.STRING_SHOULD_NOT_BE_EMPTY;
                 }
 
@@ -339,7 +343,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
 
-    protected CmisTestResult checkTypeDefinition(TypeDefinition type, String message) {
+    protected CmisTestResult checkTypeDefinition(Session session, TypeDefinition type, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
         CmisTestResult f;
@@ -401,17 +405,54 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             addResult(results, assertStringNotEmpty(type.getDescription(), null, f));
 
             if (BaseTypeId.CMIS_DOCUMENT.equals(type.getBaseTypeId())) {
-                // TODO
+                DocumentTypeDefinition docType = (DocumentTypeDefinition) type;
+
+                f = createResult(FAILURE, "Versionable flag is not set!");
+                addResult(results, assertNotNull(docType.isVersionable(), null, f));
+
+                f = createResult(FAILURE, "Content stream allowed flag is not set!");
+                addResult(results, assertNotNull(docType.getContentStreamAllowed(), null, f));
             } else if (BaseTypeId.CMIS_FOLDER.equals(type.getBaseTypeId())) {
-                // TODO
+                // nothing to do
             } else if (BaseTypeId.CMIS_RELATIONSHIP.equals(type.getBaseTypeId())) {
-                // TODO
+                RelationshipTypeDefinition relType = (RelationshipTypeDefinition) type;
+
+                f = createResult(FAILURE, "Allowed Source Type Ids are not set!");
+                addResult(results, assertNotNull(relType.getAllowedSourceTypeIds(), null, f));
+
+                if (relType.getAllowedSourceTypeIds() != null) {
+                    for (String typeId : relType.getAllowedSourceTypeIds()) {
+                        try {
+                            session.getTypeDefinition(typeId);
+                        } catch (CmisObjectNotFoundException e) {
+                            addResult(
+                                    results,
+                                    createResult(WARNING,
+                                            "Allowed Source Type Ids contain a type id that doesn't exist: " + typeId));
+                        }
+                    }
+                }
+
+                f = createResult(FAILURE, "Allowed Target Type Ids are not set!");
+                addResult(results, assertNotNull(relType.getAllowedTargetTypeIds(), null, f));
+
+                if (relType.getAllowedTargetTypeIds() != null) {
+                    for (String typeId : relType.getAllowedTargetTypeIds()) {
+                        try {
+                            session.getTypeDefinition(typeId);
+                        } catch (CmisObjectNotFoundException e) {
+                            addResult(
+                                    results,
+                                    createResult(WARNING,
+                                            "Allowed Target Type Ids contain a type id that doesn't exist: " + typeId));
+                        }
+                    }
+                }
             } else if (BaseTypeId.CMIS_POLICY.equals(type.getBaseTypeId())) {
-                // TODO
+                // nothing to do
             }
 
-            // TODO check base property definitions
-
+            // check properties
             f = createResult(FAILURE, "Type has no property definitions!");
             addResult(results, assertNotNull(type.getPropertyDefinitions(), null, f));
 
@@ -425,6 +466,155 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         addResult(results, checkPropertyDefinition(propDef, "Property definition: " + propDef.getId()));
                     }
                 }
+            }
+
+            CmisPropertyDefintion cpd;
+
+            // cmis:name
+            cpd = new CmisPropertyDefintion(PropertyIds.NAME, null, PropertyType.STRING, Cardinality.SINGLE, null,
+                    null, null);
+            addResult(results, cpd.check(type));
+
+            // cmis:objectId
+            cpd = new CmisPropertyDefintion(PropertyIds.OBJECT_ID, false, PropertyType.ID, Cardinality.SINGLE,
+                    Updatability.READONLY, null, null);
+            addResult(results, cpd.check(type));
+
+            // cmis:baseTypeId
+            cpd = new CmisPropertyDefintion(PropertyIds.BASE_TYPE_ID, false, PropertyType.ID, Cardinality.SINGLE,
+                    Updatability.READONLY, null, null);
+            addResult(results, cpd.check(type));
+
+            // cmis:objectTypeId
+            cpd = new CmisPropertyDefintion(PropertyIds.OBJECT_TYPE_ID, true, PropertyType.ID, Cardinality.SINGLE,
+                    Updatability.ONCREATE, null, null);
+            addResult(results, cpd.check(type));
+
+            // cmis:createdBy
+            cpd = new CmisPropertyDefintion(PropertyIds.CREATED_BY, false, PropertyType.STRING, Cardinality.SINGLE,
+                    Updatability.READONLY, true, true);
+            addResult(results, cpd.check(type));
+
+            // cmis:creationDate
+            cpd = new CmisPropertyDefintion(PropertyIds.CREATION_DATE, false, PropertyType.DATETIME,
+                    Cardinality.SINGLE, Updatability.READONLY, true, true);
+            addResult(results, cpd.check(type));
+
+            // cmis:lastModifiedBy
+            cpd = new CmisPropertyDefintion(PropertyIds.LAST_MODIFIED_BY, false, PropertyType.STRING,
+                    Cardinality.SINGLE, Updatability.READONLY, true, true);
+            addResult(results, cpd.check(type));
+
+            // cmis:lastModificationDate
+            cpd = new CmisPropertyDefintion(PropertyIds.LAST_MODIFICATION_DATE, false, PropertyType.DATETIME,
+                    Cardinality.SINGLE, Updatability.READONLY, true, true);
+            addResult(results, cpd.check(type));
+
+            // cmis:changeToken
+            cpd = new CmisPropertyDefintion(PropertyIds.CHANGE_TOKEN, false, PropertyType.STRING, Cardinality.SINGLE,
+                    Updatability.READONLY, null, null);
+            addResult(results, cpd.check(type));
+
+            if (BaseTypeId.CMIS_DOCUMENT.equals(type.getBaseTypeId())) {
+                // cmis:isImmutable
+                cpd = new CmisPropertyDefintion(PropertyIds.IS_IMMUTABLE, false, PropertyType.BOOLEAN,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:isLatestVersion
+                cpd = new CmisPropertyDefintion(PropertyIds.IS_LATEST_VERSION, false, PropertyType.BOOLEAN,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:isMajorVersion
+                cpd = new CmisPropertyDefintion(PropertyIds.IS_MAJOR_VERSION, false, PropertyType.BOOLEAN,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:isLatestMajorVersion
+                cpd = new CmisPropertyDefintion(PropertyIds.IS_LATEST_MAJOR_VERSION, false, PropertyType.BOOLEAN,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:versionLabel
+                cpd = new CmisPropertyDefintion(PropertyIds.VERSION_LABEL, false, PropertyType.STRING,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:versionSeriesId
+                cpd = new CmisPropertyDefintion(PropertyIds.VERSION_SERIES_ID, false, PropertyType.ID,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:isVersionSeriesCheckedOut
+                cpd = new CmisPropertyDefintion(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, false, PropertyType.BOOLEAN,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:versionSeriesCheckedOutBy
+                cpd = new CmisPropertyDefintion(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, false, PropertyType.STRING,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:versionSeriesCheckedOutId
+                cpd = new CmisPropertyDefintion(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, false, PropertyType.ID,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:checkinComment
+                cpd = new CmisPropertyDefintion(PropertyIds.CHECKIN_COMMENT, false, PropertyType.STRING,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:contentStreamLength
+                cpd = new CmisPropertyDefintion(PropertyIds.CONTENT_STREAM_LENGTH, false, PropertyType.INTEGER,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:contentStreamMimeType
+                cpd = new CmisPropertyDefintion(PropertyIds.CONTENT_STREAM_MIME_TYPE, false, PropertyType.STRING,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:contentStreamFileName
+                cpd = new CmisPropertyDefintion(PropertyIds.CONTENT_STREAM_FILE_NAME, false, PropertyType.STRING,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:contentStreamId
+                cpd = new CmisPropertyDefintion(PropertyIds.CONTENT_STREAM_ID, false, PropertyType.ID,
+                        Cardinality.SINGLE, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+            } else if (BaseTypeId.CMIS_FOLDER.equals(type.getBaseTypeId())) {
+                // cmis:parentId
+                cpd = new CmisPropertyDefintion(PropertyIds.PARENT_ID, false, PropertyType.ID, Cardinality.SINGLE,
+                        Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:path
+                cpd = new CmisPropertyDefintion(PropertyIds.PATH, false, PropertyType.STRING, Cardinality.SINGLE,
+                        Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:allowedChildObjectTypeIds
+                cpd = new CmisPropertyDefintion(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, false, PropertyType.ID,
+                        Cardinality.MULTI, Updatability.READONLY, null, null);
+                addResult(results, cpd.check(type));
+            } else if (BaseTypeId.CMIS_RELATIONSHIP.equals(type.getBaseTypeId())) {
+                // cmis:sourceId
+                cpd = new CmisPropertyDefintion(PropertyIds.SOURCE_ID, true, PropertyType.ID, Cardinality.SINGLE, null,
+                        null, null);
+                addResult(results, cpd.check(type));
+
+                // cmis:targetId
+                cpd = new CmisPropertyDefintion(PropertyIds.TARGET_ID, true, PropertyType.ID, Cardinality.SINGLE, null,
+                        null, null);
+                addResult(results, cpd.check(type));
+            } else if (BaseTypeId.CMIS_POLICY.equals(type.getBaseTypeId())) {
+                // cmis:policyText
+                cpd = new CmisPropertyDefintion(PropertyIds.POLICY_TEXT, true, PropertyType.STRING, Cardinality.SINGLE,
+                        null, null, null);
+                addResult(results, cpd.check(type));
             }
         }
 
@@ -443,7 +633,44 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         addResult(results, assertNotNull(propDef, null, f));
 
         if (propDef != null) {
-            // TODO
+            f = createResult(FAILURE, "Property id is not set!");
+            addResult(results, assertStringNotEmpty(propDef.getId(), null, f));
+
+            f = createResult(WARNING, "Local name is not set!");
+            addResult(results, assertStringNotEmpty(propDef.getLocalName(), null, f));
+
+            f = createResult(WARNING, "Local namespace is not set!");
+            addResult(results, assertStringNotEmpty(propDef.getLocalNamespace(), null, f));
+
+            f = createResult(FAILURE, "Query name is not set!");
+            addResult(results, assertStringNotEmpty(propDef.getQueryName(), null, f));
+
+            f = createResult(WARNING, "Display name is not set!");
+            addResult(results, assertStringNotEmpty(propDef.getDisplayName(), null, f));
+
+            f = createResult(WARNING, "Description is not set!");
+            addResult(results, assertStringNotEmpty(propDef.getDescription(), null, f));
+
+            f = createResult(FAILURE, "Property type is not set!");
+            addResult(results, assertNotNull(propDef.getPropertyType(), null, f));
+
+            f = createResult(FAILURE, "Cardinality is not set!");
+            addResult(results, assertNotNull(propDef.getCardinality(), null, f));
+
+            f = createResult(FAILURE, "Updatability is not set!");
+            addResult(results, assertNotNull(propDef.getUpdatability(), null, f));
+
+            f = createResult(FAILURE, "Inherited flag is not set!");
+            addResult(results, assertNotNull(propDef.isInherited(), null, f));
+
+            f = createResult(FAILURE, "Required flag is not set!");
+            addResult(results, assertNotNull(propDef.isRequired(), null, f));
+
+            f = createResult(FAILURE, "Queryable flag is not set!");
+            addResult(results, assertNotNull(propDef.isQueryable(), null, f));
+
+            f = createResult(FAILURE, "Orderable flag is not set!");
+            addResult(results, assertNotNull(propDef.isOrderable(), null, f));
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
@@ -452,7 +679,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
 
-    private void addResult(List<CmisTestResult> results, CmisTestResult result) {
+    protected void addResult(List<CmisTestResult> results, CmisTestResult result) {
         if (result != null) {
             if (result instanceof CmisTestResultImpl) {
                 ((CmisTestResultImpl) result).setStackTrace(getStackTrace());
@@ -465,7 +692,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
     }
 
-    private CmisTestResultStatus getWorst(List<CmisTestResult> results) {
+    protected CmisTestResultStatus getWorst(List<CmisTestResult> results) {
         if ((results == null) || (results.isEmpty())) {
             return CmisTestResultStatus.OK;
         }
@@ -480,4 +707,94 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         return CmisTestResultStatus.fromLevel(max);
     }
+
+    // --- helper classes ---
+
+    public class CmisPropertyDefintion {
+        private String id;
+        private Boolean required;
+        private PropertyType propertyType;
+        private Cardinality cardinality;
+        private Updatability updatability;
+        private Boolean queryable;
+        private Boolean orderable;
+
+        public CmisPropertyDefintion(String id, Boolean required, PropertyType propertyType, Cardinality cardinality,
+                Updatability updatability, Boolean queryable, Boolean orderable) {
+            this.id = id;
+            this.required = required;
+            this.propertyType = propertyType;
+            this.cardinality = cardinality;
+            this.updatability = updatability;
+            this.queryable = queryable;
+            this.orderable = orderable;
+        }
+
+        public CmisTestResult check(TypeDefinition type) {
+            List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+            CmisTestResult f;
+
+            Map<String, PropertyDefinition<?>> propDefs = type.getPropertyDefinitions();
+            if (propDefs == null) {
+                addResult(results, createResult(FAILURE, "Property definitions are missing!"));
+            } else {
+                PropertyDefinition<?> propDef = propDefs.get(id);
+                if (propDef == null) {
+                    addResult(results, createResult(FAILURE, "Property definition is missing!"));
+                } else {
+                    if ((required != null) && !required.equals(propDef.isRequired())) {
+                        f = createResult(FAILURE,
+                                "Required flag: expected: " + required + " / actual: " + propDef.isRequired());
+                        addResult(results, f);
+                    }
+
+                    if (!propertyType.equals(propDef.getPropertyType())) {
+                        f = createResult(FAILURE,
+                                "Property type: expected: " + propertyType + " / actual: " + propDef.getPropertyType());
+                        addResult(results, f);
+                    }
+
+                    if (!cardinality.equals(propDef.getCardinality())) {
+                        f = createResult(FAILURE,
+                                "Cardinality: expected: " + cardinality + " / actual: " + propDef.getCardinality());
+                        addResult(results, f);
+                    }
+
+                    if ((updatability != null) && !updatability.equals(propDef.getUpdatability())) {
+                        f = createResult(FAILURE,
+                                "Updatability: expected: " + updatability + " / actual: " + propDef.getUpdatability());
+                        addResult(results, f);
+                    }
+
+                    if ((queryable != null) && !queryable.equals(propDef.isQueryable())) {
+                        f = createResult(FAILURE,
+                                "Queryable: expected: " + queryable + " / actual: " + propDef.isQueryable());
+                        addResult(results, f);
+                    }
+
+                    if ((orderable != null) && !orderable.equals(propDef.isOrderable())) {
+                        f = createResult(FAILURE,
+                                "Orderable: expected: " + orderable + " / actual: " + propDef.isQueryable());
+                        addResult(results, f);
+                    }
+
+                    if (type.getBaseTypeId() != null) {
+                        Boolean inherited = !type.getBaseTypeId().value().equals(type.getId());
+                        if (!inherited.equals(propDef.isInherited())) {
+                            f = createResult(FAILURE,
+                                    "Inhertited: expected: " + orderable + " / actual: " + propDef.isQueryable());
+                            addResult(results, f);
+                        }
+                    }
+                }
+            }
+
+            CmisTestResultImpl result = createResult(getWorst(results), "Property definition: " + id);
+            result.getChildren().addAll(results);
+
+            return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        }
+    }
+
 }
