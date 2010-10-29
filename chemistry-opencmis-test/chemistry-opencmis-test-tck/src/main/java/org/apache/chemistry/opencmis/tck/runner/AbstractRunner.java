@@ -52,12 +52,12 @@ public abstract class AbstractRunner {
         }
 
         // override with system properties
-        for (String key : System.getProperties().stringPropertyNames()) {
-            if (!key.startsWith(OVERRIDE_KEY)) {
+        for (Object key : System.getProperties().keySet()) {
+            if (!key.toString().startsWith(OVERRIDE_KEY)) {
                 continue;
             }
 
-            parameters.put(key, System.getProperties().getProperty(key));
+            parameters.put(key.toString(), System.getProperties().getProperty(key.toString()));
         }
 
     }
