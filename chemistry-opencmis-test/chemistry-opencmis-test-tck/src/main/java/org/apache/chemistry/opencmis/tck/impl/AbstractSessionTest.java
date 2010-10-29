@@ -679,6 +679,192 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
 
+    protected CmisTestResult assertEquals(TypeDefinition expected, TypeDefinition actual, CmisTestResult success,
+            CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected type defintion is null, but actual type defintion is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual type defintion is null, but expected type defintion is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        f = createResult(FAILURE, "Type ids don't match!");
+        addResult(results, assertEquals(expected.getId(), actual.getId(), null, f));
+
+        f = createResult(FAILURE, "Base type ids don't match!");
+        addResult(results, assertEquals(expected.getBaseTypeId(), actual.getBaseTypeId(), null, f));
+
+        f = createResult(FAILURE, "Parent type ids don't match!");
+        addResult(results, assertEquals(expected.getParentTypeId(), actual.getParentTypeId(), null, f));
+
+        f = createResult(FAILURE, "Query names don't match!");
+        addResult(results, assertEquals(expected.getQueryName(), actual.getQueryName(), null, f));
+
+        f = createResult(FAILURE, "Local names don't match!");
+        addResult(results, assertEquals(expected.getLocalName(), actual.getLocalName(), null, f));
+
+        f = createResult(FAILURE, "Local namespaces don't match!");
+        addResult(results, assertEquals(expected.getLocalNamespace(), actual.getLocalNamespace(), null, f));
+
+        f = createResult(FAILURE, "Display names don't match!");
+        addResult(results, assertEquals(expected.getDisplayName(), actual.getDisplayName(), null, f));
+
+        f = createResult(FAILURE, "Descriptions don't match!");
+        addResult(results, assertEquals(expected.getDescription(), actual.getDescription(), null, f));
+
+        f = createResult(FAILURE, "Controllable ACl flags don't match!");
+        addResult(results, assertEquals(expected.isControllableAcl(), actual.isControllableAcl(), null, f));
+
+        f = createResult(FAILURE, "Controllable Policy flags don't match!");
+        addResult(results, assertEquals(expected.isControllablePolicy(), actual.isControllablePolicy(), null, f));
+
+        f = createResult(FAILURE, "Creatable flags don't match!");
+        addResult(results, assertEquals(expected.isCreatable(), actual.isCreatable(), null, f));
+
+        f = createResult(FAILURE, "Fileable flags don't match!");
+        addResult(results, assertEquals(expected.isFileable(), actual.isFileable(), null, f));
+
+        f = createResult(FAILURE, "Fulltext indexed flags don't match!");
+        addResult(results, assertEquals(expected.isFulltextIndexed(), actual.isFulltextIndexed(), null, f));
+
+        f = createResult(FAILURE, "Queryable flags don't match!");
+        addResult(results, assertEquals(expected.isQueryable(), actual.isQueryable(), null, f));
+
+        f = createResult(FAILURE, "Included in supertype query flags don't match!");
+        addResult(results,
+                assertEquals(expected.isIncludedInSupertypeQuery(), actual.isIncludedInSupertypeQuery(), null, f));
+
+        if ((expected.getPropertyDefinitions() != null) && (actual.getPropertyDefinitions() != null)) {
+            Map<String, PropertyDefinition<?>> epd = expected.getPropertyDefinitions();
+            Map<String, PropertyDefinition<?>> apd = actual.getPropertyDefinitions();
+
+            f = createResult(FAILURE, "Different number of property defintions!");
+            addResult(results, assertEquals(epd.size(), apd.size(), null, f));
+
+            for (PropertyDefinition<?> pd : epd.values()) {
+                f = createResult(FAILURE, "Property definition mismatch: " + pd.getId());
+                addResult(results, assertEquals(pd, apd.get(pd.getId()), null, f));
+            }
+        }
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEquals(PropertyDefinition<?> expected, PropertyDefinition<?> actual,
+            CmisTestResult success, CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected property defintion is null, but actual property defintion is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual property defintion is null, but expected property defintion is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        f = createResult(FAILURE, "Property ids don't match!");
+        addResult(results, assertEquals(expected.getId(), actual.getId(), null, f));
+
+        f = createResult(FAILURE, "Local names don't match!");
+        addResult(results, assertEquals(expected.getLocalName(), actual.getLocalName(), null, f));
+
+        f = createResult(FAILURE, "Local namespaces don't match!");
+        addResult(results, assertEquals(expected.getLocalNamespace(), actual.getLocalNamespace(), null, f));
+
+        f = createResult(FAILURE, "Display names don't match!");
+        addResult(results, assertEquals(expected.getDisplayName(), actual.getDisplayName(), null, f));
+
+        f = createResult(FAILURE, "Query names don't match!");
+        addResult(results, assertEquals(expected.getQueryName(), actual.getQueryName(), null, f));
+
+        f = createResult(FAILURE, "Property types don't match!");
+        addResult(results, assertEquals(expected.getPropertyType(), actual.getPropertyType(), null, f));
+
+        f = createResult(FAILURE, "Cardinalities don't match!");
+        addResult(results, assertEquals(expected.getCardinality(), actual.getCardinality(), null, f));
+
+        f = createResult(FAILURE, "Descriptions don't match!");
+        addResult(results, assertEquals(expected.getDescription(), actual.getDescription(), null, f));
+
+        f = createResult(FAILURE, "Updatability flags don't match!");
+        addResult(results, assertEquals(expected.getUpdatability(), actual.getUpdatability(), null, f));
+
+        f = createResult(FAILURE, "Default values don't match!");
+        addResult(results, assertEqualLists(expected.getDefaultValue(), actual.getDefaultValue(), null, f));
+
+        f = createResult(FAILURE, "Inherited flags don't match!");
+        addResult(results, assertEquals(expected.isInherited(), actual.isInherited(), null, f));
+
+        f = createResult(FAILURE, "Required flags don't match!");
+        addResult(results, assertEquals(expected.isRequired(), actual.isRequired(), null, f));
+
+        f = createResult(FAILURE, "Queryable flags don't match!");
+        addResult(results, assertEquals(expected.isQueryable(), actual.isQueryable(), null, f));
+
+        f = createResult(FAILURE, "Orderable flags don't match!");
+        addResult(results, assertEquals(expected.isOrderable(), actual.isOrderable(), null, f));
+
+        f = createResult(FAILURE, "Open choice flags don't match!");
+        addResult(results, assertEquals(expected.isOpenChoice(), actual.isOpenChoice(), null, f));
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    // --- helpers ---
+
     protected void addResult(List<CmisTestResult> results, CmisTestResult result) {
         if (result != null) {
             if (result instanceof CmisTestResultImpl) {

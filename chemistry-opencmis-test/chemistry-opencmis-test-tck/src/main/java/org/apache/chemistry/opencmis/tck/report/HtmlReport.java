@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.tck.report;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,9 +40,20 @@ public class HtmlReport extends AbstractCmisTestReport {
     public void createReport(Map<String, String> parameters, List<CmisTestGroup> groups, Writer writer)
             throws IOException {
         writer.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n");
-        writer.write("<html><head><title>Report</title></head><body>\n");
+        writer.write("<html><head>\n<title>Report</title>\n");
+        writer.write("<style TYPE=\"text/css\">\n");
+        writer.write(".tckResultINFO { margin-left: 5px; margin-right: 5px; }\n");
+        writer.write(".tckResultSKIPPED { margin-left: 5px; margin-right: 5px; background-color: #FFFFFF; }\n");
+        writer.write(".tckResultOK { margin-left: 5px; margin-right: 5px; background-color: #00FF00; }\n");
+        writer.write(".tckResultWARNING { margin-left: 5px; margin-right: 5px; background-color: #FFFF00; }\n");
+        writer.write(".tckResultFAILURE { margin-left: 5px; margin-right: 5px; background-color: #FF6000; }\n");
+        writer.write(".tckResultUNEXPECTED_EXCEPTION { margin-left: 5px; margin-right: 5px; background-color: #FF0000; }\n");
+        writer.write("</style>");
 
-        writer.write("\n<h1>Report</h1>\n");
+        writer.write("</head><body>\n");
+
+        writer.write("\n<h1>OpenCMIS TCK Report</h1>\n");
+        writer.write((new Date()) + "\n");
 
         writer.write("\n<h2>Parameters</h2>\n");
 
@@ -81,13 +93,15 @@ public class HtmlReport extends AbstractCmisTestReport {
 
         if (test.getResults() != null) {
             for (CmisTestResult result : test.getResults()) {
+                writer.write("<div style=\"padding: 5px;\">\n");
                 printResult(result, writer);
+                writer.write("</div>\n");
             }
         }
     }
 
     private void printResult(CmisTestResult result, Writer writer) throws IOException {
-        writer.write("<div style=\"padding:5px\">\n");
+        writer.write("<div class=\"tckResult" + result.getStatus().name() + "\">\n");
 
         writer.write("<b>" + result.getStatus() + "</b>: " + result.getMessage());
 

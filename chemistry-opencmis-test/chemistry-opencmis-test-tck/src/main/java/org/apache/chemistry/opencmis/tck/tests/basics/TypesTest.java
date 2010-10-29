@@ -21,9 +21,11 @@ package org.apache.chemistry.opencmis.tck.tests.basics;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
@@ -93,14 +95,17 @@ public class TypesTest extends AbstractSessionTest {
             addResult(createResult(WARNING, "Policy type not available!", e, false));
         }
 
-        runTypeChecks(session, session.getTypeDescendants(null, -1, true));
+        int numOfTypes = runTypeChecks(session, session.getTypeDescendants(null, -1, true));
+
+        addResult(createInfoResult("Checked " + numOfTypes + " type definitions."));
     }
 
-    private void runTypeChecks(Session session, List<Tree<ObjectType>> types) {
+    private int runTypeChecks(Session session, List<Tree<ObjectType>> types) {
         if (types == null) {
-            return;
+            return 0;
         }
 
+        int numOfTypes = 0;
         CmisTestResult failure;
 
         for (Tree<ObjectType> tree : types) {
@@ -108,10 +113,87 @@ public class TypesTest extends AbstractSessionTest {
             addResult(assertNotNull(tree, null, failure));
 
             if (tree != null) {
+                numOfTypes++;
+
                 addResult(checkTypeDefinition(session, tree.getItem(), "Type spec compliance: "
                         + tree.getItem().getId()));
-                runTypeChecks(session, tree.getChildren());
+
+                // clear the cache to ensure that the type definition is
+                // reloaded from the repository
+                session.clear();
+
+                try {
+                    TypeDefinition reloadedType = session.getTypeDefinition(tree.getItem().getId());
+
+                    addResult(checkTypeDefinition(session, reloadedType, "Type spec compliance: "
+                            + (reloadedType == null ? "?" : reloadedType.getId())));
+
+                    failure = createResult(FAILURE,
+                            "Type fetched via getTypeDescendants() is does not macth type fetched via getTypeDefinition(): "
+                                    + tree.getItem().getId());
+                    addResult(assertEquals(tree.getItem(), reloadedType, null, failure));
+                } catch (CmisObjectNotFoundException e) {
+                    addResult(createResult(FAILURE,
+                            "Type fetched via getTypeDescendants() is not available via getTypeDefinition(): "
+                                    + tree.getItem().getId(), e, false));
+                }
+
+                // clear the cache again to ensure that the type definition
+                // children are reloaded from the repository
+                session.clear();
+
+                try {
+                    ItemIterable<ObjectType> reloadedTypeChildren = session.getTypeChildren(tree.getItem().getId(),
+                            true);
+
+                    // check type children
+                    Map<String, ObjectType> typeChilden = new HashMap<String, ObjectType>();
+                    for (ObjectType childType : reloadedTypeChildren) {
+                        addResult(checkTypeDefinition(session, childType, "Type spec compliance: "
+                                + (childType == null ? "?" : childType.getId())));
+
+                        if (childType != null) {
+                            typeChilden.put(childType.getId(), childType);
+                        }
+                    }
+
+                    // compare type children and type descendants
+                    if (tree.getChildren() == null) {
+                        failure = createResult(FAILURE,
+                                "Type children fetched via getTypeDescendants() don't match type children fetched via getTypeChildren(): "
+                                        + tree.getItem().getId());
+                        addResult(assertEquals(0, typeChilden.size(), null, failure));
+                    } else {
+                        // collect the children
+                        Map<String, ObjectType> typeDescendants = new HashMap<String, ObjectType>();
+                        for (Tree<ObjectType> childType : tree.getChildren()) {
+                            if ((childType != null) && (childType.getItem() != null)) {
+                                typeDescendants.put(childType.getItem().getId(), childType.getItem());
+                            }
+                        }
+
+                        failure = createResult(FAILURE,
+                                "Type children fetched via getTypeDescendants() don't match type children fetched via getTypeChildren(): "
+                                        + tree.getItem().getId());
+                        addResult(assertEquals(typeDescendants.size(), typeChilden.size(), null, failure));
+
+                        for (ObjectType compareType : typeDescendants.values()) {
+                            failure = createResult(FAILURE,
+                                    "Type fetched via getTypeDescendants() doesn't match type fetched via getTypeChildren(): "
+                                            + tree.getItem().getId());
+                            addResult(assertEquals(compareType, typeChilden.get(compareType.getId()), null, failure));
+                        }
+                    }
+                } catch (CmisObjectNotFoundException e) {
+                    addResult(createResult(FAILURE,
+                            "Type children fetched via getTypeDescendants() is not available via getTypeChildren(): "
+                                    + tree.getItem().getId(), e, false));
+                }
+
+                numOfTypes += runTypeChecks(session, tree.getChildren());
             }
         }
+
+        return numOfTypes;
     }
 }
