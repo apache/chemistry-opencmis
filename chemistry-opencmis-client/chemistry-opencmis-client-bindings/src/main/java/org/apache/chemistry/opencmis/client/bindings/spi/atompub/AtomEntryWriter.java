@@ -36,7 +36,6 @@ import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyString;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Writes a CMIS Atom entry to an output stream.
@@ -172,6 +171,6 @@ public class AtomEntryWriter implements CmisAtomPubConstants {
             baos.write(buffer, 0, b);
         }
 
-        return new String(Base64.encodeBase64Chunked(baos.toByteArray()), "UTF-8");
+        return Base64.encodeBytes(baos.toByteArray());
     }
 }

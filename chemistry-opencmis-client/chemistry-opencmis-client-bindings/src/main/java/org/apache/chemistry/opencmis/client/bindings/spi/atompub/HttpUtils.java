@@ -153,22 +153,23 @@ public class HttpUtils {
      * HTTP Response.
      */
     public static class Response {
-        private int fResponseCode;
-        private String fResponseMessage;
-        private Map<String, List<String>> fHeaders;
-        private InputStream fStream;
-        private String fErrorContent;
+        private int responseCode;
+        private String responseMessage;
+        private Map<String, List<String>> headers;
+        private InputStream stream;
+        private String errorContent;
+        private BigInteger length;
 
         public Response(int responseCode, String responseMessage, Map<String, List<String>> headers,
                 InputStream stream, InputStream errorStream) {
-            fResponseCode = responseCode;
-            fResponseMessage = responseMessage;
-            fStream = stream;
+            this.responseCode = responseCode;
+            this.responseMessage = responseMessage;
+            this.stream = stream;
 
-            fHeaders = new HashMap<String, List<String>>();
+            this.headers = new HashMap<String, List<String>>();
             if (headers != null) {
                 for (Map.Entry<String, List<String>> e : headers.entrySet()) {
-                    fHeaders.put(e.getKey() == null ? null : e.getKey().toLowerCase(), e.getValue());
+                    this.headers.put(e.getKey() == null ? null : e.getKey().toLowerCase(), e.getValue());
                 }
             }
 
@@ -187,28 +188,46 @@ public class HttpUtils {
                         }
                         reader.close();
 
-                        fErrorContent = sb.toString();
+                        errorContent = sb.toString();
                     } catch (IOException e) {
-                        fErrorContent = "Unable to retrieve content: " + e.getMessage();
+                        errorContent = "Unable to retrieve content: " + e.getMessage();
                     }
+                }
+            }
+
+            // get the stream length
+            String lengthStr = getHeader("Content-Length");
+            if (lengthStr != null) {
+                try {
+                    length = new BigInteger(lengthStr);
+                } catch (NumberFormatException e) {
+                }
+            }
+
+            // if the stream is base64 encoded, decode it
+            if (stream != null) {
+                String encoding = getContentTransferEncoding();
+                if ((encoding != null) && (encoding.toLowerCase().trim().equals("base64"))) {
+                    length = null;
+                    this.stream = new Base64.InputStream(stream);
                 }
             }
         }
 
         public int getResponseCode() {
-            return fResponseCode;
+            return responseCode;
         }
 
         public String getResponseMessage() {
-            return fResponseMessage;
+            return responseMessage;
         }
 
         public Map<String, List<String>> getHeaders() {
-            return fHeaders;
+            return headers;
         }
 
         public String getHeader(String name) {
-            List<String> list = fHeaders.get(name.toLowerCase(Locale.US));
+            List<String> list = headers.get(name.toLowerCase(Locale.US));
             if ((list == null) || (list.isEmpty())) {
                 return null;
             }
@@ -241,31 +260,25 @@ public class HttpUtils {
             return getHeader("Content-Location");
         }
 
-        public BigInteger getContentLength() {
-            String lenStr = getHeader("Content-Length");
-            if (lenStr == null) {
-                return null;
-            }
+        public String getContentTransferEncoding() {
+            return getHeader("Content-Transfer-Encoding");
+        }
 
-            try {
-                return new BigInteger(lenStr);
-            } catch (NumberFormatException nfe) {
-                return null;
-            }
+        public BigInteger getContentLength() {
+            return length;
         }
 
         public InputStream getStream() {
-            return fStream;
+            return stream;
         }
 
         public String getErrorContent() {
-            return fErrorContent;
+            return errorContent;
         }
     }
 
     /**
-     * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
-     * 
+     * Output interface.
      */
     public interface Output {
         void write(OutputStream out) throws Exception;
