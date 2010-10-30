@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.workbench.model;
 
 import java.net.Authenticator;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -155,6 +156,10 @@ public class ClientSession {
 
     public Session getSession() {
         return session;
+    }
+
+    public Map<String, String> getSessionParameters() {
+        return Collections.unmodifiableMap(sessionParameters);
     }
 
     public OperationContext getObjectOperationContext() {

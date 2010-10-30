@@ -82,7 +82,7 @@ public class CmisTckAntTask extends Task {
             }
 
             if (groups == null) {
-                runner.loadDefaultTCKGroups();
+                runner.loadDefaultTckGroups();
             } else {
                 runner.loadGroups(groups);
             }

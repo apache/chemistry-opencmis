@@ -42,6 +42,7 @@ public abstract class AbstractRunner {
 
     private Map<String, String> parameters;
     private List<CmisTestGroup> groups = new ArrayList<CmisTestGroup>();
+    private boolean isCanceled = false;
 
     // --- parameters ---
 
@@ -113,7 +114,7 @@ public abstract class AbstractRunner {
 
     // --- groups ---
 
-    public void loadDefaultTCKGroups() throws Exception {
+    public void loadDefaultTckGroups() throws Exception {
         loadGroups(this.getClass().getResourceAsStream(DEFAULT_TCK_GROUPS));
     }
 
@@ -206,7 +207,13 @@ public abstract class AbstractRunner {
      * Runs all configured groups.
      */
     public void run(CmisTestProgressMonitor monitor) throws Exception {
+        isCanceled = false;
+
         for (CmisTestGroup group : groups) {
+            if (isCanceled) {
+                break;
+            }
+
             if ((group == null) || (!group.isEnabled())) {
                 continue;
             }
@@ -214,5 +221,13 @@ public abstract class AbstractRunner {
             group.setProgressMonitor(monitor);
             group.run();
         }
+    }
+
+    public synchronized boolean isCanceled() {
+        return isCanceled;
+    }
+
+    public synchronized void cancel() {
+        isCanceled = true;
     }
 }

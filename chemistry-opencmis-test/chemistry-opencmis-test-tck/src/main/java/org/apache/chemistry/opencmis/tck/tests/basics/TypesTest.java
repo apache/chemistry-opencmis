@@ -42,7 +42,7 @@ public class TypesTest extends AbstractSessionTest {
     @Override
     public void init(Map<String, String> parameters) {
         super.init(parameters);
-        setName("Types");
+        setName("Types Test");
     }
 
     @Override

@@ -39,7 +39,7 @@ public class RepositoryInfoTest extends AbstractSessionTest {
     @Override
     public void init(Map<String, String> parameters) {
         super.init(parameters);
-        setName("Repository Info");
+        setName("Repository Info Test");
     }
 
     @Override

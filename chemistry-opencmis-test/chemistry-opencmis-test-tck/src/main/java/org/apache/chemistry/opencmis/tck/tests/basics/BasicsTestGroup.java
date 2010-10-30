@@ -31,7 +31,7 @@ public class BasicsTestGroup extends AbstractSessionTestGroup {
     public void init(Map<String, String> parameters) throws Exception {
         super.init(parameters);
 
-        setName("Basics");
+        setName("Basics Test Group");
 
         addTest(new RepositoryInfoTest());
         addTest(new RootFolderTest());

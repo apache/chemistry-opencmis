@@ -68,10 +68,11 @@ public class ClientFrame extends JFrame implements WindowListener {
     private static final int BUTTON_QUERY = 3;
     private static final int BUTTON_CHANGELOG = 4;
     private static final int BUTTON_CONSOLE = 5;
-    private static final int BUTTON_CREATE_DOCUMENT = 6;
-    private static final int BUTTON_CREATE_FOLDER = 7;
-    private static final int BUTTON_LOG = 8;
-    private static final int BUTTON_INFO = 9;
+    private static final int BUTTON_TCK = 6;
+    private static final int BUTTON_CREATE_DOCUMENT = 7;
+    private static final int BUTTON_CREATE_FOLDER = 8;
+    private static final int BUTTON_LOG = 9;
+    private static final int BUTTON_INFO = 10;
 
     private static final String PREFS_X = "x";
     private static final String PREFS_Y = "y";
@@ -125,7 +126,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar = new JToolBar("CMIS Toolbar", JToolBar.HORIZONTAL);
 
-        toolbarButton = new JButton[10];
+        toolbarButton = new JButton[11];
 
         toolbarButton[BUTTON_CONNECT] = new JButton("Connection", ClientHelper.getIcon("connect.png"));
         toolbarButton[BUTTON_CONNECT].addActionListener(new ActionListener() {
@@ -201,6 +202,16 @@ public class ClientFrame extends JFrame implements WindowListener {
             });
             toolbarConsolePopup.add(menuItem);
         }
+
+        toolbarButton[BUTTON_TCK] = new JButton("TCK", ClientHelper.getIcon("tck.png"));
+        toolbarButton[BUTTON_TCK].setEnabled(false);
+        toolbarButton[BUTTON_TCK].addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new TckDialog(thisFrame, model);
+            }
+        });
+
+        toolBar.add(toolbarButton[BUTTON_TCK]);
 
         toolBar.addSeparator();
 
@@ -290,6 +301,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 toolbarButton[BUTTON_QUERY].setEnabled(model.supportsQuery());
                 toolbarButton[BUTTON_CHANGELOG].setEnabled(model.supportsChangeLog());
                 toolbarButton[BUTTON_CONSOLE].setEnabled(true);
+                toolbarButton[BUTTON_TCK].setEnabled(true);
                 toolbarButton[BUTTON_CREATE_DOCUMENT].setEnabled(true);
                 toolbarButton[BUTTON_CREATE_FOLDER].setEnabled(true);
 
@@ -300,6 +312,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 toolbarButton[BUTTON_QUERY].setEnabled(false);
                 toolbarButton[BUTTON_CHANGELOG].setEnabled(false);
                 toolbarButton[BUTTON_CONSOLE].setEnabled(false);
+                toolbarButton[BUTTON_TCK].setEnabled(false);
                 toolbarButton[BUTTON_CREATE_DOCUMENT].setEnabled(false);
                 toolbarButton[BUTTON_CREATE_FOLDER].setEnabled(false);
 

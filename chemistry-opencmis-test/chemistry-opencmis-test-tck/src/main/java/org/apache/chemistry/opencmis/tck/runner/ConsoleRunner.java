@@ -42,7 +42,7 @@ public class ConsoleRunner extends AbstractRunner {
         }
 
         if (args.length < 2) {
-            loadDefaultTCKGroups();
+            loadDefaultTckGroups();
         } else {
             loadGroups(new File(args[1]));
         }

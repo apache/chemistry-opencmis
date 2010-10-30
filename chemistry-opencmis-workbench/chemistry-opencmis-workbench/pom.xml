@@ -191,9 +191,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.chemistry.opencmis</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-client-impl</artifactId>
-            <version>0.2.0-incubating-SNAPSHOT</version>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>chemistry-opencmis-test-tck</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
