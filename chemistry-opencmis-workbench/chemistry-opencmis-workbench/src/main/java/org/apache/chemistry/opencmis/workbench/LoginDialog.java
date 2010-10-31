@@ -27,6 +27,8 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,7 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.workbench.ClientHelper.FileEntry;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 
 public class LoginDialog extends JDialog {
@@ -66,6 +69,9 @@ public class LoginDialog extends JDialog {
     public static final String SYSPROP_AUTHENTICATION = ClientSession.WORKBENCH_PREFIX + "authentication";
     public static final String SYSPROP_USER = ClientSession.WORKBENCH_PREFIX + "user";
     public static final String SYSPROP_PASSWORD = ClientSession.WORKBENCH_PREFIX + "password";
+
+    private static final String CONFIGS_FOLDER = "/configs/";
+    private static final String CONFIGS_LIBRARY = "config-library.properties";
 
     private static final long serialVersionUID = 1L;
 
@@ -83,6 +89,8 @@ public class LoginDialog extends JDialog {
     private JButton loginButton;
     private JComboBox repositoryBox;
 
+    private List<FileEntry> sessionConfigurations;
+
     private boolean expertLogin = false;
 
     private boolean canceled = true;
@@ -95,8 +103,8 @@ public class LoginDialog extends JDialog {
     }
 
     private void createGUI() {
-        setMinimumSize(new Dimension(600, 350));
-        setPreferredSize(new Dimension(600, 350));
+        setMinimumSize(new Dimension(700, 500));
+        setPreferredSize(new Dimension(700, 500));
 
         Container pane = getContentPane();
         pane.setLayout(new BorderLayout());
@@ -127,6 +135,18 @@ public class LoginDialog extends JDialog {
         // expert panel
         final JPanel expertPanel = new JPanel(new BorderLayout());
         expertPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+
+        sessionConfigurations = ClientHelper.readFileProperties(CONFIGS_FOLDER + CONFIGS_LIBRARY, CONFIGS_FOLDER);
+
+        final JComboBox configs = new JComboBox();
+
+        configs.addItem(new FileEntry("", null));
+        if (sessionConfigurations != null) {
+            for (FileEntry fe : sessionConfigurations) {
+                configs.addItem(fe);
+            }
+        }
+        expertPanel.add(configs, BorderLayout.PAGE_START);
 
         sessionParameterTextArea = new JTextArea();
         sessionParameterTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
@@ -207,6 +227,8 @@ public class LoginDialog extends JDialog {
                 expertLogin = (loginTabs.getSelectedComponent() == expertPanel);
 
                 if (expertLogin) {
+                    configs.setSelectedIndex(0);
+                    
                     StringBuilder sb = new StringBuilder();
                     for (Map.Entry<String, String> parameter : createBasicSessionParameters().entrySet()) {
                         sb.append(parameter.getKey());
@@ -218,6 +240,15 @@ public class LoginDialog extends JDialog {
                     sessionParameterTextArea.setText(sb.toString());
                     sessionParameterTextArea.setCaretPosition(0);
                 }
+            }
+        });
+
+        configs.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                FileEntry fe = (FileEntry) e.getItem();
+
+                sessionParameterTextArea.setText(ClientHelper.readFileAndRemoveHeader(fe.getFile()));
+                sessionParameterTextArea.setCaretPosition(0);
             }
         });
 

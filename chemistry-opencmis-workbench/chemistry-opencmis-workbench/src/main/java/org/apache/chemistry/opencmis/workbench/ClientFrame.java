@@ -31,15 +31,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import javax.swing.ImageIcon;
@@ -52,6 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
+import org.apache.chemistry.opencmis.workbench.ClientHelper.FileEntry;
 import org.apache.chemistry.opencmis.workbench.details.DetailsTabs;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
@@ -191,13 +187,13 @@ public class ClientFrame extends JFrame implements WindowListener {
         toolBar.add(toolbarButton[BUTTON_CONSOLE]);
 
         toolbarConsolePopup = new JPopupMenu();
-        for (CmisScript s : readScriptLibrary()) {
-            JMenuItem menuItem = new JMenuItem(s.getName());
-            final String path = s.getPath();
+        for (FileEntry fe : readScriptLibrary()) {
+            JMenuItem menuItem = new JMenuItem(fe.getName());
+            final String file = fe.getFile();
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    openConsole(path);
+                    openConsole(file);
                 }
             });
             toolbarConsolePopup.add(menuItem);
@@ -325,7 +321,7 @@ public class ClientFrame extends JFrame implements WindowListener {
         }
     }
 
-    private void openConsole(String path) {
+    private void openConsole(String file) {
         try {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -348,7 +344,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                     new URI(
                             "http://incubator.apache.org/chemistry/javadoc/org/apache/chemistry/opencmis/client/api/package-summary.html"));
 
-            console.getInputArea().setText(readScript(path));
+            console.getInputArea().setText(ClientHelper.readFileAndRemoveHeader(file));
         } catch (Exception ex) {
             ClientHelper.showError(null, ex);
         } finally {
@@ -375,94 +371,14 @@ public class ClientFrame extends JFrame implements WindowListener {
         menu.add(menuItem);
     }
 
-    private List<CmisScript> readScriptLibrary() {
-        InputStream stream = this.getClass().getResourceAsStream(GROOVY_SCRIPT_FOLDER + GROOVY_SCRIPT_LIBRARY);
-        if (stream == null) {
-            return Collections.singletonList(new CmisScript("Groovy Console", null));
+    private List<FileEntry> readScriptLibrary() {
+        List<FileEntry> result = ClientHelper.readFileProperties(GROOVY_SCRIPT_FOLDER + GROOVY_SCRIPT_LIBRARY,
+                GROOVY_SCRIPT_FOLDER);
+        if (result == null) {
+            result = Collections.singletonList(new FileEntry("Groovy Console", null));
         }
 
-        try {
-            Properties properties = new Properties();
-            properties.load(stream);
-            stream.close();
-
-            List<CmisScript> result = new ArrayList<CmisScript>();
-            for (String script : properties.stringPropertyNames()) {
-                result.add(new CmisScript(properties.getProperty(script), GROOVY_SCRIPT_FOLDER + script));
-            }
-            Collections.sort(result);
-
-            return result;
-        } catch (IOException e) {
-            return Collections.singletonList(new CmisScript("Groovy Console", null));
-        }
-    }
-
-    private String readScript(String path) throws Exception {
-        if (path == null) {
-            return "";
-        }
-
-        InputStream stream = this.getClass().getResourceAsStream(path);
-        if (stream == null) {
-            throw new Exception("Groovy script is missing!");
-        } else {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-            StringBuilder sb = new StringBuilder();
-            String s;
-            boolean header = true;
-
-            while ((s = reader.readLine()) != null) {
-                // remove header
-                if (header) {
-                    String st = s.trim();
-                    if (st.length() == 0) {
-                        continue;
-                    }
-
-                    char c = st.charAt(0);
-                    header = (c == '/') || (c == '*');
-                    if (header) {
-                        continue;
-                    }
-                }
-
-                sb.append(s);
-                sb.append("\n");
-            }
-
-            reader.close();
-
-            return sb.toString();
-        }
-    }
-
-    static class CmisScript implements Comparable<CmisScript> {
-        private String name;
-        private String path;
-
-        public CmisScript(String name, String path) {
-            this.name = name;
-            this.path = path;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
-        @Override
-        public int compareTo(CmisScript o) {
-            return name.compareToIgnoreCase(o.getName());
-        }
+        return result;
     }
 
     public void windowOpened(WindowEvent e) {

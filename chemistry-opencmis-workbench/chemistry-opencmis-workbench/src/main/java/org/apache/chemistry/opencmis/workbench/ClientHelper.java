@@ -21,15 +21,21 @@ package org.apache.chemistry.opencmis.workbench;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Properties;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -227,6 +233,101 @@ public class ClientHelper {
                 } catch (Exception e) {
                 }
             }
+        }
+    }
+
+    public static String readFileAndRemoveHeader(String file) {
+        if (file == null) {
+            return "";
+        }
+
+        InputStream stream = file.getClass().getResourceAsStream(file);
+        if (stream == null) {
+            return "";
+        } else {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+                StringBuilder sb = new StringBuilder();
+                String s;
+                boolean header = true;
+
+                while ((s = reader.readLine()) != null) {
+                    // remove header
+                    if (header) {
+                        String st = s.trim();
+                        if (st.length() == 0) {
+                            header = false;
+                            continue;
+                        }
+
+                        char c = st.charAt(0);
+                        header = (c == '/') || (c == '*') || (c == '#');
+                        if (header) {
+                            continue;
+                        }
+                    }
+
+                    sb.append(s);
+                    sb.append("\n");
+                }
+
+                reader.close();
+
+                return sb.toString();
+            } catch (Exception e) {
+                return "";
+            }
+        }
+    }
+
+    public static List<FileEntry> readFileProperties(String propertiesFile, String path) {
+        InputStream stream = propertiesFile.getClass().getResourceAsStream(propertiesFile);
+        if (stream == null) {
+            return null;
+        }
+
+        try {
+            Properties properties = new Properties();
+            properties.load(stream);
+            stream.close();
+
+            List<FileEntry> result = new ArrayList<FileEntry>();
+            for (String file : properties.stringPropertyNames()) {
+                result.add(new FileEntry(properties.getProperty(file), path + file));
+            }
+            Collections.sort(result);
+
+            return result;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static class FileEntry implements Comparable<FileEntry> {
+        private String name;
+        private String file;
+
+        public FileEntry(String name, String file) {
+            this.name = name;
+            this.file = file;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getFile() {
+            return file;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        @Override
+        public int compareTo(FileEntry o) {
+            return name.compareToIgnoreCase(o.getName());
         }
     }
 }
