@@ -158,7 +158,8 @@ public class CmisAtomPubServlet extends HttpServlet {
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
-            context = HttpUtils.createContext(request, CallContext.BINDING_ATOMPUB, callContextHandler);
+            context = HttpUtils.createContext(request, getServletContext(),
+                    CallContext.BINDING_ATOMPUB, callContextHandler);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {

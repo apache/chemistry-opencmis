@@ -93,7 +93,7 @@ public abstract class AbstractLocalService {
      */
     static class LocalCallContext implements CallContext {
 
-        private Map<String, String> contextMap = new HashMap<String, String>();
+        private Map<String, Object> contextMap = new HashMap<String, Object>();
 
         public LocalCallContext(String repositoryId, String user, String password) {
             contextMap.put(REPOSITORY_ID, repositoryId);
@@ -105,20 +105,20 @@ public abstract class AbstractLocalService {
             return BINDING_LOCAL;
         }
 
-        public String get(String key) {
+        public Object get(String key) {
             return contextMap.get(key);
         }
 
         public String getRepositoryId() {
-            return get(REPOSITORY_ID);
+            return (String) get(REPOSITORY_ID);
         }
 
         public String getUsername() {
-            return get(USERNAME);
+            return (String) get(USERNAME);
         }
 
         public String getPassword() {
-            return get(PASSWORD);
+            return (String) get(PASSWORD);
         }
 
         public String getLocale() {

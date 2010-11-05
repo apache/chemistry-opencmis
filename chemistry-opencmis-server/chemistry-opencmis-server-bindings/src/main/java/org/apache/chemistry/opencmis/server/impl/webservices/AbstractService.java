@@ -88,6 +88,10 @@ public abstract class AbstractService {
             }
         }
 
+        ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
+                MessageContext.SERVLET_CONTEXT);
+        context.put(CallContext.SERVLET_CONTEXT, servletContext);
+
         return context;
     }
 

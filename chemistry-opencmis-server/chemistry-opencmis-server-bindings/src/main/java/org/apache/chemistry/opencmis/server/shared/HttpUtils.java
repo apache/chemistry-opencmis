@@ -22,7 +22,9 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.ws.handler.MessageContext;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -37,7 +39,8 @@ public class HttpUtils {
     /**
      * Creates a {@link CallContext} object from a servlet request.
      */
-    public static CallContext createContext(HttpServletRequest request, String binding,
+    public static CallContext createContext(HttpServletRequest request,
+            ServletContext servletContext, String binding,
             CallContextHandler callContextHandler) {
         String[] pathFragments = splitPath(request);
 
@@ -57,6 +60,9 @@ public class HttpUtils {
                 }
             }
         }
+
+        // servlet context
+        context.put(CallContext.SERVLET_CONTEXT, servletContext);
 
         // decode range
         String rangeHeader = request.getHeader("Range");

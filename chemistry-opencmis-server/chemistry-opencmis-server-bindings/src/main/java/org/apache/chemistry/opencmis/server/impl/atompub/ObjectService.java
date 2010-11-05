@@ -389,13 +389,13 @@ public final class ObjectService {
         String streamId = getStringParameter(request, Constants.PARAM_STREAM_ID);
 
         BigInteger offset = null;
-        String offsetStr = context.get(CallContext.OFFSET);
+        String offsetStr = (String) context.get(CallContext.OFFSET);
         if (offsetStr != null) {
             offset = new BigInteger(offsetStr);
         }
 
         BigInteger length = null;
-        String lengthStr = context.get(CallContext.LENGTH);
+        String lengthStr = (String) context.get(CallContext.LENGTH);
         if (lengthStr != null) {
             length = new BigInteger(offsetStr);
         }

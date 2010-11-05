@@ -35,6 +35,8 @@ public interface CallContext {
     String OFFSET = "offset";
     String LENGTH = "length";
 
+    String SERVLET_CONTEXT = "servletContext";
+
     /**
      * Returns the binding. Usually it returns
      * {@link CallContext#BINDING_ATOMPUB},
@@ -50,12 +52,12 @@ public interface CallContext {
 
     /**
      * Returns context data by key.
-     * 
+     *
      * @param key
      *            the key
      * @return the data if the key is valid, <code>null</code> otherwise
      */
-    String get(String key);
+    Object get(String key);
 
     /**
      * Returns the repository id.

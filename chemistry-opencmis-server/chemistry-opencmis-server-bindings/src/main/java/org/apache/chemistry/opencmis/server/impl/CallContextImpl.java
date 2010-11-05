@@ -30,7 +30,7 @@ public class CallContextImpl implements CallContext {
 
     private String binding;
     private boolean objectInfoRequired;
-    private Map<String, String> parameter = new HashMap<String, String>();
+    private Map<String, Object> parameter = new HashMap<String, Object>();
 
     public CallContextImpl(String binding, String repositoryId, boolean objectInfoRequired) {
         this.binding = binding;
@@ -46,37 +46,37 @@ public class CallContextImpl implements CallContext {
         return objectInfoRequired;
     }
 
-    public String get(String key) {
+    public Object get(String key) {
         return parameter.get(key);
     }
 
     public String getRepositoryId() {
-        return get(REPOSITORY_ID);
+        return (String) get(REPOSITORY_ID);
     }
 
     public String getUsername() {
-        return get(USERNAME);
+        return (String) get(USERNAME);
     }
 
     public String getPassword() {
-        return get(PASSWORD);
+        return (String) get(PASSWORD);
     }
 
     public String getLocale() {
-        return get(LOCALE);
+        return (String) get(LOCALE);
     }
 
     /**
      * Adds a parameter.
      */
-    public void put(String key, String value) {
+    public void put(String key, Object value) {
         parameter.put(key, value);
     }
 
     /**
      * Removes a parameter.
      */
-    public String remove(String key) {
+    public Object remove(String key) {
         return parameter.remove(key);
     }
 
