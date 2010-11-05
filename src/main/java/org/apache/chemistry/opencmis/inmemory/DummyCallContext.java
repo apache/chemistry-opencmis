@@ -27,7 +27,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 public class DummyCallContext implements CallContext {
-    private Map<String, String> fParameter = new HashMap<String, String>();
+    private Map<String, Object> fParameter = new HashMap<String, Object>();
 
     public DummyCallContext() {
         fParameter.put(USERNAME, "TestUser");
@@ -39,7 +39,7 @@ public class DummyCallContext implements CallContext {
         return false;
     }
 
-    public String get(String key) {
+    public Object get(String key) {
         return fParameter.get(key);
     }
 
@@ -48,19 +48,19 @@ public class DummyCallContext implements CallContext {
     }
 
     public String getRepositoryId() {
-        return get(REPOSITORY_ID);
+        return (String) get(REPOSITORY_ID);
     }
 
     public String getLocale() {
-        return get(LOCALE);
+        return (String) get(LOCALE);
     }
 
     public String getPassword() {
-        return get(PASSWORD);
+        return (String) get(PASSWORD);
     }
 
     public String getUsername() {
-        return get(USERNAME);
+        return (String) get(USERNAME);
     }
 
     public void put(String key, String value) {
