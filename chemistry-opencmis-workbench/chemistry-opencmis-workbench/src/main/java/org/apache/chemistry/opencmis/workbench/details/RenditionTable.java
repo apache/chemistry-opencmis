@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.workbench.details;
 
 import java.awt.event.MouseEvent;
 
-import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -40,11 +39,11 @@ public class RenditionTable extends AbstractDetailsTable {
     @Override
     public void doubleClickAction(MouseEvent e, int rowIndex) {
         String streamId = getObject().getRenditions().get(rowIndex).getStreamId();
-        
+
         if (e.isShiftDown()) {
-            ClientHelper.download(this.getParent(), (Document) getObject(), streamId);
+            ClientHelper.download(this.getParent(), getObject(), streamId);
         } else {
-            ClientHelper.open(this.getParent(), (Document) getObject(), streamId);
+            ClientHelper.open(this.getParent(), getObject(), streamId);
         }
     }
 
