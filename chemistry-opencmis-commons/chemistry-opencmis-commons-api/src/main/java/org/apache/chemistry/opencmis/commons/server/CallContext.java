@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.server;
 
+import java.math.BigInteger;
+
 /**
  * An object implementing this interface holds context data of the current call.
  */
@@ -52,7 +54,7 @@ public interface CallContext {
 
     /**
      * Returns context data by key.
-     *
+     * 
      * @param key
      *            the key
      * @return the data if the key is valid, <code>null</code> otherwise
@@ -78,4 +80,14 @@ public interface CallContext {
      * Returns the locale.
      */
     String getLocale();
+
+    /**
+     * Returns the content offset if set, <code>null</code> otherwise
+     */
+    BigInteger getOffset();
+
+    /**
+     * Returns the content length if set, <code>null</code> otherwise
+     */
+    BigInteger getLength();
 }

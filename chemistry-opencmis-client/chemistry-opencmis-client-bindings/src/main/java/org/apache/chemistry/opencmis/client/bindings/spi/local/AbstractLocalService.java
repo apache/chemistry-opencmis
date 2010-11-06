@@ -1,4 +1,5 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.local;
+
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,7 +21,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
  *
  */
 
-
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,6 +124,14 @@ public abstract class AbstractLocalService {
 
         public String getLocale() {
             return null;
+        }
+
+        public BigInteger getOffset() {
+            return (BigInteger) get(OFFSET);
+        }
+
+        public BigInteger getLength() {
+            return (BigInteger) get(LENGTH);
         }
 
         public boolean isObjectInfoRequired() {

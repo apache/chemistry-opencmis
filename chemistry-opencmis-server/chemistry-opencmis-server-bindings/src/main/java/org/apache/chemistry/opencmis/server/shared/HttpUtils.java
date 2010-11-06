@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.ws.handler.MessageContext;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -39,8 +38,7 @@ public class HttpUtils {
     /**
      * Creates a {@link CallContext} object from a servlet request.
      */
-    public static CallContext createContext(HttpServletRequest request,
-            ServletContext servletContext, String binding,
+    public static CallContext createContext(HttpServletRequest request, ServletContext servletContext, String binding,
             CallContextHandler callContextHandler) {
         String[] pathFragments = splitPath(request);
 
@@ -90,10 +88,10 @@ public class HttpUtils {
                     }
 
                     if (offset != null) {
-                        context.put(CallContext.OFFSET, offset.toString());
+                        context.put(CallContext.OFFSET, offset);
                     }
                     if (length != null) {
-                        context.put(CallContext.LENGTH, length.toString());
+                        context.put(CallContext.LENGTH, length);
                     }
                 }
             }

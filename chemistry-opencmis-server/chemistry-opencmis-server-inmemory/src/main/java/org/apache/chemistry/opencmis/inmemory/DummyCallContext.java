@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.inmemory;
  */
 
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,6 +56,14 @@ public class DummyCallContext implements CallContext {
         return (String) get(LOCALE);
     }
 
+    public BigInteger getOffset() {
+        return (BigInteger) get(OFFSET);
+    }
+
+    public BigInteger getLength() {
+        return (BigInteger) get(LENGTH);
+    }
+    
     public String getPassword() {
         return (String) get(PASSWORD);
     }

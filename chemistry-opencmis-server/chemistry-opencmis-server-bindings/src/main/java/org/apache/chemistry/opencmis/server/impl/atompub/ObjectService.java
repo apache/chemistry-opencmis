@@ -388,17 +388,8 @@ public final class ObjectService {
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String streamId = getStringParameter(request, Constants.PARAM_STREAM_ID);
 
-        BigInteger offset = null;
-        String offsetStr = (String) context.get(CallContext.OFFSET);
-        if (offsetStr != null) {
-            offset = new BigInteger(offsetStr);
-        }
-
-        BigInteger length = null;
-        String lengthStr = (String) context.get(CallContext.LENGTH);
-        if (lengthStr != null) {
-            length = new BigInteger(offsetStr);
-        }
+        BigInteger offset = context.getOffset();
+        BigInteger length = context.getLength();
 
         // execute
         ContentStream content = service.getContentStream(repositoryId, objectId, streamId, offset, length, null);

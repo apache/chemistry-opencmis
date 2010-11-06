@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingImpl;
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
@@ -43,7 +42,6 @@ public final class CmisBindingFactory {
     /** NTLM authentication provider class */
     public static final String NTLM_AUTHENTICATION_PROVIDER = "org.apache.chemistry.opencmis.client.bindings.spi.NTLMAuthenticationProvider";
 
-    
     private Map<String, String> defaults;
 
     /**

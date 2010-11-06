@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +65,14 @@ public class CallContextImpl implements CallContext {
 
     public String getLocale() {
         return (String) get(LOCALE);
+    }
+
+    public BigInteger getOffset() {
+        return (BigInteger) get(OFFSET);
+    }
+
+    public BigInteger getLength() {
+        return (BigInteger) get(LENGTH);
     }
 
     /**
