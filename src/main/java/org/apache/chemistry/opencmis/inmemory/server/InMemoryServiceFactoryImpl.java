@@ -179,6 +179,14 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
               return null;
           }
 
+          public BigInteger getOffset() {
+              return null;
+          }
+
+          public BigInteger getLength() {
+              return null;
+          }
+          
           public String getPassword() {
               return null;
           }
