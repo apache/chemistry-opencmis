@@ -132,9 +132,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 // known properties that are strings and must be set
                 if (PropertyIds.OBJECT_ID.equals(propId) || PropertyIds.BASE_TYPE_ID.equals(propId)
                         || PropertyIds.OBJECT_TYPE_ID.equals(propId) || PropertyIds.CREATED_BY.equals(propId)
-                        || PropertyIds.LAST_MODIFIED_BY.equals(propId) || PropertyIds.CHANGE_TOKEN.equals(propId)
-                        || PropertyIds.PATH.equals(propId) || PropertyIds.SOURCE_ID.equals(propId)
-                        || PropertyIds.TARGET_ID.equals(propId) || PropertyIds.POLICY_TEXT.equals(propId)) {
+                        || PropertyIds.LAST_MODIFIED_BY.equals(propId) || PropertyIds.PATH.equals(propId)
+                        || PropertyIds.SOURCE_ID.equals(propId) || PropertyIds.TARGET_ID.equals(propId)
+                        || PropertyIds.POLICY_TEXT.equals(propId)) {
                     propertyCheck = PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY;
                 }
 
@@ -171,7 +171,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             // allowable actions
             f = createResult(FAILURE, "Object has no CAN_GET_PROPERTIES allowable action!");
-            addResult(results, assertNotAllowableAction(object, Action.CAN_GET_PROPERTIES, null, f));
+            addResult(results, assertAllowableAction(object, Action.CAN_GET_PROPERTIES, null, f));
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
@@ -298,7 +298,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         propertiesToCheck[i++] = propId;
                     }
 
-                    addResult(results, checkObject(folder, propertiesToCheck, "Child check: " + child.getId()));
+                    addResult(results, checkObject(child, propertiesToCheck, "Child check: " + child.getId()));
 
                     f = createResult(FAILURE, "Child is not fileable! Id: " + child.getId() + " / Type: "
                             + child.getType().getId());
@@ -331,8 +331,14 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     }
 
                     f = createResult(FAILURE,
-                            "Child has no CAN_GET_FOLDER_PARENT allowable action! Id: " + child.getId());
-                    addResult(results, assertAllowableAction(folder, Action.CAN_GET_FOLDER_PARENT, null, f));
+                            "Child has no CAN_GET_OBJECT_PARENTS allowable action! Id: " + child.getId());
+                    addResult(results, assertAllowableAction(child, Action.CAN_GET_OBJECT_PARENTS, null, f));
+
+                    if (child instanceof Folder) {
+                        f = createResult(FAILURE,
+                                "Child has no CAN_GET_FOLDER_PARENT allowable action! Id: " + child.getId());
+                        addResult(results, assertAllowableAction(child, Action.CAN_GET_FOLDER_PARENT, null, f));
+                    }
                 }
             }
         }

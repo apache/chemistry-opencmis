@@ -90,7 +90,7 @@ public class RootFolderTest extends AbstractSessionTest {
         addResult(assertNotAllowableAction(rootFolder, Action.CAN_GET_FOLDER_PARENT, null, failure));
 
         failure = createResult(WARNING, "Root folder has no CAN_GET_CHILDREN allowable action!");
-        addResult(assertNotAllowableAction(rootFolder, Action.CAN_GET_CHILDREN, null, failure));
+        addResult(assertAllowableAction(rootFolder, Action.CAN_GET_CHILDREN, null, failure));
 
         // simple children test
         addResult(checkChildren(rootFolder, "Root folder children check"));
