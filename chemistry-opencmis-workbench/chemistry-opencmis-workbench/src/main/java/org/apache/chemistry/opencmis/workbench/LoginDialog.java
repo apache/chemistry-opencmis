@@ -139,6 +139,7 @@ public class LoginDialog extends JDialog {
         sessionConfigurations = ClientHelper.readFileProperties(CONFIGS_FOLDER + CONFIGS_LIBRARY, CONFIGS_FOLDER);
 
         final JComboBox configs = new JComboBox();
+        configs.setMaximumRowCount(20);
 
         configs.addItem(new FileEntry("", null));
         if (sessionConfigurations != null) {
