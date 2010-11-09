@@ -24,12 +24,14 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.UNEXPECTED_
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -49,6 +51,7 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
@@ -58,7 +61,19 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
  */
 public abstract class AbstractSessionTest extends AbstractCmisTest {
 
+    public final static OperationContext SELECT_ALL_NO_CACHE_OC = new OperationContextImpl();
+    static {
+        SELECT_ALL_NO_CACHE_OC.setFilterString("*");
+        SELECT_ALL_NO_CACHE_OC.setCacheEnabled(false);
+        SELECT_ALL_NO_CACHE_OC.setIncludeAllowableActions(true);
+        SELECT_ALL_NO_CACHE_OC.setIncludeAcls(true);
+        SELECT_ALL_NO_CACHE_OC.setIncludePathSegments(true);
+        SELECT_ALL_NO_CACHE_OC.setIncludePolicies(true);
+        SELECT_ALL_NO_CACHE_OC.setRenditionFilterString("*");
+    }
+
     private SessionFactory factory = SessionFactoryImpl.newInstance();
+    private Folder testFolder;
 
     public BindingType getBinding() {
         if (getParameters() == null) {
@@ -88,6 +103,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             session = factory.getRepositories(parameters).get(0).createSession();
         }
 
+        // switch off the cache
+        session.getDefaultContext().setCacheEnabled(false);
+
         try {
             run(session);
         } catch (Exception e) {
@@ -106,6 +124,185 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         addResult(assertNotNull(ri, null, failure));
 
         return ri;
+    }
+
+    // --- handy create and delete methods ---
+
+    /**
+     * Creates a folder.
+     */
+    protected Folder createFolder(Folder parent, String name) {
+        String objectTypeId = getParameters().get(TestParameters.DEFAULT_FOLDER_TYPE);
+        if (objectTypeId == null) {
+            objectTypeId = TestParameters.DEFAULT_FOLDER_TYPE_VALUE;
+        }
+
+        return createFolder(parent, name, objectTypeId);
+    }
+
+    /**
+     * Creates a folder.
+     */
+    protected Folder createFolder(Folder parent, String name, String objectTypeId) {
+        Folder result = null;
+
+        CmisTestResult f;
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
+
+        try {
+            // create the folder
+            result = parent.createFolder(properties);
+        } catch (CmisBaseException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION, "Folder could not be created! Exception: " + e.getMessage(),
+                    e, true));
+        }
+
+        try {
+            // check the new folder
+            String[] propertiesToCheck = new String[result.getType().getPropertyDefinitions().size()];
+
+            int i = 0;
+            for (String propId : result.getType().getPropertyDefinitions().keySet()) {
+                propertiesToCheck[i++] = propId;
+            }
+
+            addResult(checkObject(result, propertiesToCheck, "New folder object spec compliance"));
+
+            // check object parents
+            List<Folder> objectParents = result.getParents();
+
+            f = createResult(FAILURE, "Newly created folder has no or more than one parent! Id: " + result.getId(),
+                    true);
+            addResult(assertEquals(1, objectParents.size(), null, f));
+
+            f = createResult(FAILURE, "First object parent of the newly created folder does not match parent! Id: "
+                    + result.getId(), true);
+            assertShallowEquals(parent, objectParents.get(0), null, f);
+
+            // check folder parent
+            Folder folderParent = result.getFolderParent();
+            f = createResult(FAILURE, "Newly created folder has no folder parent! Id: " + result.getId(), true);
+            addResult(assertNotNull(folderParent, null, f));
+
+            f = createResult(FAILURE,
+                    "Folder parent of the newly created folder does not match parent! Id: " + result.getId(), true);
+            assertShallowEquals(parent, folderParent, null, f);
+
+            // check children of parent
+            boolean found = false;
+            for (CmisObject child : parent.getChildren()) {
+                if (child == null) {
+                    addResult(createResult(FAILURE, "Parent folder contains a null child!", true));
+                } else {
+                    if (result.getId().equals(child.getId())) {
+                        found = true;
+
+                        f = createResult(FAILURE, "Folder and parent child don't match! Id: " + result.getId(), true);
+                        assertShallowEquals(result, child, null, f);
+                        break;
+                    }
+                }
+            }
+
+            if (!found) {
+                addResult(createResult(FAILURE, "Folder is not a child of the parent folder! Id: " + result.getId(),
+                        true));
+            }
+        } catch (CmisBaseException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Newly created folder is invalid! Exception: " + e.getMessage(), e, true));
+        }
+
+        return result;
+    }
+
+    /**
+     * Deletes an object and checks if it is deleted.
+     */
+    protected void deleteObject(CmisObject object) {
+        if (object != null) {
+            if (object instanceof Folder) {
+                try {
+                    ((Folder) object).deleteTree(true, null, true);
+                } catch (CmisBaseException e) {
+                    addResult(createResult(UNEXPECTED_EXCEPTION,
+                            "Folder could not be deleted! Exception: " + e.getMessage(), e, true));
+                }
+            } else {
+                try {
+                    object.delete(true);
+                } catch (CmisBaseException e) {
+                    addResult(createResult(UNEXPECTED_EXCEPTION,
+                            "Object could not be deleted! Exception: " + e.getMessage(), e, true));
+                }
+            }
+
+            CmisTestResult f = createResult(FAILURE, "Object should not exist anymore but it is still there! Id: "
+                    + object.getId(), true);
+            addResult(assertIsFalse(exists(object), null, f));
+        }
+    }
+
+    /**
+     * Tests if an object exists by refreshing it.
+     */
+    protected boolean exists(CmisObject object) {
+        try {
+            object.refresh();
+            return true;
+        } catch (CmisObjectNotFoundException e) {
+            return false;
+        }
+    }
+
+    // --- test folder methods ---
+
+    /**
+     * Creates a test folder.
+     */
+    protected Folder createTestFolder(Session session) {
+
+        String testFolderParentPath = getParameters().get(TestParameters.DEFAULT_TEST_FOLDER_PARENT);
+        if (testFolderParentPath == null) {
+            testFolderParentPath = TestParameters.DEFAULT_TEST_FOLDER_PARENT_VALUE;
+        }
+
+        String name = "cmistck" + System.currentTimeMillis() + session.getRepositoryInfo().hashCode();
+
+        Folder parent = null;
+        try {
+            CmisObject parentObject = session.getObjectByPath(testFolderParentPath);
+            if (!(parentObject instanceof Folder)) {
+                addResult(createResult(FAILURE, "Parent folder of the test folder is actually not a folder! Path: "
+                        + testFolderParentPath, true));
+            }
+
+            parent = (Folder) parentObject;
+        } catch (CmisBaseException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Test folder could not be created! Exception: " + e.getMessage(), e, true));
+        }
+
+        testFolder = createFolder(parent, name);
+
+        return testFolder;
+    }
+
+    /**
+     * Get the test folder.
+     */
+    protected Folder getTestFolder() {
+        return testFolder;
+    }
+
+    /**
+     * Delete the test folder.
+     */
+    protected void deleteTestFolder() {
+        deleteObject(testFolder);
     }
 
     // --- reusable checks ----
@@ -282,12 +479,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         addResult(results, assertNotNull(folder, null, f));
 
         if (folder != null) {
-            OperationContext oc = new OperationContextImpl();
-            oc.setFilterString("*");
-            oc.setCacheEnabled(false);
-            oc.setIncludeAllowableActions(true);
+            long count = 0;
+            ItemIterable<CmisObject> children = folder.getChildren(SELECT_ALL_NO_CACHE_OC);
 
-            for (CmisObject child : folder.getChildren(oc)) {
+            for (CmisObject child : children) {
+                count++;
+
                 if (child == null) {
                     addResult(results, createResult(FAILURE, "Folder contains a null child!"));
                 } else {
@@ -328,6 +525,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                             f = createResult(FAILURE, "Folder is not found in childs parents! Id: " + child.getId());
                             addResult(results, assertIsTrue(parents.size() > 0, null, f));
                         }
+                    } else {
+                        addResult(results, createResult(FAILURE, "Found a non-filealed child! Id: " + child.getId()));
                     }
 
                     f = createResult(FAILURE,
@@ -341,6 +540,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     }
                 }
             }
+
+            f = createResult(WARNING, "Number of children doesn't match the reported total number of items!");
+            addResult(results, assertEquals(count, children.getTotalNumItems(), null, f));
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
@@ -348,6 +550,57 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
+
+    protected CmisTestResult assertShallowEquals(CmisObject expected, CmisObject actual, CmisTestResult success,
+            CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected object is null, but actual object is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual object is null, but expected object is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        f = createResult(FAILURE, "Ids don't match!");
+        addResult(results, assertEquals(expected.getId(), actual.getId(), null, f));
+
+        f = createResult(FAILURE, "Base types don't match!");
+        addResult(results, assertEquals(expected.getBaseTypeId(), actual.getBaseTypeId(), null, f));
+
+        f = createResult(FAILURE, "Types don't match!");
+        addResult(results, assertEquals(expected.getType().getId(), actual.getType().getId(), null, f));
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    // --- type checks ---
 
     protected CmisTestResult checkTypeDefinition(Session session, TypeDefinition type, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();

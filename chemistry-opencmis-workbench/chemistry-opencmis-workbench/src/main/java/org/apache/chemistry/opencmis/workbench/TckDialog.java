@@ -121,7 +121,7 @@ public class TckDialog {
                 public void actionPerformed(ActionEvent event) {
                     int answer = JOptionPane.showConfirmDialog(owner,
                             "Running the TCK may take a long time and may add, remove and alter data in the repository!\n"
-                                    + "It also puts at a strain on the repository, performing several hundred calls!\n"
+                                    + "It also puts at a strain on the repository, performing several thousand calls!\n"
                                     + "\nAre you sure you want to proceed?", "TCK", JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
 
                     if (answer == JOptionPane.YES_OPTION) {

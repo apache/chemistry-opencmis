@@ -22,3 +22,4 @@
 ###############################################################
 
 org.apache.chemistry.opencmis.tck.tests.basics.BasicsTestGroup
+org.apache.chemistry.opencmis.tck.tests.crud.CRUDTestGroup
