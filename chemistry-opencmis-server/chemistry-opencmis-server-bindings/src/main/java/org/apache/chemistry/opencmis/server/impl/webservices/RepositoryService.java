@@ -101,6 +101,8 @@ public class RepositoryService extends AbstractService implements RepositoryServ
                     skipCount, convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
+        } finally {
+            closeService(service);
         }
     }
 
