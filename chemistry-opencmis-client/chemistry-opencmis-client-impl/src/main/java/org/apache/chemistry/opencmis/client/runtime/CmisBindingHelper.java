@@ -49,6 +49,8 @@ public class CmisBindingHelper {
             return createAtomPubBinding(parameters);
         case WEBSERVICES:
             return createWebServiceBinding(parameters);
+        case LOCAL:
+            return createLocalBinding(parameters);
         case CUSTOM:
             return createCustomBinding(parameters);
         default:
@@ -82,6 +84,16 @@ public class CmisBindingHelper {
     private static CmisBinding createAtomPubBinding(Map<String, String> parameters) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
         CmisBinding binding = factory.createCmisAtomPubBinding(parameters);
+
+        return binding;
+    }
+
+    /**
+     * Creates a local provider.
+     */
+    private static CmisBinding createLocalBinding(Map<String, String> parameters) {
+        CmisBindingFactory factory = CmisBindingFactory.newInstance();
+        CmisBinding binding = factory.createCmisLocalBinding(parameters);
 
         return binding;
     }

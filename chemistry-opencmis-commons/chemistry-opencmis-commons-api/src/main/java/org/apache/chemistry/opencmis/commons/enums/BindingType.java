@@ -23,7 +23,7 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum BindingType {
 
-    WEBSERVICES("webservices"), ATOMPUB("atompub"), CUSTOM("custom");
+    WEBSERVICES("webservices"), ATOMPUB("atompub"), LOCAL("local"), CUSTOM("custom");
 
     private final String value;
 
