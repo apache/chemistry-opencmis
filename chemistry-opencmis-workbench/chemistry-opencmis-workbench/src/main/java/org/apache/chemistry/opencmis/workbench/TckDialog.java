@@ -245,7 +245,7 @@ public class TckDialog {
 
         public void endGroup(CmisTestGroup group) {
             groupsProgressBar.setString("");
-            groupsProgressBar.setValue(testsProgressBar.getValue() + 1);
+            groupsProgressBar.setValue(groupsProgressBar.getValue() + 1);
         }
 
         public void startTest(CmisTest test) {

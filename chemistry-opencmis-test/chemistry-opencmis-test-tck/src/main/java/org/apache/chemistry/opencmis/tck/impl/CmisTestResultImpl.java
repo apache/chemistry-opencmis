@@ -109,4 +109,9 @@ public class CmisTestResultImpl implements CmisTestResult {
     public boolean isFatal() {
         return isFatal;
     }
+
+    @Override
+    public String toString() {
+        return status + ": " + groupName + "/" + testName + ": " + message;
+    }
 }

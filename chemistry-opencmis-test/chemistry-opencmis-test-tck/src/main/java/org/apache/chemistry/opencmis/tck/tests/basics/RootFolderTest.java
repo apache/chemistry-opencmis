@@ -93,6 +93,6 @@ public class RootFolderTest extends AbstractSessionTest {
         addResult(assertAllowableAction(rootFolder, Action.CAN_GET_CHILDREN, null, failure));
 
         // simple children test
-        addResult(checkChildren(rootFolder, "Root folder children check"));
+        addResult(checkChildren(session, rootFolder, "Root folder children check"));
     }
 }

@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.tck.impl;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.OK;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.UNEXPECTED_EXCEPTION;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
@@ -36,10 +37,12 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
+import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
@@ -307,6 +310,34 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
     // --- reusable checks ----
 
+    protected boolean isGetDescendantsSupported(Session session) {
+        RepositoryCapabilities cap = session.getRepositoryInfo().getCapabilities();
+
+        if (cap == null) {
+            return false;
+        }
+
+        if (cap.isGetDescendantsSupported() == null) {
+            return false;
+        }
+
+        return cap.isGetDescendantsSupported().booleanValue();
+    }
+
+    protected boolean isGetFolderTreeSupported(Session session) {
+        RepositoryCapabilities cap = session.getRepositoryInfo().getCapabilities();
+
+        if (cap == null) {
+            return false;
+        }
+
+        if (cap.isGetFolderTreeSupported() == null) {
+            return false;
+        }
+
+        return cap.isGetFolderTreeSupported().booleanValue();
+    }
+
     protected CmisTestResult checkObject(CmisObject object, String[] properties, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
@@ -470,85 +501,139 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
 
-    protected CmisTestResult checkChildren(Folder folder, String message) {
+    protected CmisTestResult checkChildren(Session session, Folder folder, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
         CmisTestResult f;
 
-        f = createResult(FAILURE, "Folder is null!");
-        addResult(results, assertNotNull(folder, null, f));
+        if (folder == null) {
+            return createResult(FAILURE, "Folder is null!");
+        }
 
-        if (folder != null) {
-            long count = 0;
-            ItemIterable<CmisObject> children = folder.getChildren(SELECT_ALL_NO_CACHE_OC);
+        // getChildren
 
-            for (CmisObject child : children) {
-                count++;
+        long childrenCount = 0;
+        long childrenFolderCount = 0;
+        ItemIterable<CmisObject> children = folder.getChildren(SELECT_ALL_NO_CACHE_OC);
+
+        for (CmisObject child : children) {
+            childrenCount++;
+            if (child instanceof Folder) {
+                childrenFolderCount++;
+            }
+
+            checkChild(results, folder, child);
+        }
+
+        f = createResult(WARNING, "Number of children doesn't match the reported total number of items!");
+        addResult(results, assertEquals(childrenCount, children.getTotalNumItems(), null, f));
+
+        // getDescendants
+
+        if (isGetDescendantsSupported(session)) {
+            long descendantsCount = 0;
+            List<Tree<FileableCmisObject>> descendants = folder.getDescendants(1);
+
+            for (Tree<FileableCmisObject> child : descendants) {
+                descendantsCount++;
 
                 if (child == null) {
-                    addResult(results, createResult(FAILURE, "Folder contains a null child!"));
+                    addResult(results, createResult(FAILURE, "Folder descendants contain a null tree!"));
                 } else {
-                    String[] propertiesToCheck = new String[child.getType().getPropertyDefinitions().size()];
-
-                    int i = 0;
-                    for (String propId : child.getType().getPropertyDefinitions().keySet()) {
-                        propertiesToCheck[i++] = propId;
-                    }
-
-                    addResult(results, checkObject(child, propertiesToCheck, "Child check: " + child.getId()));
-
-                    f = createResult(FAILURE, "Child is not fileable! Id: " + child.getId() + " / Type: "
-                            + child.getType().getId());
-                    addResult(results, assertIsTrue(child instanceof FileableCmisObject, null, f));
-
-                    if (child instanceof FileableCmisObject) {
-                        FileableCmisObject fileableChild = (FileableCmisObject) child;
-                        List<Folder> parents = fileableChild.getParents();
-
-                        f = createResult(FAILURE, "Child has no parents! Id: " + child.getId());
-                        addResult(results, assertIsTrue(parents.size() > 0, null, f));
-
-                        boolean foundParent = false;
-                        for (Folder parent : parents) {
-                            if (parent == null) {
-                                f = createResult(FAILURE, "One of childs parents is null! Id: " + child.getId());
-                                addResult(results, assertIsTrue(parents.size() > 0, null, f));
-                            }
-
-                            if (folder.getId().equals(parent.getId())) {
-                                foundParent = true;
-                                break;
-                            }
-                        }
-
-                        if (!foundParent) {
-                            f = createResult(FAILURE, "Folder is not found in childs parents! Id: " + child.getId());
-                            addResult(results, assertIsTrue(parents.size() > 0, null, f));
-                        }
-                    } else {
-                        addResult(results, createResult(FAILURE, "Found a non-filealed child! Id: " + child.getId()));
-                    }
-
-                    f = createResult(FAILURE,
-                            "Child has no CAN_GET_OBJECT_PARENTS allowable action! Id: " + child.getId());
-                    addResult(results, assertAllowableAction(child, Action.CAN_GET_OBJECT_PARENTS, null, f));
-
-                    if (child instanceof Folder) {
-                        f = createResult(FAILURE,
-                                "Child has no CAN_GET_FOLDER_PARENT allowable action! Id: " + child.getId());
-                        addResult(results, assertAllowableAction(child, Action.CAN_GET_FOLDER_PARENT, null, f));
-                    }
+                    checkChild(results, folder, child.getItem());
                 }
             }
 
-            f = createResult(WARNING, "Number of children doesn't match the reported total number of items!");
-            addResult(results, assertEquals(count, children.getTotalNumItems(), null, f));
+            f = createResult(FAILURE,
+                    "Number of descendants doesn't match the number of children returned by getChildren!");
+            addResult(results, assertEquals(childrenCount, descendantsCount, null, f));
+        } else {
+            addResult(results, createResult(SKIPPED, "getDescendants is not supported."));
         }
+
+        // getFolderTree
+
+        if (isGetFolderTreeSupported(session)) {
+            long folderTreeCount = 0;
+            List<Tree<FileableCmisObject>> folderTree = folder.getFolderTree(1);
+
+            for (Tree<FileableCmisObject> child : folderTree) {
+                folderTreeCount++;
+
+                if (child == null) {
+                    addResult(results, createResult(FAILURE, "Folder tree contains a null tree!"));
+                } else {
+                    checkChild(results, folder, child.getItem());
+                }
+            }
+
+            f = createResult(FAILURE, "Number of folders doesn't match the number of folders returned by getChildren!");
+            addResult(results, assertEquals(childrenFolderCount, folderTreeCount, null, f));
+        } else {
+            addResult(results, createResult(SKIPPED, "getFolderTree is not supported."));
+        }
+
+        // --- wrap up ---
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+    }
+
+    private void checkChild(List<CmisTestResult> results, Folder folder, CmisObject child) {
+        CmisTestResult f;
+
+        if (child == null) {
+            addResult(results, createResult(FAILURE, "Folder contains a null child!"));
+        } else {
+            String[] propertiesToCheck = new String[child.getType().getPropertyDefinitions().size()];
+
+            int i = 0;
+            for (String propId : child.getType().getPropertyDefinitions().keySet()) {
+                propertiesToCheck[i++] = propId;
+            }
+
+            addResult(results, checkObject(child, propertiesToCheck, "Child check: " + child.getId()));
+
+            f = createResult(FAILURE, "Child is not fileable! Id: " + child.getId() + " / Type: "
+                    + child.getType().getId());
+            addResult(results, assertIsTrue(child instanceof FileableCmisObject, null, f));
+
+            if (child instanceof FileableCmisObject) {
+                FileableCmisObject fileableChild = (FileableCmisObject) child;
+                List<Folder> parents = fileableChild.getParents();
+
+                f = createResult(FAILURE, "Child has no parents! Id: " + child.getId());
+                addResult(results, assertIsTrue(parents.size() > 0, null, f));
+
+                boolean foundParent = false;
+                for (Folder parent : parents) {
+                    if (parent == null) {
+                        f = createResult(FAILURE, "One of childs parents is null! Id: " + child.getId());
+                        addResult(results, assertIsTrue(parents.size() > 0, null, f));
+                    }
+
+                    if (folder.getId().equals(parent.getId())) {
+                        foundParent = true;
+                        break;
+                    }
+                }
+
+                if (!foundParent) {
+                    f = createResult(FAILURE, "Folder is not found in childs parents! Id: " + child.getId());
+                    addResult(results, assertIsTrue(parents.size() > 0, null, f));
+                }
+            }
+
+            f = createResult(FAILURE, "Child has no CAN_GET_OBJECT_PARENTS allowable action! Id: " + child.getId());
+            addResult(results, assertAllowableAction(child, Action.CAN_GET_OBJECT_PARENTS, null, f));
+
+            if (child instanceof Folder) {
+                f = createResult(FAILURE, "Child has no CAN_GET_FOLDER_PARENT allowable action! Id: " + child.getId());
+                addResult(results, assertAllowableAction(child, Action.CAN_GET_FOLDER_PARENT, null, f));
+            }
+        }
     }
 
     protected CmisTestResult assertShallowEquals(CmisObject expected, CmisObject actual, CmisTestResult success,
@@ -1241,5 +1326,4 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
         }
     }
-
 }
