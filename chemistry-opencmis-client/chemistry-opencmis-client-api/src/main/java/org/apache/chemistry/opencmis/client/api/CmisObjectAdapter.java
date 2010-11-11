@@ -16,33 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.enums;
+package org.apache.chemistry.opencmis.client.api;
 
 /**
- * Session Type Enum.
- * 
- * 
+ * Marker interface for adapters.
  */
-public enum SessionType {
-
-    PERSISTENT("persistent"), TRANSIENT("transient");
-    private final String value;
-
-    SessionType(String v) {
-        value = v;
-    }
-
-    public String value() {
-        return value;
-    }
-
-    public static SessionType fromValue(String v) {
-        for (SessionType c : SessionType.values()) {
-            if (c.value.equals(v)) {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException(v);
-    }
-
+public interface CmisObjectAdapter {
 }

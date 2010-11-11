@@ -23,8 +23,6 @@ import java.util.Hashtable;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.enums.SessionType;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.fit.runtime.Fixture;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,8 +56,8 @@ public abstract class AbstractReadOnlyCreateSessionIT {
         public void starting(FrameworkMethod method) {
             super.starting(method);
 
-            AbstractReadOnlyCreateSessionIT.this.fixture.logTestClassContext(AbstractReadOnlyCreateSessionIT.this
-                    .getClass(), method);
+            AbstractReadOnlyCreateSessionIT.this.fixture.logTestClassContext(
+                    AbstractReadOnlyCreateSessionIT.this.getClass(), method);
         }
     };
 
@@ -81,32 +79,5 @@ public abstract class AbstractReadOnlyCreateSessionIT {
 
         Session s = factory.createSession(parameter);
         Assert.assertNotNull(s);
-    }
-
-    @Test
-    public void createPersistentSession() {
-        SessionFactory factory = this.fixture.getSessionFactory();
-
-        Hashtable<String, String> parameter = new Hashtable<String, String>(this.fixture.getParamter());
-        parameter.put(SessionParameter.SESSION_TYPE, SessionType.PERSISTENT.value());
-
-        Session s = factory.createSession(parameter);
-        Assert.assertNotNull(s);
-    }
-
-    @Test
-    public void createTransientSession() {
-        SessionFactory factory = this.fixture.getSessionFactory();
-
-        Hashtable<String, String> parameter = new Hashtable<String, String>(this.fixture.getParamter());
-        parameter.put(SessionParameter.SESSION_TYPE, SessionType.TRANSIENT.value());
-
-        try {
-            @SuppressWarnings("unused")
-            Session s = factory.createSession(parameter);
-            Assert.fail("CmisNotSupportedException expected, because Transient Session is not supported yet.");
-        } catch (CmisNotSupportedException e) {
-
-        }
     }
 }

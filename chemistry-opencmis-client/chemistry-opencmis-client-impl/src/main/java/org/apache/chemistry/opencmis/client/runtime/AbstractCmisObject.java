@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -31,7 +29,7 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.CmisObjectAdapter;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
@@ -40,33 +38,28 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
-import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
-import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
+import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
-import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
-import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 
 /**
  * Base class for all persistent session object impl classes.
  */
-public abstract class AbstractPersistentCmisObject implements CmisObject {
+public abstract class AbstractCmisObject implements CmisObject {
 
-    private PersistentSessionImpl session;
+    private SessionImpl session;
     private ObjectType objectType;
     private Map<String, Property<?>> properties;
     private AllowableActions allowableActions;
@@ -76,15 +69,14 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     private List<Relationship> relationships;
     private Map<ExtensionLevel, List<CmisExtensionElement>> extensions;
     private OperationContext creationContext;
-    private boolean isChanged = false;
     private long refreshTimestamp;
 
-    private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
      * Initializes the object.
      */
-    protected void initialize(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
+    protected void initialize(SessionImpl session, ObjectType objectType, ObjectData objectData,
             OperationContext context) {
         if (session == null) {
             throw new IllegalArgumentException("Session must be set!");
@@ -160,42 +152,40 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
             extensions.put(ExtensionLevel.OBJECT, objectData.getExtensions());
         }
-
-        isChanged = false;
     }
 
     /**
      * Acquires a write lock.
      */
     protected void writeLock() {
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
     }
 
     /**
      * Releases a write lock.
      */
     protected void writeUnlock() {
-        fLock.writeLock().unlock();
+        lock.writeLock().unlock();
     }
 
     /**
      * Acquires a read lock.
      */
     protected void readLock() {
-        fLock.readLock().lock();
+        lock.readLock().lock();
     }
 
     /**
      * Releases a read lock.
      */
     protected void readUnlock() {
-        fLock.readLock().unlock();
+        lock.readLock().unlock();
     }
 
     /**
      * Returns the session object.
      */
-    protected PersistentSessionImpl getSession() {
+    protected SessionImpl getSession() {
         return this.session;
     }
 
@@ -246,6 +236,13 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     }
 
     /**
+     * Returns the {@link OperationContext} that was used to create this object.
+     */
+    protected OperationContext getCreationContext() {
+        return creationContext;
+    }
+
+    /**
      * Returns the query name of a property.
      */
     protected String getPropertyQueryName(String propertyId) {
@@ -262,46 +259,34 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         }
     }
 
-    // --- operations ---
+    // --- properties ---
 
     public void delete(boolean allVersions) {
         String objectId = getObjectId();
         getBinding().getObjectService().deleteObject(getRepositoryId(), objectId, allVersions, null);
     }
 
-    public ObjectId updateProperties() {
+    public CmisObject updateProperties(Map<String, ?> properties) {
         readLock();
         try {
-            String objectId = getObjectId();
-            Holder<String> objectIdHolder = new Holder<String>(objectId);
-
-            String changeToken = getChangeToken();
-            Holder<String> changeTokenHolder = new Holder<String>(changeToken);
-
-            Set<Updatability> updatebility = new HashSet<Updatability>();
-            updatebility.add(Updatability.READWRITE);
-
-            // check if checked out
-            Boolean isCheckedOut = getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
-            if ((isCheckedOut != null) && isCheckedOut.booleanValue()) {
-                updatebility.add(Updatability.WHENCHECKEDOUT);
-            }
-
-            // it's time to update
-            getBinding().getObjectService().updateProperties(getRepositoryId(), objectIdHolder, changeTokenHolder,
-                    getObjectFactory().convertProperties(this.properties, this.objectType, updatebility), null);
-
-            if (objectIdHolder.getValue() == null) {
+            ObjectId objectId = updatePropertiesOnly(properties);
+            if (objectId == null) {
                 return null;
             }
 
-            return getSession().createObjectId(objectIdHolder.getValue());
+            if (!getObjectId().equals(objectId.getId())) {
+                return getSession().getObject(objectId, getCreationContext());
+            }
         } finally {
             readUnlock();
         }
+
+        refresh();
+
+        return this;
     }
 
-    public ObjectId updateProperties(Map<String, ?> properties) {
+    public ObjectId updatePropertiesOnly(Map<String, ?> properties) {
         if ((properties == null) || (properties.isEmpty())) {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
@@ -388,7 +373,7 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     public List<Property<?>> getProperties() {
         readLock();
         try {
-            return new ArrayList<Property<?>>(this.properties.values());
+            return Collections.unmodifiableList(new ArrayList<Property<?>>(this.properties.values()));
         } finally {
             readUnlock();
         }
@@ -412,37 +397,6 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         }
         // explicit cast needed by the Sun compiler
         return (T) property.getValue();
-    }
-
-    public void setName(String name) {
-        setProperty(PropertyIds.NAME, name);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> void setProperty(String id, Object value) {
-        PropertyDefinition<T> propertyDefinition = (PropertyDefinition<T>) getObjectType().getPropertyDefinitions().get(
-                id);
-        if (propertyDefinition == null) {
-            throw new IllegalArgumentException("Unknown property '" + id + "'!");
-        }
-        // check updatability
-        if (propertyDefinition.getUpdatability() == Updatability.READONLY) {
-            throw new IllegalArgumentException("Property is read-only!");
-        }
-
-        List<T> values = checkProperty(propertyDefinition, value);
-
-        // create property
-        Property<T> newProperty = getObjectFactory().createProperty(
-                propertyDefinition, values);
-
-        writeLock();
-        try {
-            setChanged();
-            this.properties.put(id, newProperty);
-        } finally {
-            writeUnlock();
-        }
     }
 
     public ObjectType getType() {
@@ -484,20 +438,19 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
     }
 
     public Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation) {
-        String objectId = getObjectId();
+        Acl result = getSession().applyAcl(this, addAces, removeAces, aclPropagation);
 
-        ObjectFactory of = getObjectFactory();
+        refresh();
 
-        return getBinding().getAclService().applyAcl(getRepositoryId(), objectId, of.convertAces(addAces),
-                of.convertAces(removeAces), aclPropagation, null);
+        return result;
     }
 
-    public void addAcl(List<Ace> addAces, AclPropagation aclPropagation) {
-        applyAcl(addAces, null, aclPropagation);
+    public Acl addAcl(List<Ace> addAces, AclPropagation aclPropagation) {
+        return applyAcl(addAces, null, aclPropagation);
     }
 
-    public void removeAcl(List<Ace> removeAces, AclPropagation aclPropagation) {
-        applyAcl(null, removeAces, aclPropagation);
+    public Acl removeAcl(List<Ace> removeAces, AclPropagation aclPropagation) {
+        return applyAcl(null, removeAces, aclPropagation);
     }
 
     public Acl getAcl() {
@@ -511,22 +464,26 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
 
     // --- policies ---
 
-    public void applyPolicy(ObjectId policyId) {
-        if ((policyId == null) || (policyId.getId() == null)) {
-            throw new IllegalArgumentException("Policy Id is not set!");
+    public void applyPolicy(ObjectId... policyIds) {
+        readLock();
+        try {
+            getSession().applyPolicy(this, policyIds);
+        } finally {
+            readUnlock();
         }
 
-        String objectId = getObjectId();
-        getBinding().getPolicyService().applyPolicy(getRepositoryId(), policyId.getId(), objectId, null);
+        refresh();
     }
 
-    public void removePolicy(ObjectId policyId) {
-        if ((policyId == null) || (policyId.getId() == null)) {
-            throw new IllegalArgumentException("Policy Id is not set!");
+    public void removePolicy(ObjectId... policyIds) {
+        readLock();
+        try {
+            getSession().removePolicy(this, policyIds);
+        } finally {
+            readUnlock();
         }
 
-        String objectId = getObjectId();
-        getBinding().getPolicyService().removePolicy(getRepositoryId(), policyId.getId(), objectId, null);
+        refresh();
     }
 
     public List<Policy> getPolicies() {
@@ -549,42 +506,6 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         }
     }
 
-    public ItemIterable<Relationship> getRelationships(final boolean includeSubRelationshipTypes,
-            final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context) {
-
-        final String objectId = getObjectId();
-        final String typeId = (type == null ? null : type.getId());
-        final RelationshipService relationshipService = getBinding().getRelationshipService();
-        final OperationContext ctxt = new OperationContextImpl(context);
-
-        return new CollectionIterable<Relationship>(new AbstractPageFetcher<Relationship>(ctxt.getMaxItemsPerPage()) {
-
-            @Override
-            protected AbstractPageFetcher.Page<Relationship> fetchPage(long skipCount) {
-
-                // fetch the relationships
-                ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(), objectId,
-                        includeSubRelationshipTypes, relationshipDirection, typeId, ctxt.getFilterString(),
-                        ctxt.isIncludeAllowableActions(), BigInteger.valueOf(this.maxNumItems),
-                        BigInteger.valueOf(skipCount), null);
-
-                // convert relationship objects
-                List<Relationship> page = new ArrayList<Relationship>();
-                if (relList.getObjects() != null) {
-                    for (ObjectData rod : relList.getObjects()) {
-                        Relationship relationship = new PersistentRelationshipImpl(getSession(), getObjectFactory()
-                                .getTypeFromObjectData(rod), rod, ctxt);
-
-                        page.add(relationship);
-                    }
-                }
-
-                return new AbstractPageFetcher.Page<Relationship>(page, relList.getNumItems(),
-                        relList.hasMoreItems());
-            }
-        });
-    }
-
     // --- extensions ---
 
     public List<CmisExtensionElement> getExtensions(ExtensionLevel level) {
@@ -596,28 +517,29 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         return Collections.unmodifiableList(ext);
     }
 
+    // --- adapters ---
+
+    public CmisObjectAdapter getAdapter(Class<? extends CmisObjectAdapter> adapterInterface) {
+        if (adapterInterface == null) {
+            return null;
+        }
+
+        if (adapterInterface.equals(TransientCmisObject.class)) {
+            return createTransientCmisObject();
+        }
+
+        return null;
+    }
+
+    public TransientCmisObject getTransientObject() {
+        return (TransientCmisObject) getAdapter(TransientCmisObject.class);
+    }
+
+    protected TransientCmisObject createTransientCmisObject() {
+        return null;
+    }
+
     // --- other ---
-
-    public boolean isChanged() {
-        readLock();
-        try {
-            return isChanged;
-        } finally {
-            readUnlock();
-        }
-    }
-
-    /**
-     * Sets the isChanged flag to <code>true</code>
-     */
-    protected void setChanged() {
-        writeLock();
-        try {
-            isChanged = true;
-        } finally {
-            writeUnlock();
-        }
-    }
 
     public long getRefreshTimestamp() {
         readLock();
@@ -633,14 +555,15 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         try {
             String objectId = getObjectId();
 
+            OperationContext oc = getCreationContext();
+
             // get the latest data from the repository
             ObjectData objectData = getSession()
                     .getBinding()
                     .getObjectService()
-                    .getObject(getRepositoryId(), objectId, creationContext.getFilterString(),
-                            creationContext.isIncludeAllowableActions(), creationContext.getIncludeRelationships(),
-                            creationContext.getRenditionFilterString(), creationContext.isIncludePolicies(),
-                            creationContext.isIncludeAcls(), null);
+                    .getObject(getRepositoryId(), objectId, oc.getFilterString(), oc.isIncludeAllowableActions(),
+                            oc.getIncludeRelationships(), oc.getRenditionFilterString(), oc.isIncludePolicies(),
+                            oc.isIncludeAcls(), null);
 
             // reset this object
             initialize(getSession(), getObjectType(), objectData, this.creationContext);
@@ -658,83 +581,5 @@ public abstract class AbstractPersistentCmisObject implements CmisObject {
         } finally {
             writeUnlock();
         }
-    }
-
-    // --- internal ---
-
-    /**
-     * Checks if a value matches a property definition.
-     * <p>
-     * Returns a list of values.
-     */
-    @SuppressWarnings("unchecked")
-    private <T> List<T> checkProperty(PropertyDefinition<T> propertyDefinition,
-            Object value) {
-
-        // null values are ok for updates
-        if (value == null) {
-            return null;
-        }
-
-        // single and multi value check
-        List<T> values = null;
-        if (value instanceof List<?>) {
-            if (propertyDefinition.getCardinality() != Cardinality.MULTI) {
-                throw new IllegalArgumentException("Property '" + propertyDefinition.getId()
-                        + "' is not a multi value property!");
-            }
-
-            values = (List<T>) value;
-            if (values.isEmpty()) {
-                return values;
-            }
-        } else {
-            if (propertyDefinition.getCardinality() != Cardinality.SINGLE) {
-                throw new IllegalArgumentException("Property '" + propertyDefinition.getId()
-                        + "' is not a single value property!");
-            }
-
-            values = Collections.singletonList((T) value);
-        }
-
-        // check if list contains null values
-        for (Object o : values) {
-            if (o == null) {
-                throw new IllegalArgumentException("Property '" + propertyDefinition.getId()
-                        + "' contains null values!");
-            }
-        }
-
-        // take a sample and test the data type
-        boolean typeMatch = false;
-        Object firstValue = values.get(0);
-
-        switch (propertyDefinition.getPropertyType()) {
-        case STRING:
-        case ID:
-        case URI:
-        case HTML:
-            typeMatch = (firstValue instanceof String);
-            break;
-        case INTEGER:
-            typeMatch = (firstValue instanceof BigInteger);
-            break;
-        case DECIMAL:
-            typeMatch = (firstValue instanceof BigDecimal);
-            break;
-        case BOOLEAN:
-            typeMatch = (firstValue instanceof Boolean);
-            break;
-        case DATETIME:
-            typeMatch = (firstValue instanceof GregorianCalendar);
-            break;
-        }
-
-        if (!typeMatch) {
-            throw new IllegalArgumentException("Value of property '" + propertyDefinition.getId()
-                    + "' does not match property type!");
-        }
-
-        return values;
     }
 }

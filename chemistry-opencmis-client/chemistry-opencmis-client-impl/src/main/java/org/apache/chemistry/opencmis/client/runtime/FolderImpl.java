@@ -59,7 +59,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 
-public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject implements Folder {
+public class FolderImpl extends AbstractFilableCmisObject implements Folder {
 
     private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
     static {
@@ -70,7 +70,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     /**
      * Constructor.
      */
-    public PersistentFolderImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
+    public FolderImpl(SessionImpl session, ObjectType objectType, ObjectData objectData,
             OperationContext context) {
         initialize(session, objectType, objectData, context);
     }

@@ -26,12 +26,12 @@ import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
-public class PersistentRelationshipImpl extends AbstractPersistentCmisObject implements Relationship {
+public class RelationshipImpl extends AbstractCmisObject implements Relationship {
 
     /**
      * Constructor.
      */
-    public PersistentRelationshipImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
+    public RelationshipImpl(SessionImpl session, ObjectType objectType, ObjectData objectData,
             OperationContext context) {
         initialize(session, objectType, objectData, context);
     }

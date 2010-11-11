@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 /**
  * Base class for all filable persistent session object impl classes.
  */
-public abstract class AbstractPersistentFilableCmisObject extends AbstractPersistentCmisObject implements
+public abstract class AbstractFilableCmisObject extends AbstractCmisObject implements
         FileableCmisObject {
 
     public List<Folder> getParents() {

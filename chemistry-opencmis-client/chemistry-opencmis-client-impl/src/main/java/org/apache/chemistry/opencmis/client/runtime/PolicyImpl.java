@@ -24,12 +24,12 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
-public class PersistentPolicyImpl extends AbstractPersistentFilableCmisObject implements Policy {
+public class PolicyImpl extends AbstractFilableCmisObject implements Policy {
 
     /**
      * Constructor.
      */
-    public PersistentPolicyImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
+    public PolicyImpl(SessionImpl session, ObjectType objectType, ObjectData objectData,
             OperationContext context) {
         initialize(session, objectType, objectData, context);
     }

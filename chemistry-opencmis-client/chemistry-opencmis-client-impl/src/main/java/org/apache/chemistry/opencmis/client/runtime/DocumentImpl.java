@@ -43,12 +43,12 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
-public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject implements Document {
+public class DocumentImpl extends AbstractFilableCmisObject implements Document {
 
     /**
      * Constructor.
      */
-    public PersistentDocumentImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
+    public DocumentImpl(SessionImpl session, ObjectType objectType, ObjectData objectData,
             OperationContext context) {
         initialize(session, objectType, objectData, context);
     }
@@ -114,9 +114,8 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
     // operations
 
-    public Document copy(ObjectId targetFolderId, Map<String, ?> properties,
-            VersioningState versioningState, List<Policy> policies,
-            List<Ace> addACEs, List<Ace> removeACEs, OperationContext context) {
+    public Document copy(ObjectId targetFolderId, Map<String, ?> properties, VersioningState versioningState,
+            List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs, OperationContext context) {
         if (targetFolderId == null || targetFolderId.getId() == null) {
             throw new CmisInvalidArgumentException("Target must be set");
         }
@@ -125,11 +124,10 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
         Set<Updatability> updatability = new HashSet<Updatability>();
         updatability.add(Updatability.READWRITE);
 
-        String newId = getBinding().getObjectService().createDocumentFromSource(
-                getRepositoryId(), getId(),
-                factory.convertProperties(properties, getType(), updatability),
-                targetFolderId.getId(), versioningState, factory.convertPolicies(policies),
-                factory.convertAces(addACEs), factory.convertAces(removeACEs), null);
+        String newId = getBinding().getObjectService().createDocumentFromSource(getRepositoryId(), getId(),
+                factory.convertProperties(properties, getType(), updatability), targetFolderId.getId(),
+                versioningState, factory.convertPolicies(policies), factory.convertAces(addACEs),
+                factory.convertAces(removeACEs), null);
 
         // if no context is provided the object will not be fetched
         if (context == null || newId == null) {
@@ -140,11 +138,11 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
         if (!(object instanceof Document)) {
             throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
         }
-        return (Document) object;    }
+        return (Document) object;
+    }
 
     public Document copy(ObjectId targetFolderId) {
-        return copy(targetFolderId, null, null, null, null, null,
-                getSession().getDefaultContext());
+        return copy(targetFolderId, null, null, null, null, null, getSession().getDefaultContext());
     }
 
     public void deleteAllVersions() {
@@ -313,7 +311,27 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
                 contentStream.getStream());
     }
 
-    public ObjectId setContentStream(ContentStream contentStream, boolean overwrite) {
+    public Document setContentStream(ContentStream contentStream, boolean overwrite) {
+        readLock();
+        try {
+            ObjectId objectId = setContentStreamOnly(contentStream, overwrite);
+            if (objectId == null) {
+                return null;
+            }
+
+            if (!getObjectId().equals(objectId.getId())) {
+                return (Document) getSession().getObject(objectId, getCreationContext());
+            }
+        } finally {
+            readUnlock();
+        }
+
+        refresh();
+
+        return this;
+    }
+
+    public ObjectId setContentStreamOnly(ContentStream contentStream, boolean overwrite) {
         String objectId;
         String changeToken;
 
@@ -338,7 +356,27 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
         return getSession().createObjectId(objectIdHolder.getValue());
     }
 
-    public ObjectId deleteContentStream() {
+    public Document deleteContentStream() {
+        readLock();
+        try {
+            ObjectId objectId = deleteContentStreamOnly();
+            if (objectId == null) {
+                return null;
+            }
+
+            if (!getObjectId().equals(objectId.getId())) {
+                return (Document) getSession().getObject(objectId, getCreationContext());
+            }
+        } finally {
+            readUnlock();
+        }
+
+        refresh();
+
+        return this;
+    }
+
+    public ObjectId deleteContentStreamOnly() {
         String objectId;
         String changeToken;
 

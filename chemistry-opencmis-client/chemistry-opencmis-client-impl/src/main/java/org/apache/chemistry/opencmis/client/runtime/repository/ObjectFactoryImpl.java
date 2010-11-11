@@ -43,12 +43,12 @@ import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.runtime.ChangeEventImpl;
 import org.apache.chemistry.opencmis.client.runtime.ChangeEventsImpl;
-import org.apache.chemistry.opencmis.client.runtime.PersistentDocumentImpl;
-import org.apache.chemistry.opencmis.client.runtime.PersistentFolderImpl;
-import org.apache.chemistry.opencmis.client.runtime.PersistentPolicyImpl;
-import org.apache.chemistry.opencmis.client.runtime.PersistentPropertyImpl;
-import org.apache.chemistry.opencmis.client.runtime.PersistentRelationshipImpl;
-import org.apache.chemistry.opencmis.client.runtime.PersistentSessionImpl;
+import org.apache.chemistry.opencmis.client.runtime.DocumentImpl;
+import org.apache.chemistry.opencmis.client.runtime.FolderImpl;
+import org.apache.chemistry.opencmis.client.runtime.PolicyImpl;
+import org.apache.chemistry.opencmis.client.runtime.PropertyImpl;
+import org.apache.chemistry.opencmis.client.runtime.RelationshipImpl;
+import org.apache.chemistry.opencmis.client.runtime.SessionImpl;
 import org.apache.chemistry.opencmis.client.runtime.QueryResultImpl;
 import org.apache.chemistry.opencmis.client.runtime.RenditionImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.DocumentTypeImpl;
@@ -89,16 +89,16 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 /**
  * Persistent model object factory.
  */
-public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable {
+public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private PersistentSessionImpl session = null;
+    private SessionImpl session = null;
 
     /**
      * Constructor.
      */
-    protected PersistentObjectFactoryImpl(PersistentSessionImpl session) {
+    protected ObjectFactoryImpl(SessionImpl session) {
         if (session == null) {
             throw new IllegalArgumentException("Session must be set!");
         }
@@ -109,8 +109,8 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
     /**
      * Creates a new factory instance.
      */
-    public static ObjectFactory newInstance(PersistentSessionImpl session) {
-        return new PersistentObjectFactoryImpl(session);
+    public static ObjectFactory newInstance(SessionImpl session) {
+        return new ObjectFactoryImpl(session);
     }
 
     /**
@@ -237,7 +237,7 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
     // properties
 
     public <T> Property<T> createProperty(PropertyDefinition<T> type, List<T> values) {
-        return new PersistentPropertyImpl<T>(type, values);
+        return new PropertyImpl<T>(type, values);
     }
 
     @SuppressWarnings("unchecked")
@@ -471,13 +471,13 @@ public class PersistentObjectFactoryImpl implements ObjectFactory, Serializable 
         /* determine type */
         switch (objectData.getBaseTypeId()) {
         case CMIS_DOCUMENT:
-            return new PersistentDocumentImpl(this.session, type, objectData, context);
+            return new DocumentImpl(this.session, type, objectData, context);
         case CMIS_FOLDER:
-            return new PersistentFolderImpl(this.session, type, objectData, context);
+            return new FolderImpl(this.session, type, objectData, context);
         case CMIS_POLICY:
-            return new PersistentPolicyImpl(this.session, type, objectData, context);
+            return new PolicyImpl(this.session, type, objectData, context);
         case CMIS_RELATIONSHIP:
-            return new PersistentRelationshipImpl(this.session, type, objectData, context);
+            return new RelationshipImpl(this.session, type, objectData, context);
         default:
             throw new CmisRuntimeException("unsupported type: " + objectData.getBaseTypeId());
         }
