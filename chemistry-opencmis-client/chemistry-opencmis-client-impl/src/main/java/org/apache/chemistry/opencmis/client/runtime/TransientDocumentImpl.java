@@ -38,7 +38,7 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
-public class TransientDocumentImpl extends AbstractTransientCmisObject implements TransientDocument {
+public class TransientDocumentImpl extends AbstractTransientFileableCmisObject implements TransientDocument {
 
     private ContentStream contentStream;
     private boolean contentOverwrite;

@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-public interface TransientPolicy extends TransientCmisObject {
+public interface TransientPolicy extends TransientFileableCmisObject {
 
     String getPolicyText();
 

@@ -16,18 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.runtime;
+package org.apache.chemistry.opencmis.client.api;
 
-import org.apache.chemistry.opencmis.client.api.TransientPolicy;
-import org.apache.chemistry.opencmis.commons.PropertyIds;
+import java.util.List;
 
-public class TransientPolicyImpl extends AbstractTransientFileableCmisObject implements TransientPolicy {
+public interface TransientFileableCmisObject extends TransientCmisObject {
+    FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId);
 
-    public String getPolicyText() {
-        return getPropertyValue(PropertyIds.POLICY_TEXT);
-    }
+    List<Folder> getParents();
 
-    public void setPolicyText(String policyText) {
-        setPropertyValue(PropertyIds.POLICY_TEXT, policyText);
-    }
+    List<String> getPaths();
+
+    void addToFolder(ObjectId folderId, boolean allVersions);
+
+    void removeFromFolder(ObjectId folderId);
 }

@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
-public interface TransientFolder extends TransientCmisObject {
+public interface TransientFolder extends TransientFileableCmisObject {
 
     Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);

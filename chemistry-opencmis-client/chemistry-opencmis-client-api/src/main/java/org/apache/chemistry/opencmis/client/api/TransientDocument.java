@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
-public interface TransientDocument extends TransientCmisObject {
+public interface TransientDocument extends TransientFileableCmisObject {
 
     void deleteAllVersions();
 

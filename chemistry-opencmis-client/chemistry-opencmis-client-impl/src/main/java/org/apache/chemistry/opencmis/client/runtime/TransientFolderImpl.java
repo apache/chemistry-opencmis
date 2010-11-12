@@ -42,7 +42,7 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 
-public class TransientFolderImpl extends AbstractTransientCmisObject implements TransientFolder {
+public class TransientFolderImpl extends AbstractTransientFileableCmisObject implements TransientFolder {
 
     private boolean isMarkedForDeleteTree;
     private boolean deleteTreeAllVersions;
