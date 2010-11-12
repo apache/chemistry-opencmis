@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.runtime;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
+import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
@@ -29,9 +30,16 @@ public class PolicyImpl extends AbstractFilableCmisObject implements Policy {
     /**
      * Constructor.
      */
-    public PolicyImpl(SessionImpl session, ObjectType objectType, ObjectData objectData,
-            OperationContext context) {
+    public PolicyImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    protected TransientCmisObject createTransientCmisObject() {
+        TransientPolicyImpl tp = new TransientPolicyImpl();
+        tp.initialize(getSession(), this);
+
+        return tp;
     }
 
     public String getPolicyText() {

@@ -18,6 +18,99 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-public interface TransientCmisObject extends CmisObjectAdapter {
+import java.util.GregorianCalendar;
+import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
+
+public interface TransientCmisObject extends CmisObjectAdapter, ObjectId {
+
+    // CMIS properties
+
+    String getName();
+
+    void setName(String name);
+
+    String getCreatedBy();
+
+    GregorianCalendar getCreationDate();
+
+    String getLastModifiedBy();
+
+    GregorianCalendar getLastModificationDate();
+
+    ObjectType getBaseType();
+
+    ObjectType getType();
+
+    BaseTypeId getBaseTypeId();
+
+    String getChangeToken();
+
+    // properties
+
+    List<Property<?>> getProperties();
+
+    <T> Property<T> getProperty(String id);
+
+    <T> T getPropertyValue(String id);
+
+    <T> void setPropertyValue(String id, Object value);
+
+    // read-only
+
+    AllowableActions getAllowableActions();
+
+    List<Relationship> getRelationships();
+
+    List<Rendition> getRenditions();
+
+    // ACL
+
+    void addAce(String principalId, List<String> permissions, AclPropagation aclPropagation);
+
+    void removeAce(String principalId, List<String> permissions, AclPropagation aclPropagation);
+
+    Acl getOriginalAcl();
+
+    // policies
+
+    void applyPolicy(Policy... policyIds);
+
+    void removePolicy(Policy... policyIds);
+
+    List<Policy> getPolicies();
+
+    // delete
+
+    void delete(boolean allVersions);
+
+    // extensions
+
+    List<CmisExtensionElement> getInputExtensions(ExtensionLevel level);
+
+    List<CmisExtensionElement> getOutputExtensions(ExtensionLevel level);
+
+    void setOutputExtensions(ExtensionLevel level, List<CmisExtensionElement> extensions);
+
+    // save
+
+    boolean isMarkedForDelete();
+
+    boolean isModified();
+
+    void reset();
+
+    void refreshAndReset();
+
+    ObjectId save();
+
+    // shared object
+
+    CmisObject getSharedObject();
 }

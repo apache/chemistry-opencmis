@@ -23,6 +23,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Relationship;
+import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
@@ -31,9 +32,16 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
     /**
      * Constructor.
      */
-    public RelationshipImpl(SessionImpl session, ObjectType objectType, ObjectData objectData,
-            OperationContext context) {
+    public RelationshipImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    protected TransientCmisObject createTransientCmisObject() {
+        TransientRelationshipImpl tr = new TransientRelationshipImpl();
+        tr.initialize(getSession(), this);
+
+        return tr;
     }
 
     public CmisObject getSource() {

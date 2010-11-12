@@ -16,31 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.client.api;
 
-import java.util.HashSet;
-import java.util.Set;
+public interface TransientFolder extends TransientCmisObject {
 
-import org.apache.chemistry.opencmis.commons.data.AllowableActions;
-import org.apache.chemistry.opencmis.commons.enums.Action;
-
-/**
- * Allowable Actions.
- */
-public class AllowableActionsImpl extends AbstractExtensionData implements AllowableActions {
-
-    private Set<Action> allowableActions = new HashSet<Action>();
-
-    public Set<Action> getAllowableActions() {
-        return allowableActions;
-    }
-
-    public void setAllowableActions(Set<Action> allowableActions) {
-        this.allowableActions = allowableActions;
-    }
-
-    @Override
-    public String toString() {
-        return "Allowable Actions [allowable actions=" + allowableActions + "]" + super.toString();
-    }
 }

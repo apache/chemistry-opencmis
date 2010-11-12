@@ -30,12 +30,13 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
+import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
@@ -70,9 +71,16 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
     /**
      * Constructor.
      */
-    public FolderImpl(SessionImpl session, ObjectType objectType, ObjectData objectData,
-            OperationContext context) {
+    public FolderImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    protected TransientCmisObject createTransientCmisObject() {
+        TransientFolderImpl tf = new TransientFolderImpl();
+        tf.initialize(getSession(), this);
+
+        return tf;
     }
 
     public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
@@ -252,10 +260,10 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
             protected AbstractPageFetcher.Page<Document> fetchPage(long skipCount) {
 
                 // get checked out documents for this folder
-                ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), objectId, ctxt
-                        .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger
-                        .valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
+                ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), objectId,
+                        ctxt.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(),
+                        ctxt.getIncludeRelationships(), ctxt.getRenditionFilterString(),
+                        BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert objects
                 List<Document> page = new ArrayList<Document>();
@@ -293,9 +301,9 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
             protected AbstractPageFetcher.Page<CmisObject> fetchPage(long skipCount) {
 
                 // get the children
-                ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId, ctxt
-                        .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), ctxt.isIncludePathSegments(),
+                ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId,
+                        ctxt.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(),
+                        ctxt.getIncludeRelationships(), ctxt.getRenditionFilterString(), ctxt.isIncludePathSegments(),
                         BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert objects
@@ -309,8 +317,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
                     }
                 }
 
-                return new AbstractPageFetcher.Page<CmisObject>(page, children.getNumItems(), children
-                        .hasMoreItems());
+                return new AbstractPageFetcher.Page<CmisObject>(page, children.getNumItems(), children.hasMoreItems());
             }
         });
     }
@@ -445,12 +452,13 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
 
     public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
             VersioningState versioningState) {
-        return this.createDocument(properties, contentStream, versioningState, null, null, null, getSession().getDefaultContext());
+        return this.createDocument(properties, contentStream, versioningState, null, null, null, getSession()
+                .getDefaultContext());
     }
 
-    public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties,
-            VersioningState versioningState) {
-        return this.createDocumentFromSource(source, properties, versioningState, null, null, null, getSession().getDefaultContext());
+    public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState) {
+        return this.createDocumentFromSource(source, properties, versioningState, null, null, null, getSession()
+                .getDefaultContext());
     }
 
     public Folder createFolder(Map<String, ?> properties) {

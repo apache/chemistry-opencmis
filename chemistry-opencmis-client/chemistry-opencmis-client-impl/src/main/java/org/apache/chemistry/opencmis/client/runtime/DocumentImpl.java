@@ -32,6 +32,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
+import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -48,9 +49,16 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
     /**
      * Constructor.
      */
-    public DocumentImpl(SessionImpl session, ObjectType objectType, ObjectData objectData,
-            OperationContext context) {
+    public DocumentImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    protected TransientCmisObject createTransientCmisObject() {
+        TransientDocumentImpl td = new TransientDocumentImpl();
+        td.initialize(getSession(), this);
+
+        return td;
     }
 
     // properties

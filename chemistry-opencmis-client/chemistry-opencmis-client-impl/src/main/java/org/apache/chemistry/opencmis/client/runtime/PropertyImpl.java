@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.runtime;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -56,6 +57,19 @@ public class PropertyImpl<T> extends AbstractPropertyData<T> implements Property
         propertyDefinition = pd;
         initialize(pd);
         setValues(values);
+    }
+
+    /**
+     * Copy constructor.
+     */
+    public PropertyImpl(Property<T> property) {
+        if (property == null) {
+            throw new IllegalArgumentException("Source must be set!");
+        }
+
+        propertyDefinition = property.getDefinition();
+        initialize(property.getDefinition());
+        setValues(new ArrayList<T>(property.getValues()));
     }
 
     public PropertyDefinition<T> getDefinition() {
