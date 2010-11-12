@@ -58,26 +58,26 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 public abstract class AbstractTransientCmisObject implements TransientCmisObject {
 
-    private Session session;
-    private CmisObject object;
+    protected Session session;
+    protected CmisObject object;
 
-    private Map<String, Property<?>> properties;
-    private AllowableActions allowableActions;
-    private List<Rendition> renditions;
-    private Acl acl;
-    private Map<AclPropagation, List<AceChangeHolder>> addAces;
-    private Map<AclPropagation, List<AceChangeHolder>> removeAces;
-    private List<Policy> policies;
-    private Set<String> addPolicies;
-    private Set<String> removePolicies;
-    private List<Relationship> relationships;
-    private Map<ExtensionLevel, List<CmisExtensionElement>> inputExtensions;
-    private Map<ExtensionLevel, List<CmisExtensionElement>> ouputExtensions;
+    protected Map<String, Property<?>> properties;
+    protected AllowableActions allowableActions;
+    protected List<Rendition> renditions;
+    protected Acl acl;
+    protected Map<AclPropagation, List<AceChangeHolder>> addAces;
+    protected Map<AclPropagation, List<AceChangeHolder>> removeAces;
+    protected List<Policy> policies;
+    protected Set<String> addPolicies;
+    protected Set<String> removePolicies;
+    protected List<Relationship> relationships;
+    protected Map<ExtensionLevel, List<CmisExtensionElement>> inputExtensions;
+    protected Map<ExtensionLevel, List<CmisExtensionElement>> ouputExtensions;
 
     protected boolean isModified;
     protected boolean isPropertyUpdateRequired;
     protected boolean isMarkedForDelete;
-    private boolean deleteAllVersions;
+    protected boolean deleteAllVersions;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void initialize(Session session, CmisObject object) {
@@ -403,28 +403,35 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         return objectId;
     }
 
+    protected Properties prepareProperties() {
+        Set<Updatability> updatebility = new HashSet<Updatability>();
+        updatebility.add(Updatability.READWRITE);
+
+        // check if checked out
+        Boolean isCheckedOut = getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
+        if ((isCheckedOut != null) && isCheckedOut.booleanValue()) {
+            updatebility.add(Updatability.WHENCHECKEDOUT);
+        }
+
+        // convert properties
+        Properties result = getObjectFactory().convertProperties(properties, getType(), updatebility);
+
+        // extensions
+        List<CmisExtensionElement> extensions = ouputExtensions.get(ExtensionLevel.PROPERTIES);
+        if (extensions != null) {
+            result.setExtensions(extensions);
+        }
+
+        return result;
+    }
+
     protected String saveProperties(String objectId) {
         if (isPropertyUpdateRequired) {
             Holder<String> objectIdHolder = new Holder<String>(objectId);
             Holder<String> changeTokenHolder = new Holder<String>(getChangeToken());
 
-            Set<Updatability> updatebility = new HashSet<Updatability>();
-            updatebility.add(Updatability.READWRITE);
-
-            // check if checked out
-            Boolean isCheckedOut = getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
-            if ((isCheckedOut != null) && isCheckedOut.booleanValue()) {
-                updatebility.add(Updatability.WHENCHECKEDOUT);
-            }
-
             // convert properties
-            Properties props = getObjectFactory().convertProperties(properties, getType(), updatebility);
-
-            // extensions
-            List<CmisExtensionElement> extensions = ouputExtensions.get(ExtensionLevel.PROPERTIES);
-            if (extensions != null) {
-                props.setExtensions(extensions);
-            }
+            Properties props = prepareProperties();
 
             // it's time to update
             getBinding().getObjectService().updateProperties(getRepositoryId(), objectIdHolder, changeTokenHolder,
@@ -452,36 +459,34 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         return objectId;
     }
 
-    protected String saveACL(String objectId) {
+    protected Acl prepareAcl(List<AceChangeHolder> achList) {
+        if ((achList == null) || (achList.isEmpty())) {
+            return null;
+        }
 
         ObjectFactory of = getObjectFactory();
 
+        List<Ace> aces = new ArrayList<Ace>();
+        for (AceChangeHolder ach : achList) {
+            aces.add(of.createAce(ach.getPrincipalId(), ach.getPermissions()));
+        }
+
+        return of.createAcl(aces);
+    }
+
+    protected String saveACL(String objectId) {
         for (AclPropagation ap : AclPropagation.values()) {
             if (!addAces.containsKey(ap) && !removeAces.containsKey(ap)) {
                 continue;
             }
 
-            Acl addAcl = null;
-            if (addAces.containsKey(ap)) {
-                List<Ace> aces = new ArrayList<Ace>();
-                for (AceChangeHolder ach : addAces.get(ap)) {
-                    aces.add(of.createAce(ach.getPrincipalId(), ach.getPermissions()));
-                }
+            getBinding().getAclService().applyAcl(getRepositoryId(), objectId, prepareAcl(addAces.get(ap)),
+                    prepareAcl(removeAces.get(ap)), ap, null);
+        }
 
-                addAcl = of.createAcl(aces);
-            }
-
-            Acl removeAcl = null;
-            if (removeAces.containsKey(ap)) {
-                List<Ace> aces = new ArrayList<Ace>();
-                for (AceChangeHolder ach : removeAces.get(ap)) {
-                    aces.add(of.createAce(ach.getPrincipalId(), ach.getPermissions()));
-                }
-
-                removeAcl = of.createAcl(aces);
-            }
-
-            getBinding().getAclService().applyAcl(getRepositoryId(), objectId, addAcl, removeAcl, ap, null);
+        if (addAces.containsKey(null) || removeAces.containsKey(null)) {
+            getBinding().getAclService().applyAcl(getRepositoryId(), objectId, prepareAcl(addAces.get(null)),
+                    prepareAcl(removeAces.get(null)), null, null);
         }
 
         return objectId;

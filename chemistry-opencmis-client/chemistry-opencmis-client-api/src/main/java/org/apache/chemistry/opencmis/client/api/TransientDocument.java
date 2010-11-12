@@ -18,6 +18,67 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+
 public interface TransientDocument extends TransientCmisObject {
 
+    void deleteAllVersions();
+
+    ContentStream getContentStream();
+
+    ContentStream getContentStream(String streamId);
+
+    void setContentStream(ContentStream contentStream, boolean overwrite);
+
+    void deleteContentStream();
+
+    Document getObjectOfLatestVersion(boolean major);
+
+    Document getObjectOfLatestVersion(boolean major, OperationContext context);
+
+    List<Document> getAllVersions();
+
+    List<Document> getAllVersions(OperationContext context);
+
+    Document copy(ObjectId targetFolderId);
+
+    Document copy(ObjectId targetFolderId, Map<String, ?> properties, VersioningState versioningState,
+            List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs, OperationContext context);
+
+    // document specific properties
+
+    Boolean isImmutable(); // cmis:isImmutable
+
+    Boolean isLatestVersion(); // cmis:isLatestVersion
+
+    Boolean isMajorVersion(); // cmis:isMajorVersion
+
+    Boolean isLatestMajorVersion(); // cmis:isLatestMajorVersion
+
+    String getVersionLabel(); // cmis:versionLabel
+
+    String getVersionSeriesId(); // cmis:versionSeriesId
+
+    Boolean isVersionSeriesCheckedOut(); // cmis:isVersionSeriesCheckedOut
+
+    String getVersionSeriesCheckedOutBy(); // cmis:versionSeriesCheckedOutBy
+
+    String getVersionSeriesCheckedOutId(); // cmis:versionSeriesCheckedOutId
+
+    String getCheckinComment(); // cmis:checkinComment
+
+    long getContentStreamLength(); // cmis:contentStreamLength
+
+    String getContentStreamMimeType(); // cmis:contentStreamMimeType
+
+    String getContentStreamFileName(); // cmis:contentStreamFileName
+
+    String getContentStreamId(); // cmis:contentStreamId
+
+    ObjectId checkIn(boolean major, String checkinComment);
 }
