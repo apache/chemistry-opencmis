@@ -56,8 +56,6 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
-import com.sun.xml.internal.txw2.IllegalAnnotationException;
-
 public abstract class AbstractTransientCmisObject implements TransientCmisObject {
 
     private Session session;
@@ -76,9 +74,9 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
     private Map<ExtensionLevel, List<CmisExtensionElement>> inputExtensions;
     private Map<ExtensionLevel, List<CmisExtensionElement>> ouputExtensions;
 
-    private boolean isModified;
-    private boolean isPropertyUpdateRequired;
-    private boolean isMarkedForDelete;
+    protected boolean isModified;
+    protected boolean isPropertyUpdateRequired;
+    protected boolean isMarkedForDelete;
     private boolean deleteAllVersions;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -137,7 +135,7 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         isMarkedForDelete = false;
     }
 
-    public CmisObject getSharedObject() {
+    public CmisObject getCmisObject() {
         return object;
     }
 
@@ -375,7 +373,7 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
     }
 
     public ObjectId save() {
-        if (!isModified) {
+        if (!isModified()) {
             // nothing has change, so there is nothing to do
             return getObjectId();
         }
@@ -576,11 +574,11 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
 
         public AceChangeHolder(String principalId, List<String> permissions, AclPropagation aclPropagation) {
             if ((principalId == null) || (principalId.length() == 0)) {
-                throw new IllegalAnnotationException("Principal id must be set!");
+                throw new IllegalArgumentException("Principal id must be set!");
             }
 
             if ((permissions == null) || (permissions.size() == 0)) {
-                throw new IllegalAnnotationException("Permissions id must be set!");
+                throw new IllegalArgumentException("Permissions id must be set!");
             }
 
             this.principalId = principalId;

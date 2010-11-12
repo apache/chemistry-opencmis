@@ -19,7 +19,15 @@
 package org.apache.chemistry.opencmis.client.runtime;
 
 import org.apache.chemistry.opencmis.client.api.TransientPolicy;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 
 public class TransientPolicyImpl extends AbstractTransientCmisObject implements TransientPolicy {
 
+    public String getPolicyText() {
+        return getPropertyValue(PropertyIds.POLICY_TEXT);
+    }
+
+    public void setPolicyText(String policyText) {
+        setPropertyValue(PropertyIds.POLICY_TEXT, policyText);
+    }
 }

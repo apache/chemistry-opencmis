@@ -18,6 +18,61 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+
 public interface TransientFolder extends TransientCmisObject {
 
+    Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState,
+            List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
+
+    Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState);
+
+    Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState,
+            List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
+
+    Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState);
+
+    Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+            OperationContext context);
+
+    Folder createFolder(Map<String, ?> properties);
+
+    Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+            OperationContext context);
+
+    Policy createPolicy(Map<String, ?> properties);
+
+    void deleteTree(boolean allversions, UnfileObject unfile, boolean continueOnFailure);
+
+    List<Tree<FileableCmisObject>> getFolderTree(int depth);
+
+    List<Tree<FileableCmisObject>> getFolderTree(int depth, OperationContext context);
+
+    List<Tree<FileableCmisObject>> getDescendants(int depth);
+
+    List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context);
+
+    ItemIterable<CmisObject> getChildren();
+
+    ItemIterable<CmisObject> getChildren(OperationContext context);
+
+    boolean isRootFolder();
+
+    Folder getFolderParent();
+
+    String getPath();
+
+    ItemIterable<Document> getCheckedOutDocs();
+
+    ItemIterable<Document> getCheckedOutDocs(OperationContext context);
+
+    List<ObjectType> getAllowedChildObjectTypes(); // cmis:allowedChildObjectTypeIds
+
+    void setAllowedChildObjectTypes(List<ObjectType> types);
 }

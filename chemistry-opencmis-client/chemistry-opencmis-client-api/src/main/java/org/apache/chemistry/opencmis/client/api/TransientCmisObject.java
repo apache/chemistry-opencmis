@@ -112,5 +112,5 @@ public interface TransientCmisObject extends CmisObjectAdapter, ObjectId {
 
     // shared object
 
-    CmisObject getSharedObject();
+    CmisObject getCmisObject();
 }

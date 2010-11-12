@@ -20,4 +20,19 @@ package org.apache.chemistry.opencmis.client.api;
 
 public interface TransientRelationship extends TransientCmisObject {
 
+    CmisObject getSource();
+
+    CmisObject getSource(OperationContext context);
+
+    ObjectId getSourceId(); // cmis:sourceId
+
+    void setSourceId(ObjectId id);
+
+    CmisObject getTarget();
+
+    CmisObject getTarget(OperationContext context);
+
+    ObjectId getTargetId(); // cmis:targetId
+
+    void setTargetId(ObjectId id);
 }

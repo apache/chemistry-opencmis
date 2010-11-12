@@ -168,7 +168,9 @@ public interface CmisObject extends ObjectId {
      * 
      * @return the object id of the updated object (a repository might have
      *         created a new object)
+     *         
      */
+    // TODO: change name
     ObjectId updatePropertiesOnly(Map<String, ?> properties);
 
     // renditions
