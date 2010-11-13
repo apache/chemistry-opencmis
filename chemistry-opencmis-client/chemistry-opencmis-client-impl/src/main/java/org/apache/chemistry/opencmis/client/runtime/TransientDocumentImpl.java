@@ -70,12 +70,14 @@ public class TransientDocumentImpl extends AbstractTransientFileableCmisObject i
         this.contentOverwrite = overwrite;
 
         deleteContent = false;
+        isModified = true;
     }
 
     public void deleteContentStream() {
         deleteContent = true;
 
         contentStream = null;
+        isModified = true;
     }
 
     public Document getObjectOfLatestVersion(boolean major) {
@@ -172,26 +174,36 @@ public class TransientDocumentImpl extends AbstractTransientFileableCmisObject i
             return getObjectId();
         }
 
-        String newObjectId = getId();
+        String objectId = getId();
 
-        newObjectId = saveDelete(newObjectId);
-        if (newObjectId == null) {
+        if (saveDelete(objectId)) {
             // object has been deleted, there is nothing else to do
             // ... and there is no object id anymore
             return null;
         }
 
-        newObjectId = saveProperties(newObjectId);
-        newObjectId = saveContent(newObjectId);
-        newObjectId = savePolicies(newObjectId);
-        newObjectId = saveACL(newObjectId);
+        String newObjectId = objectId;
+        String newChangeToken = getChangeToken();
+
+        newObjectId = saveProperties(getId(), newChangeToken);
+
+        if (isPropertyUpdateRequired && ((contentStream != null) || deleteContent)) {
+            // we only need a new change token if the properties have changed
+            // AND the content should be modified
+            newChangeToken = getLatestChangeToken(newObjectId);
+        }
+
+        newObjectId = saveContent(newObjectId, newChangeToken);
+
+        saveACL(newObjectId);
+        savePolicies(newObjectId);
 
         return getSession().createObjectId(newObjectId);
     }
 
-    protected String saveContent(String objectId) {
+    protected String saveContent(String objectId, String changeToken) {
         Holder<String> objectIdHolder = new Holder<String>(objectId);
-        Holder<String> changeTokenHolder = new Holder<String>(getChangeToken());
+        Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
         if (contentStream != null) {
             getBinding().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, contentOverwrite,

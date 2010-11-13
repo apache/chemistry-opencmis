@@ -132,7 +132,7 @@ public class SessionImpl implements Session, Serializable {
     /**
      * required for serialization
      */
-    private static final long serialVersionUID = -4287481628831198383L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructor.
@@ -155,9 +155,11 @@ public class SessionImpl implements Session, Serializable {
     }
 
     private int determineCacheSize(Map<String, String> parameters) {
-        int size = -1;
-
-        return size;
+        try {
+            return Integer.valueOf(parameters.get(SessionParameter.CACHE_SIZE_OBJECTS));
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     private String determineRepositoryId(Map<String, String> parameters) {
@@ -424,9 +426,9 @@ public class SessionImpl implements Session, Serializable {
             protected AbstractPageFetcher.Page<ObjectType> fetchPage(long skipCount) {
 
                 // fetch the data
-                TypeDefinitionList tdl = repositoryService.getTypeChildren(
-                        SessionImpl.this.getRepositoryId(), typeId, includePropertyDefinitions,
-                        BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
+                TypeDefinitionList tdl = repositoryService.getTypeChildren(SessionImpl.this.getRepositoryId(), typeId,
+                        includePropertyDefinitions, BigInteger.valueOf(this.maxNumItems),
+                        BigInteger.valueOf(skipCount), null);
 
                 // convert type definitions
                 List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());

@@ -66,7 +66,7 @@ public class LinkCache implements Serializable {
             typeCount = CACHE_SIZE_TYPES;
         }
 
-        int objCount = session.get(SessionParameter.CACHE_SIZE_OBJECTS, CACHE_SIZE_OBJECTS);
+        int objCount = session.get(SessionParameter.CACHE_SIZE_LINKS, CACHE_SIZE_OBJECTS);
         if (objCount < 1) {
             objCount = CACHE_SIZE_OBJECTS;
         }

@@ -75,7 +75,6 @@ public abstract class AbstractReadOnlyCreateSessionIT {
         SessionFactory factory = this.fixture.getSessionFactory();
 
         Hashtable<String, String> parameter = new Hashtable<String, String>(this.fixture.getParamter());
-        parameter.remove(SessionParameter.SESSION_TYPE);
 
         Session s = factory.createSession(parameter);
         Assert.assertNotNull(s);

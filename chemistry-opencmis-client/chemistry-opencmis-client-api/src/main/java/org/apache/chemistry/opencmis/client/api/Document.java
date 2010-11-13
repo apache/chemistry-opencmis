@@ -32,6 +32,8 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public interface Document extends FileableCmisObject {
 
+    TransientDocument getTransientDocument();
+
     // object service
 
     /**

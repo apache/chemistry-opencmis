@@ -194,7 +194,7 @@ public class TransientFolderImpl extends AbstractTransientFileableCmisObject imp
                     deleteTreeAllVersions, deleteTreeUnfile, deleteTreeContinueOnFailure, null);
 
             if ((ftd != null) && (!ftd.getIds().isEmpty())) {
-                throw new CmisConstraintException("deleteTree could not delete all folder children!");
+                throw new CmisConstraintException("deleteTree could not delete all folder children: " + ftd.getIds());
             }
 
             return null;

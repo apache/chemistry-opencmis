@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
+import org.apache.chemistry.opencmis.client.api.TransientFolder;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
@@ -81,6 +82,10 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         tf.initialize(getSession(), this);
 
         return tf;
+    }
+
+    public TransientFolder getTransientFolder() {
+        return (TransientFolder) getTransientObject();
     }
 
     public Document createDocument(Map<String, ?> properties, ContentStream contentStream,

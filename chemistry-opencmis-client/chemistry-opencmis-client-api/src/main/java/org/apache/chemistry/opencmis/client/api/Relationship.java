@@ -25,6 +25,8 @@ package org.apache.chemistry.opencmis.client.api;
  */
 public interface Relationship extends CmisObject {
 
+    TransientRelationship getTransientRelationship();
+
     // relationship specific properties
 
     /**

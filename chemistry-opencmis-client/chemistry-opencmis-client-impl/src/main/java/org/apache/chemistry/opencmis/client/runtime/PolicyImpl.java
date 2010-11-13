@@ -22,6 +22,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
+import org.apache.chemistry.opencmis.client.api.TransientPolicy;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
@@ -40,6 +41,10 @@ public class PolicyImpl extends AbstractFilableCmisObject implements Policy {
         tp.initialize(getSession(), this);
 
         return tp;
+    }
+
+    public TransientPolicy getTransientPolicy() {
+        return (TransientPolicy) getTransientObject();
     }
 
     public String getPolicyText() {

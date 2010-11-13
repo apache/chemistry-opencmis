@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -378,29 +379,69 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
             return getObjectId();
         }
 
-        String newObjectId = getId();
+        String objectId = getId();
 
-        newObjectId = saveDelete(newObjectId);
-        if (newObjectId == null) {
+        if (saveDelete(objectId)) {
             // object has been deleted, there is nothing else to do
             // ... and there is no object id anymore
             return null;
         }
-
-        newObjectId = saveProperties(newObjectId);
-        newObjectId = savePolicies(newObjectId);
-        newObjectId = saveACL(newObjectId);
+        String newObjectId = saveProperties(getId(), getChangeToken());
+        saveACL(newObjectId);
+        savePolicies(newObjectId);
 
         return getSession().createObjectId(newObjectId);
     }
 
-    protected String saveDelete(String objectId) {
-        if (isMarkedForDelete) {
-            getBinding().getObjectService().deleteObject(getRepositoryId(), objectId, deleteAllVersions, null);
+    /**
+     * Fetches the latest change token of this object from the repository.
+     */
+    protected String getLatestChangeToken(String objectId) {
+        // determine the object id query name
+        PropertyDefinition<?> objectIdPropDef = getCmisObject().getType().getPropertyDefinitions()
+        .get(PropertyIds.OBJECT_ID);
+if (objectIdPropDef == null) {
+    return null;
+}
+
+String objectIdQueryName = objectIdPropDef.getQueryName();
+if (objectIdQueryName == null) {
+    return null;
+}
+        
+        // determine the change token query name
+        PropertyDefinition<?> changeTokenPropDef = getCmisObject().getType().getPropertyDefinitions()
+                .get(PropertyIds.CHANGE_TOKEN);
+        if (changeTokenPropDef == null) {
             return null;
         }
 
-        return objectId;
+        String changeTokenQueryName = changeTokenPropDef.getQueryName();
+        if (changeTokenQueryName == null) {
+            return null;
+        }
+
+        // get the change token property
+        Properties properties = getBinding().getObjectService().getProperties(getRepositoryId(), objectId,
+                objectIdQueryName +","+changeTokenQueryName, null);
+
+        // if a change token is set, return it
+        PropertyData<?> changeToken = properties.getProperties().get(PropertyIds.CHANGE_TOKEN);
+
+        if ((changeToken == null) || (changeToken.getFirstValue() == null)) {
+            return null;
+        }
+
+        return changeToken.getFirstValue().toString();
+    }
+
+    protected boolean saveDelete(String objectId) {
+        if (isMarkedForDelete) {
+            getBinding().getObjectService().deleteObject(getRepositoryId(), objectId, deleteAllVersions, null);
+            return true;
+        }
+
+        return false;
     }
 
     protected Properties prepareProperties() {
@@ -425,10 +466,10 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         return result;
     }
 
-    protected String saveProperties(String objectId) {
+    protected String saveProperties(String objectId, String changeToken) {
         if (isPropertyUpdateRequired) {
             Holder<String> objectIdHolder = new Holder<String>(objectId);
-            Holder<String> changeTokenHolder = new Holder<String>(getChangeToken());
+            Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
             // convert properties
             Properties props = prepareProperties();
@@ -445,7 +486,7 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         return objectId;
     }
 
-    protected String savePolicies(String objectId) {
+    protected void savePolicies(String objectId) {
         // add policies
         for (String policyId : addPolicies) {
             getBinding().getPolicyService().applyPolicy(getRepositoryId(), policyId, objectId, null);
@@ -455,8 +496,6 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         for (String policyId : removePolicies) {
             getBinding().getPolicyService().removePolicy(getRepositoryId(), policyId, objectId, null);
         }
-
-        return objectId;
     }
 
     protected Acl prepareAcl(List<AceChangeHolder> achList) {
@@ -474,7 +513,7 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         return of.createAcl(aces);
     }
 
-    protected String saveACL(String objectId) {
+    protected void saveACL(String objectId) {
         for (AclPropagation ap : AclPropagation.values()) {
             if (!addAces.containsKey(ap) && !removeAces.containsKey(ap)) {
                 continue;
@@ -488,8 +527,6 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
             getBinding().getAclService().applyAcl(getRepositoryId(), objectId, prepareAcl(addAces.get(null)),
                     prepareAcl(removeAces.get(null)), null, null);
         }
-
-        return objectId;
     }
 
     // --- internal ---
