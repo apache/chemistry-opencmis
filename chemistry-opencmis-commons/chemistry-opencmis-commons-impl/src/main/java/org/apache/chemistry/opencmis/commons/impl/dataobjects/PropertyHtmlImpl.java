@@ -24,11 +24,10 @@ import org.apache.chemistry.opencmis.commons.data.PropertyHtml;
 
 /**
  * Html property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyHtmlImpl extends AbstractPropertyData<String> implements PropertyHtml {
+
+    private static final long serialVersionUID = 1L;
 
     public PropertyHtmlImpl() {
     }

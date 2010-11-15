@@ -25,58 +25,41 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * TypeDefinitionContainer implementation.
  */
 public class TypeDefinitionContainerImpl extends AbstractExtensionData implements TypeDefinitionContainer {
 
-    private TypeDefinition fType;
-    private List<TypeDefinitionContainer> fChildren;
+    private static final long serialVersionUID = 1L;
+
+    private TypeDefinition type;
+    private List<TypeDefinitionContainer> children;
 
     public TypeDefinitionContainerImpl() {
     }
 
     public TypeDefinitionContainerImpl(TypeDefinition typeDef) {
         setTypeDefinition(typeDef);
-        fChildren = new ArrayList<TypeDefinitionContainer>();
+        children = new ArrayList<TypeDefinitionContainer>();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionContainer#getTypeDefinition
-     * ()
-     */
     public TypeDefinition getTypeDefinition() {
-        return fType;
+        return type;
     }
 
     public void setTypeDefinition(TypeDefinition type) {
-        fType = type;
+        this.type = type;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionContainer#getChildren()
-     */
     public List<TypeDefinitionContainer> getChildren() {
-        return fChildren;
+        return children;
     }
 
     public void setChildren(List<TypeDefinitionContainer> children) {
-        fChildren = children;
+        this.children = children;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Type Definition Container [type=" + fType + " ,children=" + fChildren + "]" + super.toString();
+        return "Type Definition Container [type=" + type + " ,children=" + children + "]" + super.toString();
     }
 }

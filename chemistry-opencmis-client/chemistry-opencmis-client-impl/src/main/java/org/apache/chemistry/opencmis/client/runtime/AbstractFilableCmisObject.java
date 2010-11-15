@@ -40,6 +40,8 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 public abstract class AbstractFilableCmisObject extends AbstractCmisObject implements
         FileableCmisObject {
 
+    private static final long serialVersionUID = 1L;
+
     public List<Folder> getParents() {
         String objectId = getObjectId();
 

@@ -22,13 +22,14 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * ObjectInFolderData implementation.
  */
 public class ObjectInFolderDataImpl extends AbstractExtensionData implements ObjectInFolderData {
 
-    private ObjectData fObject;
-    private String fPathSegment;
+    private static final long serialVersionUID = 1L;
+
+    private ObjectData object;
+    private String pathSegment;
 
     /**
      * Constructor.
@@ -43,40 +44,24 @@ public class ObjectInFolderDataImpl extends AbstractExtensionData implements Obj
         setObject(object);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectInFolderData#getObject()
-     */
     public ObjectData getObject() {
-        return fObject;
+        return object;
     }
 
     public void setObject(ObjectData object) {
-        fObject = object;
+        this.object = object;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectInFolderData#getPathSegment()
-     */
     public String getPathSegment() {
-        return fPathSegment;
+        return pathSegment;
     }
 
     public void setPathSegment(String pathSegment) {
-        fPathSegment = pathSegment;
+        this.pathSegment = pathSegment;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "ObjectInFolder [object=" + fObject + ", path segment=" + fPathSegment + "]" + super.toString();
+        return "ObjectInFolder [object=" + object + ", path segment=" + pathSegment + "]" + super.toString();
     }
 }

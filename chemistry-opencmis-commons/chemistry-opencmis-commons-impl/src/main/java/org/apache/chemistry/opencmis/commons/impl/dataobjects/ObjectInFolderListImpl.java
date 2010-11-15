@@ -25,62 +25,43 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * ObjectInFolderList implementation.
  */
 public class ObjectInFolderListImpl extends AbstractExtensionData implements ObjectInFolderList {
 
-    private List<ObjectInFolderData> fObjects;
-    private Boolean fHasMoreItems = Boolean.FALSE;
-    private BigInteger fNumItems;
+    private static final long serialVersionUID = 1L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectList#getObjects()
-     */
+    private List<ObjectInFolderData> objects;
+    private Boolean hasMoreItems = Boolean.FALSE;
+    private BigInteger numItems;
+
     public List<ObjectInFolderData> getObjects() {
-        return fObjects;
+        return objects;
     }
 
     public void setObjects(List<ObjectInFolderData> objects) {
-        fObjects = objects;
+        this.objects = objects;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectList#hasMore()
-     */
     public Boolean hasMoreItems() {
-        return fHasMoreItems;
+        return hasMoreItems;
     }
 
     public void setHasMoreItems(Boolean hasMoreItems) {
-        fHasMoreItems = hasMoreItems;
+        this.hasMoreItems = hasMoreItems;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectList#getNumItems()
-     */
     public BigInteger getNumItems() {
-        return fNumItems;
+        return numItems;
     }
 
     public void setNumItems(BigInteger numItems) {
-        fNumItems = numItems;
+        this.numItems = numItems;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "ObjectInFolder List [objects=" + fObjects + ", has more items=" + fHasMoreItems + ", num items="
-                + fNumItems + "]" + super.toString();
+        return "ObjectInFolder List [objects=" + objects + ", has more items=" + hasMoreItems + ", num items="
+                + numItems + "]" + super.toString();
     }
 }

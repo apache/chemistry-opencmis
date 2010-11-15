@@ -30,6 +30,8 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
 public class RelationshipImpl extends AbstractCmisObject implements Relationship {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Constructor.
      */

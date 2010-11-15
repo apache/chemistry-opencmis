@@ -41,16 +41,17 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Rendition;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.runtime.ChangeEventImpl;
 import org.apache.chemistry.opencmis.client.runtime.ChangeEventsImpl;
 import org.apache.chemistry.opencmis.client.runtime.DocumentImpl;
 import org.apache.chemistry.opencmis.client.runtime.FolderImpl;
 import org.apache.chemistry.opencmis.client.runtime.PolicyImpl;
 import org.apache.chemistry.opencmis.client.runtime.PropertyImpl;
-import org.apache.chemistry.opencmis.client.runtime.RelationshipImpl;
-import org.apache.chemistry.opencmis.client.runtime.SessionImpl;
 import org.apache.chemistry.opencmis.client.runtime.QueryResultImpl;
+import org.apache.chemistry.opencmis.client.runtime.RelationshipImpl;
 import org.apache.chemistry.opencmis.client.runtime.RenditionImpl;
+import org.apache.chemistry.opencmis.client.runtime.SessionImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.DocumentTypeImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.FolderTypeImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.PolicyTypeImpl;
@@ -93,24 +94,16 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private SessionImpl session = null;
+    private Session session = null;
 
     /**
-     * Constructor.
+     * Default constructor.
      */
-    protected ObjectFactoryImpl(SessionImpl session) {
-        if (session == null) {
-            throw new IllegalArgumentException("Session must be set!");
-        }
-
-        this.session = session;
+    public ObjectFactoryImpl() {
     }
 
-    /**
-     * Creates a new factory instance.
-     */
-    public static ObjectFactory newInstance(SessionImpl session) {
-        return new ObjectFactoryImpl(session);
+    public void initialize(Session session, Map<String, String> parameters) {
+        this.session = session;
     }
 
     /**
@@ -178,7 +171,6 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             throw new IllegalArgumentException("Rendition must be set!");
         }
 
-        // TODO: what should happen if the length is not set?
         long length = (rendition.getBigLength() == null ? -1 : rendition.getBigLength().longValue());
         int height = (rendition.getBigHeight() == null ? -1 : rendition.getBigHeight().intValue());
         int width = (rendition.getBigWidth() == null ? -1 : rendition.getBigWidth().intValue());
@@ -241,14 +233,11 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> Property<T> convertProperty(ObjectType objectType,
-            PropertyData<T> pd) {
-        PropertyDefinition<T> definition = (PropertyDefinition<T>) objectType.getPropertyDefinitions().get(
-                pd.getId());
+    protected <T> Property<T> convertProperty(ObjectType objectType, PropertyData<T> pd) {
+        PropertyDefinition<T> definition = (PropertyDefinition<T>) objectType.getPropertyDefinitions().get(pd.getId());
         if (definition == null) {
             // property without definition
-            throw new CmisRuntimeException("Property '" + pd.getId()
-                    + "' doesn't exist!");
+            throw new CmisRuntimeException("Property '" + pd.getId() + "' doesn't exist!");
         }
         return createProperty(definition, pd.getValues());
     }
@@ -471,13 +460,13 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         /* determine type */
         switch (objectData.getBaseTypeId()) {
         case CMIS_DOCUMENT:
-            return new DocumentImpl(this.session, type, objectData, context);
+            return new DocumentImpl((SessionImpl) this.session, type, objectData, context);
         case CMIS_FOLDER:
-            return new FolderImpl(this.session, type, objectData, context);
+            return new FolderImpl((SessionImpl) this.session, type, objectData, context);
         case CMIS_POLICY:
-            return new PolicyImpl(this.session, type, objectData, context);
+            return new PolicyImpl((SessionImpl) this.session, type, objectData, context);
         case CMIS_RELATIONSHIP:
-            return new RelationshipImpl(this.session, type, objectData, context);
+            return new RelationshipImpl((SessionImpl) this.session, type, objectData, context);
         default:
             throw new CmisRuntimeException("unsupported type: " + objectData.getBaseTypeId());
         }
@@ -550,5 +539,4 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
         return new ChangeEventsImpl(changeLogToken, events, hasMoreItems, totalNumItems);
     }
-
 }

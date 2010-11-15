@@ -21,12 +21,13 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import org.apache.chemistry.opencmis.commons.data.Principal;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * AccessControlPrincipalData implementation.
  */
 public class AccessControlPrincipalDataImpl extends AbstractExtensionData implements Principal {
 
-    private String fPrincipalId;
+    private static final long serialVersionUID = 1L;
+
+    private String principalId;
 
     /**
      * Constructor.
@@ -41,28 +42,16 @@ public class AccessControlPrincipalDataImpl extends AbstractExtensionData implem
         setPrincipalId(principalId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.AccessControlPrincipalData#getPrincipalId
-     * ()
-     */
     public String getId() {
-        return fPrincipalId;
+        return principalId;
     }
 
     public void setPrincipalId(String principalId) {
-        fPrincipalId = principalId;
+        this.principalId = principalId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Access Control Principal [principalId=" + fPrincipalId + "]" + super.toString();
+        return "Access Control Principal [principalId=" + principalId + "]" + super.toString();
     }
 }

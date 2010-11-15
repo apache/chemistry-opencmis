@@ -24,13 +24,14 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * ObjectInFolderContainer implementation.
  */
 public class ObjectInFolderContainerImpl extends AbstractExtensionData implements ObjectInFolderContainer {
 
-    private ObjectInFolderData fObject;
-    private List<ObjectInFolderContainer> fChildren;
+    private static final long serialVersionUID = 1L;
+
+    private ObjectInFolderData object;
+    private List<ObjectInFolderContainer> children;
 
     /**
      * Constructor.
@@ -47,41 +48,24 @@ public class ObjectInFolderContainerImpl extends AbstractExtensionData implement
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectInFolderContainer#getObject()
-     */
     public ObjectInFolderData getObject() {
-        return fObject;
+        return object;
     }
 
     public void setObject(ObjectInFolderData object) {
-        fObject = object;
+        this.object = object;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectInFolderContainer#getChildren()
-     */
     public List<ObjectInFolderContainer> getChildren() {
-        return fChildren;
+        return children;
     }
 
     public void setChildren(List<ObjectInFolderContainer> children) {
-        fChildren = children;
+        this.children = children;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "ObjectInFolder Container [object=" + fObject + ", children=" + fChildren + "]";
+        return "ObjectInFolder Container [object=" + object + ", children=" + children + "]";
     }
 }

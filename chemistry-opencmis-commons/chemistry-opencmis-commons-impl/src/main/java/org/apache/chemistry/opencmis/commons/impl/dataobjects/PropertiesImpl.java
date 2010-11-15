@@ -34,6 +34,8 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
  */
 public class PropertiesImpl extends AbstractExtensionData implements Properties {
 
+    private static final long serialVersionUID = 1L;
+
     List<PropertyData<?>> propertyList = new ArrayList<PropertyData<?>>();
     Map<String, PropertyData<?>> properties = new LinkedHashMap<String, PropertyData<?>>();
 

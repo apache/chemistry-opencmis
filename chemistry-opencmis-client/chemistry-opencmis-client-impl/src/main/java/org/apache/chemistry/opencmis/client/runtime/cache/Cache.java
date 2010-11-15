@@ -18,7 +18,11 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.cache;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Session;
 
 /**
  * Implements a session cache providing following capabilities:
@@ -28,7 +32,9 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
  * <li>access CmisObject by object path</li>
  * </ul>
  */
-public interface Cache {
+public interface Cache extends Serializable {
+
+    void initialize(Session session, Map<String, String> parameters);
 
     boolean containsId(String objectId, String cacheKey);
 

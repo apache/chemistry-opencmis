@@ -24,11 +24,10 @@ import org.apache.chemistry.opencmis.commons.data.PropertyUri;
 
 /**
  * Uri property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyUriImpl extends AbstractPropertyData<String> implements PropertyUri {
+
+    private static final long serialVersionUID = 1L;
 
     public PropertyUriImpl() {
     }

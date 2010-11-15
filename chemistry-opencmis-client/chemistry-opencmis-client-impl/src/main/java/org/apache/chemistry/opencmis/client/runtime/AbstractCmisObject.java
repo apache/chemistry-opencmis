@@ -59,6 +59,8 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
  */
 public abstract class AbstractCmisObject implements CmisObject {
 
+    private static final long serialVersionUID = 1L;
+
     private SessionImpl session;
     private ObjectType objectType;
     private Map<String, Property<?>> properties;
@@ -262,34 +264,34 @@ public abstract class AbstractCmisObject implements CmisObject {
     // --- properties ---
 
     public void delete(boolean allVersions) {
-        String objectId = getObjectId();
-        getBinding().getObjectService().deleteObject(getRepositoryId(), objectId, allVersions, null);
-    }
-
-    public CmisObject updateProperties(Map<String, ?> properties) {
         readLock();
         try {
-            ObjectId objectId = updatePropertiesOnly(properties);
-            if (objectId == null) {
-                return null;
-            }
-
-            if (!getObjectId().equals(objectId.getId())) {
-                return getSession().getObject(objectId, getCreationContext());
-            }
+            String objectId = getObjectId();
+            getBinding().getObjectService().deleteObject(getRepositoryId(), objectId, allVersions, null);
         } finally {
             readUnlock();
         }
+    }
 
-        refresh();
+    public CmisObject updateProperties(Map<String, ?> properties) {
+        ObjectId objectId = updateProperties(properties, true);
+        if (objectId == null) {
+            return null;
+        }
+
+        if (!getObjectId().equals(objectId.getId())) {
+            return getSession().getObject(objectId, getCreationContext());
+        }
 
         return this;
     }
 
-    public ObjectId updatePropertiesOnly(Map<String, ?> properties) {
+    public ObjectId updateProperties(Map<String, ?> properties, boolean refresh) {
         if ((properties == null) || (properties.isEmpty())) {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
+
+        String newObjectId = null;
 
         readLock();
         try {
@@ -312,14 +314,20 @@ public abstract class AbstractCmisObject implements CmisObject {
             getBinding().getObjectService().updateProperties(getRepositoryId(), objectIdHolder, changeTokenHolder,
                     getObjectFactory().convertProperties(properties, this.objectType, updatebility), null);
 
-            if (objectIdHolder.getValue() == null) {
-                return null;
-            }
-
-            return getSession().createObjectId(objectIdHolder.getValue());
+            newObjectId = objectIdHolder.getValue();
         } finally {
             readUnlock();
         }
+
+        if (refresh) {
+            refresh();
+        }
+
+        if (newObjectId == null) {
+            return null;
+        }
+
+        return getSession().createObjectId(newObjectId);
     }
 
     // --- properties ---

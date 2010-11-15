@@ -64,8 +64,7 @@ public interface Document extends FileableCmisObject {
     /**
      * Sets a new content stream for the document.
      */
-    // TODO: change name
-    ObjectId setContentStreamOnly(ContentStream contentStream, boolean overwrite);
+    ObjectId setContentStream(ContentStream contentStream, boolean overwrite, boolean refresh);
 
     /**
      * Removes the current content stream from the document.
@@ -75,8 +74,7 @@ public interface Document extends FileableCmisObject {
     /**
      * Removes the current content stream from the document.
      */
-    // TODO: change name
-    ObjectId deleteContentStreamOnly();
+    ObjectId deleteContentStream(boolean refresh);
 
     // versioning service
 

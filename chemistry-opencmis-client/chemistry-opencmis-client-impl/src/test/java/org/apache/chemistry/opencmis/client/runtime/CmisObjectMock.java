@@ -175,8 +175,7 @@ public class CmisObjectMock implements CmisObject, Serializable {
         return null;
     }
     
-    public ObjectId updatePropertiesOnly(Map<String, ?> properties) {
-
+    public ObjectId updateProperties(Map<String, ?> properties, boolean refresh) {
         return null;
     }
 

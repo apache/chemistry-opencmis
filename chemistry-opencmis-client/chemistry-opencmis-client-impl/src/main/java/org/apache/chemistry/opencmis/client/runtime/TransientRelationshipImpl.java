@@ -26,6 +26,8 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 
 public class TransientRelationshipImpl extends AbstractTransientCmisObject implements TransientRelationship {
 
+    private static final long serialVersionUID = 1L;
+
     public CmisObject getSource() {
         return getSource(getSession().getDefaultContext());
     }

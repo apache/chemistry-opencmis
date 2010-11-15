@@ -23,18 +23,14 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * PolicyIdList implementation.
  */
 public class PolicyIdListImpl extends AbstractExtensionData implements PolicyIdList {
 
+    private static final long serialVersionUID = 1L;
+
     private List<String> fPolicyIds;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.PolicyIdListData#getPolicyIds()
-     */
     public List<String> getPolicyIds() {
         return fPolicyIds;
     }

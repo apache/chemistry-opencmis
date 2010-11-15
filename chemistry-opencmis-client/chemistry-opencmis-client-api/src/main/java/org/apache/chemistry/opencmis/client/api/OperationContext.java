@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -26,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
  * An <code>OperationContext</code> object defines the filtering, paging and
  * caching of an operation.
  */
-public interface OperationContext {
+public interface OperationContext extends Serializable {
 
     /**
      * Returns the current filter.

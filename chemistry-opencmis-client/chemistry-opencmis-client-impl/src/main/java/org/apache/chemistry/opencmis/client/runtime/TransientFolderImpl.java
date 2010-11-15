@@ -44,6 +44,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 
 public class TransientFolderImpl extends AbstractTransientFileableCmisObject implements TransientFolder {
 
+    private static final long serialVersionUID = 1L;
+
     private boolean isMarkedForDeleteTree;
     private boolean deleteTreeAllVersions;
     private UnfileObject deleteTreeUnfile;

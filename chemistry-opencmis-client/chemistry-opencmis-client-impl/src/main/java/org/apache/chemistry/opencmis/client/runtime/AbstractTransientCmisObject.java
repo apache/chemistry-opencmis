@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -58,6 +59,8 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 public abstract class AbstractTransientCmisObject implements TransientCmisObject {
+
+    private static final long serialVersionUID = 1L;
 
     protected Session session;
     protected CmisObject object;
@@ -399,16 +402,16 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
     protected String getLatestChangeToken(String objectId) {
         // determine the object id query name
         PropertyDefinition<?> objectIdPropDef = getCmisObject().getType().getPropertyDefinitions()
-        .get(PropertyIds.OBJECT_ID);
-if (objectIdPropDef == null) {
-    return null;
-}
+                .get(PropertyIds.OBJECT_ID);
+        if (objectIdPropDef == null) {
+            return null;
+        }
 
-String objectIdQueryName = objectIdPropDef.getQueryName();
-if (objectIdQueryName == null) {
-    return null;
-}
-        
+        String objectIdQueryName = objectIdPropDef.getQueryName();
+        if (objectIdQueryName == null) {
+            return null;
+        }
+
         // determine the change token query name
         PropertyDefinition<?> changeTokenPropDef = getCmisObject().getType().getPropertyDefinitions()
                 .get(PropertyIds.CHANGE_TOKEN);
@@ -423,7 +426,7 @@ if (objectIdQueryName == null) {
 
         // get the change token property
         Properties properties = getBinding().getObjectService().getProperties(getRepositoryId(), objectId,
-                objectIdQueryName +","+changeTokenQueryName, null);
+                objectIdQueryName + "," + changeTokenQueryName, null);
 
         // if a change token is set, return it
         PropertyData<?> changeToken = properties.getProperties().get(PropertyIds.CHANGE_TOKEN);
@@ -609,7 +612,9 @@ if (objectIdQueryName == null) {
 
     // --- ACE helper class ---
 
-    public class AceChangeHolder {
+    public class AceChangeHolder implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         private String principalId;
         private List<String> permissions;
         private AclPropagation aclPropagation;

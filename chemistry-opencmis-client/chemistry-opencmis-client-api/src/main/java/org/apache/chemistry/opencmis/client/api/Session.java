@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,7 +58,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * ids and query names, query language, etc.)
  * </p>
  */
-public interface Session {
+public interface Session extends Serializable {
 
     /**
      * Clears all cached data. This implies that all data will be reloaded from

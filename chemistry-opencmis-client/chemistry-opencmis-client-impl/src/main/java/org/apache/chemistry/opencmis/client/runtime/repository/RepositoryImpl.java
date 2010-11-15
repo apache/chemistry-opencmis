@@ -47,11 +47,6 @@ public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
         this.sessionFactory = sessionFactory;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.repository.Repository#createSession()
-     */
     @SuppressWarnings("unchecked")
     public <T extends Session> T createSession() {
         return (T) sessionFactory.createSession(parameters);

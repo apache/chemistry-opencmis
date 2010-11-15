@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -72,13 +71,11 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Persistent model session.
  */
-public class SessionImpl implements Session, Serializable {
+public class SessionImpl implements Session {
 
     private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false, true, false,
             IncludeRelationships.NONE, null, true, null, true, 100);
@@ -89,7 +86,7 @@ public class SessionImpl implements Session, Serializable {
         CREATE_UPDATABILITY.add(Updatability.READWRITE);
     }
 
-    private static Log log = LogFactory.getLog(SessionImpl.class);
+    // private static Log log = LogFactory.getLog(SessionImpl.class);
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -114,20 +111,19 @@ public class SessionImpl implements Session, Serializable {
     private Locale locale = null;
 
     /*
+     * helper factory (serializable)
+     */
+    private ObjectFactory objectFactory;
+
+    /*
      * Object cache (serializable)
      */
-    private Cache cache = null;
+    private Cache cache;
 
     /*
-     * Lazy loaded repository info. Will be invalid after clear(). Access by
-     * getter always. (serializable)
+     * Repository info (serializable)
      */
     private RepositoryInfo repositoryInfo;
-
-    /*
-     * helper factory (non serializable)
-     */
-    private final ObjectFactory objectFactory = ObjectFactoryImpl.newInstance(this);
 
     /**
      * required for serialization
@@ -138,28 +134,15 @@ public class SessionImpl implements Session, Serializable {
      * Constructor.
      */
     public SessionImpl(Map<String, String> parameters) {
+        if (parameters == null) {
+            throw new IllegalArgumentException("No parameters provided!");
+        }
+
         this.parameters = parameters;
-        SessionImpl.log.info("Session Parameters: " + parameters);
-
         this.locale = this.determineLocale(parameters);
-        SessionImpl.log.info("Session Locale: " + this.locale.toString());
 
-        int cacheSize = this.determineCacheSize(parameters);
-
-        if (cacheSize == -1) {
-            this.cache = CacheImpl.newInstance();
-        } else {
-            this.cache = CacheImpl.newInstance(cacheSize);
-        }
-        SessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
-    }
-
-    private int determineCacheSize(Map<String, String> parameters) {
-        try {
-            return Integer.valueOf(parameters.get(SessionParameter.CACHE_SIZE_OBJECTS));
-        } catch (NumberFormatException e) {
-            return -1;
-        }
+        this.objectFactory = createObjectFactory();
+        this.cache = createCache();
     }
 
     private String determineRepositoryId(Map<String, String> parameters) {
@@ -195,20 +178,61 @@ public class SessionImpl implements Session, Serializable {
         return locale;
     }
 
+    private ObjectFactory createObjectFactory() {
+        try {
+            String classname = parameters.get(SessionParameter.OBJECT_FACTORY_CLASS);
+
+            Class<?> objectFactoryClass;
+            if (classname == null) {
+                objectFactoryClass = ObjectFactoryImpl.class;
+            } else {
+                objectFactoryClass = Class.forName(classname);
+            }
+
+            Object of = objectFactoryClass.newInstance();
+            if (!(of instanceof ObjectFactory)) {
+                throw new Exception("Class does not implement ObjectFactory!");
+            }
+
+            ((ObjectFactory) of).initialize(this, parameters);
+
+            return (ObjectFactory) of;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unable to create object factory: " + e, e);
+        }
+    }
+
+    private Cache createCache() {
+        try {
+            String classname = parameters.get(SessionParameter.CACHE_CLASS);
+
+            Class<?> cacheClass;
+            if (classname == null) {
+                cacheClass = CacheImpl.class;
+            } else {
+                cacheClass = Class.forName(classname);
+            }
+
+            Object of = cacheClass.newInstance();
+            if (!(of instanceof Cache)) {
+                throw new Exception("Class does not implement Cache!");
+            }
+
+            ((Cache) of).initialize(this, parameters);
+
+            return (Cache) of;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unable to create cache: " + e, e);
+        }
+    }
+
     public void clear() {
         lock.writeLock().lock();
         try {
-            int cacheSize = this.determineCacheSize(this.parameters);
-            if (cacheSize == -1) {
-                this.cache = CacheImpl.newInstance();
-            } else {
-                this.cache = CacheImpl.newInstance(cacheSize);
-            }
-            SessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
+            // create new object cache
+            this.cache = createCache();
 
-            /*
-             * clear provider cache
-             */
+            // clear provider cache
             getBinding().clearAllCaches();
         } finally {
             lock.writeLock().unlock();
@@ -596,10 +620,14 @@ public class SessionImpl implements Session, Serializable {
 
     public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+        if ((source == null) || (source.getId() == null)) {
+            throw new IllegalArgumentException("Source must be set!");
+        }
+
         // get the type of the source document
         ObjectType type = null;
         if (source instanceof CmisObject) {
-            type = ((CmisObject) source).getBaseType();
+            type = ((CmisObject) source).getType();
         } else {
             CmisObject sourceObj = getObject(source);
             type = sourceObj.getType();

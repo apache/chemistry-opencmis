@@ -24,11 +24,10 @@ import org.apache.chemistry.opencmis.commons.data.PropertyId;
 
 /**
  * Id property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyIdImpl extends AbstractPropertyData<String> implements PropertyId {
+
+    private static final long serialVersionUID = 1L;
 
     public PropertyIdImpl() {
     }

@@ -24,11 +24,10 @@ import org.apache.chemistry.opencmis.commons.data.PropertyString;
 
 /**
  * String property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyStringImpl extends AbstractPropertyData<String> implements PropertyString {
+
+    private static final long serialVersionUID = 1L;
 
     public PropertyStringImpl() {
     }

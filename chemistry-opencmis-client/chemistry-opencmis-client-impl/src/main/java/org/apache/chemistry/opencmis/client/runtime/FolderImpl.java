@@ -53,7 +53,6 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
-import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -62,6 +61,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 
 public class FolderImpl extends AbstractFilableCmisObject implements Folder {
+
+    private static final long serialVersionUID = 1L;
 
     private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
     static {
@@ -91,18 +92,9 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
     public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context) {
-        if ((properties == null) || (properties.isEmpty())) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
 
-        String objectId = getObjectId();
-
-        ObjectFactory of = getObjectFactory();
-
-        String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
-                of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId,
-                of.convertContentStream(contentStream), versioningState, of.convertPolicies(policies),
-                of.convertAces(addAces), of.convertAces(removeAces), null);
+        ObjectId newId = getSession().createDocument(properties, this, contentStream, versioningState, policies,
+                addAces, removeAces);
 
         // if no context is provided the object will not be fetched
         if ((context == null) || (newId == null)) {
@@ -110,7 +102,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         }
 
         // get the new object
-        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        CmisObject object = getSession().getObject(newId, context);
         if (!(object instanceof Document)) {
             throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
         }
@@ -121,33 +113,9 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
     public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context) {
-        if ((source == null) || (source.getId() == null)) {
-            throw new IllegalArgumentException("Source must be set!");
-        }
 
-        String objectId = getObjectId();
-
-        // get the type of the source document
-        ObjectType type = null;
-        if (source instanceof CmisObject) {
-            type = ((CmisObject) source).getType();
-        } else {
-            CmisObject sourceObj = getSession().getObject(source);
-            type = sourceObj.getType();
-        }
-
-        if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
-            throw new IllegalArgumentException("Source object must be a document!");
-        }
-
-        ObjectFactory of = getObjectFactory();
-
-        Set<Updatability> updatebility = new HashSet<Updatability>();
-        updatebility.add(Updatability.READWRITE);
-
-        String newId = getBinding().getObjectService().createDocumentFromSource(getRepositoryId(), source.getId(),
-                of.convertProperties(properties, type, updatebility), objectId, versioningState,
-                of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
+        ObjectId newId = getSession().createDocumentFromSource(source, properties, this, versioningState, policies,
+                addAces, removeAces);
 
         // if no context is provided the object will not be fetched
         if ((context == null) || (newId == null)) {
@@ -155,7 +123,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         }
 
         // get the new object
-        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        CmisObject object = getSession().getObject(newId, context);
         if (!(object instanceof Document)) {
             throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
         }
@@ -165,17 +133,8 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
 
     public Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces, OperationContext context) {
-        if ((properties == null) || (properties.isEmpty())) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
 
-        String objectId = getObjectId();
-
-        ObjectFactory of = getObjectFactory();
-
-        String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
-                of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId, of.convertPolicies(policies),
-                of.convertAces(addAces), of.convertAces(removeAces), null);
+        ObjectId newId = getSession().createFolder(properties, this, policies, addAces, removeAces);
 
         // if no context is provided the object will not be fetched
         if ((context == null) || (newId == null)) {
@@ -183,7 +142,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         }
 
         // get the new object
-        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        CmisObject object = getSession().getObject(newId, context);
         if (!(object instanceof Folder)) {
             throw new CmisRuntimeException("Newly created object is not a folder! New id: " + newId);
         }
@@ -193,17 +152,8 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
 
     public Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces, OperationContext context) {
-        if ((properties == null) || (properties.isEmpty())) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
 
-        String objectId = getObjectId();
-
-        ObjectFactory of = getObjectFactory();
-
-        String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
-                of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId, of.convertPolicies(policies),
-                of.convertAces(addAces), of.convertAces(removeAces), null);
+        ObjectId newId = getSession().createPolicy(properties, this, policies, addAces, removeAces);
 
         // if no context is provided the object will not be fetched
         if ((context == null) || (newId == null)) {
@@ -211,7 +161,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         }
 
         // get the new object
-        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        CmisObject object = getSession().getObject(newId, context);
         if (!(object instanceof Policy)) {
             throw new CmisRuntimeException("Newly created object is not a policy! New id: " + newId);
         }

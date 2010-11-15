@@ -32,6 +32,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDat
  */
 public class ChangeEventImpl extends ChangeEventInfoDataImpl implements ChangeEvent {
 
+    private static final long serialVersionUID = 1L;
+
     private String objectId;
     private Map<String, List<?>> properties;
     private List<String> policyIds;

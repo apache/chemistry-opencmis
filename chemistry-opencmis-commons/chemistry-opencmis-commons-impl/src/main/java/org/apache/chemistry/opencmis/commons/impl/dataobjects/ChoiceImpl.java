@@ -23,51 +23,37 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Choice implementation.
  */
 public class ChoiceImpl<T> extends AbstractExtensionData implements Choice<T> {
 
-    private String fDisplayName;
-    private List<T> fValue;
-    private List<Choice<T>> fChoice;
+    private static final long serialVersionUID = 1L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.Choice#getDisplayName()
-     */
+    private String displayName;
+    private List<T> value;
+    private List<Choice<T>> choice;
+
     public String getDisplayName() {
-        return fDisplayName;
+        return displayName;
     }
 
     public void setDisplayName(String displayName) {
-        fDisplayName = displayName;
+        this.displayName = displayName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.Choice#getValue()
-     */
     public List<T> getValue() {
-        return fValue;
+        return value;
     }
 
     public void setValue(List<T> value) {
-        fValue = value;
+        this.value = value;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.Choice#getChoice()
-     */
     public List<Choice<T>> getChoice() {
-        return fChoice;
+        return choice;
     }
 
     public void setChoice(List<Choice<T>> choice) {
-        fChoice = choice;
+        this.choice = choice;
     }
 }

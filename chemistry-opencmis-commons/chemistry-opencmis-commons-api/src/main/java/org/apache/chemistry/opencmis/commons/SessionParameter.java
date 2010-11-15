@@ -82,5 +82,8 @@ public final class SessionParameter {
     public static final String LOCALE_ISO3166_COUNTRY = "org.apache.chemistry.opencmis.locale.iso3166";
     public static final String LOCALE_VARIANT = "org.apache.chemistry.opencmis.locale.variant";
 
+    public static final String OBJECT_FACTORY_CLASS = "org.apache.chemistry.opencmis.objectfactory.classname";
+    public static final String CACHE_CLASS = "org.apache.chemistry.opencmis.cache.classname";
+
     public static final String REPOSITORY_ID = "org.apache.chemistry.opencmis.session.repository.id";
 }

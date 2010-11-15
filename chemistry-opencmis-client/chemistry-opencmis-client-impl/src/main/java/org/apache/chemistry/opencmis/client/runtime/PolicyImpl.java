@@ -28,6 +28,8 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
 public class PolicyImpl extends AbstractFilableCmisObject implements Policy {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Constructor.
      */

@@ -18,20 +18,21 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.cache;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 
 /**
  * Non synchronized cache implementation. The cache is limited to a specific
  * size of entries and works in a LRU mode.
  */
-public class CacheImpl implements Cache, Serializable {
+public class CacheImpl implements Cache {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,38 +46,30 @@ public class CacheImpl implements Cache, Serializable {
     private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
 
     /**
-     * Creates a new cache instance with a default size.
-     */
-    public static Cache newInstance() {
-        return new CacheImpl();
-    }
-
-    /**
-     * Creates a new cache instance with the given size.
-     */
-    public static Cache newInstance(int cacheSize) {
-        return new CacheImpl(cacheSize);
-    }
-
-    /**
      * Default constructor.
      */
-    protected CacheImpl() {
-        this(1000); // default cache size
+    public CacheImpl() {
     }
 
-    /**
-     * Constructor taking a cache size.
-     */
-    protected CacheImpl(int cacheSize) {
-        this.cacheSize = cacheSize;
-        initialize();
+    public void initialize(Session session, Map<String, String> parameters) {
+        fLock.writeLock().lock();
+        try {
+            try {
+                cacheSize = Integer.valueOf(parameters.get(SessionParameter.CACHE_SIZE_OBJECTS));
+            } catch (Exception e) {
+                cacheSize = 1000;
+            }
+
+            initializeInternals();
+        } finally {
+            fLock.writeLock().unlock();
+        }
     }
 
     /**
      * Sets up the internal objects.
      */
-    protected void initialize() {
+    private void initializeInternals() {
         fLock.writeLock().lock();
         try {
             int hashTableCapacity = (int) Math.ceil(cacheSize / HASHTABLE_LOAD_FACTOR) + 1;
@@ -99,20 +92,10 @@ public class CacheImpl implements Cache, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.runtime.cache.Cache#clear()
-     */
     public void clear() {
-        initialize();
+        initializeInternals();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.runtime.cache.Cache#resetPathCache()
-     */
     public void resetPathCache() {
         fLock.writeLock().lock();
         try {
@@ -122,13 +105,6 @@ public class CacheImpl implements Cache, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.runtime.cache.Cache#containsId(java.lang.String
-     * , java.lang.String)
-     */
     public boolean containsId(String objectId, String cacheKey) {
         fLock.readLock().lock();
         try {
@@ -142,13 +118,6 @@ public class CacheImpl implements Cache, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.runtime.cache.Cache#containsPath(java.lang
-     * .String, java.lang.String)
-     */
     public boolean containsPath(String path, String cacheKey) {
         fLock.readLock().lock();
         try {
@@ -162,13 +131,6 @@ public class CacheImpl implements Cache, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.runtime.cache.Cache#getById(java.lang.String,
-     * java.lang.String)
-     */
     public CmisObject getById(String objectId, String cacheKey) {
         fLock.readLock().lock();
         try {
@@ -183,13 +145,6 @@ public class CacheImpl implements Cache, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.runtime.cache.Cache#getByPath(java.lang.String
-     * , java.lang.String)
-     */
     public CmisObject getByPath(String path, String cacheKey) {
         fLock.readLock().lock();
         try {
@@ -217,13 +172,6 @@ public class CacheImpl implements Cache, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.runtime.cache.Cache#put(org.apache.opencmis
-     * .client.api.CmisObject, java.lang.String)
-     */
     public void put(CmisObject object, String cacheKey) {
         // no object, no cache key - no cache
         if ((object == null) || (cacheKey == null)) {
@@ -257,13 +205,6 @@ public class CacheImpl implements Cache, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.runtime.cache.Cache#putPath(java.lang.String,
-     * org.apache.opencmis.client.api.CmisObject, java.lang.String)
-     */
     public void putPath(String path, CmisObject object, String cacheKey) {
         fLock.writeLock().lock();
         try {
@@ -277,11 +218,6 @@ public class CacheImpl implements Cache, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.runtime.cache.Cache#getCacheSize()
-     */
     public int getCacheSize() {
         return this.cacheSize;
     }

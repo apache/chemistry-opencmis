@@ -29,6 +29,8 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
  */
 public class AllowableActionsImpl extends AbstractExtensionData implements AllowableActions {
 
+    private static final long serialVersionUID = 1L;
+
     private Set<Action> allowableActions = new HashSet<Action>();
 
     public Set<Action> getAllowableActions() {

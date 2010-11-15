@@ -28,6 +28,8 @@ import org.apache.chemistry.opencmis.client.api.TransientFileableCmisObject;
 public abstract class AbstractTransientFileableCmisObject extends AbstractTransientCmisObject implements
         TransientFileableCmisObject {
 
+    private static final long serialVersionUID = 1L;
+
     public FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId) {
         return ((FileableCmisObject) getCmisObject()).move(sourceFolderId, targetFolderId);
     }

@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
  * 
  * See CMIS Domain Model - section 2.1.2.
  */
-public interface CmisObject extends ObjectId {
+public interface CmisObject extends ObjectId, Serializable {
 
     // common properties
 
@@ -165,13 +166,14 @@ public interface CmisObject extends ObjectId {
      * 
      * @param properties
      *            the properties to update
+     * @param refresh
+     *            indicates if the object should be refresh after the update
      * 
      * @return the object id of the updated object (a repository might have
      *         created a new object)
-     *         
+     * 
      */
-    // TODO: change name
-    ObjectId updatePropertiesOnly(Map<String, ?> properties);
+    ObjectId updateProperties(Map<String, ?> properties, boolean refresh);
 
     // renditions
 
