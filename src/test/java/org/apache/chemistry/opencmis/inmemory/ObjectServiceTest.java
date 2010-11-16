@@ -842,6 +842,23 @@ public class ObjectServiceTest extends AbstractServiceTst {
         log.info("... testDefaultPropertiesFolder() finished.");
     }
 
+    @Test
+    public void testGetObjectNoObjectIdInFilter() {
+        log.info("starting testGetObjectNoObjectIdInFilter() ...");
+        log.info("  creating object");
+        String id = createDocument(fRootFolderId, false);
+        if (id != null)
+            log.info("  createDocument succeeded with created id: " + id);
+
+        log.info("  getting object");
+        String filter = PropertyIds.NAME + "," + PropertyIds.CREATION_DATE + "," + PropertyIds.LAST_MODIFICATION_DATE;
+        ObjectData res = fObjSvc.getObject(fRepositoryId, id, filter, false, IncludeRelationships.NONE, null, false, false, null);
+
+        String returnedId = res.getId();
+        assertEquals(id, returnedId);
+        log.info("... testGetObjectNoObjectIdInFilter() finished.");
+    }
+
     private void verifyAllowableActionsDocument(Set<Action> actions, boolean isVersioned, boolean hasContent) {
         assertTrue(actions.contains(Action.CAN_DELETE_OBJECT));
         assertTrue(actions.contains(Action.CAN_UPDATE_PROPERTIES));
@@ -979,11 +996,15 @@ public class ObjectServiceTest extends AbstractServiceTst {
             Map<String, PropertyData<?>> props) {
         super.testReturnedProperties(objectId, props);
 
-        PropertyData<?> pd = props.get(PropertyIds.NAME);
-        assertNotNull(pd);
-        assertEquals(objectName, pd.getFirstValue());
-        pd = props.get(PropertyIds.OBJECT_TYPE_ID);
-        assertEquals(typeId, pd.getFirstValue());
+        if (null != objectName) {
+            PropertyData<?> pd = props.get(PropertyIds.NAME);
+            assertNotNull(pd);
+            assertEquals(objectName, pd.getFirstValue());
+        }
+        if (null != typeId) {
+            PropertyData<?> pd = props.get(PropertyIds.OBJECT_TYPE_ID);
+            assertEquals(typeId, pd.getFirstValue());
+        }
     }
 
     private String createDocumentWithCustomType(String folderId, boolean withContent) {
@@ -1198,5 +1219,5 @@ public class ObjectServiceTest extends AbstractServiceTst {
             return cmisFolderType;
         }
     }
-
+    
 }

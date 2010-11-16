@@ -22,9 +22,12 @@ package org.apache.chemistry.opencmis.inmemory;
  * @author Jens
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 
 public class FilterParser {
 
@@ -41,6 +44,13 @@ public class FilterParser {
             List<String> requestedIds = Arrays.asList(filter.split(",\\s*")); // comma
             // plus
             // whitespace
+            
+            // add object id because this is always needed in AtomPub binding:
+            if (!(requestedIds.contains(PropertyIds.OBJECT_ID))) {
+                requestedIds = new ArrayList<String>(requestedIds); // copy immutable list
+                requestedIds.add(PropertyIds.OBJECT_ID);
+            }
+            
             if (requestedIds.contains("*"))
                 requestedIds = Collections.singletonList("*");
             return requestedIds;
