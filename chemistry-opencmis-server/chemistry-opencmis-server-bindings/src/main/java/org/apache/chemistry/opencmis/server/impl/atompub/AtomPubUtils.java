@@ -202,7 +202,10 @@ public final class AtomPubUtils {
 
         if (info.getRenditionInfos() != null) {
             for (RenditionInfo ri : info.getRenditionInfos()) {
-                entry.writeAlternateLink(compileUrl(baseUrl, RESOURCE_CONTENT, ri.getId()), ri.getContenType(),
+                UrlBuilder rurl = compileUrlBuilder(baseUrl, RESOURCE_CONTENT,
+                        info.getId());
+                rurl.addParameter(Constants.PARAM_STREAM_ID, ri.getId());
+                entry.writeAlternateLink(rurl.toString(), ri.getContenType(),
                         ri.getKind(), ri.getTitle(), ri.getLength());
             }
         }
@@ -242,7 +245,7 @@ public final class AtomPubUtils {
 
     /**
      * Writes the a object entry in a content changes list.
-     * 
+     *
      * Content changes objects need special treatment because some of them could
      * have been deleted and an object info cannot be generated.
      */

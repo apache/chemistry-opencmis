@@ -400,6 +400,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             throw new CmisConstraintException("No content stream");
         }
 
+        // TODO FIXME using the content link for non-default streams is
+        // incorrect, rel=alternate links should be used (if somehow the
+        // stream id is known for them, which isn't the case in CMIS 1.0).
         UrlBuilder url = new UrlBuilder(link);
         url.addParameter(Constants.PARAM_STREAM_ID, streamId);
 
