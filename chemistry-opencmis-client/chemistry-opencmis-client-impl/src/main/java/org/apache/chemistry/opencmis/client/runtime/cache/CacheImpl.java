@@ -18,6 +18,11 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.cache;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,8 +34,8 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 
 /**
- * Non synchronized cache implementation. The cache is limited to a specific
- * size of entries and works in a LRU mode.
+ * Synchronized cache implementation. The cache is limited to a specific size of
+ * entries and works in a LRU mode.
  */
 public class CacheImpl implements Cache {
 
@@ -39,11 +44,14 @@ public class CacheImpl implements Cache {
     private static final float HASHTABLE_LOAD_FACTOR = 0.75f;
 
     private int cacheSize;
+    private int cacheTtl;
+    private int pathToIdSize;
+    private int pathToIdTtl;
 
-    private LinkedHashMap<String, Map<String, CmisObject>> objectMap;
-    private Map<String, String> pathToIdMap;
+    private LinkedHashMap<String, CacheItem<Map<String, CmisObject>>> objectMap;
+    private LinkedHashMap<String, CacheItem<String>> pathToIdMap;
 
-    private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
      * Default constructor.
@@ -52,17 +60,51 @@ public class CacheImpl implements Cache {
     }
 
     public void initialize(Session session, Map<String, String> parameters) {
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
         try {
+            // cache size
             try {
                 cacheSize = Integer.valueOf(parameters.get(SessionParameter.CACHE_SIZE_OBJECTS));
+                if (cacheSize < 0) {
+                    cacheSize = 0;
+                }
             } catch (Exception e) {
                 cacheSize = 1000;
             }
 
+            // cache time-to-live
+            try {
+                cacheTtl = Integer.valueOf(parameters.get(SessionParameter.CACHE_TTL_OBJECTS));
+                if (cacheTtl < 0) {
+                    cacheTtl = 2 * 60 * 60 * 1000;
+                }
+            } catch (Exception e) {
+                cacheTtl = 2 * 60 * 60 * 1000;
+            }
+
+            // path-to-id size
+            try {
+                pathToIdSize = Integer.valueOf(parameters.get(SessionParameter.CACHE_SIZE_PATHTOID));
+                if (pathToIdSize < 0) {
+                    pathToIdSize = 0;
+                }
+            } catch (Exception e) {
+                pathToIdSize = 1000;
+            }
+
+            // path-to-id time-to-live
+            try {
+                pathToIdTtl = Integer.valueOf(parameters.get(SessionParameter.CACHE_TTL_PATHTOID));
+                if (pathToIdTtl < 0) {
+                    pathToIdTtl = 30 * 60 * 1000;
+                }
+            } catch (Exception e) {
+                pathToIdTtl = 30 * 60 * 1000;
+            }
+
             initializeInternals();
         } finally {
-            fLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
@@ -70,25 +112,40 @@ public class CacheImpl implements Cache {
      * Sets up the internal objects.
      */
     private void initializeInternals() {
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
         try {
-            int hashTableCapacity = (int) Math.ceil(cacheSize / HASHTABLE_LOAD_FACTOR) + 1;
+            // object cache
+            int cacheHashTableCapacity = (int) Math.ceil(cacheSize / HASHTABLE_LOAD_FACTOR) + 1;
 
             final int cs = cacheSize;
 
-            objectMap = new LinkedHashMap<String, Map<String, CmisObject>>(hashTableCapacity, HASHTABLE_LOAD_FACTOR) {
+            objectMap = new LinkedHashMap<String, CacheItem<Map<String, CmisObject>>>(cacheHashTableCapacity,
+                    HASHTABLE_LOAD_FACTOR) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected boolean removeEldestEntry(Map.Entry<String, Map<String, CmisObject>> eldest) {
+                protected boolean removeEldestEntry(Map.Entry<String, CacheItem<Map<String, CmisObject>>> eldest) {
                     return size() > cs;
                 }
             };
 
-            resetPathCache();
+            // path-to-id mapping
+            int pathtoidHashTableCapacity = (int) Math.ceil(pathToIdSize / HASHTABLE_LOAD_FACTOR) + 1;
+
+            final int ptis = pathToIdSize;
+
+            pathToIdMap = new LinkedHashMap<String, CacheItem<String>>(pathtoidHashTableCapacity, HASHTABLE_LOAD_FACTOR) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, CacheItem<String>> eldest) {
+                    return size() > ptis;
+                }
+            };
         } finally {
-            fLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
@@ -96,79 +153,69 @@ public class CacheImpl implements Cache {
         initializeInternals();
     }
 
-    public void resetPathCache() {
-        fLock.writeLock().lock();
-        try {
-            pathToIdMap = new HashMap<String, String>();
-        } finally {
-            fLock.writeLock().unlock();
-        }
-    }
-
     public boolean containsId(String objectId, String cacheKey) {
-        fLock.readLock().lock();
+        lock.writeLock().lock();
         try {
             if (!objectMap.containsKey(objectId)) {
                 return false;
             }
 
-            return objectMap.get(objectId).containsKey(cacheKey);
+            CacheItem<Map<String, CmisObject>> item = objectMap.get(objectId);
+            if (item.isExpired()) {
+                objectMap.remove(objectId);
+                return false;
+            }
+
+            return true;
         } finally {
-            fLock.readLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
     public boolean containsPath(String path, String cacheKey) {
-        fLock.readLock().lock();
+        lock.writeLock().lock();
         try {
             if (!pathToIdMap.containsKey(path)) {
                 return false;
             }
 
-            return containsId(pathToIdMap.get(path), cacheKey);
+            CacheItem<String> item = pathToIdMap.get(path);
+            if (item.isExpired() || !containsId(item.getItem(), cacheKey)) {
+                pathToIdMap.remove(path);
+                return false;
+            }
+
+            return true;
         } finally {
-            fLock.readLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
     public CmisObject getById(String objectId, String cacheKey) {
-        fLock.readLock().lock();
+        lock.writeLock().lock();
         try {
-            Map<String, CmisObject> cacheKeyMap = objectMap.get(objectId);
-            if (cacheKeyMap == null) {
-                return null; // not found
+            if (!containsId(objectId, cacheKey)) {
+                return null;
             }
 
-            return cacheKeyMap.get(cacheKey);
+            Map<String, CmisObject> item = objectMap.get(objectId).getItem();
+            return (item == null ? null : item.get(cacheKey));
         } finally {
-            fLock.readLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
     public CmisObject getByPath(String path, String cacheKey) {
-        fLock.readLock().lock();
+        lock.writeLock().lock();
         try {
-            String id = pathToIdMap.get(path);
-            if (id == null) {
-                return null; // not found
+            if (!containsPath(path, cacheKey)) {
+                return null;
             }
 
-            CmisObject object = getById(id, cacheKey);
-            if ((object == null) && (!objectMap.containsKey(id))) {
-                // clean up
-                fLock.readLock().unlock();
-                fLock.writeLock().lock();
-                try {
-                    pathToIdMap.remove(path);
-                } finally {
-                    fLock.writeLock().unlock();
-                    fLock.readLock().lock();
-                }
-            }
-
-            return object;
+            CacheItem<String> item = pathToIdMap.get(path);
+            return getById(item.getItem(), cacheKey);
         } finally {
-            fLock.readLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
@@ -183,42 +230,101 @@ public class CacheImpl implements Cache {
             return;
         }
 
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
         try {
             // get cache key map
-            Map<String, CmisObject> cacheKeyMap = objectMap.get(object.getId());
+            CacheItem<Map<String, CmisObject>> cacheKeyMap = objectMap.get(object.getId());
             if (cacheKeyMap == null) {
-                cacheKeyMap = new HashMap<String, CmisObject>();
+                cacheKeyMap = new CacheItem<Map<String, CmisObject>>(new HashMap<String, CmisObject>(), cacheTtl);
                 objectMap.put(object.getId(), cacheKeyMap);
             }
 
             // put into id cache
-            cacheKeyMap.put(cacheKey, object);
+            Map<String, CmisObject> m = cacheKeyMap.getItem();
+            if (m != null) {
+                m.put(cacheKey, object);
+            }
 
             // folders may have a path, use it!
             String path = object.getPropertyValue(PropertyIds.PATH);
             if (path != null) {
-                pathToIdMap.put(path, object.getId());
+                pathToIdMap.put(path, new CacheItem<String>(object.getId(), pathToIdTtl));
             }
         } finally {
-            fLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
     public void putPath(String path, CmisObject object, String cacheKey) {
-        fLock.writeLock().lock();
+        if (path == null) {
+            return;
+        }
+
+        lock.writeLock().lock();
         try {
             put(object, cacheKey);
 
             if ((object != null) && (object.getId() != null) && (cacheKey != null)) {
-                pathToIdMap.put(path, object.getId());
+                pathToIdMap.put(path, new CacheItem<String>(object.getId(), pathToIdTtl));
             }
         } finally {
-            fLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
     public int getCacheSize() {
         return this.cacheSize;
+    }
+
+    // --- cache item ---
+
+    private class CacheItem<T> implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        private SoftReference<T> item;
+        private long timestamp;
+        private int ttl;
+
+        public CacheItem(T item, int ttl) {
+            this.item = new SoftReference<T>(item);
+            timestamp = System.currentTimeMillis();
+            this.ttl = ttl;
+        }
+
+        public synchronized boolean isExpired() {
+            if ((item == null) || (item.get() == null)) {
+                return true;
+            }
+
+            return (timestamp + ttl < System.currentTimeMillis());
+        }
+
+        public synchronized T getItem() {
+            if (isExpired()) {
+                item = null;
+                return null;
+            }
+
+            timestamp = System.currentTimeMillis();
+            return item.get();
+        }
+
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            out.writeObject(isExpired() ? null : item.get());
+            out.writeLong(timestamp);
+            out.writeInt(ttl);
+        }
+
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+            @SuppressWarnings("unchecked")
+            T object = (T) in.readObject();
+            timestamp = in.readLong();
+            ttl = in.readInt();
+
+            if ((object != null) && (timestamp + ttl >= System.currentTimeMillis())) {
+                this.item = new SoftReference<T>(object);
+            }
+        }
     }
 }

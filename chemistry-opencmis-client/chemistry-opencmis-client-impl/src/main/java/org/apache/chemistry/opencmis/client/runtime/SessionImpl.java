@@ -119,6 +119,7 @@ public class SessionImpl implements Session {
      * Object cache (serializable)
      */
     private Cache cache;
+    private boolean cachePathOmit;
 
     /*
      * Repository info (serializable)
@@ -143,6 +144,8 @@ public class SessionImpl implements Session {
 
         this.objectFactory = createObjectFactory();
         this.cache = createCache();
+
+        cachePathOmit = Boolean.parseBoolean(parameters.get(SessionParameter.CACHE_PATH_OMIT));
     }
 
     private String determineRepositoryId(Map<String, String> parameters) {
@@ -393,7 +396,7 @@ public class SessionImpl implements Session {
         CmisObject result = null;
 
         // ask the cache first
-        if (context.isCacheEnabled()) {
+        if (context.isCacheEnabled() && !cachePathOmit) {
             result = this.cache.getByPath(path, context.getCacheKey());
             if (result != null) {
                 return result;

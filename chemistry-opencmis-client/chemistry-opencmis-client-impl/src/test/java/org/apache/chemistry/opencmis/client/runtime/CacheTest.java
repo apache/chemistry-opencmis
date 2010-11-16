@@ -43,7 +43,7 @@ public class CacheTest {
 
     @Test
     public void cacheSingleObjectTest() {
-        Cache cache = createCache(100);
+        Cache cache = createCache(100, 3600 * 1000);
 
         String id = "1";
         // String path = "/1";
@@ -74,14 +74,14 @@ public class CacheTest {
     @Test
     public void cacheSizeTest() {
         int cacheSize = 50000;
-        Cache cache = createCache(cacheSize);
+        Cache cache = createCache(cacheSize, 3600 * 1000);
         Assert.assertEquals(cacheSize, cache.getCacheSize());
     }
 
     @Test
     public void lruTest() {
         int cacheSize = 3;
-        Cache cache = createCache(cacheSize);
+        Cache cache = createCache(cacheSize, 3600 * 1000);
 
         String cacheKey = "key";
 
@@ -96,10 +96,28 @@ public class CacheTest {
         Assert.assertNotNull(cache.getById("id3", cacheKey));
     }
 
+    @SuppressWarnings("static-access")
+    @Test
+    public void ttlTest() throws InterruptedException {
+        Cache cache = createCache(10, 500);
+
+        String cacheKey = "key";
+        String id = "id";
+
+        CmisObject obj = this.createCmisObject(id);
+        cache.put(obj, cacheKey);
+
+        Assert.assertNotNull(cache.getById(id, cacheKey));
+
+        Thread.currentThread().sleep(501);
+
+        Assert.assertNull(cache.getById(id, cacheKey));
+    }
+
     @Test
     public void serializationTest() throws IOException, ClassNotFoundException {
         int cacheSize = 10;
-        Cache cache = createCache(cacheSize);
+        Cache cache = createCache(cacheSize, 3600 * 1000);
 
         String cacheKey = "key";
 
@@ -135,11 +153,12 @@ public class CacheTest {
         return new CmisObjectMock(id);
     }
 
-    private Cache createCache(int cacheSize) {
+    private Cache createCache(int cacheSize, int ttl) {
         Cache cache = new CacheImpl();
 
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(SessionParameter.CACHE_SIZE_OBJECTS, "" + cacheSize);
+        parameters.put(SessionParameter.CACHE_TTL_OBJECTS, "" + ttl);
 
         cache.initialize(null, parameters);
 

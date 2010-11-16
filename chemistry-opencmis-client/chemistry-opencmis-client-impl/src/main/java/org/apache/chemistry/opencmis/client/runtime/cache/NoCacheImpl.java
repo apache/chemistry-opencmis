@@ -18,37 +18,44 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.cache;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Session;
 
-/**
- * Implements a session cache providing following capabilities:
- * <p>
- * <ul>
- * <li>access CmisObject by object id</li>
- * <li>access CmisObject by object path</li>
- * </ul>
- */
-public interface Cache extends Serializable {
+public class NoCacheImpl implements Cache {
 
-    void initialize(Session session, Map<String, String> parameters);
+    private static final long serialVersionUID = 1L;
 
-    boolean containsId(String objectId, String cacheKey);
+    public void initialize(Session session, Map<String, String> parameters) {
+    }
 
-    boolean containsPath(String path, String cacheKey);
+    public boolean containsId(String objectId, String cacheKey) {
+        return false;
+    }
 
-    void put(CmisObject object, String cacheKey);
+    public boolean containsPath(String path, String cacheKey) {
+        return false;
+    }
 
-    void putPath(String path, CmisObject object, String cacheKey);
+    public void put(CmisObject object, String cacheKey) {
+    }
 
-    CmisObject getById(String objectId, String cacheKey);
+    public void putPath(String path, CmisObject object, String cacheKey) {
+    }
 
-    CmisObject getByPath(String path, String cacheKey);
+    public CmisObject getById(String objectId, String cacheKey) {
+        return null;
+    }
 
-    void clear();
+    public CmisObject getByPath(String path, String cacheKey) {
+        return null;
+    }
 
-    int getCacheSize();
+    public void clear() {
+    }
+
+    public int getCacheSize() {
+        return 0;
+    }
 }
