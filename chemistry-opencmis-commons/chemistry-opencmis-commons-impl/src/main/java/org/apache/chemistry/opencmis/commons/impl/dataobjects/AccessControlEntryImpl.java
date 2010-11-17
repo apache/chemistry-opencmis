@@ -25,15 +25,14 @@ import org.apache.chemistry.opencmis.commons.data.Principal;
 
 /**
  * Access Control Entry data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AccessControlEntryImpl extends AbstractExtensionData implements Ace {
 
-    private List<String> fPermissions;
-    private Principal fPrincipal;
-    private boolean fIsDirect = true;
+    private static final long serialVersionUID = 1L;
+
+    private List<String> permissions;
+    private Principal principal;
+    private boolean isDirect = true;
 
     /**
      * Constructor.
@@ -49,59 +48,37 @@ public class AccessControlEntryImpl extends AbstractExtensionData implements Ace
         setPermissions(permissions);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.AccessControlEntry#getPrincipal()
-     */
     public Principal getPrincipal() {
-        return fPrincipal;
+        return principal;
     }
 
     public String getPrincipalId() {
-        return fPrincipal == null ? null : fPrincipal.getId();
+        return principal == null ? null : principal.getId();
     }
 
     public void setPrincipal(Principal principal) {
-        fPrincipal = principal;
+        this.principal = principal;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.AccessControlEntry#getPermissions()
-     */
     public List<String> getPermissions() {
-        return fPermissions;
+        return permissions;
     }
 
     public void setPermissions(List<String> permissions) {
-        fPermissions = permissions;
+        this.permissions = permissions;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.AccessControlEntry#isDirect()
-     */
     public boolean isDirect() {
-        return fIsDirect;
+        return isDirect;
     }
 
     public void setDirect(boolean direct) {
-        fIsDirect = direct;
+        this.isDirect = direct;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Access Control Entry [principal=" + fPrincipal + ", permissions=" + fPermissions + ", is direct="
-                + fIsDirect + "]" + super.toString();
+        return "Access Control Entry [principal=" + principal + ", permissions=" + permissions + ", is direct="
+                + isDirect + "]" + super.toString();
     }
 }

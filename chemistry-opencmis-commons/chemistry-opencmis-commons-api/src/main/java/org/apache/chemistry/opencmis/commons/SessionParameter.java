@@ -70,9 +70,15 @@ public final class SessionParameter {
      */
     public static final String AUTH_SOAP_USERNAMETOKEN = "org.apache.chemistry.opencmis.binding.auth.soap.usernametoken";
 
+    public static final String CACHE_SIZE_OBJECTS = "org.apache.chemistry.opencmis.cache.objects.size";
+    public static final String CACHE_TTL_OBJECTS = "org.apache.chemistry.opencmis.cache.objects.ttl";
+    public static final String CACHE_SIZE_PATHTOID = "org.apache.chemistry.opencmis.cache.pathtoid.size";
+    public static final String CACHE_TTL_PATHTOID = "org.apache.chemistry.opencmis.cache.pathtoid.ttl";
+    public static final String CACHE_PATH_OMIT = "org.apache.chemistry.opencmis.cache.path.omit";
+    
     public static final String CACHE_SIZE_REPOSITORIES = "org.apache.chemistry.opencmis.binding.cache.repositories.size";
     public static final String CACHE_SIZE_TYPES = "org.apache.chemistry.opencmis.binding.cache.types.size";
-    public static final String CACHE_SIZE_OBJECTS = "org.apache.chemistry.opencmis.binding.cache.objects.size";
+    public static final String CACHE_SIZE_LINKS = "org.apache.chemistry.opencmis.binding.cache.links.size";
 
     // --- session control ---
 
@@ -80,6 +86,8 @@ public final class SessionParameter {
     public static final String LOCALE_ISO3166_COUNTRY = "org.apache.chemistry.opencmis.locale.iso3166";
     public static final String LOCALE_VARIANT = "org.apache.chemistry.opencmis.locale.variant";
 
-    public static final String SESSION_TYPE = "org.apache.chemistry.opencmis.session.type";
+    public static final String OBJECT_FACTORY_CLASS = "org.apache.chemistry.opencmis.objectfactory.classname";
+    public static final String CACHE_CLASS = "org.apache.chemistry.opencmis.cache.classname";
+
     public static final String REPOSITORY_ID = "org.apache.chemistry.opencmis.session.repository.id";
 }

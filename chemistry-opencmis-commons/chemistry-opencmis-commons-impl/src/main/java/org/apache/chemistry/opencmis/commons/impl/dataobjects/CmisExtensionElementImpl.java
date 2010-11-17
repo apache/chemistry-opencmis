@@ -28,6 +28,8 @@ import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 
 public class CmisExtensionElementImpl implements CmisExtensionElement {
 
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private String namespace;
     private String value;

@@ -26,11 +26,7 @@ import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.repository.RepositoryImpl;
-import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.enums.SessionType;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
@@ -53,55 +49,20 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 public class SessionFactoryImpl implements SessionFactory {
 
     protected SessionFactoryImpl() {
-
     }
 
     public static SessionFactory newInstance() {
         return new SessionFactoryImpl();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.SessionFactory#createSession(java.util
-     * .Map)
-     */
     @SuppressWarnings("unchecked")
     public <T extends Session> T createSession(Map<String, String> parameters) {
-        Session s = null;
-        SessionType t = null;
+        SessionImpl session = new SessionImpl(parameters);
+        session.connect();
 
-        // determine session type
-        if (parameters.containsKey(SessionParameter.SESSION_TYPE)) {
-            t = SessionType.fromValue(parameters.get(SessionParameter.SESSION_TYPE));
-        } else {
-            // default session type if type is not set
-            t = SessionType.PERSISTENT;
-        }
-
-        switch (t) {
-        case PERSISTENT:
-            PersistentSessionImpl ps = new PersistentSessionImpl(parameters);
-            ps.connect(); // connect session with provider
-            s = ps;
-            break;
-        case TRANSIENT:
-            throw new CmisNotSupportedException("SessionType " + t + "not implemented!");
-        default:
-            throw new CmisRuntimeException("SessionType " + t + "not known!");
-        }
-
-        return (T) s;
+        return (T) session;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.SessionFactory#getRepositories(java.util
-     * .Map)
-     */
     public List<Repository> getRepositories(Map<String, String> parameters) {
         CmisBinding binding = CmisBindingHelper.createProvider(parameters);
 
@@ -114,5 +75,4 @@ public class SessionFactoryImpl implements SessionFactory {
 
         return result;
     }
-
 }

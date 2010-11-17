@@ -199,7 +199,7 @@ public final class CmisBindingFactory {
 
         result.put(SessionParameter.CACHE_SIZE_REPOSITORIES, "10");
         result.put(SessionParameter.CACHE_SIZE_TYPES, "100");
-        result.put(SessionParameter.CACHE_SIZE_OBJECTS, "400");
+        result.put(SessionParameter.CACHE_SIZE_LINKS, "400");
 
         return result;
     }

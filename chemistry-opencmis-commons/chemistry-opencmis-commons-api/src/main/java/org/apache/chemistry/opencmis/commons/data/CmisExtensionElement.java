@@ -18,13 +18,14 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 /**
  * This class represents one node in the extension tree.
  */
-public interface CmisExtensionElement {
+public interface CmisExtensionElement extends Serializable {
 
     /**
      * Returns the name of the extension. The name is never <code>null</code>.

@@ -27,10 +27,12 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
  * CMIS Document.
- *
+ * 
  * Domain Model 2.4
  */
 public interface Document extends FileableCmisObject {
+
+    TransientDocument getTransientDocument();
 
     // object service
 
@@ -41,7 +43,7 @@ public interface Document extends FileableCmisObject {
 
     /**
      * Retrieves the content stream of this document.
-     *
+     * 
      * @return the content stream, or {@code null}
      */
     ContentStream getContentStream();
@@ -49,7 +51,7 @@ public interface Document extends FileableCmisObject {
     /**
      * Retrieves the content stream that is associated with the given stream id.
      * This is usually a rendition of the document.
-     *
+     * 
      * @return the content stream, or {@code null}
      */
     ContentStream getContentStream(String streamId);
@@ -57,19 +59,29 @@ public interface Document extends FileableCmisObject {
     /**
      * Sets a new content stream for the document.
      */
-    ObjectId setContentStream(ContentStream contentStream, boolean overwrite);
+    Document setContentStream(ContentStream contentStream, boolean overwrite);
+
+    /**
+     * Sets a new content stream for the document.
+     */
+    ObjectId setContentStream(ContentStream contentStream, boolean overwrite, boolean refresh);
 
     /**
      * Removes the current content stream from the document.
      */
-    ObjectId deleteContentStream();
+    Document deleteContentStream();
+
+    /**
+     * Removes the current content stream from the document.
+     */
+    ObjectId deleteContentStream(boolean refresh);
 
     // versioning service
 
     /**
      * Checks out the document and returns the object id of the PWC (private
      * working copy).
-     *
+     * 
      * @return PWC id
      */
     ObjectId checkOut(); // returns the PWC id
@@ -83,7 +95,7 @@ public interface Document extends FileableCmisObject {
     /**
      * If this is a PWC (private working copy) it performs a check in. If this
      * is not a PWC it an exception will be thrown.
-     *
+     * 
      * @return new document id
      */
     ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment,
@@ -92,18 +104,18 @@ public interface Document extends FileableCmisObject {
     /**
      * If this is a PWC (private working copy) it performs a check in. If this
      * is not a PWC it an exception will be thrown.
-     *
+     * 
      * @return new document id
      */
     ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment);
 
     /**
      * Fetches the latest major or minor version of this document.
-     *
+     * 
      * @param major
      *            if <code>true</code> the latest major version will be
      *            returned, otherwise the very last version will be returned
-     *
+     * 
      * @return the latest document object
      */
     Document getObjectOfLatestVersion(boolean major);
@@ -111,11 +123,11 @@ public interface Document extends FileableCmisObject {
     /**
      * Fetches the latest major or minor version of this document using the
      * given {@link OperationContext}.
-     *
+     * 
      * @param major
      *            if <code>true</code> the latest major version will be
      *            returned, otherwise the very last version will be returned
-     *
+     * 
      * @return the latest document object
      */
     Document getObjectOfLatestVersion(boolean major, OperationContext context);
@@ -133,20 +145,19 @@ public interface Document extends FileableCmisObject {
 
     /**
      * Creates a copy of this document, including content.
-     *
+     * 
      * @return the new document object
      */
     Document copy(ObjectId targetFolderId);
 
     /**
      * Creates a copy of this document, including content.
-     *
+     * 
      * @return the new document object or {@code null} if the parameter
      *         {@code context} was set to {@code null}
      */
-    Document copy(ObjectId targetFolderId, Map<String, ?> properties,
-            VersioningState versioningState, List<Policy> policies,
-            List<Ace> addACEs, List<Ace> removeACEs, OperationContext context);
+    Document copy(ObjectId targetFolderId, Map<String, ?> properties, VersioningState versioningState,
+            List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs, OperationContext context);
 
     // document specific properties
 

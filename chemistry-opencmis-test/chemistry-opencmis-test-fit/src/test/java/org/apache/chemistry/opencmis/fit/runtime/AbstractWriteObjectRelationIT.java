@@ -56,8 +56,8 @@ public abstract class AbstractWriteObjectRelationIT extends AbstractSessionTest 
         ObjectId id = this.session.createRelationship(properties);
 
         ObjectType ot = document1.getType();
-        ItemIterable<Relationship> relations = document1.getRelationships(true, RelationshipDirection.EITHER, ot,
-                this.session.getDefaultContext());
+        ItemIterable<Relationship> relations = session.getRelationships(document1, true, RelationshipDirection.EITHER,
+                ot, this.session.getDefaultContext());
         for (Relationship r : relations) {
             assertNotNull(r);
             assertEquals(id, r.getId());

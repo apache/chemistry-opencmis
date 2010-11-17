@@ -32,25 +32,21 @@ import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * ObjectData implementation.
  */
 public class ObjectDataImpl extends AbstractExtensionData implements ObjectData {
 
-    private Properties fProperties;
-    private ChangeEventInfo fChangeEventInfo;
-    private List<ObjectData> fRelationships;
-    private List<RenditionData> fRenditions;
-    private PolicyIdList fPolicyIds;
-    private AllowableActions fAllowableActions;
-    private Acl fAcl;
-    private Boolean fIsExactAcl;
+    private static final long serialVersionUID = 1L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#getId()
-     */
+    private Properties properties;
+    private ChangeEventInfo changeEventInfo;
+    private List<ObjectData> relationships;
+    private List<RenditionData> renditions;
+    private PolicyIdList policyIds;
+    private AllowableActions allowableActions;
+    private Acl acl;
+    private Boolean isExactAcl;
+
     public String getId() {
         Object value = getFirstValue(PropertyIds.OBJECT_ID);
         if (value instanceof String) {
@@ -60,11 +56,6 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#getBaseTypeId()
-     */
     public BaseTypeId getBaseTypeId() {
         Object value = getFirstValue(PropertyIds.BASE_TYPE_ID);
         if (value instanceof String) {
@@ -77,108 +68,68 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#getProperties()
-     */
     public Properties getProperties() {
-        return fProperties;
+        return properties;
     }
 
     public void setProperties(Properties properties) {
-        fProperties = properties;
+        this.properties = properties;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#getChangeEventInfo()
-     */
     public ChangeEventInfo getChangeEventInfo() {
-        return fChangeEventInfo;
+        return changeEventInfo;
     }
 
     public void setChangeEventInfo(ChangeEventInfo changeEventInfo) {
-        fChangeEventInfo = changeEventInfo;
+        this.changeEventInfo = changeEventInfo;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#getRelationships()
-     */
     public List<ObjectData> getRelationships() {
-        return fRelationships;
+        return relationships;
     }
 
     public void setRelationships(List<ObjectData> relationships) {
-        fRelationships = relationships;
+        this.relationships = relationships;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#getRenditions()
-     */
     public List<RenditionData> getRenditions() {
-        return fRenditions;
+        return renditions;
     }
 
     public void setRenditions(List<RenditionData> renditions) {
-        fRenditions = renditions;
+        this.renditions = renditions;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#getPolicyIds()
-     */
     public PolicyIdList getPolicyIds() {
-        return fPolicyIds;
+        return policyIds;
     }
 
     public void setPolicyIds(PolicyIdList policyIds) {
-        fPolicyIds = policyIds;
+        this.policyIds = policyIds;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#getAllowableActions()
-     */
     public AllowableActions getAllowableActions() {
-        return fAllowableActions;
+        return allowableActions;
     }
 
     public void setAllowableActions(AllowableActions allowableActions) {
-        fAllowableActions = allowableActions;
+        this.allowableActions = allowableActions;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#getACL()
-     */
     public Acl getAcl() {
-        return fAcl;
+        return acl;
     }
 
     public void setAcl(Acl acl) {
-        fAcl = acl;
+        this.acl = acl;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectData#isExactACL()
-     */
     public Boolean isExactAcl() {
-        return fIsExactAcl;
+        return isExactAcl;
     }
 
     public void setIsExactAcl(Boolean isExactACL) {
-        fIsExactAcl = isExactACL;
+        this.isExactAcl = isExactACL;
     }
 
     // ---- internal ----
@@ -188,11 +139,11 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
      * property is not set.
      */
     private Object getFirstValue(String id) {
-        if ((fProperties == null) || (fProperties.getProperties() == null)) {
+        if ((properties == null) || (properties.getProperties() == null)) {
             return null;
         }
 
-        PropertyData<?> property = fProperties.getProperties().get(id);
+        PropertyData<?> property = properties.getProperties().get(id);
         if (property == null) {
             return null;
         }
@@ -200,16 +151,11 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
         return property.getFirstValue();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Object Data [properties=" + fProperties + ", allowable actions=" + fAllowableActions
-                + ", change event info=" + fChangeEventInfo + ", ACL=" + fAcl + ", is exact ACL=" + fIsExactAcl
-                + ", policy ids=" + fPolicyIds + ", relationships=" + fRelationships + ", renditions=" + fRenditions
+        return "Object Data [properties=" + properties + ", allowable actions=" + allowableActions
+                + ", change event info=" + changeEventInfo + ", ACL=" + acl + ", is exact ACL=" + isExactAcl
+                + ", policy ids=" + policyIds + ", relationships=" + relationships + ", renditions=" + renditions
                 + "]" + super.toString();
     }
 }

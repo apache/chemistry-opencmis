@@ -26,105 +26,74 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 
 /**
  * Abstract property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractPropertyData<T> extends AbstractExtensionData implements PropertyData<T> {
 
-    private String fId;
-    private String fDisplayName;
-    private String fLocalName;
-    private String fQueryName;
+    private static final long serialVersionUID = 1L;
 
-    private List<T> fValues;
+    private String id;
+    private String displayName;
+    private String localName;
+    private String queryName;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.PropertyData#getId()
-     */
+    private List<T> values;
+
     public String getId() {
-        return fId;
+        return id;
     }
 
     public void setId(String id) {
-        fId = id;
+        this.id = id;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.PropertyData#getDisplayName()
-     */
     public String getDisplayName() {
-        return fDisplayName;
+        return displayName;
     }
 
     public void setDisplayName(String displayName) {
-        fDisplayName = displayName;
+        this.displayName = displayName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.PropertyData#getLocalName()
-     */
     public String getLocalName() {
-        return fLocalName;
+        return localName;
     }
 
     public void setLocalName(String localName) {
-        fLocalName = localName;
+        this.localName = localName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.PropertyData#getQueryName()
-     */
     public String getQueryName() {
-        return fQueryName;
+        return queryName;
     }
 
     public void setQueryName(String queryName) {
-        fQueryName = queryName;
+        this.queryName = queryName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.PropertyData#getValues()
-     */
     public List<T> getValues() {
-        return fValues;
+        return values;
     }
 
     public void setValues(List<T> values) {
         if (values == null) {
-            fValues = Collections.emptyList();
+            this.values = Collections.emptyList();
         } else {
-            fValues = values;
+            this.values = values;
         }
     }
 
     public void setValue(T value) {
         if (value == null) {
-            fValues = Collections.emptyList();
+            values = Collections.emptyList();
         } else {
-            fValues = new ArrayList<T>(1);
-            fValues.add(value);
+            values = new ArrayList<T>(1);
+            values.add(value);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.PropertyData#getFirstValue()
-     */
     public T getFirstValue() {
-        if ((fValues != null) && (!fValues.isEmpty())) {
-            return fValues.get(0);
+        if ((values != null) && (!values.isEmpty())) {
+            return values.get(0);
         }
 
         return null;
@@ -132,7 +101,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
 
     @Override
     public String toString() {
-        return "Property [id=" + fId + ", display Name=" + fDisplayName + ", local name=" + fLocalName
-                + ", query name=" + fQueryName + ", values=" + fValues + "]" + super.toString();
+        return "Property [id=" + id + ", display Name=" + displayName + ", local name=" + localName + ", query name="
+                + queryName + ", values=" + values + "]" + super.toString();
     }
 }

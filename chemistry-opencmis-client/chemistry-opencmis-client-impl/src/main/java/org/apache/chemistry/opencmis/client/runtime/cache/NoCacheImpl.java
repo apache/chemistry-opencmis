@@ -16,44 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.client.runtime.cache;
 
-import java.util.List;
+import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.definitions.Choice;
+import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Session;
 
-/**
- * Choice implementation.
- */
-public class ChoiceImpl<T> extends AbstractExtensionData implements Choice<T> {
+public class NoCacheImpl implements Cache {
 
     private static final long serialVersionUID = 1L;
 
-    private String displayName;
-    private List<T> value;
-    private List<Choice<T>> choice;
-
-    public String getDisplayName() {
-        return displayName;
+    public void initialize(Session session, Map<String, String> parameters) {
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public boolean containsId(String objectId, String cacheKey) {
+        return false;
     }
 
-    public List<T> getValue() {
-        return value;
+    public boolean containsPath(String path, String cacheKey) {
+        return false;
     }
 
-    public void setValue(List<T> value) {
-        this.value = value;
+    public void put(CmisObject object, String cacheKey) {
     }
 
-    public List<Choice<T>> getChoice() {
-        return choice;
+    public void putPath(String path, CmisObject object, String cacheKey) {
     }
 
-    public void setChoice(List<Choice<T>> choice) {
-        this.choice = choice;
+    public CmisObject getById(String objectId, String cacheKey) {
+        return null;
+    }
+
+    public CmisObject getByPath(String path, String cacheKey) {
+        return null;
+    }
+
+    public void clear() {
+    }
+
+    public int getCacheSize() {
+        return 0;
     }
 }

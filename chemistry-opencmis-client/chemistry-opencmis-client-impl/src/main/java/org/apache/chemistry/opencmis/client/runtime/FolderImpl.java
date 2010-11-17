@@ -30,12 +30,14 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Policy;
+import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
+import org.apache.chemistry.opencmis.client.api.TransientFolder;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
@@ -51,7 +53,6 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
-import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -59,7 +60,9 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 
-public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject implements Folder {
+public class FolderImpl extends AbstractFilableCmisObject implements Folder {
+
+    private static final long serialVersionUID = 1L;
 
     private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
     static {
@@ -70,26 +73,28 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     /**
      * Constructor.
      */
-    public PersistentFolderImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
-            OperationContext context) {
+    public FolderImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    protected TransientCmisObject createTransientCmisObject() {
+        TransientFolderImpl tf = new TransientFolderImpl();
+        tf.initialize(getSession(), this);
+
+        return tf;
+    }
+
+    public TransientFolder getTransientFolder() {
+        return (TransientFolder) getTransientObject();
     }
 
     public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context) {
-        if ((properties == null) || (properties.isEmpty())) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
 
-        String objectId = getObjectId();
-
-        ObjectFactory of = getObjectFactory();
-
-        String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
-                of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId,
-                of.convertContentStream(contentStream), versioningState, of.convertPolicies(policies),
-                of.convertAces(addAces), of.convertAces(removeAces), null);
+        ObjectId newId = getSession().createDocument(properties, this, contentStream, versioningState, policies,
+                addAces, removeAces);
 
         // if no context is provided the object will not be fetched
         if ((context == null) || (newId == null)) {
@@ -97,7 +102,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         }
 
         // get the new object
-        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        CmisObject object = getSession().getObject(newId, context);
         if (!(object instanceof Document)) {
             throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
         }
@@ -108,33 +113,9 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
     public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context) {
-        if ((source == null) || (source.getId() == null)) {
-            throw new IllegalArgumentException("Source must be set!");
-        }
 
-        String objectId = getObjectId();
-
-        // get the type of the source document
-        ObjectType type = null;
-        if (source instanceof CmisObject) {
-            type = ((CmisObject) source).getType();
-        } else {
-            CmisObject sourceObj = getSession().getObject(source);
-            type = sourceObj.getType();
-        }
-
-        if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
-            throw new IllegalArgumentException("Source object must be a document!");
-        }
-
-        ObjectFactory of = getObjectFactory();
-
-        Set<Updatability> updatebility = new HashSet<Updatability>();
-        updatebility.add(Updatability.READWRITE);
-
-        String newId = getBinding().getObjectService().createDocumentFromSource(getRepositoryId(), source.getId(),
-                of.convertProperties(properties, type, updatebility), objectId, versioningState,
-                of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces), null);
+        ObjectId newId = getSession().createDocumentFromSource(source, properties, this, versioningState, policies,
+                addAces, removeAces);
 
         // if no context is provided the object will not be fetched
         if ((context == null) || (newId == null)) {
@@ -142,7 +123,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         }
 
         // get the new object
-        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        CmisObject object = getSession().getObject(newId, context);
         if (!(object instanceof Document)) {
             throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
         }
@@ -152,17 +133,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     public Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces, OperationContext context) {
-        if ((properties == null) || (properties.isEmpty())) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
 
-        String objectId = getObjectId();
-
-        ObjectFactory of = getObjectFactory();
-
-        String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
-                of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId, of.convertPolicies(policies),
-                of.convertAces(addAces), of.convertAces(removeAces), null);
+        ObjectId newId = getSession().createFolder(properties, this, policies, addAces, removeAces);
 
         // if no context is provided the object will not be fetched
         if ((context == null) || (newId == null)) {
@@ -170,7 +142,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         }
 
         // get the new object
-        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        CmisObject object = getSession().getObject(newId, context);
         if (!(object instanceof Folder)) {
             throw new CmisRuntimeException("Newly created object is not a folder! New id: " + newId);
         }
@@ -180,17 +152,8 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     public Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces, OperationContext context) {
-        if ((properties == null) || (properties.isEmpty())) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
 
-        String objectId = getObjectId();
-
-        ObjectFactory of = getObjectFactory();
-
-        String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
-                of.convertProperties(properties, null, CREATE_UPDATABILITY), objectId, of.convertPolicies(policies),
-                of.convertAces(addAces), of.convertAces(removeAces), null);
+        ObjectId newId = getSession().createPolicy(properties, this, policies, addAces, removeAces);
 
         // if no context is provided the object will not be fetched
         if ((context == null) || (newId == null)) {
@@ -198,7 +161,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
         }
 
         // get the new object
-        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        CmisObject object = getSession().getObject(newId, context);
         if (!(object instanceof Policy)) {
             throw new CmisRuntimeException("Newly created object is not a policy! New id: " + newId);
         }
@@ -252,10 +215,10 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
             protected AbstractPageFetcher.Page<Document> fetchPage(long skipCount) {
 
                 // get checked out documents for this folder
-                ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), objectId, ctxt
-                        .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), BigInteger
-                        .valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
+                ObjectList checkedOutDocs = navigationService.getCheckedOutDocs(getRepositoryId(), objectId,
+                        ctxt.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(),
+                        ctxt.getIncludeRelationships(), ctxt.getRenditionFilterString(),
+                        BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert objects
                 List<Document> page = new ArrayList<Document>();
@@ -293,9 +256,9 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
             protected AbstractPageFetcher.Page<CmisObject> fetchPage(long skipCount) {
 
                 // get the children
-                ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId, ctxt
-                        .getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(), ctxt
-                        .getIncludeRelationships(), ctxt.getRenditionFilterString(), ctxt.isIncludePathSegments(),
+                ObjectInFolderList children = navigationService.getChildren(getRepositoryId(), objectId,
+                        ctxt.getFilterString(), ctxt.getOrderBy(), ctxt.isIncludeAllowableActions(),
+                        ctxt.getIncludeRelationships(), ctxt.getRenditionFilterString(), ctxt.isIncludePathSegments(),
                         BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
 
                 // convert objects
@@ -309,8 +272,7 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
                     }
                 }
 
-                return new AbstractPageFetcher.Page<CmisObject>(page, children.getNumItems(), children
-                        .hasMoreItems());
+                return new AbstractPageFetcher.Page<CmisObject>(page, children.getNumItems(), children.hasMoreItems());
             }
         });
     }
@@ -445,12 +407,13 @@ public class PersistentFolderImpl extends AbstractPersistentFilableCmisObject im
 
     public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
             VersioningState versioningState) {
-        return this.createDocument(properties, contentStream, versioningState, null, null, null, getSession().getDefaultContext());
+        return this.createDocument(properties, contentStream, versioningState, null, null, null, getSession()
+                .getDefaultContext());
     }
 
-    public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties,
-            VersioningState versioningState) {
-        return this.createDocumentFromSource(source, properties, versioningState, null, null, null, getSession().getDefaultContext());
+    public Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState) {
+        return this.createDocumentFromSource(source, properties, versioningState, null, null, null, getSession()
+                .getDefaultContext());
     }
 
     public Folder createFolder(Map<String, ?> properties) {

@@ -25,6 +25,8 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
  */
 public class ObjectIdImpl implements ObjectId {
 
+    private static final long serialVersionUID = 1L;
+
     private String id;
 
     /**
@@ -34,11 +36,6 @@ public class ObjectIdImpl implements ObjectId {
         setId(id);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.ObjectId#getId()
-     */
     public String getId() {
         return id;
     }

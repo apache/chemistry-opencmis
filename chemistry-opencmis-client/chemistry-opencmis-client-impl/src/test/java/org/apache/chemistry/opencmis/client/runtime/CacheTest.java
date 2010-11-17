@@ -23,12 +23,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.Assert;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +43,7 @@ public class CacheTest {
 
     @Test
     public void cacheSingleObjectTest() {
-        Cache cache = CacheImpl.newInstance();
+        Cache cache = createCache(100, 3600 * 1000);
 
         String id = "1";
         // String path = "/1";
@@ -71,14 +74,14 @@ public class CacheTest {
     @Test
     public void cacheSizeTest() {
         int cacheSize = 50000;
-        Cache cache = CacheImpl.newInstance(cacheSize);
+        Cache cache = createCache(cacheSize, 3600 * 1000);
         Assert.assertEquals(cacheSize, cache.getCacheSize());
     }
 
     @Test
     public void lruTest() {
         int cacheSize = 3;
-        Cache cache = CacheImpl.newInstance(cacheSize);
+        Cache cache = createCache(cacheSize, 3600 * 1000);
 
         String cacheKey = "key";
 
@@ -93,10 +96,28 @@ public class CacheTest {
         Assert.assertNotNull(cache.getById("id3", cacheKey));
     }
 
+    @SuppressWarnings("static-access")
+    @Test
+    public void ttlTest() throws InterruptedException {
+        Cache cache = createCache(10, 500);
+
+        String cacheKey = "key";
+        String id = "id";
+
+        CmisObject obj = this.createCmisObject(id);
+        cache.put(obj, cacheKey);
+
+        Assert.assertNotNull(cache.getById(id, cacheKey));
+
+        Thread.currentThread().sleep(501);
+
+        Assert.assertNull(cache.getById(id, cacheKey));
+    }
+
     @Test
     public void serializationTest() throws IOException, ClassNotFoundException {
         int cacheSize = 10;
-        Cache cache = CacheImpl.newInstance(cacheSize);
+        Cache cache = createCache(cacheSize, 3600 * 1000);
 
         String cacheKey = "key";
 
@@ -119,7 +140,6 @@ public class CacheTest {
             CmisObject o2 = cache2.getById("id" + k, cacheKey);
             Assert.assertEquals(o1.getId(), o2.getId());
         }
-
     }
 
     /**
@@ -131,5 +151,17 @@ public class CacheTest {
      */
     private CmisObject createCmisObject(final String id) {
         return new CmisObjectMock(id);
+    }
+
+    private Cache createCache(int cacheSize, int ttl) {
+        Cache cache = new CacheImpl();
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put(SessionParameter.CACHE_SIZE_OBJECTS, "" + cacheSize);
+        parameters.put(SessionParameter.CACHE_TTL_OBJECTS, "" + ttl);
+
+        cache.initialize(null, parameters);
+
+        return cache;
     }
 }

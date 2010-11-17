@@ -25,11 +25,10 @@ import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 
 /**
  * Integer property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyIntegerImpl extends AbstractPropertyData<BigInteger> implements PropertyInteger {
+
+    private static final long serialVersionUID = 1L;
 
     public PropertyIntegerImpl() {
     }

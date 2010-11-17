@@ -22,13 +22,14 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * ObjectParentData implementation.
  */
 public class ObjectParentDataImpl extends AbstractExtensionData implements ObjectParentData {
 
-    private ObjectData fObject;
-    private String fRelativePathSegment;
+    private static final long serialVersionUID = 1L;
+
+    private ObjectData object;
+    private String relativePathSegment;
 
     /**
      * Constructor.
@@ -43,41 +44,25 @@ public class ObjectParentDataImpl extends AbstractExtensionData implements Objec
         setObject(object);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.ObjectInFolderData#getObject()
-     */
     public ObjectData getObject() {
-        return fObject;
+        return object;
     }
 
     public void setObject(ObjectData object) {
-        fObject = object;
+        this.object = object;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectInFolderData#getPathSegment()
-     */
     public String getRelativePathSegment() {
-        return fRelativePathSegment;
+        return relativePathSegment;
     }
 
     public void setRelativePathSegment(String relativePathSegment) {
-        fRelativePathSegment = relativePathSegment;
+        this.relativePathSegment = relativePathSegment;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Object Parent [object=" + fObject + ", relative path segment=" + fRelativePathSegment + "]"
+        return "Object Parent [object=" + object + ", relative path segment=" + relativePathSegment + "]"
                 + super.toString();
     }
 }

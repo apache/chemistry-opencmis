@@ -20,38 +20,20 @@ package org.apache.chemistry.opencmis.client.runtime;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
-import org.apache.chemistry.opencmis.client.api.Relationship;
+import org.apache.chemistry.opencmis.client.api.TransientRelationship;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
-public class PersistentRelationshipImpl extends AbstractPersistentCmisObject implements Relationship {
+public class TransientRelationshipImpl extends AbstractTransientCmisObject implements TransientRelationship {
 
-    /**
-     * Constructor.
-     */
-    public PersistentRelationshipImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
-            OperationContext context) {
-        initialize(session, objectType, objectData, context);
-    }
+    private static final long serialVersionUID = 1L;
 
     public CmisObject getSource() {
         return getSource(getSession().getDefaultContext());
     }
 
     public CmisObject getSource(OperationContext context) {
-        readLock();
-        try {
-            ObjectId sourceId = getSourceId();
-            if (sourceId == null) {
-                return null;
-            }
-
-            return getSession().getObject(sourceId, context);
-        } finally {
-            readUnlock();
-        }
+        return getSession().getObject(getSourceId(), context);
     }
 
     public ObjectId getSourceId() {
@@ -63,22 +45,20 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
         return getSession().createObjectId(sourceId);
     }
 
+    public void setSourceId(ObjectId id) {
+        if ((id == null) || (id.getId() == null) || (id.getId().length() == 0)) {
+            throw new IllegalArgumentException("Id is invalid!");
+        }
+
+        setPropertyValue(PropertyIds.SOURCE_ID, id.getId());
+    }
+
     public CmisObject getTarget() {
         return getTarget(getSession().getDefaultContext());
     }
 
     public CmisObject getTarget(OperationContext context) {
-        readLock();
-        try {
-            ObjectId targetId = getTargetId();
-            if (targetId == null) {
-                return null;
-            }
-
-            return getSession().getObject(targetId, context);
-        } finally {
-            readUnlock();
-        }
+        return getSession().getObject(getTargetId(), context);
     }
 
     public ObjectId getTargetId() {
@@ -88,5 +68,13 @@ public class PersistentRelationshipImpl extends AbstractPersistentCmisObject imp
         }
 
         return getSession().createObjectId(targetId);
+    }
+
+    public void setTargetId(ObjectId id) {
+        if ((id == null) || (id.getId() == null) || (id.getId().length() == 0)) {
+            throw new IllegalArgumentException("Id is invalid!");
+        }
+
+        setPropertyValue(PropertyIds.TARGET_ID, id.getId());
     }
 }

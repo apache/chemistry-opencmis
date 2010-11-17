@@ -16,33 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.enums;
+package org.apache.chemistry.opencmis.client.api;
 
-/**
- * Session Type Enum.
- * 
- * 
- */
-public enum SessionType {
+public interface TransientRelationship extends TransientCmisObject {
 
-    PERSISTENT("persistent"), TRANSIENT("transient");
-    private final String value;
+    CmisObject getSource();
 
-    SessionType(String v) {
-        value = v;
-    }
+    CmisObject getSource(OperationContext context);
 
-    public String value() {
-        return value;
-    }
+    ObjectId getSourceId(); // cmis:sourceId
 
-    public static SessionType fromValue(String v) {
-        for (SessionType c : SessionType.values()) {
-            if (c.value.equals(v)) {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException(v);
-    }
+    void setSourceId(ObjectId id);
 
+    CmisObject getTarget();
+
+    CmisObject getTarget(OperationContext context);
+
+    ObjectId getTargetId(); // cmis:targetId
+
+    void setTargetId(ObjectId id);
 }

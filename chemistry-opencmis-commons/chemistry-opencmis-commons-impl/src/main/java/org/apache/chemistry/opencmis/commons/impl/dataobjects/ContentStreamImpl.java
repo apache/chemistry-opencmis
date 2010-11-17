@@ -31,10 +31,12 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
  */
 public class ContentStreamImpl extends AbstractExtensionData implements ContentStream {
 
+    private static final long serialVersionUID = 1L;
+
     private String filename;
     private BigInteger length;
     private String mimeType;
-    private InputStream stream;
+    private transient InputStream stream;
 
     /**
      * Constructor.
@@ -115,7 +117,8 @@ public class ContentStreamImpl extends AbstractExtensionData implements ContentS
     protected void finalize() throws Throwable {
         try {
             if (stream != null) {
-                // this stream must be closed to release the underlying network resources
+                // this stream must be closed to release the underlying network
+                // resources
                 stream.close();
             }
         } catch (IOException e) {

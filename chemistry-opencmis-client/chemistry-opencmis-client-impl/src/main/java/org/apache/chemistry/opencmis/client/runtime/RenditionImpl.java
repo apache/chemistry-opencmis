@@ -33,6 +33,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
  */
 public class RenditionImpl extends RenditionDataImpl implements Rendition {
 
+    private static final long serialVersionUID = 1L;
+
     private Session session;
     private String objectId;
 
@@ -48,15 +50,15 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
     }
 
     public long getLength() {
-        return fLength == null ? -1 : fLength.longValue();
+        return length == null ? -1 : length.longValue();
     }
 
     public long getHeight() {
-        return fHeight == null ? -1 : fHeight.longValue();
+        return height == null ? -1 : height.longValue();
     }
 
     public long getWidth() {
-        return fWidth == null ? -1 : fWidth.longValue();
+        return width == null ? -1 : width.longValue();
     }
 
     public Document getRenditionDocument() {
@@ -64,10 +66,10 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
     }
 
     public Document getRenditionDocument(OperationContext context) {
-        if (fRenditionDocumentId == null) {
+        if (renditionDocumentId == null) {
             return null;
         }
-        CmisObject rendDoc = session.getObject(session.createObjectId(fRenditionDocumentId), context);
+        CmisObject rendDoc = session.getObject(session.createObjectId(renditionDocumentId), context);
         if (!(rendDoc instanceof Document)) {
             return null;
         }
@@ -76,12 +78,12 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
     }
 
     public ContentStream getContentStream() {
-        if ((objectId == null) || (fStreamId == null)) {
+        if ((objectId == null) || (streamId == null)) {
             return null;
         }
 
-        ContentStream contentStream = session.getBinding().getObjectService().getContentStream(
-                session.getRepositoryInfo().getId(), objectId, fStreamId, null, null, null);
+        ContentStream contentStream = session.getBinding().getObjectService()
+                .getContentStream(session.getRepositoryInfo().getId(), objectId, streamId, null, null, null);
         if (contentStream == null) {
             return null;
         }

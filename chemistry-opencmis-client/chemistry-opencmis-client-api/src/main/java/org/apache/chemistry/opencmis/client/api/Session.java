@@ -18,15 +18,19 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
@@ -54,7 +58,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * ids and query names, query language, etc.)
  * </p>
  */
-public interface Session {
+public interface Session extends Serializable {
 
     /**
      * Clears all cached data. This implies that all data will be reloaded from
@@ -62,26 +66,6 @@ public interface Session {
      * immediately or be deferred).
      */
     void clear();
-
-    /**
-     * Saves all pending actions for this session. Corresponds to a
-     * <code>commit</code> if the CMIS provider supports transactions. If
-     * transactions are not supported by the CMIS provider, changes might be
-     * applied only partially.
-     * 
-     * <em>Not all session implementations require this method!</em>
-     */
-    void save();
-
-    /**
-     * Cancels all pending actions for this session. Corresponds to a
-     * <code>rollback</code> if the CMIS provider supports transactions. If
-     * transactions are not supported by the CMIS provider, some changes might
-     * already be applied and therefore not rolled back.
-     * 
-     * <em>Not all session implementations require this method!</em>
-     */
-    void cancel();
 
     // session context
 
@@ -388,4 +372,30 @@ public interface Session {
      * @return the object id of the new relationship
      */
     ObjectId createRelationship(Map<String, ?> properties);
+
+    /**
+     * Fetches the relationships from or to an object from the repository.
+     */
+    ItemIterable<Relationship> getRelationships(ObjectId objectId, boolean includeSubRelationshipTypes,
+            RelationshipDirection relationshipDirection, ObjectType type, OperationContext context);
+
+    /**
+     * Fetches the ACL of an object from the repository.
+     */
+    Acl getAcl(ObjectId objectId, boolean onlyBasicPermissions);
+
+    /**
+     * Applies an ACL to an object.
+     */
+    Acl applyAcl(ObjectId objectId, List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
+
+    /**
+     * Applies a set of policies to an object.
+     */
+    void applyPolicy(ObjectId objectId, ObjectId... policyIds);
+
+    /**
+     * Removes a set of policies from an object.
+     */
+    void removePolicy(ObjectId objectId, ObjectId... policyIds);
 }

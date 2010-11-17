@@ -25,11 +25,10 @@ import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
 
 /**
  * Decimal property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyDecimalImpl extends AbstractPropertyData<BigDecimal> implements PropertyDecimal {
+
+    private static final long serialVersionUID = 1L;
 
     public PropertyDecimalImpl() {
     }

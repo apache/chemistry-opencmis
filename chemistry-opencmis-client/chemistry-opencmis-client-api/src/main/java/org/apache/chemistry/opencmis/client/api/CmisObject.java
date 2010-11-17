@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +30,13 @@ import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
-import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 
 /**
  * Base CMIS object.
- *
+ * 
  * See CMIS Domain Model - section 2.1.2.
  */
-public interface CmisObject extends ObjectId {
+public interface CmisObject extends ObjectId, Serializable {
 
     // common properties
 
@@ -44,11 +44,6 @@ public interface CmisObject extends ObjectId {
      * Get the name of this object. {@code Property<String> 'cmis:name'}
      */
     String getName();
-
-    /**
-     * Set the name of this object. {@code Property<String> 'cmis:name'}
-     */
-    void setName(String name);
 
     /**
      * Get the id of the user who created the object (maintained by the
@@ -88,7 +83,7 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Get the type's base type id.
-     *
+     * 
      * @return
      */
     BaseTypeId getBaseTypeId();
@@ -110,10 +105,10 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Returns a property by id.
-     *
+     * 
      * @param id
      *            the property id
-     *
+     * 
      * @return the property or <code>null</code> if the property does not exist
      *         or is not available
      */
@@ -121,10 +116,10 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Returns a property value by id.
-     *
+     * 
      * @param id
      *            the property id
-     *
+     * 
      * @return the property value or <code>null</code> if the property does not
      *         exist or is not available
      */
@@ -149,7 +144,7 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Deletes this object.
-     *
+     * 
      * @param allVersions
      *            if this object is a document this parameter defines if just
      *            this version or all versions should be deleted
@@ -157,32 +152,28 @@ public interface CmisObject extends ObjectId {
     void delete(boolean allVersions);
 
     /**
-     * Updates the properties that have been set with
-     * {@link #setProperty(String, Object)}.
-     *
-     * @return the object id of the updated object (a repository might have
-     *         created a new object)
+     * Updates the properties that are provided.
+     * 
+     * @param properties
+     *            the properties to update
+     * 
+     * @return the updated object (a repository might have created a new object)
      */
-    ObjectId updateProperties();
+    CmisObject updateProperties(Map<String, ?> properties);
 
     /**
      * Updates the properties that are provided.
-     *
+     * 
      * @param properties
      *            the properties to update
-     *
+     * @param refresh
+     *            indicates if the object should be refresh after the update
+     * 
      * @return the object id of the updated object (a repository might have
      *         created a new object)
+     * 
      */
-    ObjectId updateProperties(Map<String, ?> properties);
-
-    // relationship service
-
-    /**
-     * Fetches the relationships from or to this object from the repository.
-     */
-    ItemIterable<Relationship> getRelationships(boolean includeSubRelationshipTypes,
-            RelationshipDirection relationshipDirection, ObjectType type, OperationContext context);
+    ObjectId updateProperties(Map<String, ?> properties, boolean refresh);
 
     // renditions
 
@@ -194,14 +185,14 @@ public interface CmisObject extends ObjectId {
     // policy service
 
     /**
-     * Applies a policy to this object.
+     * Applies policies to this object.
      */
-    void applyPolicy(ObjectId policyId);
+    void applyPolicy(ObjectId... policyIds);
 
     /**
-     * Remove a policy from this object.
+     * Remove policies from this object.
      */
-    void removePolicy(ObjectId policyId);
+    void removePolicy(ObjectId... policyIds);
 
     /**
      * Returns the applied policies if they have been fetched for this object.
@@ -211,13 +202,8 @@ public interface CmisObject extends ObjectId {
     // ACL service
 
     /**
-     * Fetches the ACL of this object from the repository.
-     */
-    Acl getAcl(boolean onlyBasicPermissions);
-
-    /**
      * Adds and removes ACEs to the object.
-     *
+     * 
      * @return the new ACL of this object
      */
     Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
@@ -225,35 +211,35 @@ public interface CmisObject extends ObjectId {
     /**
      * Adds ACEs to the object.
      */
-    void addAcl(List<Ace> addAces, AclPropagation aclPropagation);
+    Acl addAcl(List<Ace> addAces, AclPropagation aclPropagation);
 
     /**
      * Removes ACEs to the object.
      */
-    void removeAcl(List<Ace> removeAces, AclPropagation aclPropagation);
-
-    // buffered stuff
-
-    /**
-     * Sets a new property value.
-     * <p>
-     * The value may be a single value or a list.
-     *
-     * Use {@link #updateProperties()} to store the new value in the repository.
-     */
-    <T> void setProperty(String id, Object value);
+    Acl removeAcl(List<Ace> removeAces, AclPropagation aclPropagation);
 
     // extensions
 
+    /**
+     * Returns the extensions for the given level.
+     */
     List<CmisExtensionElement> getExtensions(ExtensionLevel level);
 
-    // session handling
+    // adapters
 
     /**
-     * Returns true, if this object has pending changes which are not synced
-     * with the backend.
+     * Returns an adapter based on the given interface.
      */
-    boolean isChanged();
+    CmisObjectAdapter getAdapter(Class<? extends CmisObjectAdapter> adapterInterface);
+
+    /**
+     * Returns a transient object adapter.
+     * 
+     * @see TransientCmisObject
+     */
+    TransientCmisObject getTransientObject();
+
+    // session handling
 
     /**
      * Returns the timestamp (in milliseconds) of the last refresh.

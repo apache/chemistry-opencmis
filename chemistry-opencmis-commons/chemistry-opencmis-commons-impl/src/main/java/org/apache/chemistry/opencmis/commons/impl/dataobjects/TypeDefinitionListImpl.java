@@ -25,10 +25,12 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+ * TypeDefinitionList implementation.
  */
 public class TypeDefinitionListImpl extends AbstractExtensionData implements TypeDefinitionList {
 
+    private static final long serialVersionUID = 1L;
+    
     private List<TypeDefinition> fList;
     private Boolean fHasMoreItems = Boolean.FALSE;
     private BigInteger fNumItems;
@@ -41,8 +43,9 @@ public class TypeDefinitionListImpl extends AbstractExtensionData implements Typ
 
     /**
      * Constructor from a list.
-     *
-     * @param list the initial list
+     * 
+     * @param list
+     *            the initial list
      */
     public TypeDefinitionListImpl(List<TypeDefinition> list) {
         fList = list;

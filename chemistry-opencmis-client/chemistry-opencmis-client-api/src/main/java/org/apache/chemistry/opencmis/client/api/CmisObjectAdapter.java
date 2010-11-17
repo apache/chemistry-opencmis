@@ -16,27 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
-
-import java.util.List;
-
-import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
+package org.apache.chemistry.opencmis.client.api;
 
 /**
- * PolicyIdList implementation.
+ * Marker interface for adapters.
  */
-public class PolicyIdListImpl extends AbstractExtensionData implements PolicyIdList {
-
-    private static final long serialVersionUID = 1L;
-
-    private List<String> fPolicyIds;
-
-    public List<String> getPolicyIds() {
-        return fPolicyIds;
-    }
-
-    public void setPolicyIds(List<String> policyIds) {
-        fPolicyIds = policyIds;
-    }
-
+public interface CmisObjectAdapter {
 }

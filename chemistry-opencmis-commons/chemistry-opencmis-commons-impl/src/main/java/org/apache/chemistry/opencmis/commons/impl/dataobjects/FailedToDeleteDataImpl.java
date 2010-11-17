@@ -23,23 +23,19 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * FailedToDeleteData implementation.
  */
 public class FailedToDeleteDataImpl extends AbstractExtensionData implements FailedToDeleteData {
 
+    private static final long serialVersionUID = 1L;
+
     private List<String> fIds;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.FailedToDeleteData#getIds()
-     */
     public List<String> getIds() {
         return fIds;
     }
 
     public void setIds(List<String> ids) {
-        fIds = ids;
+        this.fIds = ids;
     }
 }

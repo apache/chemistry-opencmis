@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.CmisObjectAdapter;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
@@ -32,6 +33,7 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
+import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
@@ -54,7 +56,8 @@ public class CmisObjectMock implements CmisObject, Serializable {
         this.id = id;
     }
 
-    public void addAcl(List<Ace> addAces, AclPropagation aclPropagation) {
+    public Acl addAcl(List<Ace> addAces, AclPropagation aclPropagation) {
+        return null;
     }
 
     public Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation) {
@@ -151,11 +154,7 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public List<CmisExtensionElement> getExtensions(ExtensionLevel level) {
         return null;
     }
-
-    public boolean isChanged() {
-        return false;
-    }
-
+    
     public void refresh() {
 
     }
@@ -164,31 +163,38 @@ public class CmisObjectMock implements CmisObject, Serializable {
 
     }
 
-    public void removeAcl(List<Ace> removeAces, AclPropagation aclPropagation) {
-
-    }
-
-    public void removePolicy(ObjectId policyId) {
-
-    }
-
-    public void setName(String name) {
-
-    }
-
-    public <T> void setProperty(String id, Object value) {
+    public Acl removeAcl(List<Ace> removeAces, AclPropagation aclPropagation) {
+        return null;
     }
 
     public ObjectId updateProperties() {
         return null;
     }
 
-    public ObjectId updateProperties(Map<String, ?> properties) {
+    public CmisObject updateProperties(Map<String, ?> properties) {
         return null;
+    }
+    
+    public ObjectId updateProperties(Map<String, ?> properties, boolean refresh) {
+        return null;
+    }
+
+    public void applyPolicy(ObjectId... policyIds) {
+        
+    }
+
+    public void removePolicy(ObjectId... policyIds) {
     }
 
     public String getId() {
         return this.id;
     }
 
+    public CmisObjectAdapter getAdapter(Class<? extends CmisObjectAdapter> adapterInterface) {
+        return null;
+    }
+
+    public TransientCmisObject getTransientObject() {
+        return null;
+    }
 };

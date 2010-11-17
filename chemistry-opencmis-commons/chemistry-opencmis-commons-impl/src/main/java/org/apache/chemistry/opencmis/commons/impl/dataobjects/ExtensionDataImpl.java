@@ -21,9 +21,8 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * ExtensionsData implementation.
  */
 public class ExtensionDataImpl extends AbstractExtensionData implements ExtensionsData {
-
+    private static final long serialVersionUID = 1L;
 }

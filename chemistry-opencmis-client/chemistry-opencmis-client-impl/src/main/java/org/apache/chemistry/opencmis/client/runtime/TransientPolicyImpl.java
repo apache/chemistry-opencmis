@@ -16,27 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.client.runtime;
 
-import java.util.List;
+import org.apache.chemistry.opencmis.client.api.TransientPolicy;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 
-import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
-
-/**
- * PolicyIdList implementation.
- */
-public class PolicyIdListImpl extends AbstractExtensionData implements PolicyIdList {
+public class TransientPolicyImpl extends AbstractTransientFileableCmisObject implements TransientPolicy {
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> fPolicyIds;
-
-    public List<String> getPolicyIds() {
-        return fPolicyIds;
+    public String getPolicyText() {
+        return getPropertyValue(PropertyIds.POLICY_TEXT);
     }
 
-    public void setPolicyIds(List<String> policyIds) {
-        fPolicyIds = policyIds;
+    public void setPolicyText(String policyText) {
+        setPropertyValue(PropertyIds.POLICY_TEXT, policyText);
     }
-
 }

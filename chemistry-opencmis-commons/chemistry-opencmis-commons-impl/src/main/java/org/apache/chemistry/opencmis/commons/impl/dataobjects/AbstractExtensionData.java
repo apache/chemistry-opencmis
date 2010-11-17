@@ -28,6 +28,8 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
  */
 public abstract class AbstractExtensionData implements ExtensionsData {
 
+    private static final long serialVersionUID = 1L;
+
     private List<CmisExtensionElement> extensions;
 
     public List<CmisExtensionElement> getExtensions() {

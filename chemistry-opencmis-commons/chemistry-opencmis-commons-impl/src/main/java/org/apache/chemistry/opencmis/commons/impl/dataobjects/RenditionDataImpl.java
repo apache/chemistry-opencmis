@@ -23,19 +23,20 @@ import java.math.BigInteger;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * RenditionData implementation.
  */
 public class RenditionDataImpl extends AbstractExtensionData implements RenditionData {
 
-    protected String fStreamId;
-    private String fMimeType;
-    protected BigInteger fLength;
-    private String fKind;
-    private String fTitle;
-    protected BigInteger fWidth;
-    protected BigInteger fHeight;
-    protected String fRenditionDocumentId;
+    private static final long serialVersionUID = 1L;
+
+    protected String streamId;
+    private String mimeType;
+    protected BigInteger length;
+    private String kind;
+    private String title;
+    protected BigInteger width;
+    protected BigInteger height;
+    protected String renditionDocumentId;
 
     public RenditionDataImpl() {
     }
@@ -52,122 +53,75 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
         setRenditionDocumentId(renditionDocumentId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.RenditionData#getStreamId()
-     */
     public String getStreamId() {
-        return fStreamId;
+        return streamId;
     }
 
     public void setStreamId(String streamId) {
-        fStreamId = streamId;
+        this.streamId = streamId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.RenditionData#getMimeType()
-     */
     public String getMimeType() {
-        return fMimeType;
+        return mimeType;
     }
 
     public void setMimeType(String mimeType) {
-        fMimeType = mimeType;
+        this.mimeType = mimeType;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.RenditionData#getLength()
-     */
     public BigInteger getBigLength() {
-        return fLength;
+        return length;
     }
 
     public void setBigLength(BigInteger length) {
-        fLength = length;
+        this.length = length;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.RenditionData#getKind()
-     */
     public String getKind() {
-        return fKind;
+        return kind;
     }
 
     public void setKind(String kind) {
-        fKind = kind;
+        this.kind = kind;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.RenditionData#getTitle()
-     */
     public String getTitle() {
-        return fTitle;
+        return title;
     }
 
     public void setTitle(String title) {
-        fTitle = title;
+        this.title = title;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.RenditionData#getHeight()
-     */
     public BigInteger getBigHeight() {
-        return fHeight;
+        return height;
     }
 
     public void setBigHeight(BigInteger height) {
-        fHeight = height;
+        this.height = height;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.RenditionData#getWidth()
-     */
     public BigInteger getBigWidth() {
-        return fWidth;
+        return width;
     }
 
     public void setBigWidth(BigInteger width) {
-        fWidth = width;
+        this.width = width;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RenditionData#getRenditionDocumentId
-     * ()
-     */
     public String getRenditionDocumentId() {
-        return fRenditionDocumentId;
+        return renditionDocumentId;
     }
 
     public void setRenditionDocumentId(String renditionDocumentId) {
-        fRenditionDocumentId = renditionDocumentId;
+        this.renditionDocumentId = renditionDocumentId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "RenditionDataImpl [, kind=" + fKind + ", title=" + fTitle + ", MIME type=" + fMimeType + ", length="
-                + fLength + ", rendition document id=" + fRenditionDocumentId + ", stream id=" + fStreamId + " height="
-                + fHeight + ", width=" + fWidth + "]" + super.toString();
+        return "RenditionDataImpl [, kind=" + kind + ", title=" + title + ", MIME type=" + mimeType + ", length="
+                + length + ", rendition document id=" + renditionDocumentId + ", stream id=" + streamId + " height="
+                + height + ", width=" + width + "]" + super.toString();
     }
 
 }

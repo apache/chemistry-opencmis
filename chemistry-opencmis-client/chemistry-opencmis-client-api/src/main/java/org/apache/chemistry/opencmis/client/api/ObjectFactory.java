@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.api;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,10 +38,12 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 
 /**
  * A factory to create CMIS objects.
- *
+ * 
  * @see org.apache.chemistry.opencmis.client.api.Session#getObjectFactory()
  */
-public interface ObjectFactory {
+public interface ObjectFactory extends Serializable {
+
+    void initialize(Session session, Map<String, String> parameters);
 
     // ACL and ACE
 

@@ -24,11 +24,10 @@ import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 
 /**
  * Boolean property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyBooleanImpl extends AbstractPropertyData<Boolean> implements PropertyBoolean {
+
+    private static final long serialVersionUID = 1L;
 
     public PropertyBooleanImpl() {
     }

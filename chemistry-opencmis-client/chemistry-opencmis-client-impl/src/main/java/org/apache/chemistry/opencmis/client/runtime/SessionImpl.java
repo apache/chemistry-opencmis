@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,16 +39,18 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
+import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
-import org.apache.chemistry.opencmis.client.runtime.repository.PersistentObjectFactoryImpl;
+import org.apache.chemistry.opencmis.client.runtime.repository.ObjectFactoryImpl;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -57,8 +58,10 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -66,14 +69,13 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
+import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Persistent model session.
  */
-public class PersistentSessionImpl implements Session, Serializable {
+public class SessionImpl implements Session {
 
     private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false, true, false,
             IncludeRelationships.NONE, null, true, null, true, 100);
@@ -84,9 +86,9 @@ public class PersistentSessionImpl implements Session, Serializable {
         CREATE_UPDATABILITY.add(Updatability.READWRITE);
     }
 
-    private static Log log = LogFactory.getLog(PersistentSessionImpl.class);
+    // private static Log log = LogFactory.getLog(SessionImpl.class);
 
-    private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     /*
      * default session context (serializable)
@@ -109,50 +111,41 @@ public class PersistentSessionImpl implements Session, Serializable {
     private Locale locale = null;
 
     /*
+     * helper factory (serializable)
+     */
+    private ObjectFactory objectFactory;
+
+    /*
      * Object cache (serializable)
      */
-    private Cache cache = null;
+    private Cache cache;
+    private boolean cachePathOmit;
 
     /*
-     * Lazy loaded repository info. Will be invalid after clear(). Access by
-     * getter always. (serializable)
+     * Repository info (serializable)
      */
     private RepositoryInfo repositoryInfo;
-
-    /*
-     * helper factory (non serializable)
-     */
-    private final ObjectFactory objectFactory = PersistentObjectFactoryImpl.newInstance(this);
 
     /**
      * required for serialization
      */
-    private static final long serialVersionUID = -4287481628831198383L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructor.
      */
-    public PersistentSessionImpl(Map<String, String> parameters) {
-        this.parameters = parameters;
-        PersistentSessionImpl.log.info("Session Parameters: " + parameters);
-
-        this.locale = this.determineLocale(parameters);
-        PersistentSessionImpl.log.info("Session Locale: " + this.locale.toString());
-
-        int cacheSize = this.determineCacheSize(parameters);
-
-        if (cacheSize == -1) {
-            this.cache = CacheImpl.newInstance();
-        } else {
-            this.cache = CacheImpl.newInstance(cacheSize);
+    public SessionImpl(Map<String, String> parameters) {
+        if (parameters == null) {
+            throw new IllegalArgumentException("No parameters provided!");
         }
-        PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
-    }
 
-    private int determineCacheSize(Map<String, String> parameters) {
-        int size = -1;
+        this.parameters = parameters;
+        this.locale = this.determineLocale(parameters);
 
-        return size;
+        this.objectFactory = createObjectFactory();
+        this.cache = createCache();
+
+        cachePathOmit = Boolean.parseBoolean(parameters.get(SessionParameter.CACHE_PATH_OMIT));
     }
 
     private String determineRepositoryId(Map<String, String> parameters) {
@@ -188,32 +181,65 @@ public class PersistentSessionImpl implements Session, Serializable {
         return locale;
     }
 
-    public void clear() {
-        fLock.writeLock().lock();
+    private ObjectFactory createObjectFactory() {
         try {
-            int cacheSize = this.determineCacheSize(this.parameters);
-            if (cacheSize == -1) {
-                this.cache = CacheImpl.newInstance();
-            } else {
-                this.cache = CacheImpl.newInstance(cacheSize);
-            }
-            PersistentSessionImpl.log.info("Session Cache Size: " + this.cache.getCacheSize());
+            String classname = parameters.get(SessionParameter.OBJECT_FACTORY_CLASS);
 
-            /*
-             * clear provider cache
-             */
-            getBinding().clearAllCaches();
-        } finally {
-            fLock.writeLock().unlock();
+            Class<?> objectFactoryClass;
+            if (classname == null) {
+                objectFactoryClass = ObjectFactoryImpl.class;
+            } else {
+                objectFactoryClass = Class.forName(classname);
+            }
+
+            Object of = objectFactoryClass.newInstance();
+            if (!(of instanceof ObjectFactory)) {
+                throw new Exception("Class does not implement ObjectFactory!");
+            }
+
+            ((ObjectFactory) of).initialize(this, parameters);
+
+            return (ObjectFactory) of;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unable to create object factory: " + e, e);
         }
     }
 
-    public void save() {
-        // nop
+    private Cache createCache() {
+        try {
+            String classname = parameters.get(SessionParameter.CACHE_CLASS);
+
+            Class<?> cacheClass;
+            if (classname == null) {
+                cacheClass = CacheImpl.class;
+            } else {
+                cacheClass = Class.forName(classname);
+            }
+
+            Object of = cacheClass.newInstance();
+            if (!(of instanceof Cache)) {
+                throw new Exception("Class does not implement Cache!");
+            }
+
+            ((Cache) of).initialize(this, parameters);
+
+            return (Cache) of;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unable to create cache: " + e, e);
+        }
     }
 
-    public void cancel() {
-        throw new UnsupportedOperationException("cancel");
+    public void clear() {
+        lock.writeLock().lock();
+        try {
+            // create new object cache
+            this.cache = createCache();
+
+            // clear provider cache
+            getBinding().clearAllCaches();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     public ObjectFactory getObjectFactory() {
@@ -266,7 +292,7 @@ public class PersistentSessionImpl implements Session, Serializable {
 
     public ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems,
             OperationContext context) {
-        fLock.readLock().lock();
+        lock.readLock().lock();
         try {
             Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
 
@@ -276,25 +302,25 @@ public class PersistentSessionImpl implements Session, Serializable {
 
             return objectFactory.convertChangeEvents(changeLogTokenHolder.getValue(), objectList);
         } finally {
-            fLock.readLock().unlock();
+            lock.readLock().unlock();
         }
     }
 
     public OperationContext getDefaultContext() {
-        fLock.readLock().lock();
+        lock.readLock().lock();
         try {
             return this.context;
         } finally {
-            fLock.readLock().unlock();
+            lock.readLock().unlock();
         }
     }
 
     public void setDefaultContext(OperationContext context) {
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
         try {
             this.context = (context == null ? DEFAULT_CONTEXT : context);
         } finally {
-            fLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
@@ -370,7 +396,7 @@ public class PersistentSessionImpl implements Session, Serializable {
         CmisObject result = null;
 
         // ask the cache first
-        if (context.isCacheEnabled()) {
+        if (context.isCacheEnabled() && !cachePathOmit) {
             result = this.cache.getByPath(path, context.getCacheKey());
             if (result != null) {
                 return result;
@@ -393,11 +419,11 @@ public class PersistentSessionImpl implements Session, Serializable {
     }
 
     public RepositoryInfo getRepositoryInfo() {
-        fLock.readLock().lock();
+        lock.readLock().lock();
         try {
             return this.repositoryInfo;
         } finally {
-            fLock.readLock().unlock();
+            lock.readLock().unlock();
         }
     }
 
@@ -427,9 +453,9 @@ public class PersistentSessionImpl implements Session, Serializable {
             protected AbstractPageFetcher.Page<ObjectType> fetchPage(long skipCount) {
 
                 // fetch the data
-                TypeDefinitionList tdl = repositoryService.getTypeChildren(
-                        PersistentSessionImpl.this.getRepositoryId(), typeId, includePropertyDefinitions,
-                        BigInteger.valueOf(this.maxNumItems), BigInteger.valueOf(skipCount), null);
+                TypeDefinitionList tdl = repositoryService.getTypeChildren(SessionImpl.this.getRepositoryId(), typeId,
+                        includePropertyDefinitions, BigInteger.valueOf(this.maxNumItems),
+                        BigInteger.valueOf(skipCount), null);
 
                 // convert type definitions
                 List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
@@ -530,7 +556,7 @@ public class PersistentSessionImpl implements Session, Serializable {
      * {@code WebService} or an {@code InMemory} provider is selected.
      */
     public void connect() {
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
         try {
             this.binding = CmisBindingHelper.createProvider(this.parameters);
 
@@ -542,25 +568,25 @@ public class PersistentSessionImpl implements Session, Serializable {
 
             repositoryInfo = getBinding().getRepositoryService().getRepositoryInfo(repositoryId, null);
         } finally {
-            fLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
     public CmisBinding getBinding() {
-        fLock.readLock().lock();
+        lock.readLock().lock();
         try {
             return this.binding;
         } finally {
-            fLock.readLock().unlock();
+            lock.readLock().unlock();
         }
     }
 
     public Cache getCache() {
-        fLock.readLock().lock();
+        lock.readLock().lock();
         try {
             return this.cache;
         } finally {
-            fLock.readLock().unlock();
+            lock.readLock().unlock();
         }
     }
 
@@ -597,10 +623,14 @@ public class PersistentSessionImpl implements Session, Serializable {
 
     public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+        if ((source == null) || (source.getId() == null)) {
+            throw new IllegalArgumentException("Source must be set!");
+        }
+
         // get the type of the source document
         ObjectType type = null;
         if (source instanceof CmisObject) {
-            type = ((CmisObject) source).getBaseType();
+            type = ((CmisObject) source).getType();
         } else {
             CmisObject sourceObj = getObject(source);
             type = sourceObj.getType();
@@ -704,4 +734,110 @@ public class PersistentSessionImpl implements Session, Serializable {
         return this.createRelationship(properties, null, null, null);
     }
 
+    public ItemIterable<Relationship> getRelationships(ObjectId objectId, final boolean includeSubRelationshipTypes,
+            final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context) {
+        if ((objectId == null) || (objectId.getId() == null)) {
+            throw new IllegalArgumentException("Invalid object id!");
+        }
+
+        final String id = objectId.getId();
+        final String typeId = (type == null ? null : type.getId());
+        final RelationshipService relationshipService = getBinding().getRelationshipService();
+        final OperationContext ctxt = new OperationContextImpl(context);
+
+        return new CollectionIterable<Relationship>(new AbstractPageFetcher<Relationship>(ctxt.getMaxItemsPerPage()) {
+
+            @Override
+            protected AbstractPageFetcher.Page<Relationship> fetchPage(long skipCount) {
+
+                // fetch the relationships
+                ObjectList relList = relationshipService.getObjectRelationships(getRepositoryId(), id,
+                        includeSubRelationshipTypes, relationshipDirection, typeId, ctxt.getFilterString(),
+                        ctxt.isIncludeAllowableActions(), BigInteger.valueOf(this.maxNumItems),
+                        BigInteger.valueOf(skipCount), null);
+
+                // convert relationship objects
+                List<Relationship> page = new ArrayList<Relationship>();
+                if (relList.getObjects() != null) {
+                    for (ObjectData rod : relList.getObjects()) {
+                        CmisObject relationship = getObject(createObjectId(rod.getId()), ctxt);
+                        if (!(relationship instanceof Relationship)) {
+                            throw new CmisRuntimeException("Repository returned an object that is not a relationship!");
+                        }
+
+                        page.add((Relationship) relationship);
+                    }
+                }
+
+                return new AbstractPageFetcher.Page<Relationship>(page, relList.getNumItems(), relList.hasMoreItems());
+            }
+        });
+    }
+
+    public Acl getAcl(ObjectId objectId, boolean onlyBasicPermissions) {
+        if ((objectId == null) || (objectId.getId() == null)) {
+            throw new IllegalArgumentException("Invalid object id!");
+        }
+
+        String id = objectId.getId();
+
+        return getBinding().getAclService().getAcl(getRepositoryId(), id, onlyBasicPermissions, null);
+    }
+
+    public Acl applyAcl(ObjectId objectId, List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation) {
+        if ((objectId == null) || (objectId.getId() == null)) {
+            throw new IllegalArgumentException("Invalid object id!");
+        }
+
+        ObjectFactory of = getObjectFactory();
+
+        return getBinding().getAclService().applyAcl(getRepositoryId(), objectId.getId(), of.convertAces(addAces),
+                of.convertAces(removeAces), aclPropagation, null);
+    }
+
+    public void applyPolicy(ObjectId objectId, ObjectId... policyIds) {
+        if ((objectId == null) || (objectId.getId() == null)) {
+            throw new IllegalArgumentException("Invalid object id!");
+        }
+
+        if ((policyIds == null) || (policyIds.length == 0)) {
+            throw new IllegalArgumentException("No Policies provided!");
+        }
+
+        String[] ids = new String[policyIds.length];
+        for (int i = 0; i < policyIds.length; i++) {
+            if ((policyIds[i] == null) || (policyIds[i].getId() == null)) {
+                throw new IllegalArgumentException("A Policy Id is not set!");
+            }
+
+            ids[i] = policyIds[i].getId();
+        }
+
+        for (String id : ids) {
+            getBinding().getPolicyService().applyPolicy(getRepositoryId(), id, objectId.getId(), null);
+        }
+    }
+
+    public void removePolicy(ObjectId objectId, ObjectId... policyIds) {
+        if ((objectId == null) || (objectId.getId() == null)) {
+            throw new IllegalArgumentException("Invalid object id!");
+        }
+
+        if ((policyIds == null) || (policyIds.length == 0)) {
+            throw new IllegalArgumentException("No Policies provided!");
+        }
+
+        String[] ids = new String[policyIds.length];
+        for (int i = 0; i < policyIds.length; i++) {
+            if ((policyIds[i] == null) || (policyIds[i].getId() == null)) {
+                throw new IllegalArgumentException("A Policy Id is not set!");
+            }
+
+            ids[i] = policyIds[i].getId();
+        }
+
+        for (String id : ids) {
+            getBinding().getPolicyService().removePolicy(getRepositoryId(), id, objectId.getId(), null);
+        }
+    }
 }

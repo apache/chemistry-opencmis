@@ -32,6 +32,8 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
+import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
+import org.apache.chemistry.opencmis.client.api.TransientDocument;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -39,18 +41,30 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
-public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject implements Document {
+public class DocumentImpl extends AbstractFilableCmisObject implements Document {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructor.
      */
-    public PersistentDocumentImpl(PersistentSessionImpl session, ObjectType objectType, ObjectData objectData,
-            OperationContext context) {
+    public DocumentImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    protected TransientCmisObject createTransientCmisObject() {
+        TransientDocumentImpl td = new TransientDocumentImpl();
+        td.initialize(getSession(), this);
+
+        return td;
+    }
+
+    public TransientDocument getTransientDocument() {
+        return (TransientDocument) getTransientObject();
     }
 
     // properties
@@ -114,37 +128,27 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
     // operations
 
-    public Document copy(ObjectId targetFolderId, Map<String, ?> properties,
-            VersioningState versioningState, List<Policy> policies,
-            List<Ace> addACEs, List<Ace> removeACEs, OperationContext context) {
-        if (targetFolderId == null || targetFolderId.getId() == null) {
-            throw new CmisInvalidArgumentException("Target must be set");
-        }
+    public Document copy(ObjectId targetFolderId, Map<String, ?> properties, VersioningState versioningState,
+            List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context) {
 
-        ObjectFactory factory = getObjectFactory();
-        Set<Updatability> updatability = new HashSet<Updatability>();
-        updatability.add(Updatability.READWRITE);
-
-        String newId = getBinding().getObjectService().createDocumentFromSource(
-                getRepositoryId(), getId(),
-                factory.convertProperties(properties, getType(), updatability),
-                targetFolderId.getId(), versioningState, factory.convertPolicies(policies),
-                factory.convertAces(addACEs), factory.convertAces(removeACEs), null);
+        ObjectId newId = getSession().createDocumentFromSource(this, properties, targetFolderId, versioningState,
+                policies, addAces, removeAces);
 
         // if no context is provided the object will not be fetched
         if (context == null || newId == null) {
             return null;
         }
         // get the new object
-        CmisObject object = getSession().getObject(getSession().createObjectId(newId), context);
+        CmisObject object = getSession().getObject(newId, context);
         if (!(object instanceof Document)) {
             throw new CmisRuntimeException("Newly created object is not a document! New id: " + newId);
         }
-        return (Document) object;    }
+
+        return (Document) object;
+    }
 
     public Document copy(ObjectId targetFolderId) {
-        return copy(targetFolderId, null, null, null, null, null,
-                getSession().getDefaultContext());
+        return copy(targetFolderId, null, null, null, null, null, getSession().getDefaultContext());
     }
 
     public void deleteAllVersions() {
@@ -154,16 +158,24 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
     // versioning
 
     public ObjectId checkOut() {
-        String objectId = getObjectId();
-        Holder<String> objectIdHolder = new Holder<String>(objectId);
+        String newObjectId = null;
 
-        getBinding().getVersioningService().checkOut(getRepositoryId(), objectIdHolder, null, null);
+        readLock();
+        try {
+            String objectId = getObjectId();
+            Holder<String> objectIdHolder = new Holder<String>(objectId);
 
-        if (objectIdHolder.getValue() == null) {
+            getBinding().getVersioningService().checkOut(getRepositoryId(), objectIdHolder, null, null);
+            newObjectId = objectIdHolder.getValue();
+        } finally {
+            readUnlock();
+        }
+
+        if (newObjectId == null) {
             return null;
         }
 
-        return getSession().createObjectId(objectIdHolder.getValue());
+        return getSession().createObjectId(newObjectId);
     }
 
     public void cancelCheckOut() {
@@ -174,35 +186,33 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
 
     public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream,
             String checkinComment, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
-        String objectId;
-        ObjectType type;
+        String newObjectId = null;
+
         readLock();
         try {
-            objectId = getObjectId();
-            type = getType();
+            Holder<String> objectIdHolder = new Holder<String>(getObjectId());
+
+            ObjectFactory of = getObjectFactory();
+
+            Set<Updatability> updatebility = new HashSet<Updatability>();
+            updatebility.add(Updatability.READWRITE);
+            updatebility.add(Updatability.WHENCHECKEDOUT);
+
+            getBinding().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
+                    of.convertProperties(properties, getType(), updatebility), of.convertContentStream(contentStream),
+                    checkinComment, of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces),
+                    null);
+
+            newObjectId = objectIdHolder.getValue();
         } finally {
             readUnlock();
         }
 
-        Holder<String> objectIdHolder = new Holder<String>(objectId);
-
-        ObjectFactory of = getObjectFactory();
-
-        Set<Updatability> updatebility = new HashSet<Updatability>();
-        updatebility.add(Updatability.READWRITE);
-        updatebility.add(Updatability.WHENCHECKEDOUT);
-
-        getBinding().getVersioningService()
-                .checkIn(getRepositoryId(), objectIdHolder, major,
-                        of.convertProperties(properties, type, updatebility), of.convertContentStream(contentStream),
-                        checkinComment, of.convertPolicies(policies), of.convertAces(addAces),
-                        of.convertAces(removeAces), null);
-
-        if (objectIdHolder.getValue() == null) {
+        if (newObjectId == null) {
             return null;
         }
 
-        return getSession().createObjectId(objectIdHolder.getValue());
+        return getSession().createObjectId(newObjectId);
 
     }
 
@@ -305,7 +315,6 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
             filename = getContentStreamFileName();
         }
 
-        // TODO: what should happen if the length is not set?
         long length = (contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue());
 
         // convert and return stream object
@@ -313,53 +322,84 @@ public class PersistentDocumentImpl extends AbstractPersistentFilableCmisObject 
                 contentStream.getStream());
     }
 
-    public ObjectId setContentStream(ContentStream contentStream, boolean overwrite) {
-        String objectId;
-        String changeToken;
-
-        readLock();
-        try {
-            objectId = getObjectId();
-            changeToken = getPropertyValue(PropertyIds.CHANGE_TOKEN);
-        } finally {
-            readUnlock();
-        }
-
-        Holder<String> objectIdHolder = new Holder<String>(objectId);
-        Holder<String> changeTokenHolder = new Holder<String>(changeToken);
-
-        getBinding().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, overwrite,
-                changeTokenHolder, getObjectFactory().convertContentStream(contentStream), null);
-
-        if (objectIdHolder.getValue() == null) {
+    public Document setContentStream(ContentStream contentStream, boolean overwrite) {
+        ObjectId objectId = setContentStream(contentStream, overwrite, true);
+        if (objectId == null) {
             return null;
         }
 
-        return getSession().createObjectId(objectIdHolder.getValue());
+        if (!getObjectId().equals(objectId.getId())) {
+            return (Document) getSession().getObject(objectId, getCreationContext());
+        }
+
+        return this;
     }
 
-    public ObjectId deleteContentStream() {
-        String objectId;
-        String changeToken;
+    public ObjectId setContentStream(ContentStream contentStream, boolean overwrite, boolean refresh) {
+        String newObjectId = null;
 
         readLock();
         try {
-            objectId = getObjectId();
-            changeToken = getPropertyValue(PropertyIds.CHANGE_TOKEN);
+            Holder<String> objectIdHolder = new Holder<String>(getObjectId());
+            Holder<String> changeTokenHolder = new Holder<String>((String) getPropertyValue(PropertyIds.CHANGE_TOKEN));
+
+            getBinding().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, overwrite,
+                    changeTokenHolder, getObjectFactory().convertContentStream(contentStream), null);
+
+            newObjectId = objectIdHolder.getValue();
         } finally {
             readUnlock();
         }
 
-        Holder<String> objectIdHolder = new Holder<String>(objectId);
-        Holder<String> changeTokenHolder = new Holder<String>(changeToken);
+        if (refresh) {
+            refresh();
+        }
 
-        getBinding().getObjectService().deleteContentStream(getRepositoryId(), objectIdHolder, changeTokenHolder, null);
-
-        if (objectIdHolder.getValue() == null) {
+        if (newObjectId == null) {
             return null;
         }
 
-        return getSession().createObjectId(objectIdHolder.getValue());
+        return getSession().createObjectId(newObjectId);
+    }
+
+    public Document deleteContentStream() {
+        ObjectId objectId = deleteContentStream(true);
+        if (objectId == null) {
+            return null;
+        }
+
+        if (!getObjectId().equals(objectId.getId())) {
+            return (Document) getSession().getObject(objectId, getCreationContext());
+        }
+
+        return this;
+    }
+
+    public ObjectId deleteContentStream(boolean refresh) {
+        String newObjectId = null;
+
+        readLock();
+        try {
+            Holder<String> objectIdHolder = new Holder<String>(getObjectId());
+            Holder<String> changeTokenHolder = new Holder<String>((String) getPropertyValue(PropertyIds.CHANGE_TOKEN));
+
+            getBinding().getObjectService().deleteContentStream(getRepositoryId(), objectIdHolder, changeTokenHolder,
+                    null);
+
+            newObjectId = objectIdHolder.getValue();
+        } finally {
+            readUnlock();
+        }
+
+        if (refresh) {
+            refresh();
+        }
+
+        if (newObjectId == null) {
+            return null;
+        }
+
+        return getSession().createObjectId(newObjectId);
     }
 
     public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment) {

@@ -25,11 +25,10 @@ import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
 
 /**
  * DateTime property data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyDateTimeImpl extends AbstractPropertyData<GregorianCalendar> implements PropertyDateTime {
+
+    private static final long serialVersionUID = 1L;
 
     public PropertyDateTimeImpl() {
     }

@@ -25,20 +25,14 @@ import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Allowable Actions.
  */
 public class AllowableActionsImpl extends AbstractExtensionData implements AllowableActions {
 
+    private static final long serialVersionUID = 1L;
+
     private Set<Action> allowableActions = new HashSet<Action>();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.AllowableActionsData#getAllowableActions
-     * ()
-     */
     public Set<Action> getAllowableActions() {
         return allowableActions;
     }
@@ -47,11 +41,6 @@ public class AllowableActionsImpl extends AbstractExtensionData implements Allow
         this.allowableActions = allowableActions;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "Allowable Actions [allowable actions=" + allowableActions + "]" + super.toString();

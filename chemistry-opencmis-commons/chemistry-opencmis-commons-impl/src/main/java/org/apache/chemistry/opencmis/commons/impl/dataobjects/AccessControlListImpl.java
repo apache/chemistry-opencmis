@@ -25,14 +25,13 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 
 /**
  * Access control list data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AccessControlListImpl extends AbstractExtensionData implements Acl {
 
-    private List<Ace> fAces;
-    private Boolean fIsExact;
+    private static final long serialVersionUID = 1L;
+
+    private List<Ace> aces;
+    private Boolean isExact;
 
     /**
      * Constructor.
@@ -47,39 +46,24 @@ public class AccessControlListImpl extends AbstractExtensionData implements Acl 
         setAces(aces);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.AccessControlList#getACEs()
-     */
     public List<Ace> getAces() {
-        return fAces;
+        return aces;
     }
 
     public void setAces(List<Ace> aces) {
-        fAces = aces;
+        this.aces = aces;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.AccessControlList#isExact()
-     */
     public Boolean isExact() {
-        return fIsExact;
+        return isExact;
     }
 
     public void setExact(Boolean isExact) {
-        fIsExact = isExact;
+        this.isExact = isExact;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Access Control List [ACEs=" + fAces + ", is exact=" + fIsExact + "]" + super.toString();
+        return "Access Control List [ACEs=" + aces + ", is exact=" + isExact + "]" + super.toString();
     }
 }
