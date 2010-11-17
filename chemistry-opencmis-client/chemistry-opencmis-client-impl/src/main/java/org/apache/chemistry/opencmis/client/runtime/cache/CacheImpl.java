@@ -306,7 +306,6 @@ public class CacheImpl implements Cache {
                 return null;
             }
 
-            timestamp = System.currentTimeMillis();
             return item.get();
         }
 
