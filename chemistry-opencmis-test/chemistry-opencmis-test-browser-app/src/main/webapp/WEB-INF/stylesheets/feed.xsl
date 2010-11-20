@@ -37,6 +37,20 @@
 				<img src="{$auxRoot}cmis.png" style="float: right;" />
 				<h1><xsl:value-of select="atom:feed/atom:title" /></h1>
 				<div class="navigationbox">
+					<form name="urlform">
+						<input type="text" name="url" value="" size="100"/>
+						<input type="hidden" name="browseUrl" value="{$browseUrl}" />
+						<input type="button" value="Go" onClick="load()" />
+						<input type="button" value="Atom" onClick="loadAtom()" />
+					</form>
+					<script type="text/javascript">
+						var x = window.location.search.indexOf("=");
+						if(x > -1) {
+							document.forms.urlform.url.value = decodeURI(window.location.search.substring(x+1));
+						}
+						function load() { window.location.href = document.forms.urlform.browseUrl.value + document.forms.urlform.url.value; }
+						function loadAtom() { window.location.href = document.forms.urlform.url.value; }
+					</script>	
 					<xsl:if test="atom:feed/atom:link[@rel='service']">
 						<a href="{$browseUrl}{atom:feed/atom:link[@rel='service']/@href}">Service</a> -
 					</xsl:if>
