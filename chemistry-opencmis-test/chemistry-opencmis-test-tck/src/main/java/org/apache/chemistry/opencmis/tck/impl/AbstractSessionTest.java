@@ -1305,7 +1305,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                     if ((orderable != null) && !orderable.equals(propDef.isOrderable())) {
                         f = createResult(FAILURE,
-                                "Orderable: expected: " + orderable + " / actual: " + propDef.isQueryable());
+                                "Orderable: expected: " + orderable + " / actual: " + propDef.isOrderable());
                         addResult(results, f);
                     }
 
@@ -1313,7 +1313,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         Boolean inherited = !type.getBaseTypeId().value().equals(type.getId());
                         if (!inherited.equals(propDef.isInherited())) {
                             f = createResult(FAILURE,
-                                    "Inhertited: expected: " + orderable + " / actual: " + propDef.isQueryable());
+                                    "Inhertited: expected: " + inherited + " / actual: " + propDef.isInherited());
                             addResult(results, f);
                         }
                     }
