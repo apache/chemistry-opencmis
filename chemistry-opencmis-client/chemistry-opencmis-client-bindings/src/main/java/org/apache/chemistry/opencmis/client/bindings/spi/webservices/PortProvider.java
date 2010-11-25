@@ -277,8 +277,13 @@ public class PortProvider {
             } else if (service instanceof NavigationService) {
                 portObject = ((NavigationService) service).getNavigationServicePort(new MTOMFeature());
             } else if (service instanceof ObjectService) {
+                int threshold = 4 * 1024 * 1024;
+                try {
+                    threshold = Integer.parseInt((String) fSession.get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD));
+                } catch (Exception e) {
+                }
                 portObject = ((ObjectService) service).getObjectServicePort(new MTOMFeature(),
-                        new StreamingAttachmentFeature(null, true, 4 * 1024 * 1024));
+                        new StreamingAttachmentFeature(null, true, threshold));
                 ((BindingProvider) portObject).getRequestContext().put(
                         JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
             } else if (service instanceof VersioningService) {

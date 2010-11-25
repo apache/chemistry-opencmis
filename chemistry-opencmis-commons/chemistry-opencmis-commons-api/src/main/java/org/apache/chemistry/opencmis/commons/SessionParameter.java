@@ -51,6 +51,7 @@ public final class SessionParameter {
     public static final String WEBSERVICES_MULTIFILING_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.MultiFilingService";
     public static final String WEBSERVICES_POLICY_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.PolicyService";
     public static final String WEBSERVICES_ACL_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.ACLService";
+    public static final String WEBSERVICES_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.memoryThreshold";
 
     /** Factory class name for the local binding. */
     public static final String LOCAL_FACTORY = "org.apache.chemistry.opencmis.binding.local.classname";
@@ -75,7 +76,7 @@ public final class SessionParameter {
     public static final String CACHE_SIZE_PATHTOID = "org.apache.chemistry.opencmis.cache.pathtoid.size";
     public static final String CACHE_TTL_PATHTOID = "org.apache.chemistry.opencmis.cache.pathtoid.ttl";
     public static final String CACHE_PATH_OMIT = "org.apache.chemistry.opencmis.cache.path.omit";
-    
+
     public static final String CACHE_SIZE_REPOSITORIES = "org.apache.chemistry.opencmis.binding.cache.repositories.size";
     public static final String CACHE_SIZE_TYPES = "org.apache.chemistry.opencmis.binding.cache.types.size";
     public static final String CACHE_SIZE_LINKS = "org.apache.chemistry.opencmis.binding.cache.links.size";
