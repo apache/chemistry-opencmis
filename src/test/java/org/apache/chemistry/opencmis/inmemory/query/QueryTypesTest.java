@@ -25,20 +25,24 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import java.util.Map;
 
+import org.antlr.runtime.RecognitionException;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
+import org.apache.chemistry.opencmis.server.support.query.CmisQueryException;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class QueryTypesTest extends AbstractQueryTest {
     
+    private static Log LOG = LogFactory.getLog(QueryTypesTest.class);
     private TypeManagerImpl tm;
 
     @Before
@@ -96,8 +100,9 @@ public class QueryTypesTest extends AbstractQueryTest {
             verifyResolveSelect(statement);
             fail("Select of unknown property in type should fail.");
         } catch (Exception e) {
-            assertTrue(e instanceof CmisInvalidArgumentException);
-            assertTrue(e.getMessage().contains("is not a valid property query name in"));
+            assertTrue(e instanceof RecognitionException);
+            LOG.debug("resolveTypesTest6(), e: " + e.getMessage());
+            assertTrue(e.toString().contains("is not a valid property query name in"));
         }
     }
 
@@ -108,8 +113,8 @@ public class QueryTypesTest extends AbstractQueryTest {
             verifyResolveSelect(statement);
             fail("Select of unknown property in type should fail.");
         } catch (Exception e) {
-            assertTrue(e instanceof CmisInvalidArgumentException);
-            assertTrue(e.getMessage().contains("is not a property query name in any"));
+            assertTrue(e instanceof RecognitionException);
+            assertTrue(e.toString().contains("is not a property query name in any"));
         }
     }
 
@@ -191,8 +196,8 @@ public class QueryTypesTest extends AbstractQueryTest {
             traverseStatement(statement);
             fail("Select with an unqualified property that is not unique should fail.");
         } catch (Exception e) {
-            assertTrue(e instanceof CmisInvalidArgumentException);
-            assertTrue(e.getMessage().contains("is not a unique property query name within the types in from"));
+            assertTrue(e instanceof RecognitionException);
+            assertTrue(e.toString().contains("is not a unique property query name within the types in from"));
         }
     }
 
@@ -303,6 +308,20 @@ public class QueryTypesTest extends AbstractQueryTest {
         }
     }
 
+    @Test
+    public void resolveTypesWhereWithTwoFromsQualifiedWithAlias2() throws Exception {
+//        String statement = "SELECT X.aaa FROM MyType AS X WHERE 10 = ANY X.aaa ";
+        String statement = "SELECT MyBookAlias.Title FROM BookType AS MyBookAlias WHERE MyBookAlias.ISBN = '100'"; 
+        CmisQueryWalker walker = traverseStatement(statement);
+        List<CmisSelector> wheres = queryObj.getWhereReferences();
+        assertTrue(1 == wheres.size());
+        for (CmisSelector where : wheres) {
+            assertTrue(where instanceof ColumnReference);
+            ColumnReference colRef = ((ColumnReference) where);
+            assertEquals(colRef.getTypeDefinition(), bookType);
+        }
+    }
+    
     private void verifyResolveWhere(String statement) throws Exception {
         CmisQueryWalker walker = traverseStatement(statement);
         Map<String,String> types = queryObj.getTypes();
@@ -325,8 +344,8 @@ public class QueryTypesTest extends AbstractQueryTest {
             CmisQueryWalker walker = traverseStatement(statement);
             fail("Select with an unqualified property that is not unique should fail.");
         } catch (Exception e) {
-            assertTrue(e instanceof CmisInvalidArgumentException);
-            assertTrue(e.getMessage().contains("is not a unique property query name within the types in from"));
+            assertTrue(e instanceof RecognitionException);
+            assertTrue(e.toString().contains("is not a unique property query name within the types in from"));
         }
     }
     
@@ -403,5 +422,26 @@ public class QueryTypesTest extends AbstractQueryTest {
                 fail("Unexpected type in JOIN reference");
         }
     }
-
+    
+    @Test
+    public void resolveJoinTypesWithAlias() throws Exception {
+        String statement = "SELECT Y.ISBN, X.MyBooleanProp, Y.Author FROM (MyDocType AS X JOIN BookType AS Y ON X.MyStringProp = Y.Title) "+
+                           "WHERE ('Joe' = ANY Y.Author)";
+//        "SELECT    Y.CLAIM_NUM, X.PROPERTY_ADDRESS, Y.DAMAGE_ESTIMATES " +
+//        "FROM   ( POLICY AS X JOIN CLAIMS AS Y ON X.POLICY_NUM = Y.POLICY_NUM ) " +
+//        "WHERE ( 100000 = ANY Y.DAMAGE_ESTIMATES )";
+        CmisQueryWalker walker = traverseStatement(statement);
+        List<CmisSelector> joins = queryObj.getJoinReferences();
+        assertTrue(2 == joins.size());
+        for (CmisSelector join : joins) {
+            assertTrue(join instanceof ColumnReference);
+            ColumnReference colRef = ((ColumnReference) join);
+            if (myType.equals(colRef.getTypeDefinition())) {
+                assertTrue(colRef.getPropertyQueryName().equals(STRING_PROP));
+            } else if (bookType.equals(colRef.getTypeDefinition())) {
+                assertTrue(colRef.getPropertyQueryName().equals(TITLE_PROP));
+            } else 
+                fail("Unexpected type in JOIN reference");
+        }
+    }
 }

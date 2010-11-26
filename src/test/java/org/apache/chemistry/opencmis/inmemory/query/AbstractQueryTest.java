@@ -18,9 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory.query;
 
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -28,39 +25,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.antlr.runtime.ANTLRInputStream;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.TokenSource;
-import org.antlr.runtime.TokenStream;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.PredicateWalkerBase;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_CmisBaseGrammar.query_return;
+import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
 
 public abstract class AbstractQueryTest {
 
-    protected CommonTree parserTree; // the ANTLR tree after parsing phase
-    protected CommonTree walkerTree; // the ANTLR tree after walking phase
+    protected CmisQueryWalker walker; // the walker object
     protected QueryObject queryObj;
     PredicateWalkerBase predicateWalker;
     protected TypeDefinition myType, myTypeCopy, bookType;
-
+    protected QueryUtil queryUtil;
+    
     protected static final String MY_DOC_TYPE = "MyDocType";
     protected static final String MY_DOC_TYPE_COPY = "MyDocTypeCopy";
     protected static final String BOOL_PROP = "MyBooleanProp";
@@ -76,52 +67,25 @@ public abstract class AbstractQueryTest {
     protected void setUp(QueryObject qo, PredicateWalkerBase pw) throws Exception {
             queryObj = qo;
             predicateWalker = pw;
+            queryUtil = new QueryUtil();
     }
 
     protected void tearDown() throws Exception {
     }
 
-    protected CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-        CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
-        TokenSource lexer = new CmisQlStrictLexer(input);
-        TokenStream tokens = new CommonTokenStream(lexer);
-        CmisQlStrictParser parser = new CmisQlStrictParser(tokens);
-
-        query_return parsedStatement = parser.query();
-//        if (parser.errorMessage != null) {
-//            throw new RuntimeException("Cannot parse query: " + statement + " (" + parser.errorMessage + ")");
-//        }
-        parserTree = (CommonTree) parsedStatement.getTree();            
-        // printTree(tree);
-
-        CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
-        nodes.setTokenStream(tokens);
-        CmisQueryWalker walker = new CmisQueryWalker(nodes);
-        return walker;
-    }
-
     protected CmisQueryWalker traverseStatement(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-        CmisQueryWalker walker = getWalker(statement);
-        walker.query(queryObj, predicateWalker);
-        String errMsg = walker.getErrorMessageString();
-        if (null != errMsg) {
-            fail("Walking of statement failed with error: \n   " + errMsg + 
-                    "\n   Statement was: " + statement);
-        }
-        walkerTree = (CommonTree) walker.getTreeNodeStream().getTreeSource();
+        walker =  queryUtil.traverseStatement(statement,queryObj, predicateWalker);
+        return walker;        
+    }
+    
+    protected CmisQueryWalker traverseStatementAndCatchExc(String statement) {
+        walker = queryUtil.traverseStatementAndCatchExc(statement, queryObj, predicateWalker);
         return walker;
     }
-
-    protected CmisQueryWalker traverseStatementAndCatchExc(String statement) {
-        try {
-            return traverseStatement(statement);
-        } catch (RecognitionException e) {
-            fail("Walking of statement failed with RecognitionException error: \n   " + e); 
-            return null;
-        } catch (Exception e) {
-            fail("Walking of statement failed with other exception: \n   " + e); 
-            return null;
-        }
+    
+    protected CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+        walker = queryUtil.getWalker(statement);
+        return walker;
     }
     
     protected Tree getWhereTree(Tree root) {
