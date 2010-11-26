@@ -61,14 +61,8 @@ options {
 package org.apache.chemistry.opencmis.server.support.query;
 
 import java.math.BigDecimal;
-
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.chemistry.opencmis.server.support.query.*;
 }
 
 @members {
@@ -76,26 +70,11 @@ import org.apache.chemistry.opencmis.server.support.query.*;
 
     private QueryObject queryObj;
     private Tree wherePredicateTree;
-    public String errorMessage;
 
     public Tree getWherePredicateTree() {
     	return wherePredicateTree;
     }
     
-    @Override
-    public void displayRecognitionError(String[] tokenNames,
-            RecognitionException e) {
-        if (errorMessage == null) {
-            String hdr = getErrorHeader(e);
-            String msg = getErrorMessage(e, tokenNames);
-            errorMessage = hdr + " " + msg;
-        }
-    }
-
-    public String getErrorMessageString() {
-        return errorMessage;
-    }
-
     protected void mismatch(IntStream input, int ttype, BitSet follow)
         throws RecognitionException
     {
@@ -107,7 +86,9 @@ import org.apache.chemistry.opencmis.server.support.query.*;
     {
         throw e;
     }
+
 }
+
 
 // For CMIS SQL it will be sufficient to stop on first error:
 @rulecatch {
@@ -116,18 +97,27 @@ import org.apache.chemistry.opencmis.server.support.query.*;
     }
 }
 
-query [QueryObject qo, PredicateWalkerBase pw]
+query [QueryObject qo, PredicateWalkerBase pw] throws CmisQueryException
     @init {
         queryObj = qo;
     }:
     ^(SELECT select_list from_clause order_by_clause? where_clause)
     {
         wherePredicateTree = $where_clause.tree==null ? null : $where_clause.tree.getChild(0);
-        queryObj.resolveTypes();
+        boolean resolved = queryObj.resolveTypes();
         if (null != pw && null != $where_clause.tree)
-            pw.walkPredicate(wherePredicateTree);
+            pw.walkPredicate(wherePredicateTree);        
     }
+    {
+    	resolved
+    }?
     ;
+	catch[FailedPredicateException e]
+	{
+	    // change default text to preserved text which is useful
+	    e.predicateText = queryObj.getErrorMessage();
+	    throw e;
+	}      
 
 select_list:
       STAR
@@ -208,9 +198,15 @@ table_join:
 one_table returns [String alias]:
     ^(TABLE table_name correlation_name?)
       {
-          $alias = queryObj.addType($correlation_name.text, $table_name.text);
-      }
+          ($alias = queryObj.addType($correlation_name.text, $table_name.text)) != null
+      }?
     ;
+	catch[FailedPredicateException e]
+	{
+	    // change default text to preserved text which is useful
+	    e.predicateText = queryObj.getErrorMessage();
+	    throw e;
+	}      
 
 join_kind returns [String kind]:
       INNER { $kind = "INNER"; }
