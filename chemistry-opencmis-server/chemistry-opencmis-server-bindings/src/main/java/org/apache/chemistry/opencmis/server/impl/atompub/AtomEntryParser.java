@@ -69,6 +69,8 @@ public class AtomEntryParser {
     private final static String ATTR_SRC = "src";
     private final static String ATTR_TYPE = "type";
 
+    protected boolean ignoreAtomContentSrc;
+
     private ObjectData fObject;
     private ContentStreamImpl fAtomContentStream;
     private ContentStreamImpl fCmisContentStream;
@@ -84,6 +86,14 @@ public class AtomEntryParser {
      */
     public AtomEntryParser(InputStream stream) throws Exception {
         parse(stream);
+    }
+
+    /**
+     * Sets the flag controlling whether atom content src (external content) is
+     * ignored. This flag is false by default (not ignored).
+     */
+    public void setIgnoreAtomContentSrc(boolean ignoreAtomContentSrc) {
+        this.ignoreAtomContentSrc = ignoreAtomContentSrc;
     }
 
     /**
@@ -260,6 +270,11 @@ public class AtomEntryParser {
                     type = parser.getAttributeValue(i).trim().toLowerCase();
                 }
             } else if (ATTR_SRC.equals(attrName.getLocalPart())) {
+                if (ignoreAtomContentSrc) {
+                    fAtomContentStream = null;
+                    skip(parser);
+                    return;
+                }
                 throw new CmisNotSupportedException("External content not supported!");
             }
         }

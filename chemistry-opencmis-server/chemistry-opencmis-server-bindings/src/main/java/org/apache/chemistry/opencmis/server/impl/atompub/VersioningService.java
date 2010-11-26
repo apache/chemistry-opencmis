@@ -51,7 +51,9 @@ public class VersioningService {
     public static void checkOut(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
+        AtomEntryParser parser = new AtomEntryParser();
+        parser.setIgnoreAtomContentSrc(true); // needed for some clients
+        parser.parse(request.getInputStream());
 
         // execute
         Holder<String> checkOutId = new Holder<String>(parser.getId());
