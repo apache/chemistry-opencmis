@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.CmisObjectAdapter;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
@@ -528,15 +527,14 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- adapters ---
 
-    public CmisObjectAdapter getAdapter(Class<? extends CmisObjectAdapter> adapterInterface) {
+    @SuppressWarnings("unchecked")
+    public <T> T getAdapter(Class<T> adapterInterface) {
         if (adapterInterface == null) {
             return null;
         }
-
         if (adapterInterface.equals(TransientCmisObject.class)) {
-            return createTransientCmisObject();
+            return (T) createTransientCmisObject();
         }
-
         return null;
     }
 

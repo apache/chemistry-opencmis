@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.CmisObjectAdapter;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
@@ -154,7 +153,7 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public List<CmisExtensionElement> getExtensions(ExtensionLevel level) {
         return null;
     }
-    
+
     public void refresh() {
 
     }
@@ -174,13 +173,13 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public CmisObject updateProperties(Map<String, ?> properties) {
         return null;
     }
-    
+
     public ObjectId updateProperties(Map<String, ?> properties, boolean refresh) {
         return null;
     }
 
     public void applyPolicy(ObjectId... policyIds) {
-        
+
     }
 
     public void removePolicy(ObjectId... policyIds) {
@@ -190,7 +189,7 @@ public class CmisObjectMock implements CmisObject, Serializable {
         return this.id;
     }
 
-    public CmisObjectAdapter getAdapter(Class<? extends CmisObjectAdapter> adapterInterface) {
+    public <T> T getAdapter(Class<T> adapterInterface) {
         return null;
     }
 

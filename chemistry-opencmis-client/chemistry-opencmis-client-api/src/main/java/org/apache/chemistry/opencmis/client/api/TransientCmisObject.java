@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 
-public interface TransientCmisObject extends CmisObjectAdapter, ObjectId {
+public interface TransientCmisObject extends ObjectId {
 
     // CMIS properties
 

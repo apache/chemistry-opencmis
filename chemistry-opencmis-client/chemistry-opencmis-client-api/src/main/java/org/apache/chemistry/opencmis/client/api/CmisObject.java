@@ -229,7 +229,7 @@ public interface CmisObject extends ObjectId {
     /**
      * Returns an adapter based on the given interface.
      */
-    CmisObjectAdapter getAdapter(Class<? extends CmisObjectAdapter> adapterInterface);
+    <T> T getAdapter(Class<T> adapterInterface);
 
     /**
      * Returns a transient object adapter.
