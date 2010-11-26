@@ -22,8 +22,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory.query;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -44,6 +42,8 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
@@ -58,7 +58,6 @@ import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalke
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
-import org.apache.chemistry.opencmis.server.support.query.FunctionReference;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
@@ -105,27 +104,10 @@ public class InMemoryQueryProcessor {
         return objList;
     }
 
-    public CmisQueryWalker processQuery(String statement) throws UnsupportedEncodingException, IOException,
-            RecognitionException {
-        CmisQueryWalker walker = QueryUtil.getWalker(statement);
-        walker.query(queryObj, null);
-        String errMsg = walker.getErrorMessageString();
-        if (null != errMsg) {
-            throw new RuntimeException("Walking of statement failed with error: \n   " + errMsg
-                    + "\n   Statement was: " + statement);
-        }
+    public void processQueryAndCatchExc(String statement) {
+        QueryUtil queryUtil = new QueryUtil();
+        CmisQueryWalker walker = queryUtil.traverseStatementAndCatchExc(statement, queryObj, null);
         whereTree = walker.getWherePredicateTree();
-        return walker;
-    }
-
-    public CmisQueryWalker processQueryAndCatchExc(String statement) {
-        try {
-            return processQuery(statement);
-        } catch (RecognitionException e) {
-            throw new RuntimeException("Walking of statement failed with RecognitionException error: \n   " + e);
-        } catch (Exception e) {
-            throw new RuntimeException("Walking of statement failed with other exception: \n   " + e);
-        }
     }
 
     public ObjectList buildResultList(TypeManager tm, String user, Boolean includeAllowableActions,
@@ -200,9 +182,9 @@ public class InMemoryQueryProcessor {
                     else if (propVal2 == null)
                         result = 1;
                     else
-                        result = ((Comparable) propVal1).compareTo(propVal2);
+                        result = ((Comparable<Object>) propVal1).compareTo(propVal2);
                 } else {
-                    String funcName = ((FunctionReference) sel).getName();
+                    // String funcName = ((FunctionReference) sel).getName();
                     // evaluate function here, currently ignore
                     result = 0;
                 }

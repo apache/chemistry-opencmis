@@ -24,13 +24,17 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
+import org.antlr.runtime.FailedPredicateException;
 import org.antlr.runtime.MismatchedTokenException;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
@@ -60,6 +64,17 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
+    public void simpleFailTest() {
+        String statement = "SELECT * TO MyType ORDER BY abc.def ASC";
+//        String statement = "SELECT dsfj disfj dsifj dsoijfﬂ039fi ";
+        try {
+            CmisQueryWalker walker = traverseStatement(statement);
+            fail("Errornous statement should throw exception.");
+        } catch (Exception e) {
+            LOG.debug("Exception in simpleFailTest: " + e);
+        }
+    }
+    
     public void simpleSelectTest1() throws Exception {
         String statement = "SELECT SCORE() FROM cmis:document";
 
@@ -155,7 +170,7 @@ public class QueryParseTest extends AbstractQueryTest {
             CmisQueryWalker walker = traverseStatement(statement);
             fail("Walking of statement should with RecognitionException but succeeded");
         } catch (Exception e) {
-            assertTrue(e instanceof RecognitionException || e instanceof MismatchedTokenException);
+            assertTrue(e instanceof CmisInvalidArgumentException);
         }
 
     }
@@ -192,6 +207,17 @@ public class QueryParseTest extends AbstractQueryTest {
         assertTrue(1 == types.size());
         String key = types.keySet().iterator().next();
         assertEquals("abc123", key);
+        assertEquals("MyType", types.get(key));
+    }
+    
+    @Test
+    public void simpleFromTest4() throws Exception {
+        String statement = "SELECT X.aaa FROM MyType AS X WHERE 10 = ANY X.aaa ";
+        CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
+        Map<String,String> types = queryObj.getTypes();
+        assertTrue(1 == types.size());
+        String key = types.keySet().iterator().next();
+        assertEquals("X", key);
         assertEquals("MyType", types.get(key));
     }
 
@@ -289,6 +315,7 @@ public class QueryParseTest extends AbstractQueryTest {
         String statement = "SELECT p1, p2, p3.t3 mycol FROM MyType AS MyAlias WHERE p1='abc' and p2=123 ORDER BY abc.def ASC";
         try {
             getWalker(statement);
+            Tree parserTree = (Tree) walker.getTreeNodeStream().getTreeSource();
             printTree(parserTree, statement);
 
         } catch (Exception e) {
@@ -303,6 +330,7 @@ public class QueryParseTest extends AbstractQueryTest {
 
         try {
             getWalker(statement);
+            Tree parserTree = (Tree) walker.getTreeNodeStream().getTreeSource();
             Tree whereTree = getWhereTree(parserTree);
             printTree(whereTree);
             LOG.info("Evaluate WHERE subtree: ...");
@@ -466,14 +494,25 @@ public class QueryParseTest extends AbstractQueryTest {
         String statement = "SELECT * FROM T1 MyAlias JOIN T2 AS MyAlias";
         try {
             traverseStatement(statement);
+            fail("Parsing statement " + statement + " should fail.");
+        } catch (RecognitionException e) {
+            assertTrue(e instanceof FailedPredicateException);
+            LOG.debug("duplicatedAliasTestFrom(), exception: " + e);
+            // walker.reportError(e);
+            String errorMessage = queryUtil.getErrorMessage(e);
+            LOG.debug("");
+            LOG.debug("duplicatedAliasTestFrom(), error message: " + errorMessage);
+            assertTrue(e.toString().contains("more than once as alias in a from"));
+            assertTrue(errorMessage.contains("more than once as alias in a from"));
         } catch (Exception e) {
-            assertTrue(e.getMessage().contains("more than once as alias in a from"));
+            fail("Parsing statement " + statement + " should fail with RecognitionException, but was: " + e.getClass());
         }
     }
 
     private void checkTreeWhere(String statement) {
         LOG.info("\ncheckTreeWhere: " + statement);
         traverseStatementAndCatchExc(statement);
+        Tree walkerTree = (Tree) walker.getTreeNodeStream().getTreeSource();
         Tree whereTree = getWhereTree(walkerTree);
         evalWhereTree(whereTree);
     }
@@ -817,4 +856,5 @@ public class QueryParseTest extends AbstractQueryTest {
     private void evalTimeLiteral(Tree node) {
         assertEquals(0, node.getChildCount());
     }
+
 }
