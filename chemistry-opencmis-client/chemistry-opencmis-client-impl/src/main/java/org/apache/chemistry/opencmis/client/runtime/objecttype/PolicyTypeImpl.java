@@ -18,10 +18,11 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
+import java.io.Serializable;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.PolicyType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
@@ -31,7 +32,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefiniti
 /**
  * Policy type.
  */
-public class PolicyTypeImpl extends PolicyTypeDefinitionImpl implements PolicyType {
+public class PolicyTypeImpl extends PolicyTypeDefinitionImpl implements PolicyType, Serializable {
 
     private static final long serialVersionUID = 1L;
 

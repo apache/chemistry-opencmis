@@ -31,12 +31,9 @@ import org.apache.chemistry.opencmis.commons.spi.AclService;
 
 /**
  * ACL Service AtomPub client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AclServiceImpl extends AbstractAtomPubService implements AclService {
-
+    
     /**
      * Constructor.
      */
@@ -44,16 +41,6 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
         setSession(session);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ACLService#applyACL(java.lang.String,
-     * java.lang.String, org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.commons.enums.ACLPropagation,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
         Acl result = null;
@@ -76,14 +63,6 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ACLService#getACL(java.lang.String,
-     * java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public org.apache.chemistry.opencmis.commons.data.Acl getAcl(String repositoryId, String objectId,
             Boolean onlyBasicPermissions, ExtensionsData extension) {
 

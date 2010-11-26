@@ -210,8 +210,10 @@ public abstract class AbstractRunner {
         isCanceled = false;
 
         for (CmisTestGroup group : groups) {
-            if (isCanceled) {
-                break;
+            synchronized (this) {
+                if (isCanceled) {
+                    break;
+                }
             }
 
             if ((group == null) || (!group.isEnabled())) {

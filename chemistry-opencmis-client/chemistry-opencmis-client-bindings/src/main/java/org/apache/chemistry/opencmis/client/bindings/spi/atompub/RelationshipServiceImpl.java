@@ -40,9 +40,6 @@ import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 
 /**
  * Relationship Service AtomPub client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RelationshipServiceImpl extends AbstractAtomPubService implements RelationshipService {
 
@@ -53,17 +50,6 @@ public class RelationshipServiceImpl extends AbstractAtomPubService implements R
         setSession(session);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RelationshipService#
-     * getObjectRelationships(java.lang.String , java.lang.String,
-     * java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.RelationshipDirection,
-     * java.lang.String, java.lang.String, java.lang.Boolean,
-     * java.math.BigInteger, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {

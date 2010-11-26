@@ -46,9 +46,6 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 /**
  * Discovery Service AtomPub client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class DiscoveryServiceImpl extends AbstractAtomPubService implements DiscoveryService {
 
@@ -59,16 +56,6 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         setSession(session);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.DiscoveryService#getContentChanges
-     * (java.lang.String, org.apache.opencmis.client.provider.Holder,
-     * java.lang.Boolean, java.lang.String, java.lang.Boolean,
-     * java.lang.Boolean, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeACL, BigInteger maxItems, ExtensionsData extension) {
         ObjectListImpl result = new ObjectListImpl();
@@ -126,16 +113,6 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.DiscoveryService#query(java.lang.
-     * String, java.lang.String, java.lang.Boolean, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.math.BigInteger, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {

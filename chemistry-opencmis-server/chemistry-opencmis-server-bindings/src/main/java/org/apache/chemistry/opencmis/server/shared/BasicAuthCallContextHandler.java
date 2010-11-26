@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.shared;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +30,9 @@ import org.apache.commons.codec.binary.Base64;
 /**
  * Call Context handler that handles basic authentication.
  */
-public class BasicAuthCallContextHandler implements CallContextHandler {
+public class BasicAuthCallContextHandler implements CallContextHandler, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructor.

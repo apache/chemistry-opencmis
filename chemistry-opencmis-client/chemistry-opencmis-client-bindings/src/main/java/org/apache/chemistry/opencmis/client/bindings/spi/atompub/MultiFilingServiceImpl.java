@@ -30,9 +30,6 @@ import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
 
 /**
  * MultiFiling Service AtomPub client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class MultiFilingServiceImpl extends AbstractAtomPubService implements MultiFilingService {
 
@@ -43,14 +40,6 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
         setSession(session);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.MultiFilingService#addObjectToFolder
-     * (java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         if (objectId == null) {
@@ -78,14 +67,6 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
         });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.MultiFilingService#removeObjectFromFolder
-     * (java.lang.String, java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         if (objectId == null) {
             throw new CmisInvalidArgumentException("Object id must be set!");

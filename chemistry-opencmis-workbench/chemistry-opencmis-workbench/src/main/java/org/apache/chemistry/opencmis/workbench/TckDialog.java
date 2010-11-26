@@ -119,10 +119,13 @@ public class TckDialog {
             runButton.setDefaultCapable(true);
             runButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                    int answer = JOptionPane.showConfirmDialog(owner,
-                            "Running the TCK may take a long time and may add, remove and alter data in the repository!\n"
-                                    + "It also puts at a strain on the repository, performing several thousand calls!\n"
-                                    + "\nAre you sure you want to proceed?", "TCK", JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+                    int answer = JOptionPane
+                            .showConfirmDialog(
+                                    owner,
+                                    "Running the TCK may take a long time and may add, remove and alter data in the repository!\n"
+                                            + "It also puts at a strain on the repository, performing several thousand calls!\n"
+                                            + "\nAre you sure you want to proceed?", "TCK", JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.WARNING_MESSAGE);
 
                     if (answer == JOptionPane.YES_OPTION) {
                         dispose();
@@ -214,7 +217,7 @@ public class TckDialog {
         }
     }
 
-    private class TckDialogRunner extends AbstractRunner {
+    private static class TckDialogRunner extends AbstractRunner {
         public TckDialogRunner(ClientModel model) {
             Map<String, String> parameters = new HashMap<String, String>(model.getClientSession()
                     .getSessionParameters());

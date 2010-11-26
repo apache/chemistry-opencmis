@@ -612,7 +612,7 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
 
     // --- ACE helper class ---
 
-    public class AceChangeHolder implements Serializable {
+    public static class AceChangeHolder implements Serializable {
         private static final long serialVersionUID = 1L;
 
         private String principalId;

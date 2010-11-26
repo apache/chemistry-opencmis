@@ -18,10 +18,11 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
+import java.io.Serializable;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 
@@ -30,7 +31,9 @@ import org.apache.chemistry.opencmis.client.api.Tree;
  * <p>
  * This is needed because Java doesn't support multiple inheritance.
  */
-public class ObjectTypeHelper {
+public class ObjectTypeHelper implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Session session;
     private ObjectType objectType;

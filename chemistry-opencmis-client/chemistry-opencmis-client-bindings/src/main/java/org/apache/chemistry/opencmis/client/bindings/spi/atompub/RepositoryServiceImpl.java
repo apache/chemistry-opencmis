@@ -44,9 +44,6 @@ import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
 /**
  * Repository Service AtomPub client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RepositoryServiceImpl extends AbstractAtomPubService implements RepositoryService {
 
@@ -57,24 +54,10 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         setSession(session);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos
-     * (org.apache.opencmis .client.provider .ExtensionsData)
-     */
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         return getRepositoriesInternal(null);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo
-     * (java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
@@ -92,27 +75,10 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         throw new CmisObjectNotFoundException("Repository not found!");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getTypeDefinition
-     * (java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         return getTypeDefinitionInternal(repositoryId, typeId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getTypeChildren
-     * (java.lang.String, java.lang.String, java.lang.Boolean,
-     * java.math.BigInteger, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         TypeDefinitionListImpl result = new TypeDefinitionListImpl();
@@ -180,14 +146,6 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getTypeDescendants
-     * (java.lang.String, java.lang.String, java.math.BigInteger,
-     * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
@@ -239,8 +197,8 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
                     if (element.getObject() instanceof AtomLink) {
                         addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
                     } else if (element.getObject() instanceof CmisTypeDefinitionType) {
-                        childContainer = new TypeDefinitionContainerImpl(convert((CmisTypeDefinitionType) element
-                                .getObject()));
+                        childContainer = new TypeDefinitionContainerImpl(
+                                convert((CmisTypeDefinitionType) element.getObject()));
                     } else if (element.getObject() instanceof AtomFeed) {
                         addTypeDescendantsLevel(repositoryId, (AtomFeed) element.getObject(), childContainerList);
                     }

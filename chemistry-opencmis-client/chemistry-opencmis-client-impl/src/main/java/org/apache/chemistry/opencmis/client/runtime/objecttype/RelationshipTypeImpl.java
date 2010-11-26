@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDe
 /**
  * Relationship type.
  */
-public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl implements RelationshipType {
+public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl implements RelationshipType, Serializable {
 
     private static final long serialVersionUID = 1L;
 

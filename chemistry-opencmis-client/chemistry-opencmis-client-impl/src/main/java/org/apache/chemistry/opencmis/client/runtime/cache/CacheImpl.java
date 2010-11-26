@@ -278,7 +278,7 @@ public class CacheImpl implements Cache {
 
     // --- cache item ---
 
-    private class CacheItem<T> implements Serializable {
+    private static class CacheItem<T> implements Serializable {
 
         private static final long serialVersionUID = 1L;
 

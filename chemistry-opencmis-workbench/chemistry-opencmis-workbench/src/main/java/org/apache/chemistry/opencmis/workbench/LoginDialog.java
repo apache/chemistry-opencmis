@@ -229,7 +229,7 @@ public class LoginDialog extends JDialog {
 
                 if (expertLogin) {
                     configs.setSelectedIndex(0);
-                    
+
                     StringBuilder sb = new StringBuilder();
                     for (Map.Entry<String, String> parameter : createBasicSessionParameters().entrySet()) {
                         sb.append(parameter.getKey());
@@ -449,7 +449,7 @@ public class LoginDialog extends JDialog {
         return canceled;
     }
 
-    class RepositoryRenderer extends JPanel implements ListCellRenderer {
+    static class RepositoryRenderer extends JPanel implements ListCellRenderer {
         private static final long serialVersionUID = 1L;
 
         private JLabel nameLabel;

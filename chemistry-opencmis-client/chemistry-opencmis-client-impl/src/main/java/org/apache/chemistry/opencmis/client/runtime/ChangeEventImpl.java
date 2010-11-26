@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDat
 /**
  * Change Event.
  */
-public class ChangeEventImpl extends ChangeEventInfoDataImpl implements ChangeEvent {
+public class ChangeEventImpl extends ChangeEventInfoDataImpl implements ChangeEvent, Serializable {
 
     private static final long serialVersionUID = 1L;
 

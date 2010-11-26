@@ -27,8 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 /**
  * Abstract extension data implementation.
  */
-public abstract class AbstractExtensionData implements ExtensionsData,
-        Serializable {
+public abstract class AbstractExtensionData implements ExtensionsData, Serializable {
 
     private static final long serialVersionUID = 1L;
 

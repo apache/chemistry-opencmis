@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.objecttype;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.DocumentType;
@@ -31,7 +32,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefini
 /**
  * Document type.
  */
-public class DocumentTypeImpl extends DocumentTypeDefinitionImpl implements DocumentType {
+public class DocumentTypeImpl extends DocumentTypeDefinitionImpl implements DocumentType, Serializable {
 
     private static final long serialVersionUID = 1L;
 

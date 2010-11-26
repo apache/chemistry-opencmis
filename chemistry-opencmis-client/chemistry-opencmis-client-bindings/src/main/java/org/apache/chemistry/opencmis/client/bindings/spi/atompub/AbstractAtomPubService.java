@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,9 +73,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 
 /**
  * Base class for all AtomPub clients.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AbstractAtomPubService {
 

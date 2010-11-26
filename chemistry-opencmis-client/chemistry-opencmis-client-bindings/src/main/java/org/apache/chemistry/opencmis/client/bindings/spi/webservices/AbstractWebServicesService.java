@@ -39,9 +39,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 
 /**
  * Base class for all Web Services clients.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractWebServicesService {
 

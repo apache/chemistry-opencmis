@@ -85,6 +85,11 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         } catch (IOException e) {
             log.warn("Cannot load configuration: " + e, e);
             return null;
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException ioe) {
+            }
         }
 
         // get 'class' property

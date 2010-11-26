@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
@@ -26,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 /**
  * Access control list data implementation.
  */
-public class AccessControlListImpl extends AbstractExtensionData implements Acl {
+public class AccessControlListImpl extends AbstractExtensionData implements Acl, Serializable {
 
     private static final long serialVersionUID = 1L;
 

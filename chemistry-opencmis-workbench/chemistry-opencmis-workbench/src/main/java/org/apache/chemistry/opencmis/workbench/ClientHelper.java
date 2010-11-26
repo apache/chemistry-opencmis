@@ -334,6 +334,11 @@ public class ClientHelper {
             return result;
         } catch (IOException e) {
             return null;
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException ioe) {
+            }
         }
     }
 
@@ -362,6 +367,20 @@ public class ClientHelper {
         @Override
         public int compareTo(FileEntry o) {
             return name.compareToIgnoreCase(o.getName());
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof FileEntry)) {
+                return false;
+            }
+
+            return name.equals(((FileEntry) obj).getName());
         }
     }
 }

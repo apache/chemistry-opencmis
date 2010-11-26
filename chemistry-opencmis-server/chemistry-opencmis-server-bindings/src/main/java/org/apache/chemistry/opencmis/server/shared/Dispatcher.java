@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.shared;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -36,7 +37,10 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Dispatcher for the AtomPub and Browser binding servlet.
  */
-public class Dispatcher {
+public class Dispatcher implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     public static final String METHOD_PUT = "PUT";

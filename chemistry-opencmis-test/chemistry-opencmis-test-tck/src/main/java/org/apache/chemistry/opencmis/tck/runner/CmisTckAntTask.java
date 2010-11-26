@@ -125,7 +125,7 @@ public class CmisTckAntTask extends Task {
         }
     }
 
-    private class AntRunner extends AbstractRunner {
+    private static class AntRunner extends AbstractRunner {
 
     }
 

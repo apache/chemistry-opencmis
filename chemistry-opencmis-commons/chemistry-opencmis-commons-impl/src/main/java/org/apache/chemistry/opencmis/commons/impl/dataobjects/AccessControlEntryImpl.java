@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
@@ -26,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.Principal;
 /**
  * Access Control Entry data implementation.
  */
-public class AccessControlEntryImpl extends AbstractExtensionData implements Ace {
+public class AccessControlEntryImpl extends AbstractExtensionData implements Ace, Serializable {
 
     private static final long serialVersionUID = 1L;
 
