@@ -67,6 +67,15 @@ tokens {
 package org.apache.chemistry.opencmis.server.support.query;
 }
 
+@members {
+    public boolean hasErrors() {
+    	return gCmisBaseGrammar.hasErrors();
+    }
+
+	public String getErrorMessages() {
+    	return gCmisBaseGrammar.getErrorMessages();
+	}
+}
 
 query: SELECT^ DISTINCT? select_list from_clause where_clause? order_by_clause?;
 

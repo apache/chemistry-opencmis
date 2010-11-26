@@ -60,20 +60,6 @@ options {
 package org.apache.chemistry.opencmis.server.support.query;
 }
 
-@members {
-    public String errorMessage;
-
-    @Override
-    public void displayRecognitionError(String[] tokenNames,
-            RecognitionException e) {
-        if (errorMessage == null) {
-            String hdr = getErrorHeader(e);
-            String msg = getErrorMessage(e, tokenNames);
-            errorMessage = hdr + " " + msg;
-        }
-    }
-}
-
 query: SELECT^ DISTINCT? select_list from_clause where_clause? order_by_clause?;
 
 select_list

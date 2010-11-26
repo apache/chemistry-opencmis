@@ -35,10 +35,28 @@ options {
     output = AST;
 }
 
-@rulecatch {
-	catch (RecognitionException e) {
-		throw e;
+@members {
+    private List<String> errorMessages = new ArrayList<String>();
+    
+    public boolean hasErrors() {
+    	return errorMessages.size() > 0;
+    }
+
+	public String getErrorMessages() {
+		StringBuffer allMessages = new StringBuffer();
+		
+		for (String msg : errorMessages)
+			allMessages.append(msg).append('\n');
+			
+		return allMessages.toString();
 	}
+
+    @Override
+    // Instead of sending all errors to System.err collect them in a list
+	public void emitErrorMessage(String msg) {
+		errorMessages.add(msg);
+	}
+	
 }
 
 query: 

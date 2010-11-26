@@ -69,6 +69,8 @@ public class QueryObject {
 
     // order by part
     protected List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
+    
+    private String errorMessage;
 
     public static class JoinSpec {
 
@@ -132,6 +134,10 @@ public class QueryObject {
     public CmisSelector getColumnReference(Integer token) {
         return columnReferences.get(token);
     }
+    
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
     // ///////////////////////////////////////////////////////
     // SELECT part
@@ -149,7 +155,7 @@ public class QueryObject {
     public void addAlias(String aliasName, CmisSelector aliasRef) {
         LOG.debug("add alias: " + aliasName + " for: " + aliasRef);
         if (colOrFuncAlias.containsKey(aliasName)) {
-            throw new CmisInvalidArgumentException("You cannot use name " + aliasName
+            throw new CmisQueryException("You cannot use name " + aliasName
                     + " more than once as alias in a select.");
         } else {
             aliasRef.setAliasName(aliasName);
@@ -165,19 +171,24 @@ public class QueryObject {
     // FROM part
 
     public String addType(String aliasName, String typeQueryName) {
-        LOG.debug("add alias: " + aliasName + " for: " + typeQueryName);
-        if (froms.containsKey(aliasName)) {
-            throw new CmisInvalidArgumentException("You cannot use name " + aliasName
-                    + " more than once as alias in a from part.");
+        try {
+            LOG.debug("add alias: " + aliasName + " for: " + typeQueryName);
+            if (froms.containsKey(aliasName)) {
+                throw new CmisQueryException("You cannot use name " + aliasName
+                        + " more than once as alias in a from part.");
+            }
+            if (aliasName == null) {
+                aliasName = typeQueryName;
+            }
+            froms.put(aliasName, typeQueryName);
+            if (from == null) {
+                from = aliasName;
+            }
+            return aliasName;
+        } catch (CmisQueryException cqe) {
+            errorMessage = cqe.getMessage(); // preserve message
+            return null; // indicate an error to ANTLR so that it generates FailedPredicateException
         }
-        if (aliasName == null) {
-            aliasName = typeQueryName;
-        }
-        froms.put(aliasName, typeQueryName);
-        if (from == null) {
-            from = aliasName;
-        }
-        return aliasName;
     }
 
     public String getMainTypeAlias() {
@@ -317,66 +328,73 @@ public class QueryObject {
     // ///////////////////////////////////////////////////////
     // resolve types after first pass traversing the AST is complete
 
-    public void resolveTypes() {
-        LOG.debug("First pass of query traversal is complete, resolving types");
-        if (null == typeMgr)
-            return;
+    public boolean resolveTypes() {
+        try {
+            LOG.debug("First pass of query traversal is complete, resolving types");
+            if (null == typeMgr)
+                return true;
 
-        // First resolve all alias names defined in SELECT:
-        for (CmisSelector alias : colOrFuncAlias.values()) {
-            if (alias instanceof ColumnReference) {
-                ColumnReference colRef = ((ColumnReference) alias);
-                resolveTypeForAlias(colRef);
+            // First resolve all alias names defined in SELECT:
+            for (CmisSelector alias : colOrFuncAlias.values()) {
+                if (alias instanceof ColumnReference) {
+                    ColumnReference colRef = ((ColumnReference) alias);
+                    resolveTypeForAlias(colRef);
+                }
             }
-        }
 
-        // Then replace all aliases used somewhere by their resolved column
-        // reference:
-        for (Integer obj : columnReferences.keySet()) {
-            CmisSelector selector = columnReferences.get(obj);
-            String key = selector.getName();
-            if (colOrFuncAlias.containsKey(key)) { // it is an alias
-                CmisSelector resolvedReference = colOrFuncAlias.get(key);
-                columnReferences.put(obj, resolvedReference);
-                // Note: ^ This may replace the value in the map with the same
-                // value, but this does not harm.
-                // Otherwise we need to check if it is resolved or not which
-                // causes two more ifs:
-                // if (selector instanceof ColumnReference) {
-                // ColumnReference colRef = ((ColumnReference) selector);
-                // if (colRef.getTypeDefinition() == null) // it is not yet
-                // resolved
-                // // replace unresolved column reference by resolved on from
-                // alias map
-                // columnReferences.put(obj,
-                // colOrFuncAlias.get(selector.getAliasName()));
-                // } else
-                // columnReferences.put(obj,
-                // colOrFuncAlias.get(selector.getAliasName()));
-                if (whereReferences.remove(selector))
-                    // replace unresolved by resolved reference
-                    whereReferences.add(resolvedReference);
-                if (joinReferences.remove(selector))
-                    // replace unresolved by resolved reference
-                    joinReferences.add(resolvedReference);
+            // Then replace all aliases used somewhere by their resolved column
+            // reference:
+            for (Integer obj : columnReferences.keySet()) {
+                CmisSelector selector = columnReferences.get(obj);
+                String key = selector.getName();
+                if (colOrFuncAlias.containsKey(key)) { // it is an alias
+                    CmisSelector resolvedReference = colOrFuncAlias.get(key);
+                    columnReferences.put(obj, resolvedReference);
+                    // Note: ^ This may replace the value in the map with the same
+                    // value, but this does not harm.
+                    // Otherwise we need to check if it is resolved or not which
+                    // causes two more ifs:
+                    // if (selector instanceof ColumnReference) {
+                    // ColumnReference colRef = ((ColumnReference) selector);
+                    // if (colRef.getTypeDefinition() == null) // it is not yet
+                    // resolved
+                    // // replace unresolved column reference by resolved on from
+                    // alias map
+                    // columnReferences.put(obj,
+                    // colOrFuncAlias.get(selector.getAliasName()));
+                    // } else
+                    // columnReferences.put(obj,
+                    // colOrFuncAlias.get(selector.getAliasName()));
+                    if (whereReferences.remove(selector))
+                        // replace unresolved by resolved reference
+                        whereReferences.add(resolvedReference);
+                    if (joinReferences.remove(selector))
+                        // replace unresolved by resolved reference
+                        joinReferences.add(resolvedReference);
+                }
             }
-        }
 
-        // The replace all remaining column references not using an alias
-        for (CmisSelector select : columnReferences.values()) {
-            // ignore functions here
-            if (select instanceof ColumnReference) {
-                ColumnReference colRef = ((ColumnReference) select);
-                if (colRef.getTypeDefinition() == null) { // not yet resolved
-                    if (colRef.getTypeQueryName() == null) {
-                        // unqualified select: SELECT p FROM
-                        resolveTypeForColumnReference(colRef);
-                    } else {
-                        // qualified select: SELECT t.p FROM
-                        validateColumnReferenceAndResolveType(colRef);
+            // The replace all remaining column references not using an alias
+            for (CmisSelector select : columnReferences.values()) {
+                // ignore functions here
+                if (select instanceof ColumnReference) {
+                    ColumnReference colRef = ((ColumnReference) select);
+                    if (colRef.getTypeDefinition() == null) { // not yet resolved
+                        if (colRef.getTypeQueryName() == null) {
+                            // unqualified select: SELECT p FROM
+                            resolveTypeForColumnReference(colRef);
+                        } else {
+                            // qualified select: SELECT t.p FROM
+                            validateColumnReferenceAndResolveType(colRef);
+                        }
                     }
                 }
             }
+            
+            return true;
+        } catch (CmisQueryException cqe) {
+            errorMessage = cqe.getMessage(); // preserve message
+            return false; // indicate an error to ANTLR so that it generates FailedPredicateException
         }
     }
 
@@ -410,7 +428,7 @@ public class QueryObject {
         for (String typeQueryName : froms.values()) {
             TypeDefinition td = typeMgr.getTypeByQueryName(typeQueryName);
             if (null == td)
-                throw new CmisInvalidArgumentException(typeQueryName + " is neither a type query name nor an alias.");
+                throw new CmisQueryException(typeQueryName + " is neither a type query name nor an alias.");
             else if (isStar) {
                 ++noFound;
                 tdFound = null;
@@ -420,10 +438,10 @@ public class QueryObject {
             }
         }
         if (noFound == 0)
-            throw new CmisInvalidArgumentException(propName
+            throw new CmisQueryException(propName
                     + " is not a property query name in any of the types in from ...");
         else if (noFound > 1 && !isStar)
-            throw new CmisInvalidArgumentException(propName
+            throw new CmisQueryException(propName
                     + " is not a unique property query name within the types in from ...");
         else {
             if (null != tdFound) // can be null in select * from t1 JOIN t2....
@@ -438,7 +456,7 @@ public class QueryObject {
         String typeQueryName = getReferencedTypeQueryName(colRef.getTypeQueryName());
         TypeDefinition td = typeMgr.getTypeByQueryName(typeQueryName);
         if (null == td)
-            throw new CmisInvalidArgumentException(colRef.getTypeQueryName()
+            throw new CmisQueryException(colRef.getTypeQueryName()
                     + " is neither a type query name nor an alias.");
 
         validateColumnReferenceAndResolveType(td, colRef);
@@ -453,7 +471,7 @@ public class QueryObject {
         else
             hasProp = TypeValidator.typeContainsPropertyWithQueryName(td, colRef.getPropertyQueryName());
         if (!hasProp)
-            throw new CmisInvalidArgumentException(colRef.getPropertyQueryName()
+            throw new CmisQueryException(colRef.getPropertyQueryName()
                     + " is not a valid property query name in type " + td.getId() + ".");
 
         colRef.setTypeDefinition(typeMgr.getPropertyIdForQueryName(td, colRef.getPropertyQueryName()), td);

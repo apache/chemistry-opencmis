@@ -64,22 +64,12 @@ package org.apache.chemistry.opencmis.server.support.query;
 }
 
 @members {
-	protected void mismatch(IntStream input, int ttype, BitSet follow)
-		throws RecognitionException
-	{
-		throw new MismatchedTokenException(ttype, input);
-	}
-	
-	public void recoverFromMismatchedSet(IntStream input, RecognitionException e, antlr.collections.impl.BitSet follow)
-		throws RecognitionException
-	{
-		throw e;
-	}
-}
+    public boolean hasErrors() {
+    	return gCmisBaseGrammar.hasErrors();
+    }
 
-@rulecatch {
-	catch (RecognitionException e) {
-		throw e;
+	public String getErrorMessages() {
+    	return gCmisBaseGrammar.getErrorMessages();
 	}
 }
 

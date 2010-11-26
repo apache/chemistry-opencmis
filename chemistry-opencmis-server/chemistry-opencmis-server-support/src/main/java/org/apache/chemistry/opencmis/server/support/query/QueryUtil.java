@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -30,6 +31,8 @@ import org.antlr.runtime.TokenSource;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_CmisBaseGrammar.query_return;
 
 /**
@@ -39,8 +42,11 @@ import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_Cmi
  */
 public class QueryUtil extends QueryObject {
 
+    private CmisQueryWalker walker;
+    
     // convenience method because everybody needs this piece of code
-    static public CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+    public CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+        
         CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
         TokenSource lexer = new CmisQlStrictLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
@@ -48,6 +54,9 @@ public class QueryUtil extends QueryObject {
         CommonTree parserTree; // the ANTLR tree after parsing phase
 
         query_return parsedStatement = parser.query();
+        if (parser.hasErrors()) {
+            throw new CmisInvalidArgumentException(parser.getErrorMessages());
+        }
         parserTree = (CommonTree) parsedStatement.getTree();
 
         CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
@@ -55,4 +64,41 @@ public class QueryUtil extends QueryObject {
         CmisQueryWalker walker = new CmisQueryWalker(nodes);
         return walker;
     }
+
+    public CmisQueryWalker traverseStatement(String statement, QueryObject queryObj, PredicateWalkerBase pw) throws UnsupportedEncodingException, IOException, RecognitionException {
+        walker = getWalker(statement);
+        walker.query(queryObj, pw);
+        walker.getWherePredicateTree();
+        return walker;        
+    }
+    
+    public CmisQueryWalker traverseStatementAndCatchExc(String statement, QueryObject queryObj, PredicateWalkerBase pw) {
+        QueryUtil queryUtil = new QueryUtil();
+        try {
+            return traverseStatement(statement, queryObj, pw);
+        } catch (RecognitionException e) {
+            String errorMsg = queryUtil.getErrorMessage();
+            throw new CmisInvalidArgumentException("Walking of statement failed with RecognitionException error: \n   " + errorMsg);
+        } catch (CmisBaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CmisInvalidArgumentException("Walking of statement failed with exception: \n   " + e);
+        }
+    }
+
+    public String getErrorMessage(RecognitionException e) {
+        if (null == walker)
+            return e.toString();
+        else
+            return getErrorMessage(walker, e);
+    }
+    
+    private String getErrorMessage(BaseRecognizer recognizer, RecognitionException e) {
+        String[] tokenNames = recognizer.getTokenNames();
+        // String hdr = walker.getErrorHeader(e);
+        String hdr = "Line "+e.line+":"+e.charPositionInLine;
+        String msg = recognizer.getErrorMessage(e, tokenNames);
+        return hdr + " " + msg;
+    }
+    
 }

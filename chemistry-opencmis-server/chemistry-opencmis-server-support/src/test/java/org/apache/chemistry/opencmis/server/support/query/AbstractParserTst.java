@@ -24,6 +24,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.Lexer;
@@ -189,7 +190,10 @@ public class AbstractParserTst{
         if ( tokens.index()!=tokens.size() ) {
             throw new RuntimeException("Invalid input.");
         }
-            
+        
+        /** Check for syntax errors */
+        if (((BaseRecognizer)parObj).getNumberOfSyntaxErrors() > 0)
+            throw new RuntimeException("Syntax error occured");
         return result;
     }
     
