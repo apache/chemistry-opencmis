@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.impl;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
@@ -40,7 +41,7 @@ import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 /**
  * CMIS binding implementation.
  */
-public class CmisBindingImpl implements CmisBinding {
+public class CmisBindingImpl implements CmisBinding, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,7 +51,7 @@ public class CmisBindingImpl implements CmisBinding {
 
     /**
      * Constructor.
-     * 
+     *
      * @param sessionParameters
      *            the session parameters
      */

@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
@@ -26,7 +27,8 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 /**
  * Abstract extension data implementation.
  */
-public abstract class AbstractExtensionData implements ExtensionsData {
+public abstract class AbstractExtensionData implements ExtensionsData,
+        Serializable {
 
     private static final long serialVersionUID = 1L;
 

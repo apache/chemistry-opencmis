@@ -18,13 +18,12 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * Holds extension data either set by the CMIS repository or the client.
  */
-public interface ExtensionsData extends Serializable {
+public interface ExtensionsData {
 
     List<CmisExtensionElement> getExtensions();
 

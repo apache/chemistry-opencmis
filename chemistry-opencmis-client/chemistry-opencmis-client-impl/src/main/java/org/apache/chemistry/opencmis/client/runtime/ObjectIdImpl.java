@@ -18,12 +18,14 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import java.io.Serializable;
+
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 
 /**
  * Implementation of <code>ObjectId</code>.
  */
-public class ObjectIdImpl implements ObjectId {
+public class ObjectIdImpl implements ObjectId, Serializable {
 
     private static final long serialVersionUID = 1L;
 

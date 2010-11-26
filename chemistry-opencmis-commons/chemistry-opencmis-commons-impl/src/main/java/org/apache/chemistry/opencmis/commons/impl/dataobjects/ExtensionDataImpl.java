@@ -18,11 +18,14 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.io.Serializable;
+
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 
 /**
  * ExtensionsData implementation.
  */
-public class ExtensionDataImpl extends AbstractExtensionData implements ExtensionsData {
+public class ExtensionDataImpl extends AbstractExtensionData implements
+        ExtensionsData, Serializable {
     private static final long serialVersionUID = 1L;
 }

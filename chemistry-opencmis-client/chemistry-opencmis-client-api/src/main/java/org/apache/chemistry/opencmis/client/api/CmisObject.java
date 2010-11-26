@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +32,10 @@ import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 
 /**
  * Base CMIS object.
- * 
+ *
  * See CMIS Domain Model - section 2.1.2.
  */
-public interface CmisObject extends ObjectId, Serializable {
+public interface CmisObject extends ObjectId {
 
     // common properties
 
@@ -83,7 +82,7 @@ public interface CmisObject extends ObjectId, Serializable {
 
     /**
      * Get the type's base type id.
-     * 
+     *
      * @return
      */
     BaseTypeId getBaseTypeId();
@@ -105,10 +104,10 @@ public interface CmisObject extends ObjectId, Serializable {
 
     /**
      * Returns a property by id.
-     * 
+     *
      * @param id
      *            the property id
-     * 
+     *
      * @return the property or <code>null</code> if the property does not exist
      *         or is not available
      */
@@ -116,10 +115,10 @@ public interface CmisObject extends ObjectId, Serializable {
 
     /**
      * Returns a property value by id.
-     * 
+     *
      * @param id
      *            the property id
-     * 
+     *
      * @return the property value or <code>null</code> if the property does not
      *         exist or is not available
      */
@@ -144,7 +143,7 @@ public interface CmisObject extends ObjectId, Serializable {
 
     /**
      * Deletes this object.
-     * 
+     *
      * @param allVersions
      *            if this object is a document this parameter defines if just
      *            this version or all versions should be deleted
@@ -153,25 +152,25 @@ public interface CmisObject extends ObjectId, Serializable {
 
     /**
      * Updates the properties that are provided.
-     * 
+     *
      * @param properties
      *            the properties to update
-     * 
+     *
      * @return the updated object (a repository might have created a new object)
      */
     CmisObject updateProperties(Map<String, ?> properties);
 
     /**
      * Updates the properties that are provided.
-     * 
+     *
      * @param properties
      *            the properties to update
      * @param refresh
      *            indicates if the object should be refresh after the update
-     * 
+     *
      * @return the object id of the updated object (a repository might have
      *         created a new object)
-     * 
+     *
      */
     ObjectId updateProperties(Map<String, ?> properties, boolean refresh);
 
@@ -203,7 +202,7 @@ public interface CmisObject extends ObjectId, Serializable {
 
     /**
      * Adds and removes ACEs to the object.
-     * 
+     *
      * @return the new ACL of this object
      */
     Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
@@ -234,7 +233,7 @@ public interface CmisObject extends ObjectId, Serializable {
 
     /**
      * Returns a transient object adapter.
-     * 
+     *
      * @see TransientCmisObject
      */
     TransientCmisObject getTransientObject();

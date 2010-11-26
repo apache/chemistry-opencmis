@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -57,7 +58,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 /**
  * Base class for all persistent session object impl classes.
  */
-public abstract class AbstractCmisObject implements CmisObject {
+public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     private static final long serialVersionUID = 1L;
 

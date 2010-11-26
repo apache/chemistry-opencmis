@@ -18,14 +18,11 @@
  */
 package org.apache.chemistry.opencmis.commons.spi;
 
-import java.io.Serializable;
-
-
 /**
  * Entry point for all CMIS binding related operations. It provides access to
  * the service interface objects which are very similar to the CMIS 1.0 domain
  * model.
- * 
+ *
  * <p>
  * Each instance of this class represents a session. A session comprises of a
  * connection to one CMIS endpoint over one binding for one particular user and
@@ -34,7 +31,7 @@ import java.io.Serializable;
  * provided if they are supported by the underlying binding.
  * </p>
  */
-public interface CmisBinding extends Serializable {
+public interface CmisBinding {
 
     /**
      * Gets a Repository Service interface object.
@@ -94,7 +91,7 @@ public interface CmisBinding extends Serializable {
     /**
      * Clears all caches of the current CMIS binding session that are related to
      * the given repository.
-     * 
+     *
      * @param repositoryId
      *            the repository id
      */

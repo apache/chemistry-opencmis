@@ -18,12 +18,10 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-import java.io.Serializable;
-
 /**
  * Holds an object id.
  */
-public interface ObjectId extends Serializable {
+public interface ObjectId {
 
     /**
      * Returns the id.
