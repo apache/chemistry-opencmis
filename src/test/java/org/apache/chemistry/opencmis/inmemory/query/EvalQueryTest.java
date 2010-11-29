@@ -723,7 +723,7 @@ public class EvalQueryTest extends AbstractServiceTst {
         
         statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'black' = ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING;
         try {
-            res = doQuery(statement);
+            doQuery(statement);
             fail("Unknown = ANY with single value prop should throw exception");
         } catch (Exception e) {
             assertTrue(e.toString().contains("only is allowed on multi-value properties"));

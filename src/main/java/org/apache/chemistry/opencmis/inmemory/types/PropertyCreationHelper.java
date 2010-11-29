@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
@@ -273,12 +274,10 @@ public class PropertyCreationHelper {
         }
         // add functions:
         BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
-        for (String func : requestedFuncs.keySet()) {
-            PropertyInteger pi = objFactory.createPropertyIntegerData(func, BigInteger.valueOf(100)); // fixed
-                                                                                                      // dummy
-                                                                                                      // value
-            mappedProperties.put(requestedFuncs.get(func), pi);
-
+        for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
+            PropertyInteger pi = objFactory.createPropertyIntegerData(funcEntry.getKey(), BigInteger.valueOf(100)); 
+              // fixed dummy value
+            mappedProperties.put(funcEntry.getValue(), pi);
         }
 
         Properties props = new PropertiesImpl(mappedProperties.values());
