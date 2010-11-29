@@ -168,8 +168,10 @@ public class PropertyCreationHelper {
 
     public static <T> void addElemToPicklist(AbstractPropertyDefinition<T> prop, T value) {
         List<Choice<T>> choiceList = prop.getChoices();
-        if (choiceList == null)
+        if (choiceList == null) {
             choiceList = new ArrayList<Choice<T>>();
+            prop.setChoices(choiceList);
+        }
 
         ChoiceImpl<T> elem = new ChoiceImpl<T>();
         elem.setValue(Collections.singletonList(value));
