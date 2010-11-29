@@ -580,7 +580,7 @@ public class InMemoryQueryProcessor {
             if (rVal instanceof Double)
                 return lDoubleValue.compareTo((Double) rVal);
             else if (rVal instanceof Long)
-                return Double.valueOf(((Integer) lValue).doubleValue()).compareTo((Double) rVal);
+                return Double.valueOf(((Integer) lValue).doubleValue()).compareTo(((Long)rVal).doubleValue());
             else
                 throwIncompatibleTypesException(lValue, rVal);
             break;
@@ -625,7 +625,7 @@ public class InMemoryQueryProcessor {
             return null;
         else {
             if (pd.getCardinality() == Cardinality.SINGLE)
-                return null == lVal ? null : lVal.getFirstValue();
+                return lVal.getFirstValue();
             else
                 return lVal.getValues();
         }

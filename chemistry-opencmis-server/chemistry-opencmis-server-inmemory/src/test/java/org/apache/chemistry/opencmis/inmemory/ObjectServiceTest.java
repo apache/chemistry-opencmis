@@ -128,6 +128,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
             Properties props = createDocumentProperties("DocumentWithAFolderType", FOLDER_TYPE_ID);
             id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null,
                     null, null);
+            assertNotNull(id);
             fail("Creating  document with a folder type should fail.");
         } catch (Exception e) {
             log.info("Creating  document with a folder type failed as expected.");
@@ -135,7 +136,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
         // test create a document with an illegal name, should fail:
         try {
             Properties props = createDocumentProperties("abc ()", DOCUMENT_TYPE_ID);
-            id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null,
+            fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null,
                     null, null);
             fail("Creating  document with an illegal name should fail.");
         } catch (Exception e) {
@@ -161,7 +162,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
         }
  
         try {
-            createDocumentNoCatch("/(%#$§", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
+            createDocumentNoCatch("/(%#$ï¿½", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
             fail("Document creation with ilegal name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
@@ -193,7 +194,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
         }
  
         try {
-            createFolderNoCatch("/(%#$§", fRootFolderId, FOLDER_TYPE_ID);
+            createFolderNoCatch("/(%#$ï¿½", fRootFolderId, FOLDER_TYPE_ID);
             fail("Folder creation with ilegal name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);

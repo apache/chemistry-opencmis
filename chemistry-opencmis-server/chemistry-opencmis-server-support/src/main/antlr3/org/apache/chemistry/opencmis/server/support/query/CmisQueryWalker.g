@@ -301,12 +301,12 @@ literal returns [Object value]:
     | STRING_LIT
         {
             String s = $STRING_LIT.text;
-            $value = s.substring(1, s.length() - 1);
+            $value = s!= null ? s.substring(1, s.length() - 1) : null;
         }
     | TIME_LIT
         {
             String s = $TIME_LIT.text;
-            s = s.substring(s.indexOf('\'') + 1, s.length() - 1);
+            s = s!= null ? s.substring(s.indexOf('\'') + 1, s.length() - 1) : null;
             try {
                 // $value = CalendarHelper.fromString(s);
             } catch (IllegalArgumentException e) {

@@ -117,12 +117,13 @@ public class QueryTestDataCreator {
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING, "Alpha");
-                put(PROP_ID_INT, new Integer(-100));
-                put(PROP_ID_DECIMAL, new Double(-4.0E24d));
+                put(PROP_ID_INT, Integer.valueOf(-100));
+                put(PROP_ID_DECIMAL, Double.valueOf(-4.0E24d));
                 put(PROP_ID_DATETIME, gc1);
                 put(PROP_ID_BOOLEAN, true);
             }};           
         doc1 = createDocument("alpha", rootFolderId, COMPLEX_TYPE, propertyMap1);
+        assertNotNull(doc1);
         
         final GregorianCalendar gc2 = new GregorianCalendar(TZ);
         gc2.clear();
@@ -132,23 +133,25 @@ public class QueryTestDataCreator {
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING, "Beta");
-                put(PROP_ID_INT, new Integer(-50));
-                put(PROP_ID_DECIMAL, new Double(-1.6E-5d));
+                put(PROP_ID_INT, Integer.valueOf(-50));
+                put(PROP_ID_DECIMAL, Double.valueOf(-1.6E-5d));
                 put(PROP_ID_DATETIME, gc2);
                 put(PROP_ID_BOOLEAN, false);
             }};           
         doc2 = createDocument("beta", rootFolderId, COMPLEX_TYPE, propertyMap2);
+        assertNotNull(doc2);
 
         final Map<String, Object> propertyMap3 = 
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING, "Gamma");
-                put(PROP_ID_INT, new Integer(0));
-                put(PROP_ID_DECIMAL, new Double(Math.PI));
+                put(PROP_ID_INT, Integer.valueOf(0));
+                put(PROP_ID_DECIMAL, Double.valueOf(Math.PI));
                 put(PROP_ID_DATETIME, new GregorianCalendar(TZ));
                 put(PROP_ID_BOOLEAN, true);
             }};           
         doc3 = createDocument("gamma", rootFolderId, COMPLEX_TYPE, propertyMap3);
+        assertNotNull(doc3);
 
         final GregorianCalendar gc4 = new GregorianCalendar(TZ);
         gc4.clear();
@@ -158,12 +161,13 @@ public class QueryTestDataCreator {
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING, "Delta");
-                put(PROP_ID_INT, new Integer(50));
-                put(PROP_ID_DECIMAL, new Double(1.23456E-6));
+                put(PROP_ID_INT, Integer.valueOf(50));
+                put(PROP_ID_DECIMAL, Double.valueOf(1.23456E-6));
                 put(PROP_ID_DATETIME, gc4);
                 put(PROP_ID_BOOLEAN, true);
             }};           
         doc4 = createDocument("delta", rootFolderId, COMPLEX_TYPE, propertyMap4);
+        assertNotNull(doc4);
 
         final GregorianCalendar gc5 = new GregorianCalendar(TZ);
         gc5.clear();
@@ -173,12 +177,13 @@ public class QueryTestDataCreator {
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING, "Epsilon");
-                put(PROP_ID_INT, new Integer(100));
-                put(PROP_ID_DECIMAL, new Double(1.2345E12));
+                put(PROP_ID_INT, Integer.valueOf(100));
+                put(PROP_ID_DECIMAL, Double.valueOf(1.2345E12));
                 put(PROP_ID_DATETIME, gc5);
                 put(PROP_ID_BOOLEAN, false);
             }};           
         doc5 = createDocument("epsilon", rootFolderId, COMPLEX_TYPE, propertyMap5);
+        assertNotNull(doc5);
 
     }
     
@@ -196,7 +201,7 @@ public class QueryTestDataCreator {
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING_MULTI_VALUE, mvProps1);
-                put(PROP_ID_INT, new Integer(100));
+                put(PROP_ID_INT, Integer.valueOf(100));
             }};           
         createDocument("mv-alpha", rootFolderId, COMPLEX_TYPE, propertyMap1);
 
@@ -212,7 +217,7 @@ public class QueryTestDataCreator {
             new HashMap<String, Object>() {
             { 
                 put(PROP_ID_STRING_MULTI_VALUE, mvProps2);
-                put(PROP_ID_INT, new Integer(200));
+                put(PROP_ID_INT, Integer.valueOf(200));
             }};           
         createDocument("mv-beta", rootFolderId, COMPLEX_TYPE, propertyMap2);
     }
@@ -222,7 +227,7 @@ public class QueryTestDataCreator {
         final Map<String, Object> propertyMap1 = 
             new HashMap<String, Object>() {
             { 
-                put(PROP_ID_INT, new Integer(1234));
+                put(PROP_ID_INT, Integer.valueOf(1234));
                 put(PROP_ID_STRING, "ABCD");
             }};           
         folder1 = createFolder("Folder 1", rootFolderId, FOLDER_TYPE, propertyMap1);
@@ -230,7 +235,7 @@ public class QueryTestDataCreator {
         final Map<String, Object> propertyMap2 = 
             new HashMap<String, Object>() {
             { 
-                put(PROP_ID_INT, new Integer(-2345));
+                put(PROP_ID_INT, Integer.valueOf(-2345));
                 put(PROP_ID_STRING, "defg");
             }};           
         folder2 = createFolder("Folder 2", rootFolderId, FOLDER_TYPE, propertyMap2);
@@ -238,7 +243,7 @@ public class QueryTestDataCreator {
         final Map<String, Object> propertyMap3 = 
             new HashMap<String, Object>() {
             { 
-                put(PROP_ID_INT, new Integer(123));
+                put(PROP_ID_INT, Integer.valueOf(123));
                 put(PROP_ID_STRING, "ZZZZ");
             }};           
         folder11 = createFolder("Folder 11", folder1, FOLDER_TYPE, propertyMap3);

@@ -224,7 +224,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, od, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
-        return so.getId();
+        return so != null ? so.getId() : null;
     }
 
     public void deleteContentStream(CallContext context, String repositoryId, Holder<String> objectId,
@@ -304,7 +304,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getAllowableActions()");
         StoredObject so = checkStandardParameters(repositoryId, objectId);
-        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+        fStoreManager.getObjectStore(repositoryId);
 
         if (so == null)
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -804,7 +804,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
         if (propMapNew != propMap) {
             properties = new PropertiesImpl(propMapNew.values());
-            propMap = propMapNew;
         }
 
         TypeValidator.validateProperties(typeDef, properties, true);

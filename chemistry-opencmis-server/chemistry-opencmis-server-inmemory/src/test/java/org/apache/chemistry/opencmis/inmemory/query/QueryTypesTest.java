@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.query;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -138,6 +139,7 @@ public class QueryTypesTest extends AbstractQueryTest {
 
     private void verifyResolveSelect(String statement) throws Exception {
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         Map<String,String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
         List<CmisSelector> selects = queryObj.getSelectReferences();
@@ -155,6 +157,7 @@ public class QueryTypesTest extends AbstractQueryTest {
         String statement = "SELECT BookType.Title, MyDocType.MyStringProp FROM BookType JOIN MyDocType WHERE BookType.ISBN = '100'"; 
         
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         Map<String,String> types = queryObj.getTypes();
         assertTrue(2 == types.size());
         List<CmisSelector> selects = queryObj.getSelectReferences();
@@ -174,7 +177,8 @@ public class QueryTypesTest extends AbstractQueryTest {
         String statement = "SELECT Title, MyStringProp FROM BookType JOIN MyDocType AS MyDocAlias WHERE BookType.ISBN = '100'"; 
         
         CmisQueryWalker walker = traverseStatement(statement);
-        Map<String,String> types = queryObj.getTypes();
+        assertNotNull(walker);
+       Map<String,String> types = queryObj.getTypes();
         assertTrue(2 == types.size());
         List<CmisSelector> selects = queryObj.getSelectReferences();
         assertTrue(2 == selects.size());
@@ -206,6 +210,7 @@ public class QueryTypesTest extends AbstractQueryTest {
         String statement = "SELECT MyDocType.MyStringProp FROM MyDocTypeCopy JOIN MyDocType"; 
         
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         Map<String,String> types = queryObj.getTypes();
         assertTrue(2 == types.size());
         List<CmisSelector> selects = queryObj.getSelectReferences();
@@ -219,6 +224,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveTypesTest11() throws Exception {
         String statement = "SELECT BookType.* FROM BookType WHERE ISBN = '100'"; 
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         Map<String,String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
         List<CmisSelector> selects = queryObj.getSelectReferences();
@@ -232,6 +238,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveTypesTest12() throws Exception {
         String statement = "SELECT * FROM MyDocTypeCopy JOIN MyDocType"; 
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         Map<String,String> types = queryObj.getTypes();
         assertTrue(2 == types.size());
         List<CmisSelector> selects = queryObj.getSelectReferences();
@@ -269,6 +276,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveTypesWhereWithTwoFromsUnqualified() throws Exception {
         String statement = "SELECT * FROM BookType JOIN MyDocType WHERE ISBN = '100'"; 
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<CmisSelector> wheres = queryObj.getWhereReferences();
         assertTrue(1 == wheres.size());
         for (CmisSelector where : wheres) {
@@ -283,6 +291,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveTypesWhereWithTwoFromsQualified() throws Exception {
         String statement = "SELECT * FROM BookType JOIN MyDocType AS MyDocAlias WHERE BookType.ISBN = '100'"; 
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<CmisSelector> wheres = queryObj.getWhereReferences();
         assertTrue(1 == wheres.size());
         for (CmisSelector where : wheres) {
@@ -298,6 +307,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveTypesWhereWithTwoFromsQualifiedWithAlias() throws Exception {
         String statement = "SELECT * FROM BookType AS MyBookAlias JOIN MyDocType  WHERE MyBookAlias.ISBN = '100'"; 
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<CmisSelector> wheres = queryObj.getWhereReferences();
         assertTrue(1 == wheres.size());
         for (CmisSelector where : wheres) {
@@ -313,6 +323,7 @@ public class QueryTypesTest extends AbstractQueryTest {
 //        String statement = "SELECT X.aaa FROM MyType AS X WHERE 10 = ANY X.aaa ";
         String statement = "SELECT MyBookAlias.Title FROM BookType AS MyBookAlias WHERE MyBookAlias.ISBN = '100'"; 
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<CmisSelector> wheres = queryObj.getWhereReferences();
         assertTrue(1 == wheres.size());
         for (CmisSelector where : wheres) {
@@ -324,6 +335,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     
     private void verifyResolveWhere(String statement) throws Exception {
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         Map<String,String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
         List<CmisSelector> wheres = queryObj.getWhereReferences();
@@ -341,7 +353,7 @@ public class QueryTypesTest extends AbstractQueryTest {
         String statement = "SELECT * FROM MyDocTypeCopy JOIN MyDocType WHERE MyStringProp = '100'"; 
         
         try {
-            CmisQueryWalker walker = traverseStatement(statement);
+            traverseStatement(statement);
             fail("Select with an unqualified property that is not unique should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof RecognitionException);
@@ -353,6 +365,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveTypesWhereWithTwoFromsUniqueByQualifying() throws Exception {
         String statement = "SELECT * FROM MyDocTypeCopy JOIN MyDocType WHERE MyDocType.MyStringProp = '100'";         
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<CmisSelector> wheres = queryObj.getWhereReferences();
         assertTrue(1 == wheres.size());
         for (CmisSelector where : wheres) {
@@ -367,6 +380,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveTypesOrderBy() throws Exception {
         String statement = "SELECT Title AS TitleAlias FROM BookType WHERE Author = 'Jim' ORDER BY TitleAlias";         
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<SortSpec> sorts = queryObj.getOrderBys();
         assertTrue(1 == sorts.size());
         for (SortSpec sort : sorts) {
@@ -381,6 +395,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveTypesOrderBy2() throws Exception {
         String statement = "SELECT Title AS TitleAlias FROM BookType WHERE Author = 'Jim' ORDER BY BookType.Author";         
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<SortSpec> sorts = queryObj.getOrderBys();
         assertTrue(1 == sorts.size());
         for (SortSpec sort : sorts) {
@@ -395,6 +410,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveTypesOrderBy3() throws Exception {
         String statement = "SELECT Title FROM BookType WHERE ISBN < '100' ORDER BY Author";         
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<SortSpec> sorts = queryObj.getOrderBys();
         assertTrue(1 == sorts.size());
         for (SortSpec sort : sorts) {
@@ -409,6 +425,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void resolveJoinTypesSimple() throws Exception {
         String statement = "SELECT * FROM MyDocType JOIN BookType ON MyDocType.MyStringProp = BookType.Title";         
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<CmisSelector> joins = queryObj.getJoinReferences();
         assertTrue(2 == joins.size());
         for (CmisSelector join : joins) {
@@ -431,6 +448,7 @@ public class QueryTypesTest extends AbstractQueryTest {
 //        "FROM   ( POLICY AS X JOIN CLAIMS AS Y ON X.POLICY_NUM = Y.POLICY_NUM ) " +
 //        "WHERE ( 100000 = ANY Y.DAMAGE_ESTIMATES )";
         CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
         List<CmisSelector> joins = queryObj.getJoinReferences();
         assertTrue(2 == joins.size());
         for (CmisSelector join : joins) {
