@@ -135,7 +135,11 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, size, mimetype, in);
         assertNotNull(contentStream);
 
+        long start = System.currentTimeMillis();
         doc.setContentStream(contentStream, true);
+        long end = System.currentTimeMillis();
+
+        log.info("setContentStream of " + size + " bytes:" + (end - start) + "ms");
     }
 
     @Test
@@ -523,24 +527,23 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         ContentStream cs5 = tdoc4.getContentStream();
         assertNull(cs5);
-        
+
         assertEquals(false, tdoc5.isMarkedForDelete());
-        
+
         tdoc5.delete(true);
 
-        assertEquals(true, tdoc5.isMarkedForDelete());       
+        assertEquals(true, tdoc5.isMarkedForDelete());
 
         ObjectId id5 = tdoc5.save();
         assertNull(id5);
-        
+
         // check
         try {
             this.session.getObject(id4, oc);
             fail("CmisObjectNotFoundException expected!");
-        }
-        catch (CmisObjectNotFoundException e) {
+        } catch (CmisObjectNotFoundException e) {
             // expected
-        }   
+        }
     }
 
     private byte[] readContent(ContentStream contentStream) throws Exception {
