@@ -317,7 +317,7 @@ public class TypeValidator {
             return false;
 
         for (PropertyDefinition<?> propDef : propDefs.values()) {
-            if (propDef.getQueryName().equals(propertyQueryName))
+            if (propDef.getQueryName().toLowerCase().equals(propertyQueryName.toLowerCase()))
                 return true;
         }
         

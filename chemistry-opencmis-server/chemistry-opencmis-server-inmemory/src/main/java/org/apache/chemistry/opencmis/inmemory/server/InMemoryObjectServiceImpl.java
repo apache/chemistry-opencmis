@@ -43,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -924,21 +925,45 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     hasCopied = true;
                 }
                 if (propDef.getPropertyType() == PropertyType.BOOLEAN)
-                    pd = fStoreManager.getObjectFactory().createPropertyBooleanData(propId, (List<Boolean>)defaultVal);
+                    if (propDef.getCardinality() == Cardinality.MULTI)
+                        pd = fStoreManager.getObjectFactory().createPropertyBooleanData(propId, (List<Boolean>)defaultVal);
+                    else 
+                        pd = fStoreManager.getObjectFactory().createPropertyBooleanData(propId, (Boolean)defaultVal.get(0));
                 else if (propDef.getPropertyType() == PropertyType.DATETIME)
-                    pd = fStoreManager.getObjectFactory().createPropertyDateTimeData(propId, (List<GregorianCalendar>)defaultVal);
+                    if (propDef.getCardinality() == Cardinality.MULTI)
+                        pd = fStoreManager.getObjectFactory().createPropertyDateTimeData(propId, (List<GregorianCalendar>)defaultVal);
+                    else 
+                        pd = fStoreManager.getObjectFactory().createPropertyDateTimeData(propId, (GregorianCalendar)defaultVal.get(0));
                 else if (propDef.getPropertyType() == PropertyType.DECIMAL)
-                    pd = fStoreManager.getObjectFactory().createPropertyDecimalData(propId, (List<BigDecimal>)defaultVal);
+                    if (propDef.getCardinality() == Cardinality.MULTI)
+                        pd = fStoreManager.getObjectFactory().createPropertyDecimalData(propId, (List<BigDecimal>)defaultVal);
+                    else 
+                        pd = fStoreManager.getObjectFactory().createPropertyDecimalData(propId, (BigDecimal)defaultVal.get(0));
                 else if (propDef.getPropertyType() == PropertyType.HTML)
-                    pd = fStoreManager.getObjectFactory().createPropertyHtmlData(propId, (List<String>)defaultVal);
+                    if (propDef.getCardinality() == Cardinality.MULTI)
+                        pd = fStoreManager.getObjectFactory().createPropertyHtmlData(propId, (List<String>)defaultVal);
+                    else 
+                        pd = fStoreManager.getObjectFactory().createPropertyHtmlData(propId, (String)defaultVal.get(0));
                 else if (propDef.getPropertyType() == PropertyType.ID)
-                    pd = fStoreManager.getObjectFactory().createPropertyIdData(propId, (List<String>)defaultVal);
+                    if (propDef.getCardinality() == Cardinality.MULTI)
+                        pd = fStoreManager.getObjectFactory().createPropertyIdData(propId, (List<String>)defaultVal);
+                    else 
+                        pd = fStoreManager.getObjectFactory().createPropertyIdData(propId, (String)defaultVal.get(0));
                 else if (propDef.getPropertyType() == PropertyType.INTEGER)
-                    pd = fStoreManager.getObjectFactory().createPropertyIntegerData(propId, (List<BigInteger>)defaultVal);
+                    if (propDef.getCardinality() == Cardinality.MULTI)
+                        pd = fStoreManager.getObjectFactory().createPropertyIntegerData(propId, (List<BigInteger>)defaultVal);
+                    else 
+                        pd = fStoreManager.getObjectFactory().createPropertyIntegerData(propId, (BigInteger)defaultVal.get(0));
                 else if (propDef.getPropertyType() == PropertyType.STRING)
-                    pd = fStoreManager.getObjectFactory().createPropertyStringData(propId, (List<String>)defaultVal);
+                    if (propDef.getCardinality() == Cardinality.MULTI)
+                        pd = fStoreManager.getObjectFactory().createPropertyStringData(propId, (List<String>)defaultVal);
+                    else 
+                        pd = fStoreManager.getObjectFactory().createPropertyStringData(propId, (String)defaultVal.get(0));
                 else if (propDef.getPropertyType() == PropertyType.URI)
-                    pd = fStoreManager.getObjectFactory().createPropertyUriData(propId, (List<String>)defaultVal);
+                    if (propDef.getCardinality() == Cardinality.MULTI)
+                        pd = fStoreManager.getObjectFactory().createPropertyUriData(propId, (List<String>)defaultVal);
+                    else 
+                        pd = fStoreManager.getObjectFactory().createPropertyUriData(propId, (String)defaultVal.get(0));
                 // set property:
                 properties.put(propId, pd);
             }
