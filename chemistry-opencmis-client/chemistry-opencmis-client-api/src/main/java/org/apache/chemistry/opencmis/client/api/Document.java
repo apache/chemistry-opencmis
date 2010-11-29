@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  * 
  * Domain Model 2.4
  */
-public interface Document extends FileableCmisObject {
+public interface Document extends FileableCmisObject, DocumentProperties {
 
     TransientDocument getTransientDocument();
 
@@ -158,35 +158,5 @@ public interface Document extends FileableCmisObject {
      */
     Document copy(ObjectId targetFolderId, Map<String, ?> properties, VersioningState versioningState,
             List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs, OperationContext context);
-
-    // document specific properties
-
-    Boolean isImmutable(); // cmis:isImmutable
-
-    Boolean isLatestVersion(); // cmis:isLatestVersion
-
-    Boolean isMajorVersion(); // cmis:isMajorVersion
-
-    Boolean isLatestMajorVersion(); // cmis:isLatestMajorVersion
-
-    String getVersionLabel(); // cmis:versionLabel
-
-    String getVersionSeriesId(); // cmis:versionSeriesId
-
-    Boolean isVersionSeriesCheckedOut(); // cmis:isVersionSeriesCheckedOut
-
-    String getVersionSeriesCheckedOutBy(); // cmis:versionSeriesCheckedOutBy
-
-    String getVersionSeriesCheckedOutId(); // cmis:versionSeriesCheckedOutId
-
-    String getCheckinComment(); // cmis:checkinComment
-
-    long getContentStreamLength(); // cmis:contentStreamLength
-
-    String getContentStreamMimeType(); // cmis:contentStreamMimeType
-
-    String getContentStreamFileName(); // cmis:contentStreamFileName
-
-    String getContentStreamId(); // cmis:contentStreamId
 
 }

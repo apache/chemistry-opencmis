@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -27,102 +26,16 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 
 /**
  * Base CMIS object.
- *
+ * 
  * See CMIS Domain Model - section 2.1.2.
  */
-public interface CmisObject extends ObjectId {
-
-    // common properties
-
-    /**
-     * Get the name of this object. {@code Property<String> 'cmis:name'}
-     */
-    String getName();
-
-    /**
-     * Get the id of the user who created the object (maintained by the
-     * repository). {@code Property<String> 'cmis:createdBy'}
-     */
-    String getCreatedBy();
-
-    /**
-     * Get the timestamp when the object was created (maintained by the
-     * repository). {@code Property<GregorianCalendar> 'cmis:creationDate'}
-     */
-    GregorianCalendar getCreationDate();
-
-    /**
-     * Get the id of the user who changed the object (maintained by the
-     * repository). {@code Property<String> 'cmis:lastModifiedBy'}
-     */
-    String getLastModifiedBy();
-
-    /**
-     * Get the timestamp when the object was changed (maintained by the
-     * repository). {@code Property<GregorianCalendar>
-     * 'cmis:lastModificationDate'}
-     */
-    GregorianCalendar getLastModificationDate();
-
-    /**
-     * Get the object's base type (maintained by the repository).
-     * {@code Property<String> 'cmis:baseTypeId'}
-     */
-    ObjectType getBaseType();
-
-    /**
-     * Get the object's type. {@code Property<String> 'cmis:objectTypeId'}
-     */
-    ObjectType getType();
-
-    /**
-     * Get the type's base type id.
-     *
-     * @return
-     */
-    BaseTypeId getBaseTypeId();
-
-    /**
-     * Get the change token for this object (maintained by the repository).
-     * {@code Property<String> 'cmis:changeToken'}
-     */
-    String getChangeToken();
+public interface CmisObject extends ObjectId, CmisObjectProperties {
 
     // object
-
-    /**
-     * Returns all properties that have been fetched for this object. If the
-     * object was retrieved with a property filter, only the properties that
-     * matched the filter are available.
-     */
-    List<Property<?>> getProperties();
-
-    /**
-     * Returns a property by id.
-     *
-     * @param id
-     *            the property id
-     *
-     * @return the property or <code>null</code> if the property does not exist
-     *         or is not available
-     */
-    <T> Property<T> getProperty(String id);
-
-    /**
-     * Returns a property value by id.
-     *
-     * @param id
-     *            the property id
-     *
-     * @return the property value or <code>null</code> if the property does not
-     *         exist or is not available
-     */
-    <T> T getPropertyValue(String id);
 
     /**
      * Returns the allowable actions if they have been fetched for this object.
@@ -143,7 +56,7 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Deletes this object.
-     *
+     * 
      * @param allVersions
      *            if this object is a document this parameter defines if just
      *            this version or all versions should be deleted
@@ -152,25 +65,25 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Updates the properties that are provided.
-     *
+     * 
      * @param properties
      *            the properties to update
-     *
+     * 
      * @return the updated object (a repository might have created a new object)
      */
     CmisObject updateProperties(Map<String, ?> properties);
 
     /**
      * Updates the properties that are provided.
-     *
+     * 
      * @param properties
      *            the properties to update
      * @param refresh
      *            indicates if the object should be refresh after the update
-     *
+     * 
      * @return the object id of the updated object (a repository might have
      *         created a new object)
-     *
+     * 
      */
     ObjectId updateProperties(Map<String, ?> properties, boolean refresh);
 
@@ -202,7 +115,7 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Adds and removes ACEs to the object.
-     *
+     * 
      * @return the new ACL of this object
      */
     Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
@@ -233,7 +146,7 @@ public interface CmisObject extends ObjectId {
 
     /**
      * Returns a transient object adapter.
-     *
+     * 
      * @see TransientCmisObject
      */
     TransientCmisObject getTransientObject();

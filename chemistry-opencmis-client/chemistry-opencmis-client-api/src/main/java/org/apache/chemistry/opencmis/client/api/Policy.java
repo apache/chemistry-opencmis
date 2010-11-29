@@ -23,13 +23,7 @@ package org.apache.chemistry.opencmis.client.api;
  * 
  * Domain Model 2.7
  */
-public interface Policy extends FileableCmisObject {
+public interface Policy extends FileableCmisObject, PolicyProperties {
 
     TransientPolicy getTransientPolicy();
-
-    /**
-     * Returns the policy text.
-     */
-    public String getPolicyText(); // cmis:policyText
-
 }

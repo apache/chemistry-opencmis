@@ -18,47 +18,19 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 
-public interface TransientCmisObject extends ObjectId {
-
-    // CMIS properties
-
-    String getName();
-
-    void setName(String name);
-
-    String getCreatedBy();
-
-    GregorianCalendar getCreationDate();
-
-    String getLastModifiedBy();
-
-    GregorianCalendar getLastModificationDate();
-
-    ObjectType getBaseType();
-
-    ObjectType getType();
-
-    BaseTypeId getBaseTypeId();
-
-    String getChangeToken();
+public interface TransientCmisObject extends ObjectId, CmisObjectProperties {
 
     // properties
 
-    List<Property<?>> getProperties();
-
-    <T> Property<T> getProperty(String id);
-
-    <T> T getPropertyValue(String id);
+    void setName(String name);
 
     <T> void setPropertyValue(String id, Object value);
 

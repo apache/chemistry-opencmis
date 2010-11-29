@@ -18,7 +18,16 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-public interface TransientPolicy extends TransientFileableCmisObject, PolicyProperties {
+/**
+ * Accessors to CMIS policy properties.
+ * 
+ * @see CmisObjectProperties
+ */
+public interface PolicyProperties {
 
-    void setPolicyText(String policyText);
+    /**
+     * Returns the policy text of this CMIS policy (CMIS property
+     * <code>cmis:policyText<code>).
+     */
+    String getPolicyText();
 }

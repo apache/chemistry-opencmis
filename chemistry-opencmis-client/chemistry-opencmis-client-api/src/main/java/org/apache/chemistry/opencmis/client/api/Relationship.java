@@ -23,11 +23,9 @@ package org.apache.chemistry.opencmis.client.api;
  * 
  * Domain Model 2.6
  */
-public interface Relationship extends CmisObject {
+public interface Relationship extends CmisObject, RelationshipProperties {
 
     TransientRelationship getTransientRelationship();
-
-    // relationship specific properties
 
     /**
      * Gets the source object. If the source object id is invalid,
@@ -42,11 +40,6 @@ public interface Relationship extends CmisObject {
     CmisObject getSource(OperationContext context);
 
     /**
-     * Gets the source object id.
-     */
-    ObjectId getSourceId(); // cmis:sourceId
-
-    /**
      * Gets the target object. If the target object id is invalid,
      * <code>null</code> will be returned.
      */
@@ -57,9 +50,4 @@ public interface Relationship extends CmisObject {
      * target object id is invalid, <code>null</code> will be returned.
      */
     CmisObject getTarget(OperationContext context);
-
-    /**
-     * Gets the target object id.
-     */
-    ObjectId getTargetId(); // cmis:targetId
 }

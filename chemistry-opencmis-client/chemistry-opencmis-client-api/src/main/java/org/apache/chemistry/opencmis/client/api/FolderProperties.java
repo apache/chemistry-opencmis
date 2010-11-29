@@ -18,7 +18,19 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
-public interface TransientPolicy extends TransientFileableCmisObject, PolicyProperties {
+import java.util.List;
 
-    void setPolicyText(String policyText);
+/**
+ * Accessors to CMIS folder properties.
+ * 
+ * @see CmisObjectProperties
+ */
+public interface FolderProperties {
+    /**
+     * Returns the list of the allowed object types in this folder (CMIS
+     * property
+     * <code>cmis:allowedChildObjectTypeIds<code>). If the list is empty or <code>null</code>
+     * all object types are allowed.
+     */
+    List<ObjectType> getAllowedChildObjectTypes();
 }

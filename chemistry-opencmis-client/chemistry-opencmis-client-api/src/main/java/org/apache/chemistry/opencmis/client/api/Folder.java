@@ -31,7 +31,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  * 
  * Domain Model 2.5
  */
-public interface Folder extends FileableCmisObject {
+public interface Folder extends FileableCmisObject, FolderProperties {
 
     TransientFolder getTransientFolder();
 
@@ -171,13 +171,4 @@ public interface Folder extends FileableCmisObject {
      * {@link OperationContext}.
      */
     ItemIterable<Document> getCheckedOutDocs(OperationContext context);
-
-    // folder specific properties
-
-    /**
-     * If the children object types are restricted, it returns all allowed
-     * object types. If the list is empty or <code>null</code> all object types
-     * are allowed.
-     */
-    List<ObjectType> getAllowedChildObjectTypes(); // cmis:allowedChildObjectTypeIds
 }
