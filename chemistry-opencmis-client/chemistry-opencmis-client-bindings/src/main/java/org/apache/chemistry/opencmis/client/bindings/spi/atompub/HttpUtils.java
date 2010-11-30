@@ -192,7 +192,21 @@ public class HttpUtils {
                     } catch (IOException e) {
                         errorContent = "Unable to retrieve content: " + e.getMessage();
                     }
+                } else {
+                    try {
+                        errorStream.close();
+                    } catch (IOException e) {
+                    }
                 }
+
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException e) {
+                    }
+                }
+
+                return;
             }
 
             // get the stream length
