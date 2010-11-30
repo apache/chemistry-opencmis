@@ -112,18 +112,4 @@ public class ContentStreamImpl extends AbstractExtensionData implements ContentS
         return "ContentStream [filename=" + filename + ", length=" + length + ", MIME type=" + mimeType
                 + ", has stream=" + (stream != null) + "]" + super.toString();
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            if (stream != null) {
-                // this stream must be closed to release the underlying network
-                // resources
-                stream.close();
-            }
-        } catch (IOException e) {
-        } finally {
-            super.finalize();
-        }
-    }
 }
