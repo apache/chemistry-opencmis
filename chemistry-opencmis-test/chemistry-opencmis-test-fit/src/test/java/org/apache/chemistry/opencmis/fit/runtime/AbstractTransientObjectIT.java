@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
@@ -179,15 +178,11 @@ public abstract class AbstractTransientObjectIT extends AbstractSessionTest {
 		assertEquals(tfolder.getProperty(PropertyIds.NAME).getValueAsString(), newFolderName);
 		
 		tfolder.save();
+		session2.clear();
 
 		ObjectId id = this.session2.createObjectId(tfolder.getId());
 		
-		// prepare new non-cache operation context
-		OperationContext oc = this.session.createOperationContext();
-		oc.setFilterString("*");
-		oc.setCacheEnabled(false);
-		
-		Folder folder3 = (Folder) this.session2.getObject(id, oc);
+		Folder folder3 = (Folder) this.session2.getObject(id);
 		assertNotNull(folder3);
 		assertEquals(folder3.getProperty(PropertyIds.NAME).getValueAsString(), newFolderName);
 	}
@@ -210,15 +205,11 @@ public abstract class AbstractTransientObjectIT extends AbstractSessionTest {
 		assertEquals(tdoc.getProperty(PropertyIds.NAME).getValueAsString(), newDocName);
 		
 		tdoc.save();
+		session2.clear();
 
 		ObjectId id = this.session2.createObjectId(tdoc.getId());
-		
-		// prepare new non-cache operation context
-		OperationContext oc = this.session.createOperationContext();
-		oc.setFilterString("*");
-		oc.setCacheEnabled(false);
-		
-		Document doc3 = (Document) this.session2.getObject(id, oc);
+				
+		Document doc3 = (Document) this.session2.getObject(id);
 		assertNotNull(doc3);
 		assertEquals(doc3.getProperty(PropertyIds.NAME).getValueAsString(), newDocName);
 	}
