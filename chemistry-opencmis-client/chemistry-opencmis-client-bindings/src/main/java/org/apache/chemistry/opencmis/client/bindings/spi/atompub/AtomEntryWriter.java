@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -46,11 +45,11 @@ public class AtomEntryWriter implements CmisAtomPubConstants {
     private static final String PREFIX_CMIS = "cmis";
     private static final String PREFIX_RESTATOM = "cmisra";
 
-    private static final int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 64 * 1024;
 
-    private CmisObjectType fObject;
-    private InputStream fStream;
-    private String fMediaType;
+    private CmisObjectType object;
+    private InputStream stream;
+    private String mediaType;
 
     /**
      * Constructor.
@@ -71,9 +70,9 @@ public class AtomEntryWriter implements CmisAtomPubConstants {
             throw new CmisInvalidArgumentException("Media type must be set if a stream is present!");
         }
 
-        fObject = object;
-        fMediaType = mediaType;
-        fStream = stream;
+        this.object = object;
+        this.mediaType = mediaType;
+        this.stream = stream;
     }
 
     /**
@@ -112,22 +111,22 @@ public class AtomEntryWriter implements CmisAtomPubConstants {
         writer.writeEndElement();
 
         // content
-        if (fStream != null) {
+        if (stream != null) {
             writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT);
 
             writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_MEDIATYPE);
-            writer.writeCharacters(fMediaType);
+            writer.writeCharacters(mediaType);
             writer.writeEndElement();
 
             writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
-            writer.writeCharacters(getContent());
+            writeContent(writer);
             writer.writeEndElement();
 
             writer.writeEndElement();
         }
 
         // object
-        JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(fObject), writer, true);
+        JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(object), writer, true);
 
         // end entry
         writer.writeEndElement();
@@ -143,7 +142,7 @@ public class AtomEntryWriter implements CmisAtomPubConstants {
     private String getTitle() {
         String result = "";
 
-        for (CmisProperty property : fObject.getProperties().getProperty()) {
+        for (CmisProperty property : object.getProperties().getProperty()) {
             if (PropertyIds.NAME.equals(property.getPropertyDefinitionId()) && (property instanceof CmisPropertyString)) {
                 List<String> values = ((CmisPropertyString) property).getValue();
                 if (!values.isEmpty()) {
@@ -162,15 +161,15 @@ public class AtomEntryWriter implements CmisAtomPubConstants {
         return sdf.format(new Date());
     }
 
-    private String getContent() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private void writeContent(XMLStreamWriter writer) throws Exception {
+        Base64.InputStream b64stream = new Base64.InputStream(stream, Base64.ENCODE);
 
         byte[] buffer = new byte[BUFFER_SIZE];
         int b;
-        while ((b = fStream.read(buffer)) > -1) {
-            baos.write(buffer, 0, b);
+        while ((b = b64stream.read(buffer)) > -1) {
+            if (b > 0) {
+                writer.writeCharacters(new String(buffer, 0, b, "US-ASCII"));
+            }
         }
-
-        return Base64.encodeBytes(baos.toByteArray());
     }
 }
