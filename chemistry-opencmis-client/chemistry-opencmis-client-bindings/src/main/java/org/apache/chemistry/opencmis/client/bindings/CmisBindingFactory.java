@@ -98,7 +98,9 @@ public final class CmisBindingFactory {
         if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
             sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
         }
-        sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
+        if (!sessionParameters.containsKey(SessionParameter.AUTH_HTTP_BASIC)) {
+            sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
+        }
         sessionParameters.put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, "false");
         addDefaultParameters(sessionParameters);
 
@@ -117,8 +119,12 @@ public final class CmisBindingFactory {
         if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
             sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
         }
-        sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
-        sessionParameters.put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, "true");
+        if (!sessionParameters.containsKey(SessionParameter.AUTH_SOAP_USERNAMETOKEN)) {
+            sessionParameters.put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, "true");
+        }
+        if (!sessionParameters.containsKey(SessionParameter.AUTH_HTTP_BASIC)) {
+            sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
+        }
         addDefaultParameters(sessionParameters);
 
         check(sessionParameters, SessionParameter.WEBSERVICES_ACL_SERVICE);
