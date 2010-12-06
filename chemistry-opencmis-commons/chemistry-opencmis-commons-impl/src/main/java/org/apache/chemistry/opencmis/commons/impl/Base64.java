@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
+package org.apache.chemistry.opencmis.commons.impl;
 
 /**
  * <p>

@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
@@ -52,7 +54,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Parser for Atom Entries.
@@ -71,9 +72,9 @@ public class AtomEntryParser {
 
     protected boolean ignoreAtomContentSrc;
 
-    private ObjectData fObject;
-    private ContentStreamImpl fAtomContentStream;
-    private ContentStreamImpl fCmisContentStream;
+    private ObjectData object;
+    private ContentStreamImpl atomContentStream;
+    private ContentStreamImpl cmisContentStream;
 
     /**
      * Constructor.
@@ -100,14 +101,14 @@ public class AtomEntryParser {
      * Returns the object.
      */
     public ObjectData getObject() {
-        return fObject;
+        return object;
     }
 
     /**
      * Returns the properties of the object.
      */
     public Properties getProperties() {
-        return (fObject == null ? null : fObject.getProperties());
+        return (object == null ? null : object.getProperties());
     }
 
     /**
@@ -136,34 +137,34 @@ public class AtomEntryParser {
      * Returns the ACL of the object.
      */
     public Acl getAcl() {
-        return (fObject == null ? null : fObject.getAcl());
+        return (object == null ? null : object.getAcl());
     }
 
     /**
      * Returns the policy id list of the object.
      */
     public List<String> getPolicyIds() {
-        if ((fObject == null) || (fObject.getPolicyIds() == null)) {
+        if ((object == null) || (object.getPolicyIds() == null)) {
             return null;
         }
 
-        return fObject.getPolicyIds().getPolicyIds();
+        return object.getPolicyIds().getPolicyIds();
     }
 
     /**
      * Returns the content stream.
      */
     public ContentStream getContentStream() {
-        return (fCmisContentStream == null ? fAtomContentStream : fCmisContentStream);
+        return (cmisContentStream == null ? atomContentStream : cmisContentStream);
     }
 
     /**
      * Parses the stream.
      */
     public void parse(InputStream stream) throws Exception {
-        fObject = null;
-        fAtomContentStream = null;
-        fCmisContentStream = null;
+        object = null;
+        atomContentStream = null;
+        cmisContentStream = null;
 
         if (stream == null) {
             return;
@@ -236,9 +237,9 @@ public class AtomEntryParser {
         }
 
         // overwrite cmis:name with Atom title
-        if ((fObject != null) && (fObject.getProperties() != null) && (atomTitle != null) && (atomTitle.length() > 0)) {
+        if ((object != null) && (object.getProperties() != null) && (atomTitle != null) && (atomTitle.length() > 0)) {
             PropertyString nameProperty = new PropertyStringImpl(PropertyIds.NAME, atomTitle);
-            ((PropertiesImpl) fObject.getProperties()).replaceProperty(nameProperty);
+            ((PropertiesImpl) object.getProperties()).replaceProperty(nameProperty);
         }
     }
 
@@ -247,10 +248,10 @@ public class AtomEntryParser {
      */
     private void parseObject(XMLStreamReader parser) throws Exception {
         Unmarshaller u = JaxBHelper.createUnmarshaller();
-        JAXBElement<CmisObjectType> object = u.unmarshal(parser, CmisObjectType.class);
+        JAXBElement<CmisObjectType> jaxbObject = u.unmarshal(parser, CmisObjectType.class);
 
-        if (object != null) {
-            fObject = Converter.convert(object.getValue());
+        if (jaxbObject != null) {
+            object = Converter.convert(jaxbObject.getValue());
         }
     }
 
@@ -258,20 +259,20 @@ public class AtomEntryParser {
      * Extract the content stream.
      */
     private void parseAtomContent(XMLStreamReader parser) throws Exception {
-        fAtomContentStream = new ContentStreamImpl();
+        atomContentStream = new ContentStreamImpl();
 
         // read attributes
         String type = "text";
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             QName attrName = parser.getAttributeName(i);
             if (ATTR_TYPE.equals(attrName.getLocalPart())) {
-                fAtomContentStream.setMimeType(parser.getAttributeValue(i));
+                atomContentStream.setMimeType(parser.getAttributeValue(i));
                 if (parser.getAttributeValue(i) != null) {
                     type = parser.getAttributeValue(i).trim().toLowerCase();
                 }
             } else if (ATTR_SRC.equals(attrName.getLocalPart())) {
                 if (ignoreAtomContentSrc) {
-                    fAtomContentStream = null;
+                    atomContentStream = null;
                     skip(parser);
                     return;
                 }
@@ -289,12 +290,14 @@ public class AtomEntryParser {
         } else if (type.startsWith("text/")) {
             bytes = readText(parser).getBytes("UTF-8");
         } else {
-            bytes = Base64.decodeBase64(readText(parser));
+            LightByteArrayOutputStream lbs = readBase64(parser);
+            atomContentStream.setStream(lbs.getInputStream());
+            atomContentStream.setLength(BigInteger.valueOf(lbs.getSize()));
         }
 
         if (bytes != null) {
-            fAtomContentStream.setStream(new ByteArrayInputStream(bytes));
-            fAtomContentStream.setLength(BigInteger.valueOf(bytes.length));
+            atomContentStream.setStream(new ByteArrayInputStream(bytes));
+            atomContentStream.setLength(BigInteger.valueOf(bytes.length));
         }
     }
 
@@ -302,7 +305,7 @@ public class AtomEntryParser {
      * Extract the content stream.
      */
     private void parseCmisContent(XMLStreamReader parser) throws Exception {
-        fCmisContentStream = new ContentStreamImpl();
+        cmisContentStream = new ContentStreamImpl();
 
         next(parser);
 
@@ -314,11 +317,11 @@ public class AtomEntryParser {
 
                 if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
                     if (TAG_MEDIATYPE.equals(name.getLocalPart())) {
-                        fCmisContentStream.setMimeType(readText(parser));
+                        cmisContentStream.setMimeType(readText(parser));
                     } else if (TAG_BASE64.equals(name.getLocalPart())) {
-                        byte[] bytes = Base64.decodeBase64(readText(parser));
-                        fCmisContentStream.setStream(new ByteArrayInputStream(bytes));
-                        fCmisContentStream.setLength(BigInteger.valueOf(bytes.length));
+                        LightByteArrayOutputStream lbs = readBase64(parser);
+                        cmisContentStream.setStream(lbs.getInputStream());
+                        cmisContentStream.setLength(BigInteger.valueOf(lbs.getSize()));
                     } else {
                         skip(parser);
                     }
@@ -366,6 +369,38 @@ public class AtomEntryParser {
         next(parser);
 
         return sb.toString();
+    }
+
+    /**
+     * Parses a tag that contains base64 encoded content.
+     */
+    private LightByteArrayOutputStream readBase64(XMLStreamReader parser) throws Exception {
+        LightByteArrayOutputStream bufferStream = new LightByteArrayOutputStream();
+        Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
+
+        next(parser);
+
+        while (true) {
+            int event = parser.getEventType();
+            if (event == XMLStreamReader.END_ELEMENT) {
+                break;
+            } else if (event == XMLStreamReader.CHARACTERS) {
+                String s = parser.getText();
+                if (s != null) {
+                    b64stream.write(s.getBytes("US-ASCII"));
+                }
+            } else if (event == XMLStreamReader.START_ELEMENT) {
+                throw new RuntimeException("Unexpected tag: " + parser.getName());
+            }
+
+            if (!next(parser)) {
+                break;
+            }
+        }
+
+        next(parser);
+
+        return bufferStream;
     }
 
     /**
@@ -524,5 +559,106 @@ public class AtomEntryParser {
         }
 
         return false;
+    }
+
+    private static class LightByteArrayOutputStream extends OutputStream {
+        private final static int MAX_GROW = 10 * 1024 * 1024;
+
+        private byte[] buf = null;
+        private int size = 0;
+
+        public LightByteArrayOutputStream() {
+            this(64 * 1024);
+        }
+
+        public LightByteArrayOutputStream(int initSize) {
+            if (size < 0) {
+                throw new IllegalArgumentException("Negative initial size: " + size);
+            }
+            buf = new byte[size];
+        }
+
+        private void expand(int i) {
+            int newSize = (size < MAX_GROW ? (size + i) * 2 : size + MAX_GROW);
+            byte[] newbuf = new byte[newSize];
+            System.arraycopy(buf, 0, newbuf, 0, size);
+            buf = newbuf;
+        }
+
+        public int getSize() {
+            return size;
+        }
+
+        @Override
+        public void write(byte buffer[]) {
+            write(buffer, 0, buffer.length);
+        }
+
+        @Override
+        public synchronized void write(byte[] buffer, int offset, int len) {
+            if (len == 0) {
+                return;
+            }
+
+            expand(len);
+            System.arraycopy(buffer, offset, buf, size, len);
+            size += len;
+        }
+
+        @Override
+        public void write(int oneByte) {
+            if (size == buf.length) {
+                expand(1);
+            }
+
+            buf[size++] = (byte) oneByte;
+        }
+
+        public InputStream getInputStream() {
+            return new InputStream() {
+                private int pos = 0;
+
+                @Override
+                public int available() {
+                    return size - pos;
+                }
+
+                @Override
+                public int read() {
+                    return (pos < size) ? (buf[pos++] & 0xff) : -1;
+                }
+
+                @Override
+                public int read(byte[] b, int off, int len) {
+                    if (pos >= size) {
+                        return -1;
+                    }
+
+                    if ((pos + len) > size) {
+                        len = (size - pos);
+                    }
+
+                    System.arraycopy(buf, pos, b, off, len);
+                    pos += len;
+
+                    return len;
+                }
+
+                @Override
+                public long skip(long n) {
+                    if ((pos + n) > size) {
+                        n = size - pos;
+                    }
+
+                    if (n < 0) {
+                        return 0;
+                    }
+
+                    pos += n;
+
+                    return n;
+                }
+            };
+        }
     }
 }
