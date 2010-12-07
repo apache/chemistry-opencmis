@@ -59,6 +59,7 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
         StringBuilder sb = new StringBuilder("<html>");
         if (col != null) {
             for (Object o : col) {
+                sb.append("<span>"); // workaround for a bug in Swing
                 if (o == null) {
                     sb.append("<i>null</i>");
                 } else if (o instanceof GregorianCalendar) {
@@ -68,7 +69,7 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
                 } else {
                     sb.append(o.toString());
                 }
-                sb.append("<br/>");
+                sb.append("</span><br/>");
             }
         }
         sb.append("</html>");
