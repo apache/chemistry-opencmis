@@ -171,6 +171,7 @@ public class AtomEntryParser {
         }
 
         XMLInputFactory factory = XMLInputFactory.newInstance();
+        factory.setProperty(XMLInputFactory.IS_COALESCING, "false");
         XMLStreamReader parser = factory.createXMLStreamReader(stream);
 
         while (true) {
@@ -572,14 +573,18 @@ public class AtomEntryParser {
         }
 
         public LightByteArrayOutputStream(int initSize) {
-            if (size < 0) {
-                throw new IllegalArgumentException("Negative initial size: " + size);
+            if (initSize < 0) {
+                throw new IllegalArgumentException("Negative initial size: " + initSize);
             }
-            buf = new byte[size];
+            buf = new byte[initSize];
         }
 
         private void expand(int i) {
-            int newSize = (size < MAX_GROW ? (size + i) * 2 : size + MAX_GROW);
+            if (size + i <= buf.length) {
+                return;
+            }
+
+            int newSize = ((size + i) * 2 < MAX_GROW ? (size + i) * 2 : buf.length + i + MAX_GROW);
             byte[] newbuf = new byte[newSize];
             System.arraycopy(buf, 0, newbuf, 0, size);
             buf = newbuf;
