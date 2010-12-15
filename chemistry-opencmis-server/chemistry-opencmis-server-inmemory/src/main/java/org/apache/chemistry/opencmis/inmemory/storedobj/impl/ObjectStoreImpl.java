@@ -28,6 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
@@ -181,7 +182,7 @@ public class ObjectStoreImpl implements ObjectStore {
         StoredObject found = fStoredObjectMap.remove(vers.getId());
 
         if (null == found)
-            throw new RuntimeException("Cannot delete object with id  " + vers.getId() + ". Object does not exist.");
+            throw new CmisInvalidArgumentException("Cannot delete object with id  " + vers.getId() + ". Object does not exist.");
     }
 
     // public void changePath(StoredObject obj, String oldPath, String newPath)
@@ -297,10 +298,10 @@ public class ObjectStoreImpl implements ObjectStore {
     private void deleteFolder(String folderId) {
         StoredObject folder = fStoredObjectMap.get(folderId);
         if (folder == null)
-            throw new RuntimeException("Unknown object with id:  " + folderId);
+            throw new CmisInvalidArgumentException("Unknown object with id:  " + folderId);
 
         if (!(folder instanceof FolderImpl)) {
-            throw new RuntimeException("Cannot delete folder with id:  " + folderId
+            throw new CmisInvalidArgumentException("Cannot delete folder with id:  " + folderId
                     + ". Object exists but is not a folder.");
         }
 

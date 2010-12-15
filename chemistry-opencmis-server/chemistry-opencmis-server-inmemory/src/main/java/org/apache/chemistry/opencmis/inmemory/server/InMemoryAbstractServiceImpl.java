@@ -22,6 +22,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
@@ -58,6 +59,12 @@ public class InMemoryAbstractServiceImpl {
      */
     protected StoredObject checkStandardParameters(String repositoryId, String objectId) {
 
+        if (null == repositoryId)
+            throw new CmisInvalidArgumentException("Repository Id cannot be null.");
+
+        if (null == objectId)
+            throw new CmisInvalidArgumentException("Object Id cannot be null.");
+
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         if (objStore == null)
@@ -73,6 +80,9 @@ public class InMemoryAbstractServiceImpl {
 
     protected StoredObject checkExistingObjectId(ObjectStore objStore, String objectId) {
 
+        if (null == objectId)
+            throw new CmisInvalidArgumentException("Object Id cannot be null.");
+
         StoredObject so = objStore.getObjectById(objectId);
 
         if (so == null)
@@ -82,6 +92,9 @@ public class InMemoryAbstractServiceImpl {
     }
 
     protected void checkRepositoryId(String repositoryId) {
+        if (null == repositoryId)
+            throw new CmisInvalidArgumentException("Repository Id cannot be null.");
+        
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         if (objStore == null)
@@ -92,7 +105,7 @@ public class InMemoryAbstractServiceImpl {
         String typeId = (String) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue();
         TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
         if (typeDefC == null)
-            throw new RuntimeException("Cannot create object, a type with id " + typeId + " is unknown");
+            throw new CmisInvalidArgumentException("Cannot create object, a type with id " + typeId + " is unknown");
 
         return typeDefC.getTypeDefinition();
     }
@@ -149,7 +162,7 @@ public class InMemoryAbstractServiceImpl {
 
     protected void checkIsVersionableObject(StoredObject so) {
         if (!(so instanceof VersionedDocument || so instanceof DocumentVersion))
-            throw new RuntimeException(
+            throw new CmisInvalidArgumentException(
                     "Object is of a versionable type but not instance of VersionedDocument or DocumentVersion.");
     }
 

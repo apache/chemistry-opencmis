@@ -129,7 +129,7 @@ public class StoreManagerImpl implements StoreManager {
             int depth) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager)
-            throw new RuntimeException("Unknown repository " + repositoryId);
+            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
 
         TypeDefinitionContainer tc = typeManager.getTypeById(typeId);
         List<TypeDefinitionContainer> result = null;
@@ -154,7 +154,7 @@ public class StoreManagerImpl implements StoreManager {
         Collection<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager)
-            throw new RuntimeException("Unknown repository " + repositoryId);
+            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         Collection<TypeDefinitionContainer> typeColl = typeManager.getTypeDefinitionList();
         if (includePropertyDefinitions) {
             result = typeColl;
@@ -179,7 +179,7 @@ public class StoreManagerImpl implements StoreManager {
     public List<TypeDefinitionContainer> getRootTypes(String repositoryId) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager)
-            throw new RuntimeException("Unknown repository " + repositoryId);
+            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         List<TypeDefinitionContainer> rootTypes = typeManager.getRootTypes();
 
         return rootTypes;
@@ -198,7 +198,7 @@ public class StoreManagerImpl implements StoreManager {
     public void clearTypeSystem(String repositoryId) {
         TypeManagerImpl typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager)
-            throw new RuntimeException("Unknown repository " + repositoryId);
+            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
 
         typeManager.clearTypeSystem();
     }

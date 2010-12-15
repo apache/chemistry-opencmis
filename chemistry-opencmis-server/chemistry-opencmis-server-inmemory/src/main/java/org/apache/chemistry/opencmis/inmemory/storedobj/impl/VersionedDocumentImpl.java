@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -71,10 +72,10 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
 
     public boolean deleteVersion(DocumentVersion version) {
         if (fIsCheckedOut)
-            throw new RuntimeException("version cannot be deleted if document is checked-out: " + version.getId());
+            throw new CmisInvalidArgumentException("version cannot be deleted if document is checked-out: " + version.getId());
         boolean found = fVersions.remove(version);
         if (!found)
-            throw new RuntimeException("Version is not contained in the document:" + version.getId());
+            throw new CmisInvalidArgumentException("Version is not contained in the document:" + version.getId());
 
         return !fVersions.isEmpty();
     }

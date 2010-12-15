@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -183,32 +184,7 @@ public class PropertyCreationHelper {
         prop.setDefaultValue(Collections.singletonList(defVal));
     }
 
-    // internal helpers
-    private static void createStandardDefinition(AbstractPropertyDefinition<?> prop, String id, PropertyType propType,
-            String displayName, Cardinality card) {
-
-        if (!NameValidator.isValidId(id))
-            if (!NameValidator.isValidId(id))
-                throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
-
-        prop.setId(id);
-        if (displayName == null)
-            prop.setDisplayName("Sample " + prop.getId() + " boolean property");
-        else
-            prop.setDisplayName(displayName);
-        prop.setLocalName(id);
-        prop.setLocalNamespace("local");
-        prop.setQueryName(id);
-        prop.setIsInherited(false);
-        prop.setCardinality(card);
-        prop.setIsOpenChoice(false);
-        prop.setIsQueryable(true);
-        prop.setIsRequired(false);
-        prop.setPropertyType(propType);
-        prop.setUpdatability(Updatability.READWRITE);
-    }
-
-    public static Properties getPropertiesFromObject(StoredObject so, TypeDefinition td, List<String> requestedIds) {
+    public static Properties getPropertiesFromObject(StoredObject so, TypeDefinition td, List<String> requestedIds, boolean fillOptionalPropertyData) {
         // build properties collection
 
         BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
@@ -229,6 +205,11 @@ public class PropertyCreationHelper {
             }
         }
         List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>>(properties.values());
+
+        if (fillOptionalPropertyData) {  // add query name, local name, display name
+            fillOptionalPropertyData(td, propertiesList);
+        }
+        
         Properties props = objectFactory.createPropertiesData(propertiesList);
         return props;
     }
@@ -254,21 +235,30 @@ public class PropertyCreationHelper {
             }
         }
 
+        
         Map<String, PropertyData<?>> mappedProperties = new HashMap<String, PropertyData<?>>();
         if (requestedIds.containsKey("*")) {
             for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
                 // map property id to property query name
                 String queryName = td.getPropertyDefinitions().get(prop.getKey()).getQueryName();
+                String localName = td.getPropertyDefinitions().get(prop.getKey()).getLocalName();
+                String displayName = td.getPropertyDefinitions().get(prop.getKey()).getDisplayName();
                 AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a bit dirty
                 ad.setQueryName(queryName);
+                ad.setLocalName(localName);
+                ad.setDisplayName(displayName);
                 mappedProperties.put(queryName, prop.getValue());
             }
         } else {
             // replace all ids with query names or alias:
             for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
                 String queryNameOrAlias = requestedIds.get(prop.getKey());
+                String localName = td.getPropertyDefinitions().get(prop.getKey()).getLocalName();
+                String displayName = td.getPropertyDefinitions().get(prop.getKey()).getDisplayName();
                 AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a bit dirty
                 ad.setQueryName(queryNameOrAlias);
+                ad.setLocalName(localName);
+                ad.setDisplayName(displayName);
                 mappedProperties.put(queryNameOrAlias, prop.getValue());
             }
         }
@@ -295,7 +285,7 @@ public class PropertyCreationHelper {
 
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-        Properties props = getPropertiesFromObject(so, typeDef, requestedIds);
+        Properties props = getPropertiesFromObject(so, typeDef, requestedIds, true);
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
@@ -347,4 +337,47 @@ public class PropertyCreationHelper {
 
         return od;
     }
+    
+    // internal helpers
+    private static void createStandardDefinition(AbstractPropertyDefinition<?> prop, String id, PropertyType propType,
+            String displayName, Cardinality card) {
+
+        if (!NameValidator.isValidId(id))
+            if (!NameValidator.isValidId(id))
+                throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+
+        prop.setId(id);
+        if (displayName == null)
+            prop.setDisplayName("Sample " + prop.getId() + " boolean property");
+        else
+            prop.setDisplayName(displayName);
+        prop.setLocalName(id);
+        prop.setLocalNamespace("local");
+        prop.setQueryName(id);
+        prop.setIsInherited(false);
+        prop.setCardinality(card);
+        prop.setIsOpenChoice(false);
+        prop.setIsQueryable(true);
+        prop.setIsRequired(false);
+        prop.setPropertyType(propType);
+        prop.setUpdatability(Updatability.READWRITE);
+    }
+
+    private static void fillOptionalPropertyData(TypeDefinition td, List<PropertyData<?>> properties) {
+        for (PropertyData<?> pd : properties)
+            fillOptionalPropertyData(td, (AbstractPropertyData<?>) pd);        
+    }
+    
+    private static void fillOptionalPropertyData(TypeDefinition td, AbstractPropertyData<?> property) {
+        PropertyDefinition<?> pd = td.getPropertyDefinitions().get(property.getId());
+        if (null != pd) {
+            String displayName = pd.getDisplayName();
+            String queryName = pd.getQueryName();
+            String localName = pd.getLocalName();
+            property.setDisplayName(displayName);
+            property.setLocalName(localName);
+            property.setQueryName(queryName);
+        }
+    }
+    
 }

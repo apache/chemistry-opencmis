@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
@@ -141,12 +142,12 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         if (null == versionSeriesId)
-            throw new RuntimeException("getAllVersions requires a version series id, but ist was null.");
+            throw new CmisInvalidArgumentException("getAllVersions requires a version series id, but ist was null.");
 
         StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
 
         if (!(so instanceof VersionedDocument))
-            throw new RuntimeException("Object is not instance of a VersionedDocument (version series)");
+            throw new CmisInvalidArgumentException("Object is not instance of a VersionedDocument (version series)");
 
         VersionedDocument verDoc = (VersionedDocument) so;
         List<ObjectData> res = new ArrayList<ObjectData>();
@@ -184,7 +185,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions, extension,
                     objectInfos);
         } else
-            throw new RuntimeException("Object is not instance of a document (version series)");
+            throw new CmisInvalidArgumentException("Object is not instance of a document (version series)");
 
         // provide information for Atom links for version series:
         if (context.isObjectInfoRequired()) {
@@ -208,12 +209,12 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         } else if (so instanceof Document) {
             latestVersionObject = so;
         } else
-            throw new RuntimeException("Object is not instance of a document (version series)");
+            throw new CmisInvalidArgumentException("Object is not instance of a document (version series)");
 
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
         TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
         Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, td, 
-                requestedIds);
+                requestedIds, true);
 
         return props;
     }

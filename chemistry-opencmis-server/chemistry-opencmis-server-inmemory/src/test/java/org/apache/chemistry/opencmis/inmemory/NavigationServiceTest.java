@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.inmemory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
@@ -89,6 +90,7 @@ public class NavigationServiceTest extends AbstractServiceTst {
         }
         assertEquals(3, folders.size());
         assertEquals("Folder 3", folders.get(0).getPathSegment());
+        assertTrue(result.getNumItems().longValue() > 0);
         log.info("... testGetChildren() finished.");
     }
 
