@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -621,6 +622,7 @@ public class AtomEntryParser {
 
         public InputStream getInputStream() {
             return new InputStream() {
+
                 private int pos = 0;
 
                 @Override
@@ -630,12 +632,12 @@ public class AtomEntryParser {
 
                 @Override
                 public int read() {
-                    return (pos < size) ? (buf[pos++] & 0xff) : -1;
+                    return (pos < size) && (buf != null) ? (buf[pos++] & 0xff) : -1;
                 }
 
                 @Override
                 public int read(byte[] b, int off, int len) {
-                    if (pos >= size) {
+                    if ((pos >= size) || (buf == null)) {
                         return -1;
                     }
 
@@ -662,6 +664,11 @@ public class AtomEntryParser {
                     pos += n;
 
                     return n;
+                }
+
+                @Override
+                public void close() throws IOException {
+                    buf = null;
                 }
             };
         }

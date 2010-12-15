@@ -425,7 +425,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                 } else if (firstValue instanceof GregorianCalendar) {
                     propertyData = bof.createPropertyDateTimeData(id, (List<GregorianCalendar>) values);
                 } else {
-                    throw new IllegalArgumentException("Property '" + id + "' is a Decimal property!");
+                    throw new IllegalArgumentException("Property '" + id + "' is a DateTime property!");
                 }
             }
 
