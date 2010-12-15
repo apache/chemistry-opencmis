@@ -306,7 +306,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             }
 
             TypeDefinition td = fStoreManager.getTypeById(repositoryId, spo.getTypeId()).getTypeDefinition();
-            Properties props = PropertyCreationHelper.getPropertiesFromObject(spo, td, requestedIds);
+            Properties props = PropertyCreationHelper.getPropertiesFromObject(spo, td, requestedIds, true);
             objectData.setProperties(props);
 
             oifd.setObject(objectData);
@@ -320,6 +320,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         }
         result.setObjects(folderList);
+        result.setNumItems(BigInteger.valueOf(folderList.size()));
         if (objectInfos != null) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
@@ -431,7 +432,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
     void copyFilteredProperties(String repositoryId, StoredObject so, String filter, ObjectDataImpl objData) {
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
         TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds);
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds, true);
         objData.setProperties(props);
     }
 

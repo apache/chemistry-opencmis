@@ -127,7 +127,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter("*");
 
         TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds);
+        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds, true);
 
         PropertiesImpl newPD = new PropertiesImpl();
         // copy all existing properties
@@ -185,18 +185,18 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         if (null == properties || null == properties.getProperties())
-            throw new RuntimeException("Cannot create object, without properties.");
+            throw new CmisInvalidArgumentException("Cannot create object, without properties.");
 
         // Find out what kind of object needs to be created
         PropertyData<String> pd = (PropertyData<String>) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
         String typeId = pd == null ? null : pd.getFirstValue();
         if (null == typeId)
-            throw new RuntimeException(
+            throw new CmisInvalidArgumentException(
                     "Cannot create object, without a type (no property with id CMIS_OBJECT_TYPE_ID).");
 
         TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
         if (typeDefC == null)
-            throw new RuntimeException("Cannot create object, a type with id " + typeId + " is unknown");
+            throw new CmisInvalidArgumentException("Cannot create object, a type with id " + typeId + " is unknown");
 
         // check if the given type is a document type
         BaseTypeId typeBaseId = typeDefC.getTypeDefinition().getBaseTypeId();
@@ -279,10 +279,10 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
 
         if (null == so)
-            throw new RuntimeException("Cannot delete object with id  " + folderId + ". Object does not exist.");
+            throw new CmisInvalidArgumentException("Cannot delete object with id  " + folderId + ". Object does not exist.");
 
         if (!(so instanceof Folder))
-            throw new RuntimeException("deleteTree can only be invoked on a folder, but id " + folderId
+            throw new CmisInvalidArgumentException("deleteTree can only be invoked on a folder, but id " + folderId
                     + " does not refer to a folder");
 
         if (unfileObjects == UnfileObject.UNFILE)
@@ -423,7 +423,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
         TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds);
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds, true);
         LOG.debug("stop getProperties()");
         return props;
     }
@@ -696,7 +696,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // check if the given type is a document type
         if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT))
-            throw new RuntimeException("Cannot create a document, with a non-document type: " + typeDef.getId());
+            throw new CmisInvalidArgumentException("Cannot create a document, with a non-document type: " + typeDef.getId());
 
         // check name syntax
         if (!NameValidator.isValidId(name))
@@ -799,7 +799,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // check if the given type is a folder type
         if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_FOLDER))
-            throw new RuntimeException("Cannot create a folder, with a non-folder type: " + typeDef.getId());
+            throw new CmisInvalidArgumentException("Cannot create a folder, with a non-folder type: " + typeDef.getId());
 
         Map<String, PropertyData<?>> propMap = properties.getProperties();
         Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
