@@ -29,7 +29,7 @@
     <groupId>org.apache.chemistry.opencmis</groupId>
     <artifactId>chemistry-opencmis</artifactId>
     <name>Apache Chemistry OpenCMIS</name>
-    <version>0.2.0-incubating-SNAPSHOT</version>
+    <version>0.2.0-incubating</version>
     <packaging>pom</packaging>
 
     <organization>
@@ -56,9 +56,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</connection>
-        <developerConnection>scn:svn:https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/trunk</developerConnection>
-        <url>http://svn.apache.org/viewvc/incubator/chemistry/opencmis/trunk</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/chemistry/opencmis/tags/chemistry-opencmis-0.2.0-incubating-RC1</connection>
+        <developerConnection>scn:svn:https://svn.apache.org/repos/asf/incubator/chemistry/opencmis/tags/chemistry-opencmis-0.2.0-incubating-RC1</developerConnection>
+        <url>http://svn.apache.org/viewvc/incubator/chemistry/opencmis/tags/chemistry-opencmis-0.2.0-incubating-RC1</url>
     </scm>
 
     <distributionManagement>
