@@ -221,6 +221,20 @@
     </supplement>
     <supplement>
         <project>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>1.7.5</version>
+            <name>Groovy</name>
+            <licenses>
+                <license>
+                    <name>Apache License, Version 2.0</name>
+                    <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+                </license>
+            </licenses>
+        </project>
+    </supplement>
+    <supplement>
+        <project>
             <groupId>org.jvnet</groupId>
             <artifactId>mimepull</artifactId>
             <version>1.3</version>
