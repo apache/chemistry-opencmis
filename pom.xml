@@ -29,7 +29,7 @@
     <groupId>org.apache.chemistry.opencmis</groupId>
     <artifactId>chemistry-opencmis</artifactId>
     <name>Apache Chemistry OpenCMIS</name>
-    <version>0.3.0-incubating-SNAPSHOT</version>
+    <version>0.2.0-incubating-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <organization>
