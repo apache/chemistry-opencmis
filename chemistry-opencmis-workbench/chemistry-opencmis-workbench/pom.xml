@@ -218,4 +218,42 @@
         </dependency>
     </dependencies>
 
+
+    <!--
+        Extending the default -Papache-release profile used *only*
+        during releases
+    -->
+    <profiles>
+       <profile>
+           <id>apache-release</id>
+           <activation>
+               <activeByDefault>false</activeByDefault>
+           </activation>
+           <build>
+               <plugins>
+                   <plugin>
+                      <artifactId>maven-assembly-plugin</artifactId>
+                      <inherited>false</inherited>
+                      <executions>
+                          <execution>
+                              <id>pack-workbench</id>
+                              <goals>
+                                  <goal>single</goal>
+                              </goals>
+                              <phase>package</phase>
+                              <configuration>
+                                  <attach>true</attach>
+                                  <descriptors>
+                                      <descriptor>
+                                        src/main/assembly/workbench-assembly.xml
+                                      </descriptor>
+                                  </descriptors>
+                              </configuration>
+                          </execution>
+                      </executions>
+                  </plugin>
+              </plugins>
+           </build>
+       </profile>
+   </profiles>
 </project>
