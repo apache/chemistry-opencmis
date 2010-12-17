@@ -341,7 +341,6 @@
                 <configuration>
                     <descriptors>
                         <descriptor>src/main/assembly/dev-client-assembly.xml</descriptor>
-                        <descriptor>src/main/assembly/workbench-assembly.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>
