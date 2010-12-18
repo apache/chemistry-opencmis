@@ -473,7 +473,7 @@
                                 </goals>
                                 <configuration>
                                     <resourceBundles>
-                                        <resourceBundle>org.apache.chemistry.resources:chemistry-jar-resource-bundle:1.0-SNAPSHOT</resourceBundle>
+                                        <resourceBundle>org.apache.chemistry.resources:chemistry-jar-resource-bundle:1.0</resourceBundle>
                                         <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
                                         <resourceBundle>org.apache:apache-incubator-disclaimer-resource-bundle:1.1</resourceBundle>
                                     </resourceBundles>
