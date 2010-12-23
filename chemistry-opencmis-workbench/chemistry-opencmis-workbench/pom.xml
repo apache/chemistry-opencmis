@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.apache.chemistry.opencmis</groupId>
         <artifactId>chemistry-opencmis</artifactId>
-        <version>0.2.0-incubating</version>
+        <version>0.2.0-incubating-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -94,25 +94,25 @@
                          <phase>generate-resources</phase>
                          <configuration>
                              <target>
-                                 <property name="version" value="${maven.version}" />
-                                 <property name="timestamp" value="${maven.build.timestamp}" />
-                                 <property name="basedir" value="${maven.basedir}" />
-                                 <property name="targetdir" value="${project.build.directory}" />
+                                 <property name="version" value="${maven.version}"/>
+                                 <property name="timestamp" value="${maven.build.timestamp}"/>
+                                 <property name="basedir" value="${maven.basedir}"/>
+                                 <property name="targetdir" value="${project.build.directory}"/>
                                  <property name="workbench.jar" value="${project.artifactId}-${project.version}.${project.packaging}" />
                                  
                                  <!-- build timestamp -->
                                  <echo file="${targetdir}/generated-resources/META-INF/build-timestamp.txt">Version: ${version} / Build: ${timestamp}</echo>
                                  
                                  <!-- start scripts -->
-                                 <mkdir dir="${targetdir}/start" />
+                                 <mkdir dir="${targetdir}/start"/>
                                  <copy todir="${targetdir}/start" overwrite="true">
-                                     <fileset dir="${basedir}/src/main/start" />
+                                     <fileset dir="${basedir}/src/main/start"/>
                                  </copy>
                                  <replace dir="${targetdir}/start">
-                                     <replacefilter token="@workbench.jar@" value="${workbench.jar}" />
-                                     <replacefilter token="@version@" value="Version: ${version} / Build: ${timestamp}" />
+                                     <replacefilter token="@workbench.jar@" value="${workbench.jar}"/>
+                                     <replacefilter token="@version@" value="Version: ${version} / Build: ${timestamp}"/>
                                  </replace>
-                                 <chmod dir="${targetdir}/start" perm="+x" includes="**/*.sh" />
+                                 <chmod dir="${targetdir}/start" perm="+x" includes="**/*.sh"/>
                              </target>
                          </configuration>
                          <goals>
@@ -137,7 +137,7 @@
                         <manifest>
                             <mainClass>org.apache.chemistry.opencmis.workbench.Workbench</mainClass>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix />
+                            <classpathPrefix></classpathPrefix>
                         </manifest>
                         <manifestEntries>
                             <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
