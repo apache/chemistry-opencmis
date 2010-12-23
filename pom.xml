@@ -424,7 +424,7 @@
                                         <argumnet>-k</argumnet>
                                         <argumnet>-np</argumnet>
                                         <argument>--include-directories=/chemistry </argument>
-                                        <argument>--exclude-directories=/chemistry/javadoc</argument>
+                                        <argument>--exclude-directories=/chemistry/javadoc,/chemistry/maven-site</argument>
                                         <argument>${docs.start.url}</argument>
                                     </arguments>
                                 </configuration>
