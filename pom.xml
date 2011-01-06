@@ -341,7 +341,6 @@
                 <configuration>
                     <descriptors>
                         <descriptor>src/main/assembly/dev-client-assembly.xml</descriptor>
-                        <descriptor>src/main/assembly/workbench-assembly.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>
@@ -425,7 +424,7 @@
                                         <argumnet>-k</argumnet>
                                         <argumnet>-np</argumnet>
                                         <argument>--include-directories=/chemistry </argument>
-                                        <argument>--exclude-directories=/chemistry/javadoc</argument>
+                                        <argument>--exclude-directories=/chemistry/javadoc,/chemistry/maven-site</argument>
                                         <argument>${docs.start.url}</argument>
                                     </arguments>
                                 </configuration>
@@ -474,7 +473,7 @@
                                 </goals>
                                 <configuration>
                                     <resourceBundles>
-                                        <resourceBundle>org.apache.chemistry.resources:chemistry-jar-resource-bundle:1.0-SNAPSHOT</resourceBundle>
+                                        <resourceBundle>org.apache.chemistry.resources:chemistry-jar-resource-bundle:1.0</resourceBundle>
                                         <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
                                         <resourceBundle>org.apache:apache-incubator-disclaimer-resource-bundle:1.1</resourceBundle>
                                     </resourceBundles>
