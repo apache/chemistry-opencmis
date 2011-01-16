@@ -241,6 +241,10 @@ public class TypeValidator {
             String propertyId = prop.getId();
             BaseTypeId baseTypeId = typeDef.getBaseTypeId();
 
+            // check that all mandatory attributes are present
+            if (checkMandatory && propDefsRequired.contains(propertyId))
+                propDefsRequired.remove(propertyId);
+
             if (isSystemProperty(baseTypeId, propertyId))
                 continue; // ignore system properties for validation
 
@@ -248,10 +252,6 @@ public class TypeValidator {
             if (!typeContainsProperty(typeDef, propertyId)) {
                 throw new CmisConstraintException("Unknown property " + propertyId + " in type " + typeDef.getId());
             }
-
-            // check that all mandatory attributes are present
-            if (checkMandatory && propDefsRequired.contains(propertyId))
-                propDefsRequired.remove(propertyId);
 
             // check all type specific constraints:
             PropertyDefinition<T> propDef = getPropertyDefinition(typeDef, propertyId);

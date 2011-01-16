@@ -83,6 +83,7 @@ public class DocumentTypeCreationHelper {
         PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.NAME,
                 "CMIS Name Property");
         propS.setUpdatability(Updatability.READWRITE);
+        propS.setIsRequired(true);
         propertyDefinitions.put(propS.getId(), propS);
 
         PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.OBJECT_ID,
