@@ -40,20 +40,17 @@ import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
 /**
  * Repository Service Web Services client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RepositoryServiceImpl extends AbstractWebServicesService implements RepositoryService {
 
-    private final PortProvider fPortProvider;
+    private final AbstractPortProvider portProvider;
 
     /**
      * Constructor.
      */
-    public RepositoryServiceImpl(Session session, PortProvider portProvider) {
+    public RepositoryServiceImpl(Session session, AbstractPortProvider portProvider) {
         setSession(session);
-        fPortProvider = portProvider;
+        this.portProvider = portProvider;
     }
 
     /*
@@ -64,7 +61,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
      * (org.apache.opencmis.client.provider .ExtensionsData)
      */
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-        RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort();
 
         List<RepositoryInfo> infos = null;
         try {
@@ -97,7 +94,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
      * (java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
      */
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-        RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort();
 
         try {
             return convert(port.getRepositoryInfo(repositoryId, convert(extension)));
@@ -117,7 +114,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
      * org.apache.opencmis.client.provider.ExtensionsData)
      */
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
-        RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort();
 
         try {
             return convert(port.getTypeDefinition(repositoryId, typeId, convert(extension)));
@@ -139,7 +136,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
      */
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort();
 
         try {
             return convert(port.getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems, skipCount,
@@ -161,7 +158,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
      */
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
-        RepositoryServicePort port = fPortProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort();
 
         try {
             return convertTypeContainerList(port.getTypeDescendants(repositoryId, typeId, depth,

@@ -37,20 +37,17 @@ import org.apache.chemistry.opencmis.commons.spi.PolicyService;
 
 /**
  * Policy Service Web Services client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PolicyServiceImpl extends AbstractWebServicesService implements PolicyService {
 
-    private final PortProvider fPortProvider;
+    private final AbstractPortProvider portProvider;
 
     /**
      * Constructor.
      */
-    public PolicyServiceImpl(Session session, PortProvider portProvider) {
+    public PolicyServiceImpl(Session session, AbstractPortProvider portProvider) {
         setSession(session);
-        fPortProvider = portProvider;
+        this.portProvider = portProvider;
     }
 
     /*
@@ -62,7 +59,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
      * org.apache.opencmis.client.provider.ExtensionsData)
      */
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-        PolicyServicePort port = fPortProvider.getPolicyServicePort();
+        PolicyServicePort port = portProvider.getPolicyServicePort();
 
         try {
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
@@ -86,7 +83,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
      * org.apache.opencmis.client.provider.ExtensionsData)
      */
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-        PolicyServicePort port = fPortProvider.getPolicyServicePort();
+        PolicyServicePort port = portProvider.getPolicyServicePort();
 
         try {
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
@@ -111,7 +108,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
      */
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
-        PolicyServicePort port = fPortProvider.getPolicyServicePort();
+        PolicyServicePort port = portProvider.getPolicyServicePort();
 
         try {
             List<CmisObjectType> policyList = port.getAppliedPolicies(repositoryId, objectId, filter,

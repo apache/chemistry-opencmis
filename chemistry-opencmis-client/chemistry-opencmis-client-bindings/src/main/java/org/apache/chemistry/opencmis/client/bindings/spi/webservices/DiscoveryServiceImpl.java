@@ -38,20 +38,17 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 /**
  * Discovery Service Web Services client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class DiscoveryServiceImpl extends AbstractWebServicesService implements DiscoveryService {
 
-    private final PortProvider fPortProvider;
+    private final AbstractPortProvider portProvider;
 
     /**
      * Constructor.
      */
-    public DiscoveryServiceImpl(Session session, PortProvider portProvider) {
+    public DiscoveryServiceImpl(Session session, AbstractPortProvider portProvider) {
         setSession(session);
-        fPortProvider = portProvider;
+        this.portProvider = portProvider;
     }
 
     /*
@@ -66,7 +63,7 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
      */
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeACL, BigInteger maxItems, ExtensionsData extension) {
-        DiscoveryServicePort port = fPortProvider.getDiscoveryServicePort();
+        DiscoveryServicePort port = portProvider.getDiscoveryServicePort();
 
         try {
             javax.xml.ws.Holder<String> portChangeLokToken = convertHolder(changeLogToken);
@@ -98,7 +95,7 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        DiscoveryServicePort port = fPortProvider.getDiscoveryServicePort();
+        DiscoveryServicePort port = portProvider.getDiscoveryServicePort();
 
         try {
             return convert(port.query(repositoryId, statement, searchAllVersions, includeAllowableActions, convert(

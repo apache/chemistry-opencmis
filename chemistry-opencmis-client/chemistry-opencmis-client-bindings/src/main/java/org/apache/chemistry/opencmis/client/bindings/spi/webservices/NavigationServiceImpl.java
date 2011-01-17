@@ -42,20 +42,17 @@ import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 
 /**
  * Navigation Service Web Services client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class NavigationServiceImpl extends AbstractWebServicesService implements NavigationService {
 
-    private final PortProvider fPortProvider;
+    private final AbstractPortProvider portProvider;
 
     /**
      * Constructor.
      */
-    public NavigationServiceImpl(Session session, PortProvider portProvider) {
+    public NavigationServiceImpl(Session session, AbstractPortProvider portProvider) {
         setSession(session);
-        fPortProvider = portProvider;
+        this.portProvider = portProvider;
     }
 
     /*
@@ -72,7 +69,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        NavigationServicePort port = fPortProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort();
 
         try {
             return convert(port.getChildren(repositoryId, folderId, filter, orderBy, includeAllowableActions, convert(
@@ -98,7 +95,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-        NavigationServicePort port = fPortProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort();
 
         try {
             List<CmisObjectInFolderContainerType> containerList = port.getDescendants(repositoryId, folderId, depth,
@@ -133,7 +130,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
      * org.apache.opencmis.client.provider.ExtensionsData)
      */
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
-        NavigationServicePort port = fPortProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort();
 
         try {
             return convert(port.getFolderParent(repositoryId, folderId, filter, convert(extension)));
@@ -157,7 +154,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-        NavigationServicePort port = fPortProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort();
 
         try {
             List<CmisObjectInFolderContainerType> containerList = port.getFolderTree(repositoryId, folderId, depth,
@@ -195,7 +192,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
-        NavigationServicePort port = fPortProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort();
 
         try {
             List<CmisObjectParentsType> parentsList = port.getObjectParents(repositoryId, objectId, filter,
@@ -235,7 +232,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        NavigationServicePort port = fPortProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort();
 
         try {
             return convert(port.getCheckedOutDocs(repositoryId, folderId, filter, orderBy, includeAllowableActions,

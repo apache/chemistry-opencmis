@@ -34,20 +34,17 @@ import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 
 /**
  * Relationship Service Web Services client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RelationshipServiceImpl extends AbstractWebServicesService implements RelationshipService {
 
-    private final PortProvider fPortProvider;
+    private final AbstractPortProvider portProvider;
 
     /**
      * Constructor.
      */
-    public RelationshipServiceImpl(Session session, PortProvider portProvider) {
+    public RelationshipServiceImpl(Session session, AbstractPortProvider portProvider) {
         setSession(session);
-        fPortProvider = portProvider;
+        this.portProvider = portProvider;
     }
 
     /*
@@ -64,7 +61,7 @@ public class RelationshipServiceImpl extends AbstractWebServicesService implemen
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        RelationshipServicePort port = fPortProvider.getRelationshipServicePort();
+        RelationshipServicePort port = portProvider.getRelationshipServicePort();
 
         try {
             return convert(port.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes, convert(

@@ -63,7 +63,7 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
             log.debug("Initializing Web Services SPI...");
         }
 
-        PortProvider portProvider = new PortProvider(session);
+        AbstractPortProvider portProvider = new PortProvider(session);
 
         repositoryService = new RepositoryServiceImpl(session, portProvider);
         navigationService = new NavigationServiceImpl(session, portProvider);

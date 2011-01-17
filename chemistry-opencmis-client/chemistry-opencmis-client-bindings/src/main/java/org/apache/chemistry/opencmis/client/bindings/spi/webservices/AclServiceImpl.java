@@ -32,20 +32,17 @@ import org.apache.chemistry.opencmis.commons.spi.AclService;
 
 /**
  * ACL Service Web Services client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AclServiceImpl extends AbstractWebServicesService implements AclService {
 
-    private final PortProvider fPortProvider;
+    private final AbstractPortProvider portProvider;
 
     /**
      * Constructor.
      */
-    public AclServiceImpl(Session session, PortProvider portProvider) {
+    public AclServiceImpl(Session session, AbstractPortProvider portProvider) {
         setSession(session);
-        fPortProvider = portProvider;
+        this.portProvider = portProvider;
     }
 
     /*
@@ -60,7 +57,7 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
      */
     public Acl applyAcl(String repositoryId, String objectId, Acl addACEs, Acl removeACEs,
             AclPropagation aclPropagation, ExtensionsData extension) {
-        ACLServicePort port = fPortProvider.getACLServicePort();
+        ACLServicePort port = portProvider.getACLServicePort();
 
         try {
             return convert(port.applyACL(repositoryId, objectId, convert(addACEs), convert(removeACEs), convert(
@@ -81,7 +78,7 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
      * org.apache.opencmis.client.provider.ExtensionsData)
      */
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
-        ACLServicePort port = fPortProvider.getACLServicePort();
+        ACLServicePort port = portProvider.getACLServicePort();
 
         try {
             return convert(port.getACL(repositoryId, objectId, onlyBasicPermissions, convert(extension)));

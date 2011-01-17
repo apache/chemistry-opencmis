@@ -31,20 +31,17 @@ import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
 
 /**
  * MultiFiling Service Web Services client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class MultiFilingServiceImpl extends AbstractWebServicesService implements MultiFilingService {
 
-    private final PortProvider fPortProvider;
+    private final AbstractPortProvider portProvider;
 
     /**
      * Constructor.
      */
-    public MultiFilingServiceImpl(Session session, PortProvider portProvider) {
+    public MultiFilingServiceImpl(Session session, AbstractPortProvider portProvider) {
         setSession(session);
-        fPortProvider = portProvider;
+        this.portProvider = portProvider;
     }
 
     /*
@@ -57,7 +54,7 @@ public class MultiFilingServiceImpl extends AbstractWebServicesService implement
      */
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
-        MultiFilingServicePort port = fPortProvider.getMultiFilingServicePort();
+        MultiFilingServicePort port = portProvider.getMultiFilingServicePort();
 
         try {
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
@@ -81,7 +78,7 @@ public class MultiFilingServiceImpl extends AbstractWebServicesService implement
      * org.apache.opencmis.client.provider.ExtensionsData)
      */
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
-        MultiFilingServicePort port = fPortProvider.getMultiFilingServicePort();
+        MultiFilingServicePort port = portProvider.getMultiFilingServicePort();
 
         try {
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);

@@ -18,18 +18,20 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.soap.MTOMFeature;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
-import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -44,12 +46,8 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.headers.Header;
 import org.w3c.dom.Element;
-
-import com.sun.xml.ws.api.message.Headers;
-import com.sun.xml.ws.developer.JAXWSProperties;
-import com.sun.xml.ws.developer.StreamingAttachmentFeature;
-import com.sun.xml.ws.developer.WSBindingProvider;
 
 /**
  * Provides CMIS Web Services port objects. Handles authentication headers.
@@ -78,34 +76,29 @@ public class PortProvider extends AbstractPortProvider {
 
         try {
             if (service instanceof RepositoryService) {
-                portObject = ((RepositoryService) service).getRepositoryServicePort(new MTOMFeature());
+                portObject = ((RepositoryService) service).getRepositoryServicePort();
             } else if (service instanceof NavigationService) {
-                portObject = ((NavigationService) service).getNavigationServicePort(new MTOMFeature());
+                portObject = ((NavigationService) service).getNavigationServicePort();
             } else if (service instanceof ObjectService) {
-                int threshold = 4 * 1024 * 1024;
-                try {
-                    threshold = Integer.parseInt((String) session.get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD));
-                } catch (Exception e) {
-                }
-                portObject = ((ObjectService) service).getObjectServicePort(new MTOMFeature(),
-                        new StreamingAttachmentFeature(null, true, threshold));
-                ((BindingProvider) portObject).getRequestContext().put(
-                        JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
+                portObject = ((ObjectService) service).getObjectServicePort();
             } else if (service instanceof VersioningService) {
-                portObject = ((VersioningService) service).getVersioningServicePort(new MTOMFeature());
+                portObject = ((VersioningService) service).getVersioningServicePort();
             } else if (service instanceof DiscoveryService) {
-                portObject = ((DiscoveryService) service).getDiscoveryServicePort(new MTOMFeature());
+                portObject = ((DiscoveryService) service).getDiscoveryServicePort();
             } else if (service instanceof MultiFilingService) {
-                portObject = ((MultiFilingService) service).getMultiFilingServicePort(new MTOMFeature());
+                portObject = ((MultiFilingService) service).getMultiFilingServicePort();
             } else if (service instanceof RelationshipService) {
-                portObject = ((RelationshipService) service).getRelationshipServicePort(new MTOMFeature());
+                portObject = ((RelationshipService) service).getRelationshipServicePort();
             } else if (service instanceof PolicyService) {
-                portObject = ((PolicyService) service).getPolicyServicePort(new MTOMFeature());
+                portObject = ((PolicyService) service).getPolicyServicePort();
             } else if (service instanceof ACLService) {
-                portObject = ((ACLService) service).getACLServicePort(new MTOMFeature());
+                portObject = ((ACLService) service).getACLServicePort();
             } else {
                 throw new CmisRuntimeException("Cannot find Web Services service object!");
             }
+
+            Binding binding = ((BindingProvider) portObject).getBinding();
+            ((SOAPBinding) binding).setMTOMEnabled(true);
 
             // add SOAP and HTTP authentication headers
             AbstractAuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
@@ -113,7 +106,8 @@ public class PortProvider extends AbstractPortProvider {
                 // SOAP header
                 Element soapHeader = authProvider.getSOAPHeaders(portObject);
                 if (soapHeader != null) {
-                    ((WSBindingProvider) portObject).setOutboundHeaders(Headers.create(soapHeader));
+                    ((BindingProvider) portObject).getRequestContext().put(Header.HEADER_LIST,
+                            Collections.singletonList(convertToHeader(soapHeader)));
                 }
 
                 // HTTP header
@@ -131,5 +125,10 @@ public class PortProvider extends AbstractPortProvider {
         }
 
         return portObject;
+    }
+
+    private Header convertToHeader(Element element) {
+        QName qname = new QName(element.getNamespaceURI(), element.getLocalName());
+        return new Header(qname, element);
     }
 }
