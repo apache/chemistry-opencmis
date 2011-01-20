@@ -1,4 +1,3 @@
-package org.apache.chemistry.opencmis.client.bindings.spi.local;
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +18,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
  * under the License.
  *
  */
-
+package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.data.Acl;

@@ -34,9 +34,6 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 
 /**
  * Link cache.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class LinkCache implements Serializable {
 
@@ -46,11 +43,11 @@ public class LinkCache implements Serializable {
     private static final int CACHE_SIZE_TYPES = 100;
     private static final int CACHE_SIZE_OBJECTS = 400;
 
-    private Cache fLinkCache;
-    private Cache fTypeLinkCache;
-    private Cache fCollectionLinkCache;
-    private Cache fTemplateCache;
-    private Cache fRepositoryLinkCache;
+    private Cache linkCache;
+    private Cache typeLinkCache;
+    private Cache collectionLinkCache;
+    private Cache templateCache;
+    private Cache repositoryLinkCache;
 
     /**
      * Constructor.
@@ -71,8 +68,8 @@ public class LinkCache implements Serializable {
             objCount = CACHE_SIZE_OBJECTS;
         }
 
-        fLinkCache = new CacheImpl("Link Cache");
-        fLinkCache.initialize(new String[] {
+        linkCache = new CacheImpl("Link Cache");
+        linkCache.initialize(new String[] {
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
                 LruCacheLevelImpl.class.getName() + " " + LruCacheLevelImpl.MAX_ENTRIES + "=" + objCount, // id
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=16", // rel
@@ -80,8 +77,8 @@ public class LinkCache implements Serializable {
                         + MapCacheLevelImpl.SINGLE_VALUE + "=true" // type
         });
 
-        fTypeLinkCache = new CacheImpl("Type Link Cache");
-        fTypeLinkCache.initialize(new String[] {
+        typeLinkCache = new CacheImpl("Type Link Cache");
+        typeLinkCache.initialize(new String[] {
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
                 LruCacheLevelImpl.class.getName() + " " + LruCacheLevelImpl.MAX_ENTRIES + "=" + typeCount, // id
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=16", // rel
@@ -89,20 +86,20 @@ public class LinkCache implements Serializable {
                         + MapCacheLevelImpl.SINGLE_VALUE + "=true"// type
         });
 
-        fCollectionLinkCache = new CacheImpl("Collection Link Cache");
-        fCollectionLinkCache.initialize(new String[] {
+        collectionLinkCache = new CacheImpl("Collection Link Cache");
+        collectionLinkCache.initialize(new String[] {
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=8" // collection
         });
 
-        fTemplateCache = new CacheImpl("URI Template Cache");
-        fTemplateCache.initialize(new String[] {
+        templateCache = new CacheImpl("URI Template Cache");
+        templateCache.initialize(new String[] {
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=6" // type
         });
 
-        fRepositoryLinkCache = new CacheImpl("Repository Link Cache");
-        fRepositoryLinkCache.initialize(new String[] {
+        repositoryLinkCache = new CacheImpl("Repository Link Cache");
+        repositoryLinkCache.initialize(new String[] {
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=6" // rel
         });
@@ -112,21 +109,21 @@ public class LinkCache implements Serializable {
      * Adds a link.
      */
     public void addLink(String repositoryId, String id, String rel, String type, String link) {
-        fLinkCache.put(link, repositoryId, id, rel, type);
+        linkCache.put(link, repositoryId, id, rel, type);
     }
 
     /**
      * Removes all links of an object.
      */
     public void removeLinks(String repositoryId, String id) {
-        fLinkCache.remove(repositoryId, id);
+        linkCache.remove(repositoryId, id);
     }
 
     /**
      * Gets a link.
      */
     public String getLink(String repositoryId, String id, String rel, String type) {
-        return (String) fLinkCache.get(repositoryId, id, rel, type);
+        return (String) linkCache.get(repositoryId, id, rel, type);
     }
 
     /**
@@ -140,84 +137,77 @@ public class LinkCache implements Serializable {
      * Checks a link.
      */
     public int checkLink(String repositoryId, String id, String rel, String type) {
-        return fLinkCache.check(repositoryId, id, rel, type);
+        return linkCache.check(repositoryId, id, rel, type);
     }
 
     /**
      * Locks the link cache.
      */
     public void lockLinks() {
-        fLinkCache.writeLock();
+        linkCache.writeLock();
     }
 
     /**
      * Unlocks the link cache.
      */
     public void unlockLinks() {
-        fLinkCache.writeUnlock();
+        linkCache.writeUnlock();
     }
 
     /**
      * Adds a type link.
      */
     public void addTypeLink(String repositoryId, String id, String rel, String type, String link) {
-        fTypeLinkCache.put(link, repositoryId, id, rel, type);
+        typeLinkCache.put(link, repositoryId, id, rel, type);
     }
 
     /**
      * Removes all links of a type.
      */
     public void removeTypeLinks(String repositoryId, String id) {
-        fTypeLinkCache.remove(repositoryId, id);
+        typeLinkCache.remove(repositoryId, id);
     }
 
     /**
      * Gets a type link.
      */
     public String getTypeLink(String repositoryId, String id, String rel, String type) {
-        return (String) fTypeLinkCache.get(repositoryId, id, rel, type);
-    }
-
-    /**
-     * Gets a type link.
-     */
-    public String getTypeLink(String repositoryId, String id, String rel) {
-        return getLink(repositoryId, id, rel, null);
+        return (String) typeLinkCache.get(repositoryId, id, rel, type);
     }
 
     /**
      * Locks the type link cache.
      */
     public void lockTypeLinks() {
-        fTypeLinkCache.writeLock();
+        typeLinkCache.writeLock();
     }
 
     /**
      * Unlocks the type link cache.
      */
     public void unlockTypeLinks() {
-        fTypeLinkCache.writeUnlock();
+        typeLinkCache.writeUnlock();
     }
 
     /**
      * Adds a collection.
      */
     public void addCollection(String repositoryId, String collection, String link) {
-        fCollectionLinkCache.put(link, repositoryId, collection);
+        collectionLinkCache.put(link, repositoryId, collection);
     }
 
     /**
      * Gets a collection.
      */
     public String getCollection(String repositoryId, String collection) {
-        return (String) fCollectionLinkCache.get(repositoryId, collection);
+        return (String) collectionLinkCache.get(repositoryId, collection);
     }
 
     /**
      * Adds an URI template.
      */
     public void addTemplate(String repositoryId, String type, String link) {
-        fTemplateCache.put(link, repositoryId, type);
+        templateCache.put(link, repositoryId, type);
     }
 
     /**
@@ -225,7 +215,7 @@ public class LinkCache implements Serializable {
      * parameters.
      */
     public String getTemplateLink(String repositoryId, String type, Map<String, Object> parameters) {
-        String template = (String) fTemplateCache.get(repositoryId, type);
+        String template = (String) templateCache.get(repositoryId, type);
         if (template == null) {
             return null;
         }
@@ -270,25 +260,25 @@ public class LinkCache implements Serializable {
      * Adds a collection.
      */
     public void addRepositoryLink(String repositoryId, String rel, String link) {
-        fRepositoryLinkCache.put(link, repositoryId, rel);
+        repositoryLinkCache.put(link, repositoryId, rel);
     }
 
     /**
      * Gets a collection.
      */
     public String getRepositoryLink(String repositoryId, String rel) {
-        return (String) fRepositoryLinkCache.get(repositoryId, rel);
+        return (String) repositoryLinkCache.get(repositoryId, rel);
     }
 
     /**
      * Removes all entries of the given repository from the caches.
      */
     public void clearRepository(String repositoryId) {
-        fLinkCache.remove(repositoryId);
-        fTypeLinkCache.remove(repositoryId);
-        fCollectionLinkCache.remove(repositoryId);
-        fTemplateCache.remove(repositoryId);
-        fRepositoryLinkCache.remove(repositoryId);
+        linkCache.remove(repositoryId);
+        typeLinkCache.remove(repositoryId);
+        collectionLinkCache.remove(repositoryId);
+        templateCache.remove(repositoryId);
+        repositoryLinkCache.remove(repositoryId);
     }
 
     /*
@@ -298,8 +288,8 @@ public class LinkCache implements Serializable {
      */
     @Override
     public String toString() {
-        return "Link Cache [link cache=" + fLinkCache + ", type link cache=" + fTypeLinkCache
-                + ", collection link cache=" + fCollectionLinkCache + ", repository link cache=" + fRepositoryLinkCache
-                + ",  template cache=" + fTemplateCache + "]";
+        return "Link Cache [link cache=" + linkCache + ", type link cache=" + typeLinkCache
+                + ", collection link cache=" + collectionLinkCache + ", repository link cache=" + repositoryLinkCache
+                + ",  template cache=" + templateCache + "]";
     }
 }

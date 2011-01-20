@@ -1,5 +1,3 @@
-package org.apache.chemistry.opencmis.client.bindings.spi.local;
-
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,6 +18,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
  * under the License.
  *
  */
+package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
 import java.math.BigInteger;
 import java.util.HashMap;

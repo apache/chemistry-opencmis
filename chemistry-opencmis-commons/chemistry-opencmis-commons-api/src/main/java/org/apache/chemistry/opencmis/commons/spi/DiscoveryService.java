@@ -39,13 +39,13 @@ public interface DiscoveryService {
     /**
      * Executes a CMIS query statement against the contents of the repository.
      */
-    public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
-            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
+    ObjectList query(String repositoryId, String statement, Boolean searchAllVersions, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems,
+            BigInteger skipCount, ExtensionsData extension);
 
     /**
      * Gets a list of content changes.
      */
-    public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
+    ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension);
 }

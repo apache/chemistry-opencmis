@@ -38,16 +38,15 @@ public interface PolicyService {
     /**
      * Applies a specified policy to an object.
      */
-    public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
+    void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
 
     /**
      * Removes a specified policy from an object.
      */
-    public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
+    void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
 
     /**
      * Gets the list of policies currently applied to the specified object.
      */
-    public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
-            ExtensionsData extension);
+    List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter, ExtensionsData extension);
 }
