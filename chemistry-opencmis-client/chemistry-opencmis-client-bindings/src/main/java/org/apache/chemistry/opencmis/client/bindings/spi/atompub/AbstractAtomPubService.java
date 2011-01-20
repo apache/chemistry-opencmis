@@ -22,7 +22,6 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,27 +85,27 @@ public class AbstractAtomPubService {
     protected static final String NAME_RELATIVE_PATH_SEGMENT = "relativePathSegment";
     protected static final String NAME_NUM_ITEMS = "numItems";
 
-    private Session fSession;
+    private Session session;
 
     /**
      * Sets the current session.
      */
     protected void setSession(Session session) {
-        fSession = session;
+        this.session = session;
     }
 
     /**
      * Gets the current session.
      */
     protected Session getSession() {
-        return fSession;
+        return session;
     }
 
     /**
      * Returns the service document URL of this session.
      */
     protected String getServiceDocURL() {
-        Object url = fSession.get(SessionParameter.ATOMPUB_URL);
+        Object url = session.get(SessionParameter.ATOMPUB_URL);
         if (url instanceof String) {
             return (String) url;
         }
@@ -474,7 +473,7 @@ public class AbstractAtomPubService {
      */
     protected HttpUtils.Response read(UrlBuilder url) {
         // make the call
-        HttpUtils.Response resp = HttpUtils.invokeGET(url, fSession);
+        HttpUtils.Response resp = HttpUtils.invokeGET(url, session);
 
         // check response code
         if (resp.getResponseCode() != 200) {
@@ -490,7 +489,7 @@ public class AbstractAtomPubService {
      */
     protected HttpUtils.Response post(UrlBuilder url, String contentType, HttpUtils.Output writer) {
         // make the call
-        HttpUtils.Response resp = HttpUtils.invokePOST(url, contentType, writer, fSession);
+        HttpUtils.Response resp = HttpUtils.invokePOST(url, contentType, writer, session);
 
         // check response code
         if (resp.getResponseCode() != 201) {
@@ -506,7 +505,7 @@ public class AbstractAtomPubService {
      */
     protected HttpUtils.Response put(UrlBuilder url, String contentType, HttpUtils.Output writer) {
         // make the call
-        HttpUtils.Response resp = HttpUtils.invokePUT(url, contentType, writer, fSession);
+        HttpUtils.Response resp = HttpUtils.invokePUT(url, contentType, writer, session);
 
         // check response code
         if ((resp.getResponseCode() < 200) || (resp.getResponseCode() > 299)) {
@@ -522,7 +521,7 @@ public class AbstractAtomPubService {
      */
     protected void delete(UrlBuilder url) {
         // make the call
-        HttpUtils.Response resp = HttpUtils.invokeDELETE(url, fSession);
+        HttpUtils.Response resp = HttpUtils.invokeDELETE(url, session);
 
         // check response code
         if (resp.getResponseCode() != 204) {
@@ -547,7 +546,7 @@ public class AbstractAtomPubService {
         Map<String, Set<String>> originals = convertAclToMap(originalAces);
         Map<String, Set<String>> adds = convertAclToMap(addAces);
         Map<String, Set<String>> removes = convertAclToMap(removeAces);
-        List<Ace> newACEs = new ArrayList<Ace>();
+        List<Ace> newAces = new ArrayList<Ace>();
 
         // iterate through the original ACEs
         for (Map.Entry<String, Set<String>> ace : originals.entrySet()) {
@@ -566,7 +565,7 @@ public class AbstractAtomPubService {
 
             // create new ACE
             if (!ace.getValue().isEmpty()) {
-                newACEs.add(new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(ace.getKey()),
+                newAces.add(new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(ace.getKey()),
                         new ArrayList<String>(ace.getValue())));
             }
         }
@@ -575,12 +574,12 @@ public class AbstractAtomPubService {
         // list
         for (Map.Entry<String, Set<String>> ace : adds.entrySet()) {
             if (!originals.containsKey(ace.getKey()) && !ace.getValue().isEmpty()) {
-                newACEs.add(new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(ace.getKey()),
+                newAces.add(new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(ace.getKey()),
                         new ArrayList<String>(ace.getValue())));
             }
         }
 
-        return new AccessControlListImpl(newACEs);
+        return new AccessControlListImpl(newAces);
     }
 
     /**
@@ -606,12 +605,15 @@ public class AbstractAtomPubService {
                 continue;
             }
 
-            Set<String> permissions = new HashSet<String>();
+            Set<String> permissions = result.get(ace.getPrincipal().getId());
+            if (permissions == null) {
+                permissions = new HashSet<String>();
+                result.put(ace.getPrincipal().getId(), permissions);
+            }
+
             if (ace.getPermissions() != null) {
                 permissions.addAll(ace.getPermissions());
             }
-
-            result.put(ace.getPrincipal().getId(), permissions);
         }
 
         return result;

@@ -35,9 +35,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrinc
 /**
  * Test for the ACL merging that is necessary in the AtomPub binding
  * implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AclMergeTest extends TestCase {
 
