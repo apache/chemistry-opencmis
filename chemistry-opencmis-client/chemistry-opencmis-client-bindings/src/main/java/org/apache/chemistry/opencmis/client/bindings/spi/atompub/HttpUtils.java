@@ -30,10 +30,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -85,6 +89,7 @@ public class HttpUtils {
             conn.setRequestMethod(method);
             conn.setDoInput(true);
             conn.setDoOutput(writer != null);
+            conn.setRequestProperty("User-Agent", "Apache Chemistry OpenCMIS");
 
             // set content type
             if (contentType != null) {
@@ -122,6 +127,15 @@ public class HttpUtils {
                 }
 
                 conn.setRequestProperty("Range", sb.toString());
+            }
+
+            // compression
+            if ((session.get(SessionParameter.COMPRESSION) instanceof String)
+                    && (Boolean.parseBoolean((String) session.get(SessionParameter.COMPRESSION)))) {
+                conn.setRequestProperty("Accept-Encoding", "gzip");
+            } else if ((session.get(SessionParameter.COMPRESSION) instanceof Boolean)
+                    && ((Boolean) session.get(SessionParameter.COMPRESSION)).booleanValue()) {
+                conn.setRequestProperty("Accept-Encoding", "gzip");
             }
 
             // send data
@@ -219,10 +233,31 @@ public class HttpUtils {
                 }
             }
 
-            // if the stream is base64 encoded, decode it
             if (stream != null) {
-                String encoding = getContentTransferEncoding();
-                if ((encoding != null) && (encoding.toLowerCase().trim().equals("base64"))) {
+                String encoding = getContentEncoding();
+                if (encoding != null) {
+                    if (encoding.toLowerCase().trim().equals("gzip")) {
+                        // if the stream is gzip encoded, decode it
+                        length = null;
+                        try {
+                            this.stream = new GZIPInputStream(stream, 4096);
+                        } catch (IOException e) {
+                            errorContent = e.getMessage();
+                            try {
+                                stream.close();
+                            } catch (IOException ec) {
+                            }
+                        }
+                    } else if (encoding.toLowerCase().trim().equals("deflate")) {
+                        // if the stream is deflate encoded, decode it
+                        length = null;
+                        this.stream = new InflaterInputStream(stream, new Inflater(true), 4096);
+                    }
+                }
+
+                String transferEncoding = getContentTransferEncoding();
+                if ((transferEncoding != null) && (transferEncoding.toLowerCase().trim().equals("base64"))) {
+                    // if the stream is base64 encoded, decode it
                     length = null;
                     this.stream = new Base64.InputStream(stream);
                 }
@@ -277,6 +312,10 @@ public class HttpUtils {
 
         public String getContentTransferEncoding() {
             return getHeader("Content-Transfer-Encoding");
+        }
+
+        public String getContentEncoding() {
+            return getHeader("Content-Encoding");
         }
 
         public BigInteger getContentLength() {

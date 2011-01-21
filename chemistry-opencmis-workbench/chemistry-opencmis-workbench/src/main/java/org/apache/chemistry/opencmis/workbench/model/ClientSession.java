@@ -86,7 +86,7 @@ public class ClientSession {
     }
 
     public static Map<String, String> createSessionParameters(String url, BindingType binding, String username,
-            String password, Authentication authentication) {
+            String password, Authentication authentication, boolean compression) {
         Map<String, String> parameters = new LinkedHashMap<String, String>();
 
         if (binding == BindingType.WEBSERVICES) {
@@ -116,6 +116,10 @@ public class ClientSession {
             parameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
                     CmisBindingFactory.NTLM_AUTHENTICATION_PROVIDER);
             break;
+        }
+
+        if (compression) {
+            parameters.put(SessionParameter.COMPRESSION, "true");
         }
 
         // get additional workbench properties from system properties

@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,11 +60,23 @@ public class PortProvider extends AbstractPortProvider {
 
     private static Log log = LogFactory.getLog(PortProvider.class);
 
+    private boolean useCompression;
+
     /**
      * Constructor.
      */
     public PortProvider(Session session) {
         this.session = session;
+
+        useCompression = false;
+        if ((session.get(SessionParameter.COMPRESSION) instanceof String)
+                && (Boolean.parseBoolean((String) session.get(SessionParameter.COMPRESSION)))) {
+            useCompression = true;
+        }
+        if ((session.get(SessionParameter.COMPRESSION) instanceof Boolean)
+                && ((Boolean) session.get(SessionParameter.COMPRESSION)).booleanValue()) {
+            useCompression = true;
+        }
     }
 
     /**
@@ -109,6 +123,7 @@ public class PortProvider extends AbstractPortProvider {
 
             // add SOAP and HTTP authentication headers
             AbstractAuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
+            Map<String, List<String>> httpHeaders = null;
             if (authProvider != null) {
                 // SOAP header
                 Element soapHeader = authProvider.getSOAPHeaders(portObject);
@@ -117,13 +132,21 @@ public class PortProvider extends AbstractPortProvider {
                 }
 
                 // HTTP header
-                Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(service.getWSDLDocumentLocation()
-                        .toString());
-                if (httpHeaders != null) {
-                    ((BindingProvider) portObject).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
-                            httpHeaders);
-                }
+                httpHeaders = authProvider.getHTTPHeaders(service.getWSDLDocumentLocation().toString());
             }
+
+            if (useCompression) {
+                if (httpHeaders == null) {
+                    httpHeaders = new HashMap<String, List<String>>();
+                }
+                httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
+            }
+
+            if (httpHeaders != null) {
+                ((BindingProvider) portObject).getRequestContext()
+                        .put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
+            }
+
         } catch (CmisBaseException ce) {
             throw ce;
         } catch (Exception e) {
