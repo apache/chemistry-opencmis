@@ -97,6 +97,16 @@ public class HttpUtils {
             }
         }
 
+        // get locale
+        String acceptLanguage = request.getHeader("Accept-Language");
+        if (acceptLanguage != null) {
+            String[] locale = acceptLanguage.split("-");
+            context.put(CallContext.LOCALE_ISO639_LANGUAGE, locale[0]);
+            if (locale.length > 1) {
+                context.put(CallContext.LOCALE_ISO3166_COUNTRY, locale[1]);
+            }
+        }
+
         return context;
     }
 

@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -91,6 +92,24 @@ public abstract class AbstractService {
         ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
                 MessageContext.SERVLET_CONTEXT);
         context.put(CallContext.SERVLET_CONTEXT, servletContext);
+
+        Map<String, List<String>> headers = (Map<String, List<String>>) wsContext.getMessageContext().get(
+                MessageContext.HTTP_REQUEST_HEADERS);
+        if (headers != null) {
+            for (Map.Entry<String, List<String>> header : headers.entrySet()) {
+                if (header.getKey().equalsIgnoreCase("Accept-Language") && (header.getValue() != null)) {
+                    String acceptLanguage = header.getValue().get(0);
+                    if (acceptLanguage != null) {
+                        String[] locale = acceptLanguage.split("-");
+                        context.put(CallContext.LOCALE_ISO639_LANGUAGE, locale[0]);
+                        if (locale.length > 1) {
+                            context.put(CallContext.LOCALE_ISO3166_COUNTRY, locale[1]);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
 
         return context;
     }

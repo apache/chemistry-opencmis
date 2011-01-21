@@ -36,6 +36,8 @@ public interface CallContext {
     String LOCALE = "locale";
     String OFFSET = "offset";
     String LENGTH = "length";
+    String LOCALE_ISO639_LANGUAGE = "language";
+    String LOCALE_ISO3166_COUNTRY = "country";
 
     String SERVLET_CONTEXT = "servletContext";
 

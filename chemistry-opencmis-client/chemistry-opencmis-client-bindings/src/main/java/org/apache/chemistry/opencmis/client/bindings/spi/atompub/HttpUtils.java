@@ -138,6 +138,20 @@ public class HttpUtils {
                 conn.setRequestProperty("Accept-Encoding", "gzip");
             }
 
+            // locale
+            if (session.get(SessionParameter.LOCALE_ISO639_LANGUAGE) instanceof String) {
+                String language = (String) session.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
+                String country = "";
+                if (session.get(SessionParameter.LOCALE_ISO3166_COUNTRY) instanceof String) {
+                    country = "-" + (String) session.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
+                }
+
+                String acceptLanguage = language + country;
+                if ((acceptLanguage.indexOf('\n') == -1) && (acceptLanguage.indexOf('\r') == -1)) {
+                    conn.setRequestProperty("Accept-Language", acceptLanguage);
+                }
+            }
+
             // send data
             if (writer != null) {
                 conn.setChunkedStreamingMode(BUFFER_SIZE);

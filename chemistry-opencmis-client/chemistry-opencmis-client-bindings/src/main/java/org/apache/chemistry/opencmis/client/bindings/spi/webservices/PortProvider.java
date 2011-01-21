@@ -61,6 +61,7 @@ public class PortProvider extends AbstractPortProvider {
     private static Log log = LogFactory.getLog(PortProvider.class);
 
     private boolean useCompression;
+    private String acceptLanguage;
 
     /**
      * Constructor.
@@ -76,6 +77,19 @@ public class PortProvider extends AbstractPortProvider {
         if ((session.get(SessionParameter.COMPRESSION) instanceof Boolean)
                 && ((Boolean) session.get(SessionParameter.COMPRESSION)).booleanValue()) {
             useCompression = true;
+        }
+
+        if (session.get(SessionParameter.LOCALE_ISO639_LANGUAGE) instanceof String) {
+            String language = (String) session.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
+            String country = "";
+            if (session.get(SessionParameter.LOCALE_ISO3166_COUNTRY) instanceof String) {
+                country = "-" + (String) session.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
+            }
+
+            acceptLanguage = language + country;
+            if ((acceptLanguage.indexOf('\n') > -1) || (acceptLanguage.indexOf('\r') > -1)) {
+                acceptLanguage = null;
+            }
         }
     }
 
@@ -135,11 +149,20 @@ public class PortProvider extends AbstractPortProvider {
                 httpHeaders = authProvider.getHTTPHeaders(service.getWSDLDocumentLocation().toString());
             }
 
+            // compression
             if (useCompression) {
                 if (httpHeaders == null) {
                     httpHeaders = new HashMap<String, List<String>>();
                 }
                 httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
+            }
+
+            // locale
+            if (acceptLanguage != null) {
+                if (httpHeaders == null) {
+                    httpHeaders = new HashMap<String, List<String>>();
+                }
+                httpHeaders.put("Accept-Language", Collections.singletonList(acceptLanguage));
             }
 
             if (httpHeaders != null) {
