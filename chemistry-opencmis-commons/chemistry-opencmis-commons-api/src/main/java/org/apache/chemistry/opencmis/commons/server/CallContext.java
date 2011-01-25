@@ -31,7 +31,7 @@ public interface CallContext {
     String BINDING_LOCAL = "local";
 
     String REPOSITORY_ID = "repositoryId";
-    String USERNAME = "useranme";
+    String USERNAME = "username";
     String PASSWORD = "password";
     String LOCALE = "locale";
     String OFFSET = "offset";
