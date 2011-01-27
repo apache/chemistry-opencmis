@@ -132,7 +132,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
                     break;
                 }
                 if (toid.indexOf(',') > -1) {
-                    throw new IllegalArgumentException("Property id must not contain a comma!");
+                    throw new IllegalArgumentException("Query id must not contain a comma!");
                 }
 
                 tempSet.add(toid);

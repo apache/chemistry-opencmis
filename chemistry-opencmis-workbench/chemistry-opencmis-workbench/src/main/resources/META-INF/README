@@ -18,6 +18,7 @@ cmis.workbench.user           - preset user name
 cmis.workbench.password       - preset password
 cmis.workbench.binding        - preset binding (atompub/webservices)
 cmis.workbench.authentication - preset authentication method (none/standard/ntlm)
+cmis.workbench.compression    - preset compression (on/off)
 
 
 Folder operation context:
