@@ -101,9 +101,14 @@ public abstract class AbstractService {
                     String acceptLanguage = header.getValue().get(0);
                     if (acceptLanguage != null) {
                         String[] locale = acceptLanguage.split("-");
-                        context.put(CallContext.LOCALE_ISO639_LANGUAGE, locale[0]);
+                        context.put(CallContext.LOCALE_ISO639_LANGUAGE, locale[0].trim());
                         if (locale.length > 1) {
-                            context.put(CallContext.LOCALE_ISO3166_COUNTRY, locale[1]);
+                            int x = locale[1].indexOf(',');
+                            if (x == -1) {
+                                context.put(CallContext.LOCALE_ISO3166_COUNTRY, locale[1].trim());
+                            } else {
+                                context.put(CallContext.LOCALE_ISO3166_COUNTRY, locale[1].substring(0, x).trim());
+                            }
                         }
                     }
                     break;
