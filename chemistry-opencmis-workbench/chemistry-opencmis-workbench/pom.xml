@@ -102,7 +102,7 @@
                                  <property name="workbench.jar" value="${project.artifactId}-${project.version}.${project.packaging}" />
                                  
                                  <!-- build timestamp -->
-                                 <echo file="${targetdir}/generated-resources/META-INF/build-timestamp.txt">Version: ${version} / Build: ${timestamp}</echo>
+                                 <echo file="${targetdir}/generated-resources/META-INF/build-timestamp.txt">Version: ${project.version} / Build: ${timestamp}</echo>
                                  
                                  <!-- start scripts -->
                                  <mkdir dir="${targetdir}/start" />
@@ -111,7 +111,7 @@
                                  </copy>
                                  <replace dir="${targetdir}/start">
                                      <replacefilter token="@workbench.jar@" value="${workbench.jar}" />
-                                     <replacefilter token="@version@" value="Version: ${version} / Build: ${timestamp}" />
+                                     <replacefilter token="@version@" value="Version: ${project.version} / Build: ${timestamp}" />
                                  </replace>
                                  <chmod dir="${targetdir}/start" perm="+x" includes="**/*.sh" />
                              </target>
@@ -124,6 +124,7 @@
             </plugin>                  
             <plugin>
                 <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.8</version>
                 <configuration>
                     <downloadSources>true</downloadSources>
                     <downloadJavadocs>true</downloadJavadocs>
@@ -149,7 +150,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <id>pack-workbench</id>
