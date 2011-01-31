@@ -48,12 +48,13 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
         LOG.debug("Begin addObjectToFolder()");
 
-        StoredObject[] so2 = checkParams(repositoryId, objectId, folderId);
+        StoredObject[] sos = validator.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extension); 
+
         if (allVersions != null && allVersions.booleanValue() == false)
             throw new CmisNotSupportedException(
                     "Cannot add object to folder, version specific filing is not supported.");
-        StoredObject so = so2[0];
-        StoredObject folder = so2[1];
+        StoredObject so = sos[0];
+        StoredObject folder = sos[1];
         checkObjects(so, folder);
 
         Folder newParent = (Folder) folder;
@@ -75,9 +76,11 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
         LOG.debug("Begin removeObjectFromFolder()");
 
-        StoredObject so = checkStandardParameters(repositoryId, objectId);
+        StoredObject[] sos = validator.removeObjectFromFolder(context, repositoryId, objectId, folderId, extension); 
+        StoredObject so = sos[0];
+            
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-        StoredObject folder = checkExistingObjectId(objectStore, folderId);
+        StoredObject folder = sos[1];
 
         checkObjects(so, folder);
         Folder parent = (Folder) folder;
@@ -94,14 +97,6 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         }
 
         LOG.debug("End removeObjectFromFolder()");
-    }
-
-    private StoredObject[] checkParams(String repositoryId, String objectId, String folderId) {
-        StoredObject[] so = new StoredObject[2];
-        so[0] = checkStandardParameters(repositoryId, objectId);
-        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-        so[1] = checkExistingObjectId(objectStore, folderId);
-        return so;
     }
 
     private void checkObjects(StoredObject so, StoredObject folder) {

@@ -104,7 +104,8 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
         LOG.debug("start query()");
-        checkRepositoryId(repositoryId);
+        validator.query(context, repositoryId, extension);
+        
         String user = context.getUsername();
         ObjectList res;
         

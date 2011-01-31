@@ -49,6 +49,8 @@ import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
 import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
+import org.apache.chemistry.opencmis.inmemory.server.BaseServiceValidatorImpl;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
@@ -66,6 +68,7 @@ public class StoreManagerImpl implements StoreManager {
     
     protected BindingsObjectFactory fObjectFactory;
     protected RepositoryInfo fRepositoryInfo;
+    protected CmisServiceValidator validator;
 
     /**
      * map from repository id to a type manager
@@ -111,6 +114,10 @@ public class StoreManagerImpl implements StoreManager {
 
     public ObjectStore getObjectStore(String repositoryId) {
         return fMapRepositoryToObjectStore.get(repositoryId);
+    }
+
+    public CmisServiceValidator getServiceValidator() {
+        return new BaseServiceValidatorImpl(this);
     }
 
     public BindingsObjectFactory getObjectFactory() {
@@ -377,5 +384,5 @@ public class StoreManagerImpl implements StoreManager {
         LOG.debug("Query result, number of matching objects: " + objList.getNumItems());
         return objList;
     }
-    
+
 }
