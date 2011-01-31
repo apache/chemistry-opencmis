@@ -63,7 +63,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
     public void cancelCheckOut(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
 
-        StoredObject so = checkStandardParameters(repositoryId, objectId);
+        StoredObject so = validator.cancelCheckOut(context, repositoryId, objectId, extension); 
+            
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
@@ -74,7 +75,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
+        StoredObject so = validator.checkIn(context, repositoryId, objectId, extension); 
+            
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
@@ -100,7 +102,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
     public void checkOut(CallContext context, String repositoryId, Holder<String> objectId,
             ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHandler objectInfos) {
 
-        StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
+        StoredObject so = validator.checkOut(context, repositoryId, objectId, extension, contentCopied); 
+            
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
         if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT))
             throw new CmisNotSupportedException("Only documents can be checked-out.");
@@ -138,13 +141,13 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         }
     }
 
-    public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String versionSeriesId,
+    public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String objectId, String versionSeriesId,
             String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         if (null == versionSeriesId)
             throw new CmisInvalidArgumentException("getAllVersions requires a version series id, but ist was null.");
 
-        StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
+        StoredObject so = validator.getAllVersions(context, repositoryId, objectId, versionSeriesId, extension);             
 
         if (!(so instanceof VersionedDocument))
             throw new CmisInvalidArgumentException("Object is not instance of a VersionedDocument (version series)");
@@ -168,12 +171,13 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         return res;
     }
 
-    public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
+    public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension,
             ObjectInfoHandler objectInfos) {
 
-        StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
+        StoredObject so = validator.getObjectOfLatestVersion(context, repositoryId, objectId, versionSeriesId, extension); 
+            
         ObjectData objData = null;
 
         if (so instanceof VersionedDocument) {
@@ -197,10 +201,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         return objData;
     }
 
-    public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId, String versionSeriesId,
+    public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
 
-        StoredObject so = checkStandardParameters(repositoryId, versionSeriesId);
+        StoredObject so = validator.getPropertiesOfLatestVersion(context, repositoryId, objectId, versionSeriesId, extension); 
+
         StoredObject latestVersionObject = null;
 
         if (so instanceof VersionedDocument) {

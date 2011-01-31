@@ -288,20 +288,20 @@ public class InMemoryService extends AbstractCmisService {
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
-        return fVerSvc.getObjectOfLatestVersion(getCallContext(), repositoryId, versionSeriesId, major, filter,
+        return fVerSvc.getObjectOfLatestVersion(getCallContext(), repositoryId, objectId, versionSeriesId, major, filter,
                 includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl,
                 extension, this);
     }
 
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
-        return fVerSvc.getPropertiesOfLatestVersion(getCallContext(), repositoryId, versionSeriesId, major, filter,
+        return fVerSvc.getPropertiesOfLatestVersion(getCallContext(), repositoryId, objectId, versionSeriesId, major, filter,
                 extension);
     }
 
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
-        return fVerSvc.getAllVersions(getCallContext(), repositoryId, versionSeriesId==null ? objectId : versionSeriesId, 
+        return fVerSvc.getAllVersions(getCallContext(), repositoryId, objectId, versionSeriesId, 
                 filter, includeAllowableActions, extension, this);
     }
 

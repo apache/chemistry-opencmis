@@ -68,6 +68,14 @@ public interface StoreManager {
     ObjectStore getObjectStore(String repositoryId);
 
     /**
+     * get a permission and parameter validating instance
+     * 
+     * @return
+     *      validator and permission checker
+     */
+    CmisServiceValidator getServiceValidator();
+    
+    /**
      * create a new repository with the given id. Create the repository,
      * initiate the type system and initialize it so that it is ready for use
      * 
@@ -174,5 +182,5 @@ public interface StoreManager {
     ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount);
-
-}
+    
+ }

@@ -102,9 +102,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // Attach the CallContext to a thread local context that can be
         // accessed from everywhere
 
-        String user = context.getUsername();
-        StoredObject so = createDocumentIntern(repositoryId, properties, folderId, contentStream, versioningState,
-                policies, addAces, removeAces, extension, user);
+        StoredObject so = createDocumentIntern(context, repositoryId, properties, folderId, contentStream, versioningState,
+                policies, addAces, removeAces, extension);
         LOG.debug("stop createDocument()");
         return so.getId();
     }
@@ -114,8 +113,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Acl addAces, Acl removeAces, ExtensionsData extension) {
 
         LOG.debug("start createDocumentFromSource()");
-
-        StoredObject so = checkStandardParameters(repositoryId, sourceId);
+        StoredObject so = validator.createDocumentFromSource(context, repositoryId, sourceId, folderId, extension); 
 
         ContentStream content = getContentStream(context, repositoryId, sourceId, null, BigInteger.valueOf(-1),
                 BigInteger.valueOf(-1), null);
@@ -149,9 +147,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
         LOG.debug("start createFolder()");
 
-        String user = context.getUsername();
-        Folder folder = createFolderIntern(repositoryId, properties, folderId, policies, addAces, removeAces,
-                extension, user);
+        Folder folder = createFolderIntern(context, repositoryId, properties, folderId, policies, addAces, removeAces,
+                extension);
         LOG.debug("stop createFolder()");
         return folder.getId();
     }
@@ -161,8 +158,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // TODO to be completed if ACLs are implemented
         LOG.debug("start createPolicy()");
-        checkStandardParameters(repositoryId, folderId);
-        StoredObject so = createPolicyIntern(repositoryId, properties, folderId, policies, addAces, removeAces,
+        StoredObject so = createPolicyIntern(context, repositoryId, properties, folderId, policies, addAces, removeAces,
                 extension);
         LOG.debug("stop createPolicy()");
         return so == null ? null : so.getId();
@@ -173,8 +169,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // TODO to be completed if relationships are implemented
         LOG.debug("start createRelationship()");
-        checkRepositoryId(repositoryId);
-        StoredObject so = createRelationshipIntern(repositoryId, properties, policies, addAces, removeAces, extension);
+        StoredObject so = createRelationshipIntern(context, repositoryId, properties, policies, addAces, removeAces, extension);
         LOG.debug("stop createRelationship()");
         return so == null ? null : so.getId();
     }
@@ -201,23 +196,22 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // check if the given type is a document type
         BaseTypeId typeBaseId = typeDefC.getTypeDefinition().getBaseTypeId();
         StoredObject so = null;
-        String user = context.getUsername();
         if (typeBaseId.equals(InMemoryDocumentTypeDefinition.getRootDocumentType().getBaseTypeId())) {
-            so = createDocumentIntern(repositoryId, properties, folderId, contentStream, versioningState, null, null,
-                    null, null, user);
+            so = createDocumentIntern(context, repositoryId, properties, folderId, contentStream, versioningState, null, null,
+                    null, null);
         } else if (typeBaseId.equals(InMemoryFolderTypeDefinition.getRootFolderType().getBaseTypeId())) {
-            so = createFolderIntern(repositoryId, properties, folderId, null, null, null, null, user);
+            so = createFolderIntern(context, repositoryId, properties, folderId, null, null, null, null);
         } else if (typeBaseId.equals(InMemoryPolicyTypeDefinition.getRootPolicyType().getBaseTypeId())) {
-            so = createPolicyIntern(repositoryId, properties, folderId, null, null, null, null);
+            so = createPolicyIntern(context, repositoryId, properties, folderId, null, null, null, null);
         } else if (typeBaseId.equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType().getBaseTypeId())) {
-            so = createRelationshipIntern(repositoryId, properties, null, null, null, null);
+            so = createRelationshipIntern(context, repositoryId, properties, null, null, null, null);
         } else
             LOG.error("The type contains an unknown base object id, object can't be created");
 
         // Make a call to getObject to convert the resulting id into an
         // ObjectData
         TypeDefinition td = typeDefC.getTypeDefinition();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, context.getUsername(), false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         if (context.isObjectInfoRequired()) {
@@ -232,7 +226,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Holder<String> changeToken, ExtensionsData extension) {
 
         LOG.debug("start deleteContentStream()");
-        StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
+        StoredObject so = validator.deleteContentStream(context, repositoryId, objectId, extension); 
 
         if (so == null)
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -249,7 +243,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Boolean allVersions, ExtensionsData extension) {
 
         LOG.debug("start deleteObject()");
-        checkStandardParameters(repositoryId, objectId);
+        validator.deleteObjectOrCancelCheckOut(context, repositoryId, objectId, extension);
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         LOG.debug("delete object for id: " + objectId);
 
@@ -265,7 +259,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Boolean allVersions, UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
 
         LOG.debug("start deleteTree()");
-        StoredObject so = checkStandardParameters(repositoryId, folderId);
+        StoredObject so = validator.deleteTree(context, repositoryId, folderId, allVersions, unfileObjects, extension); 
         List<String> failedToDeleteIds = new ArrayList<String>();
         FailedToDeleteDataImpl result = new FailedToDeleteDataImpl();
 
@@ -304,7 +298,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             ExtensionsData extension) {
 
         LOG.debug("start getAllowableActions()");
-        StoredObject so = checkStandardParameters(repositoryId, objectId);
+        StoredObject so = validator.getAllowableActions(context, repositoryId, objectId, extension); 
+            
         fStoreManager.getObjectStore(repositoryId);
 
         if (so == null)
@@ -320,7 +315,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             BigInteger offset, BigInteger length, ExtensionsData extension) {
 
         LOG.debug("start getContentStream()");
-        StoredObject so = checkStandardParameters(repositoryId, objectId);
+        StoredObject so = validator.getContentStream(context, repositoryId, objectId, streamId, extension); 
+            
 
         if (so == null)
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -344,7 +340,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getObject()");
 
-        StoredObject so = checkStandardParameters(repositoryId, objectId);
+        StoredObject so = validator.getObject(context, repositoryId, objectId, extension);            
 
         if (so == null)
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -360,11 +356,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             objectInfos.addObjectInfo(objectInfo);
         }
 
-//        // fill an example extension
-//        List<Object> myExtensions = new ArrayList<Object>();
-//        myExtensions.add(new JAXBElement<ExtensionSample>(new QName("http://apache.org/chemistry/opencmis/extensions", "MyExtension"), ExtensionSample.class, new ExtensionSample()));
-//        od.setExtensions(myExtensions);
-
+        // fill an example extension
         String ns = "http://apache.org/opencmis/inmemory";
         List<CmisExtensionElement> extElements = new ArrayList<CmisExtensionElement>();
 
@@ -386,7 +378,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("start getObjectByPath()");
-        checkRepositoryId(repositoryId);
+        validator.getObjectByPath(context, repositoryId, path, extension);
+        
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         StoredObject so = objectStore.getObjectByPath(path);
 
@@ -415,7 +408,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             ExtensionsData extension) {
 
         LOG.debug("start getProperties()");
-        StoredObject so = checkStandardParameters(repositoryId, objectId);
+        StoredObject so = validator.getProperties(context, repositoryId, objectId, extension);            
 
         if (so == null)
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -433,7 +426,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // TODO to be completed if renditions are implemented
         LOG.debug("start getRenditions()");
-        checkStandardParameters(repositoryId, objectId);
+        validator.getRenditions(context, repositoryId, objectId, extension);
+        
         LOG.debug("stop getRenditions()");
         return null;
     }
@@ -442,7 +436,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             String targetFolderId, String sourceFolderId, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("start moveObject()");
-        StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
+        StoredObject[] sos = validator.moveObject(context, repositoryId, objectId, targetFolderId, sourceFolderId, extension); 
+        StoredObject so = sos[0];
         Folder targetFolder = null;
         Folder sourceFolder = null;
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
@@ -511,11 +506,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Boolean overwriteFlag, Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
 
         LOG.debug("start setContentStream()");
-        checkStandardParameters(repositoryId, objectId.getValue());
-
-        ObjectStore folderStore = fStoreManager.getObjectStore(repositoryId);
-        StoredObject so = folderStore.getObjectById(objectId.getValue());
         Content content;
+
+        StoredObject so = validator.setContentStream(context, repositoryId, objectId, overwriteFlag, extension);
 
         if (!(so instanceof Document || so instanceof VersionedDocument || so instanceof DocumentVersion))
             throw new CmisObjectNotFoundException("Id" + objectId
@@ -544,7 +537,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             ObjectInfoHandler objectInfos) {
 
         LOG.debug("start updateProperties()");
-        StoredObject so = checkStandardParameters(repositoryId, objectId.getValue());
+        StoredObject so = validator.updateProperties(context, repositoryId, objectId, extension);             
 
         // Validation
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
@@ -663,10 +656,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     // ///////////////////////////////////////////////////////
     // private helper methods
 
-    private StoredObject createDocumentIntern(String repositoryId, Properties properties, String folderId,
+    private StoredObject createDocumentIntern(CallContext context, String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addACEs,
-            Acl removeACEs, ExtensionsData extension, String user) {
-        checkRepositoryId(repositoryId);
+            Acl removeACEs, ExtensionsData extension) {
+        
+        String user = context.getUsername();
+        validator.createDocument(context, repositoryId, folderId, extension);        
 
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         Map<String, PropertyData<?>> propMap = properties.getProperties();
@@ -772,12 +767,13 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         return so;
     }
 
-    private Folder createFolderIntern(String repositoryId, Properties properties, String folderId,
-            List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension, String user) {
+    private Folder createFolderIntern(CallContext context, String repositoryId, Properties properties, String folderId,
+            List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 
         // Attach the CallContext to a thread local context that can be accessed
         // from everywhere
-        checkStandardParameters(repositoryId, folderId);
+        String user = context.getUsername();
+        validator.createFolder(context, repositoryId, folderId, extension);
 
         ObjectStore fs = fStoreManager.getObjectStore(repositoryId);
         StoredObject so = null;
@@ -835,14 +831,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         return newFolder;
     }
 
-    private StoredObject createPolicyIntern(String repositoryId, Properties properties, String folderId,
+    private StoredObject createPolicyIntern(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
-        return null;
+        
+        validator.createPolicy(context, repositoryId, folderId, extension);
+        throw new CmisNotSupportedException("createPolicy is not supported.");
     }
 
-    private StoredObject createRelationshipIntern(String repositoryId, Properties properties, List<String> policies,
+    private StoredObject createRelationshipIntern(CallContext context, String repositoryId, Properties properties, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
-        return null;
+        validator.createRelationship(context, repositoryId, extension);
+        throw new CmisNotSupportedException("createRelationship is not supported.");
     }
 
     private boolean hasDescendant(Folder sourceFolder, Folder targetFolder) {

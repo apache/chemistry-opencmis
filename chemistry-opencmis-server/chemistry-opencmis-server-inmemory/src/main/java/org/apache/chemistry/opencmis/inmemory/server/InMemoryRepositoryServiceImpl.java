@@ -43,6 +43,8 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
     public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId, ExtensionsData extension) {
 
+        validator.getRepositoryInfo(context, repositoryId, extension);
+        
         RepositoryInfo repoInfo = getRepositoryInfoFromStoreManager(repositoryId);
 
         return repoInfo;
@@ -50,6 +52,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
     public List<RepositoryInfo> getRepositoryInfos(CallContext context, ExtensionsData extension) {
 
+        validator.getRepositoryInfos(context, extension);
         List<RepositoryInfo> res = new ArrayList<RepositoryInfo>();
         List<String> repIds = fStoreManager.getAllRepositoryIds();
         for (String repId : repIds) {
@@ -61,6 +64,8 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
     public TypeDefinitionList getTypeChildren(CallContext context, String repositoryId, String typeId,
             Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
+        validator.getTypeChildren(context, repositoryId, typeId, extension);
+        
         boolean inclPropDefs = includePropertyDefinitions == null ? false : includePropertyDefinitions;
         getRepositoryInfoFromStoreManager(repositoryId); // just to check if
         // repository
@@ -94,9 +99,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
     public TypeDefinition getTypeDefinition(CallContext context, String repositoryId, String typeId,
             ExtensionsData extension) {
 
-        getRepositoryInfoFromStoreManager(repositoryId); // just to check if
-        // repository
-        // exists
+        validator.getTypeDefinition(context, repositoryId, typeId, extension);
 
         TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId);
         if (tc != null) {
@@ -108,9 +111,8 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
     public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId, String typeId,
             BigInteger depth, Boolean includePropertyDefinitions, ExtensionsData extension) {
 
-        getRepositoryInfoFromStoreManager(repositoryId); // just to check if
-        // repository
-        // exists
+        validator.getTypeDescendants(context, repositoryId, typeId, extension);
+
         boolean inclPropDefs = includePropertyDefinitions == null ? false : includePropertyDefinitions;
         
         if (depth != null && depth.intValue() == 0)

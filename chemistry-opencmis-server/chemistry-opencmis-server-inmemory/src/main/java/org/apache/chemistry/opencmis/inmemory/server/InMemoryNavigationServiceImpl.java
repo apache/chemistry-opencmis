@@ -77,14 +77,11 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension,
             ObjectInfoHandler objectInfos) {
 
+        validator.getCheckedOutDocs(context, repositoryId, folderId, extension);
         ObjectListImpl res = new ObjectListImpl();
         List<ObjectData> odList = new ArrayList<ObjectData>();
 
         LOG.debug("start getCheckedOutDocs()");
-        if (null != folderId)
-            checkStandardParameters(repositoryId, folderId);
-        else
-            checkRepositoryId(repositoryId);
 
         String user = context.getUsername();
         if (null == folderId) {
@@ -133,7 +130,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getChildren()");
 
-        checkStandardParameters(repositoryId, folderId);
+        validator.getChildren(repositoryId, folderId, extension);        
 
         int maxItemsInt = maxItems == null ? -1 : maxItems.intValue();
         int skipCountInt = skipCount == null ? -1 : skipCount.intValue();
@@ -152,7 +149,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getDescendants()");
 
-        checkStandardParameters(repositoryId, folderId);
+        validator.getDescendants(context, repositoryId, folderId, extension);
 
         int levels;
         if (depth == null)
@@ -178,7 +175,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getFolderParent()");
 
-        StoredObject so = checkStandardParameters(repositoryId, folderId);
+        StoredObject so = validator.getFolderParent(context, repositoryId, folderId, extension);             
 
         Folder folder = null;
         if (so instanceof Folder)
@@ -210,7 +207,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getFolderTree()");
 
-        checkStandardParameters(repositoryId, folderId);
+        validator.getFolderTree(context, repositoryId, folderId, extension);
 
         if (depth != null && depth.intValue() == 0)
             throw new CmisInvalidArgumentException("A zero depth is not allowed for getFolderTree().");
@@ -233,7 +230,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getObjectParents()");
 
-        StoredObject so = checkStandardParameters(repositoryId, objectId);
+        StoredObject so = validator.getObjectParents(context, repositoryId, objectId, extension);             
 
         // for now we have only folders that have a parent and the in-memory
         // provider only has one

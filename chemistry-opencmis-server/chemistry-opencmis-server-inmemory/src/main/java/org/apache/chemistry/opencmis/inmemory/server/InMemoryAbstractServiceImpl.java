@@ -23,11 +23,10 @@ import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -41,64 +40,16 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 public class InMemoryAbstractServiceImpl {
 
     protected StoreManager fStoreManager;
+    protected CmisServiceValidator validator;
+
+    protected InMemoryAbstractServiceImpl(StoreManager storeManager, CmisServiceValidator validator) {
+        this.fStoreManager = storeManager;
+        this.validator = validator;
+    }
 
     protected InMemoryAbstractServiceImpl(StoreManager storeManager) {
-        fStoreManager = storeManager;
-    }
-
-    /**
-     * check if repository is known and that object exists. To avoid later calls
-     * to again retrieve the object from the id return the retrieved object for
-     * later use.
-     * 
-     * @param repositoryId
-     *            repository id
-     * @param objectId
-     *            object id
-     * @return object for objectId
-     */
-    protected StoredObject checkStandardParameters(String repositoryId, String objectId) {
-
-        if (null == repositoryId)
-            throw new CmisInvalidArgumentException("Repository Id cannot be null.");
-
-        if (null == objectId)
-            throw new CmisInvalidArgumentException("Object Id cannot be null.");
-
-        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-
-        if (objStore == null)
-            throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
-
-        StoredObject so = objStore.getObjectById(objectId);
-
-        if (so == null)
-            throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
-
-        return so;
-    }
-
-    protected StoredObject checkExistingObjectId(ObjectStore objStore, String objectId) {
-
-        if (null == objectId)
-            throw new CmisInvalidArgumentException("Object Id cannot be null.");
-
-        StoredObject so = objStore.getObjectById(objectId);
-
-        if (so == null)
-            throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
-
-        return so;
-    }
-
-    protected void checkRepositoryId(String repositoryId) {
-        if (null == repositoryId)
-            throw new CmisInvalidArgumentException("Repository Id cannot be null.");
-        
-        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-
-        if (objStore == null)
-            throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
+        this.fStoreManager = storeManager;
+        this.validator = storeManager.getServiceValidator();            
     }
 
     protected TypeDefinition getTypeDefinition(String repositoryId, Properties properties) {
