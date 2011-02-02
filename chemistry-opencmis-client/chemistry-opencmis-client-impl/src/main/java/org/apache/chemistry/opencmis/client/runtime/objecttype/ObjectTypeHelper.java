@@ -50,7 +50,7 @@ public class ObjectTypeHelper implements Serializable {
     }
 
     public boolean isBaseType() {
-        return objectType.getParentTypeId() == null;
+        return objectType.getParentTypeId() == null || objectType.getParentTypeId().length() == 0;
     }
 
     public ObjectType getBaseType() {
