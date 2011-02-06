@@ -102,7 +102,7 @@ public class SessionImpl implements Session, Serializable {
     private Map<String, String> parameters = null;
 
     /*
-     * CMIS provider (serializable)
+     * CMIS binding (serializable)
      */
     private CmisBinding binding = null;
 
@@ -484,7 +484,7 @@ public class SessionImpl implements Session, Serializable {
     }
 
     /**
-     * Converts provider <code>TypeDefinitionContainer</code> to API
+     * Converts binding <code>TypeDefinitionContainer</code> to API
      * <code>Container</code>.
      */
     private List<Tree<ObjectType>> convertTypeDescendants(List<TypeDefinitionContainer> descendantsList) {
@@ -522,7 +522,7 @@ public class SessionImpl implements Session, Serializable {
                         ctxt.getRenditionFilterString(), BigInteger.valueOf(this.maxNumItems),
                         BigInteger.valueOf(skipCount), null);
 
-                // convert type definitions
+                // convert query results
                 List<QueryResult> page = new ArrayList<QueryResult>();
                 if (resultList.getObjects() != null) {
                     for (ObjectData objectData : resultList.getObjects()) {
@@ -538,7 +538,6 @@ public class SessionImpl implements Session, Serializable {
                         resultList.hasMoreItems());
             }
         });
-
     }
 
     public String setExtensionContext(String context) {
@@ -559,7 +558,7 @@ public class SessionImpl implements Session, Serializable {
     public void connect() {
         lock.writeLock().lock();
         try {
-            this.binding = CmisBindingHelper.createProvider(this.parameters);
+            this.binding = CmisBindingHelper.createBinding(this.parameters);
 
             /* get initial repository id from session parameter */
             String repositoryId = this.determineRepositoryId(this.parameters);
@@ -655,7 +654,7 @@ public class SessionImpl implements Session, Serializable {
 
     public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
             List<Ace> addAces, List<Ace> removeAces) {
-        if ((folderId != null) && (folderId.getId() == null)) {
+        if ((folderId == null) || (folderId.getId() == null)) {
             throw new IllegalArgumentException("Folder Id must be set!");
         }
         if ((properties == null) || (properties.isEmpty())) {

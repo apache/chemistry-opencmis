@@ -122,12 +122,12 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
         BindingsObjectFactory bof = getBindingsObjectFactory();
 
-        List<Ace> providerAces = new ArrayList<Ace>();
+        List<Ace> bindingAces = new ArrayList<Ace>();
         for (Ace ace : aces) {
-            providerAces.add(bof.createAccessControlEntry(ace.getPrincipalId(), ace.getPermissions()));
+            bindingAces.add(bof.createAccessControlEntry(ace.getPrincipalId(), ace.getPermissions()));
         }
 
-        return bof.createAccessControlList(providerAces);
+        return bof.createAccessControlList(bindingAces);
     }
 
     public Ace createAce(String principal, List<String> permissions) {

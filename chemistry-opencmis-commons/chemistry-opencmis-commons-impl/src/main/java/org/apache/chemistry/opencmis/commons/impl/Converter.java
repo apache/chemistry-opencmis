@@ -2398,7 +2398,7 @@ public final class Converter {
     // -------------------------------------------------------------------------
 
     /**
-     * Converts a provider extension into a Web Services extension.
+     * Converts a binding extension into a Web Services extension.
      */
     public static CmisExtensionType convert(ExtensionsData extension) {
         if (extension == null) {
@@ -2417,7 +2417,7 @@ public final class Converter {
     }
 
     /**
-     * Converts a provider extension into a Web Services extension holder.
+     * Converts a binding extension into a Web Services extension holder.
      */
     public static javax.xml.ws.Holder<CmisExtensionType> convertExtensionHolder(ExtensionsData extension) {
         if (extension == null) {
@@ -2454,7 +2454,7 @@ public final class Converter {
     }
 
     /**
-     * Converts a Web Services extension extension into a provider holder.
+     * Converts a Web Services extension extension into a binding holder.
      */
     public static ExtensionsData convertExtensionHolder(javax.xml.ws.Holder<CmisExtensionType> extension) {
         if (extension == null) {

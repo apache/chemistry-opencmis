@@ -31,9 +31,9 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  */
 public class CmisBindingHelper {
     /**
-     * Creates a {@link CmisProvider} object.
+     * Creates a {@link CmisBinding} object.
      */
-    public static CmisBinding createProvider(Map<String, String> parameters) {
+    public static CmisBinding createBinding(Map<String, String> parameters) {
         if (parameters == null || parameters.isEmpty()) {
             throw new CmisRuntimeException("Session parameter not set!");
         }
@@ -59,7 +59,7 @@ public class CmisBindingHelper {
     }
 
     /**
-     * Creates a provider with custom parameters.
+     * Creates a binding with custom parameters.
      */
     private static CmisBinding createCustomBinding(Map<String, String> parameters) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
@@ -69,7 +69,7 @@ public class CmisBindingHelper {
     }
 
     /**
-     * Creates a Web Services provider.
+     * Creates a Web Services binding.
      */
     private static CmisBinding createWebServiceBinding(Map<String, String> parameters) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
@@ -79,7 +79,7 @@ public class CmisBindingHelper {
     }
 
     /**
-     * Creates an AtomPub provider.
+     * Creates an AtomPub binding.
      */
     private static CmisBinding createAtomPubBinding(Map<String, String> parameters) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
@@ -89,7 +89,7 @@ public class CmisBindingHelper {
     }
 
     /**
-     * Creates a local provider.
+     * Creates a local binding.
      */
     private static CmisBinding createLocalBinding(Map<String, String> parameters) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();

@@ -64,7 +64,7 @@ public class SessionFactoryImpl implements SessionFactory {
     }
 
     public List<Repository> getRepositories(Map<String, String> parameters) {
-        CmisBinding binding = CmisBindingHelper.createProvider(parameters);
+        CmisBinding binding = CmisBindingHelper.createBinding(parameters);
 
         List<RepositoryInfo> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(null);
 

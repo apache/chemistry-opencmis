@@ -46,13 +46,13 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         String objectId = getObjectId();
 
         // get object ids of the parent folders
-        List<ObjectParentData> providerParents = getBinding().getNavigationService().getObjectParents(
+        List<ObjectParentData> bindingParents = getBinding().getNavigationService().getObjectParents(
                 getRepositoryId(), objectId, getPropertyQueryName(PropertyIds.OBJECT_ID), false,
                 IncludeRelationships.NONE, null, false, null);
 
         List<Folder> parents = new ArrayList<Folder>();
 
-        for (ObjectParentData p : providerParents) {
+        for (ObjectParentData p : bindingParents) {
             if ((p == null) || (p.getObject() == null) || (p.getObject().getProperties() == null)) {
                 // should not happen...
                 throw new CmisRuntimeException("Repository sent invalid data!");
@@ -83,13 +83,13 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         String objectId = getObjectId();
 
         // get object paths of the parent folders
-        List<ObjectParentData> providerParents = getBinding().getNavigationService().getObjectParents(
+        List<ObjectParentData> bindingParents = getBinding().getNavigationService().getObjectParents(
                 getRepositoryId(), objectId, getPropertyQueryName(PropertyIds.PATH), false, IncludeRelationships.NONE,
                 null, true, null);
 
         List<String> paths = new ArrayList<String>();
 
-        for (ObjectParentData p : providerParents) {
+        for (ObjectParentData p : bindingParents) {
             if ((p == null) || (p.getObject() == null) || (p.getObject().getProperties() == null)) {
                 // should not happen...
                 throw new CmisRuntimeException("Repository sent invalid data!");

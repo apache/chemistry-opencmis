@@ -79,7 +79,7 @@ public interface CmisBinding {
     PolicyService getPolicyService();
 
     /**
-     * Gets a factory for CMIS provider specific objects.
+     * Gets a factory for CMIS binding specific objects.
      */
     BindingsObjectFactory getObjectFactory();
 

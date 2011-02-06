@@ -31,7 +31,7 @@ public final class SessionParameter {
     public static final String USER = "org.apache.chemistry.opencmis.user";
     public static final String PASSWORD = "org.apache.chemistry.opencmis.password";
 
-    // ---- provider parameter ----
+    // --- binding parameter ----
     /** Predefined binding types (see {@code BindingType}) */
     public static final String BINDING_TYPE = "org.apache.chemistry.opencmis.binding.spi.type";
 

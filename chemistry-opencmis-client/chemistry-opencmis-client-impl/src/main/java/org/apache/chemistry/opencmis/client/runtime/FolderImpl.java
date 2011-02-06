@@ -21,10 +21,8 @@ package org.apache.chemistry.opencmis.client.runtime;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -55,7 +53,6 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
-import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
@@ -63,12 +60,6 @@ import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 public class FolderImpl extends AbstractFilableCmisObject implements Folder {
 
     private static final long serialVersionUID = 1L;
-
-    private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
-    static {
-        CREATE_UPDATABILITY.add(Updatability.ONCREATE);
-        CREATE_UPDATABILITY.add(Updatability.READWRITE);
-    }
 
     /**
      * Constructor.
@@ -290,7 +281,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
                 context.isIncludeAllowableActions(), context.getIncludeRelationships(),
                 context.getRenditionFilterString(), context.isIncludePathSegments(), null);
 
-        return convertProviderContainer(providerContainerList, context);
+        return convertBindingContainer(providerContainerList, context);
     }
 
     public List<Tree<FileableCmisObject>> getFolderTree(int depth) {
@@ -306,22 +297,22 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
                 context.isIncludeAllowableActions(), context.getIncludeRelationships(),
                 context.getRenditionFilterString(), context.isIncludePathSegments(), null);
 
-        return convertProviderContainer(providerContainerList, context);
+        return convertBindingContainer(providerContainerList, context);
     }
 
     /**
-     * Converts a provider container into an API container.
+     * Converts a binding container into an API container.
      */
-    private List<Tree<FileableCmisObject>> convertProviderContainer(
-            List<ObjectInFolderContainer> providerContainerList, OperationContext context) {
-        if (providerContainerList == null) {
+    private List<Tree<FileableCmisObject>> convertBindingContainer(
+            List<ObjectInFolderContainer> bindingContainerList, OperationContext context) {
+        if (bindingContainerList == null) {
             return null;
         }
 
         ObjectFactory of = getSession().getObjectFactory();
 
         List<Tree<FileableCmisObject>> result = new ArrayList<Tree<FileableCmisObject>>();
-        for (ObjectInFolderContainer oifc : providerContainerList) {
+        for (ObjectInFolderContainer oifc : bindingContainerList) {
             if ((oifc.getObject() == null) || (oifc.getObject().getObject() == null)) {
                 // shouldn't happen ...
                 continue;
@@ -336,7 +327,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
             }
 
             // convert the children
-            List<Tree<FileableCmisObject>> children = convertProviderContainer(oifc.getChildren(), context);
+            List<Tree<FileableCmisObject>> children = convertBindingContainer(oifc.getChildren(), context);
 
             // add both to current container
             result.add(new TreeImpl<FileableCmisObject>((FileableCmisObject) object, children));
