@@ -20,11 +20,8 @@ package org.apache.chemistry.opencmis.fit.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -33,15 +30,12 @@ import java.util.UUID;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
-import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Property;
-import org.apache.chemistry.opencmis.client.api.TransientDocument;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -301,9 +295,10 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertNotNull(doc);
         doc.setContentStream(contentStream, true);
 
-        // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
-        // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
-        // Assert.assertEquals(filename, doc.getContentStreamFileName());
+        doc.refresh();
+        assertEquals(buf1.length, doc.getContentStreamLength());
+        assertEquals(mimetype, doc.getContentStreamMimeType());
+        assertEquals(filename, doc.getContentStreamFileName());
         String content2 = this.getContentAsString(doc.getContentStream());
         assertEquals(content1, content2);
     }
@@ -337,9 +332,10 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertNotNull(doc);
         doc.setContentStream(contentStream, false);
 
-        // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
-        // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
-        // Assert.assertEquals(filename, doc.getContentStreamFileName());
+        doc.refresh();
+        assertEquals(buf1.length, doc.getContentStreamLength());
+        assertEquals(mimetype, doc.getContentStreamMimeType());
+        assertEquals(filename, doc.getContentStreamFileName());
         String content2 = this.getContentAsString(doc.getContentStream());
         assertEquals(content1, content2);
     }
@@ -381,9 +377,10 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertNotNull(doc);
         doc.setContentStream(contentStream2, true);
 
-        // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
-        // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
-        // Assert.assertEquals(filename, doc.getContentStreamFileName());
+        doc.refresh();
+        assertEquals(buf2.length, doc.getContentStreamLength());
+        assertEquals(mimetype, doc.getContentStreamMimeType());
+        assertEquals(filename2, doc.getContentStreamFileName());
         String content3 = this.getContentAsString(doc.getContentStream());
         assertEquals(content2, content3);
     }
@@ -426,9 +423,10 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertNotNull(doc);
         doc.setContentStream(contentStream2, false);
 
-        // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
-        // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
-        // Assert.assertEquals(filename, doc.getContentStreamFileName());
+        doc.refresh();
+        assertEquals(buf2.length, doc.getContentStreamLength());
+        assertEquals(mimetype, doc.getContentStreamMimeType());
+        assertEquals(filename2, doc.getContentStreamFileName());
         String content3 = this.getContentAsString(doc.getContentStream());
         assertEquals(content2, content3);
     }

@@ -504,8 +504,16 @@ public class AbstractAtomPubService {
      * result.
      */
     protected HttpUtils.Response put(UrlBuilder url, String contentType, HttpUtils.Output writer) {
+        return put(url, contentType, null, writer);
+    }
+
+    /**
+     * Performs a PUT on an URL, checks the response code and returns the
+     * result.
+     */
+    protected HttpUtils.Response put(UrlBuilder url, String contentType, Map<String, String> headers, HttpUtils.Output writer) {
         // make the call
-        HttpUtils.Response resp = HttpUtils.invokePUT(url, contentType, writer, session);
+        HttpUtils.Response resp = HttpUtils.invokePUT(url, contentType, headers, writer, session);
 
         // check response code
         if ((resp.getResponseCode() < 200) || (resp.getResponseCode() > 299)) {

@@ -57,27 +57,28 @@ public class HttpUtils {
     }
 
     public static Response invokeGET(UrlBuilder url, Session session) {
-        return invoke(url, "GET", null, null, session, null, null);
+        return invoke(url, "GET", null, null, null, session, null, null);
     }
 
     public static Response invokeGET(UrlBuilder url, Session session, BigInteger offset, BigInteger length) {
-        return invoke(url, "GET", null, null, session, offset, length);
+        return invoke(url, "GET", null, null, null, session, offset, length);
     }
 
     public static Response invokePOST(UrlBuilder url, String contentType, Output writer, Session session) {
-        return invoke(url, "POST", contentType, writer, session, null, null);
+        return invoke(url, "POST", contentType, null, writer, session, null, null);
     }
 
-    public static Response invokePUT(UrlBuilder url, String contentType, Output writer, Session session) {
-        return invoke(url, "PUT", contentType, writer, session, null, null);
+    public static Response invokePUT(UrlBuilder url, String contentType, Map<String, String> headers, Output writer, Session session) {
+        return invoke(url, "PUT", contentType, headers, writer, session, null, null);
     }
 
     public static Response invokeDELETE(UrlBuilder url, Session session) {
-        return invoke(url, "DELETE", null, null, session, null, null);
+        return invoke(url, "DELETE", null, null, null, session, null, null);
     }
 
-    private static Response invoke(UrlBuilder url, String method, String contentType, Output writer, Session session,
-            BigInteger offset, BigInteger length) {
+    private static Response invoke(UrlBuilder url, String method,
+            String contentType, Map<String, String> headers, Output writer,
+            Session session, BigInteger offset, BigInteger length) {
         try {
             // log before connect
             if (log.isDebugEnabled()) {
@@ -94,6 +95,12 @@ public class HttpUtils {
             // set content type
             if (contentType != null) {
                 conn.setRequestProperty("Content-Type", contentType);
+            }
+            // set other headers
+            if (headers != null) {
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    conn.setRequestProperty(header.getKey(), header.getValue());
+                }
             }
 
             // authenticate

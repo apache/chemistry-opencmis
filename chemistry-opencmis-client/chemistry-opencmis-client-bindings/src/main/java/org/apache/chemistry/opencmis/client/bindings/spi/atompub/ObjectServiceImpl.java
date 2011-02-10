@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
@@ -51,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
@@ -523,8 +525,15 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         final InputStream stream = contentStream.getStream();
 
+        // Content-Disposition header for the filename
+        Map<String, String> headers = Collections.singletonMap(
+                MimeHelper.CONTENT_DISPOSITION,
+                MimeHelper.encodeContentDisposition(
+                        MimeHelper.DISPOSITION_ATTACHMENT,
+                        contentStream.getFileName()));
+
         // send content
-        HttpUtils.Response resp = HttpUtils.invokePUT(url, contentStream.getMimeType(), new HttpUtils.Output() {
+        HttpUtils.Response resp = put(url, contentStream.getMimeType(), headers, new HttpUtils.Output() {
             public void write(OutputStream out) throws Exception {
                 int b;
                 byte[] buffer = new byte[4096];
@@ -535,9 +544,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
                 stream.close();
             }
-        }, getSession());
+        });
 
-        // check response code
+        // check response code further
         if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 201) && (resp.getResponseCode() != 204)) {
             throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
         }

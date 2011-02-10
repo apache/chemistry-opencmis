@@ -51,6 +51,7 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
@@ -212,6 +213,10 @@ public final class ObjectService {
                 contentStream.setLength(new BigInteger(lengthStr));
             } catch (NumberFormatException e) {
             }
+        }
+        String contentDisposition = request.getHeader(MimeHelper.CONTENT_DISPOSITION);
+        if (contentDisposition != null) {
+            contentStream.setFileName(MimeHelper.decodeContentDispositionFilename(contentDisposition));
         }
 
         // execute
