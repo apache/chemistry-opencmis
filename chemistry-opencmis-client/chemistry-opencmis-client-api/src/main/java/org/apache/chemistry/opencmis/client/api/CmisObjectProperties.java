@@ -60,54 +60,54 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the name of this CMIS object (CMIS property
-     * <code>cmis:name<code>).
+     * <code>cmis:name</code>).
      */
     String getName();
 
     /**
      * Returns the user who created this CMIS object (CMIS property
-     * <code>cmis:createdBy<code>).
+     * <code>cmis:createdBy</code>).
      */
     String getCreatedBy();
 
     /**
      * Returns the timestamp when this CMIS object has been created (CMIS
-     * property <code>cmis:creationDate<code>).
+     * property <code>cmis:creationDate</code>).
      */
     GregorianCalendar getCreationDate();
 
     /**
      * Returns the user who modified this CMIS object (CMIS property
-     * <code>cmis:lastModifiedBy<code>).
+     * <code>cmis:lastModifiedBy</code>).
      */
     String getLastModifiedBy();
 
     /**
      * Returns the timestamp when this CMIS object has been modified (CMIS
-     * property <code>cmis:lastModificationDate<code>).
+     * property <code>cmis:lastModificationDate</code>).
      */
     GregorianCalendar getLastModificationDate();
 
     /**
      * Returns the id of the base type of this CMIS object (CMIS property
-     * <code>cmis:baseTypeId<code>).
+     * <code>cmis:baseTypeId</code>).
      */
     BaseTypeId getBaseTypeId();
 
     /**
      * Returns the base type of this CMIS object (object type identified by
-     * <code>cmis:baseTypeId<code>).
+     * <code>cmis:baseTypeId</code>).
      */
     ObjectType getBaseType();
 
     /**
      * Returns the type of this CMIS object (object type identified by
-     * <code>cmis:objectTypeId<code>).
+     * <code>cmis:objectTypeId</code>).
      */
     ObjectType getType();
 
     /**
-     * Returns the change token (CMIS property <code>cmis:changeToken<code>).
+     * Returns the change token (CMIS property <code>cmis:changeToken</code>).
      */
     String getChangeToken();
 }

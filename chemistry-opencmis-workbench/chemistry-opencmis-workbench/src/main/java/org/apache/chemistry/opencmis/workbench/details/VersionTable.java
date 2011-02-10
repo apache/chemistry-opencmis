@@ -32,8 +32,8 @@ public class VersionTable extends AbstractDetailsTable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] COLUMN_NAMES = { "Name", "Label", "Major", "Id" };
-    private static final int[] COLUMN_WIDTHS = { 200, 200, 80, 400 };
+    private static final String[] COLUMN_NAMES = { "Name", "Label", "Latest", "Major", "Latest Major", "Id", "Filename", "MIME Type", "Length" };
+    private static final int[] COLUMN_WIDTHS = { 200, 200, 50, 50, 50, 400, 200, 100, 100 };
 
     private static final int OLD = 60 * 1000;
 
@@ -78,12 +78,34 @@ public class VersionTable extends AbstractDetailsTable {
         case 1:
             return version.getVersionLabel();
         case 2:
-            return version.isMajorVersion();
+            return version.isLatestVersion();
         case 3:
+            return version.isMajorVersion();
+        case 4:
+            return version.isLatestMajorVersion();
+        case 5:
             return version.getId();
+        case 6:
+            return version.getContentStreamFileName();
+        case 7:
+            return version.getContentStreamMimeType();
+        case 8:
+            return version.getContentStreamLength() == -1 ? null : version.getContentStreamLength();
         }
 
         return null;
+    }
+
+    @Override
+    public Class<?> getDetailColumClass(int columnIndex) {
+        if((columnIndex == 2) || (columnIndex == 3) || (columnIndex == 4)) {
+            return Boolean.class;            
+        }
+        else if (columnIndex == 8) {
+            return Long.class;
+        }
+
+        return super.getDetailColumClass(columnIndex);
     }
 
     private List<Document> getVersions() {

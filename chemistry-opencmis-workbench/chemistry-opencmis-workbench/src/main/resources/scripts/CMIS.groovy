@@ -79,6 +79,11 @@ class CMIS {
     void printProperties(id) {
         CmisObject object = getObject(id)
         
+        if(object.getProperties() == null || object.getProperties().isEmpty()) {
+            println "- no properties (???) -"
+            return
+        }
+        
         for(Property prop: object.getProperties()) {
             printProperty(prop)
         }
@@ -86,6 +91,123 @@ class CMIS {
     
     void printProperty(Property prop) {
         println prop.getId() + ": " + prop.getValuesAsString()
+    }
+    
+    void printAllowableActions(id) {
+        CmisObject object = getObject(id)
+        
+        if(object.getAllowableActions() == null || 
+            object.getAllowableActions().getAllowableActions() == null || 
+            object.getAllowableActions().getAllowableActions().isEmpty()) {
+            println "- no allowable actions -"
+            return
+        }
+        
+        for(Action action: object.getAllowableActions().getAllowableActions()) {
+            println action.value()
+        }
+    }
+    
+    void printVersions(id) {
+         Document doc = getDocument(id)
+        
+         List<Document> versions = doc.getAllVersions()
+         
+         if(versions == null || versions.isEmpty()) {
+             println "- no versions -"
+             return
+         }
+         
+         for(Document version: doc.getAllVersions()) {
+             println(version.getVersionLabel() + " (" + version.getId() +") [" + version.getType().getId() + "]")
+         }
+    }
+    
+    void printChildren(id) {
+        Folder folder = getFolder(id)
+       
+        boolean hasChildren = false
+        for(CmisObject child: folder.getChildren()) {
+            println(child.getName() + " (" + child.getId() +") [" + child.getType().getId() + "]")
+            hasChildren = true;
+        }
+        
+        if(!hasChildren) {
+            println "- no children -"
+        }
+    }
+    
+    void printRelationships(id) {
+        CmisObject object = getObject(id)
+           
+        boolean hasRelationships = false
+        for(CmisObject rel: object.getRelationships()) {
+            println(rel.getName() + " (" + rel.getId() +") [" + rel.getType().getId() + "]")
+            hasRelationships = true
+        }
+        
+        if(!hasRelationships) {
+            println "- no relationships -"
+        }
+    }
+    
+    void printRenditions(id) {
+         Document doc = getDocument(id)
+        
+         List<Rendition> renditons = doc.getRenditions()
+         
+         if(renditons == null || renditons.isEmpty()) {
+             println "- no renditions -"
+             return
+         }
+         
+         for(Rendition rendition: renditons) {
+             println(rendition.getTitle() + " (MIME type: " + rendition.getMimeType() + ", length: "  + rendition.getLength() + " bytes)")
+         }
+    }
+    
+    void printObjectSummary(id) {
+        CmisObject object = getObject(id)
+        
+        println "Name:        " + object.getName()
+        println "Object Id:   " + object.getId()
+        println "Object Type: " + object.getType().getId()
+        println ""
+        println "--------------------------------------------------"
+        println "Properties:"
+        println "--------------------------------------------------"
+        printProperties(object)
+        println ""
+        println "--------------------------------------------------"
+        println "Allowable Actions:"
+        println "--------------------------------------------------"
+        printAllowableActions(object)
+        println ""
+        println "--------------------------------------------------"
+        println "Relationships:"
+        println "--------------------------------------------------"
+        printRelationships(object)
+        
+        if(object instanceof Document) {
+            println ""
+            println "--------------------------------------------------"
+            println "Versions:"
+            println "--------------------------------------------------"
+            printVersions(object)
+            println ""
+            println "--------------------------------------------------"
+            println "Renditions:"
+            println "--------------------------------------------------"
+            printRenditions(object)
+        }
+        
+        if(object instanceof Folder) {
+            println ""
+            println "--------------------------------------------------"
+            println "Children:"
+            println "--------------------------------------------------"
+            printChildren(id)
+        }
     }
     
     void download(id, destination) {

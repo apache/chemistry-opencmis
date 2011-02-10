@@ -23,3 +23,4 @@ import org.apache.chemistry.opencmis.client.api.*
 
 // def cmis = new scripts.CMIS(session)
 // println session.repositoryInfo.name
+// cmis.printObjectSummary "/"
