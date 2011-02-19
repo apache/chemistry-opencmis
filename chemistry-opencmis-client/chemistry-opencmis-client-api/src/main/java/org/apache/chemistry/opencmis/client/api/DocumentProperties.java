@@ -26,88 +26,88 @@ package org.apache.chemistry.opencmis.client.api;
 public interface DocumentProperties {
 
     /**
-     * Returns <code>true<code> if this CMIS object is immutable (CMIS property
-     * <code>cmis:isImmutable<code>).
+     * Returns <code>true</code> if this CMIS object is immutable (CMIS property
+     * <code>cmis:isImmutable</code>).
      */
     Boolean isImmutable();
 
     /**
      * Returns if this CMIS object is the latest version (CMIS property
-     * <code>cmis:isLatestVersion<code>).
+     * <code>cmis:isLatestVersion</code>).
      */
     Boolean isLatestVersion();
 
     /**
      * Returns
      * <code>true<code> if this CMIS object is the latest version (CMIS property
-     * <code>cmis:isMajorVersion<code>).
+     * <code>cmis:isMajorVersion</code>).
      */
     Boolean isMajorVersion();
 
     /**
      * Returns
-     * <code>true<code> if this CMIS object is the latest major version (CMIS property
-     * <code>cmis:isLatestMajorVersion<code>).
+     * <code>true</code> if this CMIS object is the latest major version (CMIS property
+     * <code>cmis:isLatestMajorVersion</code>).
      */
     Boolean isLatestMajorVersion();
 
     /**
-     * Returns the version label (CMIS property <code>cmis:versionLabel<code>).
+     * Returns the version label (CMIS property <code>cmis:versionLabel</code>).
      */
     String getVersionLabel();
 
     /**
      * Returns the version series id (CMIS property
-     * <code>cmis:versionSeriesId<code>).
+     * <code>cmis:versionSeriesId</code>).
      */
     String getVersionSeriesId();
 
     /**
      * Returns
-     * <code>true<code> if this version series is checked out (CMIS property
-     * <code>cmis:isVersionSeriesCheckedOut<code>).
+     * <code>true</code> if this version series is checked out (CMIS property
+     * <code>cmis:isVersionSeriesCheckedOut</code>).
      */
     Boolean isVersionSeriesCheckedOut();
 
     /**
      * Returns the user who checked out this version series (CMIS property
-     * <code>cmis:versionSeriesCheckedOutBy<code>).
+     * <code>cmis:versionSeriesCheckedOutBy</code>).
      */
     String getVersionSeriesCheckedOutBy();
 
     /**
      * Returns the PWC id of this version series (CMIS property
-     * <code>cmis:versionSeriesCheckedOutId<code>).
+     * <code>cmis:versionSeriesCheckedOutId</code>).
      */
     String getVersionSeriesCheckedOutId();
 
     /**
      * Returns the checkin comment (CMIS property
-     * <code>cmis:checkinComment<code>).
+     * <code>cmis:checkinComment</code>).
      */
     String getCheckinComment();
 
     /**
      * Returns the content stream length or -1 if the document has no content
-     * (CMIS property <code>cmis:contentStreamLength<code>).
+     * (CMIS property <code>cmis:contentStreamLength</code>).
      */
     long getContentStreamLength();
 
     /**
      * Returns the content stream MIME type or <code>null</code> if the document
-     * has no content (CMIS property <code>cmis:contentStreamMimeType<code>).
+     * has no content (CMIS property <code>cmis:contentStreamMimeType</code>).
      */
     String getContentStreamMimeType();
 
     /**
      * Returns the content stream filename or <code>null</code> if the document
-     * has no content (CMIS property <code>cmis:contentStreamFileName<code>).
+     * has no content (CMIS property <code>cmis:contentStreamFileName</code>).
      */
     String getContentStreamFileName();
 
     /**
      * Returns the content stream id or <code>null</code> if the document has no
-     * content (CMIS property <code>cmis:contentStreamId<code>).
+     * content (CMIS property <code>cmis:contentStreamId</code>).
      */
     String getContentStreamId();
 }

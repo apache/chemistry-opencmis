@@ -35,21 +35,20 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
- * A session is a connection to a CMIS repository with a specific authenticated
- * user.
- *
+ * A session is a connection to a CMIS repository with a specific user.
+ * 
  * <p>
- * Not all operations are supported by the connected repository. Either OpenCMIS
- * or the repository will throw an exception if an unsupported operation is
- * called. The capabilities of the repository can be discover by evaluating the
- * repository info (see {@link #getRepositoryInfo()}).
+ * Not all operations might be supported the connected repository. Either
+ * OpenCMIS or the repository will throw an exception if an unsupported
+ * operation is called. The capabilities of the repository can be discovered by
+ * evaluating the repository info (see {@link #getRepositoryInfo()}).
  * </p>
- *
+ * 
  * <p>
  * Almost all methods might throw exceptions derived from
  * {@link CmisBaseException} which is a runtime exception!
  * </p>
- *
+ * 
  * <p>
  * (Please refer to the <a
  * href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS specification</a>
@@ -81,7 +80,7 @@ public interface Session {
 
     /**
      * Sets the current session parameters for filtering, paging and caching.
-     *
+     * 
      * @param context
      *            the <code>OperationContext</code> to be used for the session;
      *            if <code>null</code>, a default context is used
@@ -95,7 +94,7 @@ public interface Session {
 
     /**
      * Creates a new operation context object with the given properties.
-     *
+     * 
      * @see OperationContext
      */
     OperationContext createOperationContext(Set<String> filter, boolean includeAcls, boolean includeAllowableActions,
@@ -160,7 +159,7 @@ public interface Session {
 
     /**
      * Returns all checked out documents.
-     *
+     * 
      * @see Folder#getCheckedOutDocs()
      */
     ItemIterable<Document> getCheckedOutDocs();
@@ -168,7 +167,7 @@ public interface Session {
     /**
      * Returns all checked out documents with the given {@link OperationContext}
      * .
-     *
+     * 
      * @see Folder#getCheckedOutDocs(OperationContext)
      */
     ItemIterable<Document> getCheckedOutDocs(OperationContext context);
@@ -177,7 +176,7 @@ public interface Session {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the cache is turned off per default {@link OperationContext}, it
      * will load the object from the repository and puts it into the cache.
-     *
+     * 
      * @param objectId
      *            the object id
      */
@@ -187,7 +186,7 @@ public interface Session {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the given {@link OperationContext} has caching turned off, it
      * will load the object from the repository and puts it into the cache.
-     *
+     * 
      * @param objectId
      *            the object id
      * @param context
@@ -199,7 +198,7 @@ public interface Session {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the cache is turned off per default {@link OperationContext}, it
      * will load the object from the repository and puts it into the cache.
-     *
+     * 
      * @param path
      *            the object path
      */
@@ -209,7 +208,7 @@ public interface Session {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the given {@link OperationContext} has caching turned off, it
      * will load the object from the repository and puts it into the cache.
-     *
+     * 
      * @param path
      *            the object path
      * @param context
@@ -221,7 +220,7 @@ public interface Session {
 
     /**
      * Sends a query to the repository. (See CMIS spec "2.1.10 Query".)
-     *
+     * 
      * @param statement
      *            the query statement (CMIS query language)
      * @param searchAllVersions
@@ -233,7 +232,7 @@ public interface Session {
     /**
      * Sends a query to the repository using the given {@link OperationContext}.
      * (See CMIS spec "2.1.10 Query".)
-     *
+     * 
      * @param statement
      *            the query statement (CMIS query language)
      * @param searchAllVersions
@@ -246,7 +245,7 @@ public interface Session {
 
     /**
      * Returns the content changes.
-     *
+     * 
      * @param changeLogToken
      *            the change log token to start from or <code>null</code>
      * @param includeProperties
@@ -259,7 +258,7 @@ public interface Session {
 
     /**
      * Returns the content changes.
-     *
+     * 
      * @param changeLogToken
      *            the change log token to start from or <code>null</code>
      * @param includeProperties
@@ -277,9 +276,9 @@ public interface Session {
 
     /**
      * Creates a new document.
-     *
+     * 
      * @return the object id of the new document
-     *
+     * 
      * @see Folder#createDocument(Map, ContentStream, VersioningState, List,
      *      List, List, OperationContext)
      */
@@ -288,9 +287,9 @@ public interface Session {
 
     /**
      * Creates a new document.
-     *
+     * 
      * @return the object id of the new document
-     *
+     * 
      * @see Folder#createDocument(Map, ContentStream, VersioningState, List,
      *      List, List, OperationContext)
      */
@@ -299,9 +298,9 @@ public interface Session {
 
     /**
      * Creates a new document from a source document.
-     *
+     * 
      * @return the object id of the new document
-     *
+     * 
      * @see Folder#createDocumentFromSource(ObjectId, Map, VersioningState,
      *      List, List, List, OperationContext)
      */
@@ -310,9 +309,9 @@ public interface Session {
 
     /**
      * Creates a new document from a source document.
-     *
+     * 
      * @return the object id of the new document
-     *
+     * 
      * @see Folder#createDocumentFromSource(ObjectId, Map, VersioningState,
      *      List, List, List, OperationContext)
      */
@@ -321,9 +320,9 @@ public interface Session {
 
     /**
      * Creates a new folder.
-     *
+     * 
      * @return the object id of the new folder
-     *
+     * 
      * @see Folder#createFolder(Map, List, List, List, OperationContext)
      */
     ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
@@ -331,18 +330,18 @@ public interface Session {
 
     /**
      * Creates a new folder.
-     *
+     * 
      * @return the object id of the new folder
-     *
+     * 
      * @see Folder#createFolder(Map, List, List, List, OperationContext)
      */
     ObjectId createFolder(Map<String, ?> properties, ObjectId folderId);
 
     /**
      * Creates a new policy.
-     *
+     * 
      * @return the object id of the new policy
-     *
+     * 
      * @see Folder#createPolicy(Map, List, List, List, OperationContext)
      */
     ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
@@ -350,16 +349,16 @@ public interface Session {
 
     /**
      * Creates a new policy.
-     *
+     * 
      * @return the object id of the new policy
-     *
+     * 
      * @see Folder#createPolicy(Map, List, List, List, OperationContext)
      */
     ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId);
 
     /**
      * Creates a new relationship.
-     *
+     * 
      * @return the object id of the new relationship
      */
     ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
@@ -367,7 +366,7 @@ public interface Session {
 
     /**
      * Creates a new relationship.
-     *
+     * 
      * @return the object id of the new relationship
      */
     ObjectId createRelationship(Map<String, ?> properties);

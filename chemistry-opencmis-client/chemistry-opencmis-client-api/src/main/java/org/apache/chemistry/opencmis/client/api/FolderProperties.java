@@ -29,7 +29,7 @@ public interface FolderProperties {
     /**
      * Returns the list of the allowed object types in this folder (CMIS
      * property
-     * <code>cmis:allowedChildObjectTypeIds<code>). If the list is empty or <code>null</code>
+     * <code>cmis:allowedChildObjectTypeIds</code>). If the list is empty or <code>null</code>
      * all object types are allowed.
      */
     List<ObjectType> getAllowedChildObjectTypes();
