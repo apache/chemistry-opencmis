@@ -61,17 +61,20 @@ public class BrowseServlet extends HttpServlet {
 
     private static final String CONTEXT_PREFIX = "{ctx}";
     private static final String PARAM_URL = "url";
+    private static final String PARAM_OVERRIDE_STYLESHEET = "overrideStylesheet";
     private static final int PARAM_URL_MIN_LEN = PARAM_URL.length() + "=".length() + "http".length() + "://".length()
             + 1;
     private static final String INIT_PARAM_AUXROOT = "auxroot";
     private static final String INIT_PARAM_ALLOW = "allow";
     private static final String INIT_PARAM_STYLESHEET = "stylesheet:";
+    private static final String INIT_PARAM_OVERRIDE_STYLESHEET = "override-stylesheet:";
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
     private String fAuxRoot = "";
     private String fAllow = ".*";
     private Map<String, Source> fStyleSheets;
+    private Map<String, Source> fOverrideStyleSheets;
 
     /**
      * Initializes the browser servlet.
@@ -80,6 +83,7 @@ public class BrowseServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         fStyleSheets = new HashMap<String, Source>();
+        fOverrideStyleSheets = new HashMap<String, Source>();
 
         DocumentBuilder builder = null;
         try {
@@ -94,17 +98,25 @@ public class BrowseServlet extends HttpServlet {
         Enumeration<String> initParams = config.getInitParameterNames();
         while (initParams.hasMoreElements()) {
             String param = initParams.nextElement();
-            if (param.startsWith(INIT_PARAM_STYLESHEET)) {
-                String contentType = param.substring(INIT_PARAM_STYLESHEET.length());
-                String stylesheetFileName = config.getInitParameter(param);
+            String stylesheetKey = null;
+            boolean isOverride = false;
 
+            if (param.startsWith(INIT_PARAM_STYLESHEET)) {
+                stylesheetKey = param.substring(INIT_PARAM_STYLESHEET.length());
+            } else if (param.startsWith(INIT_PARAM_OVERRIDE_STYLESHEET)) {
+                stylesheetKey = param.substring(INIT_PARAM_OVERRIDE_STYLESHEET.length());
+                isOverride = true;
+            }
+
+            if (stylesheetKey != null) {
+                String stylesheetFileName = config.getInitParameter(param);
                 InputStream stream = config.getServletContext().getResourceAsStream(stylesheetFileName);
                 if (stream != null) {
                     try {
                         Document xslDoc = builder.parse(stream);
-                        addStylesheet(contentType, new DOMSource(xslDoc));
+                        addStylesheet(stylesheetKey, new DOMSource(xslDoc), isOverride);
 
-                        log.info("Stylesheet: '" + contentType + "' -> '" + stylesheetFileName + "'");
+                        log.info("Stylesheet: '" + stylesheetKey + "' -> '" + stylesheetFileName + "'");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -130,21 +142,41 @@ public class BrowseServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if ((req.getQueryString() == null) || (!req.getQueryString().startsWith(PARAM_URL + "="))
-                || (req.getQueryString().length() < PARAM_URL_MIN_LEN)) {
+        String browseUrl = null;
+        String overrideStylesheet = null;
+
+        // The url parameter must come first!
+        String queryString = req.getQueryString();
+
+        if ((queryString != null) && (queryString.startsWith(PARAM_URL))) {
+            int urlEnd = queryString.indexOf(PARAM_OVERRIDE_STYLESHEET + "=");
+            if (urlEnd == -1) {
+                urlEnd = queryString.length();
+            } else {
+                overrideStylesheet = queryString.substring(urlEnd + PARAM_OVERRIDE_STYLESHEET.length() + 1);
+                --urlEnd;
+            }
+
+            browseUrl = queryString.substring(PARAM_URL.length() + 1, urlEnd);
+
+            if (browseUrl.length() < PARAM_URL_MIN_LEN) {
+                browseUrl = null;
+            }
+        }
+
+        if (browseUrl == null) {
             printInput(req, resp);
             return;
         }
 
-        doBrowse(req, resp);
+        doBrowse(req, resp, browseUrl, overrideStylesheet);
     }
 
     /**
      * Main method of the browser.
      */
-    protected void doBrowse(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String browseUrl = req.getQueryString().substring(PARAM_URL.length() + 1);
-
+    protected void doBrowse(HttpServletRequest req, HttpServletResponse resp, String browseUrl,
+            String overrideStylesheet) throws ServletException, IOException {
         // check if decoding is necessary
         // (if the char after 'http' or 'https' is not a colon, then it must be
         // decoded)
@@ -184,7 +216,7 @@ public class BrowseServlet extends HttpServlet {
             }
 
             // find stylesheet
-            Source stylesheet = getStylesheet(conn.getContentType());
+            Source stylesheet = getStylesheet(conn.getContentType(), overrideStylesheet);
 
             OutputStream out = null;
             InputStream in = new BufferedInputStream(conn.getInputStream(), BUFFER_SIZE);
@@ -205,6 +237,7 @@ public class BrowseServlet extends HttpServlet {
                 Transformer t = f.newTransformer(stylesheet);
                 t.setParameter("browseUrl", getServletUrl(req) + "?" + PARAM_URL + "=");
                 t.setParameter("auxRoot", getAuxRoot(req, fAuxRoot));
+                t.setParameter("browseOverrideStylesheet", "&" + PARAM_OVERRIDE_STYLESHEET + "=");
 
                 resp.setContentType("text/html");
                 out = new BufferedOutputStream(resp.getOutputStream(), BUFFER_SIZE);
@@ -235,35 +268,49 @@ public class BrowseServlet extends HttpServlet {
     /**
      * Assigns a stylesheet to a content type.
      */
-    private void addStylesheet(String contentType, Source source) {
+    private void addStylesheet(String contentType, Source source, boolean override) {
         if ((contentType == null) || (source == null)) {
             return;
         }
 
-        fStyleSheets.put(contentType.trim().toLowerCase(), source);
+        if (override) {
+            fOverrideStyleSheets.put(contentType.trim().toLowerCase(), source);
+        } else {
+            fStyleSheets.put(contentType.trim().toLowerCase(), source);
+        }
     }
 
     /**
-     * Returns the stylesheet for the given content type or <code>null</code> if
-     * no stylesheet is assigned to content type.
+     * Returns the stylesheet for the given override stylesheet, if there is is
+     * not override stylesheet given then the stylesheet for the given content
+     * type or <code>null</code> if no stylesheet is assigned to content type.
      */
-    private Source getStylesheet(String contentType) {
+    private Source getStylesheet(String contentType, String overrideStylesheet) {
         if (contentType == null) {
             return null;
         }
 
-        String[] ctp = contentType.trim().toLowerCase().split(";");
         Source source = null;
 
-        StringBuilder match = new StringBuilder();
-        int i = 0;
-        while (source == null && i < ctp.length) {
-            if (i > 0) {
-                match.append(";");
+        // First check if there is an override given and it has a match.
+        if (overrideStylesheet != null && overrideStylesheet.length() > 0) {
+            source = fOverrideStyleSheets.get(overrideStylesheet);
+        }
+
+        // If there is not match then check the content type map.
+        if (source == null) {
+            String[] ctp = contentType.trim().toLowerCase().split(";");
+
+            StringBuilder match = new StringBuilder();
+            int i = 0;
+            while (source == null && i < ctp.length) {
+                if (i > 0) {
+                    match.append(";");
+                }
+                match.append(ctp[i]);
+                source = fStyleSheets.get(match.toString());
+                i++;
             }
-            match.append(ctp[i]);
-            source = fStyleSheets.get(match.toString());
-            i++;
         }
 
         return source;

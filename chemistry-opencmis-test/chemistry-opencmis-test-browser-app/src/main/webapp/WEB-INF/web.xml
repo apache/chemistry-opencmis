@@ -62,8 +62,20 @@
 			<param-name>stylesheet:application/cmisacl+xml</param-name>
 			<param-value>/WEB-INF/stylesheets/acl.xsl</param-value>
 		</init-param>
+		<init-param>
+			<param-name>override-stylesheet:renditions</param-name>
+			<param-value>/WEB-INF/stylesheets/renditions.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>override-stylesheet:relationships</param-name>
+			<param-value>/WEB-INF/stylesheets/relationships.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>override-stylesheet:thumbnails</param-name>
+			<param-value>/WEB-INF/stylesheets/thumbnails.xsl</param-value>
+		</init-param>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>browse</servlet-name>
 		<url-pattern>/browse</url-pattern>
