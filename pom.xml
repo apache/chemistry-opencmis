@@ -168,6 +168,7 @@
         <module>chemistry-opencmis-server/chemistry-opencmis-server-support</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-inmemory</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-fileshare</module>
+        <module>chemistry-opencmis-server/chemistry-opencmis-server-jcr</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-fit</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-tck</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-tools</module>
