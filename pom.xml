@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>7</version>
+        <version>9</version>
     </parent>
 
     <!-- Project Information -->
@@ -37,7 +37,7 @@
         <url>http://www.apache.org/</url>
     </organization>
 
-    <url>http://incubator.apache.org/chemistry/</url>
+    <url>http://chemistry.apache.org/</url>
     <ciManagement>
         <system>Hudson Zones Apache</system>
         <url>http://hudson.zones.apache.org/hudson/view/Chemistry/</url>
@@ -184,8 +184,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.source>1.5</maven.compile.source>
         <maven.compile.target>1.5</maven.compile.target>
-        <docs.start.url>http://incubator.apache.org/chemistry/index.html</docs.start.url>
-        <docs.download.directory>${project.build.directory}/site</docs.download.directory>
+        <docs.start.url>http://chemistry.apache.org/java/opencmis.html</docs.start.url>
+        <docs.download.directory>${project.build.directory}/downloaded-site</docs.download.directory>
         <parentBasedir>${project.basedir}</parentBasedir>
     </properties>
 
@@ -275,7 +275,6 @@
                 <version>2.3</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <filtering>false</filtering>
                 </configuration>
             </plugin>
             <plugin>
@@ -344,6 +343,34 @@
         </plugins>
     </build>
 
+
+    <repositories>
+        <repository>
+            <id>maven-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven 1</name>
+            <url>http://download.java.net/maven/1/</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven 2</name>
+            <url>http://download.java.net/maven/2/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven2-repository.dev.java.net</id>
+            <url>http://download.java.net/maven/2/</url>
+        </pluginRepository>
+       <pluginRepository>
+           <id>jboss-public</id>
+           <name>Jboss Repository for Maven 2</name>
+           <url>http://repository.jboss.org/maven2/</url>
+       </pluginRepository>
+
+    </pluginRepositories>
+
     <dependencies>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -376,9 +403,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
+                <inherited>false</inherited>
                 <configuration>
                     <aggregate>true</aggregate>
+                    <reportsDirectories>
+                        <reportsDirectory>${project.build.directory}/surefire-reports/</reportsDirectory>
+                        <reportsDirectory>${project.build.directory}/failsafe-reports/</reportsDirectory>
+                    </reportsDirectories>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -416,12 +453,12 @@
                                     <executable>wget</executable>
                                     <arguments>
                                         <argument>--directory-prefix=${docs.download.directory}</argument>
-                                        <argument>--domains=incubator.apache.org</argument>
-                                        <argumnet>--mirror</argumnet>
-                                        <argumnet>-k</argumnet>
-                                        <argumnet>-np</argumnet>
-                                        <argument>--include-directories=/chemistry </argument>
-                                        <argument>--exclude-directories=/chemistry/javadoc,/chemistry/maven-site</argument>
+                                        <argument>--domains=chemistry.apache.org</argument>
+                                        <argument>--mirror</argument>
+                                        <argument>-k</argument>
+                                        <argument>-np</argument>
+                                        <argument>--include-directories=/java/${version}</argument>
+                                        <argument>--exclude-directories=/java/${version}/javadoc/,/java/${version}/maven-site/</argument>
                                         <argument>${docs.start.url}</argument>
                                     </arguments>
                                 </configuration>
@@ -446,7 +483,7 @@
                     <!-- Assemblies the doc package -->
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.2-beta-5</version>
+                        <version>2.2.1</version>
                         <inherited>false</inherited>
                         <configuration>
                             <attach>true</attach>
@@ -457,7 +494,7 @@
                         </configuration>
                     </plugin>
                     <!--
-                        We want to package up license/incubator
+                        We want to package up licenses
                         resources in the JARs produced
                     -->
                     <plugin>
@@ -470,13 +507,13 @@
                                 </goals>
                                 <configuration>
                                     <resourceBundles>
-                                        <resourceBundle>org.apache.chemistry.resources:chemistry-jar-resource-bundle:1.0</resourceBundle>
+                                        <!-- resourceBundle>org.apache.chemistry.resources:chemistry-jar-resource-bundle:1.0</resourceBundle-->
                                         <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
                                     </resourceBundles>
                                     <supplementalModels>
                                         <supplementalModel>${parentBasedir}/src/main/appended-resources/supplemental-models.xml</supplementalModel>
                                     </supplementalModels>
-                                    <!-- runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot -->
+                                    <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
                                 </configuration>
                             </execution>
                         </executions>

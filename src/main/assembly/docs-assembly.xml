@@ -28,7 +28,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.build.directory}/site/incubator.apache.org/chemistry</directory>
+            <directory>${project.build.directory}/downloaded-site/chemistry.apache.org/java</directory>
             <outputDirectory>sitedocs</outputDirectory>
             <includes>
                 <include>**</include>

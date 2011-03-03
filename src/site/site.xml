@@ -24,7 +24,7 @@
 
 	<bannerRight>
 		<name>${project.name}</name>
-		<src>http://incubator.apache.org/images/apache-incubator-logo.png</src>
+		<src>http://chemistry.apache.org/images/apache-incubator-logo.png</src>
 		<href>http://www.apache.org/</href>
 	</bannerRight>
 	
@@ -34,25 +34,12 @@
 	</skin>
 
 	<body>
-		<menu ref="parent" />
-        <menu ref="modules" />
-		<menu ref="reports" />
+		<menu ref="parent" inherit="top" />
+        <menu ref="modules" inherit="top" />
+		<menu ref="reports" inherit="top" />
 
-		<menu name="OpenCMIS">
-			<item name="Introduction" href="index.html" />
-			<item name="How to build OpenCMIS" href="how-to-build.html" />
-		</menu>
-		<menu name="CMIS Client">
-			<item name="Client API" href="client-api.html" />
-			<item name="Client Binding Layer" href="client-binding.html" />
-		</menu>
-		<menu name="CMIS Server">
-			<item name="Server Framework" href="server.html" />
-			<item name="InMemory Repository" href="server-inmemory.html" />
-			<item name="FileShare Repository" href="server-fileshare.html" />
-		</menu>
-		<menu name="Tests and Tools">
-			<item name="CMIS Browser" href="browser.html" />
+		<menu name="Chemistry" inherit="top">
+			<item name="Main Website" href="http://chemistry.apache.org" />
 		</menu>
 	</body>
 </project>
