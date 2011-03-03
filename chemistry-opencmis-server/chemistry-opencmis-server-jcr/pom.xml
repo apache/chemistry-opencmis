@@ -22,6 +22,10 @@
     <artifactId>chemistry-opencmis-server-jcr</artifactId>
     <name>OpenCMIS JCR Server Implementation</name>
     <packaging>war</packaging>
+
+    <properties>
+        <parentBasedir>../../</parentBasedir>
+    </properties>
     
     <build>
         <plugins>
