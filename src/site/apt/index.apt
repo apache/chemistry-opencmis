@@ -20,31 +20,20 @@
 ~~
 
   -----
-  OpenCMIS
+  Chemistry OpenCMIS
   -----
 
-OpenCMIS
+Chemistry OpenCMIS
   
-  OpenCMIS is an open source implementation of the 
-  {{{http://xml.coverpages.org/cmis.html}OASIS CMIS specification}}
+  OpenCMIS is an open source implementation of the  {{{http://xml.coverpages.org/cmis.html}OASIS CMIS specification}}
   for Java.
 
-  The project consists of the following parts:
-  
-  * <<CMIS Client>>
-  
-    * {{{./client-api.html}Client API}}
+  User and developer documentation for OpenCMIS is available in the main {{{http://chemistry.apache.org/java/opencmis.html}Chemistry website}}
 
-    * {{{./client-binding.html}Client Binding Layer}}
+  In this site you can find instead OpenCMIS developer information for this version (see top right corner) like:
 
-  * <<CMIS Server>>
-  
-    * {{{./server.html}Server Framework}}
-	
-    * {{{./server-inmemory.html}InMemory Test Repository}}
-	
-    * {{{./server-fileshare.html}FileShare Test Repository}}
-  
-  * <<Tests and Tools>>
-    
-	* {{{./browser.html}CMIS Browser}}
+  * Info for all OpenCMIS modules available in this release (see menu on the left)
+
+  * {{{./apidocs/index.html} Full JavaDocs}}
+
+  * {{{./surefire-report.html} Aggregated unit + integration test reports}} for the full OpenCMIS framework

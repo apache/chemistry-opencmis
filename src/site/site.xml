@@ -19,18 +19,31 @@
 -->
 <project name="OpenCMIS">
 
-	<publishDate position="right" />
-	<version position="left" />
+	<publishDate position="left" />
+	<version position="right" />
 
-	<bannerRight>
+	<bannerLeft>
 		<name>${project.name}</name>
-		<src>http://chemistry.apache.org/images/apache-incubator-logo.png</src>
-		<href>http://www.apache.org/</href>
+		<src>images/chemistry-logo.png</src>
+		<href>http://chemistry.apache.org/</href>
+	</bannerLeft>
+
+    <bannerRight>
+		<name>The Apache Software Foundation</name>
+		<src>images/apache-logo.gif</src>
+		<href>http://chemistry.apache.org/</href>
 	</bannerRight>
-	
+
+
+    <poweredBy>
+      <logo name="Maven" href="http://maven.apache.org/"
+            img="http://maven.apache.org/images/logos/maven-feather.png"/>
+    </poweredBy>
+
+
 	<skin>
 		<groupId>org.apache.maven.skins</groupId>
-		<artifactId>maven-classic-skin</artifactId>
+		<artifactId>maven-default-skin</artifactId>
 	</skin>
 
 	<body>
