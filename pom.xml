@@ -518,22 +518,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-remote-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>process</goal>
-                                </goals>
-                                <configuration>
-                                    <resourceBundles>
-                                        <!-- resourceBundle>org.apache.chemistry.resources:chemistry-jar-resource-bundle:1.0</resourceBundle-->
-                                        <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
-                                    </resourceBundles>
-                                    <supplementalModels>
-                                        <supplementalModel>${parentBasedir}/src/main/appended-resources/supplemental-models.xml</supplementalModel>
-                                    </supplementalModels>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <version>1.2</version>
+                        <configuration>
+                            <appendedResourcesDirectory>${parentBasedir}/src/main/appended-resources</appendedResourcesDirectory>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
