@@ -179,6 +179,8 @@ public interface Session {
      * 
      * @param objectId
      *            the object id
+     * 
+     * @see #getObject(String)
      */
     CmisObject getObject(ObjectId objectId);
 
@@ -191,8 +193,36 @@ public interface Session {
      *            the object id
      * @param context
      *            the {@link OperationContext} to use
+     * 
+     * @see #getObject(String, OperationContext)
      */
     CmisObject getObject(ObjectId objectId, OperationContext context);
+
+    /**
+     * Returns a CMIS object from the session cache. If the object is not in the
+     * cache or the cache is turned off per default {@link OperationContext}, it
+     * will load the object from the repository and puts it into the cache.
+     * 
+     * @param objectId
+     *            the object id
+     * 
+     * @see #getObject(ObjectId)
+     */
+    CmisObject getObject(String objectId);
+
+    /**
+     * Returns a CMIS object from the session cache. If the object is not in the
+     * cache or the given {@link OperationContext} has caching turned off, it
+     * will load the object from the repository and puts it into the cache.
+     * 
+     * @param objectId
+     *            the object id
+     * @param context
+     *            the {@link OperationContext} to use
+     * 
+     * @see #getObject(ObjectId, OperationContext)
+     */
+    CmisObject getObject(String objectId, OperationContext context);
 
     /**
      * Returns a CMIS object from the session cache. If the object is not in the

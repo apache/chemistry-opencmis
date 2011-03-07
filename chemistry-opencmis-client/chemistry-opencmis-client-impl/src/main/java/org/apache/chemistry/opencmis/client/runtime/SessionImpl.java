@@ -353,6 +353,18 @@ public class SessionImpl implements Session, Serializable {
         if ((objectId == null) || (objectId.getId() == null)) {
             throw new IllegalArgumentException("Object Id must be set!");
         }
+
+        return getObject(objectId.getId(), context);
+    }
+
+    public CmisObject getObject(String objectId) {
+        return getObject(objectId, getDefaultContext());
+    }
+
+    public CmisObject getObject(String objectId, OperationContext context) {
+        if (objectId == null) {
+            throw new IllegalArgumentException("Object Id must be set!");
+        }
         if (context == null) {
             throw new IllegalArgumentException("Operation context must be set!");
         }
@@ -361,14 +373,14 @@ public class SessionImpl implements Session, Serializable {
 
         // ask the cache first
         if (context.isCacheEnabled()) {
-            result = this.cache.getById(objectId.getId(), context.getCacheKey());
+            result = this.cache.getById(objectId, context.getCacheKey());
             if (result != null) {
                 return result;
             }
         }
 
         // get the object
-        ObjectData objectData = this.binding.getObjectService().getObject(getRepositoryId(), objectId.getId(),
+        ObjectData objectData = this.binding.getObjectService().getObject(getRepositoryId(), objectId,
                 context.getFilterString(), context.isIncludeAllowableActions(), context.getIncludeRelationships(),
                 context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(), null);
 
