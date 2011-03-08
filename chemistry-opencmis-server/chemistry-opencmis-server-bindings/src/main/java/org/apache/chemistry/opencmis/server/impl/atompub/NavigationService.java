@@ -408,7 +408,7 @@ public final class NavigationService {
     public static void getCheckedOutDocs(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String folderId = getStringParameter(request, Constants.PARAM_ID);
+        String folderId = getStringParameter(request, Constants.PARAM_FOLDER_ID);
         String filter = getStringParameter(request, Constants.PARAM_FILTER);
         String orderBy = getStringParameter(request, Constants.PARAM_ORDER_BY);
         Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
