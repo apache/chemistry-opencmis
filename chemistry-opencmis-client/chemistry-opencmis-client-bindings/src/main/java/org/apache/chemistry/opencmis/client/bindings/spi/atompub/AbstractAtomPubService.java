@@ -73,7 +73,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 /**
  * Base class for all AtomPub clients.
  */
-public class AbstractAtomPubService {
+public class AbstractAtomPubService implements LinkAccess {
 
     protected enum IdentifierType {
         ID, PATH
@@ -154,7 +154,7 @@ public class AbstractAtomPubService {
      * Gets a link from the cache if it is there or loads it into the cache if
      * it is not there.
      */
-    protected String loadLink(String repositoryId, String id, String rel, String type) {
+    public String loadLink(String repositoryId, String id, String rel, String type) {
         String link = getLink(repositoryId, id, rel, type);
         if (link == null) {
             getObjectInternal(repositoryId, IdentifierType.ID, id, ReturnVersion.THIS, null, null, null, null, null,
@@ -163,6 +163,14 @@ public class AbstractAtomPubService {
         }
 
         return link;
+    }
+
+    /**
+     * Gets the content link from the cache if it is there or loads it into the
+     * cache if it is not there.
+     */
+    public String loadContentLink(String repositoryId, String id) {
+        return loadLink(repositoryId, id, AtomPubParser.LINK_REL_CONTENT, null);
     }
 
     /**
@@ -511,7 +519,8 @@ public class AbstractAtomPubService {
      * Performs a PUT on an URL, checks the response code and returns the
      * result.
      */
-    protected HttpUtils.Response put(UrlBuilder url, String contentType, Map<String, String> headers, HttpUtils.Output writer) {
+    protected HttpUtils.Response put(UrlBuilder url, String contentType, Map<String, String> headers,
+            HttpUtils.Output writer) {
         // make the call
         HttpUtils.Response resp = HttpUtils.invokePUT(url, contentType, headers, writer, session);
 
