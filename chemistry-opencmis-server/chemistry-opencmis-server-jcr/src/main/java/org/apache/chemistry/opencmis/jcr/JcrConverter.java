@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalImp
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
+import org.apache.chemistry.opencmis.jcr.util.Util;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -45,15 +46,40 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
+import javax.jcr.nodetype.NodeType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+/**
+ * Utility class providing methods for converting various entities from/to their respective representation
+ * in JCR/CMIS.
+ */
 public final class JcrConverter {
     private JcrConverter() {}
 
+    /**
+     * Escapes all illegal JCR name characters of a string.
+     * The encoding is loosely modeled after URI encoding, but only encodes
+     * the characters it absolutely needs to in order to make the resulting
+     * string a valid JCR name.
+     * <p/>
+     * QName EBNF:<br>
+     * <pre>
+     * simplename ::= onecharsimplename | twocharsimplename | threeormorecharname
+     * onecharsimplename ::= (* Any Unicode character except: '.', '/', ':', '[', ']', '*', '|' or any whitespace character *)
+     * twocharsimplename ::= '.' onecharsimplename | onecharsimplename '.' | onecharsimplename onecharsimplename
+     * threeormorecharname ::= nonspace string nonspace
+     * string ::= char | string char
+     * char ::= nonspace | ' '
+     * nonspace ::= (* Any Unicode character except: '/', ':', '[', ']', '*', '|' or any whitespace character *)
+     * </pre>
+     *
+     * @param cmisName the name to escape
+     * @return the escaped name
+     */    
     public static String toJcrName(String cmisName) {
         StringBuffer buffer = new StringBuffer(cmisName.length() * 2);
         for (int i = 0; i < cmisName.length(); i++) {
@@ -71,10 +97,6 @@ public final class JcrConverter {
             }
         }
         return buffer.toString();
-    }
-
-    public static String toCmisQueryName(String name) {
-        return name; // fixme implement toQueryName
     }
 
     /**
@@ -101,6 +123,13 @@ public final class JcrConverter {
         return true;
     }
 
+    /**
+     * Convert a JCR <code>Property</code> to a CMIS <code>PropertyData</code>.
+     * 
+     * @param jcrProperty
+     * @return  
+     * @throws RepositoryException
+     */
     public static PropertyData<?> convert(Property jcrProperty) throws RepositoryException {
         AbstractPropertyData<?> propertyData;
 
@@ -158,14 +187,21 @@ public final class JcrConverter {
 
         propertyData.setDisplayName(jcrProperty.getName());
         propertyData.setLocalName(jcrProperty.getName());
-        propertyData.setQueryName(toCmisQueryName(jcrProperty.getName()));
+        propertyData.setQueryName(jcrProperty.getName());
         
         return propertyData;
     }
 
+    /**
+     * Set a property on a JCR node. 
+     *
+     * @param node  the node to set the property
+     * @param propertyData  the property to set
+     * @throws RepositoryException
+     */
     public static void setProperty(Node node, PropertyData<?> propertyData) throws RepositoryException {
-        int propertyType;
         Value[] values;
+        int propertyType;
 
         if (propertyData instanceof PropertyBoolean) {
             values = toValue((PropertyBoolean) propertyData, node.getSession().getValueFactory());
@@ -189,7 +225,7 @@ public final class JcrConverter {
         }
         else if (propertyData instanceof PropertyInteger) {
             values = toValue((PropertyInteger) propertyData, node.getSession().getValueFactory());
-            propertyType = PropertyType.LONG;
+            propertyType = PropertyType.DECIMAL;
         }
         else if (propertyData instanceof PropertyString) {
             values = toValue((PropertyString) propertyData, node.getSession().getValueFactory());
@@ -206,11 +242,11 @@ public final class JcrConverter {
         String id = propertyData.getId();
         String name;
         if (PropertyIds.NAME.equals(id)) {
-            node.addMixin("mix:title");
-            name = "jcr:title";
+            node.addMixin(NodeType.MIX_TITLE);
+            name = Property.JCR_TITLE;
         }
         else if (PropertyIds.CONTENT_STREAM_MIME_TYPE.equals(id)) {
-            name = "jcr:mimeType";
+            name = Property.JCR_MIMETYPE;
         }
         else {
             name = toJcrName(propertyData.getId());
@@ -224,19 +260,29 @@ public final class JcrConverter {
         }
     }
 
+    /**
+     * Remove a property from a JCR node
+     *
+     * @param node  the node from which to remove the property
+     * @param propertyData  the property to remove
+     * @throws RepositoryException
+     */
     public static void removeProperty(Node node, PropertyData<?> propertyData) throws RepositoryException {
         String id = propertyData.getId();
         String name = PropertyIds.NAME.equals(id)
-                ? "jcr:title" :
+                ? Property.JCR_TITLE :
                 toJcrName(propertyData.getId());
 
         if (node.hasProperty(name)) {
-            node.getProperty(name).remove();;
+            node.getProperty(name).remove();
         }
     }
 
     //------------------------------------------< private >---
 
+    /**
+     * Convert an array of <code>Value</code>s to a list of <code>String</code>s.
+     */
     private static List<String> toStrings(Value[] values) throws RepositoryException {
         ArrayList<String> strings = new ArrayList<String>(values.length);
 
@@ -247,6 +293,9 @@ public final class JcrConverter {
         return strings;
     }
 
+    /**
+     * Convert an array of <code>Value</code>s to a list of <code>BigInteger</code>s.
+     */
     private static List<BigInteger> toInts(Value[] values) throws RepositoryException {
         ArrayList<BigInteger> ints = new ArrayList<BigInteger>(values.length);
 
@@ -257,6 +306,9 @@ public final class JcrConverter {
         return ints;
     }
 
+    /**
+     * Convert an array of <code>Value</code>s to a list of <code>BigDecimal</code>s.
+     */
     private static List<BigDecimal> toDecs(Value[] values) throws RepositoryException {
         ArrayList<BigDecimal> decs = new ArrayList<BigDecimal>(values.length);
 
@@ -267,6 +319,9 @@ public final class JcrConverter {
         return decs;
     }
 
+    /**
+     * Convert an array of double <code>Value</code>s to a list of <code>BigInteger</code>s.
+     */
     private static List<BigDecimal> doublesToDecs(Value[] values) throws RepositoryException {
         ArrayList<BigDecimal> decs = new ArrayList<BigDecimal>(values.length);
 
@@ -277,6 +332,9 @@ public final class JcrConverter {
         return decs;
     }
 
+    /**
+     * Convert an array of <code>Value</code>s to a list of <code>Booleans</code>s.
+     */
     private static List<Boolean> toBools(Value[] values) throws RepositoryException {
         ArrayList<Boolean> bools = new ArrayList<Boolean>(values.length);
 
@@ -287,6 +345,9 @@ public final class JcrConverter {
         return bools;
     }
 
+    /**
+     * Convert an array of <code>Value</code>s to a list of <code>GregorianCalendar</code>s.
+     */
     private static List<GregorianCalendar> toDates(Value[] values) throws RepositoryException {
         ArrayList<GregorianCalendar> dates = new ArrayList<GregorianCalendar>(values.length);
 
@@ -297,6 +358,9 @@ public final class JcrConverter {
         return dates;
     }
 
+    /**
+     * Convert a <code>PropertyBoolean</code> to an array of JCR <code>Values</code>.
+     */
     private static Value[] toValue(PropertyBoolean propertyData, ValueFactory valueFactory) {
         List<Boolean> values = propertyData.getValues();
         if (values == null) {
@@ -312,6 +376,9 @@ public final class JcrConverter {
         return result;
     }
 
+    /**
+     * Convert a <code>PropertyDateTime</code> to an array of JCR <code>Values</code>.
+     */
     private static Value[] toValue(PropertyDateTime propertyData, ValueFactory valueFactory) {
         List<GregorianCalendar> values = propertyData.getValues();
         if (values == null) {
@@ -327,6 +394,9 @@ public final class JcrConverter {
         return result;
     }
 
+    /**
+     * Convert a <code>PropertyDecimal</code> to an array of JCR <code>Values</code>.
+     */
     private static Value[] toValue(PropertyDecimal propertyData, ValueFactory valueFactory) {
         List<BigDecimal> values = propertyData.getValues();
         if (values == null) {
@@ -342,6 +412,9 @@ public final class JcrConverter {
         return result;
     }
 
+    /**
+     * Convert a <code>PropertyHtml</code> to an array of JCR <code>Values</code>.
+     */
     private static Value[] toValue(PropertyHtml propertyData, ValueFactory valueFactory) {
         List<String> values = propertyData.getValues();
         if (values == null) {
@@ -357,6 +430,9 @@ public final class JcrConverter {
         return result;
     }
 
+    /**
+     * Convert a <code>PropertyId</code> to an array of JCR <code>Values</code>.
+     */
     private static Value[] toValue(PropertyId propertyData, ValueFactory valueFactory) {
         List<String> values = propertyData.getValues();
         if (values == null) {
@@ -372,6 +448,9 @@ public final class JcrConverter {
         return result;
     }
 
+    /**
+     * Convert a <code>PropertyInteger</code> to an array of JCR <code>Values</code>.
+     */
     private static Value[] toValue(PropertyInteger propertyData, ValueFactory valueFactory) {
         List<BigInteger> values = propertyData.getValues();
         if (values == null) {
@@ -387,6 +466,9 @@ public final class JcrConverter {
         return result;
     }
 
+    /**
+     * Convert a <code>PropertyString</code> to an array of JCR <code>Values</code>.
+     */
     private static Value[] toValue(PropertyString propertyData, ValueFactory valueFactory) {
         List<String> values = propertyData.getValues();
         if (values == null) {
@@ -402,6 +484,9 @@ public final class JcrConverter {
         return result;
     }
 
+    /**
+     * Convert a <code>PropertyUri</code> to an array of JCR <code>Values</code>.
+     */
     private static Value[] toValue(PropertyUri propertyData, ValueFactory valueFactory) throws ValueFormatException {
         List<String> values = propertyData.getValues();
         if (values == null) {

@@ -23,6 +23,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ * A {@link CmisServiceFactory} implementation which returns {@link JcrService} instances.  
+ */
 public class JcrServiceFactory extends AbstractServiceFactory {
     private static final Log log = LogFactory.getLog(JcrServiceFactory.class);
 
@@ -58,7 +62,7 @@ public class JcrServiceFactory extends AbstractServiceFactory {
     public void init(Map<String, String> parameters) {
         typeManager = new TypeManager();
         readConfiguration(parameters);
-        jcrRepository = new JcrRepository(acquireJcrRepository(jcrConfig), mountPath, typeManager);
+        jcrRepository = new JcrRepository(acquireJcrRepository(jcrConfig), mountPath, typeManager, new JcrNodeFactory());
     }
 
     @Override
@@ -79,6 +83,16 @@ public class JcrServiceFactory extends AbstractServiceFactory {
 
     //------------------------------------------< factories >---
 
+    /**
+     * Acquire the JCR repository given a configuration. This implementation used
+     * {@link java.util.ServiceLoader#load(Class)}  for locating <code>RepositoryFactory</code>
+     * instances. The first instance which can handle the <code>jcrConfig</code> parameters
+     * is used to acquire the repository. 
+     *
+     * @param jcrConfig  configuration determining the JCR repository to be returned
+     * @return
+     * @throws RepositoryException
+     */
     protected Repository acquireJcrRepository(Map<String, String> jcrConfig) {
         try {
             for (RepositoryFactory factory : ServiceLoader.load(RepositoryFactory.class)) {
@@ -100,6 +114,14 @@ public class JcrServiceFactory extends AbstractServiceFactory {
         }
     }
 
+    /**
+     * Create a <code>JcrService</code> from a <code>JcrRepository</code>JcrRepository> and
+     * <code>CallContext</code>.
+     * 
+     * @param jcrRepository
+     * @param context
+     * @return
+     */
     protected JcrService createJcrService(JcrRepository jcrRepository, CallContext context) {
         return new JcrService(jcrRepository);
     }

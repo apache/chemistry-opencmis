@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.jcr;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
@@ -61,6 +62,7 @@ public class TypeManager {
     private static final Log log = LogFactory.getLog(TypeManager.class);
 
     public static final String DOCUMENT_TYPE_ID = "cmis:document";
+    public static final String DOCUMENT_UNVERSIONED_TYPE_ID = "cmis:unversioned-document";
     public static final String FOLDER_TYPE_ID = "cmis:folder";
     public static final String RELATIONSHIP_TYPE_ID = "cmis:relationship";
     public static final String POLICY_TYPE_ID = "cmis:policy";
@@ -109,13 +111,32 @@ public class TypeManager {
         documentType.setIsQueryable(false);
         documentType.setQueryName("cmis:document");
         documentType.setId(DOCUMENT_TYPE_ID);
-        documentType.setIsVersionable(false);
+        documentType.setIsVersionable(true);
         documentType.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
 
         addBasePropertyDefinitions(documentType);
         addDocumentPropertyDefinitions(documentType);
 
         addTypeInternal(documentType);
+
+        // non versionable document type
+        DocumentTypeDefinitionImpl unversionedDocument = new DocumentTypeDefinitionImpl();
+        unversionedDocument.initialize(documentType);
+
+        unversionedDocument.setDescription("Unversioned document");
+        unversionedDocument.setDisplayName("Unversioned document");
+        unversionedDocument.setLocalName("Unversioned document");
+        unversionedDocument.setQueryName("cmis:unversioned-document");
+        unversionedDocument.setId(DOCUMENT_UNVERSIONED_TYPE_ID);
+        unversionedDocument.setParentTypeId(DOCUMENT_TYPE_ID);
+
+        unversionedDocument.setIsVersionable(false);
+        unversionedDocument.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
+
+        addBasePropertyDefinitions(unversionedDocument);
+        addDocumentPropertyDefinitions(unversionedDocument);
+
+        addTypeInternal(unversionedDocument);
     }
 
     /**
@@ -167,9 +188,9 @@ public class TypeManager {
     }
 
     /**
-     * CMIS getTypesChildren.
+     * See CMIS 1.0 section 2.2.2.3 getTypeChildren
      */
-    public TypeDefinitionList getTypesChildren(String typeId, boolean includePropertyDefinitions,
+    public TypeDefinitionList getTypeChildren(String typeId, boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount) {
 
         TypeDefinitionListImpl result = new TypeDefinitionListImpl(new ArrayList<TypeDefinition>());
@@ -231,7 +252,7 @@ public class TypeManager {
     }
 
     /**
-     * CMIS getTypesDescendants.
+     * See CMIS 1.0 section 2.2.2.4 getTypeDescendants
      */
     public List<TypeDefinitionContainer> getTypesDescendants(String typeId, BigInteger depth,
             Boolean includePropertyDefinitions) {
@@ -270,6 +291,12 @@ public class TypeManager {
         return copyTypeDefintion(tc.getTypeDefinition());
     }
 
+    public static boolean isVersionable(TypeDefinition typeDef) {
+        return typeDef instanceof DocumentTypeDefinition
+                ? ((DocumentTypeDefinition) typeDef).isVersionable()
+                : false;
+    }
+
     //------------------------------------------< internal >---
 
     /**
@@ -282,8 +309,8 @@ public class TypeManager {
         return tc == null ? null : tc.getTypeDefinition();
     }
 
-    //------------------------------------------< private >--- 
-    
+    //------------------------------------------< private >---
+
     private static void addBasePropertyDefinitions(AbstractTypeDefinition type) {
         type.addPropertyDefinition(createPropDef(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
                 PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, true));
@@ -487,5 +514,4 @@ public class TypeManager {
     private static TypeDefinition copyTypeDefintion(TypeDefinition type) {
         return Converter.convert(Converter.convert(type));
     }
-
 }

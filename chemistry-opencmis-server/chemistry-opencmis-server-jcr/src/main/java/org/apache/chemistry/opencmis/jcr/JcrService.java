@@ -38,7 +38,6 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -47,7 +46,6 @@ import javax.jcr.Credentials;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import java.math.BigInteger;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +96,7 @@ public class JcrService extends AbstractCmisService {
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         
-        return jcrRepository.getTypesChildren(login(repositoryId), typeId, includePropertyDefinitions, maxItems, skipCount);
+        return jcrRepository.getTypeChildren(login(repositoryId), typeId, includePropertyDefinitions, maxItems, skipCount);
     }
 
     @Override
@@ -161,13 +159,8 @@ public class JcrService extends AbstractCmisService {
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
-        login(repositoryId);
-        ObjectListImpl result = new ObjectListImpl();
-        result.setHasMoreItems(false);
-        result.setNumItems(BigInteger.ZERO);
-        List<ObjectData> emptyList = Collections.emptyList();
-        result.setObjects(emptyList);
-        return result;
+        return jcrRepository.getCheckedOutDocs(login(repositoryId), folderId, filter, orderBy, includeAllowableActions,
+                maxItems, skipCount);
     }
     
     //------------------------------------------< object service >---
@@ -213,7 +206,7 @@ public class JcrService extends AbstractCmisService {
     public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
             ExtensionsData extension) {
         
-        jcrRepository.deleteObject(login(repositoryId), objectId);
+        jcrRepository.deleteObject(login(repositoryId), objectId, allVersions);
     }
 
     @Override
@@ -276,13 +269,31 @@ public class JcrService extends AbstractCmisService {
     //------------------------------------------< versioning service >---
 
     @Override
+    public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
+            Holder<Boolean> contentCopied) {
+
+        jcrRepository.checkOut(login(repositoryId), objectId, contentCopied);
+    }
+
+    @Override
+    public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
+        jcrRepository.cancelCheckout(login(repositoryId), objectId);
+    }
+
+    @Override
+    public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
+            ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
+            ExtensionsData extension) {
+        
+        jcrRepository.checkIn(login(repositoryId), objectId, major, properties, contentStream, checkinComment);
+    }
+
+    @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
-        
-        ObjectData theVersion = jcrRepository.getObject(login(repositoryId), objectId, filter, includeAllowableActions,
-                this, context.isObjectInfoRequired());
 
-        return Collections.singletonList(theVersion);
+        return jcrRepository.getAllVersions(login(repositoryId), versionSeriesId == null ? objectId : versionSeriesId, 
+                filter, includeAllowableActions, this, context.isObjectInfoRequired());
     }
 
     @Override
@@ -290,8 +301,8 @@ public class JcrService extends AbstractCmisService {
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
 
-        return jcrRepository.getObject(login(repositoryId), objectId, filter, includeAllowableActions, this,
-                context.isObjectInfoRequired());
+        return jcrRepository.getObject(login(repositoryId), versionSeriesId == null ? objectId : versionSeriesId,
+                filter, includeAllowableActions, this, context.isObjectInfoRequired());
     }
 
     @Override

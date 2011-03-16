@@ -32,8 +32,8 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
 /**
- * <code>BinaryImpl</code> implements the <code>Binary</code> interface.
- * This is mostly a copied from org.apache.jackrabbit.value.BinaryImpl in
+ * <code>JcrBinary</code> implements the JCR <code>Binary</code> interface.
+ * This is mostly a copy from org.apache.jackrabbit.value.BinaryImpl in
  * Apache Jackrabbit's jcr-commons module. 
  */
 public class JcrBinary implements Binary {
@@ -61,14 +61,14 @@ public class JcrBinary implements Binary {
     public static final Binary EMPTY = new JcrBinary(EMPTY_BYTE_ARRAY);
 
     /**
-     * Creates a new <code>BinaryImpl</code> instance from an
-     * <code>InputStream</code>. The contents of the stream is spooled
-     * to a temporary file or to a byte buffer if its size is smaller than
-     * {@link #MAX_BUFFER_SIZE}. The input stream is closed by this implementation.
-     * <p/>
-     * @param in stream to be represented as a <code>BLOBFileValue</code> instance
+     * Creates a new <code>JcrBinary</code> instance from an <code>InputStream</code>.
+     * The contents of the stream is spooled to a temporary file or to a byte buffer
+     * if its size is smaller than {@link #MAX_BUFFER_SIZE}.
+     * The input stream is closed by this implementation.
+     *
+     * @param in  stream to be represented as a <code>JcrBinary</code> instance
      * @throws IOException if an error occurs while reading from the stream or
-     *                     writing to the temporary file
+     *      writing to the temporary file
      */
     public JcrBinary(InputStream in) throws IOException {
         byte[] spoolBuffer = new byte[0x2000];
@@ -116,11 +116,9 @@ public class JcrBinary implements Binary {
     }
 
     /**
-     * Creates a new <code>BinaryImpl</code> instance from a
-     * <code>byte[]</code> array.
-     *
-     * @param buffer byte array to be represented as a <code>BinaryImpl</code>
-     *               instance
+     * Creates a new <code>JcrBinary</code> instance from a <code>byte[]</code> array.
+     * 
+     * @param buffer byte array to be represented as a <code>JcrBinary</code> instance
      */
     public JcrBinary(byte[] buffer) {
         if (buffer == null) {
