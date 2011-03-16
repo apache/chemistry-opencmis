@@ -78,7 +78,10 @@ public final class ObjectService {
         VersioningState versioningState = getEnumParameter(request, Constants.PARAM_VERSIONIG_STATE,
                 VersioningState.class);
 
-        AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
+        AtomEntryParser parser = new AtomEntryParser();
+        parser.setIgnoreAtomContentSrc(true); // needed for some clients
+        parser.parse(request.getInputStream());
+
         String objectId = parser.getId();
 
         // execute
