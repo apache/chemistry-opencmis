@@ -65,8 +65,6 @@ import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
 /**
  * Object Service AtomPub client.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  */
 public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectService {
 
@@ -526,11 +524,14 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         final InputStream stream = contentStream.getStream();
 
         // Content-Disposition header for the filename
-        Map<String, String> headers = Collections.singletonMap(
-                MimeHelper.CONTENT_DISPOSITION,
-                MimeHelper.encodeContentDisposition(
-                        MimeHelper.DISPOSITION_ATTACHMENT,
-                        contentStream.getFileName()));
+        Map<String, String> headers = null;
+        if (contentStream.getFileName() != null) {
+            headers = Collections
+                    .singletonMap(
+                            MimeHelper.CONTENT_DISPOSITION,
+                            MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_ATTACHMENT,
+                                    contentStream.getFileName()));
+        }
 
         // send content
         HttpUtils.Response resp = put(url, contentStream.getMimeType(), headers, new HttpUtils.Output() {
