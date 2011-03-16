@@ -34,10 +34,11 @@ import javax.jcr.RepositoryFactory;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
+import javax.imageio.spi.ServiceRegistry;
 
 /**
  * A {@link CmisServiceFactory} implementation which returns {@link JcrService} instances.  
@@ -85,9 +86,10 @@ public class JcrServiceFactory extends AbstractServiceFactory {
 
     /**
      * Acquire the JCR repository given a configuration. This implementation used
-     * {@link java.util.ServiceLoader#load(Class)}  for locating <code>RepositoryFactory</code>
-     * instances. The first instance which can handle the <code>jcrConfig</code> parameters
-     * is used to acquire the repository. 
+     * {@link javax.imageio.spi.ServiceRegistry#lookupProviders(Class)} for
+     * locating <code>RepositoryFactory</code> instances. The first instance
+     * which can handle the <code>jcrConfig</code> parameters is used to
+     * acquire the repository. 
      *
      * @param jcrConfig  configuration determining the JCR repository to be returned
      * @return
@@ -95,7 +97,10 @@ public class JcrServiceFactory extends AbstractServiceFactory {
      */
     protected Repository acquireJcrRepository(Map<String, String> jcrConfig) {
         try {
-            for (RepositoryFactory factory : ServiceLoader.load(RepositoryFactory.class)) {
+            Iterator factories =
+                ServiceRegistry.lookupProviders(RepositoryFactory.class);
+            while (factories.hasNext()) {
+                RepositoryFactory factory = (RepositoryFactory) factories.next();
                 log.debug("Trying to acquire JCR repository from factory " + factory);
                 Repository repository = factory.getRepository(jcrConfig);
                 if (repository != null) {
