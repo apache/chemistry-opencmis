@@ -38,9 +38,9 @@
                             OSGi Bundle Support
                         -->
                         <manifestEntries>
-                            <Bundle-Name>org.apache.chemistry.opencmis.server.filesahre</Bundle-Name>
+                            <Bundle-Name>org.apache.chemistry.opencmis.server.fileshare</Bundle-Name>
                             <Bundle-SymbolicName>org.apache.chemistry.opencmis.server.fileshare</Bundle-SymbolicName>
-                            <Bundle-Version>0.0.1</Bundle-Version>
+                            <Bundle-Version>${project.version}</Bundle-Version>
                             <Import-Package>javax.servlet,javax.servlet.http,javax.servlet.resources</Import-Package>
                             <Bundle-Classpath>.</Bundle-Classpath>
                             <Web-ContextPath>fileshare</Web-ContextPath>
