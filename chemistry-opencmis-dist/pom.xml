@@ -133,9 +133,6 @@
                                     <attach>true</attach>
                                     <descriptors>
                                         <descriptor>
-                                            src/main/assembly/server-assembly.xml
-                                        </descriptor>
-                                        <descriptor>
                                             src/main/assembly/client-assembly.xml
                                         </descriptor>
                                         <descriptor>

@@ -64,7 +64,7 @@
     <distributionManagement>
         <site>
             <id>apache-site-staging</id>
-            <url>scpexe://people.apache.org/home/${apache.username}/public_html/chemistry/opencmis/${project.version}/site</url>
+            <url>${site.staging.protocol}://${site.staging.host}${site.staging.folder}</url>
         </site>
     </distributionManagement>
 
@@ -164,8 +164,8 @@
         <module>chemistry-opencmis-client/chemistry-opencmis-client-api</module>
         <module>chemistry-opencmis-client/chemistry-opencmis-client-impl</module>
         <module>chemistry-opencmis-client/chemistry-opencmis-client-bindings</module>
-        <module>chemistry-opencmis-server/chemistry-opencmis-server-bindings</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-support</module>
+        <module>chemistry-opencmis-server/chemistry-opencmis-server-bindings</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-inmemory</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-fileshare</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-jcr</module>
@@ -186,6 +186,11 @@
         <maven.compile.target>1.5</maven.compile.target>
         <docs.start.url>http://chemistry.apache.org/java/opencmis.html</docs.start.url>
         <docs.download.directory>${project.build.directory}/downloaded-site</docs.download.directory>
+        <!-- Site label can be overriden on the command line to deploy to distinct location during site development -->
+        <site.label>${project.version}</site.label>
+        <site.staging.protocol>scpexe</site.staging.protocol>
+        <site.staging.host>people.apache.org</site.staging.host>
+        <site.staging.folder>/home/${apache.username}/public_html/chemistry/opencmis/${site.label}/site</site.staging.folder>
         <parentBasedir>${project.basedir}</parentBasedir>
     </properties>
 
@@ -374,7 +379,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <inherited>false</inherited>
                 <configuration>
                     <aggregate>true</aggregate>
                     <reportsDirectories>
