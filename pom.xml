@@ -458,34 +458,6 @@
             </activation>
             <build>
                 <plugins>
-                    <!-- Fetches docs from ${docs.download.directory} -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <id>fetch-docs</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>wget</executable>
-                                    <arguments>
-                                        <argument>--directory-prefix=${docs.download.directory}</argument>
-                                        <argument>--domains=chemistry.apache.org</argument>
-                                        <argument>--mirror</argument>
-                                        <argument>-k</argument>
-                                        <argument>-np</argument>
-                                        <argument>--include-directories=/java/${version}</argument>
-                                        <argument>--exclude-directories=/java/${version}/maven/</argument>
-                                        <argument>${docs.start.url}</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <!-- Generates aggregated javadocs -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -501,19 +473,6 @@
                                 <phase>generate-resources</phase>
                             </execution>
                         </executions>
-                    </plugin>
-                    <!-- Assemblies the doc package -->
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.2.1</version>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <attach>true</attach>
-                            <descriptors>
-                                <descriptor>src/main/assembly/docs-assembly.xml</descriptor>
-                            </descriptors>
-                            <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
-                        </configuration>
                     </plugin>
                     <!--
                         We want to package up licenses

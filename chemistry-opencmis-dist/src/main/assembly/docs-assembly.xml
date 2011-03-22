@@ -35,7 +35,7 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.build.directory}/site/apidocs</directory>
+            <directory>${parentBasedir}/target/site/apidocs</directory>
             <outputDirectory>javadocs</outputDirectory>
             <includes>
                 <include>**</include>
