@@ -122,6 +122,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1.1</version>
                         <inherited>false</inherited>
                         <executions>
                             <execution>
@@ -142,6 +143,9 @@
                                         <argument>--exclude-directories=/java/maven/</argument>
                                         <argument>${docs.start.url}</argument>
                                     </arguments>
+                                    <successCodes>
+                                        <successCode>8</successCode>
+                                    </successCodes>
                                 </configuration>
                             </execution>
                         </executions>
