@@ -18,10 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;
@@ -35,17 +31,20 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_CmisBaseGrammar.query_return;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 /**
- * Class with static methods that contains convenience methods to repeating functionality
- * in context with query and ANTLR parsing
+ * Utility class providing convenience methods for parsing CMIS queries. 
  *
  */
-public class QueryUtil extends QueryObject {
+public class QueryUtil {
 
     private CmisQueryWalker walker;
-    
+
     // convenience method because everybody needs this piece of code
-    public CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+    public static CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
         
         CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
         TokenSource lexer = new CmisQlStrictLexer(input);
@@ -73,11 +72,10 @@ public class QueryUtil extends QueryObject {
     }
     
     public CmisQueryWalker traverseStatementAndCatchExc(String statement, QueryObject queryObj, PredicateWalkerBase pw) {
-        QueryUtil queryUtil = new QueryUtil();
         try {
             return traverseStatement(statement, queryObj, pw);
         } catch (RecognitionException e) {
-            String errorMsg = queryUtil.getErrorMessage();
+            String errorMsg = queryObj.getErrorMessage();
             throw new CmisInvalidArgumentException("Walking of statement failed with RecognitionException error: \n   " + errorMsg);
         } catch (CmisBaseException e) {
             throw e;
@@ -93,7 +91,7 @@ public class QueryUtil extends QueryObject {
             return getErrorMessage(walker, e);
     }
     
-    private String getErrorMessage(BaseRecognizer recognizer, RecognitionException e) {
+    private static String getErrorMessage(BaseRecognizer recognizer, RecognitionException e) {
         String[] tokenNames = recognizer.getTokenNames();
         // String hdr = walker.getErrorHeader(e);
         String hdr = "Line "+e.line+":"+e.charPositionInLine;
