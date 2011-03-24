@@ -21,7 +21,9 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.bindings.cache.Cache;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.CacheImpl;
@@ -30,6 +32,7 @@ import org.apache.chemistry.opencmis.client.bindings.cache.impl.LruCacheLevelImp
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 
 /**
@@ -38,6 +41,22 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 public class LinkCache implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Set<String> KNOWN_LINKS = new HashSet<String>();
+
+    static {
+        KNOWN_LINKS.add(Constants.REL_ACL);
+        KNOWN_LINKS.add(Constants.REL_DOWN);
+        KNOWN_LINKS.add(Constants.REL_UP);
+        KNOWN_LINKS.add(Constants.REL_FOLDERTREE);
+        KNOWN_LINKS.add(Constants.REL_RELATIONSHIPS);
+        KNOWN_LINKS.add(Constants.REL_SELF);
+        KNOWN_LINKS.add(Constants.REL_ALLOWABLEACTIONS);
+        KNOWN_LINKS.add(Constants.REL_EDITMEDIA);
+        KNOWN_LINKS.add(Constants.REL_POLICIES);
+        KNOWN_LINKS.add(Constants.REL_VERSIONHISTORY);
+        KNOWN_LINKS.add(AtomPubParser.LINK_REL_CONTENT);
+    }
 
     private static final int CACHE_SIZE_REPOSITORIES = 10;
     private static final int CACHE_SIZE_TYPES = 100;
@@ -72,7 +91,7 @@ public class LinkCache implements Serializable {
         linkCache.initialize(new String[] {
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
                 LruCacheLevelImpl.class.getName() + " " + LruCacheLevelImpl.MAX_ENTRIES + "=" + objCount, // id
-                MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=16", // rel
+                MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=12", // rel
                 ContentTypeCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=3,"
                         + MapCacheLevelImpl.SINGLE_VALUE + "=true" // type
         });
@@ -81,7 +100,7 @@ public class LinkCache implements Serializable {
         typeLinkCache.initialize(new String[] {
                 MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=" + repCount, // repository
                 LruCacheLevelImpl.class.getName() + " " + LruCacheLevelImpl.MAX_ENTRIES + "=" + typeCount, // id
-                MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=16", // rel
+                MapCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=12", // rel
                 ContentTypeCacheLevelImpl.class.getName() + " " + MapCacheLevelImpl.CAPACITY + "=3,"
                         + MapCacheLevelImpl.SINGLE_VALUE + "=true"// type
         });
@@ -109,7 +128,9 @@ public class LinkCache implements Serializable {
      * Adds a link.
      */
     public void addLink(String repositoryId, String id, String rel, String type, String link) {
-        linkCache.put(link, repositoryId, id, rel, type);
+        if (KNOWN_LINKS.contains(rel)) {
+            linkCache.put(link, repositoryId, id, rel, type);
+        }
     }
 
     /**
@@ -158,7 +179,9 @@ public class LinkCache implements Serializable {
      * Adds a type link.
      */
     public void addTypeLink(String repositoryId, String id, String rel, String type, String link) {
-        typeLinkCache.put(link, repositoryId, id, rel, type);
+        if (KNOWN_LINKS.contains(rel)) {
+            typeLinkCache.put(link, repositoryId, id, rel, type);
+        }
     }
 
     /**
