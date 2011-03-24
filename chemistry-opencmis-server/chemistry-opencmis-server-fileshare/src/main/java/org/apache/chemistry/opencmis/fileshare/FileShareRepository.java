@@ -1552,11 +1552,6 @@ public class FileShareRepository {
                 throw new CmisConstraintException("Property '" + prop.getId() + "' is unknown!");
             }
 
-            // skip type id
-            if (propType.getId().equals(PropertyIds.OBJECT_TYPE_ID)) {
-                continue;
-            }
-
             // can it be set?
             if ((propType.getUpdatability() == Updatability.READONLY)) {
                 throw new CmisConstraintException("Property '" + prop.getId() + "' is readonly!");

@@ -185,7 +185,7 @@ public class TypeManager {
                 Cardinality.SINGLE, Updatability.READONLY, false, true));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_TYPE_ID, "Type Id", "Type Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READONLY, false, true));
+                Cardinality.SINGLE, Updatability.ONCREATE, false, true));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.NAME, "Name", "Name", PropertyType.STRING,
                 Cardinality.SINGLE, Updatability.READWRITE, false, true));
