@@ -72,7 +72,10 @@ public final class SessionParameter {
     public static final String AUTH_SOAP_USERNAMETOKEN = "org.apache.chemistry.opencmis.binding.auth.soap.usernametoken";
 
     public static final String COMPRESSION = "org.apache.chemistry.opencmis.binding.compression";
-    
+
+    public static final String CONNECT_TIMEOUT = "org.apache.chemistry.opencmis.binding.connecttimeout";
+    public static final String READ_TIMEOUT = "org.apache.chemistry.opencmis.binding.readtimeout";
+
     public static final String CACHE_SIZE_OBJECTS = "org.apache.chemistry.opencmis.cache.objects.size";
     public static final String CACHE_TTL_OBJECTS = "org.apache.chemistry.opencmis.cache.objects.ttl";
     public static final String CACHE_SIZE_PATHTOID = "org.apache.chemistry.opencmis.cache.pathtoid.size";

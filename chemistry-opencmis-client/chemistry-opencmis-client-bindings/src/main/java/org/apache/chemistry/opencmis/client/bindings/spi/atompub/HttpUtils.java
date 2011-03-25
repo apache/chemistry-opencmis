@@ -68,7 +68,8 @@ public class HttpUtils {
         return invoke(url, "POST", contentType, null, writer, session, null, null);
     }
 
-    public static Response invokePUT(UrlBuilder url, String contentType, Map<String, String> headers, Output writer, Session session) {
+    public static Response invokePUT(UrlBuilder url, String contentType, Map<String, String> headers, Output writer,
+            Session session) {
         return invoke(url, "PUT", contentType, headers, writer, session, null, null);
     }
 
@@ -76,9 +77,8 @@ public class HttpUtils {
         return invoke(url, "DELETE", null, null, null, session, null, null);
     }
 
-    private static Response invoke(UrlBuilder url, String method,
-            String contentType, Map<String, String> headers, Output writer,
-            Session session, BigInteger offset, BigInteger length) {
+    private static Response invoke(UrlBuilder url, String method, String contentType, Map<String, String> headers,
+            Output writer, Session session, BigInteger offset, BigInteger length) {
         try {
             // log before connect
             if (log.isDebugEnabled()) {
@@ -91,6 +91,17 @@ public class HttpUtils {
             conn.setDoInput(true);
             conn.setDoOutput(writer != null);
             conn.setRequestProperty("User-Agent", "Apache Chemistry OpenCMIS");
+
+            // timeouts
+            int connectTimeout = session.get(SessionParameter.CONNECT_TIMEOUT, -1);
+            if (connectTimeout >= 0) {
+                conn.setConnectTimeout(connectTimeout);
+            }
+
+            int readTimeout = session.get(SessionParameter.READ_TIMEOUT, -1);
+            if (readTimeout >= 0) {
+                conn.setReadTimeout(readTimeout);
+            }
 
             // set content type
             if (contentType != null) {

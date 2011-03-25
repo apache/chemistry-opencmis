@@ -170,6 +170,18 @@ public class PortProvider extends AbstractPortProvider {
                         .put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
             }
 
+            // timeouts
+            int connectTimeout = session.get(SessionParameter.CONNECT_TIMEOUT, -1);
+            if (connectTimeout >= 0) {
+                ((BindingProvider) portObject).getRequestContext().put(JAXWSProperties.CONNECT_TIMEOUT, connectTimeout);
+            }
+
+            int readTimeout = session.get(SessionParameter.READ_TIMEOUT, -1);
+            if (readTimeout >= 0) {
+                ((BindingProvider) portObject).getRequestContext()
+                        .put("com.sun.xml.ws.request.timeout", connectTimeout);
+            }
+
         } catch (CmisBaseException ce) {
             throw ce;
         } catch (Exception e) {
