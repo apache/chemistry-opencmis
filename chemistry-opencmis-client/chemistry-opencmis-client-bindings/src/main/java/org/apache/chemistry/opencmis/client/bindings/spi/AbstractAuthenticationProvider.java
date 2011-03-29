@@ -104,4 +104,34 @@ public abstract class AbstractAuthenticationProvider implements Serializable {
 
         return null;
     }
+
+    /**
+     * Gets the proxy user name from the session.
+     * 
+     * @return the proxy user name or <code>null</code> if the user name is not
+     *         set
+     */
+    protected String getProxyUser() {
+        Object userObject = getSession().get(SessionParameter.PROXY_USER);
+        if (userObject instanceof String) {
+            return (String) userObject;
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the proxy password from the session.
+     * 
+     * @return the proxy password or <code>null</code> if the password is not
+     *         set
+     */
+    protected String getProxyPassword() {
+        Object passwordObject = getSession().get(SessionParameter.PROXY_PASSWORD);
+        if (passwordObject instanceof String) {
+            return (String) passwordObject;
+        }
+
+        return null;
+    }
 }

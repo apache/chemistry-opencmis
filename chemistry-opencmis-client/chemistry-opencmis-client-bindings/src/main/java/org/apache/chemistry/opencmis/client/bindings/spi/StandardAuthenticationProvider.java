@@ -56,32 +56,48 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             return null;
         }
 
+        result = new HashMap<String, List<String>>();
+
         // get user and password
         String user = getUser();
         String password = getPassword();
 
-        // if no user is set, don't create HTTP headers
-        if (user == null) {
-            return null;
+        // if no user is set, don't set HTTP header
+        if (user != null) {
+            if (password == null) {
+                password = "";
+            }
+
+            try {
+                String authHeader = "Basic "
+                        + new String(Base64.encodeBase64((user + ":" + password).getBytes("ISO-8859-1")), "ISO-8859-1");
+                result.put("Authorization", Collections.singletonList(authHeader));
+            } catch (UnsupportedEncodingException e) {
+                // shouldn't happen...
+            }
         }
 
-        if (password == null) {
-            password = "";
+        // get proxy user and password
+        String proxyUser = getProxyUser();
+        String proxyPassword = getProxyPassword();
+
+        // if no proxy user is set, don't set HTTP header
+        if (proxyUser != null) {
+            if (proxyPassword == null) {
+                proxyPassword = "";
+            }
+
+            try {
+                String authHeader = "Basic "
+                        + new String(Base64.encodeBase64((proxyUser + ":" + proxyPassword).getBytes("ISO-8859-1")),
+                                "ISO-8859-1");
+                result.put("Proxy-Authorization", Collections.singletonList(authHeader));
+            } catch (UnsupportedEncodingException e) {
+                // shouldn't happen...
+            }
         }
 
-        String authHeader = "";
-        try {
-            authHeader = "Basic "
-                    + new String(Base64.encodeBase64((user + ":" + password).getBytes("ISO-8859-1")), "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            // shouldn't happen...
-            return null;
-        }
-
-        result = new HashMap<String, List<String>>();
-        result.put("Authorization", Collections.singletonList(authHeader));
-
-        return result;
+        return result.isEmpty() ? null : result;
     }
 
     @Override
