@@ -26,11 +26,17 @@ import java.util.List;
  * @see CmisObjectProperties
  */
 public interface FolderProperties {
+
+    /**
+     * Returns the parent id or <code>null</code> if the folder is ther root
+     * folder (CMIS property <code>cmis:parentId</code>).
+     */
+    String getParentId();
+
     /**
      * Returns the list of the allowed object types in this folder (CMIS
-     * property
-     * <code>cmis:allowedChildObjectTypeIds</code>). If the list is empty or <code>null</code>
-     * all object types are allowed.
+     * property <code>cmis:allowedChildObjectTypeIds</code>). If the list is
+     * empty or <code>null</code> all object types are allowed.
      */
     List<ObjectType> getAllowedChildObjectTypes();
 }

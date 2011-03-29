@@ -170,6 +170,10 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         return failed.getIds();
     }
 
+    public String getParentId() {
+        return getPropertyValue(PropertyIds.PARENT_ID);
+    }
+
     public List<ObjectType> getAllowedChildObjectTypes() {
         List<ObjectType> result = new ArrayList<ObjectType>();
 
@@ -303,8 +307,8 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
     /**
      * Converts a binding container into an API container.
      */
-    private List<Tree<FileableCmisObject>> convertBindingContainer(
-            List<ObjectInFolderContainer> bindingContainerList, OperationContext context) {
+    private List<Tree<FileableCmisObject>> convertBindingContainer(List<ObjectInFolderContainer> bindingContainerList,
+            OperationContext context) {
         if (bindingContainerList == null) {
             return null;
         }

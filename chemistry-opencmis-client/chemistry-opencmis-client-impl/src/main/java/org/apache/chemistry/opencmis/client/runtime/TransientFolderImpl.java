@@ -153,6 +153,10 @@ public class TransientFolderImpl extends AbstractTransientFileableCmisObject imp
         return ((Folder) getCmisObject()).getCheckedOutDocs();
     }
 
+    public String getParentId() {
+        return getPropertyValue(PropertyIds.PARENT_ID);
+    }
+
     public List<ObjectType> getAllowedChildObjectTypes() {
         List<ObjectType> result = new ArrayList<ObjectType>();
 
