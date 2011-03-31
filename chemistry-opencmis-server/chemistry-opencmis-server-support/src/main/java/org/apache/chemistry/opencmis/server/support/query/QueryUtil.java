@@ -18,7 +18,10 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
-import org.antlr.runtime.ANTLRInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -31,10 +34,6 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_CmisBaseGrammar.query_return;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 /**
  * Utility class providing convenience methods for parsing CMIS queries. 
  *
@@ -46,7 +45,7 @@ public class QueryUtil {
     // convenience method because everybody needs this piece of code
     public static CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
         
-        CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
+        CharStream input = new ANTLRStringStream(statement);
         TokenSource lexer = new CmisQlStrictLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
         CmisQlStrictParser parser = new CmisQlStrictParser(tokens);
