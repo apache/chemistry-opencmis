@@ -18,10 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.framework;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
@@ -45,6 +41,10 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Simple read-only tests.
@@ -200,7 +200,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
 
         if (supportsDescendants()) {
             List<ObjectInFolderContainer> desc = getBinding().getNavigationService().getDescendants(repId,
-                    testRootFolder, BigInteger.valueOf(5), "*", Boolean.TRUE, IncludeRelationships.BOTH, null,
+                    testRootFolder, BigInteger.valueOf(2), "*", Boolean.TRUE, IncludeRelationships.BOTH, null,
                     Boolean.TRUE, null);
             assertNotNull(desc);
             Tools.print("Descendants", desc);
@@ -212,7 +212,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
 
         if (supportsFolderTree()) {
             List<ObjectInFolderContainer> tree = getBinding().getNavigationService().getFolderTree(repId,
-                    testRootFolder, BigInteger.valueOf(5), "*", Boolean.TRUE, IncludeRelationships.BOTH, null,
+                    testRootFolder, BigInteger.valueOf(2), "*", Boolean.TRUE, IncludeRelationships.BOTH, null,
                     Boolean.TRUE, null);
             assertNotNull(tree);
             Tools.print("Tree", tree);

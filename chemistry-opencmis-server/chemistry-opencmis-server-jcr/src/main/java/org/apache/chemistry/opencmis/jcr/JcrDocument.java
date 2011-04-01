@@ -51,7 +51,7 @@ public abstract class JcrDocument extends JcrNode {
 
     public static final String MIME_UNKNOWN = "application/octet-stream";
 
-    public JcrDocument(Node node, TypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
+    public JcrDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
         super(node, typeManager, pathManager, nodeFactory);
     }
 

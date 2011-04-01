@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -60,9 +61,11 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -79,17 +82,17 @@ public abstract class JcrNode {
 
     /**
      * Default value for cmis:createdBy and cmis:lastModifiedDate
-     * (Thu Jan 01 01:11:59 CET 1970)
+     * (Thu Jan 01 01:00:00 CET 1970)
      */
     public static final GregorianCalendar DATE_UNKNOWN;
 
     static {
         DATE_UNKNOWN = new GregorianCalendar();
-        DATE_UNKNOWN.setTimeInMillis(719163);
+        DATE_UNKNOWN.setTimeInMillis(0);
     }
 
     private final Node node;
-    protected final TypeManager typeManager;
+    protected final JcrTypeManager typeManager;
     protected final PathManager pathManager;
     private final JcrNodeFactory nodeFactory;
 
@@ -100,7 +103,7 @@ public abstract class JcrNode {
      * @param pathManager
      * @param nodeFactory
      */
-    public JcrNode(Node node, TypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
+    public JcrNode(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
         this.node = node;
         this.typeManager = typeManager;
         this.pathManager = pathManager;
@@ -174,7 +177,7 @@ public abstract class JcrNode {
      * @return  <code>true</code> iff this instance represents a versionable CMIS object
      */
     public boolean isVersionable() {
-        TypeDefinition typeDef = typeManager.getTypeDefinition(getTypeIdInternal());
+        TypeDefinition typeDef = typeManager.getType(getTypeIdInternal());
         return typeDef instanceof DocumentTypeDefinition
                 ? ((DocumentTypeDefinition) typeDef).isVersionable()
                 : false;
@@ -336,8 +339,7 @@ public abstract class JcrNode {
             }
 
             // Are there properties to update?
-            int propertyCount = properties.getProperties().size();
-            boolean update = rename && propertyCount > 1 || !rename && propertyCount > 0;
+            PropertyUpdater propertyUpdater = PropertyUpdater.create(typeManager, getTypeId(), properties);
 
             JcrVersionBase jcrVersion = isVersionable()
                     ? asVersion()
@@ -345,14 +347,14 @@ public abstract class JcrNode {
 
             // Update properties. Checkout if required
             boolean autoCheckout = false;
-            if (update) {
+            if (!propertyUpdater.isEmpty()) {
                 autoCheckout = jcrVersion != null && !jcrVersion.isCheckedOut();
                 if (autoCheckout) {
                     jcrVersion.checkout();
                 }
 
                 // update the properties
-                updateProperties(node, getTypeId(), properties);
+                propertyUpdater.apply(node);
             }
 
             session.save();
@@ -720,49 +722,84 @@ public abstract class JcrNode {
     }
 
     /**
-     * Update the properties of the CMIS object represented by this instance
+     * Thunk for {@link JcrNode#updateProperties(Node, String, Properties)}
      */
-    protected final void updateProperties(Node node, String typeId, Properties properties) {
-        if (properties == null) {
-            throw new CmisConstraintException("No properties!");
-        }
+    protected static final class PropertyUpdater {
+        private final List<PropertyData<?>> removeProperties = new ArrayList<PropertyData<?>>();
+        private final List<PropertyData<?>> updateProperties = new ArrayList<PropertyData<?>>();
 
-        // get the property definitions
-        TypeDefinition type = typeManager.getType(typeId);
-        if (type == null) {
-            throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
-        }
+        private PropertyUpdater() { }
 
-        // update properties
-        for (PropertyData<?> prop : properties.getProperties().values()) {
-            PropertyDefinition<?> propDef = type.getPropertyDefinitions().get(prop.getId());
-
-            // do we know that property?
-            if (propDef == null) {
-                throw new CmisConstraintException("Property '" + prop.getId() + "' is unknown!");
+        public static PropertyUpdater create(JcrTypeManager typeManager, String typeId, Properties properties) {
+            if (properties == null) {
+                throw new CmisConstraintException("No properties!");
             }
 
-            // can it be set?
-            if (propDef.getUpdatability() == Updatability.READONLY) {
-                throw new CmisConstraintException("Property '" + prop.getId() + "' is readonly!");
+            // get the property definitions
+            TypeDefinition type = typeManager.getType(typeId);
+            if (type == null) {
+                throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
             }
 
-            if (propDef.getUpdatability() == Updatability.ONCREATE) {
-                throw new CmisConstraintException("Property '" + prop.getId() + "' can only be set on create!");
-            }
+            PropertyUpdater propertyUpdater = new PropertyUpdater();
+            // update properties
+            for (PropertyData<?> prop : properties.getProperties().values()) {
+                PropertyDefinition<?> propDef = type.getPropertyDefinitions().get(prop.getId());
 
-            // default or value
-            PropertyData<?> newProp;
-            newProp = PropertyHelper.isPropertyEmpty(prop)
-                    ? PropertyHelper.getDefaultValue(propDef)
-                    : prop;
+                // do we know that property?
+                if (propDef == null) {
+                    throw new CmisInvalidArgumentException("Property '" + prop.getId() + "' is unknown!");
+                }
 
-            try {
+                // skip content stream file name
+                if (propDef.getId().equals(PropertyIds.CONTENT_STREAM_FILE_NAME)) {
+                    log.warn("Cannot set " + PropertyIds.CONTENT_STREAM_FILE_NAME + ". Ignoring");
+                    continue;
+                }
+
+                // silently skip name
+                if (propDef.getId().equals(PropertyIds.NAME)) {
+                    continue;
+                }
+
+                // can it be set?
+                if (propDef.getUpdatability() == Updatability.READONLY) {
+                    throw new CmisConstraintException("Property '" + prop.getId() + "' is readonly!");
+                }
+
+                if (propDef.getUpdatability() == Updatability.ONCREATE) {
+                    throw new CmisConstraintException("Property '" + prop.getId() + "' can only be set on create!");
+                }
+
+                // default or value
+                PropertyData<?> newProp;
+                newProp = PropertyHelper.isPropertyEmpty(prop)
+                        ? PropertyHelper.getDefaultValue(propDef)
+                        : prop;
+
+                // Schedule for remove or update
                 if (newProp == null) {
-                    JcrConverter.removeProperty(node, prop);
+                    propertyUpdater.removeProperties.add(prop);
                 }
                 else {
-                    JcrConverter.setProperty(node, newProp);
+                    propertyUpdater.updateProperties.add(newProp);
+                }
+            }
+
+            return propertyUpdater;
+        }
+
+        public boolean isEmpty() {
+            return removeProperties.isEmpty() && updateProperties.isEmpty();
+        }
+
+        public void apply(Node node) {
+            try {
+                for (PropertyData<?> prop: removeProperties) {
+                    JcrConverter.removeProperty(node, prop);
+                }
+                for (PropertyData<?> prop: updateProperties) {
+                    JcrConverter.setProperty(node, prop);
                 }
             }
             catch (RepositoryException e) {
@@ -770,6 +807,13 @@ public abstract class JcrNode {
                 throw new CmisStorageException(e.getMessage(), e);
             }
         }
+    }
+
+    /**
+     * Update the properties of the CMIS object represented by this instance
+     */
+    protected final void updateProperties(Node node, String typeId, Properties properties) {
+        PropertyUpdater.create(typeManager, typeId, properties).apply(node);
     }
 
     /**

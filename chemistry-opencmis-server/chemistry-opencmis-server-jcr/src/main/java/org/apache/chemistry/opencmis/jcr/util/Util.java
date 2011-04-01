@@ -82,4 +82,13 @@ public final class Util {
         return result.toString();
     }
 
+    /**
+     * Escapes a JCR path such that it can be used in a XPath query
+     * @param path
+     * @return  escaped path
+     */
+    public static String escape(String path) {
+        return replace(path, " ", "_x0020_"); // fixme do more thorough escaping of path
+    }
+
 }

@@ -38,7 +38,7 @@ public class JcrPrivateWorkingCopy extends JcrVersionBase {
      */
     public static String PWC_NAME = "pwc";
 
-    public JcrPrivateWorkingCopy(Node node, TypeManager typeManager, PathManager pathManager,
+    public JcrPrivateWorkingCopy(Node node, JcrTypeManager typeManager, PathManager pathManager,
             JcrNodeFactory nodeFactory) {
         
         super(node, typeManager, pathManager, nodeFactory);

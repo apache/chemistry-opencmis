@@ -28,17 +28,17 @@ import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.imageio.spi.ServiceRegistry;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.RepositoryFactory;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.imageio.spi.ServiceRegistry;
 
 /**
  * A {@link CmisServiceFactory} implementation which returns {@link JcrService} instances.  
@@ -54,14 +54,14 @@ public class JcrServiceFactory extends AbstractServiceFactory {
     public static final BigInteger DEFAULT_MAX_ITEMS_OBJECTS = BigInteger.valueOf(200);
     public static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(10);
 
-    private TypeManager typeManager;
+    private JcrTypeManager typeManager;
     private Map<String, String> jcrConfig;
     private String mountPath;
     private JcrRepository jcrRepository;
 
     @Override
     public void init(Map<String, String> parameters) {
-        typeManager = new TypeManager();
+        typeManager = new JcrTypeManager();
         readConfiguration(parameters);
         jcrRepository = new JcrRepository(acquireJcrRepository(jcrConfig), mountPath, typeManager, new JcrNodeFactory());
     }
@@ -97,10 +97,9 @@ public class JcrServiceFactory extends AbstractServiceFactory {
      */
     protected Repository acquireJcrRepository(Map<String, String> jcrConfig) {
         try {
-            Iterator factories =
-                ServiceRegistry.lookupProviders(RepositoryFactory.class);
+            Iterator<RepositoryFactory> factories = ServiceRegistry.lookupProviders(RepositoryFactory.class);
             while (factories.hasNext()) {
-                RepositoryFactory factory = (RepositoryFactory) factories.next();
+                RepositoryFactory factory = factories.next();
                 log.debug("Trying to acquire JCR repository from factory " + factory);
                 Repository repository = factory.getRepository(jcrConfig);
                 if (repository != null) {

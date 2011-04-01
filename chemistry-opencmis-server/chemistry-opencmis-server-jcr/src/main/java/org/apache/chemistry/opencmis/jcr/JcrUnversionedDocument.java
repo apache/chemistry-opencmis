@@ -20,8 +20,6 @@
 package org.apache.chemistry.opencmis.jcr;
 
 import org.apache.chemistry.opencmis.commons.enums.Action;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -31,9 +29,8 @@ import java.util.Set;
  * Instances of this class represent a non versionable cmis:document backed by an underlying JCR <code>Node</code>. 
  */
 public class JcrUnversionedDocument extends JcrDocument {
-    private static final Log log = LogFactory.getLog(JcrUnversionedDocument.class);
     
-    public JcrUnversionedDocument(Node node, TypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
+    public JcrUnversionedDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
         super(node, typeManager, pathManager, nodeFactory);
     }
 
@@ -56,7 +53,7 @@ public class JcrUnversionedDocument extends JcrDocument {
 
     @Override
     protected String getTypeIdInternal() {
-        return TypeManager.DOCUMENT_UNVERSIONED_TYPE_ID;
+        return JcrTypeManager.DOCUMENT_UNVERSIONED_TYPE_ID;
     }
 
     @Override

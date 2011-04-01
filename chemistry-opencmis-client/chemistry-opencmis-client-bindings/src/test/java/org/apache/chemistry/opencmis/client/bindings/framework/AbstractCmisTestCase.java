@@ -18,18 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.framework;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
-
 import junit.framework.TestCase;
-
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -65,6 +54,16 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Base test case for CMIS tests.
  * 
@@ -73,10 +72,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class AbstractCmisTestCase extends TestCase {
 
-    public static final String DEFAULT_TESTS_ENABLED = "false";
-    public static final String DEFAULT_USERNAME = "test";
-    public static final String DEFAULT_PASSWORD = "test";
-    public static final String DEFAULT_ATOMPUB_URL = "http://localhost:8080/cmis/atom";
+    public static final String DEFAULT_TESTS_ENABLED = "true";
+    public static final String DEFAULT_USERNAME = "admin";
+    public static final String DEFAULT_PASSWORD = "admin";
+    public static final String DEFAULT_ATOMPUB_URL = "http://localhost:7402/cmis/repository";
+//    public static final String DEFAULT_ATOMPUB_URL = "http://localhost:8080/chemistry-opencmis-server-jcr/atom";
     public static final String DEFAULT_WEBSERVICES_URLPREFIX = "http://localhost:8080/cmis/services/";
     public static final String DEFAULT_DOCTYPE = "cmis:document";
     public static final String DEFAULT_FOLDERTYPE = "cmis:folder";
@@ -702,7 +702,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
                     .getFirstValue().toString();
 
             ObjectData docByPath = getObjectByPath((parentPath.equals("/") ? "" : parentPath) + "/"
-                    + parent.getRelativePathSegment());
+                    + folderChild.getPathSegment());
 
             PropertyData<?> idProp = docByPath.getProperties().getProperties().get(PropertyIds.OBJECT_ID);
             assertNotNull(idProp);

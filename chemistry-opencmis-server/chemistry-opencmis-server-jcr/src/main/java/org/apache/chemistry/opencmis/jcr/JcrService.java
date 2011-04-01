@@ -315,6 +315,17 @@ public class JcrService extends AbstractCmisService {
         return object.getProperties();
     }
 
+    // --- discovery service ---
+
+    @Override
+    public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
+            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+
+        return jcrRepository.query(login(repositoryId), statement, searchAllVersions, includeAllowableActions,
+                maxItems, skipCount);
+    }
+    
     //------------------------------------------< protected >---
 
     protected Session login(String repositoryId) {

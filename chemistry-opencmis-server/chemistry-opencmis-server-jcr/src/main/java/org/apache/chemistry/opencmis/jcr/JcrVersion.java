@@ -19,9 +19,6 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
@@ -33,15 +30,13 @@ import java.util.regex.Pattern;
  * JCR <code>Node</code>.
  */
 public class JcrVersion extends JcrVersionBase {
-    private static final Log log = LogFactory.getLog(JcrVersion.class);
-
     private static final Pattern VERSION_LABEL_PATTERN = Pattern.compile("(\\d+)(\\.(\\d+))?.*");
     private static final int GROUP_MAJOR = 1;
     private static final int GROUP_MINOR = 3;
 
     private final Version version;
 
-    public JcrVersion(Node node, Version version, TypeManager typeManager, PathManager pathManager,
+    public JcrVersion(Node node, Version version, JcrTypeManager typeManager, PathManager pathManager,
             JcrNodeFactory nodeFactory) {
 
         super(node, typeManager, pathManager, nodeFactory);

@@ -43,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -56,6 +57,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabili
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.jcr.query.QueryTranslator;
 import org.apache.chemistry.opencmis.jcr.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,7 +90,7 @@ public final class JcrRepository {
     private static final Log log = LogFactory.getLog(JcrRepository.class);
 
     private final Repository repository;
-    private final TypeManager typeManager;
+    private final JcrTypeManager typeManager;
     private final PathManager pathManager;
     private final JcrNodeFactory nodeFactory;
 
@@ -100,7 +102,7 @@ public final class JcrRepository {
      * @param typeManager  
      * @param nodeFactory
      */
-    public JcrRepository(Repository repository, String rootPath, TypeManager typeManager, JcrNodeFactory nodeFactory) {
+    public JcrRepository(Repository repository, String rootPath, JcrTypeManager typeManager, JcrNodeFactory nodeFactory) {
         this.repository = repository;
         this.typeManager = typeManager;
         this.nodeFactory = nodeFactory;
@@ -178,7 +180,13 @@ public final class JcrRepository {
      */
     public TypeDefinition getTypeDefinition(Session session, String typeId) {
         log.debug("getTypeDefinition");
-        return typeManager.getTypeDefinition(typeId);
+
+        TypeDefinition type = typeManager.getType(typeId);
+        if (type == null) {
+            throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
+        }
+
+        return JcrTypeManager.copyTypeDefinition(type);
     }
 
     /**
@@ -211,7 +219,7 @@ public final class JcrRepository {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
         }
 
-        boolean isVersionable = TypeManager.isVersionable(type);
+        boolean isVersionable = JcrTypeManager.isVersionable(type);
         if (!isVersionable && versioningState != VersioningState.NONE) {
             throw new CmisConstraintException("Versioning not supported for " + typeId);
         }
@@ -622,16 +630,18 @@ public final class JcrRepository {
         }
 
         try {
-            // Build xpath query of the form '//path/to/folderId//*[jcr:isCheckedOut='true']'
-            String xPath = "/*[jcr:isCheckedOut='true']";
+            // Build xpath query of the form
+            // '//path/to/folderId//*[jcr:isCheckedOut='true' and (not(@jcr:createdBy) or @jcr:createdBy='admin')]'
+            String xPath = "/*[jcr:isCheckedOut='true' " +
+                    "and (not(@jcr:createdBy) or @jcr:createdBy='" + session.getUserID() + "')]";
+            
             if (folderId != null) {
                 JcrFolder jcrFolder = getJcrNode(session, folderId).asFolder();
                 String path = jcrFolder.getNode().getPath();
                 if ("/".equals(path)) {
                     path = "";
                 }
-                path = Util.replace(path, " ", "_x0020_"); // fixme do more thorough escaping of path
-                xPath = '/' + path + xPath;
+                xPath = '/' + Util.escape(path) + xPath;
             }
             else {
                 xPath = '/' + xPath;
@@ -820,6 +830,107 @@ public final class JcrRepository {
 
     }
 
+    /**
+     * See CMIS 1.0 section 2.2.6.1 query
+     */
+    public ObjectList query(final Session session, String statement, Boolean searchAllVersions,
+            Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount) {
+
+        log.debug("query");
+
+        if (searchAllVersions) {
+            throw new CmisNotSupportedException("Not supported: query for all versions");
+        }
+
+        // skip and max
+        int skip = skipCount == null ? 0 : skipCount.intValue();  
+        if (skip < 0) {
+            skip = 0;
+        }
+
+        int max = maxItems == null ? Integer.MAX_VALUE : maxItems.intValue();
+        if (max < 0) {
+            max = Integer.MAX_VALUE;
+        }
+
+        QueryTranslator queryTranslator = new QueryTranslator(typeManager) {
+            @Override
+            protected String jcrPathFromId(String id) {
+                try {
+                    JcrFolder folder = getJcrNode(session, id).asFolder();
+                    String path = folder.getNode().getPath();
+                    return Util.escape(path);                    
+                }
+                catch (RepositoryException e) {
+                    log.debug(e.getMessage(), e);
+                    throw new CmisRuntimeException(e.getMessage(), e);
+                }
+            }
+
+            @Override
+            protected String jcrPathFromCol(TypeDefinition fromType, String name) {
+                return nodeFactory.getIdentifierMap(fromType).jcrPathFromCol(name);
+            }
+
+            @Override
+            protected String jcrTypeName(TypeDefinition fromType) {
+                return nodeFactory.getIdentifierMap(fromType).jcrTypeName();
+            }
+
+            @Override
+            protected String jcrTypeCondition(TypeDefinition fromType) {
+                return nodeFactory.getIdentifierMap(fromType).jcrTypeCondition();
+            }
+        };
+
+        String xPath = queryTranslator.translateToXPath(statement);
+        try {  
+            // Execute query
+            QueryManager queryManager = session.getWorkspace().getQueryManager();
+            Query query = queryManager.createQuery(xPath, Query.XPATH);
+
+            if (skip > 0) {
+                query.setOffset(skip);
+            }
+            if (max < Integer.MAX_VALUE) {
+                query.setLimit(max + 1);    // One more in order to detect whether there are more items
+            }
+
+            QueryResult queryResult = query.execute();
+
+            // prepare results
+            ObjectListImpl result = new ObjectListImpl();
+            result.setObjects(new ArrayList<ObjectData>());
+            result.setHasMoreItems(false);
+
+            // iterate through children
+            int count = 0;
+            NodeIterator nodes = queryResult.getNodes();
+            while (nodes.hasNext() && result.getObjects().size() < max) {
+                Node node = nodes.nextNode();
+                JcrNode jcrNode = nodeFactory.create(node);
+                count++;
+
+                // Get pwc if this node is versionable and checked out
+                if (jcrNode.isVersionable() && jcrNode.asVersion().isCheckedOut()) {
+                    jcrNode = jcrNode.asVersion().getPwc();
+                }
+
+                // build and add child object
+                ObjectData objectData = jcrNode.compileObjectType(null, includeAllowableActions, null, false);
+                result.getObjects().add(objectData);
+            }
+
+            result.setHasMoreItems(nodes.hasNext());
+            result.setNumItems(BigInteger.valueOf(count));
+            return result;
+        }
+        catch (RepositoryException e) {
+            log.debug(e.getMessage(), e);
+            throw new CmisRuntimeException(e.getMessage(), e);
+        }
+    }
+
     //------------------------------------------< private >---
 
     private RepositoryInfo compileRepositoryInfo(String repositoryId) {
@@ -847,7 +958,7 @@ public final class JcrRepository {
         capabilities.setSupportsVersionSpecificFiling(false);
         capabilities.setIsPwcSearchable(false);
         capabilities.setIsPwcUpdatable(true);
-        capabilities.setCapabilityQuery(CapabilityQuery.NONE);
+        capabilities.setCapabilityQuery(CapabilityQuery.BOTHCOMBINED);
         capabilities.setCapabilityChanges(CapabilityChanges.NONE);
         capabilities.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
         capabilities.setSupportsGetDescendants(true);
@@ -965,7 +1076,7 @@ public final class JcrRepository {
                 Node node = session.getNodeByIdentifier(nodeId);
 
                 JcrNode jcrNode = nodeFactory.create(node);
-                if (JcrPrivateWorkingCopy.denotesPwc(versionName)) {  
+                if (JcrPrivateWorkingCopy.denotesPwc(versionName)) {
                     return jcrNode.asVersion().getPwc();
                 }
                 else {
@@ -1005,5 +1116,4 @@ public final class JcrRepository {
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
-
 }

@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.jcr.util.FilterIterator;
 import org.apache.chemistry.opencmis.jcr.util.Predicate;
+import org.apache.chemistry.opencmis.jcr.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -48,6 +49,9 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.jcr.version.Version;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -63,7 +67,7 @@ import java.util.Set;
 public class JcrFolder extends JcrNode {
     private static final Log log = LogFactory.getLog(JcrFolder.class);
 
-    public JcrFolder(Node node, TypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
+    public JcrFolder(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
         super(node, typeManager, pathManager, nodeFactory);
     }
 
@@ -256,10 +260,16 @@ public class JcrFolder extends JcrNode {
 
         String id = getId();
         try {
-            Session session = getNode().getSession();
-            getNode().remove();
-            session.save();
-            result.setIds(Collections.<String>emptyList());
+            Node node = getNode();
+            if (hasCheckOuts(node)) {
+                result.setIds(Collections.<String>singletonList(id));                
+            }
+            else {
+                Session session = node.getSession();
+                node.remove();
+                session.save();
+                result.setIds(Collections.<String>emptyList());
+            }
         }
         catch (RepositoryException e) {
             result.setIds(Collections.singletonList(id));
@@ -327,7 +337,7 @@ public class JcrFolder extends JcrNode {
 
     @Override
     protected String getTypeIdInternal() {
-        return TypeManager.FOLDER_TYPE_ID;
+        return JcrTypeManager.FOLDER_TYPE_ID;
     }
 
     //------------------------------------------< private >---
@@ -357,6 +367,14 @@ public class JcrFolder extends JcrNode {
 
                 // skip type id
                 if (propDef.getId().equals(PropertyIds.OBJECT_TYPE_ID)) {
+                    log.warn("Cannot set " + PropertyIds.OBJECT_TYPE_ID + ". Ignoring");
+                    addedProps.add(prop.getId());
+                    continue;
+                }
+
+                // skip content stream file name
+                if (propDef.getId().equals(PropertyIds.CONTENT_STREAM_FILE_NAME)) {
+                    log.warn("Cannot set " + PropertyIds.CONTENT_STREAM_FILE_NAME + ". Ignoring");
                     addedProps.add(prop.getId());
                     continue;
                 }
@@ -394,4 +412,22 @@ public class JcrFolder extends JcrNode {
             throw new CmisStorageException(e.getMessage(), e);
         }
     }
+
+    private static boolean hasCheckOuts(Node node) throws RepositoryException {
+        // Build xpath query of the form
+        // '//path/to/node//*[jcr:isCheckedOut='true']'
+        String xPath = "/*[jcr:isCheckedOut='true']";
+        String path = node.getPath();
+        if ("/".equals(path)) {
+            path = "";
+        }
+        xPath = '/' + Util.escape(path) + xPath;
+
+        // Execute query
+        QueryManager queryManager = node.getSession().getWorkspace().getQueryManager();
+        Query query = queryManager.createQuery(xPath, Query.XPATH);
+        QueryResult queryResult = query.execute();
+        return queryResult.getNodes().hasNext();
+    }
+    
 }

@@ -50,7 +50,7 @@ public abstract class JcrVersionBase extends JcrDocument {
 
     private final JcrNodeFactory nodeFactory;
 
-    public JcrVersionBase(Node node, TypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
+    public JcrVersionBase(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
         super(node, typeManager, pathManager, nodeFactory);
         this.nodeFactory = nodeFactory;
     }
@@ -271,7 +271,7 @@ public abstract class JcrVersionBase extends JcrDocument {
     
     @Override
     protected String getTypeIdInternal() {
-        return TypeManager.DOCUMENT_TYPE_ID;
+        return JcrTypeManager.DOCUMENT_TYPE_ID;
     }
 
     @Override

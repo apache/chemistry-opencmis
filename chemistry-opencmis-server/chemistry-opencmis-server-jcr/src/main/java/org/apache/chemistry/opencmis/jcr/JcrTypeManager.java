@@ -30,7 +30,6 @@ import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
@@ -46,11 +45,13 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,8 +59,8 @@ import java.util.Map;
 /**
  * Type Manager.
  */
-public class TypeManager {
-    private static final Log log = LogFactory.getLog(TypeManager.class);
+public class JcrTypeManager implements TypeManager { 
+    private static final Log log = LogFactory.getLog(JcrTypeManager.class);
 
     public static final String DOCUMENT_TYPE_ID = "cmis:document";
     public static final String DOCUMENT_UNVERSIONED_TYPE_ID = "cmis:unversioned-document";
@@ -70,7 +71,7 @@ public class TypeManager {
 
     private final Map<String, TypeDefinitionContainerImpl> fTypes;
 
-    public TypeManager() {
+    public JcrTypeManager() {
         fTypes = new HashMap<String, TypeDefinitionContainerImpl>();
 
         // folder type
@@ -86,8 +87,8 @@ public class TypeManager {
         folderType.setIsIncludedInSupertypeQuery(true);
         folderType.setLocalName("Folder");
         folderType.setLocalNamespace(NAMESPACE);
-        folderType.setIsQueryable(false);
-        folderType.setQueryName("cmis:folder");
+        folderType.setIsQueryable(true);  
+        folderType.setQueryName(FOLDER_TYPE_ID);
         folderType.setId(FOLDER_TYPE_ID);
 
         addBasePropertyDefinitions(folderType);
@@ -108,8 +109,8 @@ public class TypeManager {
         documentType.setIsIncludedInSupertypeQuery(true);
         documentType.setLocalName("Document");
         documentType.setLocalNamespace(NAMESPACE);
-        documentType.setIsQueryable(false);
-        documentType.setQueryName("cmis:document");
+        documentType.setIsQueryable(true);
+        documentType.setQueryName(DOCUMENT_TYPE_ID);
         documentType.setId(DOCUMENT_TYPE_ID);
         documentType.setIsVersionable(true);
         documentType.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
@@ -126,7 +127,8 @@ public class TypeManager {
         unversionedDocument.setDescription("Unversioned document");
         unversionedDocument.setDisplayName("Unversioned document");
         unversionedDocument.setLocalName("Unversioned document");
-        unversionedDocument.setQueryName("cmis:unversioned-document");
+        unversionedDocument.setIsQueryable(true);
+        unversionedDocument.setQueryName(DOCUMENT_UNVERSIONED_TYPE_ID);
         unversionedDocument.setId(DOCUMENT_UNVERSIONED_TYPE_ID);
         unversionedDocument.setParentTypeId(DOCUMENT_TYPE_ID);
 
@@ -156,22 +158,22 @@ public class TypeManager {
         // find base type
         TypeDefinition baseType;
         if (type.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
-            baseType = copyTypeDefintion(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition());
+            baseType = copyTypeDefinition(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition());
         }
         else if (type.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
-            baseType = copyTypeDefintion(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition());
+            baseType = copyTypeDefinition(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition());
         }
         else if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
-            baseType = copyTypeDefintion(fTypes.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
+            baseType = copyTypeDefinition(fTypes.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
         }
         else if (type.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
-            baseType = copyTypeDefintion(fTypes.get(POLICY_TYPE_ID).getTypeDefinition());
+            baseType = copyTypeDefinition(fTypes.get(POLICY_TYPE_ID).getTypeDefinition());
         }
         else {
             return false;
         }
 
-        AbstractTypeDefinition newType = (AbstractTypeDefinition) copyTypeDefintion(type);
+        AbstractTypeDefinition newType = (AbstractTypeDefinition) copyTypeDefinition(type);
 
         // copy property definition
         for (PropertyDefinition<?> propDef : baseType.getPropertyDefinitions().values()) {
@@ -187,6 +189,21 @@ public class TypeManager {
         return true;
     }
 
+    public TypeDefinition getType(String typeId) {
+        TypeDefinitionContainer tc = fTypes.get(typeId);
+        return tc == null ? null : tc.getTypeDefinition();
+    }
+
+    public static boolean isVersionable(TypeDefinition typeDef) {
+        return typeDef instanceof DocumentTypeDefinition
+                ? ((DocumentTypeDefinition) typeDef).isVersionable()
+                : false;
+    }
+
+    public static TypeDefinition copyTypeDefinition(TypeDefinition type) {
+        return Converter.convert(Converter.convert(type));
+    }
+    
     /**
      * See CMIS 1.0 section 2.2.2.3 getTypeChildren
      */
@@ -207,12 +224,11 @@ public class TypeManager {
 
         if (typeId == null) {
             if (skip < 1) {
-                result.getList().add(copyTypeDefintion(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition()));
+                result.getList().add(copyTypeDefinition(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition()));
                 max--;
             }
             if (skip < 2 && max > 0) {
-                result.getList().add(copyTypeDefintion(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition()));
-                max--;
+                result.getList().add(copyTypeDefinition(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition()));
             }
 
             result.setHasMoreItems(result.getList().size() + skip < 2);
@@ -230,7 +246,7 @@ public class TypeManager {
                     continue;
                 }
 
-                result.getList().add(copyTypeDefintion(child.getTypeDefinition()));
+                result.getList().add(copyTypeDefinition(child.getTypeDefinition()));
 
                 max--;
                 if (max == 0) {
@@ -282,31 +298,42 @@ public class TypeManager {
         return result;
     }
 
-    public TypeDefinition getTypeDefinition(String typeId) {
-        TypeDefinitionContainer tc = fTypes.get(typeId);
-        if (tc == null) {
-            throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
+    //------------------------------------------< JcrTypeManager >---
+
+    public TypeDefinitionContainer getTypeById(String typeId) {
+        return fTypes.get(typeId);
+    }
+
+    public TypeDefinition getTypeByQueryName(String typeQueryName) {
+        for (TypeDefinitionContainerImpl type : fTypes.values()) {
+            TypeDefinition typeDef = type.getTypeDefinition();
+            if (typeDef.getQueryName().equals(typeQueryName))
+                return typeDef;
+        }
+        
+        return null;
+    }
+
+    public Collection<TypeDefinitionContainer> getTypeDefinitionList() {
+        Collection<TypeDefinitionContainer> types = new ArrayList<TypeDefinitionContainer>(fTypes.size());
+        types.addAll(fTypes.values());
+        return types;
+    }
+
+    public List<TypeDefinitionContainer> getRootTypes() {
+        List<TypeDefinitionContainer> types = new ArrayList<TypeDefinitionContainer>(2);
+        types.add(fTypes.get(FOLDER_TYPE_ID));
+        types.add(fTypes.get(DOCUMENT_TYPE_ID));
+        return types; 
+    }
+
+    public String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName) {
+        for (PropertyDefinition<?> pd : typeDefinition.getPropertyDefinitions().values()) {
+            if (pd.getQueryName().equals(propQueryName))
+                return pd.getId();
         }
 
-        return copyTypeDefintion(tc.getTypeDefinition());
-    }
-
-    public static boolean isVersionable(TypeDefinition typeDef) {
-        return typeDef instanceof DocumentTypeDefinition
-                ? ((DocumentTypeDefinition) typeDef).isVersionable()
-                : false;
-    }
-
-    //------------------------------------------< internal >---
-
-    /**
-     * For internal use.
-     * @param typeId
-     * @return
-     */
-    TypeDefinition getType(String typeId) {
-        TypeDefinitionContainer tc = fTypes.get(typeId);
-        return tc == null ? null : tc.getTypeDefinition();
+        return null;
     }
 
     //------------------------------------------< private >---
@@ -491,7 +518,7 @@ public class TypeManager {
 
         TypeDefinitionContainerImpl result = new TypeDefinitionContainerImpl();
 
-        TypeDefinition type = copyTypeDefintion(tc.getTypeDefinition());
+        TypeDefinition type = copyTypeDefinition(tc.getTypeDefinition());
         if (!includePropertyDefinitions) {
             type.getPropertyDefinitions().clear();
         }
@@ -511,7 +538,4 @@ public class TypeManager {
         return result;
     }
 
-    private static TypeDefinition copyTypeDefintion(TypeDefinition type) {
-        return Converter.convert(Converter.convert(type));
-    }
 }
