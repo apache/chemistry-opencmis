@@ -36,4 +36,9 @@ public class ConfigConstants {
     public static final String FILLER_CONTENT_SIZE = "RepositoryFiller.ContentSizeInKB";
     public static final String FILLER_DOCUMENT_PROPERTY = "RepositoryFiller.DocumentProperty.";
     public static final String FILLER_FOLDER_PROPERTY = "RepositoryFiller.FolderProperty.";
+    
+    // runtime configuration values
+    public static final String MAX_CONTENT_SIZE_KB = "InMemoryServer.MaxContentSizeKB";
+    public static final String CLEAN_REPOSITORY_INTERVAL = "InMemoryServer.CleanIntervalMinutes";
+    public static final String DEPLOYMENT_TIME = "InMemoryServer.DeploymentTime";
 }

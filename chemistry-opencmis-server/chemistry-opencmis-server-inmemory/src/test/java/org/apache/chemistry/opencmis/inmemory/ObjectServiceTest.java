@@ -100,6 +100,7 @@ public class ObjectServiceTest extends AbstractServiceTst {
     private static final String FOLDER_TYPE_ID = InMemoryFolderTypeDefinition.getRootFolderType().getId();
     private static final String FOLDER_ID = "Folder_1";
     private static final String MY_CUSTOM_NAME = "My Custom Document";
+    private static final int MAX_SIZE = 100;
 
     ObjectCreator fCreator;
 
@@ -109,12 +110,17 @@ public class ObjectServiceTest extends AbstractServiceTst {
         super.setUp();
         fCreator = new ObjectCreator(fFactory, fObjSvc, fRepositoryId);
     }
-
+    
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
-
+    
+    @Override
+    protected void addParameters(Map<String, String> parameters) {
+        parameters.put(ConfigConstants.MAX_CONTENT_SIZE_KB, Integer.valueOf(MAX_SIZE).toString());
+    }
+    
     @Test
     public void testCreateDocument() {
         log.info("starting testCreateObject() ...");
@@ -1218,6 +1224,33 @@ public class ObjectServiceTest extends AbstractServiceTst {
             cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
             
             return cmisFolderType;
+        }
+    }
+
+    @Test
+    public void testMaxContentSize() {
+        log.info("starting testMaxContentSize() ...");
+        try {
+            createContent(MAX_SIZE + 1, MAX_SIZE); 
+            fail("createContent with exceeded content size should fail.");
+        } catch (CmisInvalidArgumentException e) {
+            log.debug("createDocument with exceeded failed as excpected.");
+        } catch (Exception e1) {
+            log.debug("createDocument with exceeded failed with wrong exception (expected CmisInvalidArgumentException, got "
+                    + e1.getClass().getName() + ").");
+        }
+        
+        try {
+            ContentStream contentStream = createContent(MAX_SIZE + 1);
+            Properties props = createDocumentProperties("TestMaxContentSize", DOCUMENT_TYPE_ID);
+            fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, contentStream, VersioningState.NONE, null,
+                    null, null, null);
+            fail("createDocument with exceeded content size should fail.");
+        } catch (CmisInvalidArgumentException e) {
+            log.debug("createDocument with exceeded failed as excpected.");
+        } catch (Exception e1) {
+            log.debug("createDocument with exceeded failed with wrong exception (expected CmisInvalidArgumentException, got "
+                    + e1.getClass().getName() + ").");
         }
     }
     
