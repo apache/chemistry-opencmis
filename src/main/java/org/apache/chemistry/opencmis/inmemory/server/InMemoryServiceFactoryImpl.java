@@ -19,9 +19,16 @@
 package org.apache.chemistry.opencmis.inmemory.server;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -31,6 +38,8 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
+import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
@@ -52,7 +61,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     private ThreadLocal<CmisServiceWrapper<InMemoryService>> threadLocalService = new ThreadLocal<CmisServiceWrapper<InMemoryService>>();
     private boolean fUseOverrideCtx = false;
     private StoreManager storeManager; // singleton root of everything
-
+    private CleanManager cleanManager = null;
+    
     @Override
     public void init(Map<String, String> parameters) {
         LOG.info("Initializing in-memory repository...");
@@ -62,20 +72,31 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         if (null != overrideCtx)
             fUseOverrideCtx = true;
 
+        ConfigurationSettings.init(parameters);
+
         String repositoryClassName = (String) parameters.get(ConfigConstants.REPOSITORY_CLASS);
         if (null == repositoryClassName)
             repositoryClassName = StoreManagerImpl.class.getName();
 
         if (null == storeManager)
             storeManager = StoreManagerFactory.createInstance(repositoryClassName);
+        
+        Date deploymentTime = new Date();
+        String strDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US).format(deploymentTime);
 
+        parameters.put(ConfigConstants.DEPLOYMENT_TIME, strDate);
+        
         initStorageManager(parameters);
 
-        fillRepositoryIfConfigured(parameters);
+        fillRepositoryIfConfigured(parameters);                
+        
+        Long cleanInterval = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.CLEAN_REPOSITORY_INTERVAL);
+        if (null != cleanInterval && cleanInterval > 0)
+            scheduleCleanRepositoryJob(cleanInterval);
 
         LOG.info("...initialized in-memory repository.");
     }
-
+    
     public static void setOverrideCallContext(CallContext ctx) {
         OVERRIDE_CTX = ctx;
     }
@@ -109,6 +130,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
     @Override
     public void destroy() {
+        if (null != cleanManager)
+            cleanManager.stopCleanRepositoryJob();
         threadLocalService = null;
     }
 
@@ -286,4 +309,42 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
           
     } // fillRepositoryIfConfigured
  
+    class CleanManager {
+        
+        private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ScheduledFuture<?> cleanerHandle = null;
+        
+        public void startCleanRepositoryJob (long intervalInMinutes) {
+            
+            final Runnable cleaner = new Runnable() {
+                public void run() { 
+                    LOG.info("Cleaning repository as part of a scheduled maintenance job.");
+                    for(String repositoryId: storeManager.getAllRepositoryIds()) {
+                        ObjectStore store = storeManager.getObjectStore(repositoryId);
+                        store.clear();             
+                        fillRepositoryIfConfigured(ConfigurationSettings.getParameters());  
+                    }
+                    LOG.info("Repository cleaned. Freeing memory.");
+                    System.gc();
+                }
+            };
+            
+            LOG.info("Repository Clean Job starting clean job, interval " + intervalInMinutes + " min");
+            cleanerHandle =
+                scheduler.scheduleAtFixedRate(cleaner, intervalInMinutes, intervalInMinutes, TimeUnit.MINUTES);
+        }
+        
+        public void stopCleanRepositoryJob() {
+            LOG.info("Repository Clean Job cancelling clean job.");
+            boolean ok = cleanerHandle.cancel(true);
+            LOG.info("Repository Clean Job cancelled with result: " + ok);
+            scheduler.shutdownNow();
+        }
+    }
+
+    private void scheduleCleanRepositoryJob(long minutes) {                 
+        cleanManager = new CleanManager();
+        cleanManager.startCleanRepositoryJob(minutes);
+    }
+
 }

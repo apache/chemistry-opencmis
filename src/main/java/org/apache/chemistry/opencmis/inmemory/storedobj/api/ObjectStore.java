@@ -109,4 +109,16 @@ public interface ObjectStore {
      * @return list of checked out documents in the repository
      */
     List<VersionedDocument> getCheckedOutDocuments(String orderBy);
+    
+    /**
+     * Clear repository and remove all data.
+     */
+    public void clear();
+    
+    /**
+     * For statistics: return the number of objects contained in the system
+     * @return
+     *      number of stored objects
+     */
+    public long getObjectCount();
 }

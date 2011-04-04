@@ -219,30 +219,21 @@ public class ObjectStoreImpl implements ObjectStore {
         Set<String> entries = fStoredObjectMap.keySet();
         return entries;
     }
+    
+    /**
+     * Clear repository and remove all data.
+     */
+    public void clear() {
+        lock();
+        fStoredObjectMap.clear();
+        storeObject(fRootFolder);
+        unlock();
+    }
 
-    // void renameAllIdsWithPrefix(String oldPath, String newPath) {
-    // Iterator<Entry<String, StoredObject>> it =
-    // fStoredObjectMap.entrySet().iterator();
-    // Map<String, StoredObject> newMap = new HashMap<String, StoredObject>();
-    // while (it.hasNext()) {
-    // Map.Entry<String, StoredObject> entry = (Map.Entry<String, StoredObject>)
-    // it
-    // .next();
-    //
-    // if (entry.getKey().startsWith(oldPath)) {
-    // if (entry.getValue() instanceof Path) {
-    // newPath = ((Path)entry.getValue()).getPath();
-    // it.remove(); // the only safe way to modify while iteration
-    // newMap.put(newPath, entry.getValue()); // we can't add to the current
-    // collection while
-    // // iterating
-    // }
-    // }
-    // }
-    // fStoredObjectMap.putAll(newMap); // add all at once when iteration is
-    // complete
-    // }
-
+    public long getObjectCount() {
+        return fStoredObjectMap.size();
+    }
+    
     // /////////////////////////////////////////
     // private helper methods
 
