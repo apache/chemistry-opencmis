@@ -217,16 +217,25 @@ public class AbstractServiceTst /* extends TestCase */{
     }
 
     protected ContentStream createContent() {
-        ContentStreamDataImpl content = new ContentStreamDataImpl();
+        return createContent(32);
+    }
+    
+    protected ContentStream createContent(int sizeInKB) {
+        return createContent(sizeInKB, 0);
+    }
+    
+    protected ContentStream createContent(int sizeInKB, long maxSizeInKB) {
+        ContentStreamDataImpl content = new ContentStreamDataImpl(maxSizeInKB);
         content.setFileName("data.txt");
         content.setMimeType("text/plain");
-        int len = 32 * 1024;
+        int len = sizeInKB * 1024;
         byte[] b = { 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a,
                 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a }; // 32
-        // Bytes
+        int noBlocks = len / b.length;
+        
         ByteArrayOutputStream ba = new ByteArrayOutputStream(len);
         try {
-            for (int i = 0; i < 1024; i++)
+            for (int i = 0; i < noBlocks; i++)
                 ba.write(b);
             content.setContent(new ByteArrayInputStream(ba.toByteArray()));
         } catch (IOException e) {
@@ -236,7 +245,7 @@ public class AbstractServiceTst /* extends TestCase */{
     }
 
     protected ContentStream createContent(char ch) {
-        ContentStreamDataImpl content = new ContentStreamDataImpl();
+        ContentStreamDataImpl content = new ContentStreamDataImpl(0);
         content.setFileName("data.txt");
         content.setMimeType("text/plain");
         int len = 32 * 1024;

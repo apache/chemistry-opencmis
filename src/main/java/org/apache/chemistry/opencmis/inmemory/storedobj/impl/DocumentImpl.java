@@ -26,6 +26,8 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
+import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.commons.logging.Log;
@@ -43,7 +45,8 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     private ContentStreamDataImpl fContent;
 
     private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
-
+    private Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
+    
     DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package
         super(objStore);
     }
@@ -74,7 +77,7 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         if (null == content) {
             fContent = null;
         } else {
-            fContent = new ContentStreamDataImpl();
+            fContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB);
             String fileName = content.getFileName();
             if (null == fileName || fileName.length() <= 0)
                 fileName = getName(); // use name of document as fallback

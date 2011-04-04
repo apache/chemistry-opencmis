@@ -28,6 +28,8 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
+import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
@@ -40,6 +42,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  * 
  */
 public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion {
+
+    private Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
     private ContentStreamDataImpl fContent;
     private VersionedDocument fContainer; // the document this version belongs
@@ -64,7 +68,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         if (null == content) {
             fContent = null;
         } else {
-            fContent = new ContentStreamDataImpl();
+            fContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB);
             fContent.setFileName(content.getFileName());
             fContent.setMimeType(content.getMimeType());
             try {

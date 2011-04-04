@@ -1,4 +1,5 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
+
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,7 +21,6 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
  *
  */
 
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,6 +30,9 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
+import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 
 public class ContentStreamDataImpl implements ContentStream {
 
@@ -45,6 +48,12 @@ public class ContentStreamDataImpl implements ContentStream {
 
     private long fStreamLimitLength;
 
+    private long sizeLimitKB;
+
+    public ContentStreamDataImpl(long maxAllowedContentSizeKB) {
+        sizeLimitKB = maxAllowedContentSizeKB;
+    }
+    
     public void setContent(InputStream in) throws IOException {
         fStreamLimitOffset = fStreamLimitLength = -1;
         if (null == in) {
@@ -56,6 +65,9 @@ public class ContentStreamDataImpl implements ContentStream {
             for (int len = 0; (len = in.read(buffer)) != -1;) {
                 contentStream.write(buffer, 0, len);
                 fLength += len;
+                if (sizeLimitKB > 0 && fLength > sizeLimitKB * 1024)
+                    throw new CmisInvalidArgumentException("Content size exceeds max. allowed size of " + sizeLimitKB
+                            + "KB.");
             }
             fContent = contentStream.toByteArray();
             fLength = contentStream.size();
@@ -103,7 +115,7 @@ public class ContentStreamDataImpl implements ContentStream {
     }
 
     public ContentStream getCloneWithLimits(long offset, long length) {
-        ContentStreamDataImpl clone = new ContentStreamDataImpl();
+        ContentStreamDataImpl clone = new ContentStreamDataImpl(0);
         clone.fFileName = fFileName;
         clone.fLength = fLength;
         clone.fContent = fContent;
