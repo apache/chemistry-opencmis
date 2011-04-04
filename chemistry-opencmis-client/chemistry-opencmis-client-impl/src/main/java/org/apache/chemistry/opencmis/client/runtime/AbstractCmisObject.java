@@ -268,6 +268,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         try {
             String objectId = getObjectId();
             getBinding().getObjectService().deleteObject(getRepositoryId(), objectId, allVersions, null);
+            getSession().removeObjectFromCache(this);
         } finally {
             readUnlock();
         }

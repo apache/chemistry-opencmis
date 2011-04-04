@@ -246,6 +246,22 @@ public interface Session {
      */
     CmisObject getObjectByPath(String path, OperationContext context);
 
+    /**
+     * Removes the given object from the cache.
+     * 
+     * @param objectId
+     *            object id
+     */
+    void removeObjectFromCache(ObjectId objectId);
+
+    /**
+     * Removes the given object from the cache.
+     * 
+     * @param objectId
+     *            object id
+     */
+    void removeObjectFromCache(String objectId);
+
     // discovery
 
     /**

@@ -48,6 +48,8 @@ public interface Cache extends Serializable {
 
     CmisObject getByPath(String path, String cacheKey);
 
+    void remove(String objectId);
+
     void clear();
 
     int getCacheSize();

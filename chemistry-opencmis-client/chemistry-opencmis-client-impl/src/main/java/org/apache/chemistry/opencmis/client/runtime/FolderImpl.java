@@ -167,6 +167,10 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         FailedToDeleteData failed = getBinding().getObjectService().deleteTree(repositoryId, objectId, allVersions,
                 unfile, continueOnFailure, null);
 
+        if ((failed == null) || (failed.getIds() == null) || (failed.getIds().isEmpty())) {
+            getSession().removeObjectFromCache(this);
+        }
+
         return failed.getIds();
     }
 

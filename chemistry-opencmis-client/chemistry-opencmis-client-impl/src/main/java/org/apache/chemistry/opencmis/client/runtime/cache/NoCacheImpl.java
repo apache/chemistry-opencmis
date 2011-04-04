@@ -52,6 +52,9 @@ public class NoCacheImpl implements Cache {
         return null;
     }
 
+    public void remove(String objectId) {
+    }
+
     public void clear() {
     }
 

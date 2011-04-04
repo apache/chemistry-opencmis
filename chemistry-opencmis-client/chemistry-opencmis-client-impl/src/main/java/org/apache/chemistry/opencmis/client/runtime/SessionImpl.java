@@ -431,6 +431,18 @@ public class SessionImpl implements Session, Serializable {
         return result;
     }
 
+    public void removeObjectFromCache(ObjectId objectId) {
+        if ((objectId == null) || (objectId.getId() == null)) {
+            return;
+        }
+
+        removeObjectFromCache(objectId.getId());
+    }
+
+    public void removeObjectFromCache(String objectId) {
+        cache.remove(objectId);
+    }
+
     public RepositoryInfo getRepositoryInfo() {
         lock.readLock().lock();
         try {

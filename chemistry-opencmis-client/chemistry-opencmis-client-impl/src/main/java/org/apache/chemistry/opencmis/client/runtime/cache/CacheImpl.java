@@ -272,6 +272,19 @@ public class CacheImpl implements Cache {
         }
     }
 
+    public void remove(String objectId) {
+        if(objectId == null) {
+            return;
+        }
+
+        lock.writeLock().lock();
+        try {
+            objectMap.remove(objectId);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
     public int getCacheSize() {
         return this.cacheSize;
     }
