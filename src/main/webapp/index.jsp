@@ -1,3 +1,23 @@
+<!-- 
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+-->
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -79,6 +99,7 @@ td  {
     border: 1px solid #ccc;
     padding: 3px 4px 3px 4px;
 }
+</style>
 
 <%!
 	private StoreManager getStoreManager(HttpServletRequest request) {
@@ -93,13 +114,12 @@ td  {
 	}
 %>
 
-</style>
 </head>
 <body>
   <img alt="Apache Chemistry Logo" title="Apache Chemistry Logo" src="chemistry_logo_small.png" />
 
 <h1>OpenCMIS InMemory Server</h1>
-<p> Your server is up an running.</p>
+<p> Your server is up and running.</p>
 <p>
 	The OpenCMIS InMemory Server is a CMIS server for development and test purposes.
 	All objects are hold in memory and will be lost after shutdown.
@@ -126,6 +146,15 @@ Authentication: Basic Authentication (user name and password are arbitrary)
 Note: Authentication is optional and only informational. User names are stored 
 in properties (createdBy, etc.), password is not required. The server does 
 not perform any kind of secure authentication.
+</p>
+
+<h2>NOTICE</h2>
+<p>
+This is an unsupported and experimental service. Any use is at your own risk.
+</p>
+<p>
+This service is provided on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+OF ANY KIND, either express or implied. See the license below for more information.
 </p>
 
 <h2>Monitor</h2>
@@ -177,7 +206,12 @@ not perform any kind of secure authentication.
 <tr>
 	<td>Max. allowed content size </td>
 	<% 
-	  out.println("<td>" + ConfigurationSettings.getConfigurationValueAsString(ConfigConstants.MAX_CONTENT_SIZE_KB) + "KB</td>");
+	  String maxSize = ConfigurationSettings.getConfigurationValueAsString(ConfigConstants.MAX_CONTENT_SIZE_KB);
+	  if (null == maxSize)
+	      maxSize = "unlimited";
+	  else
+		maxSize += "KB";
+	  out.println("<td>" + maxSize + "</td>");
 	%>
 </tr>
 <tr>
@@ -201,6 +235,8 @@ not perform any kind of secure authentication.
 	<% 
 	  String dateStr;
 	  Long interval = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.CLEAN_REPOSITORY_INTERVAL);
+	  long diff = 0;
+	  
 	  if (null == interval)
 	      dateStr = "Never";
 	  else {
@@ -210,17 +246,22 @@ not perform any kind of secure authentication.
 		      Calendar calNextClean = Calendar.getInstance();
 		      calNow.setTime(now);
 			  SimpleDateFormat formatter ; 
-		      Date deploy; 
-		      formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
+		      Date deploy;
+		      formatter = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US);
 		      deploy = formatter.parse(ConfigurationSettings.getConfigurationValueAsString(ConfigConstants.DEPLOYMENT_TIME));
 		      calNextClean.setTime(deploy);
 		      while (calNextClean.before(calNow))
 		          calNextClean.add(Calendar.MINUTE, interval.intValue());
 		      dateStr = formatter.format(calNextClean.getTime());
+		      diff = calNextClean.getTimeInMillis() - calNow.getTimeInMillis();
+		      
 		  } catch (Exception e) {
 		      dateStr = e.getMessage();
 		  }
 	  }
+	  if (diff > 0)
+	      dateStr += " (in " + diff / 60000 + "min, " + ((diff / 1000) % 60) + "s)";
+	  
 	  // Date deploy = new Date(Date.parse();
 	  out.println("<td>" + dateStr + "</td>");
 	%>
