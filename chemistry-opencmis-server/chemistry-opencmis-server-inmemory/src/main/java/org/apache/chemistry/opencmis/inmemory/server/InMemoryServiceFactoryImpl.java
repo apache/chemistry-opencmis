@@ -82,7 +82,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             storeManager = StoreManagerFactory.createInstance(repositoryClassName);
         
         Date deploymentTime = new Date();
-        String strDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US).format(deploymentTime);
+        String strDate = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US).format(deploymentTime);
 
         parameters.put(ConfigConstants.DEPLOYMENT_TIME, strDate);
         
