@@ -351,6 +351,10 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_DESCENDANTS);
 
         if (link == null) {
+            link = loadLink(repositoryId, folderId, Constants.REL_FOLDERTREE, Constants.MEDIATYPE_DESCENDANTS);
+        }
+
+        if (link == null) {
             throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_DESCENDANTS);
         }
 
