@@ -3,7 +3,7 @@
   <information>
     <title>$project.Name</title>
     <vendor>$project.Organization.Name</vendor>
-    <homepage href="http://incubator.apache.org/chemistry/opencmis.html"/>
+    <homepage href="http://chemistry.apache.org/java/opencmis.html"/>
     <description>$project.Description</description>
     <offline-allowed/>
     <update check="timeout" policy="prompt-update"/>
