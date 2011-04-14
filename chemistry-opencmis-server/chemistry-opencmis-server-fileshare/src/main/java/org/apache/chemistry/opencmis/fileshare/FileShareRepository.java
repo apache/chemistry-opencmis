@@ -92,6 +92,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedEx
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
+import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
@@ -540,8 +541,8 @@ public class FileShareRepository {
 
         addPropertyId(newProperties, typeId, null, PropertyIds.OBJECT_TYPE_ID, typeId);
         addPropertyString(newProperties, typeId, null, PropertyIds.CREATED_BY, context.getUsername());
-        addPropertyDateTime(newProperties, typeId, null, PropertyIds.CREATION_DATE, millisToCalendar(System
-                .currentTimeMillis()));
+        addPropertyDateTime(newProperties, typeId, null, PropertyIds.CREATION_DATE,
+                millisToCalendar(System.currentTimeMillis()));
         addPropertyString(newProperties, typeId, null, PropertyIds.LAST_MODIFIED_BY, context.getUsername());
 
         // check the file
@@ -941,7 +942,7 @@ public class FileShareRepository {
         ContentStreamImpl result = new ContentStreamImpl();
         result.setFileName(file.getName());
         result.setLength(BigInteger.valueOf(file.length()));
-        result.setMimeType(MIMETypes.getMIMEType(file));
+        result.setMimeType(MimeTypes.getMIMEType(file));
         result.setStream(stream);
 
         return result;
@@ -1420,11 +1421,11 @@ public class FileShareRepository {
                 addPropertyId(result, typeId, filter, PropertyIds.VERSION_SERIES_ID, fileToId(file));
                 addPropertyString(result, typeId, filter, PropertyIds.CHECKIN_COMMENT, "");
                 addPropertyInteger(result, typeId, filter, PropertyIds.CONTENT_STREAM_LENGTH, file.length());
-                addPropertyString(result, typeId, filter, PropertyIds.CONTENT_STREAM_MIME_TYPE, MIMETypes
-                        .getMIMEType(file));
+                addPropertyString(result, typeId, filter, PropertyIds.CONTENT_STREAM_MIME_TYPE,
+                        MimeTypes.getMIMEType(file));
                 addPropertyString(result, typeId, filter, PropertyIds.CONTENT_STREAM_FILE_NAME, file.getName());
 
-                objectInfo.setContentType(MIMETypes.getMIMEType(file));
+                objectInfo.setContentType(MimeTypes.getMIMEType(file));
                 objectInfo.setFileName(file.getName());
             }
 

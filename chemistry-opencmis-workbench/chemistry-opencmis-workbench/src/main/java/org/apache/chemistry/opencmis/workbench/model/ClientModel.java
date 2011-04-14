@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 
 public class ClientModel {
 
@@ -212,7 +213,7 @@ public class ClientModel {
             InputStream stream = new FileInputStream(file);
 
             content = clientSession.getSession().getObjectFactory()
-                    .createContentStream(file.getName(), file.length(), MIMETypes.getMIMEType(file), stream);
+                    .createContentStream(file.getName(), file.length(), MimeTypes.getMIMEType(file), stream);
         }
 
         return content;

@@ -47,7 +47,7 @@ import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
-import org.apache.chemistry.opencmis.workbench.model.MIMETypes;
+import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -203,7 +203,7 @@ public class ClientHelper {
         }
 
         if (filename.indexOf('.') == -1) {
-            filename = filename + MIMETypes.getExtension(content.getMimeType());
+            filename = filename + MimeTypes.getExtension(content.getMimeType());
         }
 
         File tempFile = ClientHelper.createTempFile(filename);

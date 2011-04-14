@@ -252,6 +252,10 @@ public class SessionImpl implements Session, Serializable {
     }
 
     public ItemIterable<Document> getCheckedOutDocs(OperationContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("Operation context must be set!");
+        }
+        
         final NavigationService navigationService = getBinding().getNavigationService();
         final ObjectFactory objectFactory = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
@@ -293,6 +297,10 @@ public class SessionImpl implements Session, Serializable {
 
     public ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems,
             OperationContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("Operation context must be set!");
+        }
+        
         lock.readLock().lock();
         try {
             Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
@@ -530,6 +538,9 @@ public class SessionImpl implements Session, Serializable {
 
     public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions,
             OperationContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("Operation context must be set!");
+        }
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
         final ObjectFactory objectFactory = this.getObjectFactory();
@@ -762,6 +773,9 @@ public class SessionImpl implements Session, Serializable {
             final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context) {
         if ((objectId == null) || (objectId.getId() == null)) {
             throw new IllegalArgumentException("Invalid object id!");
+        }
+        if (context == null) {
+            throw new IllegalArgumentException("Operation context must be set!");
         }
 
         final String id = objectId.getId();
