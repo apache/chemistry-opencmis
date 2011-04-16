@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -46,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
+import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -158,8 +160,8 @@ public class CmisAtomPubServlet extends HttpServlet {
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
-            context = HttpUtils.createContext(request, getServletContext(),
-                    CallContext.BINDING_ATOMPUB, callContextHandler);
+            context = HttpUtils.createContext(request, getServletContext(), CallContext.BINDING_ATOMPUB,
+                    callContextHandler);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {
@@ -169,14 +171,8 @@ public class CmisAtomPubServlet extends HttpServlet {
                 } else {
                     response.sendError(getErrorCode((CmisPermissionDeniedException) e), e.getMessage());
                 }
-            } else if (e instanceof CmisRuntimeException) {
-                LOG.error(e.getMessage(), e);
-                response.sendError(getErrorCode((CmisRuntimeException) e), e.getMessage());
-            } else if (e instanceof CmisBaseException) {
-                response.sendError(getErrorCode((CmisBaseException) e), e.getMessage());
             } else {
-                LOG.error(e.getMessage(), e);
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                printError(e, response);
             }
         }
 
@@ -263,5 +259,48 @@ public class CmisAtomPubServlet extends HttpServlet {
         }
 
         return 500;
+    }
+
+    /**
+     * Prints the error HTML page.
+     */
+    private void printError(Exception ex, HttpServletResponse response) {
+        int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+        String exceptionName = "runtime";
+
+        if (ex instanceof CmisRuntimeException) {
+            LOG.error(ex.getMessage(), ex);
+        } else if (ex instanceof CmisBaseException) {
+            statusCode = getErrorCode((CmisBaseException) ex);
+            exceptionName = ((CmisBaseException) ex).getExceptionName();
+        } else {
+            LOG.error(ex.getMessage(), ex);
+        }
+
+        try {
+            PrintWriter pw = response.getWriter();
+            response.setStatus(statusCode);
+            response.setContentType("text/html");
+            
+            pw.print("<html><head><title>Apache Chemistry OpenCMIS - " + exceptionName + " error</title>"
+                    + "<style><!--H1 {font-size:24px;line-height:normal;font-weight:bold;background-color:#f0f0f0;color:#003366;border-bottom:1px solid #3c78b5;padding:2px;} "
+                    + "BODY {font-family:Verdana,arial,sans-serif;color:black;font-size:14px;} "
+                    + "HR {color:#3c78b5;height:1px;}--></style></head><body>");
+            pw.print("<h1>HTTP Status " + statusCode + " - <!--exception-->" + exceptionName + "<!--/exception--></h1>");
+            pw.print("<p><!--message-->" + ex.getMessage() + "<!--/message--></p>");
+
+            String st = ExceptionHelper.getStacktraceAsString(ex);
+            if (st != null) {
+                pw.print("<hr noshade='noshade'/><!--stacktrace--><pre>\n" + st + "\n</pre><!--/stacktrace--><hr noshade='noshade'/>");
+            }
+
+            pw.print("</body></html>");
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            try {
+                response.sendError(statusCode, ex.getMessage());
+            } catch (Exception en) {
+            }
+        }
     }
 }

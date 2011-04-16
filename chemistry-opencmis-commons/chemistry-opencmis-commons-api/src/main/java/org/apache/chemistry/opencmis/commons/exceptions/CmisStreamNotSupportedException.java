@@ -43,6 +43,10 @@ public class CmisStreamNotSupportedException extends CmisBaseException {
         super(message, code);
     }
 
+    public CmisStreamNotSupportedException(String message, BigInteger code, String errorContent) {
+        super(message, code, errorContent);
+    }
+    
     public CmisStreamNotSupportedException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -53,5 +57,10 @@ public class CmisStreamNotSupportedException extends CmisBaseException {
 
     public CmisStreamNotSupportedException(String message) {
         super(message, BigInteger.ZERO);
+    }
+    
+    @Override
+    public String getExceptionName() {
+        return "streamNotSupported";
     }
 }

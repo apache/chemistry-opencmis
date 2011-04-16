@@ -18,7 +18,15 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
+import java.io.StringWriter;
 import java.math.BigInteger;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -36,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedEx
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
+import org.w3c.dom.Node;
 
 /**
  * Base class for all Web Services clients.
@@ -69,35 +78,67 @@ public abstract class AbstractWebServicesService {
         String msg = ex.getFaultInfo().getMessage();
         BigInteger code = ex.getFaultInfo().getCode();
 
+        String errorContent = null;
+        if (ex.getFaultInfo().getAny().size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (Object o : ex.getFaultInfo().getAny()) {
+                if (o != null) {
+                    if (o instanceof Node) {
+                        sb.append(getNodeAsString((Node) o));
+                    } else {
+                        sb.append(o.toString());
+                    }
+                    sb.append('\n');
+                }
+            }
+            errorContent = sb.toString();
+        }
+
         switch (ex.getFaultInfo().getType()) {
         case CONSTRAINT:
-            return new CmisConstraintException(msg, code);
+            return new CmisConstraintException(msg, code, errorContent);
         case CONTENT_ALREADY_EXISTS:
-            return new CmisContentAlreadyExistsException(msg, code);
+            return new CmisContentAlreadyExistsException(msg, code, errorContent);
         case FILTER_NOT_VALID:
-            return new CmisFilterNotValidException(msg, code);
+            return new CmisFilterNotValidException(msg, code, errorContent);
         case INVALID_ARGUMENT:
-            return new CmisInvalidArgumentException(msg, code);
+            return new CmisInvalidArgumentException(msg, code, errorContent);
         case NAME_CONSTRAINT_VIOLATION:
-            return new CmisNameConstraintViolationException(msg, code);
+            return new CmisNameConstraintViolationException(msg, code, errorContent);
         case NOT_SUPPORTED:
-            return new CmisNotSupportedException(msg, code);
+            return new CmisNotSupportedException(msg, code, errorContent);
         case OBJECT_NOT_FOUND:
-            return new CmisObjectNotFoundException(msg, code);
+            return new CmisObjectNotFoundException(msg, code, errorContent);
         case PERMISSION_DENIED:
-            return new CmisPermissionDeniedException(msg, code);
+            return new CmisPermissionDeniedException(msg, code, errorContent);
         case RUNTIME:
-            return new CmisRuntimeException(msg, code);
+            return new CmisRuntimeException(msg, code, errorContent);
         case STORAGE:
-            return new CmisStorageException(msg, code);
+            return new CmisStorageException(msg, code, errorContent);
         case STREAM_NOT_SUPPORTED:
-            return new CmisStreamNotSupportedException(msg, code);
+            return new CmisStreamNotSupportedException(msg, code, errorContent);
         case UPDATE_CONFLICT:
-            return new CmisUpdateConflictException(msg, code);
+            return new CmisUpdateConflictException(msg, code, errorContent);
         case VERSIONING:
-            return new CmisVersioningException(msg, code);
+            return new CmisVersioningException(msg, code, errorContent);
         }
 
         return new CmisRuntimeException("Unknown exception[" + ex.getFaultInfo().getType().value() + "]: " + msg);
+    }
+
+    private String getNodeAsString(Node node) {
+        try {
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformrt = factory.newTransformer();
+            transformrt.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            // transformrt.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            StringWriter sw = new StringWriter();
+            transformrt.transform(new DOMSource(node), new StreamResult(sw));
+            return sw.toString();
+        } catch (TransformerException e) {
+        }
+
+        return "";
     }
 }

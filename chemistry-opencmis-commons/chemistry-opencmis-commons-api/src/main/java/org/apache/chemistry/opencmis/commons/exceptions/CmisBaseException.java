@@ -88,6 +88,22 @@ public abstract class CmisBaseException extends RuntimeException {
      * 
      * @param message
      *            error message
+     * @param code
+     *            error code
+     * @param errorContent
+     *            error page content
+     */
+    public CmisBaseException(String message, BigInteger code, String errorContent) {
+        super(message);
+        this.code = code;
+        this.errorContent = errorContent;
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
      * @param errorContent
      *            error page content
      */
@@ -139,4 +155,9 @@ public abstract class CmisBaseException extends RuntimeException {
     public String getErrorContent() {
         return errorContent;
     }
+
+    /**
+     * Returns the name of the exception as defined in the CMIS specification.
+     */
+    public abstract String getExceptionName();
 }

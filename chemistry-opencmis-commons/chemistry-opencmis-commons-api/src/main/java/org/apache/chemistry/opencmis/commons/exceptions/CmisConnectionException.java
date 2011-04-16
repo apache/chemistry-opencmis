@@ -43,6 +43,10 @@ public class CmisConnectionException extends CmisBaseException {
         super(message, code);
     }
 
+    public CmisConnectionException(String message, BigInteger code, String errorContent) {
+        super(message, code, errorContent);
+    }
+
     public CmisConnectionException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -53,5 +57,10 @@ public class CmisConnectionException extends CmisBaseException {
 
     public CmisConnectionException(String message) {
         super(message, BigInteger.ZERO);
+    }
+
+    @Override
+    public String getExceptionName() {
+        return "connection";
     }
 }

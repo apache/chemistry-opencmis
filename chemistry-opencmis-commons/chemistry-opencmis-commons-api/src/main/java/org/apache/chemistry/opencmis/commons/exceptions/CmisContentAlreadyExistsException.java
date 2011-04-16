@@ -43,6 +43,10 @@ public class CmisContentAlreadyExistsException extends CmisBaseException {
         super(message, code);
     }
 
+    public CmisContentAlreadyExistsException(String message, BigInteger code, String errorContent) {
+        super(message, code, errorContent);
+    }
+
     public CmisContentAlreadyExistsException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -53,5 +57,10 @@ public class CmisContentAlreadyExistsException extends CmisBaseException {
 
     public CmisContentAlreadyExistsException(String message) {
         super(message, BigInteger.ZERO);
+    }
+
+    @Override
+    public String getExceptionName() {
+        return "contentAlreadyExists";
     }
 }

@@ -43,6 +43,10 @@ public class CmisFilterNotValidException extends CmisBaseException {
         super(message, code);
     }
 
+    public CmisFilterNotValidException(String message, BigInteger code, String errorContent) {
+        super(message, code, errorContent);
+    }
+    
     public CmisFilterNotValidException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -53,5 +57,10 @@ public class CmisFilterNotValidException extends CmisBaseException {
 
     public CmisFilterNotValidException(String message) {
         super(message, BigInteger.ZERO);
+    }
+    
+    @Override
+    public String getExceptionName() {
+        return "filterNotValid";
     }
 }

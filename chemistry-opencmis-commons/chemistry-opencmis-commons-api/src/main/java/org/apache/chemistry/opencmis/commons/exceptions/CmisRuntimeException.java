@@ -43,6 +43,10 @@ public class CmisRuntimeException extends CmisBaseException {
         super(message, code);
     }
 
+    public CmisRuntimeException(String message, BigInteger code, String errorContent) {
+        super(message, code, errorContent);
+    }
+    
     public CmisRuntimeException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -53,5 +57,10 @@ public class CmisRuntimeException extends CmisBaseException {
 
     public CmisRuntimeException(String message) {
         super(message, BigInteger.ZERO);
+    }
+    
+    @Override
+    public String getExceptionName() {
+        return "runtime";
     }
 }

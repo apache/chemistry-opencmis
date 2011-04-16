@@ -239,7 +239,7 @@ import com.sun.xml.ws.developer.StreamingDataHandler;
  */
 public final class Converter {
 
-    private static final String DEFAULT_EXTENSION_NS = "http://apache.org/chemistry/opencmis";
+    private static final String DEFAULT_EXTENSION_NS = "http://chemistry.apache.org/opencmis/extension";
 
     /**
      * Private constructor.
@@ -2270,7 +2270,7 @@ public final class Converter {
     public static Acl convert(CmisACLType acl) {
         if (acl == null)
             return null;
-        
+
         Acl result = convert(acl.getACL(), acl.isExact());
 
         // handle extensions

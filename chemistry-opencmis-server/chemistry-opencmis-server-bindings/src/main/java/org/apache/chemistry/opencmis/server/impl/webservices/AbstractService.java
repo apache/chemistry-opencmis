@@ -48,6 +48,8 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
+import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
+import org.w3c.dom.Node;
 
 /**
  * This class contains operations used by all services.
@@ -177,6 +179,11 @@ public abstract class AbstractService {
                 fault.setType(EnumServiceException.UPDATE_CONFLICT);
             } else if (ex instanceof CmisVersioningException) {
                 fault.setType(EnumServiceException.VERSIONING);
+            }
+
+            Node node = ExceptionHelper.getStacktraceAsNode(ex);
+            if (node != null) {
+                fault.getAny().add(node);
             }
         }
 

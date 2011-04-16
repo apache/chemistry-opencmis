@@ -43,6 +43,10 @@ public class CmisStorageException extends CmisBaseException {
         super(message, code);
     }
 
+    public CmisStorageException(String message, BigInteger code, String errorContent) {
+        super(message, code, errorContent);
+    }
+
     public CmisStorageException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -53,5 +57,10 @@ public class CmisStorageException extends CmisBaseException {
 
     public CmisStorageException(String message) {
         super(message, BigInteger.ZERO);
+    }
+
+    @Override
+    public String getExceptionName() {
+        return "storage";
     }
 }

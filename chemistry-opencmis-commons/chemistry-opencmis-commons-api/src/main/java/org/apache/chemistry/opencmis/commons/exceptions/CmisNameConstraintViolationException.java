@@ -43,6 +43,10 @@ public class CmisNameConstraintViolationException extends CmisBaseException {
         super(message, code);
     }
 
+    public CmisNameConstraintViolationException(String message, BigInteger code, String errorContent) {
+        super(message, code, errorContent);
+    }
+    
     public CmisNameConstraintViolationException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -53,5 +57,10 @@ public class CmisNameConstraintViolationException extends CmisBaseException {
 
     public CmisNameConstraintViolationException(String message) {
         super(message, BigInteger.ZERO);
+    }
+    
+    @Override
+    public String getExceptionName() {
+        return "nameConstraintViolation";
     }
 }
