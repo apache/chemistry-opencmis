@@ -33,8 +33,8 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public class UrlBuilder {
 
-    private StringBuilder urlPart;
-    private StringBuilder queryPart;
+    private final StringBuilder urlPart;
+    private final StringBuilder queryPart;
 
     /**
      * Constructor.

@@ -36,7 +36,7 @@ public class PolicyTypeImpl extends PolicyTypeDefinitionImpl implements PolicyTy
 
     private static final long serialVersionUID = 1L;
 
-    private ObjectTypeHelper helper;
+    private final ObjectTypeHelper helper;
 
     public PolicyTypeImpl(Session session, PolicyTypeDefinition typeDefinition) {
         initialize(typeDefinition);

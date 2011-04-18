@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
     "s", "i", "f"
 })
 public class ExtensionSample {
-    private String s;
-    private int i;
-    private double f;
+    private final String s;
+    private final int i;
+    private final double f;
     
     public ExtensionSample() {
         s = "This is an example for a CMIS extension.";

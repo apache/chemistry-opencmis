@@ -61,7 +61,7 @@ public class FileUtils {
      * @return the object
      * @throws CmisBaseException
      */
-    static public CmisObject getObject(String pathOrIdOfObject, Session session) {
+    public static CmisObject getObject(String pathOrIdOfObject, Session session) {
         if (session == null) {
             throw new IllegalArgumentException("session must be set!");
         }
@@ -89,7 +89,7 @@ public class FileUtils {
      * @return the folder object
      * @throws CmisBaseException
      */
-    static public Folder getFolder(String pathOrIdOfObject, Session session) {
+    public static Folder getFolder(String pathOrIdOfObject, Session session) {
         CmisObject folder = getObject(pathOrIdOfObject, session);
 
         if (folder instanceof Folder) {
@@ -114,7 +114,7 @@ public class FileUtils {
      * @throws FileNotFoundException
      * @throws CmisBaseException
      */
-    static public Document createDocumentFromFile(String parentIdOrPath, File file, String type,
+    public static Document createDocumentFromFile(String parentIdOrPath, File file, String type,
             VersioningState versioningState, Session session) throws FileNotFoundException {
         if (type == null) {
             type = BaseTypeId.CMIS_DOCUMENT.value(); // "cmis:document";
@@ -153,7 +153,7 @@ public class FileUtils {
      * @return the newly created document
      * @throws FileNotFoundException
      */
-    static public Document createTextDocument(String parentIdOrPath, String name, String content, String type,
+    public static Document createTextDocument(String parentIdOrPath, String name, String content, String type,
             VersioningState versioningState, Session session) throws FileNotFoundException {
         if (type == null) {
             type = BaseTypeId.CMIS_DOCUMENT.value(); // "cmis:document";
@@ -185,7 +185,7 @@ public class FileUtils {
      * @return the newly created folder
      * @throws CmisBaseException
      */
-    static public Folder createFolder(Folder parentFolder, String name, String type) {
+    public static Folder createFolder(Folder parentFolder, String name, String type) {
         if (type == null) {
             type = BaseTypeId.CMIS_FOLDER.value();
         }
@@ -211,7 +211,7 @@ public class FileUtils {
      * @return the newly created folder
      * @throws CmisBaseException
      */
-    static public Folder createFolder(String parentIdOrPath, String name, String type, Session session) {
+    public static Folder createFolder(String parentIdOrPath, String name, String type, Session session) {
         Folder parentFolder = getFolder(parentIdOrPath, session);
 
         if (type == null) {
@@ -235,7 +235,7 @@ public class FileUtils {
      * @throws IOException
      * @throws CmisBaseException
      */
-    static public void download(Document doc, String destinationPath) throws IOException {
+    public static void download(Document doc, String destinationPath) throws IOException {
         FileOutputStream fileStream = new FileOutputStream(destinationPath);
         BufferedOutputStream out = new BufferedOutputStream(fileStream);
         copyStream(doc.getContentStream().getStream(), out);
@@ -254,7 +254,7 @@ public class FileUtils {
      * @throws IOException
      * @throws CmisBaseException
      */
-    static public void download(String docIdOrPath, String destinationPath, Session session) throws IOException {
+    public static void download(String docIdOrPath, String destinationPath, Session session) throws IOException {
         CmisObject doc = getObject(docIdOrPath, session);
 
         if (doc instanceof Document) {
@@ -281,7 +281,7 @@ public class FileUtils {
      *            the session
      * @throws CmisBaseException
      */
-    static public void delete(String pathOrIdOfObject, Session session) {
+    public static void delete(String pathOrIdOfObject, Session session) {
         CmisObject object = getObject(pathOrIdOfObject, session);
 
         if (object instanceof Folder) {
@@ -297,7 +297,7 @@ public class FileUtils {
      * @param object
      *            the object
      */
-    static public void printProperties(CmisObject object) {
+    public static void printProperties(CmisObject object) {
         printProperties(object, System.out);
     }
 
@@ -308,17 +308,17 @@ public class FileUtils {
      * @param object
      *            the object
      */
-    static public void printProperties(CmisObject object, PrintStream out) {
+    public static void printProperties(CmisObject object, PrintStream out) {
         for (Property<?> prop : object.getProperties()) {
             printProperty(prop, out);
         }
     }
 
-    static public void printProperty(Property<?> prop) {
+    public static void printProperty(Property<?> prop) {
         printProperty(prop, System.out);
     }
 
-    static public void printProperty(Property<?> prop, PrintStream out) {
+    public static void printProperty(Property<?> prop, PrintStream out) {
         out.println(prop.getId() + ": " + prop.getValuesAsString());
     }
 }

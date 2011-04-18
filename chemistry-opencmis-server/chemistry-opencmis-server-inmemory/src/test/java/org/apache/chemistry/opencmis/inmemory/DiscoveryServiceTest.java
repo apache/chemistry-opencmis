@@ -35,7 +35,7 @@ import org.junit.Test;
 
 public class DiscoveryServiceTest extends AbstractServiceTst {
 
-    private static Log log = LogFactory.getLog(DiscoveryServiceTest.class);
+    private static final Log log = LogFactory.getLog(DiscoveryServiceTest.class);
     private static final String TEST_FOLDER_TYPE_ID = ObjectServiceTest.TEST_FOLDER_TYPE_ID;
     private static final String TEST_DOCUMENT_TYPE_ID = ObjectServiceTest.TEST_DOCUMENT_TYPE_ID;
     private static final String TEST_FOLDER_STRING_PROP_ID = ObjectServiceTest.TEST_FOLDER_STRING_PROP_ID;

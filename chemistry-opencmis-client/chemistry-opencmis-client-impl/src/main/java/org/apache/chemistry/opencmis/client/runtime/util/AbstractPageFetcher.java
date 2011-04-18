@@ -47,9 +47,9 @@ public abstract class AbstractPageFetcher<T> {
      * @param <T> the type of items fetched
      */
     public static class Page<T> {
-        private List<T> items;
-        private Long totalNumItems;
-        private Boolean hasMoreItems;
+        private final List<T> items;
+        private final Long totalNumItems;
+        private final Boolean hasMoreItems;
 
         public Page(List<T> items, BigInteger totalNumItems, Boolean hasMoreItems) {
             this.items = items;

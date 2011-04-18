@@ -200,9 +200,9 @@ public class HttpUtils {
      * HTTP Response.
      */
     public static class Response {
-        private int responseCode;
-        private String responseMessage;
-        private Map<String, List<String>> headers;
+        private final int responseCode;
+        private final String responseMessage;
+        private final Map<String, List<String>> headers;
         private InputStream stream;
         private String errorContent;
         private BigInteger length;

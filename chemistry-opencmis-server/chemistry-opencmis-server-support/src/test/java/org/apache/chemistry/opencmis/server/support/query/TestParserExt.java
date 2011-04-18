@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class TestParserExt extends AbstractParserTst {
 
-    private static Log log = LogFactory.getLog(TestParserStrict.class);
+    private static final Log log = LogFactory.getLog(TestParserStrict.class);
 
     @Before
     public void setUp() throws Exception {

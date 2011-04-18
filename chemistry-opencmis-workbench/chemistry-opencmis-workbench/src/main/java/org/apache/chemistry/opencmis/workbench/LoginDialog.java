@@ -476,9 +476,9 @@ public class LoginDialog extends JDialog {
     static class RepositoryRenderer extends JPanel implements ListCellRenderer {
         private static final long serialVersionUID = 1L;
 
-        private JLabel nameLabel;
-        private JLabel idLabel;
-        private JLabel descriptionLabel;
+        private final JLabel nameLabel;
+        private final JLabel idLabel;
+        private final JLabel descriptionLabel;
 
         public RepositoryRenderer() {
             super();

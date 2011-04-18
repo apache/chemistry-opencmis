@@ -242,7 +242,7 @@ public class TypeSplitPane extends JSplitPane {
 
             private static final long serialVersionUID = 1L;
 
-            private PropertyDefinitionTable table;
+            private final PropertyDefinitionTable table;
 
             public PropertyDefinitionTableModel(PropertyDefinitionTable table) {
                 this.table = table;

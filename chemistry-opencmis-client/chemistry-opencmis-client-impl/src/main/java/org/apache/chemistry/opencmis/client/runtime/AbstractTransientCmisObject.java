@@ -615,9 +615,9 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
     public static class AceChangeHolder implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        private String principalId;
-        private List<String> permissions;
-        private AclPropagation aclPropagation;
+        private final String principalId;
+        private final List<String> permissions;
+        private final AclPropagation aclPropagation;
 
         public AceChangeHolder(String principalId, List<String> permissions, AclPropagation aclPropagation) {
             if ((principalId == null) || (principalId.length() == 0)) {

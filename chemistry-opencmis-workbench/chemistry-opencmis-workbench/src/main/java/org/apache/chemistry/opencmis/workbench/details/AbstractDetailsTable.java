@@ -146,7 +146,7 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
 
     static class DetailsTableModel extends AbstractTableModel {
 
-        private AbstractDetailsTable table;
+        private final AbstractDetailsTable table;
 
         public DetailsTableModel(AbstractDetailsTable table) {
             this.table = table;

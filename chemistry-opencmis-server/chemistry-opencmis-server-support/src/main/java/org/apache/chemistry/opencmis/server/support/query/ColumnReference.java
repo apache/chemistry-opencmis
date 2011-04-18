@@ -23,8 +23,8 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 
 public class ColumnReference extends CmisSelector {
 
-    private String typeQueryName;  // type query name coming from query statement
-    private String propQueryName;  // property query name coming from query statement
+    private final String typeQueryName;  // type query name coming from query statement
+    private final String propQueryName;  // property query name coming from query statement
 
     // The following fields are set when the types are resolved:
     private String propertyId;

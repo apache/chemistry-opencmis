@@ -37,7 +37,7 @@ public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl impleme
 
     private static final long serialVersionUID = 1L;
 
-    private ObjectTypeHelper helper;
+    private final ObjectTypeHelper helper;
     private List<ObjectType> allowedSourceTypes;
     private List<ObjectType> allowedTargetTypes;
 

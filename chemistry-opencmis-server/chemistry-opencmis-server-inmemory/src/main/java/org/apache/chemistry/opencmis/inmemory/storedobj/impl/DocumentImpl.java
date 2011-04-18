@@ -45,7 +45,7 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     private ContentStreamDataImpl fContent;
 
     private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
-    private Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
+    private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
     
     DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package
         super(objStore);

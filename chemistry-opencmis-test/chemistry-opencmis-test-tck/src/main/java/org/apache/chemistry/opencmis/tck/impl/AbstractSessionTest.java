@@ -64,7 +64,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
  */
 public abstract class AbstractSessionTest extends AbstractCmisTest {
 
-    public final static OperationContext SELECT_ALL_NO_CACHE_OC = new OperationContextImpl();
+    public static final OperationContext SELECT_ALL_NO_CACHE_OC = new OperationContextImpl();
     static {
         SELECT_ALL_NO_CACHE_OC.setFilterString("*");
         SELECT_ALL_NO_CACHE_OC.setCacheEnabled(false);
@@ -75,7 +75,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         SELECT_ALL_NO_CACHE_OC.setRenditionFilterString("*");
     }
 
-    private SessionFactory factory = SessionFactoryImpl.newInstance();
+    private final SessionFactory factory = SessionFactoryImpl.newInstance();
     private Folder testFolder;
 
     public BindingType getBinding() {
@@ -1241,13 +1241,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     // --- helper classes ---
 
     public class CmisPropertyDefintion {
-        private String id;
-        private Boolean required;
-        private PropertyType propertyType;
-        private Cardinality cardinality;
-        private Updatability updatability;
-        private Boolean queryable;
-        private Boolean orderable;
+        private final String id;
+        private final Boolean required;
+        private final PropertyType propertyType;
+        private final Cardinality cardinality;
+        private final Updatability updatability;
+        private final Boolean queryable;
+        private final Boolean orderable;
 
         public CmisPropertyDefintion(String id, Boolean required, PropertyType propertyType, Cardinality cardinality,
                 Updatability updatability, Boolean queryable, Boolean orderable) {

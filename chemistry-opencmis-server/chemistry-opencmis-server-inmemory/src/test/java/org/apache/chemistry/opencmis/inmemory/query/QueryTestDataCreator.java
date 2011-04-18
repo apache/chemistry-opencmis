@@ -37,7 +37,6 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -46,7 +45,6 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 import org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator;
-import org.apache.chemistry.opencmis.inmemory.VersioningTest.VersionTestTypeSystemCreator;
 
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.*;
 
@@ -73,11 +71,11 @@ import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.*
  */
 public class QueryTestDataCreator {
     
-    private BindingsObjectFactory fFactory = new BindingsObjectFactoryImpl();
-    private String rootFolderId;
-    private String repositoryId;
-    private ObjectService fObjSvc;
-    private VersioningService fVerSvc;
+    private final BindingsObjectFactory fFactory = new BindingsObjectFactoryImpl();
+    private final String rootFolderId;
+    private final String repositoryId;
+    private final ObjectService fObjSvc;
+    private final VersioningService fVerSvc;
     private String doc1, doc2, doc3, doc4, doc5;
     private String folder1;
     private String folder2;

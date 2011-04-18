@@ -30,9 +30,9 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
  */
 public class TypeCache {
 
-    private String repositoryId;
-    private CmisService service;
-    private Map<String, TypeDefinition> typeDefinitions;
+    private final String repositoryId;
+    private final CmisService service;
+    private final Map<String, TypeDefinition> typeDefinitions;
 
     public TypeCache(String repositoryId, CmisService service) {
         this.repositoryId = repositoryId;

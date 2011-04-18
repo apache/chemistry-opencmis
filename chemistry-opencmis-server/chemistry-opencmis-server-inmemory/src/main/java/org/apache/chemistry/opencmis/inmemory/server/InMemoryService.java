@@ -54,15 +54,15 @@ public class InMemoryService extends AbstractCmisService {
 
     private static final Log LOG = LogFactory.getLog(InMemoryService.class.getName());
 
-    private StoreManager storeManager; // singleton root of everything
+    private final StoreManager storeManager; // singleton root of everything
     private CallContext context;
 
-    private InMemoryRepositoryServiceImpl fRepSvc;
-    private InMemoryObjectServiceImpl fObjSvc;
-    private InMemoryNavigationServiceImpl fNavSvc;
-    private InMemoryVersioningServiceImpl fVerSvc;
-    private InMemoryDiscoveryServiceImpl fDisSvc;
-    private InMemoryMultiFilingServiceImpl fMultiSvc;
+    private final InMemoryRepositoryServiceImpl fRepSvc;
+    private final InMemoryObjectServiceImpl fObjSvc;
+    private final InMemoryNavigationServiceImpl fNavSvc;
+    private final InMemoryVersioningServiceImpl fVerSvc;
+    private final InMemoryDiscoveryServiceImpl fDisSvc;
+    private final InMemoryMultiFilingServiceImpl fMultiSvc;
 
     public StoreManager getStoreManager() {
         return storeManager;

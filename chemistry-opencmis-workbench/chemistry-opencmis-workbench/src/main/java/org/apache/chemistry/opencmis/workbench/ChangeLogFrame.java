@@ -49,7 +49,7 @@ public class ChangeLogFrame extends JFrame {
 
     private static final String WINDOW_TITLE = "CMIS Change Log";
 
-    private ClientModel model;
+    private final ClientModel model;
 
     private JTextField changeLogTokenField;
     private ChangeLogTable changeLogTable;
@@ -157,7 +157,7 @@ public class ChangeLogFrame extends JFrame {
 
             private static final long serialVersionUID = 1L;
 
-            private ChangeLogTable table;
+            private final ChangeLogTable table;
 
             public ChangeLogTableModel(ChangeLogTable table) {
                 this.table = table;

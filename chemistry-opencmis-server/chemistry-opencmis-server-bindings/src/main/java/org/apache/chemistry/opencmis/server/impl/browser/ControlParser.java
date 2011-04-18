@@ -32,11 +32,11 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
  */
 public class ControlParser {
 
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    private Map<String, String> zeroDim = new HashMap<String, String>();
-    private Map<String, Map<Integer, String>> oneDim = new HashMap<String, Map<Integer, String>>();
-    private Map<String, Map<Integer, Map<Integer, String>>> twoDim = new HashMap<String, Map<Integer, Map<Integer, String>>>();
+    private final Map<String, String> zeroDim = new HashMap<String, String>();
+    private final Map<String, Map<Integer, String>> oneDim = new HashMap<String, Map<Integer, String>>();
+    private final Map<String, Map<Integer, Map<Integer, String>>> twoDim = new HashMap<String, Map<Integer, Map<Integer, String>>>();
 
     public ControlParser(HttpServletRequest request) {
         this.request = request;

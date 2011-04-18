@@ -41,7 +41,7 @@ public class NTLMAuthenticationProvider extends AbstractAuthenticationProvider {
     private static final long serialVersionUID = 1L;
 
     // java.net.Authenticator is static, so this can be static too
-    private final static OpenCMISAuthenticator authenticator = new OpenCMISAuthenticator();
+    private static final OpenCMISAuthenticator authenticator = new OpenCMISAuthenticator();
     static {
         Authenticator.setDefault(authenticator);
     }

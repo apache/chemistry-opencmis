@@ -29,9 +29,9 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
  */
 public class CallContextImpl implements CallContext {
 
-    private String binding;
-    private boolean objectInfoRequired;
-    private Map<String, Object> parameter = new HashMap<String, Object>();
+    private final String binding;
+    private final boolean objectInfoRequired;
+    private final Map<String, Object> parameter = new HashMap<String, Object>();
 
     public CallContextImpl(String binding, String repositoryId, boolean objectInfoRequired) {
         this.binding = binding;

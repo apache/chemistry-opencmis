@@ -54,7 +54,7 @@ import org.apache.commons.logging.LogFactory;
 
 public abstract class AbstractPortProvider {
 
-    private static Log log = LogFactory.getLog(AbstractPortProvider.class);
+    private static final Log log = LogFactory.getLog(AbstractPortProvider.class);
 
     public static final String CMIS_NAMESPACE = "http://docs.oasis-open.org/ns/cmis/ws/200908/";
 

@@ -37,14 +37,14 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CacheImpl implements Cache {
 
-    private static Log log = LogFactory.getLog(CacheImpl.class);
+    private static final Log log = LogFactory.getLog(CacheImpl.class);
 
     private static final long serialVersionUID = 1L;
 
     private List<Class<?>> fLevels;
     private List<Map<String, String>> fLevelParameters;
 
-    private String fName;
+    private final String fName;
 
     private CacheLevel fRoot;
 

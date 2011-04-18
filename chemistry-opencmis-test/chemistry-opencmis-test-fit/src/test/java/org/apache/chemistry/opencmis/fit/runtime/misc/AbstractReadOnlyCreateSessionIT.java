@@ -22,7 +22,6 @@ import java.util.Hashtable;
 
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
-import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.fit.runtime.Fixture;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

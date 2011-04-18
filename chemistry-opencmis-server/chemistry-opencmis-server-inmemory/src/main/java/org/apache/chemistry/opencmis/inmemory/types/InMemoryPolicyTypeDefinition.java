@@ -31,7 +31,7 @@ import org.apache.chemistry.opencmis.inmemory.NameValidator;
 public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
 
     private static final long serialVersionUID = 1L;
-    private static InMemoryPolicyTypeDefinition POLICY_TYPE = new InMemoryPolicyTypeDefinition();
+    private static final InMemoryPolicyTypeDefinition POLICY_TYPE = new InMemoryPolicyTypeDefinition();
 
     public static InMemoryPolicyTypeDefinition getRootPolicyType() {
         return POLICY_TYPE;

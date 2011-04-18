@@ -27,7 +27,7 @@ public class DetailsTabs extends JTabbedPane {
 
     private static final long serialVersionUID = 1L;
 
-    private ClientModel model;
+    private final ClientModel model;
 
     private ObjectPanel objectPanel;
     private ActionsPanel actionsPanel;

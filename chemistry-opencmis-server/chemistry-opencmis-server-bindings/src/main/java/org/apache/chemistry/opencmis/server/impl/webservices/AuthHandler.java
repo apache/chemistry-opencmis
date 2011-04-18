@@ -189,7 +189,7 @@ public class AuthHandler implements MessageHandler<MessageHandlerContext> {
         @XmlAnyElement(lax = true)
         protected List<Object> any;
         @XmlAnyAttribute
-        private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
         public List<Object> getAny() {
             if (any == null) {
@@ -218,7 +218,7 @@ public class AuthHandler implements MessageHandler<MessageHandlerContext> {
         @XmlSchemaType(name = "ID")
         protected String id;
         @XmlAnyAttribute
-        private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
         public AttributedString getUsername() {
             return username;
@@ -278,7 +278,7 @@ public class AuthHandler implements MessageHandler<MessageHandlerContext> {
         @XmlSchemaType(name = "ID")
         protected String id;
         @XmlAnyAttribute
-        private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
         public String getValue() {
             return value;

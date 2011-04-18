@@ -38,8 +38,8 @@ public abstract class CreateDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private ClientModel model;
-	private JPanel panel;
+	private final ClientModel model;
+	private final JPanel panel;
 
 	public CreateDialog(Frame owner, String title, ClientModel model) {
 		super(owner, title, true);

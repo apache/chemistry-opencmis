@@ -43,9 +43,9 @@ import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
 public class ObjectCreator {
 
-    private BindingsObjectFactory fFactory;
-    private ObjectService fObjSvc;
-    private String fRepositoryId;
+    private final BindingsObjectFactory fFactory;
+    private final ObjectService fObjSvc;
+    private final String fRepositoryId;
 
     public ObjectCreator(BindingsObjectFactory factory, ObjectService objSvc, String repositoryId) {
         fObjSvc = objSvc;

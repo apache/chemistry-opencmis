@@ -44,58 +44,58 @@ import org.apache.commons.logging.LogFactory;
 
 public abstract class AbstractQueryConditionProcessor implements QueryConditionProcessor {
 
-    private static Log LOG = LogFactory.getLog(ProcessQueryTest.class);
-    abstract public void onStartProcessing(Tree whereNode);
-    abstract public void onStopProcessing();
+    private static final Log LOG = LogFactory.getLog(ProcessQueryTest.class);
+    public abstract void onStartProcessing(Tree whereNode);
+    public abstract void onStopProcessing();
 
     // Compare operators
-    abstract public void onEquals(Tree eqNode, Tree leftNode, Tree rightNode);
-    abstract public void onNotEquals(Tree neNode, Tree leftNode, Tree rightNode);
-    abstract public void onGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode);
-    abstract public void onGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode);
-    abstract public void onLessThan(Tree ltNode, Tree leftNode, Tree rightNode);
-    abstract public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode);
+    public abstract void onEquals(Tree eqNode, Tree leftNode, Tree rightNode);
+    public abstract void onNotEquals(Tree neNode, Tree leftNode, Tree rightNode);
+    public abstract void onGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode);
+    public abstract void onGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode);
+    public abstract void onLessThan(Tree ltNode, Tree leftNode, Tree rightNode);
+    public abstract void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode);
 
     // Boolean operators
     public void onPreNot(Tree opNode, Tree leftNode) {
     }
-    abstract public void onNot(Tree opNode, Tree leftNode);
+    public abstract void onNot(Tree opNode, Tree leftNode);
     public void onPostNot(Tree opNode, Tree leftNode) {
     }
     public void onPreAnd(Tree opNode, Tree leftNode, Tree rightNode) {
     }
-    abstract public void onAnd(Tree opNode, Tree leftNode, Tree rightNode);
+    public abstract void onAnd(Tree opNode, Tree leftNode, Tree rightNode);
     public void onPostAnd(Tree opNode, Tree leftNode, Tree rightNode) {
     }
     public void onPreOr(Tree opNode, Tree leftNode, Tree rightNode) {
     }
-    abstract public void onOr(Tree opNode, Tree leftNode, Tree rightNode);
+    public abstract void onOr(Tree opNode, Tree leftNode, Tree rightNode);
     public void onPostOr(Tree opNode, Tree leftNode, Tree rightNode) {
     }
 
     // Multi-value:
-    abstract public void onIn(Tree node, Tree colNode, Tree listNode);
-    abstract public void onNotIn(Tree node, Tree colNode, Tree listNode);
-    abstract public void onInAny(Tree node, Tree colNode, Tree listNode);
-    abstract public void onNotInAny(Tree node, Tree colNode, Tree listNode);
-    abstract public void onEqAny(Tree node, Tree literalNode, Tree colNode);
+    public abstract void onIn(Tree node, Tree colNode, Tree listNode);
+    public abstract void onNotIn(Tree node, Tree colNode, Tree listNode);
+    public abstract void onInAny(Tree node, Tree colNode, Tree listNode);
+    public abstract void onNotInAny(Tree node, Tree colNode, Tree listNode);
+    public abstract void onEqAny(Tree node, Tree literalNode, Tree colNode);
 
     // Null comparisons:
-    abstract public void onIsNull(Tree nullNode, Tree colNode);
-    abstract public void onIsNotNull(Tree notNullNode, Tree colNode);
+    public abstract void onIsNull(Tree nullNode, Tree colNode);
+    public abstract void onIsNotNull(Tree notNullNode, Tree colNode);
 
     // String matching:
-    abstract public void onIsLike(Tree node, Tree colNode, Tree stringNode);
-    abstract public void onIsNotLike(Tree node, Tree colNode, Tree stringNode);
+    public abstract void onIsLike(Tree node, Tree colNode, Tree stringNode);
+    public abstract void onIsNotLike(Tree node, Tree colNode, Tree stringNode);
 
     // Functions:
-    abstract public void onContains(Tree node, Tree colNode, Tree paramNode);
-    abstract public void onInFolder(Tree node, Tree colNode, Tree paramNode);
-    abstract public void onInTree(Tree node, Tree colNode, Tree paramNode);
-    abstract public void onScore(Tree node);
+    public abstract void onContains(Tree node, Tree colNode, Tree paramNode);
+    public abstract void onInFolder(Tree node, Tree colNode, Tree paramNode);
+    public abstract void onInTree(Tree node, Tree colNode, Tree paramNode);
+    public abstract void onScore(Tree node);
 
     // convenience method because everybody needs this piece of code
-    static public CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+    public static CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
         CharStream input = new ANTLRInputStream(new ByteArrayInputStream(statement.getBytes("UTF-8")));
         TokenSource lexer = new CmisQlStrictLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);

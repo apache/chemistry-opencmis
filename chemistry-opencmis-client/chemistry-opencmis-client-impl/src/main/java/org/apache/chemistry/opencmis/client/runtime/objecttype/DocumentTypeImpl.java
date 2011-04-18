@@ -36,7 +36,7 @@ public class DocumentTypeImpl extends DocumentTypeDefinitionImpl implements Docu
 
     private static final long serialVersionUID = 1L;
 
-    private ObjectTypeHelper helper;
+    private final ObjectTypeHelper helper;
 
     public DocumentTypeImpl(Session session, DocumentTypeDefinition typeDefinition) {
         initialize(typeDefinition);

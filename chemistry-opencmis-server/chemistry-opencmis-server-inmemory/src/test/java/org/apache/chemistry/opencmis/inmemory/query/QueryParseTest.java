@@ -48,7 +48,7 @@ import org.junit.Test;
 
 public class QueryParseTest extends AbstractQueryTest {
 
-    private static Log LOG = LogFactory.getLog(QueryParseTest.class);
+    private static final Log LOG = LogFactory.getLog(QueryParseTest.class);
 
     @Before
     public void setUp() throws Exception {

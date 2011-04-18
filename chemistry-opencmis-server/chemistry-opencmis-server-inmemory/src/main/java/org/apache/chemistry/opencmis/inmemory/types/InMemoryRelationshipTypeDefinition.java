@@ -31,7 +31,7 @@ import org.apache.chemistry.opencmis.inmemory.NameValidator;
 public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefinitionImpl {
 
     private static final long serialVersionUID = 1L;
-    private static InMemoryRelationshipTypeDefinition RELATIONSHIP_TYPE = new InMemoryRelationshipTypeDefinition();
+    private static final InMemoryRelationshipTypeDefinition RELATIONSHIP_TYPE = new InMemoryRelationshipTypeDefinition();
 
     public static InMemoryRelationshipTypeDefinition getRootRelationshipType() {
         return RELATIONSHIP_TYPE;

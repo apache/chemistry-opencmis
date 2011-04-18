@@ -35,7 +35,7 @@ public class FolderTypeImpl extends FolderTypeDefinitionImpl implements FolderTy
 
     private static final long serialVersionUID = 1L;
 
-    private ObjectTypeHelper helper;
+    private final ObjectTypeHelper helper;
 
     public FolderTypeImpl(Session session, FolderTypeDefinition typeDefinition) {
         initialize(typeDefinition);

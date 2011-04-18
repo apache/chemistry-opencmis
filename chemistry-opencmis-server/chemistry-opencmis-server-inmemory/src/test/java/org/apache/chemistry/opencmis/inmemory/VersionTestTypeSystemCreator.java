@@ -30,9 +30,9 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefiniti
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 
 public class VersionTestTypeSystemCreator implements TypeCreator {
-    static public String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
-    static public String PROPERTY_ID = "StringProp";
-    static public List<TypeDefinition> singletonTypes = buildTypesList();
+    public static String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
+    public static String PROPERTY_ID = "StringProp";
+    public static List<TypeDefinition> singletonTypes = buildTypesList();
 
     /**
      * in the public interface of this class we return the singleton containing
@@ -46,7 +46,7 @@ public class VersionTestTypeSystemCreator implements TypeCreator {
         return singletonTypes;
     }
 
-    static public TypeDefinition getTypeById(String typeId) {
+    public static TypeDefinition getTypeById(String typeId) {
         for (TypeDefinition typeDef : singletonTypes)
             if (typeDef.getId().equals(typeId))
                 return typeDef;

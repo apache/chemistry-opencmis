@@ -75,10 +75,10 @@ public class RepositoryServiceTest extends AbstractServiceTst {
 
     // private CmisProvider fProvider;
 
-    private static Log log = LogFactory.getLog(RepositoryServiceTest.class);
+    private static final Log log = LogFactory.getLog(RepositoryServiceTest.class);
     private static final String REPOSITORY_ID = "UnitTestRepository";
 
-    static public class UnitTestRepositoryInfo implements RepositoryInfoCreator {
+    public static class UnitTestRepositoryInfo implements RepositoryInfoCreator {
 
         public RepositoryInfo createRepositoryInfo() {
             RepositoryCapabilitiesImpl caps = new RepositoryCapabilitiesImpl();
@@ -575,7 +575,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
         public static final String LEVEL1_TYPE = "DocumentLevel1";;
         public static final String LEVEL2_TYPE = "DocumentLevel2";
 
-        static public List<TypeDefinition> singletonTypes = buildTypesList();
+        public static List<TypeDefinition> singletonTypes = buildTypesList();
 
         public List<TypeDefinition> createTypesList() {
             return singletonTypes;
@@ -772,7 +772,7 @@ public class RepositoryServiceTest extends AbstractServiceTst {
             return singletonTypes;
         }
 
-        static public TypeDefinition getTypeById(String typeId) {
+        public static TypeDefinition getTypeById(String typeId) {
             for (TypeDefinition typeDef : singletonTypes)
                 if (typeDef.getId().equals(typeId))
                     return typeDef;

@@ -148,15 +148,15 @@ public class FileShareRepository {
     private static final Log log = LogFactory.getLog(FileShareRepository.class);
 
     /** Repository id */
-    private String fRepositoryId;
+    private final String fRepositoryId;
     /** Root directory */
-    private File fRoot;
+    private final File fRoot;
     /** Types */
-    private TypeManager fTypes;
+    private final TypeManager fTypes;
     /** User table */
-    private Map<String, Boolean> fUserMap;
+    private final Map<String, Boolean> fUserMap;
     /** Repository info */
-    private RepositoryInfoImpl fRepositoryInfo;
+    private final RepositoryInfoImpl fRepositoryInfo;
 
     /**
      * Constructor.

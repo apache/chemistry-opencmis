@@ -63,7 +63,7 @@ public class FolderTable extends JTable implements FolderListener {
     private static final int[] COLUMN_WIDTHS = { 24, 200, 150, 150, 80, 180, 100, 180, 100, 300 };
     private static final int ID_COLUMN = 9;
 
-    private ClientModel model;
+    private final ClientModel model;
 
     private Map<BaseTypeId, ImageIcon> icons;
 

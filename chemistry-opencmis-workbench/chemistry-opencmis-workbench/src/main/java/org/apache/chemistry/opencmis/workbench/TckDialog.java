@@ -56,8 +56,8 @@ import org.apache.chemistry.opencmis.workbench.model.ClientModel;
  */
 public class TckDialog {
 
-    private Frame owner;
-    private TckDialogRunner runner;
+    private final Frame owner;
+    private final TckDialogRunner runner;
 
     private JProgressBar groupsProgressBar;
     private JProgressBar testsProgressBar;
@@ -147,7 +147,7 @@ public class TckDialog {
 
         private static final long serialVersionUID = 1L;
 
-        private TckTask task;
+        private final TckTask task;
 
         public TckRunDialog() {
             super(owner, "TCK");
@@ -265,8 +265,8 @@ public class TckDialog {
     }
 
     class TckTask extends SwingWorker<Void, Void> {
-        private JDialog dialog;
-        private TckDialogRunner runner;
+        private final JDialog dialog;
+        private final TckDialogRunner runner;
 
         public TckTask(JDialog dialog, TckDialogRunner runner) {
             this.dialog = dialog;

@@ -62,11 +62,11 @@ public class LinkCache implements Serializable {
     private static final int CACHE_SIZE_TYPES = 100;
     private static final int CACHE_SIZE_OBJECTS = 400;
 
-    private Cache linkCache;
-    private Cache typeLinkCache;
-    private Cache collectionLinkCache;
-    private Cache templateCache;
-    private Cache repositoryLinkCache;
+    private final Cache linkCache;
+    private final Cache typeLinkCache;
+    private final Cache collectionLinkCache;
+    private final Cache templateCache;
+    private final Cache repositoryLinkCache;
 
     /**
      * Constructor.

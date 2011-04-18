@@ -35,7 +35,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDa
 public class PropertyImpl<T> extends AbstractPropertyData<T> implements Property<T>, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private PropertyDefinition<T> propertyDefinition;
+    private final PropertyDefinition<T> propertyDefinition;
 
     protected void initialize(PropertyDefinition<?> pd) {
         setId(pd.getId());

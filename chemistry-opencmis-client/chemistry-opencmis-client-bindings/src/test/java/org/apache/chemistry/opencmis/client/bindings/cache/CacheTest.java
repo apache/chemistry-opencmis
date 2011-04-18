@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.client.bindings.cache;
 
 import junit.framework.TestCase;
 
-import org.apache.chemistry.opencmis.client.bindings.cache.Cache;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.CacheImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.ContentTypeCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.LruCacheLevelImpl;
@@ -34,8 +33,8 @@ import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImp
  */
 public class CacheTest extends TestCase {
 
-    public final static String MAP_CACHE_LEVEL = "org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl";
-    public final static String LRU_CACHE_LEVEL = "org.apache.chemistry.opencmis.client.bindings.cache.impl.LruCacheLevelImpl";
+    public static final String MAP_CACHE_LEVEL = "org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl";
+    public static final String LRU_CACHE_LEVEL = "org.apache.chemistry.opencmis.client.bindings.cache.impl.LruCacheLevelImpl";
 
     public void testCache() throws Exception {
         Cache cache;

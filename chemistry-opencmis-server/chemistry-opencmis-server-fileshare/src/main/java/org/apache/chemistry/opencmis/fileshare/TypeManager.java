@@ -64,10 +64,10 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 public class TypeManager {
-    public final static String DOCUMENT_TYPE_ID = "cmis:document";
-    public final static String FOLDER_TYPE_ID = "cmis:folder";
-    public final static String RELATIONSHIP_TYPE_ID = "cmis:relationship";
-    public final static String POLICY_TYPE_ID = "cmis:policy";
+    public static final String DOCUMENT_TYPE_ID = "cmis:document";
+    public static final String FOLDER_TYPE_ID = "cmis:folder";
+    public static final String RELATIONSHIP_TYPE_ID = "cmis:relationship";
+    public static final String POLICY_TYPE_ID = "cmis:policy";
 
     private static final String NAMESPACE = "http://opencmis.org/fileshare";
 

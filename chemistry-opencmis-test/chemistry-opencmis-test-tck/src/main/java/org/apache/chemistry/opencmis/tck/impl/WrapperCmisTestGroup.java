@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.tck.CmisTest;
  * Helper group implementation that just hold one test.
  */
 public class WrapperCmisTestGroup extends AbstractCmisTestGroup {
-    private CmisTest test;
+    private final CmisTest test;
 
     public WrapperCmisTestGroup(CmisTest test) throws Exception {
         if (test == null) {

@@ -46,8 +46,8 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
     private static final long serialVersionUID = 1L;
 
     private Session session;
-    private BindingsObjectFactory objectFactory;
-    private RepositoryService repositoryServiceWrapper;
+    private final BindingsObjectFactory objectFactory;
+    private final RepositoryService repositoryServiceWrapper;
 
     /**
      * Constructor.

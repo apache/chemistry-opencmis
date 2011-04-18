@@ -64,7 +64,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class StoreManagerImpl implements StoreManager {
 
-    private static Log LOG = LogFactory.getLog(StoreManagerImpl.class);
+    private static final Log LOG = LogFactory.getLog(StoreManagerImpl.class);
     
     protected BindingsObjectFactory fObjectFactory;
     protected RepositoryInfo fRepositoryInfo;
@@ -73,12 +73,12 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * map from repository id to a type manager
      */
-    private Map<String, TypeManagerImpl> fMapRepositoryToTypeManager = new HashMap<String, TypeManagerImpl>();
+    private final Map<String, TypeManagerImpl> fMapRepositoryToTypeManager = new HashMap<String, TypeManagerImpl>();
 
     /**
      * map from repository id to a object store
      */
-    private Map<String, ObjectStore> fMapRepositoryToObjectStore = new HashMap<String, ObjectStore>();
+    private final Map<String, ObjectStore> fMapRepositoryToObjectStore = new HashMap<String, ObjectStore>();
 
     public ObjectStoreImpl getStore(String repositoryId) {
         return (ObjectStoreImpl) fMapRepositoryToObjectStore.get(repositoryId);

@@ -39,7 +39,7 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private ClientModel model;
+	private final ClientModel model;
 
 	private DeletePanel deletePanel;
 	private DeleteTreePanel deleteTreePanel;

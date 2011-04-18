@@ -44,7 +44,7 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private ClientModel model;
+	private final ClientModel model;
 	private CmisObject object;
 
 	private JPanel centerPanel;

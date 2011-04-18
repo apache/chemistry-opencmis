@@ -31,7 +31,7 @@ import org.apache.chemistry.opencmis.inmemory.NameValidator;
 public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
 
     private static final long serialVersionUID = 1L;
-    private static InMemoryFolderTypeDefinition FOLDER_TYPE = new InMemoryFolderTypeDefinition();
+    private static final InMemoryFolderTypeDefinition FOLDER_TYPE = new InMemoryFolderTypeDefinition();
 
     public static InMemoryFolderTypeDefinition getRootFolderType() {
         return FOLDER_TYPE;

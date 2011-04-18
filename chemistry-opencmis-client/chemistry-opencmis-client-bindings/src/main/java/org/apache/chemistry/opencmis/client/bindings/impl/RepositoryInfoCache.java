@@ -37,7 +37,7 @@ public class RepositoryInfoCache implements Serializable {
 
     private static final int CACHE_SIZE_REPOSITORIES = 10;
 
-    private Cache cache;
+    private final Cache cache;
 
     /**
      * Constructor.

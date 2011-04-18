@@ -41,7 +41,7 @@ public abstract class AbstractRunner {
     public static final String DEFAULT_TCK_GROUPS = "/cmis-tck-groups.txt";
 
     private Map<String, String> parameters;
-    private List<CmisTestGroup> groups = new ArrayList<CmisTestGroup>();
+    private final List<CmisTestGroup> groups = new ArrayList<CmisTestGroup>();
     private boolean isCanceled = false;
 
     // --- parameters ---

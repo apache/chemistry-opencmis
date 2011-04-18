@@ -30,7 +30,7 @@ public abstract class AtomBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private List<AtomElement> fElements = new ArrayList<AtomElement>();
+    private final List<AtomElement> fElements = new ArrayList<AtomElement>();
 
     public AtomBase() {
     }

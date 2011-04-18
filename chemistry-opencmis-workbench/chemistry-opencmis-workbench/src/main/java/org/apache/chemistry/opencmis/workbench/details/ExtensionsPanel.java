@@ -41,7 +41,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
 
     private static final long serialVersionUID = 1L;
 
-    private ClientModel model;
+    private final ClientModel model;
 
     private JTree extensionsTree;
 
@@ -143,7 +143,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
     }
 
     static class ExtensionNode {
-        private CmisExtensionElement extension;
+        private final CmisExtensionElement extension;
 
         public ExtensionNode(CmisExtensionElement extension) {
             this.extension = extension;

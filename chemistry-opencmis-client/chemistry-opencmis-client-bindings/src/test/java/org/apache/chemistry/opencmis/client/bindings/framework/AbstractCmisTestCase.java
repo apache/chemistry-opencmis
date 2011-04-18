@@ -97,7 +97,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     private String fTestRepositoryId;
     private String fTestFolderId;
 
-    private static Log log = LogFactory.getLog(AbstractCmisTestCase.class);
+    private static final Log log = LogFactory.getLog(AbstractCmisTestCase.class);
 
     /**
      * Read configuration file.

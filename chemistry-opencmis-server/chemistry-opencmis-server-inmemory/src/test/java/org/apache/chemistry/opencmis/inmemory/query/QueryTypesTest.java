@@ -19,9 +19,6 @@
 package org.apache.chemistry.opencmis.inmemory.query;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +26,6 @@ import java.util.Map;
 import org.antlr.runtime.RecognitionException;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
-import org.apache.chemistry.opencmis.server.support.query.CmisQueryException;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
@@ -43,7 +39,7 @@ import org.junit.Test;
 
 public class QueryTypesTest extends AbstractQueryTest {
 
-    private static Log LOG = LogFactory.getLog(QueryTypesTest.class);
+    private static final Log LOG = LogFactory.getLog(QueryTypesTest.class);
     private TypeManagerImpl tm;
 
     @Before

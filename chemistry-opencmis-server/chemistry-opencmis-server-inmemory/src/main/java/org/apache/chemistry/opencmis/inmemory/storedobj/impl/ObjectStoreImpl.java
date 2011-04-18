@@ -72,9 +72,9 @@ public class ObjectStoreImpl implements ObjectStore {
     /**
      * a concurrent HashMap as core element to hold all objects in the repository
      */
-    private Map<String, StoredObject> fStoredObjectMap = new ConcurrentHashMap<String, StoredObject>();
+    private final Map<String, StoredObject> fStoredObjectMap = new ConcurrentHashMap<String, StoredObject>();
     
-    private Lock fLock = new ReentrantLock();
+    private final Lock fLock = new ReentrantLock();
     
     final String fRepositoryId;
     FolderImpl fRootFolder = null;

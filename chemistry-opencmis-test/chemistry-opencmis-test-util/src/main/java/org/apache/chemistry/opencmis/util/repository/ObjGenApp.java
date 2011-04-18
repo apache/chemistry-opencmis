@@ -48,22 +48,22 @@ public class ObjGenApp {
     public static final String DEFAULT_ATOMPUB_URL = "http://localhost:8080/opencmis/atom";
     public static final String DEFAULT_WS_URL = "http://localhost:8080/cmis/services/";
 
-    private final static String CMD = "Command";
-    private final static String REPOSITORY_ID = "RepositoryId";
-    private final static String FILLER_DOCUMENT_TYPE_ID = "DocumentTypeId";
-    private final static String FILLER_FOLDER_TYPE_ID = "FolderTypeId";
-    private final static String FILLER_DOCS_PER_FOLDER = "DocsPerFolder";
-    private final static String FILLER_FOLDERS_PER_FOLDER = "FoldersPerFolder";
-    private final static String FILLER_DEPTH = "Depth";
-    private final static String FILLER_CONTENT_SIZE = "ContentSizeInKB";
-    private final static String COUNT = "Count";
-    private final static String BINDING = "Binding";
-    private final static String CLEANUP = "Cleanup";
-    private final static String ROOTFOLDER = "RootFolder";
-    private final static String THREADS = "Threads";
+    private static final String CMD = "Command";
+    private static final String REPOSITORY_ID = "RepositoryId";
+    private static final String FILLER_DOCUMENT_TYPE_ID = "DocumentTypeId";
+    private static final String FILLER_FOLDER_TYPE_ID = "FolderTypeId";
+    private static final String FILLER_DOCS_PER_FOLDER = "DocsPerFolder";
+    private static final String FILLER_FOLDERS_PER_FOLDER = "FoldersPerFolder";
+    private static final String FILLER_DEPTH = "Depth";
+    private static final String FILLER_CONTENT_SIZE = "ContentSizeInKB";
+    private static final String COUNT = "Count";
+    private static final String BINDING = "Binding";
+    private static final String CLEANUP = "Cleanup";
+    private static final String ROOTFOLDER = "RootFolder";
+    private static final String THREADS = "Threads";
 
-    private final static String BINDING_ATOM = "AtomPub";
-    private final static String BINDING_WS = "WebService";
+    private static final String BINDING_ATOM = "AtomPub";
+    private static final String BINDING_WS = "WebService";
 
     private CmisBinding binding;
     private boolean fUsingAtom;

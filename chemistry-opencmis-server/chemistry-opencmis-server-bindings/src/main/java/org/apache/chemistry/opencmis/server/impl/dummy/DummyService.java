@@ -40,7 +40,7 @@ import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
  */
 public class DummyService extends AbstractCmisService {
 
-	private RepositoryInfoImpl fRepInfo;
+	private final RepositoryInfoImpl fRepInfo;
 
 	public DummyService(String id, String name) {
 		fRepInfo = new RepositoryInfoImpl();

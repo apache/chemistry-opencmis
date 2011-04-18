@@ -31,9 +31,9 @@ public class MapCacheLevelImpl extends AbstractMapCacheLevel {
 
     private static final long serialVersionUID = 1L;
 
-    public final static String CAPACITY = "capacity";
-    public final static String LOAD_FACTOR = "loadFactor";
-    public final static String SINGLE_VALUE = "singleValue";
+    public static final String CAPACITY = "capacity";
+    public static final String LOAD_FACTOR = "loadFactor";
+    public static final String SINGLE_VALUE = "singleValue";
 
     /**
      * Constructor.

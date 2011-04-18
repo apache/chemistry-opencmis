@@ -47,7 +47,7 @@ public class Fixture {
     public static final String SESSION_FACTORY = "org.apache.chemistry.opencmis.fit.runtime.session.factory";
     public static final String TEST_ROOT_FOLDER_ID = "org.apache.chemistry.opencmis.fit.runtime.root.folder.id";
 
-    private static Log log = LogFactory.getLog(Fixture.class);
+    private static final Log log = LogFactory.getLog(Fixture.class);
 
     /*
      * general
@@ -57,7 +57,7 @@ public class Fixture {
     /*
      * test data setup
      */
-    private FixtureSetup testData = new FixtureSetup(this);
+    private final FixtureSetup testData = new FixtureSetup(this);
 
     /**
      * @return session parameter

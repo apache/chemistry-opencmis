@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public class StoreManagerFactory {
-    private static Log log = LogFactory.getLog(StoreManagerFactory.class);
+    private static final Log log = LogFactory.getLog(StoreManagerFactory.class);
 
     public static StoreManager createInstance(String className) {
 

@@ -42,7 +42,7 @@ public class TypesFrame extends JFrame {
 
     private static final String WINDOW_TITLE = "CMIS Types";
 
-    private ClientModel model;
+    private final ClientModel model;
 
     private JTree typesTree;
     private TypeSplitPane typePanel;
@@ -125,7 +125,7 @@ public class TypesFrame extends JFrame {
     }
 
     static class TypeNode {
-        private ObjectType type;
+        private final ObjectType type;
 
         public TypeNode(ObjectType type) {
             this.type = type;

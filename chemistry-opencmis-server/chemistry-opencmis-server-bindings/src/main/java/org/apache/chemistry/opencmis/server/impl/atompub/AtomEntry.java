@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
  */
 public class AtomEntry extends AtomDocumentBase {
 
-    private final static String DEFAULT_AUTHOR = "unknown";
+    private static final String DEFAULT_AUTHOR = "unknown";
 
     /**
      * Creates an Atom entry document.

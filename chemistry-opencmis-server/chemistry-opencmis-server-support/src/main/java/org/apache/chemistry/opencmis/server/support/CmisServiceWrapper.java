@@ -71,7 +71,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     private BigInteger defaultMaxItems = null;
     private BigInteger defaultDepth = MINUS_ONE;
 
-    private T service;
+    private final T service;
 
     /**
      * Constructor.

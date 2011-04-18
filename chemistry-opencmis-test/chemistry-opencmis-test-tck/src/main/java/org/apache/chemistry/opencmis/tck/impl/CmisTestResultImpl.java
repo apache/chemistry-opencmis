@@ -28,17 +28,17 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
  * CmisTestResult implementation.
  */
 public class CmisTestResultImpl implements CmisTestResult {
-    private String groupName;
-    private String testName;
-    private String message;
-    private CmisTestResultStatus status;
-    private Throwable exception;
+    private final String groupName;
+    private final String testName;
+    private final String message;
+    private final CmisTestResultStatus status;
+    private final Throwable exception;
     private StackTraceElement[] stackTrace;
     private String url;
     private String request;
     private String response;
-    private List<CmisTestResult> children = new ArrayList<CmisTestResult>();
-    private boolean isFatal;
+    private final List<CmisTestResult> children = new ArrayList<CmisTestResult>();
+    private final boolean isFatal;
 
     public CmisTestResultImpl(String groupName, String testName, String message, CmisTestResultStatus status,
             Throwable exception, boolean isFatal) {

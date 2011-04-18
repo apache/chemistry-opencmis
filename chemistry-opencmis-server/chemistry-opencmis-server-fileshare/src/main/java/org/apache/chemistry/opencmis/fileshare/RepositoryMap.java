@@ -34,8 +34,8 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
  */
 public class RepositoryMap {
 
-    private Map<String, FileShareRepository> fMap;
-    private Map<String, String> fLogins;
+    private final Map<String, FileShareRepository> fMap;
+    private final Map<String, String> fLogins;
 
     public RepositoryMap() {
         fMap = new HashMap<String, FileShareRepository>();

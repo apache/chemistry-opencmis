@@ -30,14 +30,14 @@ import org.apache.commons.logging.LogFactory;
  * 
  */
 public class TimeLogger {
-    private static Log LOG = LogFactory.getLog(TimeLogger.class);
+    private static final Log LOG = LogFactory.getLog(TimeLogger.class);
 
     private static class TimeRecord {
         public long fStart;
         public long fStop;
     };
 
-    private String fAction;
+    private final String fAction;
     private LinkedList<TimeRecord> fTimeRecs = new LinkedList<TimeRecord>();
     private final int maxSize = 2500;
     TimeRecord fCurrentRec;
@@ -196,7 +196,7 @@ public class TimeLogger {
 
     }
 
-    static private long getAverageTime(TimeLogger[] loggers) {
+    private static long getAverageTime(TimeLogger[] loggers) {
         long sum = 0;
         long size = 0;
 
@@ -218,7 +218,7 @@ public class TimeLogger {
         return (sum + size / 2) / size;
     }
 
-    static private long getMaxTime(TimeLogger[] loggers) {
+    private static long getMaxTime(TimeLogger[] loggers) {
         long max = Long.MIN_VALUE;
 
         for (int i = 0; i < loggers.length; i++) {
@@ -230,7 +230,7 @@ public class TimeLogger {
         return max;
     }
 
-    static private long getMinTime(TimeLogger[] loggers) {
+    private static long getMinTime(TimeLogger[] loggers) {
         long min = Long.MAX_VALUE;
 
         for (int i = 0; i < loggers.length; i++) {
@@ -242,7 +242,7 @@ public class TimeLogger {
         return min;
     }
 
-    static private long getTotalTime(TimeLogger[] loggers) {
+    private static long getTotalTime(TimeLogger[] loggers) {
         long totalTime = Long.MIN_VALUE;
 
         for (int i = 0; i < loggers.length; i++) {

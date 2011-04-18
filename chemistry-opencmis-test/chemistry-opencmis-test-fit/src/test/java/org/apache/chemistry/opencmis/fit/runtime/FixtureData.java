@@ -37,7 +37,7 @@ public enum FixtureData {
 			PROPERTY_NAME_STRING_MULTI_VALUED("org.apache.chemistry.opencmis.fit.runtime.multi.valued.property.name", null);
 			;
 
-	private String key;
+	private final String key;
 	private String value;
 
 	FixtureData(String key, String value) {

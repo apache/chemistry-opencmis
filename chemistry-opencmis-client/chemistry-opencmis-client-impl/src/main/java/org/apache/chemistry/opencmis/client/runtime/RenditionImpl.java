@@ -35,8 +35,8 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
 
     private static final long serialVersionUID = 1L;
 
-    private Session session;
-    private String objectId;
+    private final Session session;
+    private final String objectId;
 
     /**
      * Constructor.

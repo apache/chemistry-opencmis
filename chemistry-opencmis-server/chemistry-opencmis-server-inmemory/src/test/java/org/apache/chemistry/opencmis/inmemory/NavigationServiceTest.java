@@ -47,7 +47,7 @@ import org.junit.Test;
  * @author Jens
  */
 public class NavigationServiceTest extends AbstractServiceTst {
-    private static Log log = LogFactory.getLog(NavigationServiceTest.class);
+    private static final Log log = LogFactory.getLog(NavigationServiceTest.class);
     private static final int NUM_ROOT_FOLDERS = 10;
     private String fLevel1FolderId;
 

@@ -34,11 +34,11 @@ import org.apache.tools.ant.Task;
  * CMIS TCK Ant Task.
  */
 public class CmisTckAntTask extends Task {
-    private final static String REPORT_TEXT = "text";
-    private final static String REPORT_XML = "xml";
-    private final static String REPORT_HTML = "html";
+    private static final String REPORT_TEXT = "text";
+    private static final String REPORT_XML = "xml";
+    private static final String REPORT_HTML = "html";
 
-    private final static String DEFAULT_REPORT_NAME = "cmis-tck-report";
+    private static final String DEFAULT_REPORT_NAME = "cmis-tck-report";
 
     private File parameters;
     private File groups;

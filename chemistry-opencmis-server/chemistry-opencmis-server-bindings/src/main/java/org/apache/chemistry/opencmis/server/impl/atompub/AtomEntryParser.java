@@ -61,15 +61,15 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
  */
 public class AtomEntryParser {
 
-    private final static String TAG_ENTRY = "entry";
-    private final static String TAG_TITLE = "title";
-    private final static String TAG_OBJECT = "object";
-    private final static String TAG_CONTENT = "content";
-    private final static String TAG_BASE64 = "base64";
-    private final static String TAG_MEDIATYPE = "mediatype";
+    private static final String TAG_ENTRY = "entry";
+    private static final String TAG_TITLE = "title";
+    private static final String TAG_OBJECT = "object";
+    private static final String TAG_CONTENT = "content";
+    private static final String TAG_BASE64 = "base64";
+    private static final String TAG_MEDIATYPE = "mediatype";
 
-    private final static String ATTR_SRC = "src";
-    private final static String ATTR_TYPE = "type";
+    private static final String ATTR_SRC = "src";
+    private static final String ATTR_TYPE = "type";
 
     protected boolean ignoreAtomContentSrc;
 
@@ -564,7 +564,7 @@ public class AtomEntryParser {
     }
 
     private static class LightByteArrayOutputStream extends OutputStream {
-        private final static int MAX_GROW = 10 * 1024 * 1024;
+        private static final int MAX_GROW = 10 * 1024 * 1024;
 
         private byte[] buf = null;
         private int size = 0;

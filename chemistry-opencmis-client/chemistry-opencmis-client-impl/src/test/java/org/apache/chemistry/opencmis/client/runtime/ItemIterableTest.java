@@ -38,7 +38,7 @@ import org.junit.Test;
 
 public class ItemIterableTest {
 
-    private static Log log = LogFactory.getLog(ItemIterableTest.class);
+    private static final Log log = LogFactory.getLog(ItemIterableTest.class);
     static {
         Properties p = new Properties();
         try {
@@ -49,9 +49,9 @@ public class ItemIterableTest {
         PropertyConfigurator.configure(p);
 
     }
-    private String[] data10 = { "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9" };
-    private String[] data1 = { "A0" };
-    private String[] data0 = {};
+    private final String[] data10 = { "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9" };
+    private final String[] data1 = { "A0" };
+    private final String[] data0 = {};
 
     private ItemIterable<String> getIterable(final String[] data, long pageSize) {
         return new CollectionIterable<String>(new AbstractPageFetcher<String>(pageSize) {

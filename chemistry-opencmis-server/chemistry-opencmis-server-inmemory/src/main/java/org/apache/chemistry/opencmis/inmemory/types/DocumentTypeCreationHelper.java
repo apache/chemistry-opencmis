@@ -36,19 +36,19 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 
 public class DocumentTypeCreationHelper {
 
-    static private List<TypeDefinition> defaultTypes = createCmisDefaultTypes();
+    private static final List<TypeDefinition> defaultTypes = createCmisDefaultTypes();
 
-    static public List<TypeDefinition> createMapWithDefaultTypes() {
+    public static List<TypeDefinition> createMapWithDefaultTypes() {
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
         typesList.addAll(defaultTypes);
         return typesList;
     }
 
-    static public final List<TypeDefinition> getDefaultTypes() {
+    public static final List<TypeDefinition> getDefaultTypes() {
         return defaultTypes;
     }
 
-    static private List<TypeDefinition> createCmisDefaultTypes() {
+    private static List<TypeDefinition> createCmisDefaultTypes() {
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
 
         // create root types:
@@ -72,7 +72,7 @@ public class DocumentTypeCreationHelper {
      * 
      * @return typesMap map filled with created types
      */
-    static public List<TypeDefinition> createDefaultTypes() {
+    public static List<TypeDefinition> createDefaultTypes() {
         List<TypeDefinition> typesList = createCmisDefaultTypes();
 
         return typesList;

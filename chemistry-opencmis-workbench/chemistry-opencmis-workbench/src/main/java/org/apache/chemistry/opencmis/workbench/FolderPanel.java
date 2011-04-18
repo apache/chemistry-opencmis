@@ -41,7 +41,7 @@ public class FolderPanel extends JPanel implements FolderListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private ClientModel model;
+	private final ClientModel model;
 
 	private String parentId;
 

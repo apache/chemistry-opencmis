@@ -38,7 +38,7 @@ public class TypeDefinitionCache implements Serializable {
     private static final int CACHE_SIZE_REPOSITORIES = 10;
     private static final int CACHE_SIZE_TYPES = 100;
 
-    private Cache cache;
+    private final Cache cache;
 
     /**
      * Constructor.

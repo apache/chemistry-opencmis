@@ -35,8 +35,8 @@ public class ObjectTypeHelper implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Session session;
-    private ObjectType objectType;
+    private final Session session;
+    private final ObjectType objectType;
     private ObjectType baseType;
     private ObjectType parentType;
 

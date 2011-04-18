@@ -29,7 +29,7 @@ public class ServiceDoc extends AtomBase {
 
     private static final long serialVersionUID = 1L;
 
-    private List<RepositoryWorkspace> fWorkspaces = new ArrayList<RepositoryWorkspace>();
+    private final List<RepositoryWorkspace> fWorkspaces = new ArrayList<RepositoryWorkspace>();
 
     public ServiceDoc() {
     }

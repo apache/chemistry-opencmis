@@ -62,7 +62,7 @@ public class QueryFrame extends JFrame {
     private static final String WINDOW_TITLE = "CMIS Query";
     private static final String DEFAULT_QUERY = "SELECT * FROM cmis:document";
 
-    private ClientModel model;
+    private final ClientModel model;
 
     private JTextArea queryText;
     private JFormattedTextField maxHitsField;
@@ -256,9 +256,9 @@ public class QueryFrame extends JFrame {
 
         private int columnCount = 0;
         private int rowCount = 0;
-        private Map<String, Integer> columnMapping = new HashMap<String, Integer>();
-        private Map<Integer, Map<Integer, Object>> data = new HashMap<Integer, Map<Integer, Object>>();
-        private Map<Integer, Class<?>> columnClass = new HashMap<Integer, Class<?>>();
+        private final Map<String, Integer> columnMapping = new HashMap<String, Integer>();
+        private final Map<Integer, Map<Integer, Object>> data = new HashMap<Integer, Map<Integer, Object>>();
+        private final Map<Integer, Class<?>> columnClass = new HashMap<Integer, Class<?>>();
 
         public ResultTableModel() {
         }

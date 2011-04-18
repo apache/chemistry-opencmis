@@ -48,7 +48,7 @@ public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
 
     private static final long serialVersionUID = 1L;
 
-    private static Log log = LogFactory.getLog(CmisLocalSpi.class);
+    private static final Log log = LogFactory.getLog(CmisLocalSpi.class);
 
     private CmisServiceFactory factory;
 

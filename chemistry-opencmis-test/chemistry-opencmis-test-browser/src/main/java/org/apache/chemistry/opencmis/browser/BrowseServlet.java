@@ -57,7 +57,7 @@ public class BrowseServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private static Log log = LogFactory.getLog(BrowseServlet.class);
+    private static final Log log = LogFactory.getLog(BrowseServlet.class);
 
     private static final String CONTEXT_PREFIX = "{ctx}";
     private static final String PARAM_URL = "url";

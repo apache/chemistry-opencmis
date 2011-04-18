@@ -53,8 +53,8 @@ import org.apache.commons.logging.LogFactory;
 
 public class ClientHelper {
 
-    private static Log log = LogFactory.getLog(ClientHelper.class);
-    private static int BUFFER_SIZE = 64 * 1024;
+    private static final Log log = LogFactory.getLog(ClientHelper.class);
+    private static final int BUFFER_SIZE = 64 * 1024;
 
     public static void showError(Component parent, Exception ex) {
         if (log.isErrorEnabled()) {
@@ -343,8 +343,8 @@ public class ClientHelper {
     }
 
     public static class FileEntry implements Comparable<FileEntry> {
-        private String name;
-        private String file;
+        private final String name;
+        private final String file;
 
         public FileEntry(String name, String file) {
             this.name = name;

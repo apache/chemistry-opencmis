@@ -42,7 +42,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
     private static final long serialVersionUID = 1L;
 
-    private ClientModel model;
+    private final ClientModel model;
 
     private JTextField nameField;
     private JTextField idField;

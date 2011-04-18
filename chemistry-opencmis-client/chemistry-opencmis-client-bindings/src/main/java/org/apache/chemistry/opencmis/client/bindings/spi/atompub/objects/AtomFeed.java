@@ -29,7 +29,7 @@ public class AtomFeed extends AtomBase {
 
     private static final long serialVersionUID = 1L;
 
-    private List<AtomEntry> fEntries = new ArrayList<AtomEntry>();
+    private final List<AtomEntry> fEntries = new ArrayList<AtomEntry>();
 
     public AtomFeed() {
     }

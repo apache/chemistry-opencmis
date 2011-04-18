@@ -114,13 +114,13 @@ public class SessionImpl implements Session, Serializable {
     /*
      * helper factory (serializable)
      */
-    private ObjectFactory objectFactory;
+    private final ObjectFactory objectFactory;
 
     /*
      * Object cache (serializable)
      */
     private Cache cache;
-    private boolean cachePathOmit;
+    private final boolean cachePathOmit;
 
     /*
      * Repository info (serializable)

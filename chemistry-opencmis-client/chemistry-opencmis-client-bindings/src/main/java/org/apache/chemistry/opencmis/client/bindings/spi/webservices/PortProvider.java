@@ -58,7 +58,7 @@ import com.sun.xml.ws.developer.WSBindingProvider;
  */
 public class PortProvider extends AbstractPortProvider {
 
-    private static Log log = LogFactory.getLog(PortProvider.class);
+    private static final Log log = LogFactory.getLog(PortProvider.class);
 
     private boolean useCompression;
     private String acceptLanguage;

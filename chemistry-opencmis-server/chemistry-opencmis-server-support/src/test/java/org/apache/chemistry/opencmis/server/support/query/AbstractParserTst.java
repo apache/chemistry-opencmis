@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class AbstractParserTst{
     
-    private static Log log = LogFactory.getLog(AbstractParserTst.class);
+    private static final Log log = LogFactory.getLog(AbstractParserTst.class);
         
     protected String superGrammarName;
     Class<?> lexer;

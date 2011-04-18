@@ -31,8 +31,6 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
-import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 
 public class ContentStreamDataImpl implements ContentStream {
 
@@ -48,7 +46,7 @@ public class ContentStreamDataImpl implements ContentStream {
 
     private long fStreamLimitLength;
 
-    private long sizeLimitKB;
+    private final long sizeLimitKB;
 
     public ContentStreamDataImpl(long maxAllowedContentSizeKB) {
         sizeLimitKB = maxAllowedContentSizeKB;

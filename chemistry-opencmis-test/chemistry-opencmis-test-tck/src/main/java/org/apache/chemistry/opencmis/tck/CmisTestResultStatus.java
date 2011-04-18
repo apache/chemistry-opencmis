@@ -29,7 +29,7 @@ public enum CmisTestResultStatus {
     FAILURE(4), // check failed and it is specification violation
     UNEXPECTED_EXCEPTION(5); // exception caught that is not handled by the test
 
-    private int level;
+    private final int level;
 
     private CmisTestResultStatus(int level) {
         this.level = level;

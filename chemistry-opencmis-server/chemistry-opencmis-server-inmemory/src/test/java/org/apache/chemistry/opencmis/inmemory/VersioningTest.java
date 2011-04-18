@@ -61,7 +61,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class VersioningTest extends AbstractServiceTst {
-    private static Log log = LogFactory.getLog(ObjectServiceTest.class);
+    private static final Log log = LogFactory.getLog(ObjectServiceTest.class);
     private static final String PROP_VALUE = "Mickey Mouse";
     private static final String PROP_VALUE_NEW = "Donald Duck";
     private static final String PROP_NAME = "My Versioned Document";
@@ -666,8 +666,8 @@ public class VersioningTest extends AbstractServiceTst {
     }
 
     public static class VersionTestTypeSystemCreator implements TypeCreator {
-        static public String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
-        static public String PROPERTY_ID = "StringProp";
+        public static String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
+        public static String PROPERTY_ID = "StringProp";
 
         public List<TypeDefinition> createTypesList() {
             // always add CMIS default types

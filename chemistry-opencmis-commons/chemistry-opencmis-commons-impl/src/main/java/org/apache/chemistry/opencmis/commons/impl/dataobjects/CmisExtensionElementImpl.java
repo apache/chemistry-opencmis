@@ -30,11 +30,11 @@ public class CmisExtensionElementImpl implements CmisExtensionElement {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
-    private String namespace;
-    private String value;
+    private final String name;
+    private final String namespace;
+    private final String value;
     private Map<String, String> attributes;
-    private List<CmisExtensionElement> children;
+    private final List<CmisExtensionElement> children;
 
     /**
      * Constructor for a leaf.

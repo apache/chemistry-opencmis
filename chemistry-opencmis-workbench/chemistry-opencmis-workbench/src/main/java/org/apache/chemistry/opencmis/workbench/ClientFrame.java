@@ -79,7 +79,7 @@ public class ClientFrame extends JFrame implements WindowListener {
     private static final String GROOVY_SCRIPT_FOLDER = "/scripts/";
     private static final String GROOVY_SCRIPT_LIBRARY = "script-library.properties";
 
-    private Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+    private final Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 
     private LoginDialog loginDialog;
     private LogFrame logFrame;
@@ -93,7 +93,7 @@ public class ClientFrame extends JFrame implements WindowListener {
     private FolderPanel folderPanel;
     private DetailsTabs detailsTabs;
 
-    private ClientModel model;
+    private final ClientModel model;
 
     public ClientFrame() {
         super();

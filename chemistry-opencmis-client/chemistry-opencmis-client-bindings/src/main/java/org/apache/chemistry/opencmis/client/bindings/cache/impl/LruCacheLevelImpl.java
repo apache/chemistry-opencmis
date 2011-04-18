@@ -31,7 +31,7 @@ public class LruCacheLevelImpl extends AbstractMapCacheLevel {
 
     private static final long serialVersionUID = 1L;
 
-    public final static String MAX_ENTRIES = "maxEntries";
+    public static final String MAX_ENTRIES = "maxEntries";
 
     public void initialize(Map<String, String> parameters) {
         final int maxEntries = getIntParameter(parameters, MAX_ENTRIES, 100);

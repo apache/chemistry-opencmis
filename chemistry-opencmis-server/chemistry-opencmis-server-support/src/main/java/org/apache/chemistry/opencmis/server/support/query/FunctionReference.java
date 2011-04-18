@@ -22,7 +22,7 @@ public class FunctionReference extends CmisSelector {
 
     public enum CmisQlFunction { SCORE, };
 
-    private CmisQlFunction function;
+    private final CmisQlFunction function;
 
     public FunctionReference(CmisQlFunction func) {
         this.function = func;

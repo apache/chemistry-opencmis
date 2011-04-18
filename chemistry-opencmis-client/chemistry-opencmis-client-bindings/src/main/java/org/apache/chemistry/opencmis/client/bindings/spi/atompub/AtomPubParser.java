@@ -62,7 +62,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     // public constants
     public static final String LINK_REL_CONTENT = "@@content@@";
 
-    private InputStream fStream;
+    private final InputStream fStream;
     private AtomBase fParseResult;
 
     public AtomPubParser(InputStream stream) {

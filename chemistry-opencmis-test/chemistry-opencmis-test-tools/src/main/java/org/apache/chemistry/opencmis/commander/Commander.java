@@ -39,14 +39,14 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  */
 public class Commander {
 
-    private final static Map<String, Command> COMMAND_MAP = new LinkedHashMap<String, Command>();
+    private static final Map<String, Command> COMMAND_MAP = new LinkedHashMap<String, Command>();
     static {
         addCommand(new InfosCommand());
         addCommand(new ListCommand());
         addCommand(new DeleteCommand());
     }
 
-    private PrintWriter fPW;
+    private final PrintWriter fPW;
 
     /**
      * Constructor.
@@ -135,7 +135,7 @@ public class Commander {
     /**
      * Adds a command
      */
-    private final static void addCommand(Command command) {
+    private static final void addCommand(Command command) {
         if ((command == null) || (command.getCommandName() == null)) {
             return;
         }

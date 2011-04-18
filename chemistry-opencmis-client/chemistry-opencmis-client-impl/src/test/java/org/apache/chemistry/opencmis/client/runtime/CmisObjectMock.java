@@ -49,7 +49,7 @@ public class CmisObjectMock implements CmisObject, Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    private String id;
+    private final String id;
 
     public CmisObjectMock(String id) {
         this.id = id;

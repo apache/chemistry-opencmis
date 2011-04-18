@@ -30,8 +30,8 @@ public class AtomElement implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private QName fName;
-    private Object fObject;
+    private final QName fName;
+    private final Object fObject;
 
     public AtomElement(QName name, Object object) {
         fName = name;

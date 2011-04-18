@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
     
-    private static Log LOG = LogFactory.getLog(InMemoryDiscoveryServiceImpl.class);
+    private static final Log LOG = LogFactory.getLog(InMemoryDiscoveryServiceImpl.class);
 
     AtomLinkInfoProvider fAtomLinkProvider;
     InMemoryNavigationServiceImpl fNavigationService; // real implementation of

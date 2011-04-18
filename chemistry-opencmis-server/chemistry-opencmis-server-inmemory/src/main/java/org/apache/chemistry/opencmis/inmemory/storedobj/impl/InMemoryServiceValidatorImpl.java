@@ -18,16 +18,8 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
-import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
-import org.apache.chemistry.opencmis.commons.server.CallContext;
-import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.server.BaseServiceValidatorImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
 public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
 

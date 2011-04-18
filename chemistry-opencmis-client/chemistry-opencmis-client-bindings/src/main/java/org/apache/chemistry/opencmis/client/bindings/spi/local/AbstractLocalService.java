@@ -93,7 +93,7 @@ public abstract class AbstractLocalService {
      */
     static class LocalCallContext implements CallContext {
 
-        private Map<String, Object> contextMap = new HashMap<String, Object>();
+        private final Map<String, Object> contextMap = new HashMap<String, Object>();
 
         public LocalCallContext(String repositoryId, String user, String password) {
             contextMap.put(REPOSITORY_ID, repositoryId);

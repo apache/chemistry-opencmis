@@ -58,14 +58,14 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ObjectGenerator {
 
-    private static Log log = LogFactory.getLog(ObjectGenerator.class);
-    private BindingsObjectFactory fFactory;
+    private static final Log log = LogFactory.getLog(ObjectGenerator.class);
+    private final BindingsObjectFactory fFactory;
     NavigationService fNavSvc;
     ObjectService fObjSvc;
-    private String fRepositoryId;
-    private TimeLogger fTimeLoggerCreateDoc;
-    private TimeLogger fTimeLoggerCreateFolder;
-    private TimeLogger fTimeLoggerDelete;
+    private final String fRepositoryId;
+    private final TimeLogger fTimeLoggerCreateDoc;
+    private final TimeLogger fTimeLoggerCreateFolder;
+    private final TimeLogger fTimeLoggerDelete;
     private boolean fCleanup;
     List<String> fTopLevelDocsCreated; // list of ids created on first level
     List<String> fTopLevelFoldersCreated; // list of ids created on first level

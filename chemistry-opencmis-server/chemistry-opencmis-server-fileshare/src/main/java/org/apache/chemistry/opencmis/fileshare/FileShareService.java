@@ -56,7 +56,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
  */
 public class FileShareService extends AbstractCmisService {
 
-    private RepositoryMap repositoryMap;
+    private final RepositoryMap repositoryMap;
     private CallContext context;
 
     /**

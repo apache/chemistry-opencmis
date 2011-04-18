@@ -47,7 +47,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class AtomLinkInfoProvider {
 
-    private StoreManager fStoreManager;
+    private final StoreManager fStoreManager;
 
     public AtomLinkInfoProvider(StoreManager storeManager) {
         fStoreManager = storeManager;

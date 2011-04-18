@@ -64,10 +64,12 @@ import org.apache.chemistry.opencmis.server.impl.browser.TypeCache;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.*;
+
 /**
  * OpenCMIS objects to JSON converter.
  */
-public class JSONConverter extends JSONConstants {
+public class JSONConverter {
 
     /**
      * Private constructor.

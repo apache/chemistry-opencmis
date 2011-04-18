@@ -60,7 +60,7 @@ public class ClientModel {
     private List<CmisObject> currentChildren = Collections.emptyList();
     private CmisObject currentObject = null;
 
-    private EventListenerList listenerList = new EventListenerList();
+    private final EventListenerList listenerList = new EventListenerList();
 
     public ClientModel() {
     }

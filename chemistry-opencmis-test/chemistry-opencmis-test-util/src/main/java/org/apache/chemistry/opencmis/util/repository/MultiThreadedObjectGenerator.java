@@ -27,12 +27,12 @@ import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
 public class MultiThreadedObjectGenerator {
 
-    static public enum Action {
+    public static enum Action {
         CreateDocument, CreateTree, CreateFolders
     };
 
     static class ObjectGeneratorRunner implements Runnable {
-        private Action fAction;
+        private final Action fAction;
         ObjectGenerator fObjGen;
         private String fRootFolderId;
         private int fFoldersPerFolders;
@@ -73,7 +73,7 @@ public class MultiThreadedObjectGenerator {
 
     } // ObjectCreatorRunner
 
-    static private ObjectGenerator createObjectGenerator(CmisBinding binding, String repoId, int docsPerFolder,
+    private static ObjectGenerator createObjectGenerator(CmisBinding binding, String repoId, int docsPerFolder,
             int foldersPerFolders, int depth, String documentType, String folderType, int contentSizeInKB,
             String rootFolderId, boolean doCleanup) {
 
@@ -95,7 +95,7 @@ public class MultiThreadedObjectGenerator {
         return gen;
     }
 
-    static private String getRootFolderId(CmisBinding binding, String repositoryId, String rootFolderId) {
+    private static String getRootFolderId(CmisBinding binding, String repositoryId, String rootFolderId) {
         RepositoryService repSvc = binding.getRepositoryService();
 
         RepositoryInfo rep = repSvc.getRepositoryInfo(repositoryId, null);

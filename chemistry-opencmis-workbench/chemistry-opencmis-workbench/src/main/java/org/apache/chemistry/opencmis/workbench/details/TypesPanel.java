@@ -28,7 +28,7 @@ public class TypesPanel extends TypeSplitPane implements ObjectListener {
 
     private static final long serialVersionUID = 1L;
 
-    private ClientModel model;
+    private final ClientModel model;
 
     public TypesPanel(ClientModel model) {
         super();

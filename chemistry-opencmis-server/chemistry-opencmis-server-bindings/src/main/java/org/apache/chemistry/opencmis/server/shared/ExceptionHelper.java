@@ -32,7 +32,7 @@ public class ExceptionHelper {
 
     public static final String STACK_TRACE_PROPERTY = "org.apache.chemistry.opencmis.stacktrace.disable";
 
-    private static boolean sendStackTrace;
+    private static final boolean sendStackTrace;
 
     static {
         sendStackTrace = System.getProperty(STACK_TRACE_PROPERTY) == null;

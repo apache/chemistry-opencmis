@@ -38,7 +38,7 @@ public class RepositoryInfoFrame extends JFrame {
 
     private static final String WINDOW_TITLE = "CMIS Repository Info";
 
-    private ClientModel model;
+    private final ClientModel model;
 
     public RepositoryInfoFrame(ClientModel model) {
         super();
@@ -74,7 +74,7 @@ public class RepositoryInfoFrame extends JFrame {
 
         private static final long serialVersionUID = 1L;
 
-        private RepositoryInfo repInfo;
+        private final RepositoryInfo repInfo;
 
         public RepositoryInfoPanel(RepositoryInfo repInfo) {
             super();

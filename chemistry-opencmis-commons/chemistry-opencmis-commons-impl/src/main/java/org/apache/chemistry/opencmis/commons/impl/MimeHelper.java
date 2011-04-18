@@ -215,9 +215,9 @@ public class MimeHelper {
 
         public static final int QUOTEDSTRING = -2;
 
-        private int _type;
+        private final int _type;
 
-        private String _value;
+        private final String _value;
 
         public Token(int type, String value) {
             _type = type;
