@@ -57,9 +57,9 @@ public class ExceptionHelper {
     /**
      * Returns the stack trace as DOM node.
      */
-    public static Node getStacktraceAsNode(Exception ex) {
+    public static Node getStacktraceAsNode(Throwable t) {
         try {
-            String st = getStacktraceAsString(ex);
+            String st = getStacktraceAsString(t);
             if (st != null) {
                 DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
                 DocumentBuilder docBuilder = dbfac.newDocumentBuilder();

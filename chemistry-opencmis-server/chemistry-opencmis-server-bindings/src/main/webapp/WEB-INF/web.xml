@@ -51,6 +51,16 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
+	
+	<servlet>
+		<servlet-name>cmisbrowser</servlet-name>
+		<servlet-class>org.apache.chemistry.opencmis.server.impl.browser.CmisBrowserBindingServlet</servlet-class>
+		<init-param>
+			<param-name>callContextHandler</param-name>
+			<param-value>org.apache.chemistry.opencmis.server.shared.BasicAuthCallContextHandler</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
 
 
 	<servlet-mapping>
@@ -61,6 +71,11 @@
 	<servlet-mapping>
 		<servlet-name>cmisatom</servlet-name>
 		<url-pattern>/atom/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>cmisbrowser</servlet-name>
+		<url-pattern>/browser/*</url-pattern>
 	</servlet-mapping>
 
 	<session-config>

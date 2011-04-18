@@ -49,6 +49,7 @@ import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -281,17 +282,20 @@ public class CmisAtomPubServlet extends HttpServlet {
             PrintWriter pw = response.getWriter();
             response.setStatus(statusCode);
             response.setContentType("text/html");
-            
-            pw.print("<html><head><title>Apache Chemistry OpenCMIS - " + exceptionName + " error</title>"
+
+            pw.print("<html><head><title>Apache Chemistry OpenCMIS - "
+                    + exceptionName
+                    + " error</title>"
                     + "<style><!--H1 {font-size:24px;line-height:normal;font-weight:bold;background-color:#f0f0f0;color:#003366;border-bottom:1px solid #3c78b5;padding:2px;} "
                     + "BODY {font-family:Verdana,arial,sans-serif;color:black;font-size:14px;} "
                     + "HR {color:#3c78b5;height:1px;}--></style></head><body>");
             pw.print("<h1>HTTP Status " + statusCode + " - <!--exception-->" + exceptionName + "<!--/exception--></h1>");
-            pw.print("<p><!--message-->" + ex.getMessage() + "<!--/message--></p>");
+            pw.print("<p><!--message-->" + StringEscapeUtils.escapeHtml(ex.getMessage()) + "<!--/message--></p>");
 
             String st = ExceptionHelper.getStacktraceAsString(ex);
             if (st != null) {
-                pw.print("<hr noshade='noshade'/><!--stacktrace--><pre>\n" + st + "\n</pre><!--/stacktrace--><hr noshade='noshade'/>");
+                pw.print("<hr noshade='noshade'/><!--stacktrace--><pre>\n" + st
+                        + "\n</pre><!--/stacktrace--><hr noshade='noshade'/>");
             }
 
             pw.print("</body></html>");
