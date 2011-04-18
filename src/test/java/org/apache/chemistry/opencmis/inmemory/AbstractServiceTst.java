@@ -64,7 +64,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class AbstractServiceTst /* extends TestCase */{
-    private static Log LOG = LogFactory.getLog(AbstractServiceTst.class);
+    private static final Log LOG = LogFactory.getLog(AbstractServiceTst.class);
     protected static final String REPOSITORY_ID = "UnitTestRepository";
     protected BindingsObjectFactory fFactory = new BindingsObjectFactoryImpl();
     protected String fRootFolderId;

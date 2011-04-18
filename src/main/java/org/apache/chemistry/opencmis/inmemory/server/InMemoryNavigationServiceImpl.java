@@ -63,7 +63,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
-    private static Log LOG = LogFactory.getLog(InMemoryNavigationServiceImpl.class);
+    private static final Log LOG = LogFactory.getLog(InMemoryNavigationServiceImpl.class);
 
     AtomLinkInfoProvider fAtomLinkProvider;
 

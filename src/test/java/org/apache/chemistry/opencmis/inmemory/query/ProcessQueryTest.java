@@ -42,9 +42,9 @@ import org.junit.Test;
 
 public class ProcessQueryTest extends AbstractQueryTest {
 
-    private static Log LOG = LogFactory.getLog(ProcessQueryTest.class);
+    private static final Log LOG = LogFactory.getLog(ProcessQueryTest.class);
 
-    static private class TestQueryProcessor extends AbstractQueryConditionProcessor {
+    private static class TestQueryProcessor extends AbstractQueryConditionProcessor {
 
         private static final String ON_START = "onStartWasCalled";
         private static final String ON_STOP = "onStopWasCalled";

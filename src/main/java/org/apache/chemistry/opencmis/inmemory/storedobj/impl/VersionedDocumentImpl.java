@@ -37,7 +37,7 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
 
     private boolean fIsCheckedOut;
     private String fCheckedOutUser;
-    private List<DocumentVersion> fVersions;
+    private final List<DocumentVersion> fVersions;
 
     public VersionedDocumentImpl(ObjectStoreImpl objStore) {
         super(objStore);

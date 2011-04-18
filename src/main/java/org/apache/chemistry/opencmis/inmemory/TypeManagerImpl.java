@@ -51,7 +51,7 @@ public class TypeManagerImpl implements TypeManager {
     /**
      * map from repository id to a types map
      */
-    private Map<String, TypeDefinitionContainer> fTypesMap = new HashMap<String, TypeDefinitionContainer>();
+    private final Map<String, TypeDefinitionContainer> fTypesMap = new HashMap<String, TypeDefinitionContainer>();
 
     /* (non-Javadoc)
      * @see org.apache.chemistry.opencmis.inmemory.TypeManager#getTypeById(java.lang.String)

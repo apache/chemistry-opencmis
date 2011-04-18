@@ -76,7 +76,7 @@ import org.junit.Test;
 
 public class ObjectServiceTest extends AbstractServiceTst {
 
-    private static Log log = LogFactory.getLog(ObjectServiceTest.class);
+    private static final Log log = LogFactory.getLog(ObjectServiceTest.class);
     public static final String TEST_FOLDER_TYPE_ID = "MyFolderType";
     public static final String TEST_DOCUMENT_TYPE_ID = "MyDocumentType";
     public static final String TEST_DOC_TYPE_WITH_DEFAULTS_ID = "DocumentTypeWithDefault";

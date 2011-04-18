@@ -31,7 +31,7 @@ public class NameValidator {
      * @param s
      *            string to verify
      */
-    static public boolean isValidId(String s) {
+    public static boolean isValidId(String s) {
         if (null == s || s.length() == 0)
             return false;
         
@@ -47,7 +47,7 @@ public class NameValidator {
         return true;
     }
 
-    static public boolean isValidLocalName(String s) {
+    public static boolean isValidLocalName(String s) {
         return isValidId(s);
     }
 
@@ -58,7 +58,7 @@ public class NameValidator {
      * @param s
      *            string to verify
      */
-    static public boolean isValidName(String s) {
+    public static boolean isValidName(String s) {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '-'
@@ -68,11 +68,11 @@ public class NameValidator {
         return true;
     }
 
-    static public boolean isValidNamespace(String s) {
+    public static boolean isValidNamespace(String s) {
         return isValidId(s);
     }
 
-    static public boolean isValidQueryName(String s) {
+    public static boolean isValidQueryName(String s) {
         return isValidId(s);
     }
 

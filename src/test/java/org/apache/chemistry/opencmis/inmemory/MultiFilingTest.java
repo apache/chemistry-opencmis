@@ -36,7 +36,6 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -49,7 +48,7 @@ import org.junit.Test;
 
 public class MultiFilingTest extends AbstractServiceTst {
 
-    private static Log LOG = LogFactory.getLog(MultiFilingTest.class);
+    private static final Log LOG = LogFactory.getLog(MultiFilingTest.class);
     private static final String DOCUMENT_TYPE_ID = UnitTestTypeSystemCreator.COMPLEX_TYPE;
     private static final String FOLDER_TYPE_ID = InMemoryFolderTypeDefinition.getRootFolderType().getId();
     private static final String UNFILED_DOC_NAME = "Unfiled document";

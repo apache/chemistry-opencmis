@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.inmemory.NameValidator;
 public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
 
     private static final long serialVersionUID = 1L;
-    private static InMemoryDocumentTypeDefinition DOCUMENT_TYPE = new InMemoryDocumentTypeDefinition();
+    private static final InMemoryDocumentTypeDefinition DOCUMENT_TYPE = new InMemoryDocumentTypeDefinition();
 
     public static InMemoryDocumentTypeDefinition getRootDocumentType() {
         return DOCUMENT_TYPE;

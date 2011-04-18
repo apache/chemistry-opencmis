@@ -43,10 +43,10 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion {
 
-    private Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
+    private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
     private ContentStreamDataImpl fContent;
-    private VersionedDocument fContainer; // the document this version belongs
+    private final VersionedDocument fContainer; // the document this version belongs
     // to
     private String fComment; // checkin comment
     boolean fIsMajor;

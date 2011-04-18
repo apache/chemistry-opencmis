@@ -70,7 +70,7 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public class PropertyCreationHelper {
-    private static Log log = LogFactory.getLog(PropertyCreationHelper.class);
+    private static final Log log = LogFactory.getLog(PropertyCreationHelper.class);
 
     public static PropertyBooleanDefinitionImpl createBooleanDefinition(String id, String displayName) {
         PropertyBooleanDefinitionImpl prop = new PropertyBooleanDefinitionImpl();

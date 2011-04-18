@@ -43,7 +43,7 @@ import org.junit.Test;
 
 public class EvalQueryTest extends AbstractServiceTst {
     
-    private static Log log = LogFactory.getLog(EvalQueryTest.class);
+    private static final Log log = LogFactory.getLog(EvalQueryTest.class);
     private QueryTestDataCreator dataCreator;
     
     @Before

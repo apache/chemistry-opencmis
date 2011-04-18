@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 public class DummyCallContext implements CallContext {
-    private Map<String, Object> fParameter = new HashMap<String, Object>();
+    private final Map<String, Object> fParameter = new HashMap<String, Object>();
 
     public DummyCallContext() {
         fParameter.put(USERNAME, "TestUser");
