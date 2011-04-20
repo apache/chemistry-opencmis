@@ -596,7 +596,7 @@ public class AtomEntryParser {
         }
 
         @Override
-        public void write(byte buffer[]) {
+        public void write(byte[] buffer) {
             write(buffer, 0, buffer.length);
         }
 

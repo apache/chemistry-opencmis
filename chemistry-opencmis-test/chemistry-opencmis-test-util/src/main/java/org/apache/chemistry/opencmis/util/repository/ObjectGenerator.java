@@ -297,7 +297,7 @@ public class ObjectGenerator {
 
     public String[] createDocuments(String folderId, int count) {
 
-        String result[];
+        String[] result;
 
         fTimeLoggerCreateDoc.reset();
         for (int i = 0; i < count; i++) {
@@ -317,7 +317,7 @@ public class ObjectGenerator {
 
     public String[] createFolders(String folderId, int count) {
 
-        String result[];
+        String[] result;
 
         fTimeLoggerCreateFolder.reset();
         for (int i = 0; i < count; i++) {
@@ -592,7 +592,7 @@ public class ObjectGenerator {
                 if (entry.getValue().getFirstValue() instanceof GregorianCalendar) {
                     for (Object obj : entry.getValue().getValues()) {
                         GregorianCalendar cal = (GregorianCalendar) obj;
-                        valueStr.append(df.format(cal.getTime()) + ", ");
+                        valueStr.append(df.format(cal.getTime())).append(", ");
                     }
                     valueStr.append("]");
                 } else {

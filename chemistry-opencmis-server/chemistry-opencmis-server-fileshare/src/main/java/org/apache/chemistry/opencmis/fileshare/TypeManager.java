@@ -199,10 +199,9 @@ public class TypeManager {
         type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFIED_BY, "Last Modified By", "Last Modified By",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, true));
 
-        type
-                .addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFICATION_DATE, "Last Modification Date",
-                        "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY,
-                        false, true));
+        type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFICATION_DATE, "Last Modification Date",
+                "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY,
+                false, true));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CHANGE_TOKEN, "Change Token", "Change Token",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
@@ -251,10 +250,9 @@ public class TypeManager {
         type.addPropertyDefinition(createPropDef(PropertyIds.CHECKIN_COMMENT, "Checkin Comment", "Checkin Comment",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
-        type
-                .addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_LENGTH, "Content Stream Length",
-                        "Content Stream Length", PropertyType.INTEGER, Cardinality.SINGLE, Updatability.READONLY,
-                        false, false));
+        type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_LENGTH, "Content Stream Length",
+                "Content Stream Length", PropertyType.INTEGER, Cardinality.SINGLE, Updatability.READONLY,
+                false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_MIME_TYPE, "MIME Type", "MIME Type",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));

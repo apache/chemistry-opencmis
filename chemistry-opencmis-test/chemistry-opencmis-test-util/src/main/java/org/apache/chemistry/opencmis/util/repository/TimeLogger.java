@@ -35,7 +35,7 @@ public class TimeLogger {
     private static class TimeRecord {
         public long fStart;
         public long fStop;
-    };
+    }
 
     private final String fAction;
     private LinkedList<TimeRecord> fTimeRecs = new LinkedList<TimeRecord>();

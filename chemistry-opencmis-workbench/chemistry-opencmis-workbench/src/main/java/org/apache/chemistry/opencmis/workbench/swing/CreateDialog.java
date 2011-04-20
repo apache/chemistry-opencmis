@@ -102,7 +102,7 @@ public abstract class CreateDialog extends JDialog {
 		return result;
 	}
 
-	public static interface ObjectTypeItem {
+	public interface ObjectTypeItem {
 		ObjectType getObjectType();
 	}
 }

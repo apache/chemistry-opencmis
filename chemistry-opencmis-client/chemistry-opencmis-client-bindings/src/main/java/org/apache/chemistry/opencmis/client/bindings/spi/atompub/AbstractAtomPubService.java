@@ -77,7 +77,7 @@ public class AbstractAtomPubService implements LinkAccess {
 
     protected enum IdentifierType {
         ID, PATH
-    };
+    }
 
     protected static final String NAME_COLLECTION = "collection";
     protected static final String NAME_URI_TEMPLATE = "uritemplate";

@@ -117,6 +117,10 @@ public class BrowserBindingUtils {
         SERVICE, REPOSITORY, ROOT
     }
 
+    // Utility class.
+    private BrowserBindingUtils() {
+    }
+
     /**
      * Compiles the base URL for links, collections and templates.
      */

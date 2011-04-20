@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 
 /**
  * Base CMIS object.
- * 
+ * <p>
  * See CMIS Domain Model - section 2.1.2.
  */
 public interface CmisObject extends ObjectId, CmisObjectProperties {

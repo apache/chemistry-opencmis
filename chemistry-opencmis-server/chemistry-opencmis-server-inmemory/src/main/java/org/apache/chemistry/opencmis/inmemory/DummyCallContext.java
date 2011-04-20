@@ -1,4 +1,3 @@
-package org.apache.chemistry.opencmis.inmemory;
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +18,7 @@ package org.apache.chemistry.opencmis.inmemory;
  * under the License.
  *
  */
-
+package org.apache.chemistry.opencmis.inmemory;
 
 import java.math.BigInteger;
 import java.util.HashMap;

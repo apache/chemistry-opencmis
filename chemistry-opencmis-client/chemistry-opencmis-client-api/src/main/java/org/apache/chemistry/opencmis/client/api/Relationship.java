@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.client.api;
 
 /**
  * CMIS Relationship.
- * 
- * Domain Model 2.6
+ * <p>
+ * See Domain Model 2.6
  */
 public interface Relationship extends CmisObject, RelationshipProperties {
 

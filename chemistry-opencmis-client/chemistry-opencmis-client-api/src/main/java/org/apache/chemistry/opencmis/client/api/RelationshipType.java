@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Relationship Object Type.
- * 
+ * <p>
  * See CMIS Domain Model - section 2.1.6.1.
  */
 public interface RelationshipType extends ObjectType {

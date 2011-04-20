@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 public class QueryTranslatorTest {
     private String jcrTypeCondition;
 
-    QueryTranslator queryTranslator = new QueryTranslator(new JcrTypeManager()) {
+    final QueryTranslator queryTranslator = new QueryTranslator(new JcrTypeManager()) {
         @Override
         protected String jcrPathFromId(String id) {
             assertNotNull(id);

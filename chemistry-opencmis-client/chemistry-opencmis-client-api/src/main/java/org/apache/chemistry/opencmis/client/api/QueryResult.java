@@ -35,7 +35,7 @@ public interface QueryResult {
 
     /**
      * Returns a property by id.
-     * 
+     * <p>
      * Since repositories are not obligated to add property ids to their query
      * result properties, this method might not always work as expected with
      * some repositories. Use {@link #getPropertyByQueryName(String)} instead.

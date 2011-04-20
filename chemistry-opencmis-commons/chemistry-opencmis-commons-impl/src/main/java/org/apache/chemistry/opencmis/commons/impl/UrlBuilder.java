@@ -89,7 +89,7 @@ public class UrlBuilder {
         urlPart.append("://");
         urlPart.append(host);
         if (port > 0) {
-            urlPart.append(":" + port);
+            urlPart.append(":").append(port);
         }
         if (path != null) {
             urlPart.append(path);

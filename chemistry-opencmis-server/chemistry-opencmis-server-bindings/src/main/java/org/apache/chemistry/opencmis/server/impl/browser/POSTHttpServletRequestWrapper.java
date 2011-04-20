@@ -35,7 +35,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
-    private boolean isMultipart;
+    private final boolean isMultipart;
     private Map<String, String[]> parameters;
     private String filename;
     private String contentType;

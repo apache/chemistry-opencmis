@@ -175,7 +175,7 @@ public class TypeValidator {
 
             super.validate(propDef, property);
 
-            BigInteger propVal = ((PropertyInteger) property).getFirstValue();
+            BigInteger propVal = property.getFirstValue();
             BigInteger minVal = ((PropertyIntegerDefinition) propDef).getMinValue();
             BigInteger maxVal = ((PropertyIntegerDefinition) propDef).getMaxValue();
 
@@ -197,7 +197,7 @@ public class TypeValidator {
 
             super.validate(propDef, property);
 
-            BigDecimal propVal = ((PropertyDecimal) property).getFirstValue();
+            BigDecimal propVal = property.getFirstValue();
             BigDecimal minVal = ((PropertyDecimalDefinition) propDef).getMinValue();
             BigDecimal maxVal = ((PropertyDecimalDefinition) propDef).getMaxValue();
 
@@ -221,8 +221,8 @@ public class TypeValidator {
 
             long maxLen = ((PropertyStringDefinition) propDef).getMaxLength() == null ? -1
                     : ((PropertyStringDefinition) propDef).getMaxLength().longValue();
-            long len = ((PropertyData<String>) property).getFirstValue() == null ? -1
-                    : ((PropertyData<String>) property).getFirstValue().length();
+            long len = property.getFirstValue() == null ? -1
+                    : property.getFirstValue().length();
 
             // check max length
             if (maxLen >= 0 && len >= 0 && maxLen < len) {

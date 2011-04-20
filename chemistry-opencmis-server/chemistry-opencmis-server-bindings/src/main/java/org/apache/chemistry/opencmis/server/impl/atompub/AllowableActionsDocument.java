@@ -46,8 +46,7 @@ public class AllowableActionsDocument {
     /**
      * Writes an object.
      */
-    public void writeAllowableActions(AllowableActions allowableActions, OutputStream out) throws XMLStreamException,
-            JAXBException {
+    public void writeAllowableActions(AllowableActions allowableActions, OutputStream out) throws JAXBException {
         CmisAllowableActionsType allowableActionsJaxb = convert(allowableActions);
         if (allowableActionsJaxb == null) {
             return;

@@ -69,7 +69,6 @@ public class InMemoryService extends AbstractCmisService {
     }
 
     public InMemoryService(Map<String, String> parameters, StoreManager sm) {
-
         storeManager = sm;
         fRepSvc = new InMemoryRepositoryServiceImpl(storeManager);
         fNavSvc = new InMemoryNavigationServiceImpl(storeManager);

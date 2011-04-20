@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.api;
 
 /**
  * Accessors to CMIS document properties.
- * 
+ *
  * @see CmisObjectProperties
  */
 public interface DocumentProperties {

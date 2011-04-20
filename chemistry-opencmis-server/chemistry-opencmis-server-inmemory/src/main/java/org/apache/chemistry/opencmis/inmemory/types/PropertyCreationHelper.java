@@ -68,8 +68,8 @@ import org.apache.commons.logging.LogFactory;
  * @author Jens
  * 
  */
-
 public class PropertyCreationHelper {
+
     private static final Log log = LogFactory.getLog(PropertyCreationHelper.class);
 
     public static PropertyBooleanDefinitionImpl createBooleanDefinition(String id, String displayName) {

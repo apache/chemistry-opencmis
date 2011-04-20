@@ -40,11 +40,11 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinit
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 
 public class DefaultTypeSystemCreator implements TypeCreator {
-    public static List<TypeDefinition> singletonTypes = buildTypesList();
+    public static final List<TypeDefinition> singletonTypes = buildTypesList();
     public static final String COMPLEX_TYPE = "ComplexType";
     public static final String TOPLEVEL_TYPE = "DocumentTopLevel";
     public static final String VERSIONED_TYPE = "VersionableType";
-    public static final String LEVEL1_TYPE = "DocumentLevel1";;
+    public static final String LEVEL1_TYPE = "DocumentLevel1";
     public static final String LEVEL2_TYPE = "DocumentLevel2";
 
     /**

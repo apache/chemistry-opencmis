@@ -54,7 +54,7 @@ public class StoredObjectImpl implements StoredObject {
     protected GregorianCalendar fModifiedAt;
     protected String fRepositoryId;
     protected Map<String, PropertyData<?>> fProperties;
-    protected ObjectStoreImpl fObjStore;
+    protected final ObjectStoreImpl fObjStore;
 
     StoredObjectImpl(ObjectStoreImpl objStore) { // visibility should be package
         GregorianCalendar now = getNow();

@@ -18,9 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
-/**
- * @author Jens
- */
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +26,14 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 
+/**
+ * @author Jens
+ */
 public class FilterParser {
+
+    // Utility class
+    private FilterParser() {
+    }
 
     public static boolean isContainedInFilter(String propertyId, List<String> requestedIds) {
         if (requestedIds.contains("*"))

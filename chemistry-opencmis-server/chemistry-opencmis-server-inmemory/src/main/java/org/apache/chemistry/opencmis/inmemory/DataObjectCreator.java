@@ -47,6 +47,10 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class DataObjectCreator {
 
+    // Utility class
+    private DataObjectCreator() {
+    }
+
     public static AllowableActions fillAllowableActions(StoredObject so, String user) {
 
         boolean isFolder = so instanceof Folder;

@@ -220,7 +220,7 @@ public class XPathBuilderTest {
         return Arrays.asList(elements);
     }
 
-    private static XPathBuilder execute(String statement) throws RecognitionException, IOException {
+    private static XPathBuilder execute(String statement) {
         QueryUtil queryUtil = new QueryUtil();
         QueryObject queryObject = new QueryObject(new JcrTypeManager());
         ParseTreeWalker<XPathBuilder> parseTreeWalker = new ParseTreeWalker<XPathBuilder>(new EvaluatorXPath());
@@ -228,8 +228,7 @@ public class XPathBuilderTest {
         return parseTreeWalker.getResult();
     }
 
-    private static void check(String query, String result, List<String> folderPredicates, Boolean evaluation)
-            throws IOException, RecognitionException {
+    private static void check(String query, String result, List<String> folderPredicates, Boolean evaluation) {
 
         XPathBuilder queryBuilder = execute(query);
         if (result == null) {

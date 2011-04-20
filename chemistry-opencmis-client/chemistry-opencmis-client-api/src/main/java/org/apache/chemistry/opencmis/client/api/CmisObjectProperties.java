@@ -25,14 +25,14 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Accessors to CMIS object properties.
- * 
+ * <p>
  * A property might not be available because either the repository didn't
  * provide it or a property filter was used to retrieve this object.
- * 
+ * <p>
  * The property values represent a snapshot of the object when it was loaded.
  * The objects and its properties can be out-of-date if the object has been
  * modified in the repository.
- * 
+ * <p>
  * Implementations of this interface might alter property values without
  * updating the object in the repository. In this case, the values returned by
  * these accessors don't reflect the state of the object in the repository.

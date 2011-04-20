@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
  * Object Type.
- * 
+ * <p>
  * See CMIS Domain Model - section 2.1.3.
  */
 public interface ObjectType extends TypeDefinition {

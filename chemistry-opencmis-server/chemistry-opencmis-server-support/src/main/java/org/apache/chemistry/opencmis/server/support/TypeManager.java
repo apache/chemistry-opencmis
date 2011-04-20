@@ -33,7 +33,7 @@ public interface TypeManager {
      *            id of the type definition
      * @return type definition for this id
      */
-    public abstract TypeDefinitionContainer getTypeById(String typeId);
+    TypeDefinitionContainer getTypeById(String typeId);
 
     /**
      * return a type definition from the type query name or null if not found
@@ -42,14 +42,14 @@ public interface TypeManager {
      *            query name of the type definition
      * @return type definition for this query name
      */
-    public abstract TypeDefinition getTypeByQueryName(String typeQueryName);
+    TypeDefinition getTypeByQueryName(String typeQueryName);
 
     /**
      * return a list of all types known in this repository
      * 
      * @return
      */
-    public abstract Collection<TypeDefinitionContainer> getTypeDefinitionList();
+    Collection<TypeDefinitionContainer> getTypeDefinitionList();
 
     /**
      * return a list of the root types as defined in the CMIS spec (for
@@ -57,7 +57,7 @@ public interface TypeManager {
      * 
      * @return
      */
-    public abstract List<TypeDefinitionContainer> getRootTypes();
+    List<TypeDefinitionContainer> getRootTypes();
 
     /**
      * retrieve the property id from a type for a given property query name 
@@ -69,6 +69,6 @@ public interface TypeManager {
      * @return
      *      property id of property or null if not found
      */
-    public abstract String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName);
+    String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName);
 
 }

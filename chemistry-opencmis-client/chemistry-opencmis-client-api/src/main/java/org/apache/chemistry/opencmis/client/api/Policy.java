@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.client.api;
 
 /**
  * CMIS Policy.
- * 
- * Domain Model 2.7
+ * <p>
+ * See Domain Model 2.7
  */
 public interface Policy extends FileableCmisObject, PolicyProperties {
 

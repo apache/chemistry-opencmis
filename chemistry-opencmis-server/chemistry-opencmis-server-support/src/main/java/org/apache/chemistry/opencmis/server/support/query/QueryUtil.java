@@ -43,7 +43,7 @@ public class QueryUtil {
     private CmisQueryWalker walker;
 
     // convenience method because everybody needs this piece of code
-    public static CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+    public static CmisQueryWalker getWalker(String statement) throws RecognitionException {
         
         CharStream input = new ANTLRStringStream(statement);
         TokenSource lexer = new CmisQlStrictLexer(input);

@@ -354,11 +354,6 @@ public class ProcessQueryTest extends AbstractQueryTest {
         super.setUp(qo, queryProcessor);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void testStartStopProcessing() {
         String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE ISBN = 100";

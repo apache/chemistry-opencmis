@@ -51,9 +51,9 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
     private static final Log LOG = LogFactory.getLog(InMemoryVersioningServiceImpl.class.getName());
 
-    InMemoryObjectServiceImpl fObjectService; // real implementation of the
+    final InMemoryObjectServiceImpl fObjectService; // real implementation of the
     // service
-    AtomLinkInfoProvider fAtomLinkProvider;
+    final AtomLinkInfoProvider fAtomLinkProvider;
 
     public InMemoryVersioningServiceImpl(StoreManager storeManager, InMemoryObjectServiceImpl objectService) {
         super(storeManager);

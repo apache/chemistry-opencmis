@@ -28,8 +28,8 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
  * CMIS Folder.
- * 
- * Domain Model 2.5
+ * <p>
+ * See Domain Model 2.5
  */
 public interface Folder extends FileableCmisObject, FolderProperties {
 

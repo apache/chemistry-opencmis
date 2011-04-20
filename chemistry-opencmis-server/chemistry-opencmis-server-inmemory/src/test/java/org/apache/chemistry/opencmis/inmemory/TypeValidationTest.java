@@ -370,7 +370,6 @@ public class TypeValidationTest extends TestCase {
         TypeManager tm = buildInheritedTypes();
         TypeDefinition superType = tm.getTypeById(DOC_TYPE_SUPER).getTypeDefinition();
         TypeDefinition subType = tm.getTypeById(DOC_TYPE_SUB).getTypeDefinition();
-        ;
 
         List<PropertyData<?>> properties = createPropertiesWithNameAndTypeId(DOC_TYPE_SUB);
         properties.add(FACTORY.createPropertyStringData(STRING_PROP_TYPE_SUB,

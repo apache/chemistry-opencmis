@@ -29,7 +29,7 @@ public class MultiThreadedObjectGenerator {
 
     public static enum Action {
         CreateDocument, CreateTree, CreateFolders
-    };
+    }
 
     static class ObjectGeneratorRunner implements Runnable {
         private final Action fAction;
@@ -55,7 +55,7 @@ public class MultiThreadedObjectGenerator {
         }
 
         public String[] doCreateDocument() {
-            String ids[] = fObjGen.createDocuments(fRootFolderId, fCount);
+            String[] ids = fObjGen.createDocuments(fRootFolderId, fCount);
             return ids;
         }
 
@@ -196,7 +196,7 @@ public class MultiThreadedObjectGenerator {
 
     public static void runMultiThreaded(ObjectGeneratorRunner[] runner) {
         int threadCount = runner.length;
-        Thread threads[] = new Thread[threadCount];
+        Thread[] threads = new Thread[threadCount];
         for (int i = 0; i < threadCount; i++) {
             Thread thread = new Thread(runner[i], "ObjectGeneratorThread-" + i);
             threads[i] = thread;

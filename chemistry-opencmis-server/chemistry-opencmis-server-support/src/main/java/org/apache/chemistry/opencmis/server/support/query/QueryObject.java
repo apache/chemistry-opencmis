@@ -48,36 +48,36 @@ public class QueryObject {
     // http://www.antlr.org/pipermail/antlr-interest/2008-April/027600.html
     // select part
     protected TypeManager typeMgr;
-    protected List<CmisSelector> selectReferences = new ArrayList<CmisSelector>();
-    protected List<CmisSelector> whereReferences = new ArrayList<CmisSelector>();
-    protected List<CmisSelector> joinReferences = new ArrayList<CmisSelector>();
+    protected final List<CmisSelector> selectReferences = new ArrayList<CmisSelector>();
+    protected final List<CmisSelector> whereReferences = new ArrayList<CmisSelector>();
+    protected final List<CmisSelector> joinReferences = new ArrayList<CmisSelector>();
     // --> Join not implemented yet
-    protected Map<String, CmisSelector> colOrFuncAlias = new HashMap<String, CmisSelector>();
+    protected final Map<String, CmisSelector> colOrFuncAlias = new HashMap<String, CmisSelector>();
 
     // from part
     /** map from alias name to type query name */
-    protected Map<String, String> froms = new LinkedHashMap<String, String>();
+    protected final Map<String, String> froms = new LinkedHashMap<String, String>();
 
     /** main from alias name */
     protected String from = null;
 
-    protected List<JoinSpec> joinSpecs = new LinkedList<JoinSpec>();
+    protected final List<JoinSpec> joinSpecs = new LinkedList<JoinSpec>();
 
     // where part
-    protected Map<Integer, CmisSelector> columnReferences = new HashMap<Integer, CmisSelector>();
+    protected final Map<Integer, CmisSelector> columnReferences = new HashMap<Integer, CmisSelector>();
 
     // order by part
-    protected List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
+    protected final List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
     
     private String errorMessage;
 
     public static class JoinSpec {
 
         /** INNER / LEFT / RIGHT */
-        public String kind;
+        public final String kind;
 
         /** Alias or full table type */
-        public String alias;
+        public final String alias;
 
         public ColumnReference onLeft;
 
@@ -101,8 +101,8 @@ public class QueryObject {
     }
 
     public class SortSpec {
-        public boolean ascending;
-        public Integer colRefKey; // key in columnReferencesMap point to column
+        public final boolean ascending;
+        public final Integer colRefKey; // key in columnReferencesMap point to column
                                     // descriptions
 
         public SortSpec(Integer key, boolean ascending) {
@@ -117,7 +117,7 @@ public class QueryObject {
         public boolean isAscending() {
             return ascending;
         }
-    };
+    }
 
     public QueryObject() {
     }

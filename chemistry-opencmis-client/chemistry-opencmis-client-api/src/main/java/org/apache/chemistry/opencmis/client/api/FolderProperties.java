@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Accessors to CMIS folder properties.
- * 
+ *
  * @see CmisObjectProperties
  */
 public interface FolderProperties {

@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 /**
  * Iterable for CMIS collections that allows ability to skip to specific
- * position or return a sub collection.
+ * position or return a subcollection.
  *
  * @param <T> the type of the items
  */

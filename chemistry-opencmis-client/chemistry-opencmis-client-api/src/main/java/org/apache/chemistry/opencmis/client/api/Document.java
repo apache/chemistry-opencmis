@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
  * CMIS Document.
- * 
+ * <p>
  * Domain Model 2.4
  */
 public interface Document extends FileableCmisObject, DocumentProperties {

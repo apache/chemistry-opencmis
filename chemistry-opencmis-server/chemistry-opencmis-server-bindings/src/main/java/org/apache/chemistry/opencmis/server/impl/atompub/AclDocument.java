@@ -46,7 +46,7 @@ public class AclDocument {
     /**
      * Writes an object.
      */
-    public void writeAcl(Acl acl, OutputStream out) throws XMLStreamException, JAXBException {
+    public void writeAcl(Acl acl, OutputStream out) throws JAXBException {
         CmisAccessControlListType aclJaxb = convert(acl);
         if (aclJaxb == null) {
             return;

@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.api;
 
 /**
  * Folder Object Type.
- * 
+ * <p>
  * See CMIS Domain Model - section 2.1.5.4.
  */
 public interface FolderType extends ObjectType {

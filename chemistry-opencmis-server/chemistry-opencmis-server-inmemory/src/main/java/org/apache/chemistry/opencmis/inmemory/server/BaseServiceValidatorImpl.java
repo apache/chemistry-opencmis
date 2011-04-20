@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
 public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
-    protected StoreManager fStoreManager;
+    protected final StoreManager fStoreManager;
     
     public BaseServiceValidatorImpl(StoreManager sm) {
         fStoreManager = sm;

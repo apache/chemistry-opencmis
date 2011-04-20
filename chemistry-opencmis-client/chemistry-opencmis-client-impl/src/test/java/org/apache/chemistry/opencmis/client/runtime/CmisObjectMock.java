@@ -196,4 +196,4 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public TransientCmisObject getTransientObject() {
         return null;
     }
-};
+}

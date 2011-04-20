@@ -39,8 +39,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class InMemoryAbstractServiceImpl {
 
-    protected StoreManager fStoreManager;
-    protected CmisServiceValidator validator;
+    protected final StoreManager fStoreManager;
+    protected final CmisServiceValidator validator;
 
     protected InMemoryAbstractServiceImpl(StoreManager storeManager, CmisServiceValidator validator) {
         this.fStoreManager = storeManager;

@@ -22,7 +22,7 @@ import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 
 /**
  * Document Object Type.
- * 
+ * <p>
  * See CMIS Domain Model - section 2.1.4.3.
  */
 public interface DocumentType extends ObjectType {
