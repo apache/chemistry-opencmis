@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import junit.framework.Assert;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -69,7 +70,7 @@ public class ObjectCreator {
         id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies, addACEs,
                 removeACEs, extension);
         if (null == id)
-            junit.framework.Assert.fail("createDocument failed.");
+            Assert.fail("createDocument failed.");
 
         return id;
     }

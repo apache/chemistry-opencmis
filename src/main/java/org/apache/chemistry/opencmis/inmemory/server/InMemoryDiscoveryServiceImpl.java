@@ -44,10 +44,10 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
     
     private static final Log LOG = LogFactory.getLog(InMemoryDiscoveryServiceImpl.class);
 
-    AtomLinkInfoProvider fAtomLinkProvider;
-    InMemoryNavigationServiceImpl fNavigationService; // real implementation of
+    final AtomLinkInfoProvider fAtomLinkProvider;
+    final InMemoryNavigationServiceImpl fNavigationService; // real implementation of
     // the service
-    InMemoryRepositoryServiceImpl fRepositoryService;
+    final InMemoryRepositoryServiceImpl fRepositoryService;
 
     public InMemoryDiscoveryServiceImpl(StoreManager storeManager, InMemoryRepositoryServiceImpl repSvc,
             InMemoryNavigationServiceImpl navSvc) {

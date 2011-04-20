@@ -125,7 +125,6 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
       LOG.debug("stop getService()");
       return wrapperService.getWrappedService(); // wrapperService;
-
   }
 
     @Override

@@ -35,7 +35,7 @@ public interface Filing {
      * character indicating how folders are separated within a path string. This
      * char must not be a valid character of an object name.
      */
-    public static final String PATH_SEPARATOR = "/";
+    String PATH_SEPARATOR = "/";
 
     /**
      * return a list of parents. for single parent object this list must contain
@@ -62,6 +62,6 @@ public interface Filing {
      * @param newParent
      *            new parent folder for the object
      */
-    public void move(Folder oldParent, Folder newParent);
+    void move(Folder oldParent, Folder newParent);
 
 }

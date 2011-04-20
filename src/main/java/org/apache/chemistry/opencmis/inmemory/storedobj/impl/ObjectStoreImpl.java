@@ -266,7 +266,6 @@ public class ObjectStoreImpl implements ObjectStore {
 
     public Folder createFolder(String name) {
         Folder folder = new FolderImpl(this, name, null);
-        ;
         folder.setRepositoryId(fRepositoryId);
         return folder;
     }

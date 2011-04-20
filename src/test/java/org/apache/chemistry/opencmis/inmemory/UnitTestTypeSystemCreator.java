@@ -46,10 +46,10 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 
 public class UnitTestTypeSystemCreator implements TypeCreator {
-    public static List<TypeDefinition> singletonTypes = buildTypesList();
+    public static final List<TypeDefinition> singletonTypes = buildTypesList();
     public static final String COMPLEX_TYPE = "ComplexType";
     public static final String TOPLEVEL_TYPE = "DocumentTopLevel";
-    public static final String LEVEL1_TYPE = "DocumentLevel1";;
+    public static final String LEVEL1_TYPE = "DocumentLevel1";
     public static final String LEVEL2_TYPE = "DocumentLevel2";
     public static final String VERSION_DOCUMENT_TYPE_ID = "MyVersionedType";
     public static final String VERSION_PROPERTY_ID = "StringProp";

@@ -38,7 +38,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class AbstractServiceImpl {
 
-    protected StoreManager fStoreManager;
+    protected final StoreManager fStoreManager;
 
     protected AbstractServiceImpl(StoreManager storeManager) {
         fStoreManager = storeManager;

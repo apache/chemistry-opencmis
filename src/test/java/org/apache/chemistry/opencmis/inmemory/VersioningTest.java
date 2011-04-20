@@ -666,8 +666,8 @@ public class VersioningTest extends AbstractServiceTst {
     }
 
     public static class VersionTestTypeSystemCreator implements TypeCreator {
-        public static String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
-        public static String PROPERTY_ID = "StringProp";
+        public static final String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
+        public static final String PROPERTY_ID = "StringProp";
 
         public List<TypeDefinition> createTypesList() {
             // always add CMIS default types

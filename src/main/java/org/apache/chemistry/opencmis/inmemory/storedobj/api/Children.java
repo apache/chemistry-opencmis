@@ -35,7 +35,7 @@ public interface Children {
      * @param folder
      *            new child folder
      */
-    public void addChildFolder(Folder folder);
+    void addChildFolder(Folder folder);
 
     /**
      * Add a document to a folder. This call persists the folder and the
@@ -44,7 +44,7 @@ public interface Children {
      * @param doc
      *            document to be added
      */
-    public void addChildDocument(Document doc);
+    void addChildDocument(Document doc);
 
     /**
      * Add a versioned document to a folder. This call persists the folder and
@@ -53,7 +53,7 @@ public interface Children {
      * @param doc
      *            document to be added
      */
-    public void addChildDocument(VersionedDocument doc);
+    void addChildDocument(VersionedDocument doc);
 
     /**
      * get all the children of this folder. To support paging an initial offset
@@ -65,7 +65,7 @@ public interface Children {
      *            initial offset where to start fetching
      * @return list of children objects
      */
-    public List<StoredObject> getChildren(int maxItems, int skipCount);
+    List<StoredObject> getChildren(int maxItems, int skipCount);
 
     /**
      * get all the children of this folder which are folders. To support paging
@@ -78,7 +78,7 @@ public interface Children {
      *            initial offset where to start fetching
      * @return list of children folders
      */
-    public List<Folder> getFolderChildren(int maxItems, int skipCount);
+    List<Folder> getFolderChildren(int maxItems, int skipCount);
 
     /**
      * indicate if a child with the given name exists in this folder
@@ -87,6 +87,6 @@ public interface Children {
      *            name to check
      * @return true if the name exists in the folderas child, false otherwise
      */
-    public boolean hasChild(String name);
+    boolean hasChild(String name);
 
 }

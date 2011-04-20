@@ -36,7 +36,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
     private static final Log LOG = LogFactory.getLog(InMemoryMultiFilingServiceImpl.class.getName());
 
-    AtomLinkInfoProvider fAtomLinkProvider;
+    final AtomLinkInfoProvider fAtomLinkProvider;
 
     public InMemoryMultiFilingServiceImpl(StoreManager storeMgr) {
         super(storeMgr);

@@ -57,7 +57,7 @@ public interface StoreManager {
      *            true if the repository was just created and is initialized for
      *            the first time false if it existed before and is reloaded
      */
-    public void initRepository(String repositoryId);
+    void initRepository(String repositoryId);
 
     /**
      * get the object store for the given repository id.

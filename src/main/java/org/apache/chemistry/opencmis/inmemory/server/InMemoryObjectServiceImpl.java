@@ -87,7 +87,7 @@ import org.apache.commons.logging.LogFactory;
 public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private static final Log LOG = LogFactory.getLog(InMemoryServiceFactoryImpl.class.getName());
 
-    AtomLinkInfoProvider fAtomLinkProvider;
+    final AtomLinkInfoProvider fAtomLinkProvider;
 
     public InMemoryObjectServiceImpl(StoreManager storeManager) {
         super(storeManager);

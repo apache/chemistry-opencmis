@@ -66,7 +66,7 @@ public class StoreManagerImpl implements StoreManager {
 
     private static final Log LOG = LogFactory.getLog(StoreManagerImpl.class);
     
-    protected BindingsObjectFactory fObjectFactory;
+    protected final BindingsObjectFactory fObjectFactory;
     protected RepositoryInfo fRepositoryInfo;
     protected CmisServiceValidator validator;
 

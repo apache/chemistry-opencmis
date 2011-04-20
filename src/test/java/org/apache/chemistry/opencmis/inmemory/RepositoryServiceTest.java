@@ -572,10 +572,10 @@ public class RepositoryServiceTest extends AbstractServiceTst {
 
         public static final String COMPLEX_TYPE = "ComplexType";
         public static final String TOPLEVEL_TYPE = "DocumentTopLevel";
-        public static final String LEVEL1_TYPE = "DocumentLevel1";;
+        public static final String LEVEL1_TYPE = "DocumentLevel1";
         public static final String LEVEL2_TYPE = "DocumentLevel2";
 
-        public static List<TypeDefinition> singletonTypes = buildTypesList();
+        public static final List<TypeDefinition> singletonTypes = buildTypesList();
 
         public List<TypeDefinition> createTypesList() {
             return singletonTypes;

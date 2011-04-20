@@ -252,7 +252,7 @@ public class InMemoryQueryProcessor {
 
     public class InMemoryWhereClauseWalker extends AbstractPredicateWalker {
 
-        protected StoredObject so;
+        protected final StoredObject so;
 
         public InMemoryWhereClauseWalker(StoredObject so) {
             this.so = so;
@@ -321,15 +321,12 @@ public class InMemoryQueryProcessor {
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.SINGLE)
-                throw new RuntimeException("Operator IN only is allowed on single-value properties ");
+                throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
             else if (lVal == null)
                 return false;
             else {
                 Object prop = lVal.getFirstValue();
-                if (literals.contains(prop))
-                    return true;
-                else
-                    return false;
+                return literals.contains(prop);
             }
         }
 
@@ -343,15 +340,12 @@ public class InMemoryQueryProcessor {
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.SINGLE)
-                throw new RuntimeException("Operator IN only is allowed on single-value properties ");
+                throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
             else if (lVal == null)
                 return false;
             else {
                 Object prop = lVal.getFirstValue();
-                if (literals.contains(prop))
-                    return false;
-                else
-                    return true;
+                return !literals.contains(prop);
             }
         }
 
@@ -362,7 +356,7 @@ public class InMemoryQueryProcessor {
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.MULTI)
-                throw new RuntimeException("Operator ANY...IN only is allowed on multi-value properties ");
+                throw new IllegalStateException("Operator ANY...IN only is allowed on multi-value properties ");
             else if (lVal == null)
                 return false;
             else {
@@ -386,7 +380,7 @@ public class InMemoryQueryProcessor {
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.MULTI)
-                throw new RuntimeException("Operator ANY...IN only is allowed on multi-value properties ");
+                throw new IllegalStateException("Operator ANY...IN only is allowed on multi-value properties ");
             else if (lVal == null)
                 return false;
             else {
@@ -407,15 +401,12 @@ public class InMemoryQueryProcessor {
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             Object literal = walkExpr(literalNode);
             if (pd.getCardinality() != Cardinality.MULTI)
-                throw new RuntimeException("Operator = ANY only is allowed on multi-value properties ");
+                throw new IllegalStateException("Operator = ANY only is allowed on multi-value properties ");
             else if (lVal == null)
                 return false;
             else {
                 List<?> props = lVal.getValues();
-                if (props.contains(literal))
-                    return true;
-                else
-                    return false;
+                return props.contains(literal);
             }
         }
 
@@ -435,16 +426,16 @@ public class InMemoryQueryProcessor {
         public Boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
             Object rVal = walkExpr(stringNode);
             if (!(rVal instanceof String))
-                throw new RuntimeException("LIKE operator requires String literal on right hand side.");
+                throw new IllegalStateException("LIKE operator requires String literal on right hand side.");
 
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyType propType = pd.getPropertyType();
             if (propType != PropertyType.STRING && propType != PropertyType.HTML && propType != PropertyType.ID
                     && propType != PropertyType.URI)
-                throw new RuntimeException("Property type " + propType.value() + " is not allowed FOR LIKE");
+                throw new IllegalStateException("Property type " + propType.value() + " is not allowed FOR LIKE");
             if (pd.getCardinality() != Cardinality.SINGLE)
-                throw new RuntimeException("LIKE is not allowed for multi-value properties ");
+                throw new IllegalStateException("LIKE is not allowed for multi-value properties ");
 
             String propVal = (String) so.getProperties().get(colRef.getPropertyId()).getFirstValue();
             String pattern = translatePattern((String) rVal); // SQL to Java
@@ -461,7 +452,7 @@ public class InMemoryQueryProcessor {
 
         @Override
         public Boolean walkContains(Tree qualNode, Tree colNode, Tree queryNode) {
-            throw new RuntimeException("Operator CONTAINS not supported in InMemory server.");
+            throw new IllegalStateException("Operator CONTAINS not supported in InMemory server.");
         }
 
         @Override
@@ -473,7 +464,7 @@ public class InMemoryQueryProcessor {
             }
             Object lit = walkExpr(paramNode);
             if (!(lit instanceof String))
-                throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
+                throw new IllegalStateException("Folder id in IN_FOLDER must be of type String");
             String folderId = (String) lit;
 
             // check if object is in folder
@@ -492,7 +483,7 @@ public class InMemoryQueryProcessor {
             }
             Object lit = walkExpr(paramNode);
             if (!(lit instanceof String))
-                throw new RuntimeException("Folder id in IN_FOLDER must be of type String");
+                throw new IllegalStateException("Folder id in IN_FOLDER must be of type String");
             String folderId = (String) lit;
 
             // check if object is in folder
@@ -511,7 +502,7 @@ public class InMemoryQueryProcessor {
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             if (lVal instanceof List<?>)
-                throw new RuntimeException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
+                throw new IllegalStateException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
             else
                 return InMemoryQueryProcessor.this.compareTo(pd, lVal, rVal);
         }
@@ -599,17 +590,17 @@ public class InMemoryQueryProcessor {
     private ColumnReference getColumnReference(Tree columnNode) {
         CmisSelector sel = queryObj.getColumnReference(columnNode.getTokenStartIndex());
         if (null == sel)
-            throw new RuntimeException("Unknown property query name " + columnNode.getChild(0));
+            throw new IllegalStateException("Unknown property query name " + columnNode.getChild(0));
         else if (sel instanceof ColumnReference)
             return (ColumnReference) sel;
         else
-            throw new RuntimeException("Unexpected numerical value function in where clause");
+            throw new IllegalStateException("Unexpected numerical value function in where clause");
     }
 
     private String getTableReference(Tree tableNode) {
         String typeQueryName = queryObj.getTypeQueryName(tableNode.getText());
         if (null == typeQueryName)
-            throw new RuntimeException("Inavlid type in IN_FOLDER() or IN_TREE(), must be in FROM list: "
+            throw new IllegalStateException("Inavlid type in IN_FOLDER() or IN_TREE(), must be in FROM list: "
                     + tableNode.getText());
         return typeQueryName;
     }
@@ -666,7 +657,7 @@ public class InMemoryQueryProcessor {
     }
 
     private void throwIncompatibleTypesException(Object o1, Object o2) {
-        throw new RuntimeException("Incompatible Types to compare: " + o1 + " and " + o2);
+        throw new IllegalArgumentException("Incompatible Types to compare: " + o1 + " and " + o2);
     }
 
 }

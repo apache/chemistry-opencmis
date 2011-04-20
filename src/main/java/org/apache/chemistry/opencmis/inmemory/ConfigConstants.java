@@ -41,4 +41,8 @@ public class ConfigConstants {
     public static final String MAX_CONTENT_SIZE_KB = "InMemoryServer.MaxContentSizeKB";
     public static final String CLEAN_REPOSITORY_INTERVAL = "InMemoryServer.CleanIntervalMinutes";
     public static final String DEPLOYMENT_TIME = "InMemoryServer.DeploymentTime";
+
+    private ConfigConstants() {
+    }
+
 }

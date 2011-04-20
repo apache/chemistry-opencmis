@@ -61,14 +61,11 @@ public abstract class AbstractQueryTest {
     protected static final String AUTHOR_PROP = "Author";
     protected static final String ISBN_PROP = "ISBN";
     protected static final String PUB_DATE_PROP = "PublishingDate";
-    
-    protected void setUp(QueryObject qo, PredicateWalkerBase pw) throws Exception {
-            queryObj = qo;
-            predicateWalker = pw;
-            queryUtil = new QueryUtil();
-    }
 
-    protected void tearDown() throws Exception {
+    protected void setUp(QueryObject qo, PredicateWalkerBase pw) {
+        queryObj = qo;
+        predicateWalker = pw;
+        queryUtil = new QueryUtil();
     }
 
     protected CmisQueryWalker traverseStatement(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
@@ -110,23 +107,23 @@ public abstract class AbstractQueryTest {
         Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
 
         PropertyBooleanDefinition prop1 = PropertyCreationHelper.createBooleanDefinition(BOOL_PROP,
-        "Sample Boolean Property");
+                "Sample Boolean Property");
         ((PropertyBooleanDefinitionImpl) prop1).setIsRequired(true);
         propertyDefinitions.put(prop1.getId(), prop1);
 
         PropertyStringDefinition prop2 = PropertyCreationHelper.createStringDefinition(STRING_PROP,
-        "Sample String Property");
+                "Sample String Property");
         propertyDefinitions.put(prop2.getId(), prop2);
 
         PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(INT_PROP,
-        "Sample Integer Property");
+                "Sample Integer Property");
         propertyDefinitions.put(prop2.getId(), prop2);
 
         cmisType.setPropertyDefinitions(propertyDefinitions);
 
         typeDefs.add(cmisType);
         myType = cmisType;
-        
+
         // add another type definition with exactly the same properties
         cmisType = new InMemoryDocumentTypeDefinition(MY_DOC_TYPE_COPY,
                 "Document Type Duplicated", InMemoryDocumentTypeDefinition.getRootDocumentType());
@@ -149,11 +146,11 @@ public abstract class AbstractQueryTest {
         propertyDefinitions.put(prop2.getId(), prop2);
 
         prop3 = PropertyCreationHelper.createIntegerDefinition(ISBN_PROP,
-        "ISBN of Book");
+                "ISBN of Book");
         propertyDefinitions.put(prop3.getId(), prop3);
 
         PropertyDateTimeDefinitionImpl prop4 = PropertyCreationHelper.createDateTimeDefinition(PUB_DATE_PROP,
-        "Publishing Date of Book");
+                "Publishing Date of Book");
         propertyDefinitions.put(prop4.getId(), prop4);
 
         cmisType.setPropertyDefinitions(propertyDefinitions);
@@ -163,6 +160,5 @@ public abstract class AbstractQueryTest {
         
         return typeDefs;
     }
-
 
 }

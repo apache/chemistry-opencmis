@@ -29,7 +29,7 @@ public class ConfigurationSettings {
 
     private static ConfigurationSettings singleInstance;
     
-    Map<String, String> parameters;
+    final Map<String, String> parameters;
     
     private ConfigurationSettings(Map<String, String> parameters) {
         this.parameters = parameters;

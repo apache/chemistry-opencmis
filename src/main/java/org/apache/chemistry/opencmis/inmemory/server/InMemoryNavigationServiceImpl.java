@@ -65,7 +65,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
     private static final Log LOG = LogFactory.getLog(InMemoryNavigationServiceImpl.class);
 
-    AtomLinkInfoProvider fAtomLinkProvider;
+    final AtomLinkInfoProvider fAtomLinkProvider;
 
     public InMemoryNavigationServiceImpl(StoreManager storeManager) {
         super(storeManager);

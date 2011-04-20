@@ -60,8 +60,8 @@ public interface QueryConditionProcessor extends PredicateWalkerBase {
     void onEqAny(Tree node, Tree literalNode, Tree colNode);
 
     // Null comparisons:
-    public void onIsNull(Tree nullNode, Tree colNode);
-    public void onIsNotNull(Tree notNullNode, Tree colNode);
+    void onIsNull(Tree nullNode, Tree colNode);
+    void onIsNotNull(Tree notNullNode, Tree colNode);
 
     // String matching:
     void onIsLike(Tree node, Tree colNode, Tree stringNode);

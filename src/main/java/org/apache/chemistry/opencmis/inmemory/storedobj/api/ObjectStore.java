@@ -113,12 +113,12 @@ public interface ObjectStore {
     /**
      * Clear repository and remove all data.
      */
-    public void clear();
+    void clear();
     
     /**
      * For statistics: return the number of objects contained in the system
      * @return
      *      number of stored objects
      */
-    public long getObjectCount();
+    long getObjectCount();
 }
