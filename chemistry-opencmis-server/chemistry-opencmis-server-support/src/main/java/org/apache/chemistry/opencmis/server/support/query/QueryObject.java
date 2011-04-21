@@ -68,7 +68,7 @@ public class QueryObject {
 
     // order by part
     protected final List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
-    
+
     private String errorMessage;
 
     public static class JoinSpec {
@@ -133,7 +133,7 @@ public class QueryObject {
     public CmisSelector getColumnReference(Integer token) {
         return columnReferences.get(token);
     }
-    
+
     public String getErrorMessage() {
         return errorMessage;
     }
@@ -379,7 +379,7 @@ public class QueryObject {
                 if (select instanceof ColumnReference) {
                     ColumnReference colRef = ((ColumnReference) select);
                     if (colRef.getTypeDefinition() == null) { // not yet resolved
-                        if (colRef.getTypeQueryName() == null) {
+                        if (colRef.getQualifier() == null) {
                             // unqualified select: SELECT p FROM
                             resolveTypeForColumnReference(colRef);
                         } else {
@@ -389,7 +389,7 @@ public class QueryObject {
                     }
                 }
             }
-            
+
             return true;
         } catch (CmisQueryException cqe) {
             errorMessage = cqe.getMessage(); // preserve message
@@ -404,7 +404,7 @@ public class QueryObject {
             CmisSelector selector = colOrFuncAlias.get(aliasName);
             if (selector instanceof ColumnReference) {
                 colRef = (ColumnReference) selector; // alias target
-                if (colRef.getTypeQueryName() == null) {
+                if (colRef.getQualifier() == null) {
                     // unqualified select: SELECT p FROM
                     resolveTypeForColumnReference(colRef);
                 } else {
@@ -452,10 +452,10 @@ public class QueryObject {
     // from
     protected void validateColumnReferenceAndResolveType(ColumnReference colRef) {
         // either same name or mapped alias
-        String typeQueryName = getReferencedTypeQueryName(colRef.getTypeQueryName());
+        String typeQueryName = getReferencedTypeQueryName(colRef.getQualifier());
         TypeDefinition td = typeMgr.getTypeByQueryName(typeQueryName);
         if (null == td)
-            throw new CmisQueryException(colRef.getTypeQueryName()
+            throw new CmisQueryException(colRef.getQualifier()
                     + " is neither a type query name nor an alias.");
 
         validateColumnReferenceAndResolveType(td, colRef);

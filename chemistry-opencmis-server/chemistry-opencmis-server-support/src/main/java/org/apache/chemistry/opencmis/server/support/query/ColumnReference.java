@@ -23,25 +23,31 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 
 public class ColumnReference extends CmisSelector {
 
-    private final String typeQueryName;  // type query name coming from query statement
+    private final String qualifier;      // type qualifier coming from query statement
     private final String propQueryName;  // property query name coming from query statement
 
     // The following fields are set when the types are resolved:
     private String propertyId;
     private TypeDefinition typeDef;
 
-    public ColumnReference(String typeQueryName, String propQueryName) {
-        this.typeQueryName = typeQueryName;
+    public ColumnReference(String qualifier, String propQueryName) {
+        this.qualifier = qualifier;
         this.propQueryName = propQueryName;
     }
 
     public ColumnReference(String propQueryName) {
-        this.typeQueryName = null;
+        this.qualifier = null;
         this.propQueryName = propQueryName;
     }
 
+    public String getQualifier() {
+        return qualifier;
+    }
+
+    /** @deprecated use {@link #getQualifier} instead. */
+    @Deprecated
     public String getTypeQueryName() {
-        return typeQueryName;
+        return getQualifier();
     }
 
     public String getPropertyQueryName() {
@@ -73,7 +79,7 @@ public class ColumnReference extends CmisSelector {
     @Override
     public String toString() {
         return "ColumnReference("
-                + (typeQueryName == null ? "" : typeQueryName + ".")
+                + (qualifier == null ? "" : qualifier + ".")
                 + propQueryName + (aliasName == null ? "" : " AS " + aliasName)
                 + ")";
     }
