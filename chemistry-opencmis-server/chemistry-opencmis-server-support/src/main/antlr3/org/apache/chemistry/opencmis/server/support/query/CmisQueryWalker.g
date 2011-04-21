@@ -72,9 +72,9 @@ import org.apache.commons.logging.LogFactory;
     private Tree wherePredicateTree;
 
     public Tree getWherePredicateTree() {
-    	return wherePredicateTree;
+        return wherePredicateTree;
     }
-    
+
     protected void mismatch(IntStream input, int ttype, BitSet follow)
         throws RecognitionException
     {
@@ -106,18 +106,18 @@ query [QueryObject qo, PredicateWalkerBase pw] throws CmisQueryException
         wherePredicateTree = $where_clause.tree==null ? null : $where_clause.tree.getChild(0);
         boolean resolved = queryObj.resolveTypes();
         if (null != pw && null != $where_clause.tree)
-            pw.walkPredicate(wherePredicateTree);        
+            pw.walkPredicate(wherePredicateTree);
     }
     {
-    	resolved
+        resolved
     }?
     ;
-	catch[FailedPredicateException e]
-	{
-	    // change default text to preserved text which is useful
-	    e.predicateText = queryObj.getErrorMessage();
-	    throw e;
-	}      
+    catch[FailedPredicateException e]
+    {
+        // change default text to preserved text which is useful
+        e.predicateText = queryObj.getErrorMessage();
+        throw e;
+    }
 
 select_list:
       STAR
@@ -201,12 +201,12 @@ one_table returns [String alias]:
           ($alias = queryObj.addType($correlation_name.text, $table_name.text)) != null
       }?
     ;
-	catch[FailedPredicateException e]
-	{
-	    // change default text to preserved text which is useful
-	    e.predicateText = queryObj.getErrorMessage();
-	    throw e;
-	}      
+    catch[FailedPredicateException e]
+    {
+        // change default text to preserved text which is useful
+        e.predicateText = queryObj.getErrorMessage();
+        throw e;
+    }
 
 join_kind returns [String kind]:
       INNER { $kind = "INNER"; }
