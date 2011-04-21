@@ -94,17 +94,32 @@
 				       <linkedResource>
 					       <name>src/main/webapp/WEB-INF/sun-jaxws.xml</name> 
 						   <type>1</type> 
-						   <location>${basedir}/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/WEB-INF/sun-jaxws.xml</location>
+						   <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/WEB-INF/sun-jaxws.xml</location>
 					   </linkedResource>
 				       <linkedResource>
 					       <name>src/main/webapp/WEB-INF/web.xml</name> 
 						   <type>1</type> 
-						   <location>${basedir}/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/WEB-INF/web.xml</location>
+						   <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/WEB-INF/web.xml</location>
 					   </linkedResource>
 				       <linkedResource>
 					       <name>src/main/webapp/WEB-INF/wsdl</name> 
 						   <type>2</type> 
-						   <location>${basedir}/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/WEB-INF/wsdl</location>
+						   <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/WEB-INF/wsdl</location>
+					   </linkedResource>
+				       <linkedResource>
+					       <name>src/main/webapp/css</name> 
+						   <type>2</type> 
+						   <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/css</location>
+					   </linkedResource>
+				       <linkedResource>
+					       <name>src/main/webapp/images</name> 
+						   <type>2</type> 
+						   <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/images</location>
+					   </linkedResource>
+				       <linkedResource>
+					       <name>src/main/webapp/web</name> 
+						   <type>2</type> 
+						   <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/web</location>
 					   </linkedResource>
 				   </linkedResources>
                 </configuration>            
