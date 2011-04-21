@@ -111,7 +111,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertTrue(selects.get(0) instanceof ColumnReference);
 
         ColumnReference colRef = ((ColumnReference)selects.get(0));
-        assertEquals("t1", colRef.getTypeQueryName());
+        assertEquals("t1", colRef.getQualifier());
         assertEquals("abc", colRef.getPropertyQueryName());
     }
 
@@ -128,7 +128,7 @@ public class QueryParseTest extends AbstractQueryTest {
 
         ColumnReference colRef = ((ColumnReference)selects.get(0));
         assertTrue(selects.get(0) instanceof ColumnReference);
-        assertEquals(null, colRef.getTypeQueryName());
+        assertEquals(null, colRef.getQualifier());
         assertEquals("*", colRef.getPropertyQueryName());
     }
 
@@ -145,7 +145,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertTrue(selects.get(0) instanceof ColumnReference);
 
         ColumnReference colRef = ((ColumnReference)selects.get(0));
-        assertEquals("t1", colRef.getTypeQueryName());
+        assertEquals("t1", colRef.getQualifier());
         assertEquals("*", colRef.getPropertyQueryName());
     }
 
@@ -162,7 +162,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertTrue(selects.get(0) instanceof ColumnReference);
 
         ColumnReference colRef = ((ColumnReference)selects.get(0));
-        assertEquals("t2", colRef.getTypeQueryName());
+        assertEquals("t2", colRef.getQualifier());
         assertEquals("aaa", colRef.getPropertyQueryName());
     }
 
@@ -304,7 +304,7 @@ public class QueryParseTest extends AbstractQueryTest {
 
         CmisSelector sortSpec = sp.getSelector();
         assert(sortSpec instanceof ColumnReference);
-        assertEquals("abc", ((ColumnReference)sortSpec).getTypeQueryName());
+        assertEquals("abc", ((ColumnReference)sortSpec).getQualifier());
         assertEquals("def", ((ColumnReference)sortSpec).getPropertyQueryName());
     }
 
@@ -322,7 +322,7 @@ public class QueryParseTest extends AbstractQueryTest {
 
         CmisSelector sortSpec = sp.getSelector();
         assert(sortSpec instanceof ColumnReference);
-        assertNull(((ColumnReference)sortSpec).getTypeQueryName());
+        assertNull(((ColumnReference)sortSpec).getQualifier());
         assertEquals("def", ((ColumnReference)sortSpec).getPropertyQueryName());
     }
 
