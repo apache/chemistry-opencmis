@@ -35,71 +35,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="css/opencmis.css"/>
 <title>Apache Chemistry OpenCMIS-InMemory Server</title>
-<style type="text/css">
-
-body {
-  font-family: Verdana, arial, sans-serif;
-  color: black;
-  font-size: 12px;
-}
-
-h1 {
-  font-size: 24px;
-  line-height: normal;
-  font-weight: bold;
-  background-color: #f0f0f0;
-  color: #003366;
-   border-bottom: 1px solid #3c78b5;
-  padding: 2px;
-  margin: 36px 0px 4px 0px;
-}
-
-h2 {
-  font-size: 18px;
-  line-height: normal;
-  font-weight: bold;
-  background-color: #f0f0f0;
-   border-bottom: 1px solid #3c78b5;
-  padding: 2px;
-  margin: 27px 0px 4px 0px;
-}
-
-h3 {
-  font-size: 14px;
-  line-height: normal;
-  font-weight: bold;
-  background-color: #f0f0f0;
-  padding: 2px;
-  margin: 21px 0px 4px 0px;
-}
-
-h4 {
-  font-size: 12px;
-  line-height: normal;
-  font-weight: bold;
-  background-color: #f0f0f0;
-  padding: 2px;
-  margin: 18px 0px 4px 0px;
-}
-
-HR {
-  color: 3c78b5;
-  height: 1;
-}
-
-th  {
-    border: 1px solid #ccc;
-    padding: 2px 4px 2px 4px;
-    background: #f0f0f0;
-    text-align: center;
-}
-
-td  {
-    border: 1px solid #ccc;
-    padding: 3px 4px 3px 4px;
-}
-</style>
 
 <%!
 	private StoreManager getStoreManager(HttpServletRequest request) {
@@ -116,7 +53,7 @@ td  {
 
 </head>
 <body>
-  <img alt="Apache Chemistry Logo" title="Apache Chemistry Logo" src="chemistry_logo_small.png" />
+  <img alt="Apache Chemistry Logo" title="Apache Chemistry Logo" src="images/chemistry_logo_small.png" />
 
 <h1>OpenCMIS InMemory Server</h1>
 <p> Your server is up and running.</p>
@@ -146,6 +83,14 @@ Authentication: Basic Authentication (user name and password are arbitrary)
 Note: Authentication is optional and only informational. User names are stored 
 in properties (createdBy, etc.), password is not required. The server does 
 not perform any kind of secure authentication.
+</p>
+
+<h2>Web Interface</h2>
+<p>
+The <a href="web">OpenCMIS web interface</a> is simple web interface to access
+the repository. Please note that this is not the usual way to access the repository.
+Usually you will use a client application supporting the CMIS specification like
+the CMIS workbench.
 </p>
 
 <h2>NOTICE</h2>
@@ -284,7 +229,7 @@ This software is licensed under the
 <br/>
 
 <a href="http://www.apache.org">
-  <img alt="ASF Logo" title="ASF Logo" src="asf_logo.png" align="right"/>
+  <img alt="ASF Logo" title="ASF Logo" src="images/asf_logo.png" align="right"/>
 </a>
 
 </body>
