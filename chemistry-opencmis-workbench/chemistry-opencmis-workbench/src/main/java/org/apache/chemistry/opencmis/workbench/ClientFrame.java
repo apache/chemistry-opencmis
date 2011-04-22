@@ -337,7 +337,7 @@ public class ClientFrame extends JFrame implements WindowListener {
             addConsoleMenu(cmisMenu, "CMIS 1.0 Specification", new URI(
                     "http://docs.oasis-open.org/cmis/CMIS/v1.0/os/cmis-spec-v1.0.html"));
             addConsoleMenu(cmisMenu, "OpenCMIS Documentation", new URI(
-                    "http://incubator.apache.org/chemistry/opencmis.html"));
+                    "http://chemistry.apache.org/java/opencmis.html"));
             addConsoleMenu(
                     cmisMenu,
                     "OpenCMIS Client API JavaDoc",

@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.workbench.actions.DeleteContentStreamPanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeletePanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeleteTreePanel;
 import org.apache.chemistry.opencmis.workbench.actions.MovePanel;
+import org.apache.chemistry.opencmis.workbench.actions.PropertyUpdatePanel;
 import org.apache.chemistry.opencmis.workbench.actions.SetContentStreamPanel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
@@ -37,83 +38,89 @@ import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
 
 public class ActionsPanel extends JPanel implements ObjectListener {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ClientModel model;
+    private final ClientModel model;
 
-	private DeletePanel deletePanel;
-	private DeleteTreePanel deleteTreePanel;
-	private MovePanel movePanel;
-	private CheckOutPanel checkOutPanel;
-	private CancelCheckOutPanel cancelCheckOutPanel;
-	private CheckInPanel checkInPanel;
-	private SetContentStreamPanel setContentStreamPanel;
-	private DeleteContentStreamPanel deleteContentStreamPanel;
+    private PropertyUpdatePanel propertyUpdatePanel;
+    private DeletePanel deletePanel;
+    private DeleteTreePanel deleteTreePanel;
+    private MovePanel movePanel;
+    private CheckOutPanel checkOutPanel;
+    private CancelCheckOutPanel cancelCheckOutPanel;
+    private CheckInPanel checkInPanel;
+    private SetContentStreamPanel setContentStreamPanel;
+    private DeleteContentStreamPanel deleteContentStreamPanel;
 
-	public ActionsPanel(ClientModel model) {
-		super();
+    public ActionsPanel(ClientModel model) {
+        super();
 
-		this.model = model;
-		model.addObjectListener(this);
+        this.model = model;
+        model.addObjectListener(this);
 
-		createGUI();
-	}
+        createGUI();
+    }
 
-	public void objectLoaded(ClientModelEvent event) {
-		CmisObject object = model.getCurrentObject();
+    public void objectLoaded(ClientModelEvent event) {
+        CmisObject object = model.getCurrentObject();
 
-		deletePanel.setObject(object);
-		deletePanel.setVisible(deletePanel.isAllowed());
+        propertyUpdatePanel.setObject(object);
+        propertyUpdatePanel.setVisible(propertyUpdatePanel.isAllowed());
 
-		deleteTreePanel.setObject(object);
-		deleteTreePanel.setVisible(deleteTreePanel.isAllowed());
+        deletePanel.setObject(object);
+        deletePanel.setVisible(deletePanel.isAllowed());
 
-		movePanel.setObject(object);
-		movePanel.setVisible(movePanel.isAllowed());
+        deleteTreePanel.setObject(object);
+        deleteTreePanel.setVisible(deleteTreePanel.isAllowed());
 
-		checkOutPanel.setObject(object);
-		checkOutPanel.setVisible(checkOutPanel.isAllowed());
+        movePanel.setObject(object);
+        movePanel.setVisible(movePanel.isAllowed());
 
-		cancelCheckOutPanel.setObject(object);
-		cancelCheckOutPanel.setVisible(cancelCheckOutPanel.isAllowed());
+        checkOutPanel.setObject(object);
+        checkOutPanel.setVisible(checkOutPanel.isAllowed());
 
-		checkInPanel.setObject(object);
-		checkInPanel.setVisible(checkInPanel.isAllowed());
+        cancelCheckOutPanel.setObject(object);
+        cancelCheckOutPanel.setVisible(cancelCheckOutPanel.isAllowed());
 
-		setContentStreamPanel.setObject(object);
-		setContentStreamPanel.setVisible(setContentStreamPanel.isAllowed());
+        checkInPanel.setObject(object);
+        checkInPanel.setVisible(checkInPanel.isAllowed());
 
-		deleteContentStreamPanel.setObject(object);
-		deleteContentStreamPanel.setVisible(deleteContentStreamPanel
-				.isAllowed());
-	}
+        setContentStreamPanel.setObject(object);
+        setContentStreamPanel.setVisible(setContentStreamPanel.isAllowed());
 
-	private void createGUI() {
-		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        deleteContentStreamPanel.setObject(object);
+        deleteContentStreamPanel.setVisible(deleteContentStreamPanel.isAllowed());
+    }
 
-		deletePanel = new DeletePanel(model);
-		add(deletePanel);
+    private void createGUI() {
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-		deleteTreePanel = new DeleteTreePanel(model);
-		add(deleteTreePanel);
+        propertyUpdatePanel = new PropertyUpdatePanel(model);
+        add(propertyUpdatePanel);
 
-		movePanel = new MovePanel(model);
-		add(movePanel);
+        deletePanel = new DeletePanel(model);
+        add(deletePanel);
 
-		checkOutPanel = new CheckOutPanel(model);
-		add(checkOutPanel);
+        deleteTreePanel = new DeleteTreePanel(model);
+        add(deleteTreePanel);
 
-		cancelCheckOutPanel = new CancelCheckOutPanel(model);
-		add(cancelCheckOutPanel);
+        movePanel = new MovePanel(model);
+        add(movePanel);
 
-		checkInPanel = new CheckInPanel(model);
-		add(checkInPanel);
+        checkOutPanel = new CheckOutPanel(model);
+        add(checkOutPanel);
 
-		setContentStreamPanel = new SetContentStreamPanel(model);
-		add(setContentStreamPanel);
+        cancelCheckOutPanel = new CancelCheckOutPanel(model);
+        add(cancelCheckOutPanel);
 
-		deleteContentStreamPanel = new DeleteContentStreamPanel(model);
-		add(deleteContentStreamPanel);
-	}
+        checkInPanel = new CheckInPanel(model);
+        add(checkInPanel);
+
+        setContentStreamPanel = new SetContentStreamPanel(model);
+        add(setContentStreamPanel);
+
+        deleteContentStreamPanel = new DeleteContentStreamPanel(model);
+        add(deleteContentStreamPanel);
+    }
 }
