@@ -92,7 +92,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                             @Override
                             public void run() {
                                 try {
-                                    List<String> pathsList = (pathObject).getPaths();
+                                    List<String> pathsList = pathObject.getPaths();
                                     if ((pathsList == null) || (pathsList.size() == 0)) {
                                         paths.setList(Collections.singletonList("(unfiled)"));
                                     } else {
@@ -100,6 +100,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                                     }
                                 } catch (Exception e) {
                                     paths.setList(Collections.singletonList("(???)"));
+                                    // ClientHelper.showError(null, e);
                                 }
                                 ObjectPanel.this.revalidate();
                             }

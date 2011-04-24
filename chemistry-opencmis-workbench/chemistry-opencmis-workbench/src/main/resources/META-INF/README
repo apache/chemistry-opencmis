@@ -43,6 +43,16 @@ cmis.workbench.object.includeRelationships
 cmis.workbench.object.renditionFilter
 
 
+Version operation context:
+
+cmis.workbench.version.filter
+cmis.workbench.version.includeAcls
+cmis.workbench.version.includeAllowableActions
+cmis.workbench.version.includePolicies
+cmis.workbench.version.includeRelationships
+cmis.workbench.version.renditionFilter
+cmis.workbench.version.maxItemsPerPage
+
 Others:
 
 cmis.workbench.acceptSelfSignedCertificates - disable SSL certificate check (true/false)

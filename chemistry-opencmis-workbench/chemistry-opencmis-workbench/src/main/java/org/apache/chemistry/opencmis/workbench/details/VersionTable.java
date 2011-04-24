@@ -22,40 +22,86 @@ import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 
 public class VersionTable extends AbstractDetailsTable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] COLUMN_NAMES = { "Name", "Label", "Latest", "Major", "Latest Major", "Id", "Filename", "MIME Type", "Length" };
+    private static final String[] COLUMN_NAMES = { "Name", "Label", "Latest", "Major", "Latest Major", "Id",
+            "Filename", "MIME Type", "Length" };
     private static final int[] COLUMN_WIDTHS = { 200, 200, 50, 50, 50, 400, 200, 100, 100 };
 
-    private static final int OLD = 60 * 1000;
-
     private List<Document> versions;
-    private String lastId;
-    private long lastTimestamp;
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public VersionTable(ClientModel model) {
         super();
 
         versions = Collections.emptyList();
-        lastId = null;
-        lastTimestamp = System.currentTimeMillis();
         init(model, COLUMN_NAMES, COLUMN_WIDTHS);
     }
 
     @Override
+    public void objectLoaded(ClientModelEvent event) {
+        lock.writeLock().lock();
+        try {
+            versions = Collections.emptyList();
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        if (getObject() instanceof Document) {
+            final Document doc = (Document) getObject();
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        List<Document> newVersions = doc.getAllVersions(getClientModel().getClientSession()
+                                .geVersionOperationContext());
+
+                        lock.writeLock().lock();
+                        try {
+                            versions = newVersions;
+                        } finally {
+                            lock.writeLock().unlock();
+                        }
+                    } catch (Exception ex) {
+                        if (!(ex instanceof CmisNotSupportedException)) {
+                            ClientHelper.showError(null, ex);
+                        }
+                    } finally {
+                        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    }
+                    ((DetailsTableModel) getModel()).fireTableDataChanged();
+                }
+            });
+        }
+
+        super.objectLoaded(event);
+    }
+
+    @Override
     public void doubleClickAction(MouseEvent e, int rowIndex) {
-        if (e.isShiftDown()) {
-            ClientHelper.download(this.getParent(), getVersions().get(rowIndex), null);
-        } else {
-            ClientHelper.open(this.getParent(), getVersions().get(rowIndex), null);
+        lock.readLock().lock();
+        try {
+            if (e.isShiftDown()) {
+                ClientHelper.download(this.getParent(), versions.get(rowIndex), null);
+            } else {
+                ClientHelper.open(this.getParent(), versions.get(rowIndex), null);
+            }
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
@@ -65,12 +111,24 @@ public class VersionTable extends AbstractDetailsTable {
             return 0;
         }
 
-        return getVersions().size();
+        lock.readLock().lock();
+        try {
+            return versions.size();
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public Object getDetailValueAt(int rowIndex, int columnIndex) {
-        Document version = getVersions().get(rowIndex);
+        Document version = null;
+
+        lock.readLock().lock();
+        try {
+            version = versions.get(rowIndex);
+        } finally {
+            lock.readLock().unlock();
+        }
 
         switch (columnIndex) {
         case 0:
@@ -98,50 +156,12 @@ public class VersionTable extends AbstractDetailsTable {
 
     @Override
     public Class<?> getDetailColumClass(int columnIndex) {
-        if((columnIndex == 2) || (columnIndex == 3) || (columnIndex == 4)) {
-            return Boolean.class;            
-        }
-        else if (columnIndex == 8) {
+        if ((columnIndex == 2) || (columnIndex == 3) || (columnIndex == 4)) {
+            return Boolean.class;
+        } else if (columnIndex == 8) {
             return Long.class;
         }
 
         return super.getDetailColumClass(columnIndex);
-    }
-
-    private List<Document> getVersions() {
-        // not a document -> no versions
-        if (!(getObject() instanceof Document)) {
-            versions = Collections.emptyList();
-            lastId = null;
-
-            return versions;
-        }
-
-        // if the versions have been fetched recently, don't reload
-        Document doc = (Document) getObject();
-        if (doc.getId().equals(lastId)) {
-            if (lastTimestamp + OLD > System.currentTimeMillis()) {
-                return versions;
-            }
-        }
-
-        // reset everything
-        lastId = doc.getId();
-        lastTimestamp = System.currentTimeMillis();
-        versions = Collections.emptyList();
-
-        // get versions
-        try {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            versions = doc.getAllVersions();
-        } catch (Exception ex) {
-            if (!(ex instanceof CmisNotSupportedException)) {
-                ClientHelper.showError(null, ex);
-            }
-        } finally {
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-
-        return versions;
     }
 }

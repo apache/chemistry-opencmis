@@ -59,7 +59,7 @@ public class DetailsTabs extends JTabbedPane {
         typesPanel = new TypesPanel(model);
         extensionsPanel = new ExtensionsPanel(model);
 
-        addTab("Object", objectPanel);
+        addTab("Object", new JScrollPane(objectPanel));
         addTab("Actions", new JScrollPane(actionsPanel));
         addTab("Properties", new JScrollPane(propertyTable));
         addTab("Relationships", new JScrollPane(relationshipTable));

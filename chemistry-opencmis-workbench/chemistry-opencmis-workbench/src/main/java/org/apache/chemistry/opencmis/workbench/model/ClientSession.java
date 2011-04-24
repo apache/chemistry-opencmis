@@ -51,24 +51,39 @@ public class ClientSession {
     public static final String WORKBENCH_PREFIX = "cmis.workbench.";
     public static final String OBJECT_PREFIX = WORKBENCH_PREFIX + "object.";
     public static final String FOLDER_PREFIX = WORKBENCH_PREFIX + "folder.";
+    public static final String VERSION_PREFIX = WORKBENCH_PREFIX + "version.";
     public static final String ACCEPT_SELF_SIGNED_CERTIFICATES = WORKBENCH_PREFIX + "acceptSelfSignedCertificates";
 
     public enum Authentication {
         NONE, STANDARD, NTLM
     }
 
-    private static final Set<String> PROPERTY_SET = new HashSet<String>();
+    private static final Set<String> FOLDER_PROPERTY_SET = new HashSet<String>();
     static {
-        PROPERTY_SET.add(PropertyIds.OBJECT_ID);
-        PROPERTY_SET.add(PropertyIds.OBJECT_TYPE_ID);
-        PROPERTY_SET.add(PropertyIds.NAME);
-        PROPERTY_SET.add(PropertyIds.CONTENT_STREAM_MIME_TYPE);
-        PROPERTY_SET.add(PropertyIds.CONTENT_STREAM_LENGTH);
-        PROPERTY_SET.add(PropertyIds.CONTENT_STREAM_FILE_NAME);
-        PROPERTY_SET.add(PropertyIds.CREATED_BY);
-        PROPERTY_SET.add(PropertyIds.CREATION_DATE);
-        PROPERTY_SET.add(PropertyIds.LAST_MODIFIED_BY);
-        PROPERTY_SET.add(PropertyIds.LAST_MODIFICATION_DATE);
+        FOLDER_PROPERTY_SET.add(PropertyIds.OBJECT_ID);
+        FOLDER_PROPERTY_SET.add(PropertyIds.OBJECT_TYPE_ID);
+        FOLDER_PROPERTY_SET.add(PropertyIds.NAME);
+        FOLDER_PROPERTY_SET.add(PropertyIds.CONTENT_STREAM_MIME_TYPE);
+        FOLDER_PROPERTY_SET.add(PropertyIds.CONTENT_STREAM_LENGTH);
+        FOLDER_PROPERTY_SET.add(PropertyIds.CONTENT_STREAM_FILE_NAME);
+        FOLDER_PROPERTY_SET.add(PropertyIds.CREATED_BY);
+        FOLDER_PROPERTY_SET.add(PropertyIds.CREATION_DATE);
+        FOLDER_PROPERTY_SET.add(PropertyIds.LAST_MODIFIED_BY);
+        FOLDER_PROPERTY_SET.add(PropertyIds.LAST_MODIFICATION_DATE);
+    }
+
+    private static final Set<String> VERSION_PROPERTY_SET = new HashSet<String>();
+    static {
+        VERSION_PROPERTY_SET.add(PropertyIds.OBJECT_ID);
+        VERSION_PROPERTY_SET.add(PropertyIds.OBJECT_TYPE_ID);
+        VERSION_PROPERTY_SET.add(PropertyIds.NAME);
+        VERSION_PROPERTY_SET.add(PropertyIds.VERSION_LABEL);
+        VERSION_PROPERTY_SET.add(PropertyIds.IS_LATEST_VERSION);
+        VERSION_PROPERTY_SET.add(PropertyIds.IS_MAJOR_VERSION);
+        VERSION_PROPERTY_SET.add(PropertyIds.IS_LATEST_MAJOR_VERSION);
+        VERSION_PROPERTY_SET.add(PropertyIds.CONTENT_STREAM_MIME_TYPE);
+        VERSION_PROPERTY_SET.add(PropertyIds.CONTENT_STREAM_LENGTH);
+        VERSION_PROPERTY_SET.add(PropertyIds.CONTENT_STREAM_FILE_NAME);
     }
 
     private Map<String, String> sessionParameters;
@@ -76,6 +91,7 @@ public class ClientSession {
     private Session session;
     private OperationContext objectOperationContext;
     private OperationContext folderOperationContext;
+    private OperationContext versionOperationContext;
 
     public ClientSession(Map<String, String> sessionParameters) {
         if (sessionParameters == null) {
@@ -174,6 +190,10 @@ public class ClientSession {
         return folderOperationContext;
     }
 
+    public OperationContext geVersionOperationContext() {
+        return versionOperationContext;
+    }
+
     private void createOperationContexts() {
         // object operation context
         setDefault(OBJECT_PREFIX, sessionParameters, ClientOperationContext.FILTER, "*");
@@ -193,7 +213,7 @@ public class ClientSession {
             ObjectType type = session.getTypeDefinition(BaseTypeId.CMIS_DOCUMENT.value());
 
             StringBuilder filter = new StringBuilder();
-            for (String propId : PROPERTY_SET) {
+            for (String propId : FOLDER_PROPERTY_SET) {
                 PropertyDefinition<?> propDef = type.getPropertyDefinitions().get(propId);
                 if (propDef != null) {
                     if (filter.length() > 0) {
@@ -213,9 +233,36 @@ public class ClientSession {
                 IncludeRelationships.NONE.value());
         setDefault(FOLDER_PREFIX, sessionParameters, ClientOperationContext.RENDITION_FILTER, "cmis:none");
         setDefault(FOLDER_PREFIX, sessionParameters, ClientOperationContext.ORDER_BY, null);
-        setDefault(FOLDER_PREFIX, sessionParameters, ClientOperationContext.MAX_ITEMS_PER_PAGE, "1000");
+        setDefault(FOLDER_PREFIX, sessionParameters, ClientOperationContext.MAX_ITEMS_PER_PAGE, "10000");
 
         folderOperationContext = new ClientOperationContext(FOLDER_PREFIX, sessionParameters);
+
+        if (!sessionParameters.containsKey(VERSION_PREFIX + ClientOperationContext.FILTER)) {
+            ObjectType type = session.getTypeDefinition(BaseTypeId.CMIS_DOCUMENT.value());
+
+            StringBuilder filter = new StringBuilder();
+            for (String propId : VERSION_PROPERTY_SET) {
+                PropertyDefinition<?> propDef = type.getPropertyDefinitions().get(propId);
+                if (propDef != null) {
+                    if (filter.length() > 0) {
+                        filter.append(",");
+                    }
+                    filter.append(propDef.getQueryName());
+                }
+            }
+
+            sessionParameters.put(VERSION_PREFIX + ClientOperationContext.FILTER, filter.toString());
+        }
+
+        setDefault(VERSION_PREFIX, sessionParameters, ClientOperationContext.INCLUDE_ACLS, "false");
+        setDefault(VERSION_PREFIX, sessionParameters, ClientOperationContext.INCLUDE_ALLOWABLE_ACTIONS, "false");
+        setDefault(VERSION_PREFIX, sessionParameters, ClientOperationContext.INCLUDE_POLICIES, "false");
+        setDefault(VERSION_PREFIX, sessionParameters, ClientOperationContext.INCLUDE_RELATIONSHIPS,
+                IncludeRelationships.NONE.value());
+        setDefault(VERSION_PREFIX, sessionParameters, ClientOperationContext.RENDITION_FILTER, "cmis:none");
+        setDefault(VERSION_PREFIX, sessionParameters, ClientOperationContext.MAX_ITEMS_PER_PAGE, "10000");
+
+        versionOperationContext = new ClientOperationContext(VERSION_PREFIX, sessionParameters);
     }
 
     private void setDefault(String prefix, Map<String, String> map, String key, String value) {

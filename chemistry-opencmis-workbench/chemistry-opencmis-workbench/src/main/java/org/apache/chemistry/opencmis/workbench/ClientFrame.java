@@ -43,7 +43,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
@@ -256,7 +255,7 @@ public class ClientFrame extends JFrame implements WindowListener {
         folderPanel = new FolderPanel(model);
         detailsTabs = new DetailsTabs(model);
 
-        split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, folderPanel, new JScrollPane(detailsTabs));
+        split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, folderPanel, detailsTabs);
 
         pane.add(split, BorderLayout.CENTER);
 
@@ -336,8 +335,8 @@ public class ClientFrame extends JFrame implements WindowListener {
 
             addConsoleMenu(cmisMenu, "CMIS 1.0 Specification", new URI(
                     "http://docs.oasis-open.org/cmis/CMIS/v1.0/os/cmis-spec-v1.0.html"));
-            addConsoleMenu(cmisMenu, "OpenCMIS Documentation", new URI(
-                    "http://chemistry.apache.org/java/opencmis.html"));
+            addConsoleMenu(cmisMenu, "OpenCMIS Documentation",
+                    new URI("http://chemistry.apache.org/java/opencmis.html"));
             addConsoleMenu(
                     cmisMenu,
                     "OpenCMIS Client API JavaDoc",
