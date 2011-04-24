@@ -67,6 +67,9 @@ import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
  */
 public final class NavigationService {
 
+    private NavigationService() {
+    }
+
     /**
      * Children Collection GET.
      */
@@ -386,15 +389,14 @@ public final class NavigationService {
         feed.writeSelfLink(compileUrl(baseUrl, RESOURCE_PARENTS, objectInfo.getId()), null);
 
         // write entries
-        if (parents != null) {
-            AtomEntry entry = new AtomEntry(feed.getWriter());
-            for (ObjectParentData object : parents) {
-                if ((object == null) || (object.getObject() == null)) {
-                    continue;
-                }
-                writeObjectEntry(service, entry, object.getObject(), null, repositoryId, null,
-                        object.getRelativePathSegment(), baseUrl, false);
+        AtomEntry entry = new AtomEntry(feed.getWriter());
+        for (ObjectParentData object : parents) {
+            if ((object == null) || (object.getObject() == null)) {
+                continue;
             }
+            writeObjectEntry(service, entry, object.getObject(), null,
+                    repositoryId, null, object.getRelativePathSegment(),
+                    baseUrl, false);
         }
 
         // we are done

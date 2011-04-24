@@ -51,7 +51,7 @@ public class ContentStreamDataImpl implements ContentStream {
     public ContentStreamDataImpl(long maxAllowedContentSizeKB) {
         sizeLimitKB = maxAllowedContentSizeKB;
     }
-    
+
     public void setContent(InputStream in) throws IOException {
         fStreamLimitOffset = fStreamLimitLength = -1;
         if (null == in) {
@@ -63,9 +63,10 @@ public class ContentStreamDataImpl implements ContentStream {
             for (int len = 0; (len = in.read(buffer)) != -1;) {
                 contentStream.write(buffer, 0, len);
                 fLength += len;
-                if (sizeLimitKB > 0 && fLength > sizeLimitKB * 1024)
+                if (sizeLimitKB > 0 && fLength > sizeLimitKB * 1024) {
                     throw new CmisInvalidArgumentException("Content size exceeds max. allowed size of " + sizeLimitKB
                             + "KB.");
+                }
             }
             fContent = contentStream.toByteArray();
             fLength = contentStream.size();
@@ -103,13 +104,14 @@ public class ContentStreamDataImpl implements ContentStream {
     }
 
     public InputStream getStream() {
-        if (null == fContent)
+        if (null == fContent) {
             return null;
-        else if (fStreamLimitOffset <= 0 && fStreamLimitLength < 0)
+        } else if (fStreamLimitOffset <= 0 && fStreamLimitLength < 0) {
             return new ByteArrayInputStream(fContent);
-        else
+        } else {
             return new ByteArrayInputStream(fContent, (int) (fStreamLimitOffset < 0 ? 0 : fStreamLimitOffset),
                     (int) (fStreamLimitLength < 0 ? fLength : fStreamLimitLength));
+        }
     }
 
     public ContentStream getCloneWithLimits(long offset, long length) {

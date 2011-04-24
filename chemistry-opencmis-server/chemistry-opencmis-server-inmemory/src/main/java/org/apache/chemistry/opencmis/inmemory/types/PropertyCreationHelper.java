@@ -66,11 +66,14 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Jens
- * 
+ *
  */
 public class PropertyCreationHelper {
 
     private static final Log log = LogFactory.getLog(PropertyCreationHelper.class);
+
+    private PropertyCreationHelper() {
+    }
 
     public static PropertyBooleanDefinitionImpl createBooleanDefinition(String id, String displayName) {
         PropertyBooleanDefinitionImpl prop = new PropertyBooleanDefinitionImpl();
@@ -209,7 +212,7 @@ public class PropertyCreationHelper {
         if (fillOptionalPropertyData) {  // add query name, local name, display name
             fillOptionalPropertyData(td, propertiesList);
         }
-        
+
         Properties props = objectFactory.createPropertiesData(propertiesList);
         return props;
     }
@@ -235,7 +238,7 @@ public class PropertyCreationHelper {
             }
         }
 
-        
+
         Map<String, PropertyData<?>> mappedProperties = new HashMap<String, PropertyData<?>>();
         if (requestedIds.containsKey("*")) {
             for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
@@ -265,7 +268,7 @@ public class PropertyCreationHelper {
         // add functions:
         BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
         for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
-            PropertyInteger pi = objFactory.createPropertyIntegerData(funcEntry.getKey(), BigInteger.valueOf(100)); 
+            PropertyInteger pi = objFactory.createPropertyIntegerData(funcEntry.getKey(), BigInteger.valueOf(100));
               // fixed dummy value
             mappedProperties.put(funcEntry.getValue(), pi);
         }
@@ -273,15 +276,16 @@ public class PropertyCreationHelper {
         Properties props = new PropertiesImpl(mappedProperties.values());
         return props;
     }
-    
+
    public static ObjectData getObjectData(TypeDefinition typeDef, StoredObject so, String filter, String user,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
         ObjectDataImpl od = new ObjectDataImpl();
 
-        if (so == null)
+        if (so == null) {
             throw new CmisObjectNotFoundException("Illegal object id: null");
+        }
 
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
@@ -292,18 +296,22 @@ public class PropertyCreationHelper {
             AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
             od.setAllowableActions(allowableActions);
         }
-        if (null != includeACL && includeACL)
+        if (null != includeACL && includeACL) {
             od.setAcl(null);
+        }
         od.setIsExactAcl(true);
 
-        if (null != includePolicyIds && includePolicyIds)
+        if (null != includePolicyIds && includePolicyIds) {
             od.setPolicyIds(DataObjectCreator.fillPolicyIds(so));
+        }
 
-        if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE)
+        if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
             od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so));
+        }
 
-        if (renditionFilter != null && renditionFilter.length() > 0)
+        if (renditionFilter != null && renditionFilter.length() > 0) {
             od.setRenditions(DataObjectCreator.fillRenditions(so));
+        }
 
         od.setProperties(props);
 
@@ -311,7 +319,7 @@ public class PropertyCreationHelper {
         return od;
     }
 
-    public static ObjectData getObjectDataQueryResult(TypeDefinition typeDef, StoredObject so, String user, 
+    public static ObjectData getObjectDataQueryResult(TypeDefinition typeDef, StoredObject so, String user,
             Map<String, String> requestedProperties, Map<String, String> requestedFuncs,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter
             ) {
@@ -326,31 +334,36 @@ public class PropertyCreationHelper {
             AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
             od.setAllowableActions(allowableActions);
         }
-        
-        if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE)
-            od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so));
 
-        if (renditionFilter != null && renditionFilter.length() > 0)
+        if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
+            od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so));
+        }
+
+        if (renditionFilter != null && renditionFilter.length() > 0) {
             od.setRenditions(DataObjectCreator.fillRenditions(so));
+        }
 
         od.setProperties(props);
 
         return od;
     }
-    
+
     // internal helpers
     private static void createStandardDefinition(AbstractPropertyDefinition<?> prop, String id, PropertyType propType,
             String displayName, Cardinality card) {
 
-        if (!NameValidator.isValidId(id))
-            if (!NameValidator.isValidId(id))
+        if (!NameValidator.isValidId(id)) {
+            if (!NameValidator.isValidId(id)) {
                 throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+            }
+        }
 
         prop.setId(id);
-        if (displayName == null)
+        if (displayName == null) {
             prop.setDisplayName("Sample " + prop.getId() + " boolean property");
-        else
+        } else {
             prop.setDisplayName(displayName);
+        }
         prop.setLocalName(id);
         prop.setLocalNamespace("local");
         prop.setQueryName(id);
@@ -364,10 +377,11 @@ public class PropertyCreationHelper {
     }
 
     private static void fillOptionalPropertyData(TypeDefinition td, List<PropertyData<?>> properties) {
-        for (PropertyData<?> pd : properties)
-            fillOptionalPropertyData(td, (AbstractPropertyData<?>) pd);        
+        for (PropertyData<?> pd : properties) {
+            fillOptionalPropertyData(td, (AbstractPropertyData<?>) pd);
+        }
     }
-    
+
     private static void fillOptionalPropertyData(TypeDefinition td, AbstractPropertyData<?> property) {
         PropertyDefinition<?> pd = td.getPropertyDefinitions().get(property.getId());
         if (null != pd) {
@@ -379,5 +393,5 @@ public class PropertyCreationHelper {
             property.setQueryName(queryName);
         }
     }
-    
+
 }

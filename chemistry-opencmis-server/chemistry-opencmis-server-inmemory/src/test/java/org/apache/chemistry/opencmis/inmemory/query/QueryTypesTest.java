@@ -43,21 +43,22 @@ public class QueryTypesTest extends AbstractQueryTest {
     private TypeManagerImpl tm;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         tm = new TypeManagerImpl();
         tm.initTypeSystem(null); // create CMIS default types
 
         // create some types for testing
         List<TypeDefinition> typeDefs = super.createTypes();
-        for (TypeDefinition typeDef : typeDefs)
+        for (TypeDefinition typeDef : typeDefs) {
             tm.addTypeDefinition(typeDef);
+        }
 
         // initialize query object with type manager
         super.setUp(new QueryObject(tm), null);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
     }
 
     @Test
@@ -91,7 +92,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     }
 
     @Test
-    public void resolveTypesTest6() throws Exception {
+    public void resolveTypesTest6() {
         String statement = "SELECT BookType.UnknownProperty FROM BookType WHERE ISBN = '100'";
         try {
             verifyResolveSelect(statement);
@@ -104,7 +105,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     }
 
     @Test
-    public void resolveTypesTest7() throws Exception {
+    public void resolveTypesTest7() {
         String statement = "SELECT UnknownProperty FROM BookType WHERE ISBN = '100'";
         try {
             verifyResolveSelect(statement);
@@ -189,7 +190,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     }
 
     @Test
-    public void resolveTypesWithTwoFromsNotUnique() throws Exception {
+    public void resolveTypesWithTwoFromsNotUnique() {
         String statement = "SELECT MyStringProp FROM MyDocTypeCopy JOIN MyDocType";
 
         try {
@@ -345,7 +346,7 @@ public class QueryTypesTest extends AbstractQueryTest {
     }
 
     @Test
-    public void resolveTypesWhereWithTwoFromsNotUnique() throws Exception {
+    public void resolveTypesWhereWithTwoFromsNotUnique() {
         String statement = "SELECT * FROM MyDocTypeCopy JOIN MyDocType WHERE MyStringProp = '100'";
 
         try {
@@ -431,8 +432,9 @@ public class QueryTypesTest extends AbstractQueryTest {
                 assertTrue(colRef.getPropertyQueryName().equals(STRING_PROP));
             } else if (bookType.equals(colRef.getTypeDefinition())) {
                 assertTrue(colRef.getPropertyQueryName().equals(TITLE_PROP));
-            } else
+            } else {
                 fail("Unexpected type in JOIN reference");
+            }
         }
     }
 
@@ -454,8 +456,9 @@ public class QueryTypesTest extends AbstractQueryTest {
                 assertTrue(colRef.getPropertyQueryName().equals(STRING_PROP));
             } else if (bookType.equals(colRef.getTypeDefinition())) {
                 assertTrue(colRef.getPropertyQueryName().equals(TITLE_PROP));
-            } else
+            } else {
                 fail("Unexpected type in JOIN reference");
+            }
         }
     }
 }

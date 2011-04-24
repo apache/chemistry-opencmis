@@ -40,6 +40,9 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
  */
 public class MultiFilingService {
 
+    private MultiFilingService() {
+    }
+
     /**
      * Remove object from folder.
      */

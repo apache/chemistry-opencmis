@@ -35,6 +35,9 @@ import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
  */
 public class HttpUtils {
 
+    private HttpUtils() {
+    }
+
     /**
      * Creates a {@link CallContext} object from a servlet request.
      */

@@ -40,45 +40,45 @@ import org.apache.commons.logging.LogFactory;
  *  working around this antlr bug.
  *
  */
-public class AbstractParserTst{
-    
-    private static final Log log = LogFactory.getLog(AbstractParserTst.class);
-        
+public class AbstractParserTest{
+
+    private static final Log log = LogFactory.getLog(AbstractParserTest.class);
+
     protected String superGrammarName;
     Class<?> lexer;
     Class<?> parser;
     protected String treeParserPath;
-    
-    protected void setUp(Class<?> lexerClass, Class<?> parserClass, String baseGrammar) throws Exception {
+
+    protected void setUp(Class<?> lexerClass, Class<?> parserClass, String baseGrammar)  {
         lexer = lexerClass;
         parser = parserClass;
         this.superGrammarName = baseGrammar;
     }
 
-    protected void tearDown() throws Exception {
+    protected void tearDown() {
     }
 
-    protected void testLexerOk(String rule, String statement) throws Exception {
+    protected void testLexerOk(String rule, String statement) {
         // test input: "a"
       try {
-        Object retval = execLexer(rule, statement, false);        
+        Object retval = execLexer(rule, statement, false);
         log.debug("testing rule " + rule + " parsed to: " + retval);
       } catch (Exception e) {
           fail("testing rule " + rule + ": " + e.toString());
       }
     }
-    
-    protected void testLexerFail(String rule, String statement) throws Exception {
+
+    protected void testLexerFail(String rule, String statement) {
         // test input: "a"
       try {
-        Object retval = execLexer(rule, statement, false);        
+        Object retval = execLexer(rule, statement, false);
         fail("testing rule should fail " + rule);
       } catch (Exception e) {
         log.debug("testing rule " + rule + " parsed with exception: " + e);
       }
     }
 
-    protected void testParserOk(String rule, String statement) throws Exception {
+    protected void testParserOk(String rule, String statement) {
       try {
           Object retval = execParser(rule, statement, false);
           log.debug("testing rule " + rule + " parsed to: " + retval);
@@ -87,7 +87,7 @@ public class AbstractParserTst{
       }
     }
 
-    protected void testParserFail(String rule, String statement) throws Exception {
+    protected void testParserFail(String rule, String statement) {
       try {
           Object retval = execParser(rule, statement, false);
           fail("testing rule should fail " + rule);
@@ -96,7 +96,7 @@ public class AbstractParserTst{
       }
     }
 
-    protected void testParser(String rule, String statement, String expectedResult) throws Exception {
+    protected void testParser(String rule, String statement, String expectedResult) {
       try {
           Object actual = execParser(rule, statement, false);
           log.debug("testing rule " + rule + " parsed to: " + actual);
@@ -104,8 +104,8 @@ public class AbstractParserTst{
         fail("testing rule " + rule + " failed: " + e);
       }
     }
-    
-    
+
+
     // Invoke target lexer.rule
     public String execLexer(String testRuleName, String testInput, boolean isFile) throws Exception {
         String result = null;
@@ -115,9 +115,9 @@ public class AbstractParserTst{
 
         /** Use Reflection to create instances of lexer and parser */
         Class<?>[] lexArgTypes = new Class[]{CharStream.class};                // assign type to lexer's args
-        Constructor<?> lexConstructor = lexer.getConstructor(lexArgTypes);        
-        Object[] lexArgs = new Object[]{input};                             // assign value to lexer's args   
-        Object lexObj = lexConstructor.newInstance(lexArgs);                // makes new instance of lexer    
+        Constructor<?> lexConstructor = lexer.getConstructor(lexArgTypes);
+        Object[] lexArgs = new Object[]{input};                             // assign value to lexer's args
+        Object lexObj = lexConstructor.newInstance(lexArgs);                // makes new instance of lexer
 
         Method ruleName = lexer.getMethod("m"+testRuleName, new Class[0]);
 
@@ -129,10 +129,10 @@ public class AbstractParserTst{
             throw new RuntimeException("extra text found, '"+input.substring(currentIndex, input.size()-1)+"'");
 //            System.out.println("extra text found, '"+input.substring(currentIndex, input.size()-1)+"'");
         }
-            
+
         return result;
     }
-    
+
     // Invoke target parser.rule
     public Object execParser(String testRuleName, String testInput, boolean isFile) throws Exception {
         String result = null;
@@ -143,14 +143,14 @@ public class AbstractParserTst{
         /** Use Reflection to create instances of lexer and parser */
         Class<?>[] lexArgTypes = new Class[]{CharStream.class};                // assign type to lexer's args
         Constructor<?> lexConstructor = lexer.getConstructor(lexArgTypes);
-        Object[] lexArgs = new Object[]{input};                             // assign value to lexer's args   
-        Object lexObj = lexConstructor.newInstance(lexArgs);                // makes new instance of lexer    
+        Object[] lexArgs = new Object[]{input};                             // assign value to lexer's args
+        Object lexObj = lexConstructor.newInstance(lexArgs);                // makes new instance of lexer
 
         CommonTokenStream tokens = new CommonTokenStream((Lexer) lexObj);
         Class<?>[] parArgTypes = new Class[]{TokenStream.class};               // assign type to parser's args
         Constructor<?> parConstructor = parser.getConstructor(parArgTypes);
-        Object[] parArgs = new Object[]{tokens};                            // assign value to parser's args  
-        Object parObj = parConstructor.newInstance(parArgs);                // makes new instance of parser      
+        Object[] parArgs = new Object[]{tokens};                            // assign value to parser's args
+        Object parObj = parConstructor.newInstance(parArgs);                // makes new instance of parser
 
         Method ruleName = parser.getMethod(testRuleName);
 
@@ -162,8 +162,9 @@ public class AbstractParserTst{
             if ( ruleReturn.getClass().toString().indexOf(testRuleName+"_return")>0 ) {
                 try {   // NullPointerException may happen here...
                     String classPath = parser.getName();
-                    if (null != superGrammarName)
+                    if (null != superGrammarName) {
                         classPath += "_" + superGrammarName;
+                    }
                     Class<?> _return = Class.forName(classPath+"$"+testRuleName+"_return");
                     Method[] methods = _return.getDeclaredMethods();
                     for(Method method : methods) {
@@ -190,11 +191,12 @@ public class AbstractParserTst{
         if ( tokens.index()!=tokens.size() ) {
             throw new RuntimeException("Invalid input.");
         }
-        
+
         /** Check for syntax errors */
-        if (((BaseRecognizer)parObj).getNumberOfSyntaxErrors() > 0)
+        if (((BaseRecognizer)parObj).getNumberOfSyntaxErrors() > 0) {
             throw new RuntimeException("Syntax error occured");
+        }
         return result;
     }
-    
+
  }

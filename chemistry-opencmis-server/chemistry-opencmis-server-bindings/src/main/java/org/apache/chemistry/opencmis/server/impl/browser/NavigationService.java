@@ -46,6 +46,9 @@ import org.json.simple.JSONObject;
  */
 public final class NavigationService {
 
+    private NavigationService() {
+    }
+
     /**
      * getChildren.
      */

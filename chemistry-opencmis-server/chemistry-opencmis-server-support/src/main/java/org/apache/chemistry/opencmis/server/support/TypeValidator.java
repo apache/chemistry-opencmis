@@ -48,11 +48,13 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 public class TypeValidator {
 
     public static void validateRequiredSystemProperties(Properties properties) {
-        if (properties == null || properties.getProperties() == null)
+        if (properties == null || properties.getProperties() == null) {
             throw new RuntimeException("Cannot create object, no properties are given");
+        }
 
-        if (!properties.getProperties().containsKey(PropertyIds.OBJECT_TYPE_ID))
+        if (!properties.getProperties().containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             throw new RuntimeException("Cannot create object, type id is missing");
+        }
 
     }
 
@@ -87,9 +89,10 @@ public class TypeValidator {
         public void validate(PropertyDefinition<T> propDef, PropertyData<T> prop) {
 
             // check general constraints for all property types
-            if (propDef.getCardinality() == Cardinality.SINGLE && prop.getValues().size() > 1)
+            if (propDef.getCardinality() == Cardinality.SINGLE && prop.getValues().size() > 1) {
                 throw new CmisConstraintException("The property with id " + propDef.getId()
                         + " is single valued, but multiple values are passed " + prop.getValues());
+            }
 
             if (propDef.getChoices() != null && propDef.getChoices().size() > 0) {
                 validateChoices(propDef, prop);
@@ -100,8 +103,9 @@ public class TypeValidator {
             boolean isAllowedValue = true;
             boolean hasMultiValueChoiceLists = false;
             for (Choice<?> allowedValue : propDef.getChoices()) {
-                if (allowedValue.getValue() != null && allowedValue.getValue().size() > 1)
+                if (allowedValue.getValue() != null && allowedValue.getValue().size() > 1) {
                     hasMultiValueChoiceLists = true;
+                }
             }
 
             // check if value is in list
@@ -126,8 +130,9 @@ public class TypeValidator {
                         }
                     }
 
-                    if (isAllowedValue)
+                    if (isAllowedValue) {
                         break;
+                    }
                 }
 
             } else {
@@ -142,15 +147,16 @@ public class TypeValidator {
                 }
             }
 
-            if (!isAllowedValue)
+            if (!isAllowedValue) {
                 throw new CmisConstraintException("The property with id " + propDef.getId()
                         + " has a fixed set of values. Value(s) " + prop.getValues() + " are not listed.");
+            }
         }
 
         /**
          * Calculate the list of allowed values for this property definition by
          * recursively collecting all choice values from property definition
-         * 
+         *
          * @param propDef
          *            property definition
          * @return list of possible values in complete hierarchy
@@ -158,8 +164,9 @@ public class TypeValidator {
         private List<T> getAllowedValues(List<Choice<T>> choices) {
             List<T> allowedValues = new ArrayList<T>(choices.size());
             for (Choice<T> choice : choices) {
-                if (choice.getValue() != null)
+                if (choice.getValue() != null) {
                     allowedValues.add(choice.getValue().get(0));
+                }
                 if (choice.getChoice() != null) {
                     List<Choice<T>> x = choice.getChoice();
                     allowedValues.addAll(getAllowedValues(x));
@@ -171,6 +178,7 @@ public class TypeValidator {
 
     static class PropertyValidatorInteger extends PropertyValidator<BigInteger> {
 
+        @Override
         public void validate(PropertyDefinition<BigInteger> propDef, PropertyData<BigInteger> property) {
 
             super.validate(propDef, property);
@@ -193,6 +201,7 @@ public class TypeValidator {
 
     static class PropertyValidatorDecimal extends PropertyValidator<BigDecimal> {
 
+        @Override
         public void validate(PropertyDefinition<BigDecimal> propDef, PropertyData<BigDecimal> property) {
 
             super.validate(propDef, property);
@@ -215,6 +224,7 @@ public class TypeValidator {
 
     static class PropertyValidatorString extends PropertyValidator<String> {
 
+        @Override
         public void validate(PropertyDefinition<String> propDef, PropertyData<String> property) {
 
             super.validate(propDef, property);
@@ -242,11 +252,14 @@ public class TypeValidator {
             BaseTypeId baseTypeId = typeDef.getBaseTypeId();
 
             // check that all mandatory attributes are present
-            if (checkMandatory && propDefsRequired.contains(propertyId))
+            if (checkMandatory && propDefsRequired.contains(propertyId)) {
                 propDefsRequired.remove(propertyId);
+            }
 
             if (isSystemProperty(baseTypeId, propertyId))
+             {
                 continue; // ignore system properties for validation
+            }
 
             // Check if all properties are known in the type
             if (!typeContainsProperty(typeDef, propertyId)) {
@@ -259,13 +272,15 @@ public class TypeValidator {
             validator.validate(propDef, (PropertyData<T>) prop);
         }
 
-        if (checkMandatory && !propDefsRequired.isEmpty())
+        if (checkMandatory && !propDefsRequired.isEmpty()) {
             throw new CmisConstraintException("The following mandatory properties are missing: " + propDefsRequired);
+        }
     }
 
     public static void validateVersionStateForCreate(DocumentTypeDefinition typeDef, VersioningState verState) {
-        if (null == verState)
+        if (null == verState) {
             return;
+        }
         if (typeDef.isVersionable() && verState.equals(VersioningState.NONE) || !typeDef.isVersionable()
                 && !verState.equals(VersioningState.NONE)) {
             throw new CmisConstraintException("The versioning state flag is imcompatible to the type definition.");
@@ -276,11 +291,14 @@ public class TypeValidator {
     public static void validateAllowedChildObjectTypes(TypeDefinition childTypeDef, List<String> allowedChildTypes) {
 
         if (null == allowedChildTypes)
+         {
             return; // all types are allowed
+        }
 
         for (String allowedChildType : allowedChildTypes) {
-            if (allowedChildType.equals(childTypeDef.getId()))
+            if (allowedChildType.equals(childTypeDef.getId())) {
                 return;
+            }
         }
         throw new RuntimeException("The requested type " + childTypeDef.getId() + " is not allowed in this folder");
     }
@@ -289,8 +307,9 @@ public class TypeValidator {
         List<String> res = new ArrayList<String>();
         if (null != propDefs) {
             for (PropertyDefinition<?> propDef : propDefs.values()) {
-                if (propDef.isRequired() && !isMandatorySystemProperty(propDef.getId()))
+                if (propDef.isRequired() && !isMandatorySystemProperty(propDef.getId())) {
                     res.add(propDef.getId());
+                }
             }
         }
         return res;
@@ -299,28 +318,32 @@ public class TypeValidator {
     public static boolean typeContainsProperty(TypeDefinition typeDef, String propertyId) {
 
         Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
-        if (null == propDefs)
+        if (null == propDefs) {
             return false;
+        }
 
         PropertyDefinition<?> propDef = propDefs.get(propertyId);
 
-        if (null == propDef)
+        if (null == propDef) {
             return false; // unknown property id in this type
-        else
+        } else {
             return true;
+        }
     }
 
     public static boolean typeContainsPropertyWithQueryName(TypeDefinition typeDef, String propertyQueryName) {
 
         Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
-        if (null == propDefs)
+        if (null == propDefs) {
             return false;
+        }
 
         for (PropertyDefinition<?> propDef : propDefs.values()) {
-            if (propDef.getQueryName().toLowerCase().equals(propertyQueryName.toLowerCase()))
+            if (propDef.getQueryName().toLowerCase().equals(propertyQueryName.toLowerCase())) {
                 return true;
+            }
         }
-        
+
         return false; // unknown property query name in this type
     }
 
@@ -328,15 +351,17 @@ public class TypeValidator {
     private static <T> PropertyDefinition<T> getPropertyDefinition(TypeDefinition typeDef, String propertyId) {
 
         Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
-        if (null == propDefs)
+        if (null == propDefs) {
             return null;
+        }
 
         PropertyDefinition<?> propDef = propDefs.get(propertyId);
 
-        if (null == propDef)
+        if (null == propDef) {
             return null; // not found
-        else
+        } else {
             return (PropertyDefinition<T>) propDef;
+        }
     }
 
     private static boolean isSystemProperty(BaseTypeId baseTypeId, String propertyId) {

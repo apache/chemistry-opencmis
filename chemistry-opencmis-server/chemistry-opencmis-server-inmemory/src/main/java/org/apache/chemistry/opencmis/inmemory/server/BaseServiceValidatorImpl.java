@@ -34,16 +34,16 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     protected final StoreManager fStoreManager;
-    
+
     public BaseServiceValidatorImpl(StoreManager sm) {
         fStoreManager = sm;
     }
 
     /**
-     * check if repository is known and that object exists. To avoid later calls
+     * Check if repository is known and that object exists. To avoid later calls
      * to again retrieve the object from the id return the retrieved object for
      * later use.
-     * 
+     *
      * @param repositoryId
      *            repository id
      * @param objectId
@@ -51,22 +51,25 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
      * @return object for objectId
      */
     protected StoredObject checkStandardParameters(String repositoryId, String objectId) {
-
-        if (null == repositoryId)
+        if (null == repositoryId) {
             throw new CmisInvalidArgumentException("Repository Id cannot be null.");
+        }
 
-        if (null == objectId)
+        if (null == objectId) {
             throw new CmisInvalidArgumentException("Object Id cannot be null.");
+        }
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
-        if (objStore == null)
+        if (objStore == null) {
             throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
+        }
 
         StoredObject so = objStore.getObjectById(objectId);
 
-        if (so == null)
+        if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
+        }
 
         return so;
     }
@@ -74,21 +77,24 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     protected StoredObject checkStandardParametersAllowNull(String repositoryId, String objectId) {
 
         StoredObject so = null;
-        
-        if (null == repositoryId)
+
+        if (null == repositoryId) {
             throw new CmisInvalidArgumentException("Repository Id cannot be null.");
+        }
 
         if (null != objectId) {
 
             ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
-            if (objStore == null)
+            if (objStore == null) {
                 throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
+            }
 
             so = objStore.getObjectById(objectId);
 
-            if (so == null)
+            if (so == null) {
                 throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
+            }
         }
 
         return so;
@@ -96,25 +102,29 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     protected StoredObject checkExistingObjectId(ObjectStore objStore, String objectId) {
 
-        if (null == objectId)
+        if (null == objectId) {
             throw new CmisInvalidArgumentException("Object Id cannot be null.");
+        }
 
         StoredObject so = objStore.getObjectById(objectId);
 
-        if (so == null)
+        if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
+        }
 
         return so;
     }
 
     protected void checkRepositoryId(String repositoryId) {
-        if (null == repositoryId)
+        if (null == repositoryId) {
             throw new CmisInvalidArgumentException("Repository Id cannot be null.");
-        
+        }
+
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
-        if (objStore == null)
+        if (objStore == null) {
             throw new CmisInvalidArgumentException("Unknown repository id: " + repositoryId);
+        }
     }
 
     protected StoredObject[] checkParams(String repositoryId, String objectId1, String objectId2) {
@@ -124,12 +134,12 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         so[1] = checkExistingObjectId(objectStore, objectId2);
         return so;
     }
-    
-    public void getRepositoryInfos(CallContext context, ExtensionsData extension) {        
+
+    public void getRepositoryInfos(CallContext context, ExtensionsData extension) {
     }
 
     public void getRepositoryInfo(CallContext context, String repositoryId, ExtensionsData extension) {
-        
+
         checkRepositoryId(repositoryId);
     }
 
@@ -170,22 +180,22 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     public StoredObject getObjectParents(CallContext context, String repositoryId, String objectId,
             ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId);
     }
 
     public StoredObject getFolderParent(CallContext context, String repositoryId, String folderId,
             ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, folderId);
     }
 
     public StoredObject getCheckedOutDocs(CallContext context, String repositoryId, String folderId,
             ExtensionsData extension) {
-        
-        if (null != folderId)
+
+        if (null != folderId) {
             return checkStandardParameters(repositoryId, folderId);
-        else {
+        } else {
             checkRepositoryId(repositoryId);
             return null;
         }
@@ -193,7 +203,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     }
 
     public StoredObject createDocument(CallContext context, String repositoryId, String folderId,
-            ExtensionsData extension) {       
+            ExtensionsData extension) {
         return checkStandardParametersAllowNull(repositoryId, folderId);
     }
 
@@ -217,47 +227,47 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     public StoredObject getAllowableActions(CallContext context, String repositoryId, String objectId,
             ExtensionsData extension) {
-        // 
+        //
         return checkStandardParameters(repositoryId, objectId);
     }
 
     public StoredObject getObject(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId);
     }
 
     public StoredObject getProperties(CallContext context, String repositoryId, String objectId,
             ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId);
     }
 
     public StoredObject getRenditions(CallContext context, String repositoryId, String objectId,
             ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId);
     }
 
     public void getObjectByPath(CallContext context, String repositoryId, String path, ExtensionsData extension) {
-        
+
         checkRepositoryId(repositoryId);
     }
 
     public StoredObject getContentStream(CallContext context, String repositoryId, String objectId, String streamId,
             ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId);
     }
 
     public StoredObject updateProperties(CallContext context, String repositoryId, Holder<String> objectId,
             ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId.getValue());
     }
 
     public StoredObject[] moveObject(CallContext context, String repositoryId, Holder<String> objectId,
             String targetFolderId, String sourceFolderId, ExtensionsData extension) {
-        
+
         StoredObject[] res = new StoredObject[3];
         res [0] = checkStandardParameters(repositoryId, objectId.getValue());
         res[1] = checkExistingObjectId(fStoreManager.getObjectStore(repositoryId), sourceFolderId);
@@ -278,7 +288,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     public StoredObject setContentStream(CallContext context, String repositoryId, Holder<String> objectId,
             Boolean overwriteFlag, ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId.getValue());
     }
 
@@ -295,7 +305,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     public StoredObject cancelCheckOut(CallContext context, String repositoryId, String objectId,
             ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId);
     }
 
@@ -306,7 +316,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     public StoredObject getObjectOfLatestVersion(CallContext context, String repositoryId, String objectId,
             String versionSeriesId, ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, versionSeriesId == null ? objectId : versionSeriesId);
     }
 
@@ -318,46 +328,46 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     public StoredObject getAllVersions(CallContext context, String repositoryId, String objectId,
             String versionSeriesId, ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, versionSeriesId == null ? objectId : versionSeriesId);
     }
 
     public void query(CallContext context, String repositoryId, ExtensionsData extension) {
-        
+
         checkRepositoryId(repositoryId);
     }
 
     public void getContentChanges(CallContext context, String repositoryId, ExtensionsData extension) {
-        
+
         checkRepositoryId(repositoryId);
     }
 
     public StoredObject[] addObjectToFolder(CallContext context, String repositoryId, String objectId, String folderId,
             Boolean allVersions, ExtensionsData extension) {
-        
+
         return checkParams(repositoryId, objectId, folderId);
     }
 
     public StoredObject[] removeObjectFromFolder(CallContext context, String repositoryId, String objectId,
             String folderId, ExtensionsData extension) {
-        
+
         return checkParams(repositoryId, objectId, folderId);
     }
 
     public StoredObject getObjectRelationships(CallContext context, String repositoryId, String objectId,
             RelationshipDirection relationshipDirection, String typeId, ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId);
     }
 
     public StoredObject getAcl(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId);
     }
 
     public StoredObject applyAcl(CallContext context, String repositoryId, String objectId,
             AclPropagation aclPropagation, ExtensionsData extension) {
-        
+
         return checkStandardParameters(repositoryId, objectId);
     }
 

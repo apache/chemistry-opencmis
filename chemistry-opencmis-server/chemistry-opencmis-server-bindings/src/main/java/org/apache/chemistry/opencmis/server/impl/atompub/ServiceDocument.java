@@ -31,9 +31,9 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 
 /**
  * Service document class.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class ServiceDocument extends AtomDocumentBase {
 
@@ -62,7 +62,7 @@ public class ServiceDocument extends AtomDocumentBase {
         getWriter().writeEndElement();
     }
 
-    public void writeRepositoryInfo(RepositoryInfo repInfo) throws XMLStreamException, JAXBException {
+    public void writeRepositoryInfo(RepositoryInfo repInfo) throws JAXBException {
         CmisRepositoryInfoType repInfoJaxb = convert(repInfo);
         if (repInfoJaxb == null) {
             return;

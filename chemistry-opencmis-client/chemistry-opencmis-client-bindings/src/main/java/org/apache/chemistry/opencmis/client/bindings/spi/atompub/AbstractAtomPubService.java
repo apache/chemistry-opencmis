@@ -602,7 +602,7 @@ public class AbstractAtomPubService implements LinkAccess {
     /**
      * Converts a list of ACEs into Map for better handling.
      */
-    private Map<String, Set<String>> convertAclToMap(Acl acl) {
+    private static Map<String, Set<String>> convertAclToMap(Acl acl) {
         Map<String, Set<String>> result = new HashMap<String, Set<String>>();
 
         if ((acl == null) || (acl.getAces() == null)) {

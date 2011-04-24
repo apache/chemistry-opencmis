@@ -387,7 +387,7 @@ public class BrowseServlet extends HttpServlet {
      * Prints a HTML error message.
      */
     private void printError(HttpServletRequest req, HttpServletResponse resp, String message, Exception e)
-            throws ServletException, IOException {
+            throws IOException {
         resp.setContentType("text/html;charset=utf-8");
         PrintWriter pw = resp.getWriter();
 
@@ -408,7 +408,7 @@ public class BrowseServlet extends HttpServlet {
     /**
      * Prints an HTML input box.
      */
-    private void printInput(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void printInput(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html;charset=utf-8");
         PrintWriter pw = resp.getWriter();
 

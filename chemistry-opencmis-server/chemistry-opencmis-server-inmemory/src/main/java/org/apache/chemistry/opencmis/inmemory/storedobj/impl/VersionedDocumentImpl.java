@@ -47,8 +47,9 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
 
     public DocumentVersion addVersion(ContentStream content, VersioningState verState, String user) {
 
-        if (isCheckedOut())
+        if (isCheckedOut()) {
             throw new CmisConstraintException("Cannot add a version to document, document is checked out.");
+        }
 
         DocumentVersionImpl ver = new DocumentVersionImpl(fRepositoryId, this, content, verState, fObjStore);
         ver.setSystemBasePropertiesWhenCreatedDirect(getName(), getTypeId(), user); // copy
@@ -71,11 +72,13 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
     }
 
     public boolean deleteVersion(DocumentVersion version) {
-        if (fIsCheckedOut)
+        if (fIsCheckedOut) {
             throw new CmisInvalidArgumentException("version cannot be deleted if document is checked-out: " + version.getId());
+        }
         boolean found = fVersions.remove(version);
-        if (!found)
+        if (!found) {
             throw new CmisInvalidArgumentException("Version is not contained in the document:" + version.getId());
+        }
 
         return !fVersions.isEmpty();
     }
@@ -97,9 +100,10 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
                 throw new CmisConstraintException("Error: Can't checkin. Document " + getId() + " user " + user
                         + " has not checked out the document");
             }
-        } else
+        } else {
             throw new CmisConstraintException("Error: Can't cancel checkout, Document " + getId()
                     + " is not checked out.");
+        }
 
         DocumentVersion pwc = getPwc();
         pwc.setCheckinComment(checkinComment);
@@ -130,8 +134,9 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         DocumentVersion latest = null;
         if (major) {
             for (DocumentVersion ver : fVersions) {
-                if (ver.isMajor())
+                if (ver.isMajor()) {
                     latest = ver;
+                }
             }
         } else {
             latest = fVersions.get(fVersions.size() - 1);
@@ -149,12 +154,14 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
 
     public DocumentVersion getPwc() {
         for (DocumentVersion ver : fVersions) {
-            if (ver.isPwc())
+            if (ver.isPwc()) {
                 return ver;
+            }
         }
         return null;
     }
 
+    @Override
     public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
             List<String> requestedIds) {
 

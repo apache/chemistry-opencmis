@@ -44,7 +44,7 @@ public abstract class AbstractIterator<T> implements Iterator<T> {
      * @param skipCount
      * @param pageFetcher
      */
-    public AbstractIterator(long skipCount, AbstractPageFetcher<T> pageFetcher) {
+    protected AbstractIterator(long skipCount, AbstractPageFetcher<T> pageFetcher) {
         this.skipCount = skipCount;
         this.pageFetcher = pageFetcher;
     }

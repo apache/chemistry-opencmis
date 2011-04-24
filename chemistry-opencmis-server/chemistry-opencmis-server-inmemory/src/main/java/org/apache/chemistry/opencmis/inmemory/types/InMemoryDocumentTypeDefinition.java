@@ -31,9 +31,7 @@ import org.apache.chemistry.opencmis.inmemory.NameValidator;
 
 /**
  * A small convenience class simplifying document type creation
- * 
  */
-
 public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
 
     private static final long serialVersionUID = 1L;
@@ -60,19 +58,20 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
     public InMemoryDocumentTypeDefinition(String id, String displayName, InMemoryDocumentTypeDefinition parentType) {
         // get root type
         init(id, displayName);
-        if (parentType != null)
+        if (parentType != null) {
             setBaseTypeId(parentType.getBaseTypeId());
-        else
+        } else {
             throw new IllegalArgumentException("Must provide a parent type when creating a document type definition");
+        }
         setParentTypeId(parentType.getId());
     }
 
-    /*
+    /**
      * Set the property definitions for this type. The parameter
      * propertyDefinitions should only contain the custom property definitions
      * for this type. The standard property definitions are added automatically.
-     * 
-     * @seeorg.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition#
+     *
+     * @see org.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition#
      * setPropertyDefinitions(java.util.Map)
      */
     public void addCustomPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
@@ -86,13 +85,15 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
     // }
 
     private void init(String id, String displayName) {
-        if (!NameValidator.isValidId(id))
+        if (!NameValidator.isValidId(id)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_ID);
+        }
 
         setBaseTypeId(BaseTypeId.CMIS_DOCUMENT);
         setId(id);
-        if (displayName == null)
+        if (displayName == null) {
             displayName = '#' + id + '#';
+        }
         setDisplayName(displayName);
         // create some suitable defaults for convenience
         setDescription("Description of " + getDisplayName() + " Type");

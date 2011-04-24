@@ -40,8 +40,6 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 public class TransientDocumentImpl extends AbstractTransientFileableCmisObject implements TransientDocument {
 
-    private static final long serialVersionUID = 1L;
-
     private ContentStream contentStream;
     private boolean contentOverwrite;
     private boolean deleteContent;

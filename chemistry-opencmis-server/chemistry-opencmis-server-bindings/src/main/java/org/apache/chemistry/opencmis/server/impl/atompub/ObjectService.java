@@ -67,8 +67,11 @@ public final class ObjectService {
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
+    private ObjectService() {
+    }
+
     /**
-     * Create*.
+     * Create.
      */
     public static void create(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -168,7 +171,7 @@ public final class ObjectService {
      * Delete object.
      */
     public static void deleteObject(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
@@ -184,7 +187,7 @@ public final class ObjectService {
      * Delete content stream.
      */
     public static void deleteContentStream(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);

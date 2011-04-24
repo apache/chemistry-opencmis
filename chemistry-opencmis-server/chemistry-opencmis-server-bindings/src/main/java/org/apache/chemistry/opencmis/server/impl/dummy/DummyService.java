@@ -40,64 +40,75 @@ import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
  */
 public class DummyService extends AbstractCmisService {
 
-	private final RepositoryInfoImpl fRepInfo;
+    private final RepositoryInfoImpl fRepInfo;
 
-	public DummyService(String id, String name) {
-		fRepInfo = new RepositoryInfoImpl();
+    public DummyService(String id, String name) {
+        fRepInfo = new RepositoryInfoImpl();
 
-		fRepInfo.setId(id);
-		fRepInfo.setName(name);
-		fRepInfo.setDescription(name);
-		fRepInfo.setCmisVersionSupported("1.0");
-		fRepInfo.setRootFolder("root");
+        fRepInfo.setId(id);
+        fRepInfo.setName(name);
+        fRepInfo.setDescription(name);
+        fRepInfo.setCmisVersionSupported("1.0");
+        fRepInfo.setRootFolder("root");
 
-		fRepInfo.setVendorName("OpenCMIS");
-		fRepInfo.setProductName("OpenCMIS Server");
-		fRepInfo.setProductVersion("1.0");
-	}
+        fRepInfo.setVendorName("OpenCMIS");
+        fRepInfo.setProductName("OpenCMIS Server");
+        fRepInfo.setProductVersion("1.0");
+    }
 
-	public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-		if (!fRepInfo.getId().equals(repositoryId)) {
-			throw new CmisObjectNotFoundException("A repository with repository id '" + repositoryId
-					+ "' does not exist!");
-		}
+    @Override
+    public RepositoryInfo getRepositoryInfo(String repositoryId,
+            ExtensionsData extension) {
+        if (!fRepInfo.getId().equals(repositoryId)) {
+            throw new CmisObjectNotFoundException(
+                    "A repository with repository id '" + repositoryId
+                            + "' does not exist!");
+        }
 
-		return fRepInfo;
-	}
+        return fRepInfo;
+    }
 
-	public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-		return Collections.singletonList((RepositoryInfo) fRepInfo);
-	}
+    @Override
+    public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
+        return Collections.singletonList((RepositoryInfo) fRepInfo);
+    }
 
-	@Override
-	public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
-			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		throw new CmisNotSupportedException();
-	}
+    @Override
+    public ObjectInFolderList getChildren(String repositoryId, String folderId,
+            String filter, String orderBy, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter,
+            Boolean includePathSegment, BigInteger maxItems,
+            BigInteger skipCount, ExtensionsData extension) {
+        throw new CmisNotSupportedException();
+    }
 
-	@Override
-	public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
-			IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
-			Boolean includeAcl, ExtensionsData extension) {
-		throw new CmisNotSupportedException();
-	}
+    @Override
+    public ObjectData getObject(String repositoryId, String objectId,
+            String filter, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter,
+            Boolean includePolicyIds, Boolean includeAcl,
+            ExtensionsData extension) {
+        throw new CmisNotSupportedException();
+    }
 
-	@Override
-	public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
-			Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-			Boolean includeRelativePathSegment, ExtensionsData extension) {
-		throw new CmisNotSupportedException();
-	}
+    @Override
+    public List<ObjectParentData> getObjectParents(String repositoryId,
+            String objectId, String filter, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter,
+            Boolean includeRelativePathSegment, ExtensionsData extension) {
+        throw new CmisNotSupportedException();
+    }
 
-	@Override
-	public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
-			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-		throw new CmisNotSupportedException();
-	}
+    @Override
+    public TypeDefinitionList getTypeChildren(String repositoryId,
+            String typeId, Boolean includePropertyDefinitions,
+            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+        throw new CmisNotSupportedException();
+    }
 
-	@Override
-	public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
-		throw new CmisNotSupportedException();
-	}
+    @Override
+    public TypeDefinition getTypeDefinition(String repositoryId, String typeId,
+            ExtensionsData extension) {
+        throw new CmisNotSupportedException();
+    }
 }

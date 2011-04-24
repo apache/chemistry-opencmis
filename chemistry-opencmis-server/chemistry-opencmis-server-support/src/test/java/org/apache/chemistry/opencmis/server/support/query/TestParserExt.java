@@ -24,7 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestParserExt extends AbstractParserTst {
+public class TestParserExt extends AbstractParserTest {
 
     private static final Log log = LogFactory.getLog(TestParserStrict.class);
 
@@ -33,24 +33,25 @@ public class TestParserExt extends AbstractParserTst {
         super.setUp(CmisQlStrictLexer.class, CmisQlExtParser.class, null);
     }
 
+    @Override
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         super.tearDown();
     }
 
     @Test
-    public void test_predicate1() throws Exception {
+    public void test_predicate1() {
         testParser("value_expression", "LOWER(foo)", "(FUNC LOWER (COL foo))");
     }
 
     @Test
-    public void test_query1() throws Exception {
+    public void test_query1() {
         testParser("query", "SELECT DISTINCT a, b, c FROM Document", "(SELECT DISTINCT (LIST (COL a) (COL b) (COL c)) (FROM (TABLE Document)))");
     }
-    
+
     @Test
-    public void test_query2() throws Exception {
-        testParserOk("query", 
+    public void test_query2() {
+        testParserOk("query",
                 "SELECT Y.CLAIM_NUM, X.PROPERTY_ADDRESS, Y.DAMAGE_ESTIMATES " +
                 "FROM POLICY AS X JOIN CLAIMS AS Y ON X.POLICY_NUM = Y.POLICY_NUM " +
                 "    WHERE ( 100000 <= ANY Y.DAMAGE_ESTIMATES ) AND ( Y.CAUSE NOT LIKE '%Katrina%' )");
@@ -58,10 +59,10 @@ public class TestParserExt extends AbstractParserTst {
 
 
     @Test
-    public void test_query3() throws Exception {
-        testParserOk("query", 
+    public void test_query3() {
+        testParserOk("query",
                 "SELECT OBJECT_ID, SCORE() AS X, DESTINATION, DEPARTURE_DATES " +
                 "FROM TRAVEL_BROCHURE " +
-                "WHERE ( CONTAINS('CARIBBEAN CENTRAL AMERICA CRUISE TOUR') ) AND( '2010-1-1' < ANY DEPARTURE_DATES )"); 
+                "WHERE ( CONTAINS('CARIBBEAN CENTRAL AMERICA CRUISE TOUR') ) AND( '2010-1-1' < ANY DEPARTURE_DATES )");
     }
 }

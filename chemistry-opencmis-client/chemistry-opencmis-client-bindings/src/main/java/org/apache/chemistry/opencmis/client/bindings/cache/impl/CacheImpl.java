@@ -31,9 +31,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Default cache implementation.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class CacheImpl implements Cache {
 
@@ -307,7 +307,7 @@ public class CacheImpl implements Cache {
 
     // ---- internal ----
 
-    private String getFormattedKeys(String[] keys) {
+    private static String getFormattedKeys(String[] keys) {
         StringBuilder sb = new StringBuilder();
         for (String k : keys) {
             if (sb.length() > 0) {

@@ -30,7 +30,7 @@ public abstract class AbstractPageFetcher<T> {
 
     protected long maxNumItems;
 
-    public AbstractPageFetcher(long maxNumItems) {
+    protected AbstractPageFetcher(long maxNumItems) {
         this.maxNumItems = maxNumItems;
     }
 

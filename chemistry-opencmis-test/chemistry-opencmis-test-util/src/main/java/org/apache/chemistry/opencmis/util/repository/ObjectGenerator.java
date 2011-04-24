@@ -52,9 +52,9 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A simple helper class for the tests that generates a sample folder hierarchy
  * and optionally documents in it.
- * 
+ *
  * @author Jens
- * 
+ *
  */
 public class ObjectGenerator {
 
@@ -193,8 +193,9 @@ public class ObjectGenerator {
         fTopLevelFoldersCreated.clear();
         fTopLevelDocsCreated.clear();
         createFolderHierachy(rootFolderId, 0, levels, childrenPerLevel);
-        if (fCleanup)
+        if (fCleanup) {
             deleteTree();
+        }
     }
 
     public void setUseUuidsForNames(boolean useUuids) {
@@ -207,7 +208,7 @@ public class ObjectGenerator {
     /**
      * retrieve the index-th folder from given level of the hierarchy starting
      * at rootId
-     * 
+     *
      * @param rootId
      * @param level
      * @param index
@@ -231,7 +232,7 @@ public class ObjectGenerator {
 
     /**
      * retrieve the index-th document from given folder
-     * 
+     *
      * @param folderId
      *            folder to retrieve document from
      * @param index
@@ -251,10 +252,11 @@ public class ObjectGenerator {
             ObjectData child = children.get(i).getObject();
             docId = (String) child.getProperties().getProperties().get(PropertyIds.OBJECT_ID).getFirstValue();
             if (child.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT)) {
-                if (numDocsFound == index)
+                if (numDocsFound == index) {
                     return docId;
-                else
+                } else {
                     numDocsFound++;
+                }
             }
         }
         return docId;
@@ -262,7 +264,7 @@ public class ObjectGenerator {
 
     /**
      * return the total number of documents created
-     * 
+     *
      * @return
      */
     public int getDocumentsInTotal() {
@@ -271,7 +273,7 @@ public class ObjectGenerator {
 
     /**
      * return the total number of folders created
-     * 
+     *
      * @return
      */
     public int getFoldersInTotal() {
@@ -280,8 +282,6 @@ public class ObjectGenerator {
 
     /**
      * return the total number of objects created
-     * 
-     * @return
      */
     public int getObjectsInTotal() {
         return fDocumentsInTotalCount + fFoldersInTotalCount;
@@ -290,8 +290,9 @@ public class ObjectGenerator {
     public String createSingleDocument(String folderId) {
         fTimeLoggerCreateDoc.reset();
         String objectId = createDocument(folderId, 0, 0);
-        if (fCleanup)
+        if (fCleanup) {
             deleteObject(objectId);
+        }
         return objectId;
     }
 
@@ -309,8 +310,9 @@ public class ObjectGenerator {
             result = null;
         } else {
             result = new String[count];
-            for (int i = 0; i < fTopLevelDocsCreated.size(); i++)
+            for (int i = 0; i < fTopLevelDocsCreated.size(); i++) {
                 result[i] = fTopLevelDocsCreated.get(i);
+            }
         }
         return result;
     }
@@ -328,8 +330,9 @@ public class ObjectGenerator {
             result = null;
         } else {
             result = new String[count];
-            for (int i = 0; i < fTopLevelFoldersCreated.size(); i++)
+            for (int i = 0; i < fTopLevelFoldersCreated.size(); i++) {
                 result[i] = fTopLevelFoldersCreated.get(i);
+            }
         }
         return result;
     }
@@ -341,22 +344,25 @@ public class ObjectGenerator {
     public void printTimings() {
         fTimeLoggerCreateDoc.printTimes();
         fTimeLoggerCreateFolder.printTimes();
-        if (fCleanup)
+        if (fCleanup) {
             fTimeLoggerDelete.printTimes();
+        }
     }
 
     public void logTimings() {
         fTimeLoggerCreateDoc.logTimes();
         fTimeLoggerCreateFolder.logTimes();
-        if (fCleanup)
+        if (fCleanup) {
             fTimeLoggerDelete.logTimes();
+        }
     }
 
     private void createFolderHierachy(String parentId, int level, int levels, int childrenPerLevel) {
         String id = null;
 
-        if (level >= levels)
+        if (level >= levels) {
             return;
+        }
 
         log.debug(" create folder for parent id: " + parentId + ", in level " + level + ", max levels " + levels);
 
@@ -365,8 +371,9 @@ public class ObjectGenerator {
             try {
                 fTimeLoggerCreateFolder.start();
                 id = fObjSvc.createFolder(fRepositoryId, props, parentId, null, null, null, null);
-                if (level == 0)
+                if (level == 0) {
                     fTopLevelFoldersCreated.add(id);
+                }
             } finally {
                 fTimeLoggerCreateFolder.stop();
             }
@@ -378,8 +385,9 @@ public class ObjectGenerator {
         }
         for (int j = 0; j < fNoDocumentsToCreate; j++) {
             id = createDocument(parentId, j, level);
-            if (level == 0)
+            if (level == 0) {
                 fTopLevelDocsCreated.add(id);
+            }
         }
     }
 
@@ -407,8 +415,9 @@ public class ObjectGenerator {
         // log.info("create document in folder " + folderId);
         Properties props = createDocumentProperties(no, level);
         String id = null;
-        if (fContentSizeInK > 0)
+        if (fContentSizeInK > 0) {
             contentStream = createContent();
+        }
         try {
             fTimeLoggerCreateDoc.start();
             id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies,
@@ -417,8 +426,9 @@ public class ObjectGenerator {
             fTimeLoggerCreateDoc.stop();
         }
 
-        if (null == id)
+        if (null == id) {
             throw new RuntimeException("createDocument failed.");
+        }
         ++fDocumentsInTotalCount;
         return id;
     }
@@ -462,8 +472,9 @@ public class ObjectGenerator {
         try {
             for (int j = 0; j < fContentSizeInK; j++) {
                 // write 1K of data
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < 32; i++) {
                     ba.write(b);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to fill content stream with data", e);
@@ -505,17 +516,19 @@ public class ObjectGenerator {
     }
 
     private String generateDocNameValue(int no, int level) {
-        if (fUseUuids)
+        if (fUseUuids) {
             return UUID.randomUUID().toString();
-        else
+        } else {
             return NAMEPROPVALPREFIXDOC + level + "-" + no;
+        }
     }
 
     private String generateFolderNameValue(int no, int level) {
-        if (fUseUuids)
+        if (fUseUuids) {
             return UUID.randomUUID().toString();
-        else
+        } else {
             return NAMEPROPVALPREFIXFOLDER + level + "-" + no;
+        }
     }
 
     private String generateStringPropValueDoc() {
@@ -546,8 +559,9 @@ public class ObjectGenerator {
         // be
         // optimized
         StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < depth; i++)
+        for (int i = 0; i < depth; i++) {
             prefix.append("   ");
+        }
 
         ObjectInFolderList result = fNavSvc.getChildren(fRepositoryId, folderId, propertyFilter, null, false,
                 IncludeRelationships.NONE, null, true, BigInteger.valueOf(-1), BigInteger.valueOf(-1), null);
@@ -574,8 +588,9 @@ public class ObjectGenerator {
     private void dumpObjectProperties(ObjectData object, int depth, String propertyFilter, boolean mustFetchProperties) {
         final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < depth; i++)
+        for (int i = 0; i < depth; i++) {
             prefix.append("   ");
+        }
 
         log.info(prefix + "found object id " + object.getId());
         Map<String, PropertyData<?>> propMap;

@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.server.support.TypeValidator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 /**
  * QueryObject is a class used to encapsulate a CMIS query. It is created from
  * an ANTLR parser on an incoming query string. During parsing various
@@ -239,7 +240,9 @@ public class QueryObject {
                 ColumnReference colRef = (ColumnReference) sel;
                 String key = colRef.getPropertyId();
                 if (null == key)
+                 {
                     key = colRef.getPropertyQueryName(); // happens for *
+                }
                 String propDescr = colRef.getAliasName() == null ? colRef.getPropertyQueryName() : colRef
                         .getAliasName();
                 res.put(key, propDescr);
@@ -330,8 +333,9 @@ public class QueryObject {
     public boolean resolveTypes() {
         try {
             LOG.debug("First pass of query traversal is complete, resolving types");
-            if (null == typeMgr)
+            if (null == typeMgr) {
                 return true;
+            }
 
             // First resolve all alias names defined in SELECT:
             for (CmisSelector alias : colOrFuncAlias.values()) {
@@ -364,12 +368,14 @@ public class QueryObject {
                     // } else
                     // columnReferences.put(obj,
                     // colOrFuncAlias.get(selector.getAliasName()));
-                    if (whereReferences.remove(selector))
+                    if (whereReferences.remove(selector)) {
                         // replace unresolved by resolved reference
                         whereReferences.add(resolvedReference);
-                    if (joinReferences.remove(selector))
+                    }
+                    if (joinReferences.remove(selector)) {
                         // replace unresolved by resolved reference
                         joinReferences.add(resolvedReference);
+                    }
                 }
             }
 
@@ -426,9 +432,9 @@ public class QueryObject {
         TypeDefinition tdFound = null;
         for (String typeQueryName : froms.values()) {
             TypeDefinition td = typeMgr.getTypeByQueryName(typeQueryName);
-            if (null == td)
+            if (null == td) {
                 throw new CmisQueryException(typeQueryName + " is neither a type query name nor an alias.");
-            else if (isStar) {
+            } else if (isStar) {
                 ++noFound;
                 tdFound = null;
             } else if (TypeValidator.typeContainsPropertyWithQueryName(td, propName)) {
@@ -436,15 +442,16 @@ public class QueryObject {
                 tdFound = td;
             }
         }
-        if (noFound == 0)
+        if (noFound == 0) {
             throw new CmisQueryException(propName
                     + " is not a property query name in any of the types in from ...");
-        else if (noFound > 1 && !isStar)
+        } else if (noFound > 1 && !isStar) {
             throw new CmisQueryException(propName
                     + " is not a unique property query name within the types in from ...");
-        else {
-            if (null != tdFound) // can be null in select * from t1 JOIN t2....
+        } else {
+            if (null != tdFound) {
                 validateColumnReferenceAndResolveType(tdFound, colRef);
+            }
         }
     }
 
@@ -454,9 +461,10 @@ public class QueryObject {
         // either same name or mapped alias
         String typeQueryName = getReferencedTypeQueryName(colRef.getQualifier());
         TypeDefinition td = typeMgr.getTypeByQueryName(typeQueryName);
-        if (null == td)
+        if (null == td) {
             throw new CmisQueryException(colRef.getQualifier()
                     + " is neither a type query name nor an alias.");
+        }
 
         validateColumnReferenceAndResolveType(td, colRef);
     }
@@ -465,13 +473,15 @@ public class QueryObject {
 
         // type found, check if property exists
         boolean hasProp;
-        if (colRef.getPropertyQueryName().equals("*"))
+        if (colRef.getPropertyQueryName().equals("*")) {
             hasProp = true;
-        else
+        } else {
             hasProp = TypeValidator.typeContainsPropertyWithQueryName(td, colRef.getPropertyQueryName());
-        if (!hasProp)
+        }
+        if (!hasProp) {
             throw new CmisQueryException(colRef.getPropertyQueryName()
                     + " is not a valid property query name in type " + td.getId() + ".");
+        }
 
         colRef.setTypeDefinition(typeMgr.getPropertyIdForQueryName(td, colRef.getPropertyQueryName()), td);
     }
@@ -484,12 +494,14 @@ public class QueryObject {
             // if an alias was defined but still the original is used we have to
             // search case: SELECT T.p FROM T AS TAlias
             for (String tqn : froms.values()) {
-                if (typeQueryNameOrAlias.equals(tqn))
+                if (typeQueryNameOrAlias.equals(tqn)) {
                     return tqn;
+                }
             }
             return null;
-        } else
+        } else {
             return typeQueryName;
+        }
     }
 
 }

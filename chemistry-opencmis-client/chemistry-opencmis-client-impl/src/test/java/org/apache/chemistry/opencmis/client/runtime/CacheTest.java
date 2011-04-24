@@ -50,7 +50,7 @@ public class CacheTest {
         String cacheKey = "key";
 
         // add object
-        CmisObject obj1 = this.createCmisObject(id);
+        CmisObject obj1 = createCmisObject(id);
         cache.put(obj1, cacheKey);
 
         // access object
@@ -86,7 +86,7 @@ public class CacheTest {
         String cacheKey = "key";
 
         for (int i = 0; i < cacheSize + 1; i++) {
-            CmisObject obj = this.createCmisObject("id" + i);
+            CmisObject obj = createCmisObject("id" + i);
             cache.put(obj, cacheKey);
         }
 
@@ -122,7 +122,7 @@ public class CacheTest {
         String cacheKey = "key";
 
         for (int i = 0; i < cacheSize; i++) {
-            CmisObject obj = this.createCmisObject("id" + i);
+            CmisObject obj = createCmisObject("id" + i);
             cache.put(obj, cacheKey);
         }
 
@@ -144,16 +144,16 @@ public class CacheTest {
 
     /**
      * Create a Mock for testing Cache is sufficient.
-     * 
+     *
      * @param id
      * @param path
      * @return a mocked object
      */
-    private CmisObject createCmisObject(final String id) {
+    private static CmisObject createCmisObject(final String id) {
         return new CmisObjectMock(id);
     }
 
-    private Cache createCache(int cacheSize, int ttl) {
+    private static Cache createCache(int cacheSize, int ttl) {
         Cache cache = new CacheImpl();
 
         Map<String, String> parameters = new HashMap<String, String>();

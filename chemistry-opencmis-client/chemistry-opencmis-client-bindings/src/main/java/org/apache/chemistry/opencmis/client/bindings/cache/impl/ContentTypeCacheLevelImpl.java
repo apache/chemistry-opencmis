@@ -24,9 +24,9 @@ import java.util.TreeMap;
 
 /**
  * Content type cache.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class ContentTypeCacheLevelImpl extends MapCacheLevelImpl {
 
@@ -58,7 +58,7 @@ public class ContentTypeCacheLevelImpl extends MapCacheLevelImpl {
      * Normalizes the key which should be a content type. It's quite simple at
      * the moment but should cover most cases.
      */
-    private String normalize(String key) {
+    private static String normalize(String key) {
         if (key == null) {
             return null;
         }

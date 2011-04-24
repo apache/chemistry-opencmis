@@ -33,9 +33,9 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
  * Common functionality for all service implementations
- * 
+ *
  * @author Jens
- * 
+ *
  */
 public class InMemoryAbstractServiceImpl {
 
@@ -49,14 +49,15 @@ public class InMemoryAbstractServiceImpl {
 
     protected InMemoryAbstractServiceImpl(StoreManager storeManager) {
         this.fStoreManager = storeManager;
-        this.validator = storeManager.getServiceValidator();            
+        this.validator = storeManager.getServiceValidator();
     }
 
     protected TypeDefinition getTypeDefinition(String repositoryId, Properties properties) {
         String typeId = (String) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue();
         TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
-        if (typeDefC == null)
+        if (typeDefC == null) {
             throw new CmisInvalidArgumentException("Cannot create object, a type with id " + typeId + " is unknown");
+        }
 
         return typeDefC.getTypeDefinition();
     }
@@ -71,7 +72,7 @@ public class InMemoryAbstractServiceImpl {
      * We allow checkin, cancel, checkout operations on a single version as well
      * as on a version series This method returns the versioned document
      * (version series) in each case
-     * 
+     *
      * @param value
      *            version or version series id of a document
      * @return version series id
@@ -92,8 +93,9 @@ public class InMemoryAbstractServiceImpl {
     protected VersionedDocument testIsNotCheckedOutBySomeoneElse(StoredObject so, String user) {
         checkIsVersionableObject(so);
         VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
-        if (verDoc.isCheckedOut())
+        if (verDoc.isCheckedOut()) {
             testCheckedOutByCurrentUser(user, verDoc);
+        }
 
         return verDoc;
     }
@@ -112,25 +114,29 @@ public class InMemoryAbstractServiceImpl {
     }
 
     protected void checkIsVersionableObject(StoredObject so) {
-        if (!(so instanceof VersionedDocument || so instanceof DocumentVersion))
+        if (!(so instanceof VersionedDocument || so instanceof DocumentVersion)) {
             throw new CmisInvalidArgumentException(
                     "Object is of a versionable type but not instance of VersionedDocument or DocumentVersion.");
+        }
     }
 
     protected void checkHasUser(String user) {
-        if (null == user || user.length() == 0)
+        if (null == user || user.length() == 0) {
             throw new CmisPermissionDeniedException("Object can't be checked-in, no user is given.");
+        }
     }
 
     protected void testCheckedOutByCurrentUser(String user, VersionedDocument verDoc) {
-        if (!user.equals(verDoc.getCheckedOutBy()))
+        if (!user.equals(verDoc.getCheckedOutBy())) {
             throw new CmisUpdateConflictException("Object can't be checked-in, user " + verDoc.getCheckedOutBy()
                     + " has checked out the document.");
+        }
     }
 
     protected void testIsCheckedOut(VersionedDocument verDoc) {
-        if (!verDoc.isCheckedOut())
+        if (!verDoc.isCheckedOut()) {
             throw new CmisUpdateConflictException("Canot check-in: Document " + verDoc.getId() + " is not checked out.");
+        }
     }
 
 }

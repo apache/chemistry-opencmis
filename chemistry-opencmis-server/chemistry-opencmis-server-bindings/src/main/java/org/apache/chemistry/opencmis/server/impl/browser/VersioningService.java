@@ -39,6 +39,9 @@ import org.json.simple.JSONArray;
  */
 public class VersioningService {
 
+    private VersioningService() {
+    }
+
     /**
      * getAllVersions.
      */

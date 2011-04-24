@@ -19,7 +19,6 @@
 
 package org.apache.chemistry.opencmis.jcr.query;
 
-import org.antlr.runtime.RecognitionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
@@ -29,7 +28,6 @@ import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -40,7 +38,7 @@ import static org.junit.Assert.*;
 public class XPathBuilderTest {
 
     @Test
-    public void testValidQuery() throws IOException, RecognitionException {
+    public void testValidQuery() {
         check("select * from cmis:document",
                 null,
                 list(),
@@ -140,7 +138,7 @@ public class XPathBuilderTest {
     }
 
     @Test
-    public void testTooSpecificQuery() throws RecognitionException, IOException {
+    public void testTooSpecificQuery() {
         check("select * from cmis:document where NOT IN_FOLDER('folderId')",
                 "false()",
                 list("folderId/"),
@@ -173,7 +171,7 @@ public class XPathBuilderTest {
     }
 
     @Test
-    public void testNotImplemented() throws IOException, RecognitionException {
+    public void testNotImplemented() {
         try {
             execute("select * from cmis:document where cmis:name in (1,2,3)");
             fail();
@@ -188,7 +186,7 @@ public class XPathBuilderTest {
     }
 
     @Test
-    public void testInvalidQuery() throws IOException, RecognitionException {
+    public void testInvalidQuery() {
         try {
             execute("");
             fail();
@@ -229,12 +227,10 @@ public class XPathBuilderTest {
     }
 
     private static void check(String query, String result, List<String> folderPredicates, Boolean evaluation) {
-
         XPathBuilder queryBuilder = execute(query);
         if (result == null) {
             assertEquals(null, queryBuilder);
-        }
-        else {
+        } else {
             assertEquals(result, queryBuilder.xPath());
 
             Iterator<XPathBuilder> folderPredicatesBuilder = queryBuilder.folderPredicates().iterator();
@@ -246,7 +242,6 @@ public class XPathBuilderTest {
 
             assertEquals(evaluation, queryBuilder.eval(false));
         }
-
     }
 
 }

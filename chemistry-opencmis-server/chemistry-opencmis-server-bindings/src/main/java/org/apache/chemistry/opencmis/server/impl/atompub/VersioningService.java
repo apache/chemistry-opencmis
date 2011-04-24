@@ -45,6 +45,9 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
  */
 public class VersioningService {
 
+    private VersioningService() {
+    }
+
     /**
      * Check Out.
      */
@@ -152,7 +155,7 @@ public class VersioningService {
      * Delete object.
      */
     public static void deleteAllVersions(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
 

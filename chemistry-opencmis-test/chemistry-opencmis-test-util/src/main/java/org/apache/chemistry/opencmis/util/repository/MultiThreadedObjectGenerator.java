@@ -31,6 +31,9 @@ public class MultiThreadedObjectGenerator {
         CreateDocument, CreateTree, CreateFolders
     }
 
+    private MultiThreadedObjectGenerator() {
+    }
+
     static class ObjectGeneratorRunner implements Runnable {
         private final Action fAction;
         ObjectGenerator fObjGen;
@@ -99,8 +102,9 @@ public class MultiThreadedObjectGenerator {
         RepositoryService repSvc = binding.getRepositoryService();
 
         RepositoryInfo rep = repSvc.getRepositoryInfo(repositoryId, null);
-        if (null == rootFolderId || rootFolderId.length() == 0)
+        if (null == rootFolderId || rootFolderId.length() == 0) {
             rootFolderId = rep.getRootFolderId();
+        }
 
         return rootFolderId;
     }

@@ -205,7 +205,7 @@ public class AtomEntryParserTest {
         assertNull(aep.getProperties());
     }
 
-    private byte[] parse(byte[] entry) throws Exception {
+    private static byte[] parse(byte[] entry) throws Exception {
         AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry));
         ContentStream contentStream = aep.getContentStream();
 

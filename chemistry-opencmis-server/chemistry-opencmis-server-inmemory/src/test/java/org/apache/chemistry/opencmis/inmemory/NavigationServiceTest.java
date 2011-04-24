@@ -51,13 +51,15 @@ public class NavigationServiceTest extends AbstractServiceTest {
     private static final int NUM_ROOT_FOLDERS = 10;
     private String fLevel1FolderId;
 
+    @Override
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setUp();
     }
 
+    @Override
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         super.tearDown();
     }
 
@@ -120,8 +122,9 @@ public class NavigationServiceTest extends AbstractServiceTest {
 
     private void logFolderContainer(ObjectInFolderContainer folder, int depth) {
         StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < depth; i++)
+        for (int i = 0; i < depth; i++) {
             prefix.append("   ");
+        }
 
         log.info(prefix + "name: " + folder.getObject().getPathSegment());
         List<ObjectInFolderContainer> children = folder.getChildren();
@@ -202,8 +205,9 @@ public class NavigationServiceTest extends AbstractServiceTest {
         if (null != objs) {
             sum = objs.size();
             for (ObjectInFolderContainer obj : objs) {
-                if (null != obj.getChildren())
+                if (null != obj.getChildren()) {
                     sum += getSizeOfDescendants(obj.getChildren());
+                }
             }
         }
         return sum;
@@ -217,8 +221,9 @@ public class NavigationServiceTest extends AbstractServiceTest {
                     .getRootFolderType().getId()));
             Properties props = fFactory.createPropertiesData(properties);
             String id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
-            if (i == 3) // store one
+            if (i == 3) {
                 fLevel1FolderId = id;
+            }
         }
     }
 

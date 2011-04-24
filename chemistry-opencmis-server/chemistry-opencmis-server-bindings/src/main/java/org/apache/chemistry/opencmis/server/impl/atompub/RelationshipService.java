@@ -48,6 +48,9 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
  */
 public class RelationshipService {
 
+    private RelationshipService() {
+    }
+
     /**
      * Get object relationships.
      */
@@ -107,14 +110,12 @@ public class RelationshipService {
                 relationships.hasMoreItems(), AtomPubUtils.PAGE_SIZE);
 
         // write entries
-        if (relationships != null) {
-            AtomEntry entry = new AtomEntry(feed.getWriter());
-            for (ObjectData object : relationships.getObjects()) {
-                if (object == null) {
-                    continue;
-                }
-                writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
+        AtomEntry entry = new AtomEntry(feed.getWriter());
+        for (ObjectData object : relationships.getObjects()) {
+            if (object == null) {
+                continue;
             }
+            writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
         }
 
         // we are done

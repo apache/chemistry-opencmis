@@ -44,7 +44,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
     public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId, ExtensionsData extension) {
 
         validator.getRepositoryInfo(context, repositoryId, extension);
-        
+
         RepositoryInfo repoInfo = getRepositoryInfoFromStoreManager(repositoryId);
 
         return repoInfo;
@@ -65,7 +65,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
             Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
         validator.getTypeChildren(context, repositoryId, typeId, extension);
-        
+
         boolean inclPropDefs = includePropertyDefinitions == null ? false : includePropertyDefinitions;
         getRepositoryInfoFromStoreManager(repositoryId); // just to check if
         // repository
@@ -87,10 +87,12 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         result.setHasMoreItems(children.size() > max - skip);
         List<TypeDefinition> childrenTypes = new ArrayList<TypeDefinition>();
         ListIterator<TypeDefinitionContainer> it = children.listIterator(skip);
-        if (max < 0)
+        if (max < 0) {
             max = children.size();
-        for (int i = skip; i < max + skip && it.hasNext(); i++)
+        }
+        for (int i = skip; i < max + skip && it.hasNext(); i++) {
             childrenTypes.add(it.next().getTypeDefinition());
+        }
 
         result.setList(childrenTypes);
         return result;
@@ -104,8 +106,9 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId);
         if (tc != null) {
             return tc.getTypeDefinition();
-        } else
+        } else {
             throw new CmisObjectNotFoundException("unknown type id: " + typeId);
+        }
     }
 
     public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String repositoryId, String typeId,
@@ -114,9 +117,10 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         validator.getTypeDescendants(context, repositoryId, typeId, extension);
 
         boolean inclPropDefs = includePropertyDefinitions == null ? false : includePropertyDefinitions;
-        
-        if (depth != null && depth.intValue() == 0)
+
+        if (depth != null && depth.intValue() == 0) {
             throw new CmisInvalidArgumentException("depth == 0 is illegal in getTypeDescendants");
+        }
 
         List<TypeDefinitionContainer> result = null;
         if (typeId == null) {
@@ -127,10 +131,11 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         } else {
             TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId, inclPropDefs,
                     depth == null ? -1 : depth.intValue());
-            if (tc == null)
+            if (tc == null) {
                 throw new CmisInvalidArgumentException("unknown type id: " + typeId);
-            else
+            } else {
                 result = tc.getChildren();
+            }
         }
 
         return result;

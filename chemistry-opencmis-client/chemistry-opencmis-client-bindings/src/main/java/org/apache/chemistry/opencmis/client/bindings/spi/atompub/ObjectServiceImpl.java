@@ -591,7 +591,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
     // ---- internal ----
 
-    private void checkCreateProperties(Properties properties) {
+    private static void checkCreateProperties(Properties properties) {
         if ((properties == null) || (properties.getProperties() == null)) {
             throw new CmisInvalidArgumentException("Properties must be set!");
         }

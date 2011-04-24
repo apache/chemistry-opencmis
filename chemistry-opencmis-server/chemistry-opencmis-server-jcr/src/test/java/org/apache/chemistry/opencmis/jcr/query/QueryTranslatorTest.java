@@ -19,7 +19,6 @@
 
 package org.apache.chemistry.opencmis.jcr.query;
 
-import org.antlr.runtime.RecognitionException;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
@@ -28,7 +27,6 @@ import org.apache.chemistry.opencmis.jcr.util.ISO8601;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.GregorianCalendar;
 
 import static org.junit.Assert.*;
@@ -197,7 +195,7 @@ public class QueryTranslatorTest {
         assertEquals(
             "/jcr:root/jcr:folderId//element(*,jcr:document)[@jcr:primaryType = nt:base]",
             queryTranslator.translateToXPath("select * from cmis:document where not(not(IN_TREE('folderId')))"));
-        
+
         assertEquals(
             "/jcr:root/jcr:folderId/element(*,jcr:document)[@jcr:primaryType = nt:base and @jcr:name <= 1]",
             queryTranslator.translateToXPath(
@@ -250,7 +248,7 @@ public class QueryTranslatorTest {
     }
 
     @Test
-    public void testNotImplemented() throws IOException, RecognitionException {
+    public void testNotImplemented() {
         try {
             queryTranslator.translateToXPath("select * from cmis:document where cmis:name in (1,2,3)");
             fail();
@@ -265,30 +263,30 @@ public class QueryTranslatorTest {
     }
 
     @Test
-    public void testInvalidQuery() throws IOException, RecognitionException {
+    public void testInvalidQuery() {
         try {
             queryTranslator.translateToXPath("");
             fail();
+        } catch (CmisInvalidArgumentException expected) {
         }
-        catch (CmisInvalidArgumentException expected) {}
 
         try {
             queryTranslator.translateToXPath("select * from cmis:something");
             fail();
+        } catch (CmisInvalidArgumentException expected) {
         }
-        catch (CmisInvalidArgumentException expected) {}
 
         try {
             queryTranslator.translateToXPath("select * from cmis:document WHERE");
             fail();
+        } catch (CmisInvalidArgumentException expected) {
         }
-        catch (CmisInvalidArgumentException expected) {}
 
         try {
             queryTranslator.translateToXPath("select * from cmis:document WHERE cmis:something = 'foo'");
             fail();
+        } catch (CmisInvalidArgumentException expected) {
         }
-        catch (CmisInvalidArgumentException expected) {}
     }
 
 }

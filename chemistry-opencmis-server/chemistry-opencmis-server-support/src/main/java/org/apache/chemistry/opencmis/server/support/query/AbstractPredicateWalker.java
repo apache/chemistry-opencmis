@@ -230,22 +230,25 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
     }
 
     public Boolean walkContains(Tree opNode, Tree qualNode, Tree queryNode) {
-        if (qualNode != null)
+        if (qualNode != null) {
             walkExpr(qualNode);
+        }
         walkExpr(queryNode);
         return false;
     }
 
     public Boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
-        if (qualNode != null)
+        if (qualNode != null) {
             walkExpr(qualNode);
+        }
         walkExpr(paramNode);
         return false;
     }
 
     public Boolean walkInTree(Tree opNode, Tree qualNode, Tree paramNode) {
-        if (qualNode != null)
+        if (qualNode != null) {
             walkExpr(qualNode);
+        }
         walkExpr(paramNode);
         return false;
     }

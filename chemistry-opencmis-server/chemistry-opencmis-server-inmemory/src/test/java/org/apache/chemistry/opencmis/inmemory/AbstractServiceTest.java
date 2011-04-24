@@ -62,7 +62,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataIm
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class AbstractServiceTest /* extends TestCase */{
+public class AbstractServiceTest {
 
     private static final Log LOG = LogFactory.getLog(AbstractServiceTest.class);
 
@@ -97,7 +97,7 @@ public class AbstractServiceTest /* extends TestCase */{
         fTypeCreatorClassName = typeCreatorClassName;
     }
 
-    protected void setUp() throws Exception {
+    protected void setUp() {
         // super.setUp();
         LOG.debug("Initializing InMemory Test with type creator class: " + fTypeCreatorClassName);
         Map<String, String> parameters = new HashMap<String, String>();
@@ -138,7 +138,7 @@ public class AbstractServiceTest /* extends TestCase */{
     protected void addParameters(Map<String, String> parameters) {
     }
 
-    protected void tearDown() throws Exception {
+    protected void tearDown() {
         // super.tearDown();
     }
 
@@ -151,8 +151,9 @@ public class AbstractServiceTest /* extends TestCase */{
         String id = null;
         try {
             id = createFolderNoCatch(folderName, parentFolderId, typeId);
-            if (null == id)
+            if (null == id) {
                 fail("createFolder failed.");
+            }
         } catch (Exception e) {
             fail("createFolder() failed with exception: " + e);
         }
@@ -175,8 +176,9 @@ public class AbstractServiceTest /* extends TestCase */{
 
         Properties props = createDocumentProperties(name, typeId);
 
-        if (withContent)
+        if (withContent) {
             contentStream = createContent();
+        }
 
         String id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies,
                 addACEs, removeACEs, extension);
@@ -188,8 +190,9 @@ public class AbstractServiceTest /* extends TestCase */{
         String id = null;
         try {
             id = createDocumentNoCatch(name , folderId, typeId, versioningState, withContent);
-            if (null == id)
+            if (null == id) {
                 fail("createDocument failed.");
+            }
         } catch (Exception e) {
             fail("createDocument() failed with exception: " + e);
         }
@@ -220,11 +223,11 @@ public class AbstractServiceTest /* extends TestCase */{
     protected ContentStream createContent() {
         return createContent(32);
     }
-    
+
     protected ContentStream createContent(int sizeInKB) {
         return createContent(sizeInKB, 0);
     }
-    
+
     protected ContentStream createContent(int sizeInKB, long maxSizeInKB) {
         ContentStreamDataImpl content = new ContentStreamDataImpl(maxSizeInKB);
         content.setFileName("data.txt");
@@ -233,11 +236,12 @@ public class AbstractServiceTest /* extends TestCase */{
         byte[] b = { 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a,
                 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a }; // 32
         int noBlocks = len / b.length;
-        
+
         ByteArrayOutputStream ba = new ByteArrayOutputStream(len);
         try {
-            for (int i = 0; i < noBlocks; i++)
+            for (int i = 0; i < noBlocks; i++) {
                 ba.write(b);
+            }
             content.setContent(new ByteArrayInputStream(ba.toByteArray()));
         } catch (IOException e) {
             throw new RuntimeException("Failed to fill content stream with data", e);
@@ -251,12 +255,14 @@ public class AbstractServiceTest /* extends TestCase */{
         content.setMimeType("text/plain");
         int len = 32 * 1024;
         byte[] b = new byte[32];
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < 32; i++) {
             b[i] = (byte) Character.getNumericValue(ch);
+        }
         ByteArrayOutputStream ba = new ByteArrayOutputStream(len);
         try {
-            for (int i = 0; i < 1024; i++)
+            for (int i = 0; i < 1024; i++) {
                 ba.write(b);
+            }
             content.setContent(new ByteArrayInputStream(ba.toByteArray()));
         } catch (IOException e) {
             throw new RuntimeException("Failed to fill content stream with data", e);

@@ -23,7 +23,6 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 import java.io.OutputStream;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
@@ -31,9 +30,9 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
 
 /**
  * Allowable Actions document.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class AllowableActionsDocument {
 

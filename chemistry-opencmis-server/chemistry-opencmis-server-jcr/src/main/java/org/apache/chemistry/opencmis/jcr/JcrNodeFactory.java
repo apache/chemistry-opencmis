@@ -38,7 +38,7 @@ import java.util.Map;
 /**
  * Factory for creating instances of sub-classes of {@link JcrNode} from JCR <code>Node</code>s.
  */
-public class JcrNodeFactory {  
+public class JcrNodeFactory {
     private static final Log log = LogFactory.getLog(JcrNodeFactory.class);
 
     private JcrTypeManager typeManager;
@@ -126,11 +126,11 @@ public class JcrNodeFactory {
             // xxx not supported: BASE_TYPE_ID, CHANGE_TOKEN
         }};
 
-        public IdentifierMapBase(String jcrTypeName) {
+        protected IdentifierMapBase(String jcrTypeName) {
             this.jcrTypeName = jcrTypeName;
         }
 
-        public IdentifierMapBase(String jcrTypeName, Map<String, String> cmis2Jcr) {
+        protected IdentifierMapBase(String jcrTypeName, Map<String, String> cmis2Jcr) {
             this(jcrTypeName);
             this.cmis2Jcr.putAll(cmis2Jcr);
         }
@@ -146,11 +146,11 @@ public class JcrNodeFactory {
         }
 
         public String jcrTypeName() {
-            return jcrTypeName;   
+            return jcrTypeName;
         }
 
         public String jcrTypeCondition() {
-            return null; 
+            return null;
         }
     }
 

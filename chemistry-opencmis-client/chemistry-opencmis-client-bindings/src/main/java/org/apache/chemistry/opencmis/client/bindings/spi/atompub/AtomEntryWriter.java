@@ -37,10 +37,13 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyString;
 
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.*;
+
+
 /**
  * Writes a CMIS Atom entry to an output stream.
  */
-public class AtomEntryWriter implements CmisAtomPubConstants {
+public class AtomEntryWriter {
 
     private static final String PREFIX_ATOM = "atom";
     private static final String PREFIX_CMIS = "cmis";
@@ -155,7 +158,7 @@ public class AtomEntryWriter implements CmisAtomPubConstants {
         return result;
     }
 
-    private String getUpdated() {
+    private static String getUpdated() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 

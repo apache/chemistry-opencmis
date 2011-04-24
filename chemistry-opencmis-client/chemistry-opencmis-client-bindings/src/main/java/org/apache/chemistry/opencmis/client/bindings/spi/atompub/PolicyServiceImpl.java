@@ -168,7 +168,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
     /**
      * Finds the id property within a CMIS object.
      */
-    private String findIdProperty(CmisObjectType object) {
+    private static String findIdProperty(CmisObjectType object) {
         if ((object == null) || (object.getProperties() == null)) {
             return null;
         }

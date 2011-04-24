@@ -24,12 +24,15 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * create objects that are stored in a persistent store
- * 
+ *
  * @author Jens
  */
-
 public class StoreManagerFactory {
+
     private static final Log log = LogFactory.getLog(StoreManagerFactory.class);
+
+    private StoreManagerFactory() {
+    }
 
     public static StoreManager createInstance(String className) {
 
@@ -54,9 +57,9 @@ public class StoreManagerFactory {
             e.printStackTrace();
         }
 
-        if (obj instanceof StoreManager)
+        if (obj instanceof StoreManager) {
             return (StoreManager) obj;
-        else {
+        } else {
             log.error("Failed to create StoredObjectCreator, class " + className
                     + " does not implement interface StoredObjectCreator");
             return null;

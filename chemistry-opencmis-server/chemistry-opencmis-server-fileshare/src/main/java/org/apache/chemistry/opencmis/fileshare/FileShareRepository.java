@@ -160,7 +160,7 @@ public class FileShareRepository {
 
     /**
      * Constructor.
-     * 
+     *
      * @param repId
      *            CMIS repository id
      * @param root
@@ -267,7 +267,7 @@ public class FileShareRepository {
         fRepositoryInfo.setAclCapabilities(aclCapability);
     }
 
-    private PermissionDefinition createPermission(String permission, String description) {
+    private static PermissionDefinition createPermission(String permission, String description) {
         PermissionDefinitionDataImpl pd = new PermissionDefinitionDataImpl();
         pd.setPermission(permission);
         pd.setDescription(description);
@@ -275,7 +275,7 @@ public class FileShareRepository {
         return pd;
     }
 
-    private PermissionMapping createMapping(String key, String permission) {
+    private static PermissionMapping createMapping(String key, String permission) {
         PermissionMappingDataImpl pm = new PermissionMappingDataImpl();
         pm.setKey(key);
         pm.setPermissions(Collections.singletonList(permission));
@@ -1202,7 +1202,7 @@ public class FileShareRepository {
 
     /**
      * Removes a folder and its content.
-     * 
+     *
      * @throws
      */
     private boolean deleteFolder(File folder, boolean continueOnFailure, FailedToDeleteDataImpl ftd) {
@@ -1237,14 +1237,14 @@ public class FileShareRepository {
 
     /**
      * Checks if the given name is valid for a file system.
-     * 
+     *
      * @param name
      *            the name to check
-     * 
+     *
      * @return <code>true</code> if the name is valid, <code>false</code>
      *         otherwise
      */
-    private boolean isValidName(String name) {
+    private static boolean isValidName(String name) {
         if ((name == null) || (name.length() == 0) || (name.indexOf(File.separatorChar) != -1)
                 || (name.indexOf(File.pathSeparatorChar) != -1)) {
             return false;
@@ -1256,13 +1256,13 @@ public class FileShareRepository {
     /**
      * Checks if a folder is empty. A folder is considered as empty if no files
      * or only the shadow file reside in the folder.
-     * 
+     *
      * @param folder
      *            the folder
-     * 
+     *
      * @return <code>true</code> if the folder is empty.
      */
-    private boolean isFolderEmpty(File folder) {
+    private static boolean isFolderEmpty(File folder) {
         if (!folder.isDirectory()) {
             return true;
         }
@@ -1653,7 +1653,7 @@ public class FileShareRepository {
         return result;
     }
 
-    private boolean isEmptyProperty(PropertyData<?> prop) {
+    private static boolean isEmptyProperty(PropertyData<?> prop) {
         if ((prop == null) || (prop.getValues() == null)) {
             return true;
         }
@@ -1740,7 +1740,7 @@ public class FileShareRepository {
      * Adds the default value of property if defined.
      */
     @SuppressWarnings("unchecked")
-    private boolean addPropertyDefault(PropertiesImpl props, PropertyDefinition<?> propDef) {
+    private static boolean addPropertyDefault(PropertiesImpl props, PropertyDefinition<?> propDef) {
         if ((props == null) || (props.getProperties() == null)) {
             throw new IllegalArgumentException("Props must not be null!");
         }
@@ -1833,7 +1833,7 @@ public class FileShareRepository {
         return result;
     }
 
-    private void addAction(Set<Action> aas, Action action, boolean condition) {
+    private static void addAction(Set<Action> aas, Action action, boolean condition) {
         if (condition) {
             aas.add(action);
         }
@@ -1873,7 +1873,7 @@ public class FileShareRepository {
     /**
      * Writes the properties for a document or folder.
      */
-    private void writePropertiesFile(File file, Properties properties) {
+    private static void writePropertiesFile(File file, Properties properties) {
         File propFile = getPropertiesFile(file);
 
         // if no properties set delete the properties file
@@ -1904,7 +1904,7 @@ public class FileShareRepository {
     /**
      * Converts milliseconds into a calendar object.
      */
-    private GregorianCalendar millisToCalendar(long millis) {
+    private static GregorianCalendar millisToCalendar(long millis) {
         GregorianCalendar result = new GregorianCalendar();
         result.setTimeZone(TimeZone.getTimeZone("GMT"));
         result.setTimeInMillis(millis);
@@ -1917,7 +1917,7 @@ public class FileShareRepository {
      * <code>filter</code> is <code>null</code>, empty or one of the properties
      * is '*' , an empty collection will be returned.
      */
-    private Set<String> splitFilter(String filter) {
+    private static Set<String> splitFilter(String filter) {
         if (filter == null) {
             return null;
         }
@@ -1948,7 +1948,7 @@ public class FileShareRepository {
     /**
      * Gets the type id from a set of properties.
      */
-    private String getTypeId(Properties properties) {
+    private static String getTypeId(Properties properties) {
         PropertyData<?> typeProperty = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
         if (!(typeProperty instanceof PropertyId)) {
             throw new CmisInvalidArgumentException("Type id must be set!");
@@ -1965,7 +1965,7 @@ public class FileShareRepository {
     /**
      * Returns the first value of an id property.
      */
-    private String getIdProperty(Properties properties, String name) {
+    private static String getIdProperty(Properties properties, String name) {
         PropertyData<?> property = properties.getProperties().get(name);
         if (!(property instanceof PropertyId)) {
             return null;
@@ -1977,7 +1977,7 @@ public class FileShareRepository {
     /**
      * Returns the first value of an string property.
      */
-    private String getStringProperty(Properties properties, String name) {
+    private static String getStringProperty(Properties properties, String name) {
         PropertyData<?> property = properties.getProperties().get(name);
         if (!(property instanceof PropertyString)) {
             return null;
@@ -1989,7 +1989,7 @@ public class FileShareRepository {
     /**
      * Returns the first value of an datetime property.
      */
-    private GregorianCalendar getDateTimeProperty(Properties properties, String name) {
+    private static GregorianCalendar getDateTimeProperty(Properties properties, String name) {
         PropertyData<?> property = properties.getProperties().get(name);
         if (!(property instanceof PropertyDateTime)) {
             return null;
@@ -2022,7 +2022,7 @@ public class FileShareRepository {
     /**
      * Returns the properties file of the given file.
      */
-    private File getPropertiesFile(File file) {
+    private static File getPropertiesFile(File file) {
         if (file.isDirectory()) {
             return new File(file, SHADOW_FOLDER);
         }

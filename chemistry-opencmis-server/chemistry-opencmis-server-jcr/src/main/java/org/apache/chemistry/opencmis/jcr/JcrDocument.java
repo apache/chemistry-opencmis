@@ -44,14 +44,14 @@ import java.math.BigInteger;
 import java.util.Set;
 
 /**
- * Instances of this class represent a cmis:document backed by an underlying JCR <code>Node</code>. 
+ * Instances of this class represent a cmis:document backed by an underlying JCR <code>Node</code>.
  */
 public abstract class JcrDocument extends JcrNode {
     private static final Log log = LogFactory.getLog(JcrDocument.class);
 
     public static final String MIME_UNKNOWN = "application/octet-stream";
 
-    public JcrDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
+    protected JcrDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
         super(node, typeManager, pathManager, nodeFactory);
     }
 
@@ -217,7 +217,7 @@ public abstract class JcrDocument extends JcrNode {
     protected boolean getIsImmutable() {
         return false;
     }
-    
+
     @Override
     protected void compileProperties(PropertiesImpl properties, Set<String> filter, ObjectInfoImpl objectInfo)
             throws RepositoryException {

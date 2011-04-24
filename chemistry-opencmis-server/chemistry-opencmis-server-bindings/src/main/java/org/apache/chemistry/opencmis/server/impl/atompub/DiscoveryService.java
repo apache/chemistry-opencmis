@@ -59,6 +59,9 @@ public class DiscoveryService {
     private static final String METHOD_GET = "GET";
     private static final String METHOD_POST = "POST";
 
+    private DiscoveryService() {
+    }
+
     /**
      * Query.
      */

@@ -42,7 +42,6 @@ import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,7 +50,7 @@ public class QueryParseTest extends AbstractQueryTest {
     private static final Log LOG = LogFactory.getLog(QueryParseTest.class);
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         // initialize query object, we do not need a type manager for just testing parsing
         super.setUp(new QueryObject(null), null);
     }
@@ -67,8 +66,8 @@ public class QueryParseTest extends AbstractQueryTest {
             LOG.debug("Exception in simpleFailTest: " + e);
         }
     }
-    
-    public void simpleSelectTest1() throws Exception {
+
+    public void simpleSelectTest1() {
         String statement = "SELECT SCORE() FROM cmis:document";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
@@ -83,7 +82,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleSelectTest2() throws Exception {
+    public void simpleSelectTest2() {
         String statement = "SELECT abc FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
         assertNotNull(walker);
@@ -99,7 +98,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleSelectTest3() throws Exception {
+    public void simpleSelectTest3() {
         String statement = "SELECT t1.abc FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
         assertNotNull(walker);
@@ -116,7 +115,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleSelectTest4() throws Exception {
+    public void simpleSelectTest4() {
         String statement = "SELECT * FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
         assertNotNull(walker);
@@ -133,7 +132,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleSelectTest5() throws Exception {
+    public void simpleSelectTest5() {
         String statement = "SELECT t1.* FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
         assertNotNull(walker);
@@ -150,7 +149,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleSelectTest6() throws Exception {
+    public void simpleSelectTest6() {
         String statement = "SELECT t2.aaa myalias FROM cmis:document";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
         assertNotNull(walker);
@@ -167,7 +166,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleSelectTest7() throws Exception {
+    public void simpleSelectTest7() {
         // error processing
         String statement = "SELECTXXX t2.aaa myalias FROM cmis:document WHERE a < t1";
         try {
@@ -179,7 +178,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleFromTest1() throws Exception {
+    public void simpleFromTest1() {
         String statement = "SELECT * FROM MyType MyAlias";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
@@ -194,7 +193,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleFromTest2() throws Exception {
+    public void simpleFromTest2() {
         String statement = "SELECT * FROM MyType";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
         assertNotNull(walker);
@@ -208,7 +207,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleFromTest3() throws Exception {
+    public void simpleFromTest3() {
         String statement = "SELECT t2.aaa FROM MyType abc123";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
         assertNotNull(walker);
@@ -220,9 +219,9 @@ public class QueryParseTest extends AbstractQueryTest {
         assertEquals("abc123", key);
         assertEquals("MyType", types.get(key));
     }
-    
+
     @Test
-    public void simpleFromTest4() throws Exception {
+    public void simpleFromTest4() {
         String statement = "SELECT X.aaa FROM MyType AS X WHERE 10 = ANY X.aaa ";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
         assertNotNull(walker);
@@ -236,7 +235,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleWhereTest() throws Exception {
+    public void simpleWhereTest() {
         String statement = "SELECT * FROM MyType WHERE MyProp1=123";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
@@ -265,8 +264,9 @@ public class QueryParseTest extends AbstractQueryTest {
     private boolean traverseTreeAndFindNodeInColumnMap(Tree node, Map<Object, CmisSelector> colRefs) {
         boolean found = false;
 //        System.out.println("cmp to: " + System.identityHashCode(node) + " is: " + node.toString());
-        if (null != colRefs.get(node))
+        if (null != colRefs.get(node)) {
             return true;
+        }
 
         int count = node.getChildCount();
         for (int i=0; i<count && !found; i++) {
@@ -279,8 +279,9 @@ public class QueryParseTest extends AbstractQueryTest {
     private boolean traverseTreeAndFindNodeInColumnMap2(Tree node, Object colRef) {
         int count = node.getChildCount();
         LOG.debug("  checking with: " + node + " identity hash code: " + System.identityHashCode(node));
-        if (node==colRef)
+        if (node==colRef) {
             return true;
+        }
         boolean found = false;
         for (int i=0; i<count && !found; i++) {
             Tree child = node.getChild(i);
@@ -290,7 +291,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleSortTest1() throws Exception {
+    public void simpleSortTest1() {
         String statement = "SELECT * FROM MyType ORDER BY abc.def ASC";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
@@ -309,7 +310,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void simpleSortTest2() throws Exception {
+    public void simpleSortTest2() {
         String statement = "SELECT * FROM MyType ORDER BY def DESC";
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
         assertNotNull(walker);
@@ -486,7 +487,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void doubleFromTest() throws Exception {
+    public void doubleFromTest() {
         String statement = "SELECT * FROM MyType JOIN YourType WHERE a='1'";
 
         CmisQueryWalker walker = traverseStatementAndCatchExc(statement);
@@ -498,7 +499,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void duplicatedAliasTestSelect() throws Exception {
+    public void duplicatedAliasTestSelect() {
         String statement = "SELECT p1.T1 MyAlias, p2.T1 AS MyAlias FROM T1";
         try {
             traverseStatement(statement);
@@ -508,7 +509,7 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
-    public void duplicatedAliasTestFrom() throws Exception {
+    public void duplicatedAliasTestFrom() {
         String statement = "SELECT * FROM T1 MyAlias JOIN T2 AS MyAlias";
         try {
             traverseStatement(statement);
@@ -571,7 +572,7 @@ public class QueryParseTest extends AbstractQueryTest {
         --indent;
     }
 
-    private String printNode(Tree node) {
+    private static String printNode(Tree node) {
         switch (node.getType()) {
         case CmisQlStrictLexer.TABLE:
             return "#TABLE";
@@ -764,115 +765,115 @@ public class QueryParseTest extends AbstractQueryTest {
     private void evalInAny(Tree node) {
     }
 
-    private void evalColumn(Tree node) {
+    private static void evalColumn(Tree node) {
         assertEquals(1, node.getChildCount());
         assertEquals(CmisQlStrictLexer.ID, node.getChild(0).getType());
     }
 
-    private void evalEquals(Tree node) {
+    private static void evalEquals(Tree node) {
         assertEquals(2, node.getChildCount());
     }
 
-    private void evalInFolder(Tree node) {
+    private static void evalInFolder(Tree node) {
         assertEquals(1, node.getChildCount());
     }
 
-    private void evalApproxNumLiteral(Tree node) {
+    private static void evalApproxNumLiteral(Tree node) {
     }
 
-    private void evalNull(Tree node) {
+    private static void evalNull(Tree node) {
         assertEquals(1, node.getChildCount());
     }
 
-    private void evalLike(Tree node) {
+    private static void evalLike(Tree node) {
         assertEquals(2, node.getChildCount());
     }
 
-    private void evalNumLiteral(Tree node) {
+    private static void evalNumLiteral(Tree node) {
         assertEquals(0, node.getChildCount());
     }
 
-    private void evalInList(Tree node) {
+    private static void evalInList(Tree node) {
     }
 
-    private void evalEqAny(Tree node) {
+    private static void evalEqAny(Tree node) {
     }
 
-    private void evalNotLike(Tree node) {
+    private static void evalNotLike(Tree node) {
         assertEquals(2, node.getChildCount());
     }
 
-    private void evalNotIn(Tree node) {
+    private static void evalNotIn(Tree node) {
     }
 
-    private void evalIsNull(Tree node) {
+    private static void evalIsNull(Tree node) {
         assertEquals(1, node.getChildCount());
     }
 
-    private void evalIsNotNull(Tree node) {
+    private static void evalIsNotNull(Tree node) {
         assertEquals(1, node.getChildCount());
     }
 
-    private void evalLessThan(Tree node) {
+    private static void evalLessThan(Tree node) {
         assertEquals(2, node.getChildCount());
     }
 
-    private void evalBooleanLiteral(Tree node) {
+    private static void evalBooleanLiteral(Tree node) {
         assertEquals(0, node.getChildCount());
     }
 
-    private void evalStringLiteral(Tree node) {
+    private static void evalStringLiteral(Tree node) {
         assertEquals(0, node.getChildCount());
     }
 
-    private void evalContains(Tree node) {
+    private static void evalContains(Tree node) {
         assertEquals(1, node.getChildCount());
     }
 
-    private void evalExactNumLiteral(Tree node) {
+    private static void evalExactNumLiteral(Tree node) {
         assertEquals(0, node.getChildCount());
     }
 
-    private void evalLessOrEqual(Tree node) {
+    private static void evalLessOrEqual(Tree node) {
         assertEquals(2, node.getChildCount());
     }
 
-    private void evalNot(Tree node) {
+    private static void evalNot(Tree node) {
         assertEquals(1, node.getChildCount());
     }
 
-    private void evalId(Tree node) {
+    private static void evalId(Tree node) {
         assertEquals(0, node.getChildCount());
     }
 
-    private void evalAnd(Tree node) {
+    private static void evalAnd(Tree node) {
         assertEquals(2, node.getChildCount());
     }
 
     private void evalIn(Tree node) {
     }
 
-    private void evalNotEquals(Tree node) {
+    private static void evalNotEquals(Tree node) {
         assertEquals(2, node.getChildCount());
     }
 
-    private void evalScore(Tree node) {
+    private static void evalScore(Tree node) {
         assertEquals(0, node.getChildCount());
     }
 
-    private void evalInTree(Tree node) {
+    private static void evalInTree(Tree node) {
         assertEquals(1, node.getChildCount());
     }
 
-    private void evalOr(Tree node) {
+    private static void evalOr(Tree node) {
         assertEquals(2, node.getChildCount());
     }
 
-    private void evalGreaterThan(Tree node) {
+    private static void evalGreaterThan(Tree node) {
         assertEquals(2, node.getChildCount());
     }
 
-    private void evalTimeLiteral(Tree node) {
+    private static void evalTimeLiteral(Tree node) {
         assertEquals(0, node.getChildCount());
     }
 

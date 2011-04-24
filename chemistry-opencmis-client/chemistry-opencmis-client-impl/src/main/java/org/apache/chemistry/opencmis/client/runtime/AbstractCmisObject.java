@@ -540,7 +540,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     }
 
     public TransientCmisObject getTransientObject() {
-        return (TransientCmisObject) getAdapter(TransientCmisObject.class);
+        return getAdapter(TransientCmisObject.class);
     }
 
     protected TransientCmisObject createTransientCmisObject() {

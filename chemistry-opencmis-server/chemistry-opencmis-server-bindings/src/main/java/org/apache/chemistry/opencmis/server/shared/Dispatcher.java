@@ -67,7 +67,7 @@ public class Dispatcher implements Serializable {
 
     /**
      * Find the appropriate method an call it.
-     * 
+     *
      * @return <code>true</code> if the method was found, <code>false</code>
      *         otherwise.
      */
@@ -84,8 +84,6 @@ public class Dispatcher implements Serializable {
 
         try {
             m.invoke(null, context, service, repositoryId, request, response);
-        } catch (IllegalArgumentException e) {
-            throw e;
         } catch (IllegalAccessException e) {
             throw new CmisRuntimeException("Internal error!", e);
         } catch (InvocationTargetException e) {
@@ -102,7 +100,7 @@ public class Dispatcher implements Serializable {
     /**
      * Generates a map key from a resource and an HTTP method.
      */
-    private String getKey(String resource, String httpMethod) {
+    private static String getKey(String resource, String httpMethod) {
         return resource + "/" + httpMethod;
     }
 }

@@ -60,8 +60,6 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 public abstract class AbstractTransientCmisObject implements TransientCmisObject {
 
-    private static final long serialVersionUID = 1L;
-
     protected Session session;
     protected CmisObject object;
 
@@ -540,7 +538,7 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
      * Returns a list of values.
      */
     @SuppressWarnings("unchecked")
-    private <T> List<T> checkProperty(PropertyDefinition<T> propertyDefinition, Object value) {
+    private static <T> List<T> checkProperty(PropertyDefinition<T> propertyDefinition, Object value) {
 
         // null values are ok for updates
         if (value == null) {

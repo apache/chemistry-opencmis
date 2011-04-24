@@ -345,7 +345,7 @@ public class AtomEntryParser {
     /**
      * Parses a tag that contains text.
      */
-    private String readText(XMLStreamReader parser) throws Exception {
+    private static String readText(XMLStreamReader parser) throws Exception {
         StringBuilder sb = new StringBuilder();
 
         next(parser);
@@ -376,7 +376,7 @@ public class AtomEntryParser {
     /**
      * Parses a tag that contains base64 encoded content.
      */
-    private LightByteArrayOutputStream readBase64(XMLStreamReader parser) throws Exception {
+    private static LightByteArrayOutputStream readBase64(XMLStreamReader parser) throws Exception {
         LightByteArrayOutputStream bufferStream = new LightByteArrayOutputStream();
         Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
 
@@ -408,7 +408,7 @@ public class AtomEntryParser {
     /**
      * Copies a subtree into a stream.
      */
-    private byte[] copy(XMLStreamReader parser) throws Exception {
+    private static byte[] copy(XMLStreamReader parser) throws Exception {
         // create a writer
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
@@ -449,7 +449,7 @@ public class AtomEntryParser {
     /**
      * Copies a XML start element.
      */
-    private void copyStartElement(XMLStreamReader parser, XMLStreamWriter writer) throws Exception {
+    private static void copyStartElement(XMLStreamReader parser, XMLStreamWriter writer) throws Exception {
         String namespaceUri = parser.getNamespaceURI();
         String prefix = parser.getPrefix();
         String localName = parser.getLocalName();
@@ -493,7 +493,7 @@ public class AtomEntryParser {
      * Checks if the given prefix is assigned to the given namespace.
      */
     @SuppressWarnings("unchecked")
-    private void addNamespaceIfMissing(XMLStreamWriter writer, String prefix, String namespaceUri) throws Exception {
+    private static void addNamespaceIfMissing(XMLStreamWriter writer, String prefix, String namespaceUri) throws Exception {
         if ((namespaceUri == null) || (namespaceUri.trim().length() == 0)) {
             return;
         }
@@ -520,7 +520,7 @@ public class AtomEntryParser {
     /**
      * Adds a namespace to a XML element.
      */
-    private void addNamespace(XMLStreamWriter writer, String prefix, String namespaceUri) throws Exception {
+    private static void addNamespace(XMLStreamWriter writer, String prefix, String namespaceUri) throws Exception {
         if ((prefix == null) || (prefix.trim().length() == 0)) {
             writer.setDefaultNamespace(namespaceUri);
             writer.writeDefaultNamespace(namespaceUri);
@@ -533,7 +533,7 @@ public class AtomEntryParser {
     /**
      * Skips a tag or subtree.
      */
-    private void skip(XMLStreamReader parser) throws Exception {
+    private static void skip(XMLStreamReader parser) throws Exception {
         int level = 1;
         while (next(parser)) {
             int event = parser.getEventType();
@@ -550,7 +550,7 @@ public class AtomEntryParser {
         next(parser);
     }
 
-    private boolean next(XMLStreamReader parser) throws Exception {
+    private static boolean next(XMLStreamReader parser) throws Exception {
         if (parser.hasNext()) {
             try {
                 parser.next();

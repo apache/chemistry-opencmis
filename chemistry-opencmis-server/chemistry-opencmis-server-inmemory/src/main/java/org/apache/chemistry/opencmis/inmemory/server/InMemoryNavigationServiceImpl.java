@@ -130,7 +130,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getChildren()");
 
-        validator.getChildren(repositoryId, folderId, extension);        
+        validator.getChildren(repositoryId, folderId, extension);
 
         int maxItemsInt = maxItems == null ? -1 : maxItems.intValue();
         int skipCountInt = skipCount == null ? -1 : skipCount.intValue();
@@ -152,13 +152,13 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         validator.getDescendants(context, repositoryId, folderId, extension);
 
         int levels;
-        if (depth == null)
+        if (depth == null) {
             levels = 2; // one of the recommended defaults (should it be
-        // -1?)
-        else if (depth.intValue() == 0)
+        } else if (depth.intValue() == 0) {
             throw new CmisInvalidArgumentException("A zero depth is not allowed for getDescendants().");
-        else
+        } else {
             levels = depth.intValue();
+        }
 
         int level = 0;
         String user = context.getUsername();
@@ -175,18 +175,20 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getFolderParent()");
 
-        StoredObject so = validator.getFolderParent(context, repositoryId, folderId, extension);             
+        StoredObject so = validator.getFolderParent(context, repositoryId, folderId, extension);
 
         Folder folder = null;
-        if (so instanceof Folder)
+        if (so instanceof Folder) {
             folder = (Folder) so;
-        else
+        } else {
             throw new CmisInvalidArgumentException("Can't get folder parent, id does not refer to a folder: "
                     + folderId);
+        }
 
         ObjectData res = getFolderParentIntern(repositoryId, folder, filter, context.isObjectInfoRequired() ? objectInfos : null);
-        if (res == null)
+        if (res == null) {
             throw new CmisInvalidArgumentException("Cannot get parent of a root folder");
+        }
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -209,8 +211,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         validator.getFolderTree(context, repositoryId, folderId, extension);
 
-        if (depth != null && depth.intValue() == 0)
+        if (depth != null && depth.intValue() == 0) {
             throw new CmisInvalidArgumentException("A zero depth is not allowed for getFolderTree().");
+        }
 
         int levels = depth == null ? 2 : depth.intValue();
         int level = 0;
@@ -230,7 +233,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getObjectParents()");
 
-        StoredObject so = validator.getObjectParents(context, repositoryId, objectId, extension);             
+        StoredObject so = validator.getObjectParents(context, repositoryId, objectId, extension);
 
         // for now we have only folders that have a parent and the in-memory
         // provider only has one
@@ -238,10 +241,11 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         List<ObjectParentData> result = null;
 
         Filing spo = null;
-        if (so instanceof Filing)
+        if (so instanceof Filing) {
             spo = (Filing) so;
-        else
+        } else {
             return Collections.emptyList();
+        }
 
         result = getObjectParentsIntern(repositoryId, spo, filter, context.isObjectInfoRequired() ? objectInfos : null);
 
@@ -270,13 +274,16 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         StoredObject so = fs.getObjectById(folderId);
         Folder folder = null;
 
-        if (so == null)
+        if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + folderId);
+        }
 
-        if (so instanceof Folder)
+        if (so instanceof Folder) {
             folder = (Folder) so;
-        else
+        }
+        else {
             return null; // it is a document and has no children
+        }
 
         List<? extends StoredObject> children = folderOnly ? folder.getFolderChildren(maxItems, skipCount) : folder
                 .getChildren(maxItems, skipCount);
@@ -286,8 +293,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         for (StoredObject spo : children) {
             ObjectInFolderDataImpl oifd = new ObjectInFolderDataImpl();
             ObjectDataImpl objectData = new ObjectDataImpl();
-            if (includePathSegments != null && includePathSegments)
+            if (includePathSegments != null && includePathSegments) {
                 oifd.setPathSegment(spo.getName());
+            }
             if (includeAllowableActions != null && includeAllowableActions) {
                 AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
                 objectData.setAllowableActions(allowableActions);
@@ -352,8 +360,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                             level + 1, maxLevels, folderOnly, objectInfos, user);
 
                     oifc.setObject(child);
-                    if (null != subChildren)
+                    if (null != subChildren) {
                         oifc.setChildren(subChildren);
+                    }
                     childrenOfFolderId.add(oifc);
                 }
             }
@@ -381,13 +390,14 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 String relPathSeg = path.substring(beginIndex, path.length());
                 parentData.setRelativePathSegment(relPathSeg);
                 result = Collections.singletonList((ObjectParentData) parentData);
-            } else
+            } else {
                 result = Collections.emptyList();
+            }
         } else if (sop instanceof MultiFiling) {
             result = new ArrayList<ObjectParentData>();
             MultiFiling multiParentObj = (MultiFiling) sop;
             List<Folder> parents = multiParentObj.getParents();
-            if (null != parents)
+            if (null != parents) {
                 for (Folder parent : parents) {
                     ObjectParentDataImpl parentData = new ObjectParentDataImpl();
                     ObjectDataImpl objData = new ObjectDataImpl();
@@ -401,6 +411,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                         objectInfos.addObjectInfo(objectInfo);
                     }
                 }
+            }
         }
         return result;
     }

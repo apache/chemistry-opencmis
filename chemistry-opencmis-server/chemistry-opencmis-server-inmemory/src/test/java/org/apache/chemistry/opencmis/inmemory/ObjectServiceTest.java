@@ -104,29 +104,32 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
     ObjectCreator fCreator;
 
+    @Override
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setTypeCreatorClass(ObjectTestTypeSystemCreator.class.getName());
         super.setUp();
         fCreator = new ObjectCreator(fFactory, fObjSvc, fRepositoryId);
     }
-    
+
+    @Override
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         super.tearDown();
     }
-    
+
     @Override
     protected void addParameters(Map<String, String> parameters) {
         parameters.put(ConfigConstants.MAX_CONTENT_SIZE_KB, Integer.valueOf(MAX_SIZE).toString());
     }
-    
+
     @Test
     public void testCreateDocument() {
         log.info("starting testCreateObject() ...");
         String id = createDocument(fRootFolderId, false);
-        if (id != null)
+        if (id != null) {
             log.info("createDocument succeeded with created id: " + id);
+        }
         log.info("... testCreateObject() finished.");
 
         // test create a document with a folder type, should fail:
@@ -159,14 +162,14 @@ public class ObjectServiceTest extends AbstractServiceTest {
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
         }
-        
+
         try {
             createDocumentNoCatch("", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
             fail("Document creation with empty name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
         }
- 
+
         try {
             createDocumentNoCatch("/(%#$�", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
             fail("Document creation with ilegal name should fail.");
@@ -182,7 +185,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertTrue(e instanceof CmisNameConstraintViolationException);
         }
     }
-    
+
     @Test
     public void testCreateFolderInvalidNames() {
         try {
@@ -191,14 +194,14 @@ public class ObjectServiceTest extends AbstractServiceTest {
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
         }
-        
+
         try {
             createFolderNoCatch("", fRootFolderId, FOLDER_TYPE_ID);
             fail("Folder creation with empty name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
         }
- 
+
         try {
             createFolderNoCatch("/(%#$�", fRootFolderId, FOLDER_TYPE_ID);
             fail("Folder creation with ilegal name should fail.");
@@ -214,14 +217,15 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertTrue(e instanceof CmisNameConstraintViolationException);
         }
     }
-     
+
     @Test
     public void testGetObject() {
         log.info("starting testGetObject() ...");
         log.info("  creating object");
         String id = createDocument(fRootFolderId, false);
-        if (id != null)
+        if (id != null) {
             log.info("  createDocument succeeded with created id: " + id);
+        }
 
         log.info("  getting object");
         retrieveDocument(id);
@@ -282,8 +286,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public void testCreateDocumentWithContent() {
         log.info("starting testCreateDocumentWithContent() ...");
         String id = createDocument(fRootFolderId, true);
-        if (id != null)
+        if (id != null) {
             log.info("createDocument succeeded with created id: " + id);
+        }
 
         ContentStream sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
                 BigInteger.valueOf(-1) /* length */, null);
@@ -339,8 +344,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
         try {
             id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, contentStream, VersioningState.NONE, policies,
                     addACEs, removeACEs, extension);
-            if (null == id)
+            if (null == id) {
                 fail("createDocument failed.");
+            }
 
             ContentStream sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
                     BigInteger.valueOf(-1) /* length */, null);
@@ -350,7 +356,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             fail("createDocument() failed with exception: " + e);
         }
     }
-    
+
     @Test
     public void testCreateDocumentFromSource() {
         log.info("starting testCreateDocumentFromSource() ...");
@@ -363,8 +369,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
             Properties props = createDocumentPropertiesForDocumentFromSource("Document From Source");
             id2 = fObjSvc.createDocumentFromSource(fRepositoryId, id1, props, fRootFolderId, versioningState, null,
                     null, null, null);
-            if (null == id2)
+            if (null == id2) {
                 fail("createDocumentFromSource failed.");
+            }
         } catch (Exception e) {
             fail("createDocumentFromSource() failed with exception: " + e);
         }
@@ -387,8 +394,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("  creating object");
 
         String id = createDocumentInheritedProperties(fRootFolderId, false);
-        if (id != null)
+        if (id != null) {
             log.info("  createDocument succeeded with created id: " + id);
+        }
 
         log.info("  getting object");
         try {
@@ -473,8 +481,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("Testing to delete a document");
         log.info("  creating object");
         String id = createDocument(fRootFolderId, false);
-        if (id != null)
+        if (id != null) {
             log.info("  createDocument succeeded with created id: " + id);
+        }
 
         log.info("  getting object");
         retrieveDocument(id);
@@ -606,8 +615,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("starting testUpdateProperties() ...");
         String oldChangeToken, newChangeToken;
         String id = createDocumentWithCustomType(fRootFolderId, false);
-        if (id != null)
+        if (id != null) {
             log.info("createDocument succeeded with created id: " + id);
+        }
 
         log.info("  getting object");
         try {
@@ -793,8 +803,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public void testDefaultPropertiesDocument() {
         log.info("starting testDefaultPropertiesDocument() ...");
         String id = createDocument("DefPropDoc", fRootFolderId, TEST_DOC_TYPE_WITH_DEFAULTS_ID, false);
-        if (id != null)
+        if (id != null) {
             log.info("createDocument succeeded with created id: " + id);
+        }
         ObjectData res = getDocumentObjectData(id);
         Map<String, PropertyData<?>> props = res.getProperties().getProperties();
         PropertyData<?> pd =  props.get(TEST_DOCUMENT_MY_INT_PROP_ID);
@@ -802,29 +813,30 @@ public class ObjectServiceTest extends AbstractServiceTest {
         Object bi = pd.getFirstValue();
         assertNotNull(bi);
         assertEquals(BigInteger.valueOf(100), bi);
-        
+
         pd =  props.get(TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID);
         assertNotNull(pd);
         List<String> valueList = (List<String>) pd.getValues();
         assertNotNull(valueList);
         assertTrue(valueList.contains("Apache"));
         assertTrue(valueList.contains("CMIS"));
-        
+
         pd =  props.get(TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT);
         assertNotNull(pd);
         bi = pd.getFirstValue();
         assertNotNull(bi);
         assertEquals(BigInteger.valueOf(100), bi);
-   
+
         log.info("... testDefaultPropertiesDocument() finished.");
     }
-    
+
     @Test
     public void testDefaultPropertiesFolder() {
         log.info("starting testDefaultPropertiesFolder() ...");
         String id = createFolder("DefPropFolder", fRootFolderId, TEST_FOLDER_TYPE_WITH_DEFAULTS_ID);
-        if (id != null)
+        if (id != null) {
             log.info("createDocument succeeded with created id: " + id);
+        }
         ObjectData res = getDocumentObjectData(id);
         Map<String, PropertyData<?>> props = res.getProperties().getProperties();
         PropertyData<?> pd =  props.get(TEST_FOLDER_MY_INT_PROP_ID);
@@ -832,20 +844,20 @@ public class ObjectServiceTest extends AbstractServiceTest {
         Object bi = pd.getFirstValue();
         assertNotNull(bi);
         assertEquals(BigInteger.valueOf(100), bi);
-        
+
         pd =  props.get(TEST_FOLDER_MY_MULTI_STRING_PROP_ID);
         assertNotNull(pd);
         List<String> valueList = (List<String>) pd.getValues();
         assertNotNull(valueList);
         assertTrue(valueList.contains("Apache"));
         assertTrue(valueList.contains("CMIS"));
-        
+
         pd =  props.get(TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT);
         assertNotNull(pd);
         bi = pd.getFirstValue();
         assertNotNull(bi);
         assertEquals(BigInteger.valueOf(100), bi);
-   
+
         log.info("... testDefaultPropertiesFolder() finished.");
     }
 
@@ -854,8 +866,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("starting testGetObjectNoObjectIdInFilter() ...");
         log.info("  creating object");
         String id = createDocument(fRootFolderId, false);
-        if (id != null)
+        if (id != null) {
             log.info("  createDocument succeeded with created id: " + id);
+        }
 
         log.info("  getting object");
         String filter = PropertyIds.NAME + "," + PropertyIds.CREATION_DATE + "," + PropertyIds.LAST_MODIFICATION_DATE;
@@ -866,7 +879,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("... testGetObjectNoObjectIdInFilter() finished.");
     }
 
-    private void verifyAllowableActionsDocument(Set<Action> actions, boolean isVersioned, boolean hasContent) {
+    private static void verifyAllowableActionsDocument(Set<Action> actions, boolean isVersioned, boolean hasContent) {
         assertTrue(actions.contains(Action.CAN_DELETE_OBJECT));
         assertTrue(actions.contains(Action.CAN_UPDATE_PROPERTIES));
         assertTrue(actions.contains(Action.CAN_GET_PROPERTIES));
@@ -947,8 +960,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
         gen.dumpFolder(fRootFolderId, propertyFilter);
         Holder<String> holder = new Holder<String>();
         String sourceIdToMove = gen.getFolderId(rootFolderId, 2, 1);
-        if (!isFolder) // get first document in this folder
+        if (!isFolder) {
             sourceIdToMove = gen.getDocumentId(sourceIdToMove, 0);
+        }
         holder.setValue(sourceIdToMove); // "/Folder_1/My Folder 0/My Folder 1");
         String sourceFolderId = getSourceFolder(sourceIdToMove);
         log.info("Id before moveObject: " + holder.getValue());
@@ -1032,15 +1046,17 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         Properties props = fFactory.createPropertiesData(properties);
 
-        if (withContent)
+        if (withContent) {
             contentStream = createContent();
+        }
 
         // create the document
         String id = null;
         id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies, addACEs,
                 removeACEs, extension);
-        if (null == id)
+        if (null == id) {
             throw new RuntimeException("createDocument failed.");
+        }
         return id;
     }
 
@@ -1065,15 +1081,17 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         Properties props = fFactory.createPropertiesData(properties);
 
-        if (withContent)
+        if (withContent) {
             contentStream = createContent();
+        }
 
         // create the document
         String id = null;
         id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies, addACEs,
                 removeACEs, extension);
-        if (null == id)
+        if (null == id) {
             throw new RuntimeException("createDocument failed.");
+        }
         return id;
     }
 
@@ -1163,7 +1181,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
             return cmisDocumentType;
         }
-        
+
         private static InMemoryDocumentTypeDefinition createDocumentTypeWithDefault() {
             InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(
                     TEST_DOC_TYPE_WITH_DEFAULTS_ID, "Document Type With default values", InMemoryDocumentTypeDefinition
@@ -1182,16 +1200,16 @@ public class ObjectServiceTest extends AbstractServiceTest {
             List<BigInteger> defVal = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop2.setDefaultValue(defVal);
             propertyDefinitions.put(prop2.getId(), prop2);
-            
+
             PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default");
             prop3.setIsRequired(true);
             List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop3.setDefaultValue(defVal2);
-            propertyDefinitions.put(prop3.getId(), prop3);          
+            propertyDefinitions.put(prop3.getId(), prop3);
 
             cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
-            
+
             return cmisDocumentType;
         }
 
@@ -1213,16 +1231,16 @@ public class ObjectServiceTest extends AbstractServiceTest {
             List<BigInteger> defVal = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop2.setDefaultValue(defVal);
             propertyDefinitions.put(prop2.getId(), prop2);
-            
+
             PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default");
             prop3.setIsRequired(true);
             List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop3.setDefaultValue(defVal2);
-            propertyDefinitions.put(prop3.getId(), prop3);          
+            propertyDefinitions.put(prop3.getId(), prop3);
 
             cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
-            
+
             return cmisFolderType;
         }
     }
@@ -1231,7 +1249,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public void testMaxContentSize() {
         log.info("starting testMaxContentSize() ...");
         try {
-            createContent(MAX_SIZE + 1, MAX_SIZE); 
+            createContent(MAX_SIZE + 1, MAX_SIZE);
             fail("createContent with exceeded content size should fail.");
         } catch (CmisInvalidArgumentException e) {
             log.debug("createDocument with exceeded failed as excpected.");
@@ -1239,7 +1257,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             log.debug("createDocument with exceeded failed with wrong exception (expected CmisInvalidArgumentException, got "
                     + e1.getClass().getName() + ").");
         }
-        
+
         try {
             ContentStream contentStream = createContent(MAX_SIZE + 1);
             Properties props = createDocumentProperties("TestMaxContentSize", DOCUMENT_TYPE_ID);
@@ -1253,5 +1271,5 @@ public class ObjectServiceTest extends AbstractServiceTest {
                     + e1.getClass().getName() + ").");
         }
     }
-    
+
 }

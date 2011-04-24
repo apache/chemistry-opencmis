@@ -70,9 +70,10 @@ import java.util.Set;
 
 /**
  * Common base class for all JCR <code>Node</code>s to be represented as CMIS objects. Instances of this class
- * are responsible for mapping from CMIS to JCR and vice versa. 
+ * are responsible for mapping from CMIS to JCR and vice versa.
  */
 public abstract class JcrNode {
+
     private static final Log log = LogFactory.getLog(JcrNode.class);
 
     /**
@@ -98,12 +99,13 @@ public abstract class JcrNode {
 
     /**
      * Create a new instance wrapping a JCR <code>node</code>.
+     *
      * @param node  the JCR <code>node</code> to represent
      * @param typeManager
      * @param pathManager
      * @param nodeFactory
      */
-    public JcrNode(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
+    protected JcrNode(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
         this.node = node;
         this.typeManager = typeManager;
         this.pathManager = pathManager;
@@ -172,7 +174,7 @@ public abstract class JcrNode {
     public boolean isFolder() {
         return BaseTypeId.CMIS_FOLDER == getBaseTypeId();
     }
-    
+
     /**
      * @return  <code>true</code> iff this instance represents a versionable CMIS object
      */
@@ -455,7 +457,7 @@ public abstract class JcrNode {
     protected abstract BaseTypeId getBaseTypeId();
 
     /**
-     * @return  the value of the <code>cmis:objectTypeId</code> property 
+     * @return  the value of the <code>cmis:objectTypeId</code> property
      */
     protected abstract String getTypeIdInternal();
 
@@ -608,7 +610,7 @@ public abstract class JcrNode {
 
     /**
      * Factory method for creating a new <code>JcrNode</code> instance from a JCR <code>Node</code>
-     * 
+     *
      * @param node  the JCR <code>Node</code>
      * @return  a new <code>JcrNode</code>
      */
@@ -821,7 +823,7 @@ public abstract class JcrNode {
      *
      * @param node  the node for which to retrieve the version history
      * @return  version history of <code>node</code>
-     * @throws RepositoryException  if <code>node</code> is not versionable 
+     * @throws RepositoryException  if <code>node</code> is not versionable
      */
     protected static VersionHistory getVersionHistory(Node node) throws RepositoryException {
         return getVersionManager(node).getVersionHistory(node.getPath());
@@ -829,7 +831,7 @@ public abstract class JcrNode {
 
     /**
      * Utility function for retrieving the version manager from a JCR <code>Node</code>.
-     * 
+     *
      * @param node
      * @return
      * @throws RepositoryException
@@ -864,7 +866,7 @@ public abstract class JcrNode {
     }
 
     /**
-     * Utility function for retrieving a string property from a JCR <code>Node</code> or a default 
+     * Utility function for retrieving a string property from a JCR <code>Node</code> or a default
      * value in case of an error.
      *
      * @param node
@@ -884,7 +886,7 @@ public abstract class JcrNode {
     /**
      * Utility function for retrieving a date property from a JCR <code>Node</code> or a default
      * value in case of an error.
-     * 
+     *
      * @param node
      * @param propertyName
      * @param defaultValue
@@ -905,7 +907,7 @@ public abstract class JcrNode {
 
     /**
      * Add <code>action</code> to <code>actions</code> iff <code>condition</code> is true.
-     * 
+     *
      * @param actions
      * @param action
      * @param condition

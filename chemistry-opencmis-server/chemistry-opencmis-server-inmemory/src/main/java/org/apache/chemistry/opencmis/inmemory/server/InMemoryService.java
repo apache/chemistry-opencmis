@@ -93,20 +93,24 @@ public class InMemoryService extends AbstractCmisService {
         return fRepSvc.getRepositoryInfos(getCallContext(), extension);
     }
 
+    @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         return fRepSvc.getRepositoryInfo(getCallContext(), repositoryId, extension);
     }
 
+    @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         return fRepSvc.getTypeChildren(getCallContext(), repositoryId, typeId, includePropertyDefinitions, maxItems,
                 skipCount, extension);
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         return fRepSvc.getTypeDefinition(getCallContext(), repositoryId, typeId, extension);
     }
 
+    @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         return fRepSvc.getTypeDescendants(getCallContext(), repositoryId, typeId, depth, includePropertyDefinitions,
@@ -115,6 +119,7 @@ public class InMemoryService extends AbstractCmisService {
 
     // --- navigation service ---
 
+    @Override
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -122,6 +127,7 @@ public class InMemoryService extends AbstractCmisService {
                 includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension, this);
     }
 
+    @Override
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -129,6 +135,7 @@ public class InMemoryService extends AbstractCmisService {
                 includeRelationships, renditionFilter, includePathSegment, maxItems, skipCount, extension, this);
     }
 
+    @Override
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -136,10 +143,12 @@ public class InMemoryService extends AbstractCmisService {
                 includeRelationships, renditionFilter, includePathSegment, extension, this);
     }
 
+    @Override
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
         return fNavSvc.getFolderParent(getCallContext(), repositoryId, folderId, filter, extension, this);
     }
 
+    @Override
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -147,6 +156,7 @@ public class InMemoryService extends AbstractCmisService {
                 includeRelationships, renditionFilter, includePathSegment, extension, this);
     }
 
+    @Override
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
@@ -156,6 +166,7 @@ public class InMemoryService extends AbstractCmisService {
 
     // --- object service ---
 
+    @Override
     public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState, List<String> policies, ExtensionsData extension) {
         String id = fObjSvc.create(getCallContext(), repositoryId, properties, folderId, contentStream,
@@ -164,6 +175,7 @@ public class InMemoryService extends AbstractCmisService {
 
     }
 
+    @Override
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
@@ -171,6 +183,7 @@ public class InMemoryService extends AbstractCmisService {
                 versioningState, policies, addAces, removeAces, extension);
     }
 
+    @Override
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -178,53 +191,63 @@ public class InMemoryService extends AbstractCmisService {
                 versioningState, policies, addAces, removeAces, extension);
     }
 
+    @Override
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         return fObjSvc.createFolder(getCallContext(), repositoryId, properties, folderId, policies, addAces,
                 removeAces, extension);
     }
 
+    @Override
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         return fObjSvc.createPolicy(getCallContext(), repositoryId, properties, folderId, policies, addAces,
                 removeAces, extension);
     }
 
+    @Override
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         return fObjSvc.createRelationship(getCallContext(), repositoryId, properties, policies, addAces, removeAces,
                 extension);
     }
 
+    @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         fObjSvc.deleteContentStream(getCallContext(), repositoryId, objectId, changeToken, extension);
     }
 
+    @Override
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
         fObjSvc.deleteObjectOrCancelCheckOut(getCallContext(), repositoryId, objectId, allVersions, extension);
     }
 
+    @Override
     public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
             ExtensionsData extension) {
         fObjSvc.deleteObjectOrCancelCheckOut(getCallContext(), repositoryId, objectId, allVersions, extension);
     }
 
+    @Override
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
         return fObjSvc.deleteTree(getCallContext(), repositoryId, folderId, allVersions, unfileObjects,
                 continueOnFailure, extension);
     }
 
+    @Override
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         return fObjSvc.getAllowableActions(getCallContext(), repositoryId, objectId, extension);
     }
 
+    @Override
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
         return fObjSvc.getContentStream(getCallContext(), repositoryId, objectId, streamId, offset, length, extension);
     }
 
+    @Override
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -232,6 +255,7 @@ public class InMemoryService extends AbstractCmisService {
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, this);
     }
 
+    @Override
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -239,27 +263,32 @@ public class InMemoryService extends AbstractCmisService {
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, this);
     }
 
+    @Override
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         return fObjSvc.getProperties(getCallContext(), repositoryId, objectId, filter, extension);
     }
 
+    @Override
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         return fObjSvc.getRenditions(getCallContext(), repositoryId, objectId, renditionFilter, maxItems, skipCount,
                 extension);
     }
 
+    @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         fObjSvc.moveObject(getCallContext(), repositoryId, objectId, targetFolderId, sourceFolderId, extension, this);
     }
 
+    @Override
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         fObjSvc.setContentStream(getCallContext(), repositoryId, objectId, overwriteFlag, changeToken, contentStream,
                 extension);
     }
 
+    @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         fObjSvc.updateProperties(getCallContext(), repositoryId, objectId, changeToken, properties, null, extension,
@@ -268,10 +297,12 @@ public class InMemoryService extends AbstractCmisService {
 
     // --- versioning service ---
 
+    @Override
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
         fVerSvc.cancelCheckOut(getCallContext(), repositoryId, objectId, extension);
     }
 
+    @Override
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -279,11 +310,13 @@ public class InMemoryService extends AbstractCmisService {
                 policies, addAces, removeAces, extension, this);
     }
 
+    @Override
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
         fVerSvc.checkOut(getCallContext(), repositoryId, objectId, extension, contentCopied, this);
     }
 
+    @Override
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
@@ -292,26 +325,30 @@ public class InMemoryService extends AbstractCmisService {
                 extension, this);
     }
 
+    @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
         return fVerSvc.getPropertiesOfLatestVersion(getCallContext(), repositoryId, objectId, versionSeriesId, major, filter,
                 extension);
     }
 
+    @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
-        return fVerSvc.getAllVersions(getCallContext(), repositoryId, objectId, versionSeriesId, 
+        return fVerSvc.getAllVersions(getCallContext(), repositoryId, objectId, versionSeriesId,
                 filter, includeAllowableActions, extension, this);
     }
 
     // --- discovery service ---
 
+    @Override
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
         return fDisSvc.getContentChanges(getCallContext(), repositoryId, changeLogToken, includeProperties, filter, includePolicyIds,
                 includeAcl, maxItems, extension, this);
     }
 
+    @Override
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -321,17 +358,20 @@ public class InMemoryService extends AbstractCmisService {
 
     // --- multi filing service ---
 
+    @Override
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         fMultiSvc.addObjectToFolder(getCallContext(), repositoryId, objectId, folderId, allVersions, extension, this);
     }
 
+    @Override
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         fMultiSvc.removeObjectFromFolder(getCallContext(), repositoryId, objectId, folderId, extension, this);
     }
 
     // --- relationship service ---
 
+    @Override
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -341,35 +381,40 @@ public class InMemoryService extends AbstractCmisService {
 
     // --- ACL service ---
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl aces, AclPropagation aclPropagation) {
         return super.applyAcl(repositoryId, objectId, aces, aclPropagation);
     }
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
         return super.applyAcl(repositoryId, objectId, addAces, removeAces, aclPropagation, extension);
     }
 
+    @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         return super.getAcl(repositoryId, objectId, onlyBasicPermissions, extension);
     }
 
     // --- policy service ---
 
+    @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         super.applyPolicy(repositoryId, policyId, objectId, extension);
     }
 
+    @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
         return super.getAppliedPolicies(repositoryId, objectId, filter, extension);
     }
 
+    @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         super.removePolicy(repositoryId, policyId, objectId, extension);
     }
 
-    // //////////////
-    //	
+    // /////////////
 
 }

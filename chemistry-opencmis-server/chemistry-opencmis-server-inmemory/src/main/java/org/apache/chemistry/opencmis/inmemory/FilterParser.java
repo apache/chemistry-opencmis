@@ -36,27 +36,29 @@ public class FilterParser {
     }
 
     public static boolean isContainedInFilter(String propertyId, List<String> requestedIds) {
-        if (requestedIds.contains("*"))
+        if (requestedIds.contains("*")) {
             return true;
+        }
         return requestedIds.contains(propertyId);
     }
 
     public static List<String> getRequestedIdsFromFilter(String filter) {
-        if (filter == null || filter.length() == 0)
+        if (filter == null || filter.length() == 0) {
             return Collections.singletonList("*");
-        else {
+        } else {
             List<String> requestedIds = Arrays.asList(filter.split(",\\s*")); // comma
             // plus
             // whitespace
-            
+
             // add object id because this is always needed in AtomPub binding:
             if (!(requestedIds.contains(PropertyIds.OBJECT_ID))) {
                 requestedIds = new ArrayList<String>(requestedIds); // copy immutable list
                 requestedIds.add(PropertyIds.OBJECT_ID);
             }
-            
-            if (requestedIds.contains("*"))
+
+            if (requestedIds.contains("*")) {
                 requestedIds = Collections.singletonList("*");
+            }
             return requestedIds;
         }
     }

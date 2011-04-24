@@ -177,7 +177,7 @@ public class TypeManager {
         // addTypeInteral(policyType);
     }
 
-    private void addBasePropertyDefinitions(AbstractTypeDefinition type) {
+    private static void addBasePropertyDefinitions(AbstractTypeDefinition type) {
         type.addPropertyDefinition(createPropDef(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
                 PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, true));
 
@@ -207,7 +207,7 @@ public class TypeManager {
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
     }
 
-    private void addFolderPropertyDefinitions(FolderTypeDefinitionImpl type) {
+    private static void addFolderPropertyDefinitions(FolderTypeDefinitionImpl type) {
         type.addPropertyDefinition(createPropDef(PropertyIds.PARENT_ID, "Parent Id", "Parent Id", PropertyType.ID,
                 Cardinality.SINGLE, Updatability.READONLY, false, false));
 
@@ -219,7 +219,7 @@ public class TypeManager {
                 Cardinality.SINGLE, Updatability.READONLY, false, false));
     }
 
-    private void addDocumentPropertyDefinitions(DocumentTypeDefinitionImpl type) {
+    private static void addDocumentPropertyDefinitions(DocumentTypeDefinitionImpl type) {
         type.addPropertyDefinition(createPropDef(PropertyIds.IS_IMMUTABLE, "Is Immutable", "Is Immutable",
                 PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
@@ -267,7 +267,7 @@ public class TypeManager {
     /**
      * Creates a property definition object.
      */
-    private PropertyDefinition<?> createPropDef(String id, String displayName, String description,
+    private static PropertyDefinition<?> createPropDef(String id, String displayName, String description,
             PropertyType datatype, Cardinality cardinality, Updatability updateability, boolean inherited,
             boolean required) {
         AbstractPropertyDefinition<?> result = null;
@@ -535,7 +535,7 @@ public class TypeManager {
         return copyTypeDefintion(tc.getTypeDefinition());
     }
 
-    private TypeDefinition copyTypeDefintion(TypeDefinition type) {
+    private static TypeDefinition copyTypeDefintion(TypeDefinition type) {
         return Converter.convert(Converter.convert(type));
     }
 }

@@ -54,10 +54,12 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypePolicyDefinitionT
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeRelationshipDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumPropertiesBase;
 
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.*;
+
 /**
  * AtomPub Parser.
  */
-public class AtomPubParser implements CmisAtomPubConstants {
+public class AtomPubParser {
 
     // public constants
     public static final String LINK_REL_CONTENT = "@@content@@";
@@ -127,7 +129,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a service document.
      */
-    private ServiceDoc parseServiceDoc(XMLStreamReader parser) throws Exception {
+    private static ServiceDoc parseServiceDoc(XMLStreamReader parser) throws Exception {
         ServiceDoc result = new ServiceDoc();
 
         next(parser);
@@ -161,7 +163,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a workspace element in a service document.
      */
-    private RepositoryWorkspace parseWorkspace(XMLStreamReader parser) throws Exception {
+    private static RepositoryWorkspace parseWorkspace(XMLStreamReader parser) throws Exception {
         RepositoryWorkspace workspace = new RepositoryWorkspace();
 
         next(parser);
@@ -281,7 +283,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses an Allowable Actions document.
      */
-    private AtomAllowableActions parseAllowableActions(XMLStreamReader parser) throws Exception {
+    private static AtomAllowableActions parseAllowableActions(XMLStreamReader parser) throws Exception {
         AtomElement elemenet = unmarshalElement(parser, CmisAllowableActionsType.class);
         return new AtomAllowableActions((CmisAllowableActionsType) elemenet.getObject());
     }
@@ -289,7 +291,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses an ACL document.
      */
-    private AtomAcl parseACL(XMLStreamReader parser) throws Exception {
+    private static AtomAcl parseACL(XMLStreamReader parser) throws Exception {
         AtomElement elemenet = unmarshalElement(parser, CmisAccessControlListType.class);
         return new AtomAcl((CmisAccessControlListType) elemenet.getObject());
     }
@@ -341,7 +343,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Unmarshals a JAXB element.
      */
-    private <T> AtomElement unmarshalElement(XMLStreamReader parser, Class<T> cmisType) throws Exception {
+    private static <T> AtomElement unmarshalElement(XMLStreamReader parser, Class<T> cmisType) throws Exception {
         QName name = parser.getName();
 
         Unmarshaller u = JaxBHelper.createUnmarshaller();
@@ -391,7 +393,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a workspace element.
      */
-    private AtomElement parseWorkspaceElement(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseWorkspaceElement(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
 
         if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
@@ -419,7 +421,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a collection tag.
      */
-    private AtomElement parseCollection(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseCollection(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
         Map<String, String> result = new HashMap<String, String>();
 
@@ -454,7 +456,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a template tag.
      */
-    private AtomElement parseTemplate(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseTemplate(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
         Map<String, String> result = new HashMap<String, String>();
 
@@ -492,7 +494,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a link tag.
      */
-    private AtomElement parseLink(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseLink(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
         AtomLink result = new AtomLink();
 
@@ -516,7 +518,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a link tag.
      */
-    private AtomElement parseAtomContentSrc(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseAtomContentSrc(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
         AtomLink result = new AtomLink();
         result.setRel(LINK_REL_CONTENT);
@@ -537,7 +539,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a text tag.
      */
-    private AtomElement parseText(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseText(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
         return new AtomElement(name, readText(parser));
     }
@@ -545,7 +547,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a text tag and convert it into an integer.
      */
-    private AtomElement parseBigInteger(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseBigInteger(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
         return new AtomElement(name, new BigInteger(readText(parser)));
     }
@@ -553,7 +555,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Parses a tag that contains text.
      */
-    private String readText(XMLStreamReader parser) throws Exception {
+    private static String readText(XMLStreamReader parser) throws Exception {
         StringBuilder sb = new StringBuilder();
 
         next(parser);
@@ -584,7 +586,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
     /**
      * Skips a tag or subtree.
      */
-    private void skip(XMLStreamReader parser) throws Exception {
+    private static void skip(XMLStreamReader parser) throws Exception {
         int level = 1;
         while (next(parser)) {
             int event = parser.getEventType();
@@ -601,7 +603,7 @@ public class AtomPubParser implements CmisAtomPubConstants {
         next(parser);
     }
 
-    private boolean next(XMLStreamReader parser) throws Exception {
+    private static boolean next(XMLStreamReader parser) throws Exception {
         if (parser.hasNext()) {
             parser.next();
             return true;

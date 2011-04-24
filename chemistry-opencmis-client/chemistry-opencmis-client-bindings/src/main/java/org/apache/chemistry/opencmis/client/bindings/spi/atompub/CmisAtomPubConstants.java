@@ -28,53 +28,57 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeRelationshipDefin
 /**
  * Constants for AtomPub.
  */
-public interface CmisAtomPubConstants {
+public final class CmisAtomPubConstants {
+
+    private CmisAtomPubConstants() {
+    }
 
     // service doc
-    String TAG_SERVICE = "service";
-    String TAG_WORKSPACE = "workspace";
-    String TAG_REPOSITORY_INFO = "repositoryInfo";
-    String TAG_COLLECTION = "collection";
-    String TAG_COLLECTION_TYPE = "collectionType";
-    String TAG_URI_TEMPLATE = "uritemplate";
-    String TAG_TEMPLATE_TEMPLATE = "template";
-    String TAG_TEMPLATE_TYPE = "type";
-    String TAG_LINK = "link";
+    public static final String TAG_SERVICE = "service";
+    public static final String TAG_WORKSPACE = "workspace";
+    public static final String TAG_REPOSITORY_INFO = "repositoryInfo";
+    public static final String TAG_COLLECTION = "collection";
+    public static final String TAG_COLLECTION_TYPE = "collectionType";
+    public static final String TAG_URI_TEMPLATE = "uritemplate";
+    public static final String TAG_TEMPLATE_TEMPLATE = "template";
+    public static final String TAG_TEMPLATE_TYPE = "type";
+    public static final String TAG_LINK = "link";
 
     // atom
-    String TAG_ATOM_ID = "id";
-    String TAG_ATOM_TITLE = "title";
-    String TAG_ATOM_UPDATED = "updated";
+    public static final String TAG_ATOM_ID = "id";
+    public static final String TAG_ATOM_TITLE = "title";
+    public static final String TAG_ATOM_UPDATED = "updated";
 
     // feed
-    String TAG_FEED = "feed";
+    public static final String TAG_FEED = "feed";
 
     // entry
-    String TAG_ENTRY = "entry";
-    String TAG_OBJECT = "object";
-    String TAG_NUM_ITEMS = "numItems";
-    String TAG_PATH_SEGMENT = "pathSegment";
-    String TAG_RELATIVE_PATH_SEGMENT = "relativePathSegment";
-    String TAG_TYPE = "type";
-    String TAG_CHILDREN = "children";
-    String TAG_CONTENT = "content";
-    String TAG_CONTENT_MEDIATYPE = "mediatype";
-    String TAG_CONTENT_BASE64 = "base64";
+    public static final String TAG_ENTRY = "entry";
+    public static final String TAG_OBJECT = "object";
+    public static final String TAG_NUM_ITEMS = "numItems";
+    public static final String TAG_PATH_SEGMENT = "pathSegment";
+    public static final String TAG_RELATIVE_PATH_SEGMENT = "relativePathSegment";
+    public static final String TAG_TYPE = "type";
+    public static final String TAG_CHILDREN = "children";
+    public static final String TAG_CONTENT = "content";
+    public static final String TAG_CONTENT_MEDIATYPE = "mediatype";
+    public static final String TAG_CONTENT_BASE64 = "base64";
 
-    String ATTR_DOCUMENT_TYPE = CmisTypeDocumentDefinitionType.class.getAnnotation(XmlType.class).name();
-    String ATTR_FOLDER_TYPE = CmisTypeFolderDefinitionType.class.getAnnotation(XmlType.class).name();
-    String ATTR_RELATIONSHIP_TYPE = CmisTypeRelationshipDefinitionType.class.getAnnotation(XmlType.class).name();
-    String ATTR_POLICY_TYPE = CmisTypePolicyDefinitionType.class.getAnnotation(XmlType.class).name();
+    public static final String ATTR_DOCUMENT_TYPE = CmisTypeDocumentDefinitionType.class.getAnnotation(XmlType.class).name();
+    public static final String ATTR_FOLDER_TYPE = CmisTypeFolderDefinitionType.class.getAnnotation(XmlType.class).name();
+    public static final String ATTR_RELATIONSHIP_TYPE = CmisTypeRelationshipDefinitionType.class.getAnnotation(XmlType.class).name();
+    public static final String ATTR_POLICY_TYPE = CmisTypePolicyDefinitionType.class.getAnnotation(XmlType.class).name();
 
     // allowable actions
-    String TAG_ALLOWABLEACTIONS = "allowableActions";
+    public static final String TAG_ALLOWABLEACTIONS = "allowableActions";
 
     // ACL
-    String TAG_ACL = "acl";
+    public static final String TAG_ACL = "acl";
 
     // links
-    String LINK_REL = "rel";
-    String LINK_HREF = "href";
-    String LINK_TYPE = "type";
-    String CONTENT_SRC = "src";
+    public static final String LINK_REL = "rel";
+    public static final String LINK_HREF = "href";
+    public static final String LINK_TYPE = "type";
+    public static final String CONTENT_SRC = "src";
+
 }

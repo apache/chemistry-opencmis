@@ -282,7 +282,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
     /**
      * Translates an exception in an appropriate HTTP error code.
      */
-    private int getErrorCode(CmisBaseException ex) {
+    private static int getErrorCode(CmisBaseException ex) {
         if (ex instanceof CmisConstraintException) {
             return 409;
         } else if (ex instanceof CmisContentAlreadyExistsException) {
@@ -316,7 +316,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
      * Prints the error as JSON.
      */
     @SuppressWarnings("unchecked")
-    private void printError(Exception ex, HttpServletRequest request, HttpServletResponse response, CallContext context) {
+    private static void printError(Exception ex, HttpServletRequest request, HttpServletResponse response, CallContext context) {
         int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         String exceptionName = "runtime";
 

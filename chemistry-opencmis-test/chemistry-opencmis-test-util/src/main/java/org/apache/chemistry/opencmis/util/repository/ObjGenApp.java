@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
 public class ObjGenApp {
+
     public static final String DEFAULT_USER = "";
     public static final String DEFAULT_PWD = "";
     public static final String PROP_ATOMPUB_URL = "opencmis.test.atompub.url";
@@ -128,8 +129,9 @@ public class ObjGenApp {
 
         OptionSet options = parser.parse(args);
 
-        if (options.valueOf(fCmd) == null || options.has("?"))
+        if (options.valueOf(fCmd) == null || options.has("?")) {
             usage(parser);
+        }
 
         if (options.valueOf(fBinding).equals(BINDING_WS)) {
             fUsingAtom = false;
@@ -172,7 +174,7 @@ public class ObjGenApp {
     // logger.printTimes();
     // }
 
-    private void usage(OptionParser parser) {
+    private static void usage(OptionParser parser) {
         try {
             System.out.println();
             System.out.println("ObjGenApp is a command line tool for testing a CMIS repository.");
@@ -183,12 +185,11 @@ public class ObjGenApp {
             System.out.println("JVM system properties: " + PROP_ATOMPUB_URL + ", " + PROP_WS_URL);
             System.out.println();
             System.out.println("Example: ");
-            System.out
-                    .println("java -D"
-                            + PROP_ATOMPUB_URL
-                            + "=http://localhost:8080/opencmis/atom -cp ... "
-                            + "org.apache.chemistry.opencmis.util.repository.ObjGenApp --Binding=AtomPub --Command=CreateDocument "
-                            + "--RepositoryId=A1 --ContentSizeInKB=25");
+            System.out.println("java -D"
+                    + PROP_ATOMPUB_URL
+                    + "=http://localhost:8080/opencmis/atom -cp ... "
+                    + "org.apache.chemistry.opencmis.util.repository.ObjGenApp --Binding=AtomPub --Command=CreateDocument "
+                    + "--RepositoryId=A1 --ContentSizeInKB=25");
             return;
         } catch (IOException e) {
             e.printStackTrace();
@@ -231,10 +232,11 @@ public class ObjGenApp {
     }
 
     private void printParameters(OptionSet options) {
-        if (fUsingAtom)
+        if (fUsingAtom) {
             System.out.println("Using AtomPub, connecting to  " + getAtomPubUrl());
-        else
+        } else {
             System.out.println("Using WebService, connecting to  " + getWsUrl());
+        }
 
         System.out.println("Repository id is: " + options.valueOf(fRepoId));
         System.out.println("Content size: " + options.valueOf(fContentSize));
@@ -250,13 +252,14 @@ public class ObjGenApp {
         System.out.println("Creating document with parameters:");
         printParameters(options);
         int noThreads = options.valueOf(fThreads);
-        if (noThreads <= 1)
+        if (noThreads <= 1) {
             createSingleDocument(options.valueOf(fRepoId), options.valueOf(fDocType), options.valueOf(fContentSize),
                     options.valueOf(fRootFolder), options.valueOf(fCount), options.valueOf(fCleanup));
-        else
+        } else {
             createSingleDocumentMT(noThreads, options.valueOf(fRepoId), options.valueOf(fDocType), options
                     .valueOf(fContentSize), options.valueOf(fRootFolder), options.valueOf(fCount), options
                     .valueOf(fCleanup));
+        }
     }
 
     private void fillRepository(OptionSet options) {
@@ -269,16 +272,17 @@ public class ObjGenApp {
         System.out.println("Folder Type: " + options.valueOf(fFolderType));
 
         int noThreads = options.valueOf(fThreads);
-        if (noThreads <= 1)
+        if (noThreads <= 1) {
             fillRepository(options.valueOf(fRepoId), options.valueOf(fDocsPerFolder),
                     options.valueOf(fFolderPerFolder), options.valueOf(fDepth), options.valueOf(fDocType), options
                             .valueOf(fFolderType), options.valueOf(fContentSize), options.valueOf(fRootFolder), options
                             .valueOf(fCleanup));
-        else
+        } else {
             fillRepositoryMT(noThreads, options.valueOf(fRepoId), options.valueOf(fDocsPerFolder), options
                     .valueOf(fFolderPerFolder), options.valueOf(fDepth), options.valueOf(fDocType), options
                     .valueOf(fFolderType), options.valueOf(fContentSize), options.valueOf(fRootFolder), options
                     .valueOf(fCleanup));
+        }
 
     }
 
@@ -288,12 +292,13 @@ public class ObjGenApp {
         printParameters(options);
         System.out.println("Folder Type: " + options.valueOf(fFolderType));
         int noThreads = options.valueOf(fThreads);
-        if (noThreads <= 1)
+        if (noThreads <= 1) {
             createFolders(options.valueOf(fRepoId), options.valueOf(fFolderType), options.valueOf(fRootFolder), options
                     .valueOf(fCount), options.valueOf(fCleanup));
-        else
+        } else {
             createFoldersMT(noThreads, options.valueOf(fRepoId), options.valueOf(fFolderType), options
                     .valueOf(fRootFolder), options.valueOf(fCount), options.valueOf(fCleanup));
+        }
     }
 
     private void createSingleDocument(String repoId, String documentType, int contentSizeInKB, String rootFolderId,
@@ -309,11 +314,13 @@ public class ObjGenApp {
         System.out.println("Document creation succeeded.");
         System.out.println("Folder used as root for creation: " + rootFolderId);
         System.out.println("Ids of created documents: ");
-        if (null == ids)
+        if (null == ids) {
             System.out.println("<none>");
-        else
-            for (int i = 0; i < ids.length; i++)
+        } else {
+            for (int i = 0; i < ids.length; i++) {
                 System.out.println(ids[i]);
+            }
+        }
         gen.printTimings();
         gen.resetCounters();
     }
@@ -339,11 +346,13 @@ public class ObjGenApp {
         System.out.println("Result:");
         System.out.println("Folder creation succeeded.");
         System.out.println("Ids of created folders: ");
-        if (null == ids)
+        if (null == ids) {
             System.out.println("<none>");
-        else
-            for (int i = 0; i < ids.length; i++)
+        } else {
+            for (int i = 0; i < ids.length; i++) {
                 System.out.println(ids[i]);
+            }
+        }
         gen.printTimings();
         gen.resetCounters();
     }
@@ -378,19 +387,22 @@ public class ObjGenApp {
 
     private CmisBinding getBinding() {
         if (binding == null) {
-            if (fUsingAtom)
+            if (fUsingAtom) {
                 binding = createAtomBinding(getAtomPubUrl(), DEFAULT_USER, DEFAULT_PWD);
-            else
+            } else {
                 binding = createWsBinding(getWsUrl(), DEFAULT_USER, DEFAULT_PWD);
+            }
         }
         return binding;
     }
 
     private static void filLoginParams(Map<String, String> parameters, String user, String password) {
-        if (user != null && user.length() > 0)
+        if (user != null && user.length() > 0) {
             parameters.put(SessionParameter.USER, user);
-        if (user != null && user.length() > 0)
+        }
+        if (user != null && user.length() > 0) {
             parameters.put(SessionParameter.PASSWORD, password);
+        }
     }
 
     private static CmisBinding createAtomBinding(String url, String user, String password) {
@@ -483,8 +495,9 @@ public class ObjGenApp {
             r = new BufferedReader(isr);
             do {
                 str = r.readLine();
-                if (str != null)
+                if (str != null) {
                     System.out.println(str);
+                }
             } while (str != null);
         } catch (MalformedURLException e) {
             System.out.println("Must enter a valid URL" + e);

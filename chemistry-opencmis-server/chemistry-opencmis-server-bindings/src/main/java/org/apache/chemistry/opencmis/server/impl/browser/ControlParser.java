@@ -85,7 +85,7 @@ public class ControlParser {
         }
     }
 
-    private int getFirstIndex(String controlName) {
+    private static int getFirstIndex(String controlName) {
         int result = -1;
 
         int open = controlName.indexOf('[');
@@ -107,7 +107,7 @@ public class ControlParser {
         return result;
     }
 
-    private int getSecondIndex(String controlName) {
+    private static int getSecondIndex(String controlName) {
         int result = -1;
 
         int open = controlName.indexOf("][");
@@ -129,7 +129,7 @@ public class ControlParser {
         return result;
     }
 
-    private List<String> convertToList(String controlName, Map<Integer, String> map) {
+    private static List<String> convertToList(String controlName, Map<Integer, String> map) {
         if (map == null) {
             return null;
         }

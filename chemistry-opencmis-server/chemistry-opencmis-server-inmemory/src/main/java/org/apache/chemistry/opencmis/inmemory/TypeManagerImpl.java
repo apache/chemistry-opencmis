@@ -42,9 +42,9 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 /**
  * Class that manages a type system for a repository types can be added, the
  * inheritance can be managed and type can be retrieved for a given type id.
- * 
+ *
  * @author Jens
- * 
+ *
  */
 public class TypeManagerImpl implements TypeManager {
 
@@ -65,8 +65,9 @@ public class TypeManagerImpl implements TypeManager {
      */
     public TypeDefinition getTypeByQueryName(String typeQueryName) {
         for (Entry<String, TypeDefinitionContainer> entry : fTypesMap.entrySet()) {
-            if (entry.getValue().getTypeDefinition().getQueryName().equals(typeQueryName))
+            if (entry.getValue().getTypeDefinition().getQueryName().equals(typeQueryName)) {
                 return entry.getValue().getTypeDefinition();
+            }
         }
         return null;
     }
@@ -79,8 +80,9 @@ public class TypeManagerImpl implements TypeManager {
         List<TypeDefinitionContainer> typeRoots = new ArrayList<TypeDefinitionContainer>();
         // iterate types map and return a list collecting the root types:
         for (TypeDefinitionContainer typeDef : fTypesMap.values()) {
-            if (typeDef.getTypeDefinition().getParentTypeId() == null)
+            if (typeDef.getTypeDefinition().getParentTypeId() == null) {
                 typeRoots.add(typeDef);
+            }
         }
 
         return typeRoots;
@@ -93,9 +95,11 @@ public class TypeManagerImpl implements TypeManager {
         // just take first repository
         List<TypeDefinitionContainer> rootTypes = new ArrayList<TypeDefinitionContainer>();
 
-        for (TypeDefinitionContainer type : fTypesMap.values())
-            if (isRootType(type))
+        for (TypeDefinitionContainer type : fTypesMap.values()) {
+            if (isRootType(type)) {
                 rootTypes.add(type);
+            }
+        }
 
         return rootTypes;
     }
@@ -104,10 +108,10 @@ public class TypeManagerImpl implements TypeManager {
      * Initialize the type system with the given types. This list must not
      * contain the CMIS default types. The default type are always contained by
      * default.
-     * 
+     *
      * @param typesList
      *            list of types to add to the repository
-     * 
+     *
      */
     public void initTypeSystem(List<TypeDefinition> typesList) {
 
@@ -117,8 +121,9 @@ public class TypeManagerImpl implements TypeManager {
         // children
         // and property lists
         if (null != typesList) {
-            for (TypeDefinition typeDef : typesList)
+            for (TypeDefinition typeDef : typesList) {
                 addTypeDefinition(typeDef);
+            }
         }
 
     }
@@ -126,22 +131,24 @@ public class TypeManagerImpl implements TypeManager {
     /**
      * Add a type to the type system. Add all properties from inherited types,
      * add type to children of parent types.
-     * 
+     *
      * @param repositoryId
      *            repository to which the type is added
      * @param cmisType
      *            new type to add
      */
     public void addTypeDefinition(TypeDefinition cmisType) {
-        if (fTypesMap.containsKey(cmisType.getId()))
+        if (fTypesMap.containsKey(cmisType.getId())) {
             throw new RuntimeException("You cannot add type with id " + cmisType.getId()
                     + " because it already exists.");
+        }
 
         TypeDefinitionContainerImpl typeContainer = new TypeDefinitionContainerImpl(cmisType);
 
-        if (!fTypesMap.containsKey(cmisType.getParentTypeId()))
+        if (!fTypesMap.containsKey(cmisType.getParentTypeId())) {
             throw new RuntimeException("Cannot add type, because parent with id " + cmisType.getParentTypeId()
                     + " does not exist.");
+        }
 
         // add new type to children of parent types
         TypeDefinitionContainer parentTypeContainer = fTypesMap.get(cmisType.getParentTypeId());
@@ -159,40 +166,44 @@ public class TypeManagerImpl implements TypeManager {
      * Remove all types from the type system. After this call only the default
      * CMIS types are present in the type system. Use this method with care, its
      * mainly intended for unit tests
-     * 
+     *
      * @param repositoryId
      */
     public void clearTypeSystem() {
         fTypesMap.clear();
         createCmisDefaultTypes();
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.chemistry.opencmis.inmemory.TypeManager#getPropertyIdForQueryName(org.apache.chemistry.opencmis.commons.definitions.TypeDefinition, java.lang.String)
      */
     public String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName) {
         for (PropertyDefinition<?> pd : typeDefinition.getPropertyDefinitions().values()) {
-            if (pd.getQueryName().equals(propQueryName))
+            if (pd.getQueryName().equals(propQueryName)) {
                 return pd.getId();
+            }
         }
         return null;
     }
 
     private void addInheritedProperties(Map<String, PropertyDefinition<?>> propDefs, TypeDefinition typeDefinition) {
 
-        if (null == typeDefinition)
+        if (null == typeDefinition) {
             return;
+        }
 
         if (null != typeDefinition.getPropertyDefinitions())
+         {
             addInheritedPropertyDefinitions(propDefs, typeDefinition.getPropertyDefinitions());
         // propDefs.putAll(typeDefinition.getPropertyDefinitions());
+        }
 
         TypeDefinitionContainer parentTypeContainer = fTypesMap.get(typeDefinition.getParentTypeId());
         TypeDefinition parentType = (null == parentTypeContainer ? null : parentTypeContainer.getTypeDefinition());
         addInheritedProperties(propDefs, parentType);
     }
 
-    private void addInheritedPropertyDefinitions(Map<String, PropertyDefinition<?>> propDefs,
+    private static void addInheritedPropertyDefinitions(Map<String, PropertyDefinition<?>> propDefs,
             Map<String, PropertyDefinition<?>> superPropDefs) {
 
         for (Entry<String, PropertyDefinition<?>> superProp : superPropDefs.entrySet()) {
@@ -215,10 +226,11 @@ public class TypeManagerImpl implements TypeManager {
         if (c.getTypeDefinition().equals(InMemoryFolderTypeDefinition.getRootFolderType())
                 || c.getTypeDefinition().equals(InMemoryDocumentTypeDefinition.getRootDocumentType())
                 || c.getTypeDefinition().equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType())
-                || c.getTypeDefinition().equals(InMemoryPolicyTypeDefinition.getRootPolicyType()))
+                || c.getTypeDefinition().equals(InMemoryPolicyTypeDefinition.getRootPolicyType())) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     private static PropertyDefinition<?> clonePropertyDefinition(PropertyDefinition<?> src) {

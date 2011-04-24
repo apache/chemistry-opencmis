@@ -51,6 +51,9 @@ public final class ObjectService {
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
+    private ObjectService() {
+    }
+
     /**
      * createDocument.
      */

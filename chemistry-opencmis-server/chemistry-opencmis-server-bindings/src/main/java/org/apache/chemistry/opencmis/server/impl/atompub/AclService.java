@@ -43,6 +43,9 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
  */
 public class AclService {
 
+    private AclService() {
+    }
+
     /**
      * Get ACL.
      */

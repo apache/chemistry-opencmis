@@ -163,7 +163,7 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
         }
     }
 
-    private List<String> split(String csl) {
+    private static List<String> split(String csl) {
         if (csl == null) {
             return Collections.emptyList();
         }
@@ -176,7 +176,7 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
         return result;
     }
 
-    private String replaceSystemProperties(String s) {
+    private static String replaceSystemProperties(String s) {
         if (s == null) {
             return null;
         }
@@ -212,7 +212,7 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private TypeDefinition loadType(String filename) {
+    private static TypeDefinition loadType(String filename) {
         TypeDefinition result = null;
 
         try {

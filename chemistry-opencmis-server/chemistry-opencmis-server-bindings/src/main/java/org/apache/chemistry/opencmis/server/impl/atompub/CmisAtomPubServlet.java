@@ -232,7 +232,7 @@ public class CmisAtomPubServlet extends HttpServlet {
     /**
      * Translates an exception in an appropriate HTTP error code.
      */
-    private int getErrorCode(CmisBaseException ex) {
+    private static int getErrorCode(CmisBaseException ex) {
         if (ex instanceof CmisConstraintException) {
             return 409;
         } else if (ex instanceof CmisContentAlreadyExistsException) {
@@ -265,7 +265,7 @@ public class CmisAtomPubServlet extends HttpServlet {
     /**
      * Prints the error HTML page.
      */
-    private void printError(Exception ex, HttpServletResponse response) {
+    private static void printError(Exception ex, HttpServletResponse response) {
         int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         String exceptionName = "runtime";
 

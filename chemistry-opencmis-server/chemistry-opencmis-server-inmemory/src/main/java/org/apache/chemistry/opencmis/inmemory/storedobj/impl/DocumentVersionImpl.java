@@ -37,9 +37,9 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
  * A class representing a single version of a document
- * 
+ *
  * @author Jens
- * 
+ *
  */
 public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion {
 
@@ -96,10 +96,12 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
             if (ver.isMajor()) {
                 ++majorNo;
                 minorNo = 0;
-            } else
+            } else {
                 ++minorNo;
-            if (ver == this)
+            }
+            if (ver == this) {
                 break;
+            }
         }
         String label = "V " + majorNo + "." + minorNo;
         return label;
@@ -119,10 +121,11 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     }
 
     public ContentStream getContent(long offset, long length) {
-        if (offset <= 0 && length < 0)
+        if (offset <= 0 && length < 0) {
             return fContent;
-        else
+        } else {
             return fContent.getCloneWithLimits(offset, length);
+        }
     }
 
     public VersionedDocument getParentDocument() {
@@ -132,23 +135,27 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     private boolean isLatestVersion() {
         List<DocumentVersion> allVers = fContainer.getAllVersions();
         boolean isLatestVersion;
-        if (isPwc())
+        if (isPwc()) {
             isLatestVersion = allVers.size() > 1 && allVers.get(allVers.size() - 2).equals(this);
-        else
+        } else {
             isLatestVersion = allVers.get(allVers.size() - 1).equals(this);
+        }
         return isLatestVersion;
     }
 
     private boolean isLatestMajorVersion() {
-        if (!fIsMajor)
+        if (!fIsMajor) {
             return false;
+        }
 
         List<DocumentVersion> allVersions = fContainer.getAllVersions();
         DocumentVersion latestMajor = null;
 
-        for (DocumentVersion ver : allVersions)
-            if (ver.isMajor() && !ver.isPwc())
+        for (DocumentVersion ver : allVersions) {
+            if (ver.isMajor() && !ver.isPwc()) {
                 latestMajor = ver;
+            }
+        }
 
         boolean isLatestMajorVersion = latestMajor == this;
         return isLatestMajorVersion;
@@ -159,6 +166,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     // fId = UUID.randomUUID().toString();
     // }
 
+    @Override
     public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
             List<String> requestedIds) {
 

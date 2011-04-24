@@ -141,7 +141,7 @@ public class SessionImpl implements Session, Serializable {
         }
 
         this.parameters = parameters;
-        this.locale = this.determineLocale(parameters);
+        this.locale = determineLocale(parameters);
 
         this.objectFactory = createObjectFactory();
         this.cache = createCache();
@@ -149,13 +149,13 @@ public class SessionImpl implements Session, Serializable {
         cachePathOmit = Boolean.parseBoolean(parameters.get(SessionParameter.CACHE_PATH_OMIT));
     }
 
-    private String determineRepositoryId(Map<String, String> parameters) {
+    private static String determineRepositoryId(Map<String, String> parameters) {
         String repositoryId = parameters.get(SessionParameter.REPOSITORY_ID);
         // if null then the provider will return a repository id (lazy)
         return repositoryId;
     }
 
-    private Locale determineLocale(Map<String, String> parameters) {
+    private static Locale determineLocale(Map<String, String> parameters) {
         Locale locale = null;
 
         String language = parameters.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
@@ -255,7 +255,7 @@ public class SessionImpl implements Session, Serializable {
         if (context == null) {
             throw new IllegalArgumentException("Operation context must be set!");
         }
-        
+
         final NavigationService navigationService = getBinding().getNavigationService();
         final ObjectFactory objectFactory = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
@@ -300,7 +300,7 @@ public class SessionImpl implements Session, Serializable {
         if (context == null) {
             throw new IllegalArgumentException("Operation context must be set!");
         }
-        
+
         lock.readLock().lock();
         try {
             Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
@@ -596,7 +596,7 @@ public class SessionImpl implements Session, Serializable {
             this.binding = CmisBindingHelper.createBinding(this.parameters);
 
             /* get initial repository id from session parameter */
-            String repositoryId = this.determineRepositoryId(this.parameters);
+            String repositoryId = determineRepositoryId(this.parameters);
             if (repositoryId == null) {
                 throw new IllegalStateException("Repository Id is not set!");
             }

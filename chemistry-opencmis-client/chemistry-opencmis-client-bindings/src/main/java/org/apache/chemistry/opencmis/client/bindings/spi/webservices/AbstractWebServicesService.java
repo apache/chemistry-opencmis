@@ -126,7 +126,7 @@ public abstract class AbstractWebServicesService {
         return new CmisRuntimeException("Unknown exception[" + ex.getFaultInfo().getType().value() + "]: " + msg);
     }
 
-    private String getNodeAsString(Node node) {
+    private static String getNodeAsString(Node node) {
         try {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformrt = factory.newTransformer();

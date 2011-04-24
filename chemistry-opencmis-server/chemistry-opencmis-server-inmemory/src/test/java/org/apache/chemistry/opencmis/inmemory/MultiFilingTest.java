@@ -58,13 +58,15 @@ public class MultiFilingTest extends AbstractServiceTest {
     private String fId2;
     private String fId11;
 
+    @Override
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setUp();
     }
 
+    @Override
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         super.tearDown();
     }
 
@@ -131,10 +133,12 @@ public class MultiFilingTest extends AbstractServiceTest {
         boolean foundNewParent = false;
         boolean foundOldParent = false;
         for (ObjectParentData parentData : parents) {
-            if (parentData.getObject().getId().equals(newFolderId))
+            if (parentData.getObject().getId().equals(newFolderId)) {
                 foundNewParent = true;
-            if (parentData.getObject().getId().equals(fId11))
+            }
+            if (parentData.getObject().getId().equals(fId11)) {
                 foundOldParent = true;
+            }
         }
         assertTrue("After move new target should be a parent", foundNewParent);
         assertFalse("After move old source should no longer be a parent", foundOldParent);

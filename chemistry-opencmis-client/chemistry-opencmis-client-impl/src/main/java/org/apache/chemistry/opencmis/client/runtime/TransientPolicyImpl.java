@@ -23,8 +23,6 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 
 public class TransientPolicyImpl extends AbstractTransientFileableCmisObject implements TransientPolicy {
 
-    private static final long serialVersionUID = 1L;
-
     public String getPolicyText() {
         return getPropertyValue(PropertyIds.POLICY_TEXT);
     }

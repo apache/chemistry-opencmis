@@ -159,7 +159,7 @@ public final class CmisBindingFactory {
     /**
      * Checks the passed session parameters.
      */
-    private void checkSessionParameters(Map<String, String> sessionParameters, boolean mustContainSPI) {
+    private static void checkSessionParameters(Map<String, String> sessionParameters, boolean mustContainSPI) {
         // don't accept null
         if (sessionParameters == null) {
             throw new IllegalArgumentException("Session parameter map not set!");
@@ -179,7 +179,7 @@ public final class CmisBindingFactory {
      * Checks if the given parameter is present. If not, throw an
      * <code>IllegalArgumentException</code>.
      */
-    private void check(Map<String, String> sessionParameters, String parameter) {
+    private static void check(Map<String, String> sessionParameters, String parameter) {
         if (!sessionParameters.containsKey(parameter)) {
             throw new IllegalArgumentException("Parameter '" + parameter + "' is missing!");
         }
@@ -200,7 +200,7 @@ public final class CmisBindingFactory {
     /**
      * Creates a default session parameters map with some reasonable defaults.
      */
-    private Map<String, String> createNewDefaultParameters() {
+    private static Map<String, String> createNewDefaultParameters() {
         Map<String, String> result = new HashMap<String, String>();
 
         result.put(SessionParameter.CACHE_SIZE_REPOSITORIES, "10");

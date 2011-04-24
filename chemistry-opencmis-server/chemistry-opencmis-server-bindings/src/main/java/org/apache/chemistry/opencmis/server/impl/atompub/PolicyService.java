@@ -44,6 +44,9 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
  */
 public class PolicyService {
 
+    private PolicyService() {
+    }
+
     /**
      * Get applied policies.
      */
@@ -86,14 +89,12 @@ public class PolicyService {
         feed.writeSelfLink(compileUrl(baseUrl, RESOURCE_POLICIES, objectInfo.getId()), null);
 
         // write entries
-        if (policies != null) {
-            AtomEntry entry = new AtomEntry(feed.getWriter());
-            for (ObjectData policy : policies) {
-                if (policy == null) {
-                    continue;
-                }
-                writePolicyEntry(service, entry, objectInfo.getId(), policy, repositoryId, baseUrl);
+        AtomEntry entry = new AtomEntry(feed.getWriter());
+        for (ObjectData policy : policies) {
+            if (policy == null) {
+                continue;
             }
+            writePolicyEntry(service, entry, objectInfo.getId(), policy, repositoryId, baseUrl);
         }
 
         // we are done
@@ -145,7 +146,7 @@ public class PolicyService {
      * Remove policy.
      */
     public static void removePolicy(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String policyId = getStringParameter(request, Constants.PARAM_POLICY_ID);

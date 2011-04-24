@@ -31,7 +31,7 @@ public abstract class AbstractIterable<T> implements ItemIterable<T> {
     private long skipCount;
     private AbstractIterator<T> iterator;
 
-    public AbstractIterable(AbstractPageFetcher<T> pageFetcher) {
+    protected AbstractIterable(AbstractPageFetcher<T> pageFetcher) {
         this(0, pageFetcher);
     }
 

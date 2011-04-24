@@ -38,6 +38,9 @@ public class DocumentTypeCreationHelper {
 
     private static final List<TypeDefinition> defaultTypes = createCmisDefaultTypes();
 
+    private DocumentTypeCreationHelper() {
+    }
+
     public static List<TypeDefinition> createMapWithDefaultTypes() {
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
         typesList.addAll(defaultTypes);
@@ -69,7 +72,7 @@ public class DocumentTypeCreationHelper {
 
     /**
      * create root types and a collection of sample types
-     * 
+     *
      * @return typesMap map filled with created types
      */
     public static List<TypeDefinition> createDefaultTypes() {
@@ -245,9 +248,10 @@ public class DocumentTypeCreationHelper {
     public static void mergePropertyDefinitions(Map<String, PropertyDefinition<?>> existingPpropertyDefinitions,
             Map<String, PropertyDefinition<?>> newPropertyDefinitions) {
         for (String propId : newPropertyDefinitions.keySet()) {
-            if (existingPpropertyDefinitions.containsKey(propId))
+            if (existingPpropertyDefinitions.containsKey(propId)) {
                 throw new RuntimeException("You can't set a property with id " + propId
                         + ". This property id already exists already or exists in supertype");
+            }
         }
         existingPpropertyDefinitions.putAll(newPropertyDefinitions);
     }

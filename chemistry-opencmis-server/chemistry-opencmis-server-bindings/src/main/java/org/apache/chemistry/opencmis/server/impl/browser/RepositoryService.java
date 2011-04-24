@@ -47,6 +47,9 @@ import org.json.simple.JSONValue;
  */
 public final class RepositoryService {
 
+    private RepositoryService() {
+    }
+
     /**
      * getRepositories.
      */
