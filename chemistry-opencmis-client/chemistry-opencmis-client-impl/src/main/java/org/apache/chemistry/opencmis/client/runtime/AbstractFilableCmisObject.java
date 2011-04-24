@@ -25,11 +25,14 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -37,8 +40,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 /**
  * Base class for all filable persistent session object impl classes.
  */
-public abstract class AbstractFilableCmisObject extends AbstractCmisObject implements
-        FileableCmisObject {
+public abstract class AbstractFilableCmisObject extends AbstractCmisObject implements FileableCmisObject {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,9 +48,9 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         String objectId = getObjectId();
 
         // get object ids of the parent folders
-        List<ObjectParentData> bindingParents = getBinding().getNavigationService().getObjectParents(
-                getRepositoryId(), objectId, getPropertyQueryName(PropertyIds.OBJECT_ID), false,
-                IncludeRelationships.NONE, null, false, null);
+        List<ObjectParentData> bindingParents = getBinding().getNavigationService().getObjectParents(getRepositoryId(),
+                objectId, getPropertyQueryName(PropertyIds.OBJECT_ID), false, IncludeRelationships.NONE, null, false,
+                null);
 
         List<Folder> parents = new ArrayList<Folder>();
 
@@ -82,10 +84,13 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
     public List<String> getPaths() {
         String objectId = getObjectId();
 
+        ObjectType folderType = getSession().getTypeDefinition(BaseTypeId.CMIS_FOLDER.value());
+        PropertyDefinition<?> propDef = folderType.getPropertyDefinitions().get(PropertyIds.PATH);
+        String pathQueryName = (propDef == null ? null : propDef.getQueryName());
+
         // get object paths of the parent folders
-        List<ObjectParentData> bindingParents = getBinding().getNavigationService().getObjectParents(
-                getRepositoryId(), objectId, getPropertyQueryName(PropertyIds.PATH), false, IncludeRelationships.NONE,
-                null, true, null);
+        List<ObjectParentData> bindingParents = getBinding().getNavigationService().getObjectParents(getRepositoryId(),
+                objectId, pathQueryName, false, IncludeRelationships.NONE, null, true, null);
 
         List<String> paths = new ArrayList<String>();
 
