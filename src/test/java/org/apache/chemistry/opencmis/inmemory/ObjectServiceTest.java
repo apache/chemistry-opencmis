@@ -74,7 +74,7 @@ import org.junit.Test;
  * @author Jens
  */
 
-public class ObjectServiceTest extends AbstractServiceTst {
+public class ObjectServiceTest extends AbstractServiceTest {
 
     private static final Log log = LogFactory.getLog(ObjectServiceTest.class);
     public static final String TEST_FOLDER_TYPE_ID = "MyFolderType";

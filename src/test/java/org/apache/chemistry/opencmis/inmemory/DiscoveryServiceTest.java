@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DiscoveryServiceTest extends AbstractServiceTst {
+public class DiscoveryServiceTest extends AbstractServiceTest {
 
     private static final Log log = LogFactory.getLog(DiscoveryServiceTest.class);
     private static final String TEST_FOLDER_TYPE_ID = ObjectServiceTest.TEST_FOLDER_TYPE_ID;

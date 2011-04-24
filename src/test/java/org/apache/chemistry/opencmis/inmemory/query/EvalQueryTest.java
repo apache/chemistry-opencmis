@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.inmemory.AbstractServiceTst;
+import org.apache.chemistry.opencmis.inmemory.AbstractServiceTest;
 import org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,7 +41,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class EvalQueryTest extends AbstractServiceTst {
+public class EvalQueryTest extends AbstractServiceTest {
     
     private static final Log log = LogFactory.getLog(EvalQueryTest.class);
     private QueryTestDataCreator dataCreator;
