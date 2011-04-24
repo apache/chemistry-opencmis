@@ -23,9 +23,9 @@ import org.apache.chemistry.opencmis.fit.runtime.Fixture;
 
 public class TransientObjectAtomPubIT extends AbstractTransientObjectIT {
 
-	@Override
-	public void initFixture(Fixture fixture) {
+    @Override
+    public void initFixture(Fixture fixture) {
         fixture.enableAtomPub();
-	}
+    }
 
 }

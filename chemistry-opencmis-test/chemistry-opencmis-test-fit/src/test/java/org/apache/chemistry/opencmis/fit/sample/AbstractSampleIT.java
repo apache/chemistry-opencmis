@@ -39,9 +39,9 @@ import org.junit.Test;
 
 /**
  * Sample test case that demonstrates how to build integration tests.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public abstract class AbstractSampleIT {
 
@@ -149,7 +149,7 @@ public abstract class AbstractSampleIT {
     /**
      * Checks a base type.
      */
-    private void checkBaseType(String id, BaseTypeId baseType, ObjectType objectType) {
+    private static void checkBaseType(String id, BaseTypeId baseType, ObjectType objectType) {
         assertNotNull(objectType);
         if (id != null) {
             assertEquals(id, objectType.getId());

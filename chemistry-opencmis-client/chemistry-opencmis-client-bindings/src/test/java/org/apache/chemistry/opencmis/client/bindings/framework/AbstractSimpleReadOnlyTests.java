@@ -65,7 +65,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     /**
      * Tests repository info.
      */
-    public void testRepositoryInfo() throws Exception {
+    public void testRepositoryInfo() {
         if (!isEnabled(TEST_REPOSITORY_INFO)) {
             return;
         }
@@ -83,7 +83,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     /**
      * Some type related tests.
      */
-    public void testTypes() throws Exception {
+    public void testTypes() {
         if (!isEnabled(TEST_TYPES)) {
             return;
         }
@@ -176,7 +176,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     /**
      * Navigation smoke test.
      */
-    public void testNavigation() throws Exception {
+    public void testNavigation() {
         if (!isEnabled(TEST_NAVIGATION)) {
             return;
         }
@@ -310,7 +310,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     /**
      * Query smoke test.
      */
-    public void testQuery() throws Exception {
+    public void testQuery() {
         if (!isEnabled(TEST_QUERY)) {
             return;
         }
@@ -338,7 +338,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     /**
      * Checked out smoke test.
      */
-    public void testCheckedout() throws Exception {
+    public void testCheckedout() {
         if (!isEnabled(TEST_CHECKEDOUT)) {
             return;
         }
@@ -363,7 +363,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     /**
      * Content changes smoke test.
      */
-    public void testContentChanges() throws Exception {
+    public void testContentChanges() {
         if (!isEnabled(TEST_CONTENT_CHANGES)) {
             return;
         }
@@ -394,7 +394,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     /**
      * Tests some of the read-only methods of the Object Service.
      */
-    private void checkObject(String objectId) throws Exception {
+    private void checkObject(String objectId) {
         System.out.println("Checking object " + objectId + "...");
 
         ObjectData object = getObject(objectId);
@@ -487,7 +487,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
     /**
      * Tests some of the read-only methods of the Versioning Service.
      */
-    private void checkObjectVersions(String objectId) throws Exception {
+    private void checkObjectVersions(String objectId) {
         System.out.println("Checking versions of object " + objectId + "...");
 
         String versionSeriesId = getVersionSeriesId(objectId);

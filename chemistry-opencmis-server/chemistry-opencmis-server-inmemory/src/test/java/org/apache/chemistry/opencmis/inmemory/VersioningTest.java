@@ -60,7 +60,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class VersioningTest extends AbstractServiceTst {
+public class VersioningTest extends AbstractServiceTest {
     private static final Log log = LogFactory.getLog(ObjectServiceTest.class);
     private static final String PROP_VALUE = "Mickey Mouse";
     private static final String PROP_VALUE_NEW = "Donald Duck";

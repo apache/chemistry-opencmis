@@ -61,7 +61,7 @@ public class SecurityTest extends AbstractSessionTest {
         }
     }
 
-    private boolean isHttpsUrl(String url) {
+    private static boolean isHttpsUrl(String url) {
         if (url == null) {
             return false;
         }

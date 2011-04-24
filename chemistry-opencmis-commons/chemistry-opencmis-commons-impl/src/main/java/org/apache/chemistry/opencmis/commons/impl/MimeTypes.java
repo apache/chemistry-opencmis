@@ -27,6 +27,9 @@ public class MimeTypes {
 
     private static final Map<String, String> EXT2MIME = new HashMap<String, String>();
     private static final Map<String, String> MIME2EXT = new HashMap<String, String>();
+    
+    private MimeTypes() {
+    }
 
     static {
         // extension to MIME type

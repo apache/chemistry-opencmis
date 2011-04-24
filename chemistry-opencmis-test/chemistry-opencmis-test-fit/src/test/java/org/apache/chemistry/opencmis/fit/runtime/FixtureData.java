@@ -21,60 +21,68 @@ package org.apache.chemistry.opencmis.fit.runtime;
 import java.util.Map;
 
 public enum FixtureData {
-	FOLDER_TYPE_ID("org.apache.chemistry.opencmis.fit.runtime.folder.type.id",
-			"cmis:folder"), DOCUMENT_TYPE_ID(
-			"org.apache.chemistry.opencmis.fit.runtime.document.type.id",
-			"cmis:document"), QUERY(
-			"org.apache.chemistry.opencmis.fit.runtime.query",
-			"SELECT * FROM cmis:document"), PROPERTY_FILTER(
-			"org.apache.chemistry.opencmis.fit.runtime.property.filter", "*"), FOLDER1_NAME(
-			"org.apache.chemistry.opencmis.fit.runtime.folder1.name", "folder1"), FOLDER2_NAME(
-			"org.apache.chemistry.opencmis.fit.runtime.folder2.name", "folder2"), DOCUMENT1_NAME(
-			"org.apache.chemistry.opencmis.fit.runtime.document1.name",
-			"document1.txt"), DOCUMENT2_NAME(
-			"org.apache.chemistry.opencmis.fit.runtime.document2.name",
-			"document2.txt"), 
-			PROPERTY_NAME_STRING_MULTI_VALUED("org.apache.chemistry.opencmis.fit.runtime.multi.valued.property.name", null);
+    FOLDER_TYPE_ID("org.apache.chemistry.opencmis.fit.runtime.folder.type.id",
+            "cmis:folder"),
+    DOCUMENT_TYPE_ID("org.apache.chemistry.opencmis.fit.runtime.document.type.id",
+            "cmis:document"),
+    QUERY("org.apache.chemistry.opencmis.fit.runtime.query",
+            "SELECT * FROM cmis:document"),
+    PROPERTY_FILTER(
+            "org.apache.chemistry.opencmis.fit.runtime.property.filter", "*"),
+    FOLDER1_NAME(
+            "org.apache.chemistry.opencmis.fit.runtime.folder1.name", "folder1"),
+    FOLDER2_NAME(
+            "org.apache.chemistry.opencmis.fit.runtime.folder2.name", "folder2"),
+    DOCUMENT1_NAME(
+            "org.apache.chemistry.opencmis.fit.runtime.document1.name",
+            "document1.txt"),
+    DOCUMENT2_NAME(
+            "org.apache.chemistry.opencmis.fit.runtime.document2.name",
+            "document2.txt"),
+    PROPERTY_NAME_STRING_MULTI_VALUED(
+            "org.apache.chemistry.opencmis.fit.runtime.multi.valued.property.name",
+            null);
 
     private final String key;
-	private String value;
+    private String value;
 
-	FixtureData(String key, String value) {
-		this.key = key;
-		this.value = value;
-	}
+    FixtureData(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
 
-	public String value() {
-		return this.value;
-	}
+    public String value() {
+        return this.value;
+    }
 
-	public static void changeValues(Map<String, String> map) {
-		for (FixtureData fd : FixtureData.values()) {
-			String v = map.get(fd.key);
-			if (v != null) {
-				fd.changeValue(v);
-			}
-		}
-	}
+    public static void changeValues(Map<String, String> map) {
+        for (FixtureData fd : FixtureData.values()) {
+            String v = map.get(fd.key);
+            if (v != null) {
+                fd.changeValue(v);
+            }
+        }
+    }
 
-	public static FixtureData get(String key) {
-		for (FixtureData fd : FixtureData.values()) {
-			if (fd.key.equals(key)) {
-				return fd;
-			}
-		}
-		throw new IllegalArgumentException(key);
-	}
+    public static FixtureData get(String key) {
+        for (FixtureData fd : FixtureData.values()) {
+            if (fd.key.equals(key)) {
+                return fd;
+            }
+        }
+        throw new IllegalArgumentException(key);
+    }
 
-	void changeValue(String newValue) {
-		this.value = newValue;
-	}
+    void changeValue(String newValue) {
+        this.value = newValue;
+    }
 
-	public String toString() {
-		return this.value();
-	}
+    @Override
+    public String toString() {
+        return this.value();
+    }
 
-	public String key() {
-		return this.key;
-	}
+    public String key() {
+        return this.key;
+    }
 }

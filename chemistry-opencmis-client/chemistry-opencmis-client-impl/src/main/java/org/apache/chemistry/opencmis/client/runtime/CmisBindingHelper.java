@@ -30,6 +30,10 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * Helper methods for binding handling.
  */
 public class CmisBindingHelper {
+
+    private CmisBindingHelper() {
+    }
+
     /**
      * Creates a {@link CmisBinding} object.
      */

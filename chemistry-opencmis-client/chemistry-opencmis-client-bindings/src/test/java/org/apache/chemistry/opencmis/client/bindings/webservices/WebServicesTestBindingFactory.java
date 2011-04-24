@@ -29,6 +29,9 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * Web Services Binding Factory.
  */
 public class WebServicesTestBindingFactory {
+    
+    private WebServicesTestBindingFactory() {
+    }
 
     public static CmisBinding createBinding(String url, String username, String password) {
         boolean isPrefix = true;

@@ -36,7 +36,7 @@ public abstract class AbstractReadOnlyAclCapabilityIT extends AbstractSessionTes
     private AclCapabilities aclCapabilities = null;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         RepositoryInfo r = this.session.getRepositoryInfo();
         // capabilities
         RepositoryCapabilities repcap = r.getCapabilities();

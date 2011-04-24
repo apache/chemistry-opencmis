@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -44,201 +43,210 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.junit.Test;
 
 public abstract class AbstractTransientObjectIT extends AbstractSessionTest {
-	@Test
-	public void transientUpdate() throws Exception {
-		ObjectId parentId = this.session.createObjectId(this.fixture
-				.getTestRootId());
-		String filename1 = UUID.randomUUID().toString();
-		String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
-		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put(PropertyIds.NAME, filename1);
-		properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+    @Test
+    public void transientUpdate() throws Exception {
+        ObjectId parentId = session
+                .createObjectId(this.fixture.getTestRootId());
+        String filename1 = UUID.randomUUID().toString();
+        String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
-		String mimetype = "text/html; charset=UTF-8";
-		String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, filename1);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
 
-		byte[] buf1 = content1.getBytes("UTF-8");
-		ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-		ContentStream contentStream1 = this.session.getObjectFactory()
-				.createContentStream(filename1, buf1.length, mimetype, in1);
-		assertNotNull(contentStream1);
+        String mimetype = "text/html; charset=UTF-8";
+        String content1 = "Im Walde rauscht ein Wasserfall. Wenn's nicht mehr rauscht ist's Wasser all.";
 
-		ObjectId id = this.session.createDocument(properties, parentId,
-				contentStream1, VersioningState.NONE);
-		assertNotNull(id);
+        byte[] buf1 = content1.getBytes("UTF-8");
+        ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
+        ContentStream contentStream1 = session.getObjectFactory()
+                .createContentStream(filename1, buf1.length, mimetype, in1);
+        assertNotNull(contentStream1);
 
-		// prepare new non-cache operation context
-		OperationContext oc = this.session.createOperationContext();
-		oc.setFilterString("*");
-		oc.setCacheEnabled(false);
+        ObjectId id = session.createDocument(properties, parentId,
+                contentStream1, VersioningState.NONE);
+        assertNotNull(id);
 
-		// set new name and save
-		Document doc2 = (Document) this.session.getObject(id, oc);
-		TransientDocument tdoc2 = doc2.getTransientDocument();
+        // prepare new non-cache operation context
+        OperationContext oc = session.createOperationContext();
+        oc.setFilterString("*");
+        oc.setCacheEnabled(false);
 
-		assertEquals(filename1, tdoc2.getName());
+        // set new name and save
+        Document doc2 = (Document) session.getObject(id, oc);
+        TransientDocument tdoc2 = doc2.getTransientDocument();
 
-		ContentStream cs2 = tdoc2.getContentStream();
-		assertNotNull(cs2);
-		assertContent(buf1, readContent(cs2));
+        assertEquals(filename1, tdoc2.getName());
 
-		String filename2 = UUID.randomUUID().toString();
-		tdoc2.setName(filename2);
-		assertEquals(filename2, tdoc2.getName());
+        ContentStream cs2 = tdoc2.getContentStream();
+        assertNotNull(cs2);
+        assertContent(buf1, readContent(cs2));
 
-		ObjectId id2 = tdoc2.save();
-		assertNotNull(id2);
+        String filename2 = UUID.randomUUID().toString();
+        tdoc2.setName(filename2);
+        assertEquals(filename2, tdoc2.getName());
 
-		// set new content and save
-		Document doc3 = (Document) this.session.getObject(id2, oc);
-		TransientDocument tdoc3 = doc3.getTransientDocument();
+        ObjectId id2 = tdoc2.save();
+        assertNotNull(id2);
 
-		assertEquals(filename2, tdoc3.getName());
+        // set new content and save
+        Document doc3 = (Document) session.getObject(id2, oc);
+        TransientDocument tdoc3 = doc3.getTransientDocument();
 
-		ContentStream cs3 = tdoc3.getContentStream();
-		assertNotNull(cs3);
-		assertContent(buf1, readContent(cs3));
+        assertEquals(filename2, tdoc3.getName());
 
-		String content3 = "Es rauscht noch.";
+        ContentStream cs3 = tdoc3.getContentStream();
+        assertNotNull(cs3);
+        assertContent(buf1, readContent(cs3));
 
-		byte[] buf3 = content3.getBytes("UTF-8");
-		ByteArrayInputStream in3 = new ByteArrayInputStream(buf3);
-		ContentStream contentStream3 = this.session.getObjectFactory()
-				.createContentStream(tdoc3.getName(), buf3.length, mimetype,
-						in3);
-		assertNotNull(contentStream3);
+        String content3 = "Es rauscht noch.";
 
-		tdoc3.setContentStream(contentStream3, true);
+        byte[] buf3 = content3.getBytes("UTF-8");
+        ByteArrayInputStream in3 = new ByteArrayInputStream(buf3);
+        ContentStream contentStream3 = session.getObjectFactory()
+                .createContentStream(tdoc3.getName(), buf3.length, mimetype,
+                        in3);
+        assertNotNull(contentStream3);
 
-		ObjectId id3 = tdoc3.save();
-		assertNotNull(id3);
+        tdoc3.setContentStream(contentStream3, true);
 
-		// set new name, delete content and save
-		Document doc4 = (Document) this.session.getObject(id3, oc);
-		TransientDocument tdoc4 = doc4.getTransientDocument();
+        ObjectId id3 = tdoc3.save();
+        assertNotNull(id3);
 
-		assertEquals(tdoc3.getName(), tdoc4.getName());
+        // set new name, delete content and save
+        Document doc4 = (Document) session.getObject(id3, oc);
+        TransientDocument tdoc4 = doc4.getTransientDocument();
 
-		ContentStream cs4 = tdoc4.getContentStream();
-		assertNotNull(cs4);
-		assertContent(buf3, readContent(cs4));
+        assertEquals(tdoc3.getName(), tdoc4.getName());
 
-		String filename4 = UUID.randomUUID().toString();
-		tdoc4.setName(filename4);
-		assertEquals(filename4, tdoc4.getName());
+        ContentStream cs4 = tdoc4.getContentStream();
+        assertNotNull(cs4);
+        assertContent(buf3, readContent(cs4));
 
-		tdoc4.deleteContentStream();
+        String filename4 = UUID.randomUUID().toString();
+        tdoc4.setName(filename4);
+        assertEquals(filename4, tdoc4.getName());
 
-		ObjectId id4 = tdoc4.save();
-		assertNotNull(id4);
+        tdoc4.deleteContentStream();
 
-		// delete object
-		Document doc5 = (Document) this.session.getObject(id4, oc);
-		TransientDocument tdoc5 = doc5.getTransientDocument();
+        ObjectId id4 = tdoc4.save();
+        assertNotNull(id4);
 
-		assertEquals(filename4, tdoc5.getName());
+        // delete object
+        Document doc5 = (Document) session.getObject(id4, oc);
+        TransientDocument tdoc5 = doc5.getTransientDocument();
 
-		ContentStream cs5 = tdoc4.getContentStream();
-		assertNull(cs5);
+        assertEquals(filename4, tdoc5.getName());
 
-		assertEquals(false, tdoc5.isMarkedForDelete());
+        ContentStream cs5 = tdoc4.getContentStream();
+        assertNull(cs5);
 
-		tdoc5.delete(true);
+        assertEquals(false, tdoc5.isMarkedForDelete());
 
-		assertEquals(true, tdoc5.isMarkedForDelete());
+        tdoc5.delete(true);
 
-		ObjectId id5 = tdoc5.save();
-		assertNull(id5);
+        assertEquals(true, tdoc5.isMarkedForDelete());
 
-		// check
-		try {
-			this.session.getObject(id4, oc);
-			fail("CmisObjectNotFoundException expected!");
-		} catch (CmisObjectNotFoundException e) {
-			// expected
-		}
-	}
+        ObjectId id5 = tdoc5.save();
+        assertNull(id5);
 
-	@Test
-	public void transientFolderSessionCheck() throws UnsupportedEncodingException {
-	    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.FOLDER1_NAME;
-		Folder folder1 = (Folder) this.session.getObjectByPath(path);
-		assertNotNull("folder not found: " + path, folder1);
+        // check
+        try {
+            this.session.getObject(id4, oc);
+            fail("CmisObjectNotFoundException expected!");
+        } catch (CmisObjectNotFoundException e) {
+            // expected
+        }
+    }
 
-		TransientFolder tfolder = folder1.getTransientFolder();
-		assertNotNull(tfolder);
+    @Test
+    public void transientFolderSessionCheck() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
+                + FixtureData.FOLDER1_NAME;
+        Folder folder1 = (Folder) session.getObjectByPath(path);
+        assertNotNull("folder not found: " + path, folder1);
 
-		String newFolderName = UUID.randomUUID().toString();
-		tfolder.setPropertyValue(PropertyIds.NAME, newFolderName);
-		
-		Folder folder2 = (Folder) this.session2.getObjectByPath(path);
-		assertNotNull(folder2);
-		assertEquals(folder2.getProperty(PropertyIds.NAME).getValueAsString(), FixtureData.FOLDER1_NAME.toString());
-		assertEquals(tfolder.getProperty(PropertyIds.NAME).getValueAsString(), newFolderName);
-		
-		tfolder.save();
-		session2.clear();
+        TransientFolder tfolder = folder1.getTransientFolder();
+        assertNotNull(tfolder);
 
-		ObjectId id = this.session2.createObjectId(tfolder.getId());
-		
-		Folder folder3 = (Folder) this.session2.getObject(id);
-		assertNotNull(folder3);
-		assertEquals(folder3.getProperty(PropertyIds.NAME).getValueAsString(), newFolderName);
-	}
+        String newFolderName = UUID.randomUUID().toString();
+        tfolder.setPropertyValue(PropertyIds.NAME, newFolderName);
 
-	@Test
-	public void transientDocumentSessionCheck() throws UnsupportedEncodingException {
-	    String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
-		Document document1 = (Document) this.session.getObjectByPath(path);
-		assertNotNull("document not found: " + path, document1);
+        Folder folder2 = (Folder) session2.getObjectByPath(path);
+        assertNotNull(folder2);
+        assertEquals(folder2.getProperty(PropertyIds.NAME).getValueAsString(),
+                FixtureData.FOLDER1_NAME.toString());
+        assertEquals(tfolder.getProperty(PropertyIds.NAME).getValueAsString(),
+                newFolderName);
 
-		TransientDocument tdoc = document1.getTransientDocument();
-		assertNotNull(tdoc);
+        tfolder.save();
+        session2.clear();
 
-		String newDocName = UUID.randomUUID().toString();
-		tdoc.setPropertyValue(PropertyIds.NAME, newDocName);
-		
-		Document  doc2 = (Document) this.session2.getObjectByPath(path);
-		assertNotNull(doc2);
-		assertEquals(doc2.getProperty(PropertyIds.NAME).getValueAsString(), FixtureData.DOCUMENT1_NAME.toString());
-		assertEquals(tdoc.getProperty(PropertyIds.NAME).getValueAsString(), newDocName);
-		
-		tdoc.save();
-		session2.clear();
+        ObjectId id = session2.createObjectId(tfolder.getId());
 
-		ObjectId id = this.session2.createObjectId(tdoc.getId());
-				
-		Document doc3 = (Document) this.session2.getObject(id);
-		assertNotNull(doc3);
-		assertEquals(doc3.getProperty(PropertyIds.NAME).getValueAsString(), newDocName);
-	}
+        Folder folder3 = (Folder) session2.getObject(id);
+        assertNotNull(folder3);
+        assertEquals(folder3.getProperty(PropertyIds.NAME).getValueAsString(),
+                newFolderName);
+    }
 
-	
-	private byte[] readContent(ContentStream contentStream) throws Exception {
-		assertNotNull(contentStream);
-		assertNotNull(contentStream.getStream());
+    @Test
+    public void transientDocumentSessionCheck() {
+        String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/"
+                + FixtureData.DOCUMENT1_NAME;
+        Document document1 = (Document) session.getObjectByPath(path);
+        assertNotNull("document not found: " + path, document1);
 
-		InputStream stream = contentStream.getStream();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TransientDocument tdoc = document1.getTransientDocument();
+        assertNotNull(tdoc);
 
-		byte[] buffer = new byte[4096];
-		int b;
-		while ((b = stream.read(buffer)) > -1) {
-			baos.write(buffer, 0, b);
-		}
+        String newDocName = UUID.randomUUID().toString();
+        tdoc.setPropertyValue(PropertyIds.NAME, newDocName);
 
-		return baos.toByteArray();
-	}
+        Document doc2 = (Document) session2.getObjectByPath(path);
+        assertNotNull(doc2);
+        assertEquals(doc2.getProperty(PropertyIds.NAME).getValueAsString(),
+                FixtureData.DOCUMENT1_NAME.toString());
+        assertEquals(tdoc.getProperty(PropertyIds.NAME).getValueAsString(),
+                newDocName);
 
-	private void assertContent(byte[] expected, byte[] actual) {
-		assertNotNull(expected);
-		assertNotNull(actual);
+        tdoc.save();
+        session2.clear();
 
-		assertEquals("Content size:", expected.length, actual.length);
+        ObjectId id = session2.createObjectId(tdoc.getId());
 
-		for (int i = 0; i < expected.length; i++) {
-			assertEquals("Content not equal.", expected[i], actual[i]);
-		}
-	}
+        Document doc3 = (Document) session2.getObject(id);
+        assertNotNull(doc3);
+        assertEquals(doc3.getProperty(PropertyIds.NAME).getValueAsString(),
+                newDocName);
+    }
+
+    private static byte[] readContent(ContentStream contentStream)
+            throws Exception {
+        assertNotNull(contentStream);
+        assertNotNull(contentStream.getStream());
+
+        InputStream stream = contentStream.getStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        byte[] buffer = new byte[4096];
+        int b;
+        while ((b = stream.read(buffer)) > -1) {
+            baos.write(buffer, 0, b);
+        }
+
+        return baos.toByteArray();
+    }
+
+    private static void assertContent(byte[] expected, byte[] actual) {
+        assertNotNull(expected);
+        assertNotNull(actual);
+
+        assertEquals("Content size:", expected.length, actual.length);
+
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals("Content not equal.", expected[i], actual[i]);
+        }
+    }
 }

@@ -154,6 +154,20 @@
                 <role>release manager</role>
             </roles>
         </developer>
+        <developer>
+            <name>Florent Guillaume</name>
+            <id>fguillaume</id>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Stefane Fermigier</name>
+            <id>sfermigier</id>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
     </developers>
 
 

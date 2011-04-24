@@ -57,20 +57,18 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
 
         // build string
         StringBuilder sb = new StringBuilder("<html>");
-        if (col != null) {
-            for (Object o : col) {
-                sb.append("<span>"); // workaround for a bug in Swing
-                if (o == null) {
-                    sb.append("<i>null</i>");
-                } else if (o instanceof GregorianCalendar) {
-                    sb.append(ClientHelper.getDateString((GregorianCalendar) o));
-                } else if (o instanceof Choice<?>) {
-                    sb.append(((Choice<?>) o).getValue());
-                } else {
-                    sb.append(o.toString());
-                }
-                sb.append("</span><br/>");
+        for (Object o : col) {
+            sb.append("<span>"); // workaround for a bug in Swing
+            if (o == null) {
+                sb.append("<i>null</i>");
+            } else if (o instanceof GregorianCalendar) {
+                sb.append(ClientHelper.getDateString((GregorianCalendar) o));
+            } else if (o instanceof Choice<?>) {
+                sb.append(((Choice<?>) o).getValue());
+            } else {
+                sb.append(o.toString());
             }
+            sb.append("</span><br/>");
         }
         sb.append("</html>");
 

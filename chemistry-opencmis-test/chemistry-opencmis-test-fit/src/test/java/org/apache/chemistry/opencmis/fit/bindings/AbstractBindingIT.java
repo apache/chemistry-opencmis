@@ -98,7 +98,7 @@ public abstract class AbstractBindingIT {
     /**
      * Creates a folder that will be used by all read-write tests.
      */
-    private void createTestFolder() {
+    private static void createTestFolder() {
         // System.out.println("Creating test folder...");
 
         // get root folder id

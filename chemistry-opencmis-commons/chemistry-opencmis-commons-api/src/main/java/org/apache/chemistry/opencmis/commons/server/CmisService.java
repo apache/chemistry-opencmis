@@ -1,4 +1,3 @@
-package org.apache.chemistry.opencmis.commons.server;
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,6 +18,7 @@ package org.apache.chemistry.opencmis.commons.server;
  * under the License.
  *
  */
+package org.apache.chemistry.opencmis.commons.server;
 
 
 import java.util.List;

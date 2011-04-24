@@ -43,7 +43,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
     @Test
     public void createFolder() {
-        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        ObjectId parentId = session.createObjectId(fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.FOLDER_TYPE_ID.value();
 
@@ -51,13 +51,13 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         properties.put(PropertyIds.NAME, folderName);
         properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
 
-        ObjectId id = this.session.createFolder(properties, parentId);
+        ObjectId id = session.createFolder(properties, parentId);
         assertNotNull(id);
     }
 
     @Test
     public void createDocument() throws IOException {
-        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        ObjectId parentId = session.createObjectId(fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
@@ -71,27 +71,27 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length,
+        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, buf1.length,
                 mimetype, in1);
         assertNotNull(contentStream);
 
-        ObjectId id = this.session.createDocument(properties, parentId, contentStream, VersioningState.NONE);
+        ObjectId id = session.createDocument(properties, parentId, contentStream, VersioningState.NONE);
         assertNotNull(id);
 
         // verify content
-        Document doc = (Document) this.session.getObject(id);
+        Document doc = (Document) session.getObject(id);
         assertNotNull(doc);
         // Assert.assertEquals(buf1.length, doc.getContentStreamLength());
         // Assert.assertEquals(mimetype, doc.getContentStreamMimeType());
         // Assert.assertEquals(filename, doc.getContentStreamFileName());
-        String content2 = this.getContentAsString(doc.getContentStream());
+        String content2 = getContentAsString(doc.getContentStream());
         assertEquals(content1, content2);
     }
 
     @Test
     @Ignore
-    public void createHugeDocument() throws IOException {
-        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+    public void createHugeDocument() {
+        ObjectId parentId = session.createObjectId(fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
@@ -102,11 +102,11 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         String filename = UUID.randomUUID().toString();
         String mimetype = "application/octet-stream";
 
-        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE);
+        ObjectId id = session.createDocument(properties, parentId, null, VersioningState.NONE);
         assertNotNull(id);
 
         // verify content
-        Document doc = (Document) this.session.getObject(id);
+        Document doc = (Document) session.getObject(id);
         assertNotNull(doc);
 
         final int size = 1 * 1024 * 1024 * 1024; // 1GB
@@ -126,7 +126,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
             }
         };
 
-        ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, size, mimetype, in);
+        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, size, mimetype, in);
         assertNotNull(contentStream);
 
         long start = System.currentTimeMillis();
@@ -141,26 +141,26 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         try {
             // verify content
             String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
-            Document srcDocument = (Document) this.session.getObjectByPath(path);
+            Document srcDocument = (Document) session.getObjectByPath(path);
             assertNotNull("Document not found: " + path, srcDocument);
-            String srcContent = this.getContentAsString(srcDocument.getContentStream());
+            String srcContent = getContentAsString(srcDocument.getContentStream());
 
-            ObjectId parentFolder = session.createObjectId(this.fixture.getTestRootId());
+            ObjectId parentFolder = session.createObjectId(fixture.getTestRootId());
             String name = UUID.randomUUID().toString();
 
             Map<String, Object> properties = new HashMap<String, Object>();
             properties.put(PropertyIds.NAME, name);
 
-            ObjectId dstDocumentId = this.session.createDocumentFromSource(srcDocument, properties, parentFolder,
+            ObjectId dstDocumentId = session.createDocumentFromSource(srcDocument, properties, parentFolder,
                     VersioningState.NONE);
             assertNotNull(dstDocumentId);
-            Document dstDocument = (Document) this.session.getObject(dstDocumentId);
-            String dstContent = this.getContentAsString(dstDocument.getContentStream());
+            Document dstDocument = (Document) session.getObject(dstDocumentId);
+            String dstContent = getContentAsString(dstDocument.getContentStream());
             assertEquals(srcContent, dstContent);
 
         } catch (CmisNotSupportedException e) {
             // not an error
-            this.log.info(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -169,13 +169,13 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         // verify content
 
         String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
-        Document document = (Document) this.session.getObjectByPath(path);
+        Document document = (Document) session.getObjectByPath(path);
         assertNotNull("Document not found: " + path, document);
 
         // check default content
         ContentStream contentStream = document.getContentStream();
         assertNotNull(contentStream);
-        String contentString = this.getContentAsString(contentStream);
+        String contentString = getContentAsString(contentStream);
         assertNotNull(contentString);
 
         // delete and set new content
@@ -189,7 +189,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length, mimetype, in1);
+        contentStream = session.getObjectFactory().createContentStream(filename, buf1.length, mimetype, in1);
         assertNotNull(contentStream);
 
         document.setContentStream(contentStream, true);
@@ -197,7 +197,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         // check default content
         ContentStream contentStream2 = document.getContentStream();
         assertNotNull(contentStream2);
-        String contentString2 = this.getContentAsString(contentStream2);
+        String contentString2 = getContentAsString(contentStream2);
         assertNotNull(contentString2);
 
         assertEquals(content1, contentString2);
@@ -207,7 +207,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
     public void updateProperties() {
         // verify content
         String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
-        Document document = (Document) this.session.getObjectByPath(path);
+        Document document = (Document) session.getObjectByPath(path);
         assertNotNull("Document not found: " + path, document);
 
         // TODO: adapt test to refactored interface
@@ -220,7 +220,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
     public void updateSinglePropertyAndCheckName() {
         // verify content
         String path = "/" + Fixture.TEST_ROOT_FOLDER_NAME + "/" + FixtureData.DOCUMENT1_NAME;
-        Document document = (Document) this.session.getObjectByPath(path);
+        Document document = (Document) session.getObjectByPath(path);
         assertNotNull("Document not found: " + path, document);
 
         String value = UUID.randomUUID().toString();
@@ -246,11 +246,11 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         String s3 = p.getFirstValue();
         assertEquals(s1, s3);
 
-        Document document2 = (Document) this.session.getObjectByPath(path);
+        Document document2 = (Document) session.getObjectByPath(path);
         assertNotNull("Document not found: " + path, document2);
     }
 
-    private String getContentAsString(ContentStream stream) throws IOException {
+    private static String getContentAsString(ContentStream stream) throws IOException {
         assertNotNull(stream);
         InputStream in2 = stream.getStream();
         assertNotNull(in2);
@@ -269,7 +269,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
     @Test
     public void createDocumentAndSetContent() throws IOException {
-        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        ObjectId parentId = session.createObjectId(fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
@@ -283,15 +283,15 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length,
+        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, buf1.length,
                 mimetype, in1);
         assertNotNull(contentStream);
 
-        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE);
+        ObjectId id = session.createDocument(properties, parentId, null, VersioningState.NONE);
         assertNotNull(id);
 
         // set and verify content
-        Document doc = (Document) this.session.getObject(id);
+        Document doc = (Document) session.getObject(id);
         assertNotNull(doc);
         doc.setContentStream(contentStream, true);
 
@@ -299,14 +299,14 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertEquals(buf1.length, doc.getContentStreamLength());
         assertEquals(mimetype, doc.getContentStreamMimeType());
         assertEquals(filename, doc.getContentStreamFileName());
-        String content2 = this.getContentAsString(doc.getContentStream());
+        String content2 = getContentAsString(doc.getContentStream());
         assertEquals(content1, content2);
     }
 
     @Ignore
     @Test
     public void createDocumentAndSetContentNoOverwrite() throws IOException {
-        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        ObjectId parentId = session.createObjectId(fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
@@ -320,15 +320,15 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream = this.session.getObjectFactory().createContentStream(filename, buf1.length,
+        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, buf1.length,
                 mimetype, in1);
         assertNotNull(contentStream);
 
-        ObjectId id = this.session.createDocument(properties, parentId, null, VersioningState.NONE);
+        ObjectId id = session.createDocument(properties, parentId, null, VersioningState.NONE);
         assertNotNull(id);
 
         // set and verify content
-        Document doc = (Document) this.session.getObject(id);
+        Document doc = (Document) session.getObject(id);
         assertNotNull(doc);
         doc.setContentStream(contentStream, false);
 
@@ -336,13 +336,13 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertEquals(buf1.length, doc.getContentStreamLength());
         assertEquals(mimetype, doc.getContentStreamMimeType());
         assertEquals(filename, doc.getContentStreamFileName());
-        String content2 = this.getContentAsString(doc.getContentStream());
+        String content2 = getContentAsString(doc.getContentStream());
         assertEquals(content1, content2);
     }
 
     @Test
     public void createDocumentAndUpdateContent() throws IOException {
-        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        ObjectId parentId = session.createObjectId(fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
@@ -356,11 +356,11 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream1 = this.session.getObjectFactory().createContentStream(filename1, buf1.length,
+        ContentStream contentStream1 = session.getObjectFactory().createContentStream(filename1, buf1.length,
                 mimetype, in1);
         assertNotNull(contentStream1);
 
-        ObjectId id = this.session.createDocument(properties, parentId, contentStream1, VersioningState.NONE);
+        ObjectId id = session.createDocument(properties, parentId, contentStream1, VersioningState.NONE);
         assertNotNull(id);
 
         // set and verify content
@@ -369,11 +369,11 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf2 = content2.getBytes("UTF-8");
         ByteArrayInputStream in2 = new ByteArrayInputStream(buf2);
-        ContentStream contentStream2 = this.session.getObjectFactory().createContentStream(filename2, buf2.length,
+        ContentStream contentStream2 = session.getObjectFactory().createContentStream(filename2, buf2.length,
                 mimetype, in2);
         assertNotNull(contentStream2);
 
-        Document doc = (Document) this.session.getObject(id);
+        Document doc = (Document) session.getObject(id);
         assertNotNull(doc);
         doc.setContentStream(contentStream2, true);
 
@@ -381,14 +381,14 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertEquals(buf2.length, doc.getContentStreamLength());
         assertEquals(mimetype, doc.getContentStreamMimeType());
         assertEquals(filename2, doc.getContentStreamFileName());
-        String content3 = this.getContentAsString(doc.getContentStream());
+        String content3 = getContentAsString(doc.getContentStream());
         assertEquals(content2, content3);
     }
 
     @Ignore
     @Test(expected = CmisContentAlreadyExistsException.class)
     public void createDocumentAndUpdateContentNoOverwrite() throws IOException {
-        ObjectId parentId = this.session.createObjectId(this.fixture.getTestRootId());
+        ObjectId parentId = session.createObjectId(fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
 
@@ -402,11 +402,11 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream1 = this.session.getObjectFactory().createContentStream(filename1, buf1.length,
+        ContentStream contentStream1 = session.getObjectFactory().createContentStream(filename1, buf1.length,
                 mimetype, in1);
         assertNotNull(contentStream1);
 
-        ObjectId id = this.session.createDocument(properties, parentId, contentStream1, VersioningState.NONE);
+        ObjectId id = session.createDocument(properties, parentId, contentStream1, VersioningState.NONE);
         assertNotNull(id);
 
         // set and verify content
@@ -415,11 +415,11 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf2 = content2.getBytes("UTF-8");
         ByteArrayInputStream in2 = new ByteArrayInputStream(buf2);
-        ContentStream contentStream2 = this.session.getObjectFactory().createContentStream(filename2, buf2.length,
+        ContentStream contentStream2 = session.getObjectFactory().createContentStream(filename2, buf2.length,
                 mimetype, in2);
         assertNotNull(contentStream2);
 
-        Document doc = (Document) this.session.getObject(id);
+        Document doc = (Document) session.getObject(id);
         assertNotNull(doc);
         doc.setContentStream(contentStream2, false);
 
@@ -427,7 +427,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         assertEquals(buf2.length, doc.getContentStreamLength());
         assertEquals(mimetype, doc.getContentStreamMimeType());
         assertEquals(filename2, doc.getContentStreamFileName());
-        String content3 = this.getContentAsString(doc.getContentStream());
+        String content3 = getContentAsString(doc.getContentStream());
         assertEquals(content2, content3);
     }
 

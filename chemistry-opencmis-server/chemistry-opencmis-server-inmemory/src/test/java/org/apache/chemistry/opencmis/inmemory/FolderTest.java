@@ -36,10 +36,9 @@ import org.junit.Test;
  * @author Jens
  */
 
-/*
- * Some test directly against the in-memory folder object
+/**
+ * Some test directly against the in-memory folder object.
  */
-
 public class FolderTest extends TestCase {
 
     private ObjectStore fStore;

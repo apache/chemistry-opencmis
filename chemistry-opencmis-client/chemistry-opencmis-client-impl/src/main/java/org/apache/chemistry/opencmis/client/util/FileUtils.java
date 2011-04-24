@@ -50,6 +50,9 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
  * A set of utility methods that simplify file and folder operations.
  */
 public class FileUtils {
+    
+    private FileUtils() {
+    }
 
     /**
      * Gets an object by path or object id.

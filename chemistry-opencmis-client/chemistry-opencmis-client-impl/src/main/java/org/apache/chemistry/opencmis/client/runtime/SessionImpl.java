@@ -698,7 +698,7 @@ public class SessionImpl implements Session, Serializable {
 
         String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
-                (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
+                folderId.getId(), objectFactory.convertPolicies(policies),
                 objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
 
         if (newId == null) {

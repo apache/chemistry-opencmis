@@ -30,6 +30,9 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * 
  */
 public class AtomPubTestBindingFactory {
+    
+    private AtomPubTestBindingFactory() {
+    }
 
     public static CmisBinding createBinding(String atomPubUrl, String user, String password) {
         // gather parameters

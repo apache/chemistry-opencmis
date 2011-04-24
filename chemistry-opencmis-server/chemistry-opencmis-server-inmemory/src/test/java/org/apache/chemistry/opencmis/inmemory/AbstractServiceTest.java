@@ -1,4 +1,3 @@
-package org.apache.chemistry.opencmis.inmemory;
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +18,7 @@ package org.apache.chemistry.opencmis.inmemory;
  * under the License.
  *
  */
-
+package org.apache.chemistry.opencmis.inmemory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -63,8 +62,10 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataIm
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class AbstractServiceTst /* extends TestCase */{
-    private static final Log LOG = LogFactory.getLog(AbstractServiceTst.class);
+public class AbstractServiceTest /* extends TestCase */{
+
+    private static final Log LOG = LogFactory.getLog(AbstractServiceTest.class);
+
     protected static final String REPOSITORY_ID = "UnitTestRepository";
     protected BindingsObjectFactory fFactory = new BindingsObjectFactoryImpl();
     protected String fRootFolderId;
@@ -78,7 +79,7 @@ public class AbstractServiceTst /* extends TestCase */{
     protected DummyCallContext fTestCallContext;
     private String fTypeCreatorClassName;
 
-    public AbstractServiceTst() {
+    public AbstractServiceTest() {
         // The in-memory server unit tests can either be run directly against
         // the
         // service implementation or against a clocal binding interface. The

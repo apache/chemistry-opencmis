@@ -36,7 +36,7 @@ public class CacheTest extends TestCase {
     public static final String MAP_CACHE_LEVEL = "org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl";
     public static final String LRU_CACHE_LEVEL = "org.apache.chemistry.opencmis.client.bindings.cache.impl.LruCacheLevelImpl";
 
-    public void testCache() throws Exception {
+    public void testCache() {
         Cache cache;
 
         cache = new CacheImpl();
@@ -81,7 +81,7 @@ public class CacheTest extends TestCase {
         assertNull(valueObj);
     }
 
-    public void testCacheBadUsage() throws Exception {
+    public void testCacheBadUsage() {
         Cache cache;
 
         cache = new CacheImpl();
@@ -103,7 +103,7 @@ public class CacheTest extends TestCase {
         assertNull(cache.get((String[]) null));
     }
 
-    public void testCacheConfig() throws Exception {
+    public void testCacheConfig() {
         Cache cache;
 
         // empty config
@@ -135,7 +135,7 @@ public class CacheTest extends TestCase {
         }
     }
 
-    public void testMapCache() throws Exception {
+    public void testMapCache() {
         Cache cache;
 
         cache = new CacheImpl();
@@ -153,7 +153,7 @@ public class CacheTest extends TestCase {
         }
     }
 
-    public void testURLCache() throws Exception {
+    public void testURLCache() {
         Cache cache;
 
         cache = new CacheImpl();
@@ -175,7 +175,7 @@ public class CacheTest extends TestCase {
         }
     }
 
-    public void XtestFallback() throws Exception {
+    public void XtestFallback() {
         Cache cache;
 
         cache = new CacheImpl();
@@ -190,7 +190,7 @@ public class CacheTest extends TestCase {
         assertEquals("value1", cache.get("key3"));
     }
 
-    public void testContentTypeCache() throws Exception {
+    public void testContentTypeCache() {
         ContentTypeCacheLevelImpl cl = new ContentTypeCacheLevelImpl();
         cl.initialize(null);
 

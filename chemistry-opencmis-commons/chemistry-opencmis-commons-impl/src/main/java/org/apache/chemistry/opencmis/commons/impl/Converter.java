@@ -2268,8 +2268,9 @@ public final class Converter {
      * Converts an access control list object.
      */
     public static Acl convert(CmisACLType acl) {
-        if (acl == null)
+        if (acl == null) {
             return null;
+        }
 
         Acl result = convert(acl.getACL(), acl.isExact());
 

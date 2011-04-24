@@ -46,7 +46,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MultiFilingTest extends AbstractServiceTst {
+public class MultiFilingTest extends AbstractServiceTest {
 
     private static final Log LOG = LogFactory.getLog(MultiFilingTest.class);
     private static final String DOCUMENT_TYPE_ID = UnitTestTypeSystemCreator.COMPLEX_TYPE;

@@ -57,7 +57,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     /**
      * Tests folder creation.
      */
-    public void testCreateFolder() throws Exception {
+    public void testCreateFolder() {
         if (!isEnabled(TEST_CREATE_FOLDER)) {
             return;
         }
@@ -233,7 +233,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     /**
      * Tests property updates.
      */
-    public void testUpdateProperties() throws Exception {
+    public void testUpdateProperties() {
         if (!isEnabled(TEST_UPDATE_PROPERTIES)) {
             return;
         }
@@ -270,7 +270,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     /**
      * Tests delete tree.
      */
-    public void testDeleteTree() throws Exception {
+    public void testDeleteTree() {
         if (!isEnabled(TEST_DELETE_TREE)) {
             return;
         }
@@ -302,7 +302,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     /**
      * Tests move object.
      */
-    public void testMoveObject() throws Exception {
+    public void testMoveObject() {
         if (!isEnabled(TEST_MOVE_OBJECT)) {
             return;
         }
@@ -329,7 +329,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     /**
      * Tests copy object.
      */
-    public void testCopyObject() throws Exception {
+    public void testCopyObject() {
         if (!isEnabled(TEST_COPY_OBJECT)) {
             return;
         }
@@ -363,7 +363,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
     /**
      * Test check-in/check-out.
      */
-    public void testVersioning() throws Exception {
+    public void testVersioning() {
         if (!isEnabled(TEST_VERSIONING)) {
             return;
         }

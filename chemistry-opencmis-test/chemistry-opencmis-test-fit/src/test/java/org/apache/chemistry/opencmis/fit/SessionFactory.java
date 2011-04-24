@@ -30,9 +30,8 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
  * Session factory for integration tests.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class SessionFactory {
 
@@ -45,6 +44,9 @@ public class SessionFactory {
 
     private static final String ATOMPUB_PATH = "/opencmis/atom";
     private static final String WEBSERVICES_PATH = "/opencmis/services/";
+
+    private SessionFactory() {
+    }
 
     /**
      * Returns the repository id of the test repository.

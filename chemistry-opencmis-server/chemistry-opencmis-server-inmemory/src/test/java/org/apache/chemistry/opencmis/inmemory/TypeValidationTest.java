@@ -59,6 +59,7 @@ import org.junit.Test;
  * @author Jens
  */
 public class TypeValidationTest extends TestCase {
+
     private static final String MY_DOC_TYPE = "MyDocType1";
     private static final String STRING_DOC_TYPE = "StringDocType";
     private static final String STRING_PROP_TYPE = "StringProp";
@@ -73,16 +74,6 @@ public class TypeValidationTest extends TestCase {
     private static final String STRING_PROP_TYPE_SUPER = "StringPropSuper";
     private static final String STRING_PROP_TYPE_SUB = "StringPropSub";
     private static final BindingsObjectFactory FACTORY = new BindingsObjectFactoryImpl();
-
-    @Before
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     private List<PropertyData<?>> createPropertiesWithNameAndTypeId(String typeId) {
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();

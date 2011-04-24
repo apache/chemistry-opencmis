@@ -31,6 +31,9 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer
  * 
  */
 public class Tools {
+    
+    private Tools() {
+    }
 
     public static void print(RepositoryInfo repositoryInfo) {
         if (repositoryInfo == null) {
@@ -72,7 +75,6 @@ public class Tools {
 
             printTypes(container.getChildren(), level + 1);
         }
-
     }
 
     public static void print(String title, List<ObjectInFolderContainer> containerList) {

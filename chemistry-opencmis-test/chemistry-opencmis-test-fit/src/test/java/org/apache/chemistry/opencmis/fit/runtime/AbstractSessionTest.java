@@ -95,14 +95,14 @@ public abstract class AbstractSessionTest {
      */
     protected Fixture fixture = null;
 
-    public AbstractSessionTest() {
+    protected AbstractSessionTest() {
         this.fixture = new Fixture();
         this.initFixture(this.fixture);
         this.fixture.init();
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         SessionFactory factory = this.fixture.getSessionFactory();
         this.session = factory.createSession(this.fixture.getParamter());
         this.fixture.setUpTestData(this.session);
@@ -111,7 +111,7 @@ public abstract class AbstractSessionTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         this.fixture.teardownTestData(this.session);
     }
 

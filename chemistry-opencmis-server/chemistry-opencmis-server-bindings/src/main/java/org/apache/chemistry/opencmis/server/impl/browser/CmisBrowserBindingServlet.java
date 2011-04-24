@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.*;
+import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
+import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.io.IOException;
@@ -90,39 +93,39 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         rootDispatcher = new Dispatcher();
 
         try {
-            repositoryDispatcher.addResource("", Dispatcher.METHOD_GET, RepositoryService.class, "getRepositoryInfo");
-            repositoryDispatcher.addResource(BrowserBindingUtils.SELECTOR_LAST_RESULT, Dispatcher.METHOD_GET,
+            repositoryDispatcher.addResource("", METHOD_GET, RepositoryService.class, "getRepositoryInfo");
+            repositoryDispatcher.addResource(SELECTOR_LAST_RESULT, METHOD_GET,
                     RepositoryService.class, "getLastResult");
-            repositoryDispatcher.addResource(BrowserBindingUtils.SELECTOR_TYPE_CHILDREN, Dispatcher.METHOD_GET,
+            repositoryDispatcher.addResource(SELECTOR_TYPE_CHILDREN, METHOD_GET,
                     RepositoryService.class, "getTypeChildren");
-            repositoryDispatcher.addResource(BrowserBindingUtils.SELECTOR_TYPE_DESCENDANTS, Dispatcher.METHOD_GET,
+            repositoryDispatcher.addResource(SELECTOR_TYPE_DESCENDANTS, METHOD_GET,
                     RepositoryService.class, "getTypeDescendants");
-            repositoryDispatcher.addResource(BrowserBindingUtils.SELECTOR_TYPE_DEFINITION, Dispatcher.METHOD_GET,
+            repositoryDispatcher.addResource(SELECTOR_TYPE_DEFINITION, METHOD_GET,
                     RepositoryService.class, "getTypeDefintion");
-            repositoryDispatcher.addResource(BrowserBindingUtils.SELECTOR_QUERY, Dispatcher.METHOD_GET,
+            repositoryDispatcher.addResource(SELECTOR_QUERY, METHOD_GET,
                     DiscoveryService.class, "query");
-            repositoryDispatcher.addResource(BrowserBindingUtils.CMISACTION_QUERY, Dispatcher.METHOD_POST,
+            repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST,
                     DiscoveryService.class, "query");
-            repositoryDispatcher.addResource(BrowserBindingUtils.CMISACTION_CREATEDOCUMENT, Dispatcher.METHOD_POST,
+            repositoryDispatcher.addResource(CMISACTION_CREATEDOCUMENT, METHOD_POST,
                     ObjectService.class, "createDocument");
 
-            rootDispatcher.addResource(BrowserBindingUtils.SELECTOR_OBJECT, Dispatcher.METHOD_GET, ObjectService.class,
+            rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class,
                     "getObject");
-            rootDispatcher.addResource(BrowserBindingUtils.SELECTOR_CONTENT, Dispatcher.METHOD_GET,
+            rootDispatcher.addResource(SELECTOR_CONTENT, METHOD_GET,
                     ObjectService.class, "getContentStream");
-            rootDispatcher.addResource(BrowserBindingUtils.SELECTOR_CHILDREN, Dispatcher.METHOD_GET,
+            rootDispatcher.addResource(SELECTOR_CHILDREN, METHOD_GET,
                     NavigationService.class, "getChildren");
-            rootDispatcher.addResource(BrowserBindingUtils.SELECTOR_DESCENDANTS, Dispatcher.METHOD_GET,
+            rootDispatcher.addResource(SELECTOR_DESCENDANTS, METHOD_GET,
                     NavigationService.class, "getDescendants");
-            rootDispatcher.addResource(BrowserBindingUtils.SELECTOR_FOLDER_TREE, Dispatcher.METHOD_GET,
+            rootDispatcher.addResource(SELECTOR_FOLDER_TREE, METHOD_GET,
                     NavigationService.class, "getFolderTree");
-            rootDispatcher.addResource(BrowserBindingUtils.SELECTOR_PARENTS, Dispatcher.METHOD_GET,
+            rootDispatcher.addResource(SELECTOR_PARENTS, METHOD_GET,
                     NavigationService.class, "getObjectParents");
-            rootDispatcher.addResource(BrowserBindingUtils.SELECTOR_VERSIONS, Dispatcher.METHOD_GET,
+            rootDispatcher.addResource(SELECTOR_VERSIONS, METHOD_GET,
                     VersioningService.class, "getAllVersions");
-            rootDispatcher.addResource(BrowserBindingUtils.CMISACTION_CREATEDOCUMENT, Dispatcher.METHOD_POST,
+            rootDispatcher.addResource(CMISACTION_CREATEDOCUMENT, METHOD_POST,
                     ObjectService.class, "createDocument");
-            rootDispatcher.addResource(BrowserBindingUtils.CMISACTION_CREATEFOLDER, Dispatcher.METHOD_POST,
+            rootDispatcher.addResource(CMISACTION_CREATEFOLDER, METHOD_POST,
                     ObjectService.class, "createFolder");
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);
@@ -199,7 +202,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             String repositoryId = pathFragments[0];
             boolean methodFound = false;
 
-            if (Dispatcher.METHOD_GET.equals(method)) {
+            if (METHOD_GET.equals(method)) {
                 String selector = HttpUtils.getStringParameter(request, BrowserBindingUtils.PARAM_SELECTOR);
                 String objectId = getStringParameter(request, Constants.PARAM_OBJECT_ID);
 
@@ -222,24 +225,24 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                                     .get(BrowserBindingUtils.CONTEXT_BASETYPE_ID));
                             switch (basetype) {
                             case CMIS_DOCUMENT:
-                                selector = BrowserBindingUtils.SELECTOR_CONTENT;
+                                selector = SELECTOR_CONTENT;
                                 break;
                             case CMIS_FOLDER:
-                                selector = BrowserBindingUtils.SELECTOR_CHILDREN;
+                                selector = SELECTOR_CHILDREN;
                                 break;
                             default:
-                                selector = BrowserBindingUtils.SELECTOR_OBJECT;
+                                selector = SELECTOR_OBJECT;
                                 break;
                             }
                         } catch (Exception e) {
-                            selector = BrowserBindingUtils.SELECTOR_OBJECT;
+                            selector = SELECTOR_OBJECT;
                         }
                     }
 
                     methodFound = rootDispatcher.dispatch(selector, method, context, service, repositoryId, request,
                             response);
                 }
-            } else if (Dispatcher.METHOD_POST.equals(method)) {
+            } else if (METHOD_POST.equals(method)) {
                 POSTHttpServletRequestWrapper postRequest = new POSTHttpServletRequestWrapper(request);
 
                 String cmisaction = HttpUtils.getStringParameter(postRequest, BrowserBindingUtils.CONTROL_CMISACTION);

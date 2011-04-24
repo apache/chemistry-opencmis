@@ -38,6 +38,9 @@ public class ExceptionHelper {
         sendStackTrace = System.getProperty(STACK_TRACE_PROPERTY) == null;
     }
 
+    private ExceptionHelper() {
+    }
+
     /**
      * Returns the stack trace as string.
      */

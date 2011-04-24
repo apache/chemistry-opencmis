@@ -23,9 +23,9 @@ import org.apache.chemistry.opencmis.fit.runtime.Fixture;
 
 public class TransientObjectWebServicesIT extends AbstractTransientObjectIT {
 
-	@Override
-	public void initFixture(Fixture fixture) {
-		fixture.enableWebServices();
-	}
+    @Override
+    public void initFixture(Fixture fixture) {
+        fixture.enableWebServices();
+    }
 
 }

@@ -128,11 +128,7 @@ public class ObjectCreator {
     }
 
     /**
-     * Compare two streams and return true if they are equal
-     * 
-     * @param csd1
-     * @param csd2
-     * @return
+     * Compare two streams and return true if they are equal.
      */
     public boolean verifyContent(ContentStream csd1, ContentStream csd2) {
         if (!csd1.getFileName().equals(csd2.getFileName()))

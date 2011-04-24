@@ -32,7 +32,7 @@ public abstract class AtomBase implements Serializable {
 
     private final List<AtomElement> fElements = new ArrayList<AtomElement>();
 
-    public AtomBase() {
+    protected AtomBase() {
     }
 
     public abstract String getType();

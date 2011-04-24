@@ -71,7 +71,7 @@ import org.junit.Test;
 /**
  * @author Jens
  */
-public class RepositoryServiceTest extends AbstractServiceTst {
+public class RepositoryServiceTest extends AbstractServiceTest {
 
     // private CmisProvider fProvider;
 

@@ -105,7 +105,8 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
 		centerPanel.add(comp);
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+    public void actionPerformed(ActionEvent e) {
 		try {
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			doAction();
@@ -133,7 +134,8 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
 
 		JButton browseButton = new JButton("Browse");
 		browseButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
+			@Override
+            public void actionPerformed(ActionEvent event) {
 				JFileChooser fileChooser = new JFileChooser();
 				int chooseResult = fileChooser.showDialog(filenameField,
 						"Select");

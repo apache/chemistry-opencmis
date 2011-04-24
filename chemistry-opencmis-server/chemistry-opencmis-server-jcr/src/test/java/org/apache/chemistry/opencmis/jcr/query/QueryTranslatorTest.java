@@ -92,7 +92,6 @@ public class QueryTranslatorTest {
             queryTranslator.translateToXPath(
                     "select * from cmis:document where NOT (cmis:isLatestVersion>'foo' OR cmis:name< 1.0)"));
 
-
         assertEquals(
             "/jcr:root//element(*,jcr:document)[(@jcr:name = 'foo' or @jcr:objectId = 'baz' and @jcr:createdBy = 'bar')]",
             queryTranslator.translateToXPath(

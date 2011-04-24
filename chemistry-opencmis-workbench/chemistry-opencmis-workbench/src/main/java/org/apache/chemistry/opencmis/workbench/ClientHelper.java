@@ -55,6 +55,9 @@ public class ClientHelper {
 
     private static final Log log = LogFactory.getLog(ClientHelper.class);
     private static final int BUFFER_SIZE = 64 * 1024;
+    
+    private ClientHelper() {
+    }
 
     public static void showError(Component parent, Exception ex) {
         if (log.isErrorEnabled()) {

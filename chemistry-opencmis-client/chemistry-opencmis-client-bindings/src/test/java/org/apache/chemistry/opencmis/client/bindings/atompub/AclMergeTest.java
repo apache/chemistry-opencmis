@@ -38,7 +38,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrinc
  */
 public class AclMergeTest extends TestCase {
 
-    public void testIsACLMergeRequired() throws Exception {
+    public void testIsACLMergeRequired() {
         AtomPubService service = new AtomPubService();
 
         assertFalse(service.publicIsACLMergeRequired(null, null));
@@ -47,7 +47,7 @@ public class AclMergeTest extends TestCase {
         assertFalse(service.publicIsACLMergeRequired(new AccessControlListImpl(), new AccessControlListImpl()));
     }
 
-    public void testAclMerge() throws Exception {
+    public void testAclMerge() {
         AtomPubService service = new AtomPubService();
 
         // original
@@ -104,7 +104,7 @@ public class AclMergeTest extends TestCase {
     /**
      * Creates an ACL structure from a Map.
      */
-    private Acl createACL(Map<String, String[]> aceData) {
+    private static Acl createACL(Map<String, String[]> aceData) {
         AccessControlListImpl result = new AccessControlListImpl();
 
         List<Ace> aces = new ArrayList<Ace>();

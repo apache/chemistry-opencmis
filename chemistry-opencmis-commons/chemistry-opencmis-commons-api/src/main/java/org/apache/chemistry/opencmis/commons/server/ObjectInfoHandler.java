@@ -1,4 +1,3 @@
-package org.apache.chemistry.opencmis.commons.server;
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,11 +18,11 @@ package org.apache.chemistry.opencmis.commons.server;
  * under the License.
  *
  */
-
+package org.apache.chemistry.opencmis.commons.server;
 
 public interface ObjectInfoHandler {
 
-	ObjectInfo getObjectInfo(String repositoryId, String objectId);
+    ObjectInfo getObjectInfo(String repositoryId, String objectId);
 
-	void addObjectInfo(ObjectInfo objectInfo);
+    void addObjectInfo(ObjectInfo objectInfo);
 }

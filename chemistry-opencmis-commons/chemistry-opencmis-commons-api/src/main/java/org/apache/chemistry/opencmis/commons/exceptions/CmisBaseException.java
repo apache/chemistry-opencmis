@@ -36,7 +36,7 @@ public abstract class CmisBaseException extends RuntimeException {
     /**
      * Default constructor.
      */
-    public CmisBaseException() {
+    protected CmisBaseException() {
         super();
     }
 
@@ -50,7 +50,7 @@ public abstract class CmisBaseException extends RuntimeException {
      * @param cause
      *            the cause
      */
-    public CmisBaseException(String message, BigInteger code, Throwable cause) {
+    protected CmisBaseException(String message, BigInteger code, Throwable cause) {
         super(message, cause);
         this.code = code;
     }
@@ -65,7 +65,7 @@ public abstract class CmisBaseException extends RuntimeException {
      * @param cause
      *            the cause
      */
-    public CmisBaseException(String message, String errorContent, Throwable cause) {
+    protected CmisBaseException(String message, String errorContent, Throwable cause) {
         super(message, cause);
         this.errorContent = errorContent;
     }
@@ -78,7 +78,7 @@ public abstract class CmisBaseException extends RuntimeException {
      * @param code
      *            error code
      */
-    public CmisBaseException(String message, BigInteger code) {
+    protected CmisBaseException(String message, BigInteger code) {
         super(message);
         this.code = code;
     }
@@ -93,7 +93,7 @@ public abstract class CmisBaseException extends RuntimeException {
      * @param errorContent
      *            error page content
      */
-    public CmisBaseException(String message, BigInteger code, String errorContent) {
+    protected CmisBaseException(String message, BigInteger code, String errorContent) {
         super(message);
         this.code = code;
         this.errorContent = errorContent;
@@ -107,7 +107,7 @@ public abstract class CmisBaseException extends RuntimeException {
      * @param errorContent
      *            error page content
      */
-    public CmisBaseException(String message, String errorContent) {
+    protected CmisBaseException(String message, String errorContent) {
         super(message);
         this.errorContent = errorContent;
     }
@@ -120,7 +120,7 @@ public abstract class CmisBaseException extends RuntimeException {
      * @param cause
      *            the cause
      */
-    public CmisBaseException(String message, Throwable cause) {
+    protected CmisBaseException(String message, Throwable cause) {
         this(message, (BigInteger) null, cause);
     }
 
@@ -130,7 +130,7 @@ public abstract class CmisBaseException extends RuntimeException {
      * @param message
      *            error message
      */
-    public CmisBaseException(String message) {
+    protected CmisBaseException(String message) {
         this(message, (BigInteger) null);
     }
 

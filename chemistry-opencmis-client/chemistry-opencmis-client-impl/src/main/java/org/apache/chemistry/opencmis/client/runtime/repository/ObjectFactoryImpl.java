@@ -502,8 +502,9 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
             if (properties.containsKey(PropertyIds.OBJECT_ID)) {
                 List<?> objectIdList = properties.get(PropertyIds.OBJECT_ID);
-                if ((objectIdList != null) && (!objectIdList.isEmpty()))
+                if ((objectIdList != null) && (!objectIdList.isEmpty())) {
                     objectId = objectIdList.get(0).toString();
+                }
             }
 
             if ((objectData.getPolicyIds() != null) && (objectData.getPolicyIds().getPolicyIds() != null)) {

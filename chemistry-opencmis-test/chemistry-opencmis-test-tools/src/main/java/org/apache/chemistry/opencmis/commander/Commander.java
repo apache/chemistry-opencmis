@@ -33,9 +33,9 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
  * Commander tool main.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public class Commander {
 
@@ -92,7 +92,7 @@ public class Commander {
     /**
      * Prints usage.
      */
-    private void printUsage(PrintWriter output) {
+    private static void printUsage(PrintWriter output) {
         output.println("CMIS Commander\n");
         output.println("Usage: Commander <config file> <command>\n");
         output.println("Available commands:");
@@ -106,7 +106,7 @@ public class Commander {
     /**
      * Creates the provider object
      */
-    private CmisBinding createBinding(String configFile) throws Exception {
+    private static CmisBinding createBinding(String configFile) throws Exception {
         Properties properties = new Properties();
         properties.load(new FileInputStream(configFile));
 

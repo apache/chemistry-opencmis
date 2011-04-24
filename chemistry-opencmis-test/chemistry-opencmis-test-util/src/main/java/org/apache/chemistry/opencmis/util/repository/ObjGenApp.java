@@ -456,11 +456,11 @@ public class ObjGenApp {
         return binding;
     }
 
-    private String getAtomPubUrl() {
+    private static String getAtomPubUrl() {
         return System.getProperty(PROP_ATOMPUB_URL, DEFAULT_ATOMPUB_URL);
     }
 
-    private String getWsUrl() {
+    private static String getWsUrl() {
         return System.getProperty(PROP_WS_URL, DEFAULT_WS_URL);
     }
 
@@ -468,7 +468,7 @@ public class ObjGenApp {
         return System.getProperty(PROP_URL, fUrlStr);
     }
 
-    private void getUrl(String urlStr) {
+    private static void getUrl(String urlStr) {
         URL url;
         InputStream is;
         InputStreamReader isr;

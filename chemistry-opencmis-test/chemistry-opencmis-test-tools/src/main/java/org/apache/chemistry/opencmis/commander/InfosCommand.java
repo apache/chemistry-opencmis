@@ -28,7 +28,7 @@ public class InfosCommand implements Command {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.opencmis.commander.Command#getCommandName()
      */
     public String getCommandName() {
@@ -37,7 +37,7 @@ public class InfosCommand implements Command {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.opencmis.commander.Command#getUsage()
      */
     public String getUsage() {
@@ -52,7 +52,7 @@ public class InfosCommand implements Command {
         }
     }
 
-    private void printRepositoryInfo(RepositoryInfo repositoryInfo, PrintWriter output) {
+    private static void printRepositoryInfo(RepositoryInfo repositoryInfo, PrintWriter output) {
         output.println("Id:           " + repositoryInfo.getId());
         output.println("Name:         " + repositoryInfo.getProductName());
         output.println("Description:  " + repositoryInfo.getDescription());

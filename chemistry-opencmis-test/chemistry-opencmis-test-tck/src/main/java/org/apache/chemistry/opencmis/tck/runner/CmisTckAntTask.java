@@ -46,7 +46,7 @@ public class CmisTckAntTask extends Task {
     private String format;
 
     @Override
-    public void init() throws BuildException {
+    public void init() {
         super.init();
         parameters = null;
         groups = null;
@@ -71,7 +71,7 @@ public class CmisTckAntTask extends Task {
     }
 
     @Override
-    public void execute() throws BuildException {
+    public void execute() {
         try {
             AntRunner runner = new AntRunner();
 

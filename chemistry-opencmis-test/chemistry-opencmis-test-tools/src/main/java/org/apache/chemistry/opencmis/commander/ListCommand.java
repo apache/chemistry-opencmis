@@ -30,7 +30,7 @@ public class ListCommand implements Command {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.opencmis.commander.Command#getCommandName()
      */
     public String getCommandName() {
@@ -39,7 +39,7 @@ public class ListCommand implements Command {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.opencmis.commander.Command#getUsage()
      */
     public String getUsage() {
@@ -68,7 +68,7 @@ public class ListCommand implements Command {
     /**
      * Returns a property value as string.
      */
-    private String getPropertyValue(ObjectInFolderData object, String name) {
+    private static String getPropertyValue(ObjectInFolderData object, String name) {
         if ((object == null) || (object.getObject() == null) || (object.getObject().getProperties() == null)
                 || (object.getObject().getProperties().getProperties() == null)) {
             return "?";
