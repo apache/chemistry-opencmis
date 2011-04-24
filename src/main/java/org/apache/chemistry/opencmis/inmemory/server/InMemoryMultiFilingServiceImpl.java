@@ -48,11 +48,12 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
         LOG.debug("Begin addObjectToFolder()");
 
-        StoredObject[] sos = validator.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extension); 
+        StoredObject[] sos = validator.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extension);
 
-        if (allVersions != null && allVersions.booleanValue() == false)
+        if (allVersions != null && allVersions.booleanValue() == false) {
             throw new CmisNotSupportedException(
                     "Cannot add object to folder, version specific filing is not supported.");
+        }
         StoredObject so = sos[0];
         StoredObject folder = sos[1];
         checkObjects(so, folder);
@@ -76,9 +77,9 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
         LOG.debug("Begin removeObjectFromFolder()");
 
-        StoredObject[] sos = validator.removeObjectFromFolder(context, repositoryId, objectId, folderId, extension); 
+        StoredObject[] sos = validator.removeObjectFromFolder(context, repositoryId, objectId, folderId, extension);
         StoredObject so = sos[0];
-            
+
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         StoredObject folder = sos[1];
 
@@ -99,18 +100,21 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         LOG.debug("End removeObjectFromFolder()");
     }
 
-    private void checkObjects(StoredObject so, StoredObject folder) {
-        if (!(so instanceof MultiFiling))
+    private static void checkObjects(StoredObject so, StoredObject folder) {
+        if (!(so instanceof MultiFiling)) {
             throw new CmisConstraintException("Cannot add object to folder, object id " + so.getId()
                     + " is not a multi-filed object.");
+        }
 
-        if ((so instanceof Folder))
+        if ((so instanceof Folder)) {
             throw new CmisConstraintException("Cannot add object to folder, object id " + folder.getId()
                     + " is a folder and folders are not multi-filed.");
+        }
 
-        if (!(folder instanceof Folder))
+        if (!(folder instanceof Folder)) {
             throw new CmisConstraintException("Cannot add object to folder, folder id " + folder.getId()
                     + " does not refer to a folder.");
+        }
     }
 
 }

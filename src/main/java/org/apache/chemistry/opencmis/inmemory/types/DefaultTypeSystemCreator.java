@@ -60,16 +60,18 @@ public class DefaultTypeSystemCreator implements TypeCreator {
     }
 
     public static TypeDefinition getTypeById(String typeId) {
-        for (TypeDefinition typeDef : singletonTypes)
-            if (typeDef.getId().equals(typeId))
+        for (TypeDefinition typeDef : singletonTypes) {
+            if (typeDef.getId().equals(typeId)) {
                 return typeDef;
+            }
+        }
         return null;
     }
 
     /**
-     * create root types and a collection of sample types
-     * 
-     * @return typesMap map filled with created types
+     * Create root types and a collection of sample types.
+     *
+     * @return typesMap a map filled with created types
      */
     private static List<TypeDefinition> buildTypesList() {
         // always add CMIS default types
@@ -208,7 +210,7 @@ public class DefaultTypeSystemCreator implements TypeCreator {
         prop9.setChoices(choiceList);
         prop9.setDefaultValue(Collections.singletonList("blue"));
         propertyDefinitions.put(prop9.getId(), prop9);
-        
+
         /*
          * try short form: / PropertyCreationHelper.addElemToPicklist(prop9,
          * "red"); PropertyCreationHelper.addElemToPicklist(prop9, "green");

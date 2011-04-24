@@ -36,9 +36,9 @@ import org.apache.commons.logging.LogFactory;
 /**
  * InMemory Stored Document A document is a stored object that has a path and
  * (optional) content
- * 
+ *
  * @author Jens
- * 
+ *
  */
 
 public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
@@ -46,45 +46,35 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
 
     private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
     private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
-    
+
     DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package
         super(objStore);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.opencmis.client.provider.spi.inmemory.IDocument#getContent()
-     */
     public ContentStream getContent(long offset, long length) {
-        if (null == fContent)
+        if (null == fContent) {
             return null;
-        else if (offset <= 0 && length < 0)
+        } else if (offset <= 0 && length < 0) {
             return fContent;
-        else
+        } else {
             return fContent.getCloneWithLimits(offset, length);
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.opencmis.client.provider.spi.inmemory.IDocument#setContent(org.opencmis
-     * .client.provider .ContentStreamData)
-     */
     public void setContent(ContentStream content, boolean mustPersist) {
-
         if (null == content) {
             fContent = null;
         } else {
             fContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB);
             String fileName = content.getFileName();
-            if (null == fileName || fileName.length() <= 0)
+            if (null == fileName || fileName.length() <= 0) {
                 fileName = getName(); // use name of document as fallback
+            }
             fContent.setFileName(fileName);
             String mimeType = content.getMimeType();
-            if (null == mimeType || mimeType.length() <= 0)
-                mimeType = "application/octet-stream";  // use as fallback
+            if (null == mimeType || mimeType.length() <= 0) {
+                mimeType = "application/octet-stream"; // use as fallback
+            }
             fContent.setMimeType(mimeType);
             try {
                 fContent.setContent(content.getStream());
@@ -95,6 +85,7 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         }
     }
 
+    @Override
     public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
             List<String> requestedIds) {
 

@@ -28,13 +28,13 @@ public class ConfigurationSettings {
     private static final Log LOG = LogFactory.getLog(ConfigurationSettings.class.getName());
 
     private static ConfigurationSettings singleInstance;
-    
+
     final Map<String, String> parameters;
-    
+
     private ConfigurationSettings(Map<String, String> parameters) {
         this.parameters = parameters;
     }
-    
+
     private String getConfigurationValueIntern(String key) {
         return parameters.get(key);
     }
@@ -46,20 +46,21 @@ public class ConfigurationSettings {
         }
         return singleInstance.getConfigurationValueIntern(key);
     }
-    
+
     public static Long getConfigurationValueAsLong(String key) {
         String str = getConfigurationValueAsString(key);
-        if (null != str)
+        if (null != str) {
             return Long.valueOf(str);
-        else
+        } else {
             return null;
+        }
     }
-    
+
     public static void init(Map<String, String> parameters) {
-        singleInstance = new ConfigurationSettings(parameters);        
+        singleInstance = new ConfigurationSettings(parameters);
     }
-    
+
     public static Map<String, String> getParameters() {
-        return singleInstance.parameters;        
+        return singleInstance.parameters;
     }
 }

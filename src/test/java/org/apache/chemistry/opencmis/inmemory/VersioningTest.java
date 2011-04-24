@@ -70,16 +70,18 @@ public class VersioningTest extends AbstractServiceTest {
 
     ObjectCreator fCreator;
 
+    @Override
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setTypeCreatorClass(VersionTestTypeSystemCreator.class.getName());
         super.setUp();
         fCreator = new ObjectCreator(fFactory, fObjSvc, fRepositoryId);
         setRuntimeContext(TEST_USER);
     }
 
+    @Override
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         super.tearDown();
     }
 
@@ -480,7 +482,7 @@ public class VersioningTest extends AbstractServiceTest {
         checkVersionProperties(verId, versioningState, allVersions.get(0).getProperties().getProperties(), null);
     }
 
-    private String getVersionSeriesId(String docId, Map<String, PropertyData<?>> props) {
+    private static String getVersionSeriesId(String docId, Map<String, PropertyData<?>> props) {
         PropertyId pdid = (PropertyId) props.get(PropertyIds.VERSION_SERIES_ID);
         assertNotNull(pdid);
         String sVal = pdid.getFirstValue();
@@ -493,12 +495,11 @@ public class VersioningTest extends AbstractServiceTest {
         return isCheckedOut(props.getProperties());
     }
 
-    private boolean isCheckedOut(Map<String, PropertyData<?>> props) {
+    private static boolean isCheckedOut(Map<String, PropertyData<?>> props) {
         PropertyBoolean pdb = (PropertyBoolean) props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
         assertNotNull(pdb);
         boolean bVal = pdb.getFirstValue();
         return bVal;
-
     }
 
     private void checkVersionProperties(String docId, VersioningState versioningState,
@@ -535,10 +536,11 @@ public class VersioningTest extends AbstractServiceTest {
         PropertyId pdid = (PropertyId) props.get(PropertyIds.VERSION_SERIES_ID);
         assertNotNull(pdb);
         String sVal = pdid.getFirstValue();
-        if (typeDef.isVersionable())
+        if (typeDef.isVersionable()) {
             assertFalse(docId.equals(sVal));
-        else
+        } else {
             assertEquals(docId, sVal);
+        }
 
         pdb = (PropertyBoolean) props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
         assertNotNull(pdb);
@@ -548,29 +550,33 @@ public class VersioningTest extends AbstractServiceTest {
         PropertyString pds = (PropertyString) props.get(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY);
         assertNotNull(pdb);
         sVal = pds.getFirstValue();
-        if (versioningState == VersioningState.CHECKEDOUT)
+        if (versioningState == VersioningState.CHECKEDOUT) {
             assertTrue(sVal != null && sVal.length() > 0);
-        else
+        } else {
             assertTrue(null == sVal || sVal.equals(""));
+        }
 
         pdid = (PropertyId) props.get(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID);
         assertNotNull(pdid);
         sVal = pdid.getFirstValue();
-        if (versioningState == VersioningState.CHECKEDOUT)
+        if (versioningState == VersioningState.CHECKEDOUT) {
             assertTrue(sVal != null && sVal.length() > 0);
-        else
+        } else {
             assertTrue(null == sVal || sVal.equals(""));
+        }
 
         pds = (PropertyString) props.get(PropertyIds.CHECKIN_COMMENT);
         assertNotNull(pdb);
         sVal = pds.getFirstValue();
-        if (checkinComment == null)
+        if (checkinComment == null) {
             assertTrue(null == sVal);
-        else
+        } else {
             assertEquals(checkinComment, sVal);
+        }
 
     }
 
+    @Override
     public String getDocument(String id) {
         String returnedId = null;
         try {
@@ -586,7 +592,7 @@ public class VersioningTest extends AbstractServiceTest {
         return returnedId;
     }
 
-    private void testReturnedProperties(Map<String, PropertyData<?>> props) {
+    private static void testReturnedProperties(Map<String, PropertyData<?>> props) {
         for (PropertyData<?> pd : props.values()) {
             log.info("return property id: " + pd.getId() + ", value: " + pd.getValues());
         }

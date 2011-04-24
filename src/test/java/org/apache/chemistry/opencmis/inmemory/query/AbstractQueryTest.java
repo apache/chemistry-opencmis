@@ -49,7 +49,7 @@ public abstract class AbstractQueryTest {
     PredicateWalkerBase predicateWalker;
     protected TypeDefinition myType, myTypeCopy, bookType;
     protected QueryUtil queryUtil;
-    
+
     protected static final String MY_DOC_TYPE = "MyDocType";
     protected static final String MY_DOC_TYPE_COPY = "MyDocTypeCopy";
     protected static final String BOOL_PROP = "MyBooleanProp";
@@ -70,19 +70,19 @@ public abstract class AbstractQueryTest {
 
     protected CmisQueryWalker traverseStatement(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
         walker =  queryUtil.traverseStatement(statement,queryObj, predicateWalker);
-        return walker;        
+        return walker;
     }
-    
+
     protected CmisQueryWalker traverseStatementAndCatchExc(String statement) {
         walker = queryUtil.traverseStatementAndCatchExc(statement, queryObj, predicateWalker);
         return walker;
     }
-    
-    protected CmisQueryWalker getWalker(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-        walker = queryUtil.getWalker(statement);
+
+    protected CmisQueryWalker getWalker(String statement) throws RecognitionException {
+        walker = QueryUtil.getWalker(statement);
         return walker;
     }
-    
+
     protected Tree getWhereTree(Tree root) {
         int count = root.getChildCount();
         for (int i=0; i<count; i++) {
@@ -99,7 +99,7 @@ public abstract class AbstractQueryTest {
     protected  List<TypeDefinition> createTypes() {
 
         List<TypeDefinition> typeDefs = new ArrayList<TypeDefinition>();
-        
+
         // First test type
         InMemoryDocumentTypeDefinition cmisType = new InMemoryDocumentTypeDefinition(MY_DOC_TYPE,
                 "Document Type for Validation", InMemoryDocumentTypeDefinition.getRootDocumentType());
@@ -154,10 +154,10 @@ public abstract class AbstractQueryTest {
         propertyDefinitions.put(prop4.getId(), prop4);
 
         cmisType.setPropertyDefinitions(propertyDefinitions);
-        
+
         typeDefs.add(cmisType);
         bookType = cmisType;
-        
+
         return typeDefs;
     }
 

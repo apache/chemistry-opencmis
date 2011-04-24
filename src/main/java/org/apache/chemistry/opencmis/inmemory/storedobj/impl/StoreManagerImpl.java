@@ -59,13 +59,13 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * factory to create objects that are stored in the InMemory store
- * 
+ *
  * @author Jens
  */
 public class StoreManagerImpl implements StoreManager {
 
     private static final Log LOG = LogFactory.getLog(StoreManagerImpl.class);
-    
+
     protected final BindingsObjectFactory fObjectFactory;
     protected RepositoryInfo fRepositoryInfo;
     protected CmisServiceValidator validator;
@@ -102,8 +102,9 @@ public class StoreManagerImpl implements StoreManager {
 
     public void createAndInitRepository(String repositoryId, String typeCreatorClassName) {
         if (fMapRepositoryToObjectStore.containsKey(repositoryId)
-                || fMapRepositoryToTypeManager.containsKey(repositoryId))
+                || fMapRepositoryToTypeManager.containsKey(repositoryId)) {
             throw new RuntimeException("Cannot add repository, repository " + repositoryId + " already exists.");
+        }
 
         fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
         fMapRepositoryToTypeManager.put(repositoryId, new TypeManagerImpl());
@@ -126,8 +127,9 @@ public class StoreManagerImpl implements StoreManager {
 
     public TypeDefinitionContainer getTypeById(String repositoryId, String typeId) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
-        if (null == typeManager)
+        if (null == typeManager) {
             throw new RuntimeException("Unknown repository " + repositoryId);
+        }
 
         return typeManager.getTypeById(typeId);
     }
@@ -135,8 +137,9 @@ public class StoreManagerImpl implements StoreManager {
     public TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
             int depth) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
-        if (null == typeManager)
+        if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        }
 
         TypeDefinitionContainer tc = typeManager.getTypeById(typeId);
         List<TypeDefinitionContainer> result = null;
@@ -144,11 +147,12 @@ public class StoreManagerImpl implements StoreManager {
         if (tc != null) {
             if (depth == -1) {
                 result = tc.getChildren();
-                if (!includePropertyDefinitions)
+                if (!includePropertyDefinitions) {
                     cloneTypeList(depth - 1, false, result);
-            } else if (depth == 0 || depth < -1)
+                }
+            } else if (depth == 0 || depth < -1) {
                 throw new CmisInvalidArgumentException("illegal depth value: " + depth);
-            else {
+            } else {
                 result = tc.getChildren();
                 cloneTypeList(depth - 1, includePropertyDefinitions, result);
             }
@@ -160,8 +164,9 @@ public class StoreManagerImpl implements StoreManager {
             boolean includePropertyDefinitions) {
         Collection<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
-        if (null == typeManager)
+        if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        }
         Collection<TypeDefinitionContainer> typeColl = typeManager.getTypeDefinitionList();
         if (includePropertyDefinitions) {
             result = typeColl;
@@ -185,8 +190,9 @@ public class StoreManagerImpl implements StoreManager {
 
     public List<TypeDefinitionContainer> getRootTypes(String repositoryId) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
-        if (null == typeManager)
+        if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        }
         List<TypeDefinitionContainer> rootTypes = typeManager.getRootTypes();
 
         return rootTypes;
@@ -194,8 +200,9 @@ public class StoreManagerImpl implements StoreManager {
 
     public RepositoryInfo getRepositoryInfo(String repositoryId) {
         ObjectStore sm = fMapRepositoryToObjectStore.get(repositoryId);
-        if (null == sm)
+        if (null == sm) {
             return null;
+        }
 
         RepositoryInfo repoInfo = createDefaultRepositoryInfo(repositoryId);
 
@@ -204,8 +211,9 @@ public class StoreManagerImpl implements StoreManager {
 
     public void clearTypeSystem(String repositoryId) {
         TypeManagerImpl typeManager = fMapRepositoryToTypeManager.get(repositoryId);
-        if (null == typeManager)
+        if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        }
 
         typeManager.clearTypeSystem();
     }
@@ -231,9 +239,10 @@ public class StoreManagerImpl implements StoreManager {
             if (obj instanceof RepositoryInfoCreator) {
                 repoCreator = (RepositoryInfoCreator) obj;
                 fRepositoryInfo = repoCreator.createRepositoryInfo();
-            } else
+            } else {
                 throw new RuntimeException(
                         "Illegal class to create repository info, must implement RepositoryInfoCreator interface.");
+            }
         } else {
             // create a default repository info
             createDefaultRepositoryInfo(repositoryId);
@@ -261,10 +270,11 @@ public class StoreManagerImpl implements StoreManager {
                         "Illegal class to create type system, must implement TypeCreator interface.", e);
             }
 
-            if (obj instanceof TypeCreator)
+            if (obj instanceof TypeCreator) {
                 typeCreator = (TypeCreator) obj;
-            else
+            } else {
                 throw new RuntimeException("Illegal class to create type system, must implement TypeCreator interface.");
+            }
 
             // retrieve the list of available types from the configured class.
             // test
@@ -278,11 +288,13 @@ public class StoreManagerImpl implements StoreManager {
 
         List<TypeDefinition> typeDefs = null;
         TypeManagerImpl typeManager = fMapRepositoryToTypeManager.get(repositoryId);
-        if (null == typeManager)
+        if (null == typeManager) {
             throw new RuntimeException("Unknown repository " + repositoryId);
+        }
 
-        if (null != typeCreatorClassName)
+        if (null != typeCreatorClassName) {
             typeDefs = initTypeSystem(typeCreatorClassName);
+        }
 
         typeManager.initTypeSystem(typeDefs);
     }
@@ -342,7 +354,7 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * traverse tree and replace each need node with a clone. remove properties
      * on clone if requested, cut children of clone if depth is exceeded.
-     * 
+     *
      * @param depth
      * @param types
      */
@@ -352,8 +364,9 @@ public class StoreManagerImpl implements StoreManager {
         while (it.hasNext()) {
             TypeDefinitionContainer tdc = it.next();
             AbstractTypeDefinition td = ((AbstractTypeDefinition) tdc.getTypeDefinition()).clone();
-            if (!includePropertyDefinitions)
+            if (!includePropertyDefinitions) {
                 td.setPropertyDefinitions(null);
+            }
             TypeDefinitionContainerImpl tdcClone = new TypeDefinitionContainerImpl(td);
             if (depth > 0) {
                 ArrayList<TypeDefinitionContainer> children = new ArrayList<TypeDefinitionContainer>(tdc.getChildren()

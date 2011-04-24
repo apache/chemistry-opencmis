@@ -30,14 +30,11 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
- * 
+ * AbstractPathImpl is the common superclass of all objects hold in the
+ * repository that have a single parent, these are: Folders.
+ *
  * @author Jens
- * 
- *         AbstractPathImpl is the common superclass of all objects hold in the
- *         repository that have a single parent, these are: Folders
- * 
  */
-
 public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implements SingleFiling {
 
     protected FolderImpl fParent;
@@ -46,18 +43,12 @@ public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implemen
         super(objStore);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.opencmis.client.provider.spi.inmemory.StoredObjectWithPath#getPath()
-     */
     public String getPath() {
         StringBuffer path = new StringBuffer(getName());
-        if (null == getParent())
-            path.replace(0, path.length(), PATH_SEPARATOR); // root folder-->
-        // set /
-        else {
+        if (null == getParent()) {
+            path.replace(0, path.length(), PATH_SEPARATOR);
+        } else {
+            // root folder-->
             Folder f = getParent();
             while (f.getParent() != null) {
                 path.insert(0, PATH_SEPARATOR);
@@ -71,13 +62,6 @@ public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implemen
         return path.toString();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.opencmis.client.provider.spi.inmemory.StoredObjectWithPath#getParent
-     * ()
-     */
     public Folder getParent() {
         return fParent;
     }
@@ -87,20 +71,13 @@ public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implemen
     }
 
     public List<Folder> getParents() {
-        if (null == fParent)
+        if (null == fParent) {
             return Collections.emptyList();
-        else
+        } else {
             return Collections.singletonList((Folder) fParent);
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.opencmis.client.provider.spi.inmemory.storedobj.api.StoredObjectWithPath
-     * #
-     * setParent(org.opencmis.client.provider.spi.inmemory.storedobj.api.Folder)
-     */
     public void setParent(Folder parent) {
         try {
             fObjStore.lock();
@@ -110,16 +87,20 @@ public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implemen
         }
     }
 
+    @Override
     public void rename(String newName) {
-        if (!NameValidator.isValidId(newName))
+        if (!NameValidator.isValidId(newName)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+        }
         try {
             fObjStore.lock();
-            if (getParent() == null)
+            if (getParent() == null) {
                 throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
-            if (getParent().hasChild(newName))
+            }
+            if (getParent().hasChild(newName)) {
                 throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
                         + ". This path already exists.");
+            }
 
             setName(newName);
         } finally {
@@ -128,18 +109,20 @@ public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implemen
     }
 
     public void move(Folder oldParent, Folder newParent) {
-
         try {
             fObjStore.lock();
-            if (this instanceof Document || this instanceof VersionedDocument)
+            if (this instanceof Document || this instanceof VersionedDocument) {
                 fParent.moveChildDocument(this, oldParent, newParent);
-            else {// it must be a folder
-                if (getParent() == null)
+            } else {// it must be a folder
+                if (getParent() == null) {
                     throw new IllegalArgumentException("Root folder cannot be moved.");
-                if (newParent == null)
+                }
+                if (newParent == null) {
                     throw new IllegalArgumentException("null is not a valid move target.");
-                if (newParent.hasChild(getName()))
+                }
+                if (newParent.hasChild(getName())) {
                     throw new IllegalArgumentException("Cannot move folder, this name already exists in target.");
+                }
 
                 setParent(newParent);
             }

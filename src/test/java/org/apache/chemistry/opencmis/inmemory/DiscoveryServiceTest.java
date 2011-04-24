@@ -43,13 +43,13 @@ public class DiscoveryServiceTest extends AbstractServiceTest {
 
     @Override
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setTypeCreatorClass(ObjectTestTypeSystemCreator.class.getName());
         super.setUp();
     }
 
     @Test
-    public void testQuery() throws Exception {
+    public void testQuery() {
         log.info("starting testQuery() ...");
 
         ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepositoryId);
@@ -78,7 +78,7 @@ public class DiscoveryServiceTest extends AbstractServiceTest {
         ObjectList res = fDiscSvc.query(fRepositoryId, statement, searchAllVersions, includeAllowableActions,
                 includeRelationships, renditionFilter, maxItems, skipCount, null);
         assertEquals(1, res.getObjects().size());
-        
+
         statement = "SELECT " + TEST_DOCUMENT_STRING_PROP_ID + " FROM " + TEST_DOCUMENT_TYPE_ID + " WHERE " + TEST_DOCUMENT_STRING_PROP_ID + "='My Doc StringProperty 1'";
         res = fDiscSvc.query(fRepositoryId, statement, searchAllVersions, includeAllowableActions,
                 includeRelationships, renditionFilter, maxItems, skipCount, null);
@@ -92,7 +92,7 @@ public class DiscoveryServiceTest extends AbstractServiceTest {
         assertEquals(7, res.getObjects().size());
 
 
-        /*        
+        /*
         assertEquals(BigInteger.valueOf(9), res.getNumItems());
 
         statement = "SELECT * FROM cmis:folder";
@@ -116,7 +116,7 @@ public class DiscoveryServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void testQueryPaging() throws Exception {
+    public void testQueryPaging() {
         log.info("starting testQuery() ...");
 
         String statement;
@@ -151,8 +151,9 @@ public class DiscoveryServiceTest extends AbstractServiceTest {
                     includeRelationships, renditionFilter, maxItems, skipCount, null);
             hasMoreItems = res.hasMoreItems();
             assertEquals(3, res.getObjects().size());
-            if (res.getNumItems() != null)
+            if (res.getNumItems() != null) {
                 assertEquals(9L, res.getNumItems().longValue());
+            }
             skipCount = skipCount.add(maxItems);
             ++count;
         }

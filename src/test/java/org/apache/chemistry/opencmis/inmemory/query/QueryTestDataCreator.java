@@ -51,14 +51,14 @@ import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.*
 /**
  * Utility class that fills the in-memory repository with some test objects that
  * can be used for query
- * 
+ *
  * @author Jens
  *
  * This class uses the following data for query testing. We have one document type
  * "ComplexType" and one folder type "FolderType" The document type has one property of
  * each of the types boolean, integer, decimal, string and datetime. id, uri and html are
- * treated like a string and do not make a difference. 
- * 
+ * treated like a string and do not make a difference.
+ *
  * String   Int         Double      DateTime  Boolean
  * ------------------------------------------------
  * Alpha    -100        -1.6E-5     23.05.1618  true
@@ -66,11 +66,11 @@ import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.*
  * Gamma    0           3.141592    (now)       true
  * Delta    50          1.23456E-6  20.01.2038  true
  * Epsilon  100         1.2345E12   14.07.2345  false
- * 
+ *
  * For folder and tree tests this series is put in each of the three test folders
  */
 public class QueryTestDataCreator {
-    
+
     private final BindingsObjectFactory fFactory = new BindingsObjectFactoryImpl();
     private final String rootFolderId;
     private final String repositoryId;
@@ -81,14 +81,14 @@ public class QueryTestDataCreator {
     private String folder2;
     private String folder11;
     private static final TimeZone TZ = TimeZone.getTimeZone("Zulu");
-    
+
     public QueryTestDataCreator(String repositoryId, String rootFolderId, ObjectService objSvc, VersioningService verSvc) {
         this.rootFolderId = rootFolderId;
         this.repositoryId = repositoryId;
         fObjSvc = objSvc;
         fVerSvc = verSvc;
     }
-    
+
     public String getFolder1() {
         return folder1;
     }
@@ -98,7 +98,7 @@ public class QueryTestDataCreator {
     public String getFolder11() {
         return folder11;
     }
-    
+
     public void createBasicTestData() {
         createTestFolders();
         createBasicTestDocuments();
@@ -110,187 +110,187 @@ public class QueryTestDataCreator {
         final GregorianCalendar gc1 = new GregorianCalendar(TZ);
         gc1.clear();
         gc1.set(1945, 4, 8);
-        
-        final Map<String, Object> propertyMap1 = 
+
+        final Map<String, Object> propertyMap1 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING, "Alpha");
                 put(PROP_ID_INT, Integer.valueOf(-100));
                 put(PROP_ID_DECIMAL, Double.valueOf(-4.0E24d));
                 put(PROP_ID_DATETIME, gc1);
                 put(PROP_ID_BOOLEAN, true);
-            }};           
+            }};
         doc1 = createDocument("alpha", rootFolderId, COMPLEX_TYPE, propertyMap1);
         assertNotNull(doc1);
-        
+
         final GregorianCalendar gc2 = new GregorianCalendar(TZ);
         gc2.clear();
         gc2.set(1618, 4, 23);
-        
-        final Map<String, Object> propertyMap2 = 
+
+        final Map<String, Object> propertyMap2 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING, "Beta");
                 put(PROP_ID_INT, Integer.valueOf(-50));
                 put(PROP_ID_DECIMAL, Double.valueOf(-1.6E-5d));
                 put(PROP_ID_DATETIME, gc2);
                 put(PROP_ID_BOOLEAN, false);
-            }};           
+            }};
         doc2 = createDocument("beta", rootFolderId, COMPLEX_TYPE, propertyMap2);
         assertNotNull(doc2);
 
-        final Map<String, Object> propertyMap3 = 
+        final Map<String, Object> propertyMap3 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING, "Gamma");
                 put(PROP_ID_INT, Integer.valueOf(0));
                 put(PROP_ID_DECIMAL, Double.valueOf(Math.PI));
                 put(PROP_ID_DATETIME, new GregorianCalendar(TZ));
                 put(PROP_ID_BOOLEAN, true);
-            }};           
+            }};
         doc3 = createDocument("gamma", rootFolderId, COMPLEX_TYPE, propertyMap3);
         assertNotNull(doc3);
 
         final GregorianCalendar gc4 = new GregorianCalendar(TZ);
         gc4.clear();
         gc4.set(2038, 0, 20);
-        
-        final Map<String, Object> propertyMap4 = 
+
+        final Map<String, Object> propertyMap4 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING, "Delta");
                 put(PROP_ID_INT, Integer.valueOf(50));
                 put(PROP_ID_DECIMAL, Double.valueOf(1.23456E-6));
                 put(PROP_ID_DATETIME, gc4);
                 put(PROP_ID_BOOLEAN, true);
-            }};           
+            }};
         doc4 = createDocument("delta", rootFolderId, COMPLEX_TYPE, propertyMap4);
         assertNotNull(doc4);
 
         final GregorianCalendar gc5 = new GregorianCalendar(TZ);
         gc5.clear();
         gc5.set(2345, 6, 14);
-        
-        final Map<String, Object> propertyMap5 = 
+
+        final Map<String, Object> propertyMap5 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING, "Epsilon");
                 put(PROP_ID_INT, Integer.valueOf(100));
                 put(PROP_ID_DECIMAL, Double.valueOf(1.2345E12));
                 put(PROP_ID_DATETIME, gc5);
                 put(PROP_ID_BOOLEAN, false);
-            }};           
+            }};
         doc5 = createDocument("epsilon", rootFolderId, COMPLEX_TYPE, propertyMap5);
         assertNotNull(doc5);
 
     }
-    
+
     @SuppressWarnings("serial")
     public void createMultiValueDocuments() {
-        final List<String> mvProps1 = 
+        final List<String> mvProps1 =
             new ArrayList<String>() {
-            { 
+            {
                 add("red");
                 add("green");
                 add("blue");
             }};
-        
-        final Map<String, Object> propertyMap1 = 
+
+        final Map<String, Object> propertyMap1 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING_MULTI_VALUE, mvProps1);
                 put(PROP_ID_INT, Integer.valueOf(100));
-            }};           
+            }};
         createDocument("mv-alpha", rootFolderId, COMPLEX_TYPE, propertyMap1);
 
-        final List<String> mvProps2 = 
+        final List<String> mvProps2 =
             new ArrayList<String>() {
-            { 
+            {
                 add("red");
                 add("pink");
                 add("violet");
             }};
-        
-        final Map<String, Object> propertyMap2 = 
+
+        final Map<String, Object> propertyMap2 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING_MULTI_VALUE, mvProps2);
                 put(PROP_ID_INT, Integer.valueOf(200));
-            }};           
+            }};
         createDocument("mv-beta", rootFolderId, COMPLEX_TYPE, propertyMap2);
     }
-    
+
     @SuppressWarnings("serial")
     public void createTestFolders() {
-        final Map<String, Object> propertyMap1 = 
+        final Map<String, Object> propertyMap1 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_INT, Integer.valueOf(1234));
                 put(PROP_ID_STRING, "ABCD");
-            }};           
+            }};
         folder1 = createFolder("Folder 1", rootFolderId, FOLDER_TYPE, propertyMap1);
-        
-        final Map<String, Object> propertyMap2 = 
+
+        final Map<String, Object> propertyMap2 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_INT, Integer.valueOf(-2345));
                 put(PROP_ID_STRING, "defg");
-            }};           
+            }};
         folder2 = createFolder("Folder 2", rootFolderId, FOLDER_TYPE, propertyMap2);
 
-        final Map<String, Object> propertyMap3 = 
+        final Map<String, Object> propertyMap3 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_INT, Integer.valueOf(123));
                 put(PROP_ID_STRING, "ZZZZ");
-            }};           
+            }};
         folder11 = createFolder("Folder 11", folder1, FOLDER_TYPE, propertyMap3);
     }
-    
+
     @SuppressWarnings("serial")
     public void createNullTestDocument() {
 
-        final Map<String, Object> propertyMap1 = 
+        final Map<String, Object> propertyMap1 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING, "DocumentWithNulls");
-            }};           
+            }};
         createDocument("nulldoc", rootFolderId, COMPLEX_TYPE, propertyMap1);
     }
-    
+
     @SuppressWarnings("serial")
     public void createLikeTestDocuments(String folderId) {
 
-        final Map<String, Object> propertyMap1 = 
+        final Map<String, Object> propertyMap1 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING, "ABCDEF");
-            }};           
+            }};
         createDocument("likedoc1", folderId, COMPLEX_TYPE, propertyMap1);
 
-        final Map<String, Object> propertyMap2 = 
+        final Map<String, Object> propertyMap2 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING, "ABC123");
-            }};           
+            }};
         createDocument("likedoc2", folderId, COMPLEX_TYPE, propertyMap2);
-        
-        final Map<String, Object> propertyMap3 = 
+
+        final Map<String, Object> propertyMap3 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(PROP_ID_STRING, "123ABC");
-            }};           
+            }};
         createDocument("likedoc3", folderId, COMPLEX_TYPE, propertyMap3);
     }
-    
+
     @SuppressWarnings("serial")
     public String createVersionedDocument() {
-        final Map<String, Object> propertyMap1 = 
+        final Map<String, Object> propertyMap1 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(VERSION_PROPERTY_ID, "ver123");
-            }};           
-        
+            }};
+
         String verIdV1 = createDocument("verdoc1", rootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID, propertyMap1, VersioningState.MAJOR);
         ObjectData version = fObjSvc.getObject(repositoryId, verIdV1, "*", false, IncludeRelationships.NONE, null,
                 false, false, null);
@@ -298,12 +298,12 @@ public class QueryTestDataCreator {
         // get version series id
         String verIdSer = (String) version.getProperties().getProperties().get(PropertyIds.VERSION_SERIES_ID).getFirstValue();
 
-        // create second version 
-        final Map<String, Object> propertyMap2 = 
+        // create second version
+        final Map<String, Object> propertyMap2 =
             new HashMap<String, Object>() {
-            { 
+            {
                 put(VERSION_PROPERTY_ID, "ver456");
-            }};           
+            }};
         Properties propsV2 = createDocumentProperties("dummy", UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID, propertyMap2);
 
         Holder<String> idHolder = new Holder<String>(verIdV1);
@@ -317,14 +317,15 @@ public class QueryTestDataCreator {
         // String verIdV2 = idHolder.getValue();
         return verIdSer;
     }
-    
+
     private String createFolder(String folderName, String parentFolderId, String typeId, Map<String, Object> properties) {
         Properties props = createFolderProperties(folderName, typeId, properties);
         String id = null;
         try {
             id = fObjSvc.createFolder(repositoryId, props, parentFolderId, null, null, null, null);
-            if (null == id)
+            if (null == id) {
                 fail("createFolder failed.");
+            }
         } catch (Exception e) {
             fail("createFolder() failed with exception: " + e);
         }
@@ -348,8 +349,9 @@ public class QueryTestDataCreator {
         try {
             id = fObjSvc.createDocument(repositoryId, props, folderId, contentStream, verState, policies,
                     addACEs, removeACEs, extension);
-            if (null == id)
+            if (null == id) {
                 fail("createDocument failed.");
+            }
         } catch (Exception e) {
             fail("createDocument() failed with exception: " + e);
         }
@@ -382,13 +384,13 @@ public class QueryTestDataCreator {
         Properties props = fFactory.createPropertiesData(properties);
         return props;
     }
-        
+
 
     /**
      * Simplified property creation method, create Property of Boolean, String, Integer,
      * Decimal, or DataTime depending on class of value (Boolean, String, Integer, Double,
      * or GregorianCalendar. Id, Html and URI are not supported
-     * 
+     *
      * @param propId
      * @param value
      * @return
@@ -418,10 +420,12 @@ public class QueryTestDataCreator {
                 return fFactory.createPropertyStringData(propId, (List<String>)value);
             } else if (clazz.equals(GregorianCalendar.class)) {
                 return fFactory.createPropertyDateTimeData(propId, (List<GregorianCalendar>)value);
-            } else
+            } else {
                 fail("unsupported type in propery value: " + clazz);
-        } else
+            }
+        } else {
             fail("unsupported type in propery value: " + clazz);
+        }
         return null;
     }
 }

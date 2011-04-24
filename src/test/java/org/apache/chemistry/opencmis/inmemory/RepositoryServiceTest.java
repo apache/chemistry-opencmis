@@ -118,19 +118,21 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         }
     }
 
+    @Override
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setTypeCreatorClass(RepositoryTestTypeSystemCreator.class.getName());
         super.setUp();
     }
 
+    @Override
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         super.tearDown();
     }
 
     @Test
-    public void testRepositoryInfo() throws Exception {
+    public void testRepositoryInfo() {
         log.info("starting testRepositoryInfo() ...");
         List<RepositoryInfo> repositories = fRepSvc.getRepositoryInfos(null);
         assertNotNull(repositories);
@@ -149,7 +151,7 @@ public class RepositoryServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void testTypeDefinition() throws Exception {
+    public void testTypeDefinition() {
         log.info("");
         log.info("starting testTypeDefinition() ...");
         String repositoryId = getRepositoryId();
@@ -358,7 +360,7 @@ public class RepositoryServiceTest extends AbstractServiceTest {
 
         log.info("... testGetTypeChildrenNoProperties() finished.");
     }
-    
+
     @Test
     public void testGetWrongParameters() {
         log.info("");
@@ -497,24 +499,27 @@ public class RepositoryServiceTest extends AbstractServiceTest {
 
     private boolean containsTypeByIdRecursive(String typeId, List<TypeDefinitionContainer> types) {
         for (TypeDefinitionContainer type : types) {
-            if (containsTypeByIdRecursive(typeId, type))
+            if (containsTypeByIdRecursive(typeId, type)) {
                 return true;
+            }
         }
         return false;
     }
 
     private boolean containsTypeByIdRecursive(String typeId, TypeDefinitionContainer typeContainer) {
-        if (typeId.equals(typeContainer.getTypeDefinition().getId()))
+        if (typeId.equals(typeContainer.getTypeDefinition().getId())) {
             return true;
+        }
 
         for (TypeDefinitionContainer type : typeContainer.getChildren()) {
-            if (containsTypeByIdRecursive(typeId, type))
+            if (containsTypeByIdRecursive(typeId, type)) {
                 return true;
+            }
         }
         return false;
     }
 
-    private void containsAllBasePropertyDefinitions(TypeDefinition typeDef) {
+    private static void containsAllBasePropertyDefinitions(TypeDefinition typeDef) {
         Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
         String baseTypeId = typeDef.getBaseTypeId().value();
 
@@ -553,17 +558,20 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         } else if (baseTypeId.equals(BaseTypeId.CMIS_RELATIONSHIP.value())) {
             assertTrue(propDefs.containsKey(PropertyIds.SOURCE_ID));
             assertTrue(propDefs.containsKey(PropertyIds.TARGET_ID));
-        } else
+        } else {
             fail("Unknown base type id in type definition");
+        }
     }
 
     private int getRecursiveSize(List<TypeDefinitionContainer> types) {
-        if (null == types)
+        if (null == types) {
             return 0;
+        }
 
         int size = types.size();
-        for (TypeDefinitionContainer type : types)
+        for (TypeDefinitionContainer type : types) {
             size += getRecursiveSize(type.getChildren());
+        }
 
         return size;
     }
@@ -773,9 +781,11 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         }
 
         public static TypeDefinition getTypeById(String typeId) {
-            for (TypeDefinition typeDef : singletonTypes)
-                if (typeDef.getId().equals(typeId))
+            for (TypeDefinition typeDef : singletonTypes) {
+                if (typeDef.getId().equals(typeId)) {
                     return typeDef;
+                }
+            }
             return null;
         }
 

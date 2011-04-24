@@ -31,22 +31,25 @@ public class NameValidator {
     /**
      * check whether id contains only valid characters Allowed are 'a'..'z',
      * 'A'..'Z', '0'..'9', '.', '-', ' ', '_';
-     * 
+     *
      * @param s
      *            string to verify
      */
     public static boolean isValidId(String s) {
-        if (null == s || s.length() == 0)
+        if (null == s || s.length() == 0) {
             return false;
-        
-        if (s.startsWith("cmis:"))
+        }
+
+        if (s.startsWith("cmis:")) {
             s = s.substring(5);
+        }
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '-'
-                    || c == '_' || c == ' '))
+                    || c == '_' || c == ' ')) {
                 return false;
+            }
         }
         return true;
     }
@@ -58,7 +61,7 @@ public class NameValidator {
     /**
      * check whether id contains only valid characters Allowed are 'a'..'z',
      * 'A'..'Z', '0'..'9', '.', '-', ' ', '_';
-     * 
+     *
      * @param s
      *            string to verify
      */
@@ -66,8 +69,9 @@ public class NameValidator {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '-'
-                    || c == '_' || c == ' '))
+                    || c == '_' || c == ' ')) {
                 return false;
+            }
         }
         return true;
     }

@@ -45,6 +45,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractQueryConditionProcessor implements QueryConditionProcessor {
 
     private static final Log LOG = LogFactory.getLog(ProcessQueryTest.class);
+
     public abstract void onStartProcessing(Tree whereNode);
     public abstract void onStopProcessing();
 
@@ -122,7 +123,7 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
             evalWhereNode(whereNode);
             onStopProcessing();
         }
-        return null; // unused 
+        return null; // unused
     }
 
     // ///////////////////////////////////////////////////////
@@ -285,10 +286,11 @@ public abstract class AbstractQueryConditionProcessor implements QueryConditionP
         case CmisQlStrictLexer.BOOL_LIT:
             return Boolean.parseBoolean(node.getText());
         case CmisQlStrictLexer.NUM_LIT:
-            if (text.contains(".") || text.contains("e") || text.contains("E"))
+            if (text.contains(".") || text.contains("e") || text.contains("E")) {
                 return Double.parseDouble(text);
-            else
+            } else {
                 return Long.parseLong(text);
+            }
         case CmisQlStrictLexer.STRING_LIT:
             return text.substring(1, text.length()-1);
         case CmisQlStrictLexer.TIME_LIT:

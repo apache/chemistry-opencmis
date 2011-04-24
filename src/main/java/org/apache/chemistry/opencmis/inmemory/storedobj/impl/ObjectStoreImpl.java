@@ -41,27 +41,28 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 /**
  * The object store is the central core of the in-memory repository. It is based on huge HashMap
  * map mapping ids to objects in memory. To allow access from multiple threads a Java concurrent
- * HashMap is used that allows parallel access methods. 
- * 
- * Certain methods in the in-memory repository must guarantee constraints. For example a folder 
+ * HashMap is used that allows parallel access methods.
+ * <p>
+ * Certain methods in the in-memory repository must guarantee constraints. For example a folder
  * enforces that each child has a unique name. Therefore certain operations must occur in an
- * atomic manner. In the example it must be guaranteed that no write access occurs to the 
+ * atomic manner. In the example it must be guaranteed that no write access occurs to the
  * map between acquiring the iterator to find the children and finishing the add operation when
  * no name conflicts can occur. For this purpose this class has methods to lock an unlock the
  * state of the repository. It is very important that the caller acquiring the lock enforces an
- * unlock under all circumstances. Typical code is: 
- * 
+ * unlock under all circumstances. Typical code is:
+ * <p>
+ * <pre>
  * ObjectStoreImpl os = ... ;
  * try {
  *     os.lock();
  * } finally {
  *     os.unlock();
  * }
- * 
+ * </pre>
+ *
  * The locking is very coarse-grained. Productive implementations would probably implement finer
  * grained locks on a folder or document rather than the complete repository.
  */
-
 public class ObjectStoreImpl implements ObjectStore {
 
     /**
@@ -73,9 +74,9 @@ public class ObjectStoreImpl implements ObjectStore {
      * a concurrent HashMap as core element to hold all objects in the repository
      */
     private final Map<String, StoredObject> fStoredObjectMap = new ConcurrentHashMap<String, StoredObject>();
-    
+
     private final Lock fLock = new ReentrantLock();
-    
+
     final String fRepositoryId;
     FolderImpl fRootFolder = null;
 
@@ -91,36 +92,22 @@ public class ObjectStoreImpl implements ObjectStore {
     public void lock() {
       fLock.lock();
     }
-    
+
     public void unlock() {
       fLock.unlock();
     }
-    
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#
-     * getRootFolder()
-     */
+
     public Folder getRootFolder() {
         return fRootFolder;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#
-     * getFolderByPath(java.lang .String)
-     */
     public StoredObject getObjectByPath(String path) {
-
         for (StoredObject so : fStoredObjectMap.values()) {
             if (so instanceof SingleFiling) {
                 String soPath = ((SingleFiling) so).getPath();
-                if (soPath.equals(path))
+                if (soPath.equals(path)) {
                     return so;
+                }
             } else if (so instanceof MultiFiling) {
                 MultiFiling mfo = (MultiFiling) so;
                 List<Folder> parents = mfo.getParents();
@@ -128,41 +115,30 @@ public class ObjectStoreImpl implements ObjectStore {
                     String parentPath = parent.getPath();
                     String mfPath = parentPath.equals(Folder.PATH_SEPARATOR) ? parentPath + mfo.getPathSegment()
                             : parentPath + Folder.PATH_SEPARATOR + mfo.getPathSegment();
-                    if (mfPath.equals(path))
+                    if (mfPath.equals(path)) {
                         return so;
+                    }
                 }
-            } else
+            } else {
                 return null;
+            }
         }
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#
-     * getObjectById(java.lang .String)
-     */
     public StoredObject getObjectById(String objectId) {
         // we use path as id so we just can look it up in the map
         StoredObject so = fStoredObjectMap.get(objectId);
         return so;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opencmis.client.provider.spi.inmemory.storedobj.impl.ObjectStore#
-     * deleteObject(java.lang .String)
-     */
     public void deleteObject(String objectId) {
         String path = objectId; // currently the same
         StoredObject obj = fStoredObjectMap.get(path);
 
-        if (null == obj)
+        if (null == obj) {
             throw new RuntimeException("Cannot delete object with id  " + objectId + ". Object does not exist.");
+        }
 
         if (obj instanceof FolderImpl) {
             deleteFolder(objectId);
@@ -171,8 +147,9 @@ public class ObjectStoreImpl implements ObjectStore {
             VersionedDocument parentDoc = vers.getParentDocument();
             fStoredObjectMap.remove(path);
             boolean otherVersionsExist = vers.getParentDocument().deleteVersion(vers);
-            if (!otherVersionsExist)
+            if (!otherVersionsExist) {
                 fStoredObjectMap.remove(parentDoc.getId());
+            }
         } else {
             fStoredObjectMap.remove(path);
         }
@@ -181,8 +158,9 @@ public class ObjectStoreImpl implements ObjectStore {
     public void removeVersion(DocumentVersion vers) {
         StoredObject found = fStoredObjectMap.remove(vers.getId());
 
-        if (null == found)
+        if (null == found) {
             throw new CmisInvalidArgumentException("Cannot delete object with id  " + vers.getId() + ". Object does not exist.");
+        }
     }
 
     // public void changePath(StoredObject obj, String oldPath, String newPath)
@@ -201,8 +179,9 @@ public class ObjectStoreImpl implements ObjectStore {
     public String storeObject(StoredObject so) {
         String id = so.getId();
         // check if update or create
-        if (null == id)
+        if (null == id) {
             id = getNextId().toString();
+        }
         fStoredObjectMap.put(id, so);
         return id;
     }
@@ -219,7 +198,7 @@ public class ObjectStoreImpl implements ObjectStore {
         Set<String> entries = fStoredObjectMap.keySet();
         return entries;
     }
-    
+
     /**
      * Clear repository and remove all data.
      */
@@ -233,7 +212,7 @@ public class ObjectStoreImpl implements ObjectStore {
     public long getObjectCount() {
         return fStoredObjectMap.size();
     }
-    
+
     // /////////////////////////////////////////
     // private helper methods
 
@@ -287,8 +266,9 @@ public class ObjectStoreImpl implements ObjectStore {
 
     private void deleteFolder(String folderId) {
         StoredObject folder = fStoredObjectMap.get(folderId);
-        if (folder == null)
+        if (folder == null) {
             throw new CmisInvalidArgumentException("Unknown object with id:  " + folderId);
+        }
 
         if (!(folder instanceof FolderImpl)) {
             throw new CmisInvalidArgumentException("Cannot delete folder with id:  " + folderId
@@ -297,8 +277,9 @@ public class ObjectStoreImpl implements ObjectStore {
 
         // check if children exist
         List<StoredObject> children = ((Folder) folder).getChildren(-1, -1);
-        if (children != null && !children.isEmpty())
+        if (children != null && !children.isEmpty()) {
             throw new CmisConstraintException("Cannot delete folder with id:  " + folderId + ". Folder is not empty.");
+        }
 
         fStoredObjectMap.remove(folderId);
     }

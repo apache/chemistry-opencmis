@@ -115,20 +115,26 @@ public class InMemoryQueryProcessor {
         ObjectListImpl res = new ObjectListImpl();
         res.setNumItems(BigInteger.valueOf(matches.size()));
         int start = 0;
-        if (skipCount != null)
+        if (skipCount != null) {
             start = (int) skipCount.longValue();
-        if (start < 0)
+        }
+        if (start < 0) {
             start = 0;
-        if (start > matches.size())
+        }
+        if (start > matches.size()) {
             start = matches.size();
+        }
         int stop = 0;
-        if (maxItems != null)
+        if (maxItems != null) {
             stop = start + (int) maxItems.longValue();
-        if (stop <= 0 || stop > matches.size())
+        }
+        if (stop <= 0 || stop > matches.size()) {
             stop = matches.size();
+        }
         res.setHasMoreItems(stop < matches.size());
-        if (start > 0 || stop > 0)
+        if (start > 0 || stop > 0) {
             matches = matches.subList(start, stop);
+        }
         List<ObjectData> objDataList = new ArrayList<ObjectData>();
         Map<String, String> props = queryObj.getRequestedProperties();
         Map<String, String> funcs = queryObj.getRequestedFuncs();
@@ -158,8 +164,9 @@ public class InMemoryQueryProcessor {
 
     private void sortMatches() {
         final List<SortSpec> orderBy = queryObj.getOrderBys();
-        if (orderBy.size() > 1)
+        if (orderBy.size() > 1) {
             LOG.warn("ORDER BY has more than one sort criterium, all but the first are ignored.");
+        }
         class ResultComparator implements Comparator<StoredObject> {
 
             @SuppressWarnings("unchecked")
@@ -172,27 +179,30 @@ public class InMemoryQueryProcessor {
                     String propId = ((ColumnReference) sel).getPropertyId();
                     Object propVal1 = so1.getProperties().get(propId).getFirstValue();
                     Object propVal2 = so2.getProperties().get(propId).getFirstValue();
-                    if (propVal1 == null && propVal2 == null)
+                    if (propVal1 == null && propVal2 == null) {
                         result = 0;
-                    else if (propVal1 == null)
+                    } else if (propVal1 == null) {
                         result = -1;
-                    else if (propVal2 == null)
+                    } else if (propVal2 == null) {
                         result = 1;
-                    else
+                    } else {
                         result = ((Comparable<Object>) propVal1).compareTo(propVal2);
+                    }
                 } else {
                     // String funcName = ((FunctionReference) sel).getName();
                     // evaluate function here, currently ignore
                     result = 0;
                 }
-                if (!s.isAscending())
+                if (!s.isAscending()) {
                     result = -result;
+                }
                 return result;
             }
         }
 
-        if (orderBy.size() > 0)
+        if (orderBy.size() > 0) {
             Collections.sort(matches, new ResultComparator());
+        }
 
     }
 
@@ -200,7 +210,7 @@ public class InMemoryQueryProcessor {
      * Check for each object contained in the in-memory repository if it matches
      * the current query expression. If yes add it to the list of matched
      * objects.
-     * 
+     *
      * @param so
      *            object stored in the in-memory repository
      */
@@ -222,26 +232,31 @@ public class InMemoryQueryProcessor {
                                                         // series
         boolean typeMatches = typeMatches(td, so);
         if (!searchAllVersions && so instanceof DocumentVersion
-                && ((DocumentVersion) so).getParentDocument().getLatestVersion(false) != so)
+                && ((DocumentVersion) so).getParentDocument().getLatestVersion(false) != so) {
             skip = true;
+        }
         // ... then check expression...
-        if (typeMatches && !skip)
+        if (typeMatches && !skip) {
             evalWhereTree(whereTree, so);
+        }
     }
 
     private void evalWhereTree(Tree node, StoredObject so) {
         boolean match = true;
-        if (null != node)
+        if (null != node) {
             match = evalWhereNode(so, node);
+        }
         if (match)
+         {
             matches.add(so); // add to list
+        }
     }
 
     /**
      * For each object check if it matches and append it to match-list if it
      * does. We do here our own walking mechanism so that we can pass additional
      * parameters and define the return types.
-     * 
+     *
      * @param node
      *            node in where clause
      * @return true if it matches, false if it not matches
@@ -320,11 +335,11 @@ public class InMemoryQueryProcessor {
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
-            if (pd.getCardinality() != Cardinality.SINGLE)
+            if (pd.getCardinality() != Cardinality.SINGLE) {
                 throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
-            else if (lVal == null)
+            } else if (lVal == null) {
                 return false;
-            else {
+            } else {
                 Object prop = lVal.getFirstValue();
                 return literals.contains(prop);
             }
@@ -339,11 +354,11 @@ public class InMemoryQueryProcessor {
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
-            if (pd.getCardinality() != Cardinality.SINGLE)
+            if (pd.getCardinality() != Cardinality.SINGLE) {
                 throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
-            else if (lVal == null)
+            } else if (lVal == null) {
                 return false;
-            else {
+            } else {
                 Object prop = lVal.getFirstValue();
                 return !literals.contains(prop);
             }
@@ -355,16 +370,17 @@ public class InMemoryQueryProcessor {
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
-            if (pd.getCardinality() != Cardinality.MULTI)
+            if (pd.getCardinality() != Cardinality.MULTI) {
                 throw new IllegalStateException("Operator ANY...IN only is allowed on multi-value properties ");
-            else if (lVal == null)
+            } else if (lVal == null) {
                 return false;
-            else {
+            } else {
                 List<?> props = lVal.getValues();
                 for (Object prop : props) {
                     LOG.debug("comparing with: " + prop);
-                    if (literals.contains(prop))
+                    if (literals.contains(prop)) {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -379,16 +395,17 @@ public class InMemoryQueryProcessor {
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
-            if (pd.getCardinality() != Cardinality.MULTI)
+            if (pd.getCardinality() != Cardinality.MULTI) {
                 throw new IllegalStateException("Operator ANY...IN only is allowed on multi-value properties ");
-            else if (lVal == null)
+            } else if (lVal == null) {
                 return false;
-            else {
+            } else {
                 List<?> props = lVal.getValues();
                 for (Object prop : props) {
                     LOG.debug("comparing with: " + prop);
-                    if (literals.contains(prop))
+                    if (literals.contains(prop)) {
                         return false;
+                    }
                 }
                 return true;
             }
@@ -400,11 +417,11 @@ public class InMemoryQueryProcessor {
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             Object literal = walkExpr(literalNode);
-            if (pd.getCardinality() != Cardinality.MULTI)
+            if (pd.getCardinality() != Cardinality.MULTI) {
                 throw new IllegalStateException("Operator = ANY only is allowed on multi-value properties ");
-            else if (lVal == null)
+            } else if (lVal == null) {
                 return false;
-            else {
+            } else {
                 List<?> props = lVal.getValues();
                 return props.contains(literal);
             }
@@ -425,17 +442,20 @@ public class InMemoryQueryProcessor {
         @Override
         public Boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
             Object rVal = walkExpr(stringNode);
-            if (!(rVal instanceof String))
+            if (!(rVal instanceof String)) {
                 throw new IllegalStateException("LIKE operator requires String literal on right hand side.");
+            }
 
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyType propType = pd.getPropertyType();
             if (propType != PropertyType.STRING && propType != PropertyType.HTML && propType != PropertyType.ID
-                    && propType != PropertyType.URI)
+                    && propType != PropertyType.URI) {
                 throw new IllegalStateException("Property type " + propType.value() + " is not allowed FOR LIKE");
-            if (pd.getCardinality() != Cardinality.SINGLE)
+            }
+            if (pd.getCardinality() != Cardinality.SINGLE) {
                 throw new IllegalStateException("LIKE is not allowed for multi-value properties ");
+            }
 
             String propVal = (String) so.getProperties().get(colRef.getPropertyId()).getFirstValue();
             String pattern = translatePattern((String) rVal); // SQL to Java
@@ -463,15 +483,17 @@ public class InMemoryQueryProcessor {
                 // only one from without join support
             }
             Object lit = walkExpr(paramNode);
-            if (!(lit instanceof String))
+            if (!(lit instanceof String)) {
                 throw new IllegalStateException("Folder id in IN_FOLDER must be of type String");
+            }
             String folderId = (String) lit;
 
             // check if object is in folder
-            if (so instanceof Filing)
+            if (so instanceof Filing) {
                 return hasParent((Filing) so, folderId);
-            else
+            } else {
                 return false;
+            }
         }
 
         @Override
@@ -482,15 +504,17 @@ public class InMemoryQueryProcessor {
                 // only one from without join support
             }
             Object lit = walkExpr(paramNode);
-            if (!(lit instanceof String))
+            if (!(lit instanceof String)) {
                 throw new IllegalStateException("Folder id in IN_FOLDER must be of type String");
+            }
             String folderId = (String) lit;
 
             // check if object is in folder
-            if (so instanceof Filing)
+            if (so instanceof Filing) {
                 return hasAncestor((Filing) so, folderId);
-            else
+            } else {
                 return false;
+            }
         }
 
         protected Integer compareTo(Tree leftChild, Tree rightChild) {
@@ -501,10 +525,11 @@ public class InMemoryQueryProcessor {
             ColumnReference colRef = getColumnReference(leftChild);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-            if (lVal instanceof List<?>)
+            if (lVal instanceof List<?>) {
                 throw new IllegalStateException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
-            else
+            } else {
                 return InMemoryQueryProcessor.this.compareTo(pd, lVal, rVal);
+            }
         }
 
         @SuppressWarnings("unchecked")
@@ -513,24 +538,30 @@ public class InMemoryQueryProcessor {
         }
     }
 
-    private boolean hasParent(Filing objInFolder, String folderId) {
+    private static boolean hasParent(Filing objInFolder, String folderId) {
         List<Folder> parents = objInFolder.getParents();
 
-        for (Folder folder : parents)
-            if (folderId.equals(folder.getId()))
+        for (Folder folder : parents) {
+            if (folderId.equals(folder.getId())) {
                 return true;
+            }
+        }
         return false;
     }
 
     private boolean hasAncestor(Filing objInFolder, String folderId) {
         List<Folder> parents = objInFolder.getParents();
 
-        for (Folder folder : parents)
-            if (folderId.equals(folder.getId()))
+        for (Folder folder : parents) {
+            if (folderId.equals(folder.getId())) {
                 return true;
-        for (Folder folder : parents)
-            if (hasAncestor(folder, folderId))
+            }
+        }
+        for (Folder folder : parents) {
+            if (hasAncestor(folder, folderId)) {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -538,19 +569,21 @@ public class InMemoryQueryProcessor {
         Object lValue = lVal.getFirstValue();
         switch (td.getPropertyType()) {
         case BOOLEAN:
-            if (rVal instanceof Boolean)
+            if (rVal instanceof Boolean) {
                 return ((Boolean) lValue).compareTo((Boolean) rVal);
-            else
+            } else {
                 throwIncompatibleTypesException(lValue, rVal);
+            }
             break;
         case INTEGER: {
             Long lLongValue = ((BigInteger) lVal.getFirstValue()).longValue();
-            if (rVal instanceof Long)
+            if (rVal instanceof Long) {
                 return (lLongValue).compareTo((Long) rVal);
-            else if (rVal instanceof Double)
+            } else if (rVal instanceof Double) {
                 return Double.valueOf(((Integer) lValue).doubleValue()).compareTo((Double) rVal);
-            else
+            } else {
                 throwIncompatibleTypesException(lValue, rVal);
+            }
             break;
         }
         case DATETIME:
@@ -560,17 +593,19 @@ public class InMemoryQueryProcessor {
                 // " right: " +
                 // CalendarHelper.toString((GregorianCalendar)rVal));
                 return ((GregorianCalendar) lValue).compareTo((GregorianCalendar) rVal);
-            } else
+            } else {
                 throwIncompatibleTypesException(lValue, rVal);
+            }
             break;
         case DECIMAL: {
             Double lDoubleValue = ((BigDecimal) lVal.getFirstValue()).doubleValue();
-            if (rVal instanceof Double)
+            if (rVal instanceof Double) {
                 return lDoubleValue.compareTo((Double) rVal);
-            else if (rVal instanceof Long)
+            } else if (rVal instanceof Long) {
                 return Double.valueOf(((Integer) lValue).doubleValue()).compareTo(((Long)rVal).doubleValue());
-            else
+            } else {
                 throwIncompatibleTypesException(lValue, rVal);
+            }
             break;
         }
         case HTML:
@@ -580,8 +615,9 @@ public class InMemoryQueryProcessor {
             if (rVal instanceof String) {
                 LOG.debug("compare strings: " + lValue + " with " + rVal);
                 return ((String) lValue).compareTo((String) rVal);
-            } else
+            } else {
                 throwIncompatibleTypesException(lValue, rVal);
+            }
             break;
         }
         return 0;
@@ -589,19 +625,21 @@ public class InMemoryQueryProcessor {
 
     private ColumnReference getColumnReference(Tree columnNode) {
         CmisSelector sel = queryObj.getColumnReference(columnNode.getTokenStartIndex());
-        if (null == sel)
+        if (null == sel) {
             throw new IllegalStateException("Unknown property query name " + columnNode.getChild(0));
-        else if (sel instanceof ColumnReference)
+        } else if (sel instanceof ColumnReference) {
             return (ColumnReference) sel;
-        else
+        } else {
             throw new IllegalStateException("Unexpected numerical value function in where clause");
+        }
     }
 
     private String getTableReference(Tree tableNode) {
         String typeQueryName = queryObj.getTypeQueryName(tableNode.getText());
-        if (null == typeQueryName)
+        if (null == typeQueryName) {
             throw new IllegalStateException("Inavlid type in IN_FOLDER() or IN_TREE(), must be in FROM list: "
                     + tableNode.getText());
+        }
         return typeQueryName;
     }
 
@@ -609,13 +647,14 @@ public class InMemoryQueryProcessor {
         ColumnReference colRef = getColumnReference(columnNode);
         PropertyDefinition<?> pd = colRef.getPropertyDefinition();
         PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-        if (null == lVal)
+        if (null == lVal) {
             return null;
-        else {
-            if (pd.getCardinality() == Cardinality.SINGLE)
+        } else {
+            if (pd.getCardinality() == Cardinality.SINGLE) {
                 return lVal.getFirstValue();
-            else
+            } else {
                 return lVal.getValues();
+            }
         }
     }
 
@@ -627,13 +666,14 @@ public class InMemoryQueryProcessor {
 
         while (index >= 0) {
             index = wildcardString.indexOf('%', start);
-            if (index < 0)
+            if (index < 0) {
                 res.append(wildcardString.substring(start));
-            else if (index == 0 || index > 0 && wildcardString.charAt(index - 1) != '\\') {
+            } else if (index == 0 || index > 0 && wildcardString.charAt(index - 1) != '\\') {
                 res.append(wildcardString.substring(start, index));
                 res.append(".*");
-            } else
+            } else {
                 res.append(wildcardString.substring(start, index + 1));
+            }
             start = index + 1;
         }
         wildcardString = res.toString();
@@ -644,19 +684,20 @@ public class InMemoryQueryProcessor {
 
         while (index >= 0) {
             index = wildcardString.indexOf('_', start);
-            if (index < 0)
+            if (index < 0) {
                 res.append(wildcardString.substring(start));
-            else if (index == 0 || index > 0 && wildcardString.charAt(index - 1) != '\\') {
+            } else if (index == 0 || index > 0 && wildcardString.charAt(index - 1) != '\\') {
                 res.append(wildcardString.substring(start, index));
                 res.append(".");
-            } else
+            } else {
                 res.append(wildcardString.substring(start, index + 1));
+            }
             start = index + 1;
         }
         return res.toString();
     }
 
-    private void throwIncompatibleTypesException(Object o1, Object o2) {
+    private static void throwIncompatibleTypesException(Object o1, Object o2) {
         throw new IllegalArgumentException("Incompatible Types to compare: " + o1 + " and " + o2);
     }
 

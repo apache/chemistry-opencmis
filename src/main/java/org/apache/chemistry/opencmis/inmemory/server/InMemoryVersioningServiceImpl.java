@@ -63,8 +63,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
     public void cancelCheckOut(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
 
-        StoredObject so = validator.cancelCheckOut(context, repositoryId, objectId, extension); 
-            
+        StoredObject so = validator.cancelCheckOut(context, repositoryId, objectId, extension);
+
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
@@ -75,18 +75,20 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        StoredObject so = validator.checkIn(context, repositoryId, objectId, extension); 
-            
+        StoredObject so = validator.checkIn(context, repositoryId, objectId, extension);
+
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
         DocumentVersion pwc = verDoc.getPwc();
 
-        if (null != contentStream)
+        if (null != contentStream) {
             pwc.setContent(contentStream, false);
+        }
 
-        if (null != properties && null != properties.getProperties())
+        if (null != properties && null != properties.getProperties()) {
             pwc.setCustomProperties(properties.getProperties());
+        }
 
         verDoc.checkIn(major, checkinComment, user);
 
@@ -102,13 +104,14 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
     public void checkOut(CallContext context, String repositoryId, Holder<String> objectId,
             ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHandler objectInfos) {
 
-        StoredObject so = validator.checkOut(context, repositoryId, objectId, extension, contentCopied); 
-            
+        StoredObject so = validator.checkOut(context, repositoryId, objectId, extension, contentCopied);
+
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
-        if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT))
+        if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT)) {
             throw new CmisNotSupportedException("Only documents can be checked-out.");
-        else if (!((DocumentTypeDefinition) typeDef).isVersionable())
+        } else if (!((DocumentTypeDefinition) typeDef).isVersionable()) {
             throw new CmisNotSupportedException("Object can't be checked-out, type is not versionable.");
+        }
 
         checkIsVersionableObject(so);
 
@@ -123,8 +126,9 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             content = ((VersionedDocument) so).getLatestVersion(false).getContent(0, -1);
         }
 
-        if (verDoc.isCheckedOut())
+        if (verDoc.isCheckedOut()) {
             throw new CmisUpdateConflictException("Document " + objectId.getValue() + " is already checked out.");
+        }
 
         String user = context.getUsername();
         checkHasUser(user);
@@ -144,13 +148,15 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
     public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String objectId, String versionSeriesId,
             String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        if (null == versionSeriesId)
+        if (null == versionSeriesId) {
             throw new CmisInvalidArgumentException("getAllVersions requires a version series id, but ist was null.");
+        }
 
-        StoredObject so = validator.getAllVersions(context, repositoryId, objectId, versionSeriesId, extension);             
+        StoredObject so = validator.getAllVersions(context, repositoryId, objectId, versionSeriesId, extension);
 
-        if (!(so instanceof VersionedDocument))
+        if (!(so instanceof VersionedDocument)) {
             throw new CmisInvalidArgumentException("Object is not instance of a VersionedDocument (version series)");
+        }
 
         VersionedDocument verDoc = (VersionedDocument) so;
         List<ObjectData> res = new ArrayList<ObjectData>();
@@ -176,8 +182,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension,
             ObjectInfoHandler objectInfos) {
 
-        StoredObject so = validator.getObjectOfLatestVersion(context, repositoryId, objectId, versionSeriesId, extension); 
-            
+        StoredObject so = validator.getObjectOfLatestVersion(context, repositoryId, objectId, versionSeriesId, extension);
+
         ObjectData objData = null;
 
         if (so instanceof VersionedDocument) {
@@ -188,8 +194,9 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         } else if (so instanceof Document) {
             objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions, extension,
                     objectInfos);
-        } else
+        } else {
             throw new CmisInvalidArgumentException("Object is not instance of a document (version series)");
+        }
 
         // provide information for Atom links for version series:
         if (context.isObjectInfoRequired()) {
@@ -204,7 +211,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
     public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
 
-        StoredObject so = validator.getPropertiesOfLatestVersion(context, repositoryId, objectId, versionSeriesId, extension); 
+        StoredObject so = validator.getPropertiesOfLatestVersion(context, repositoryId, objectId, versionSeriesId, extension);
 
         StoredObject latestVersionObject = null;
 
@@ -213,12 +220,13 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             latestVersionObject = verDoc.getLatestVersion(major);
         } else if (so instanceof Document) {
             latestVersionObject = so;
-        } else
+        } else {
             throw new CmisInvalidArgumentException("Object is not instance of a document (version series)");
+        }
 
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
         TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, td, 
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, td,
                 requestedIds, true);
 
         return props;

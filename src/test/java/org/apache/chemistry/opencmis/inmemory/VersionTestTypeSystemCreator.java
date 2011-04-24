@@ -47,15 +47,17 @@ public class VersionTestTypeSystemCreator implements TypeCreator {
     }
 
     public static TypeDefinition getTypeById(String typeId) {
-        for (TypeDefinition typeDef : singletonTypes)
-            if (typeDef.getId().equals(typeId))
+        for (TypeDefinition typeDef : singletonTypes) {
+            if (typeDef.getId().equals(typeId)) {
                 return typeDef;
+            }
+        }
         return null;
     }
 
     /**
      * create root types and a collection of sample types
-     * 
+     *
      * @return typesMap map filled with created types
      */
     private static List<TypeDefinition> buildTypesList() {

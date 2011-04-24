@@ -51,8 +51,6 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefiniti
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.TypeValidator;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -75,7 +73,7 @@ public class TypeValidationTest extends TestCase {
     private static final String STRING_PROP_TYPE_SUB = "StringPropSub";
     private static final BindingsObjectFactory FACTORY = new BindingsObjectFactoryImpl();
 
-    private List<PropertyData<?>> createPropertiesWithNameAndTypeId(String typeId) {
+    private static List<PropertyData<?>> createPropertiesWithNameAndTypeId(String typeId) {
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(FACTORY.createPropertyIdData(PropertyIds.NAME, "Document_1"));
         properties.add(FACTORY.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
@@ -402,7 +400,7 @@ public class TypeValidationTest extends TestCase {
 
     /**
      * create sample type
-     * 
+     *
      * @return type definition of sample type
      */
     private static InMemoryDocumentTypeDefinition buildMyType() {

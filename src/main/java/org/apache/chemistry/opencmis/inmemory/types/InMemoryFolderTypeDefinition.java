@@ -54,19 +54,20 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
     public InMemoryFolderTypeDefinition(String id, String displayName, InMemoryFolderTypeDefinition parentType) {
         // get root type
         init(id, displayName);
-        if (parentType != null)
+        if (parentType != null) {
             setBaseTypeId(parentType.getBaseTypeId());
-        else
+        } else {
             throw new IllegalArgumentException("Must provide a parent type when creating a folder type definition");
+        }
         setParentTypeId(parentType.getId());
     }
 
-    /*
+    /**
      * Set the property definitions for this type. The parameter
      * propertyDefinitions should only contain the custom property definitions
      * for this type. The standard property definitions are added automatically.
-     * 
-     * @seeorg.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition#
+     *
+     * @see org.apache.opencmis.commons.impl.dataobjects.AbstractTypeDefinition#
      * setPropertyDefinitions(java.util.Map)
      */
     public void addCustomPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
@@ -74,13 +75,15 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
     }
 
     private void init(String id, String displayName) {
-        if (!NameValidator.isValidId(id))
+        if (!NameValidator.isValidId(id)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+        }
 
         setBaseTypeId(BaseTypeId.CMIS_FOLDER);
         setId(id);
-        if (displayName == null)
+        if (displayName == null) {
             displayName = '#' + id + '#';
+        }
         setDisplayName(displayName);
         // create some suitable defaults for convenience
         setDescription("Description of " + getDisplayName() + " Type");

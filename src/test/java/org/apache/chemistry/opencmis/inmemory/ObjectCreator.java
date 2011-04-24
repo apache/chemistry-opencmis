@@ -69,8 +69,9 @@ public class ObjectCreator {
         String id = null;
         id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies, addACEs,
                 removeACEs, extension);
-        if (null == id)
+        if (null == id) {
             Assert.fail("createDocument failed.");
+        }
 
         return id;
     }
@@ -79,10 +80,11 @@ public class ObjectCreator {
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
         properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
-        if (null != propsToSet)
+        if (null != propsToSet) {
             for (Entry<String, String> propToSet : propsToSet.entrySet()) {
                 properties.add(fFactory.createPropertyStringData(propToSet.getKey(), propToSet.getValue()));
             }
+        }
         Properties props = fFactory.createPropertiesData(properties);
         return props;
     }
@@ -97,8 +99,9 @@ public class ObjectCreator {
         // Bytes
         ByteArrayOutputStream ba = new ByteArrayOutputStream(len);
         try {
-            for (int i = 0; i < 1024; i++)
+            for (int i = 0; i < 1024; i++) {
                 ba.write(b);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to fill content stream with data", e);
         }
@@ -117,8 +120,9 @@ public class ObjectCreator {
         // Bytes
         ByteArrayOutputStream ba = new ByteArrayOutputStream(len);
         try {
-            for (int i = 0; i < 1024; i++)
+            for (int i = 0; i < 1024; i++) {
                 ba.write(b);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to fill content stream with data", e);
         }
@@ -131,12 +135,15 @@ public class ObjectCreator {
      * Compare two streams and return true if they are equal.
      */
     public boolean verifyContent(ContentStream csd1, ContentStream csd2) {
-        if (!csd1.getFileName().equals(csd2.getFileName()))
+        if (!csd1.getFileName().equals(csd2.getFileName())) {
             return false;
-        if (!csd1.getBigLength().equals(csd2.getBigLength()))
+        }
+        if (!csd1.getBigLength().equals(csd2.getBigLength())) {
             return false;
-        if (!csd1.getMimeType().equals(csd2.getMimeType()))
+        }
+        if (!csd1.getMimeType().equals(csd2.getMimeType())) {
             return false;
+        }
         long len = csd1.getBigLength().longValue();
         InputStream s1 = csd1.getStream();
         InputStream s2 = csd2.getStream();
@@ -144,8 +151,9 @@ public class ObjectCreator {
             for (int i = 0; i < len; i++) {
                 int val1 = s1.read();
                 int val2 = s2.read();
-                if (val1 != val2)
+                if (val1 != val2) {
                     return false;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
