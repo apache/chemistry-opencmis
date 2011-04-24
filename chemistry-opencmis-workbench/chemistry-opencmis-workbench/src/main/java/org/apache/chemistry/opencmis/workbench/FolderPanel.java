@@ -84,9 +84,8 @@ public class FolderPanel extends JPanel implements FolderListener {
 		setLayout(new BorderLayout());
 
 		JPanel panel = new JPanel();
-		// panel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 3));
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-		panel.setBorder(BorderFactory.createEmptyBorder(3, 0, 2, 0));
+		panel.setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
 
 		upButton = new JButton("up");
 		upButton.setEnabled(false);
