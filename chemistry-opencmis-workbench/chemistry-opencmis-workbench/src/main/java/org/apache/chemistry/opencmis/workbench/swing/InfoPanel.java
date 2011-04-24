@@ -19,112 +19,214 @@
 package org.apache.chemistry.opencmis.workbench.swing;
 
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.net.URI;
+import java.util.Collection;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
 
 public abstract class InfoPanel extends JPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JPanel gridPanel;
-	private GridBagConstraints gbc;
-	private Font boldFont;
+    private JPanel gridPanel;
+    private GridBagConstraints gbc;
+    private Font boldFont;
 
-	protected void setupGUI() {
-		setLayout(new FlowLayout(FlowLayout.LEFT));
-		setBackground(Color.WHITE);
+    protected void setupGUI() {
+        setLayout(new FlowLayout(FlowLayout.LEFT));
+        setBackground(Color.WHITE);
 
-		gridPanel = new JPanel(new GridBagLayout());
-		gridPanel.setBackground(Color.WHITE);
-		add(gridPanel);
+        gridPanel = new JPanel(new GridBagLayout());
+        gridPanel.setBackground(Color.WHITE);
+        add(gridPanel);
 
-		gbc = new GridBagConstraints();
+        gbc = new GridBagConstraints();
 
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridy = 0;
-		gbc.insets = new Insets(3, 3, 3, 3);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(3, 3, 3, 3);
 
-		Font labelFont = UIManager.getFont("Label.font");
-		boldFont = labelFont
-				.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);
-	}
+        Font labelFont = UIManager.getFont("Label.font");
+        boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);
+    }
 
-	protected JTextField addLine(String label) {
-		return addLine(label, false);
-	}
+    protected JTextField addLine(final String label) {
+        return addLine(label, false);
+    }
 
-	protected JTextField addLine(String label, boolean bold) {
-		JTextField textField = new JTextField();
-		textField.setEditable(false);
-		textField.setBorder(BorderFactory.createEmptyBorder());
-		if (bold) {
-			textField.setFont(boldFont);
-		}
+    protected JTextField addLine(final String label, final boolean bold) {
+        JTextField textField = new JTextField();
+        textField.setEditable(false);
+        textField.setBorder(BorderFactory.createEmptyBorder());
+        if (bold) {
+            textField.setFont(boldFont);
+        }
 
-		JLabel textLable = new JLabel(label);
-		textLable.setLabelFor(textField);
-		if (bold) {
-			textLable.setFont(boldFont);
-		}
+        JLabel textLable = new JLabel(label);
+        textLable.setLabelFor(textField);
+        if (bold) {
+            textLable.setFont(boldFont);
+        }
 
-		gbc.gridy++;
+        gbc.gridy++;
 
-		gbc.gridx = 0;
-		gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-		gridPanel.add(textLable, gbc);
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gridPanel.add(textLable, gbc);
 
-		gbc.gridx = 1;
-		gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-		gridPanel.add(textField, gbc);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gridPanel.add(textField, gbc);
 
-		return textField;
-	}
+        return textField;
+    }
 
-	protected JCheckBox addCheckBox(String label) {
-		JCheckBox checkBox = new JCheckBox();
-		checkBox.setEnabled(false);
+    protected JTextField addLink(final String label) {
+        final JTextField textField = addLine(label, false);
 
-		JLabel textLable = new JLabel(label);
-		textLable.setLabelFor(checkBox);
+        if (Desktop.isDesktopSupported()) {
+            textField.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void removeUpdate(DocumentEvent e) {
 
-		gbc.gridy++;
+                }
 
-		gbc.gridx = 0;
-		gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-		gridPanel.add(textLable, gbc);
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    String uri = textField.getText().toLowerCase();
+                    if (uri.startsWith("http://") || uri.startsWith("https://")) {
+                        textField.setForeground(Color.BLUE);
+                        textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    } else {
+                        textField.setForeground(UIManager.getColor("textForeground"));
+                        textField.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    }
+                }
 
-		gbc.gridx = 1;
-		gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-		gridPanel.add(checkBox, gbc);
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                }
+            });
 
-		return checkBox;
-	}
+            textField.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
 
-	protected <T extends JComponent> T addComponent(String label, T comp) {
-		JLabel textLable = new JLabel(label);
-		textLable.setLabelFor(comp);
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
 
-		gbc.gridy++;
+                @Override
+                public void mouseExited(MouseEvent e) {
+                }
 
-		gbc.gridx = 0;
-		gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-		gridPanel.add(textLable, gbc);
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                }
 
-		gbc.gridx = 1;
-		gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-		gridPanel.add(comp, gbc);
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+                        String uri = textField.getText().toLowerCase();
+                        if (uri.startsWith("http://") || uri.startsWith("https://")) {
+                            try {
+                                Desktop.getDesktop().browse(new URI(textField.getText()));
+                            } catch (Exception ex) {
+                                ClientHelper.showError(InfoPanel.this, ex);
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
-		return comp;
-	}
+        return textField;
+    }
+
+    protected JCheckBox addCheckBox(String label) {
+        JCheckBox checkBox = new JCheckBox();
+        checkBox.setEnabled(false);
+
+        JLabel textLable = new JLabel(label);
+        textLable.setLabelFor(checkBox);
+
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gridPanel.add(textLable, gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gridPanel.add(checkBox, gbc);
+
+        return checkBox;
+    }
+
+    protected <T extends JComponent> T addComponent(String label, T comp) {
+        JLabel textLable = new JLabel(label);
+        textLable.setLabelFor(comp);
+
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gridPanel.add(textLable, gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gridPanel.add(comp, gbc);
+
+        return comp;
+    }
+
+    public static class InfoList extends JPanel {
+        private static final long serialVersionUID = 1L;
+
+        public InfoList() {
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setBackground(Color.WHITE);
+        }
+
+        public void clear() {
+            removeAll();
+        }
+
+        public void setList(Collection<?> list) {
+            clear();
+
+            if (list == null || list.size() == 0) {
+                return;
+            }
+
+            for (Object o : list) {
+                JTextField textField = new JTextField(o == null ? "" : o.toString());
+                textField.setEditable(false);
+                textField.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 0));
+                add(textField);
+            }
+        }
+    }
 }

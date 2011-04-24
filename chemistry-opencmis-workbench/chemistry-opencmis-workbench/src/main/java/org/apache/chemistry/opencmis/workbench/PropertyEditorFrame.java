@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.workbench;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,13 +31,16 @@ import java.text.Format;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -45,12 +49,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -72,12 +74,13 @@ public class PropertyEditorFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private static final String WINDOW_TITLE = "Property Editor";
+    private static final ImageIcon ICON_ADD = ClientHelper.getIcon("add.png");
 
     private final ClientModel model;
     private final CmisObject object;
     private List<PropertyInputPanel> propertyPanels;
 
-    public PropertyEditorFrame(ClientModel model, CmisObject object) {
+    public PropertyEditorFrame(final ClientModel model, final CmisObject object) {
         super();
 
         this.model = model;
@@ -88,19 +91,32 @@ public class PropertyEditorFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE);
-        setPreferredSize(new Dimension(600, 600));
-        setMinimumSize(new Dimension(200, 60));
+        setPreferredSize(new Dimension(800, 600));
+        setMinimumSize(new Dimension(300, 120));
 
         setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel();
+        final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+
+        final Font labelFont = UIManager.getFont("Label.font");
+        final Font boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);
+
+        final JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        final JLabel nameLabel = new JLabel(object.getName());
+        nameLabel.setFont(boldFont);
+        topPanel.add(nameLabel);
+        topPanel.add(new JLabel(object.getId()));
+        add(topPanel, BorderLayout.PAGE_START);
 
         JScrollPane scrollPane = new JScrollPane(panel);
         add(scrollPane, BorderLayout.CENTER);
 
         propertyPanels = new ArrayList<PropertyEditorFrame.PropertyInputPanel>();
 
+        int position = 0;
         for (PropertyDefinition<?> propDef : object.getType().getPropertyDefinitions().values()) {
             boolean isUpdatable = (propDef.getUpdatability() == Updatability.READWRITE)
                     || (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT && object.getAllowableActions()
@@ -108,7 +124,7 @@ public class PropertyEditorFrame extends JFrame {
 
             if (isUpdatable) {
                 PropertyInputPanel propertyPanel = new PropertyInputPanel(propDef, object.getPropertyValue(propDef
-                        .getId()));
+                        .getId()), position++);
 
                 propertyPanels.add(propertyPanel);
                 panel.add(propertyPanel);
@@ -116,6 +132,7 @@ public class PropertyEditorFrame extends JFrame {
         }
 
         JButton updateButton = new JButton("Update");
+        updateButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         updateButton.setDefaultCapable(true);
         updateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -151,14 +168,12 @@ public class PropertyEditorFrame extends JFrame {
 
             ObjectId newId = object.updateProperties(properties, false);
 
-            if (newId != null) {
-                if (newId.getId().equals(model.getCurrentObject().getId())) {
-                    try {
-                        model.reloadObject();
-                        model.reloadFolder();
-                    } catch (Exception ex) {
-                        ClientHelper.showError(null, ex);
-                    }
+            if ((newId != null) && newId.getId().equals(model.getCurrentObject().getId())) {
+                try {
+                    model.reloadObject();
+                    model.reloadFolder();
+                } catch (Exception ex) {
+                    ClientHelper.showError(null, ex);
                 }
             }
 
@@ -169,7 +184,7 @@ public class PropertyEditorFrame extends JFrame {
         }
     }
 
-    public interface UpdateStatus {
+    interface UpdateStatus {
         enum StatusFlag {
             DontChange, Update, Unset
         }
@@ -179,49 +194,73 @@ public class PropertyEditorFrame extends JFrame {
         StatusFlag getStatus();
     }
 
+    interface MultivalueManager {
+        void addNewValue();
+
+        void removeValue(int pos);
+
+        void moveUp(int pos);
+
+        void moveDown(int pos);
+    }
+
     /**
      * Property input panel.
      */
-    public static class PropertyInputPanel extends JPanel implements UpdateStatus {
+    public static class PropertyInputPanel extends JPanel implements UpdateStatus, MultivalueManager {
         private static final long serialVersionUID = 1L;
+
+        private static final Color BACKGROUND1 = UIManager.getColor("Table:\"Table.cellRenderer\".background");
+        private static final Color BACKGROUND2 = UIManager.getColor("Table.alternateRowColor");
+        private static final Color LINE = new Color(0xB8, 0xB8, 0xB8);
 
         private final PropertyDefinition<?> propDef;
         private final Object value;
+        private final Color bgColor;
         private JComboBox changeBox;
-        private List<JComponent> valueComponents;
+        private LinkedList<JComponent> valueComponents;
 
-        public PropertyInputPanel(PropertyDefinition<?> propDef, Object value) {
+        public PropertyInputPanel(PropertyDefinition<?> propDef, Object value, int position) {
             super();
             this.propDef = propDef;
             this.value = value;
+            bgColor = (position % 2 == 0 ? BACKGROUND1 : BACKGROUND2);
             createGUI();
         }
 
-        protected void createGUI() {
+        private void createGUI() {
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
-            setBackground(Color.WHITE);
-            setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            setBackground(bgColor);
+            setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE),
+                    BorderFactory.createEmptyBorder(10, 5, 10, 5)));
 
             Font labelFont = UIManager.getFont("Label.font");
             Font boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);
 
             JPanel titlePanel = new JPanel();
             titlePanel.setLayout(new BorderLayout());
-            titlePanel.setBackground(Color.WHITE);
+            titlePanel.setBackground(bgColor);
             titlePanel.setToolTipText("<html><b>" + propDef.getPropertyType().value() + "</b> ("
                     + propDef.getCardinality().value() + " value)"
                     + (propDef.getDescription() != null ? "<br>" + propDef.getDescription() : ""));
             add(titlePanel);
 
-            JLabel label = new JLabel(propDef.getDisplayName() + " (" + propDef.getId() + ")");
-            label.setFont(boldFont);
-            titlePanel.add(label, BorderLayout.LINE_START);
+            JPanel namePanel = new JPanel();
+            namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
+            namePanel.setBackground(bgColor);
+            JLabel displayNameLabel = new JLabel(propDef.getDisplayName());
+            displayNameLabel.setFont(boldFont);
+            namePanel.add(displayNameLabel);
+            JLabel idLabel = new JLabel(propDef.getId());
+            namePanel.add(idLabel);
+
+            titlePanel.add(namePanel, BorderLayout.LINE_START);
 
             changeBox = new JComboBox(new Object[] { "Don't change     ", "Update    ", "Unset     " });
             titlePanel.add(changeBox, BorderLayout.LINE_END);
 
-            valueComponents = new ArrayList<JComponent>();
+            valueComponents = new LinkedList<JComponent>();
             if (propDef.getCardinality() == Cardinality.SINGLE) {
                 JComponent valueField = createInputField(value);
                 valueComponents.add(valueField);
@@ -229,14 +268,27 @@ public class PropertyEditorFrame extends JFrame {
             } else {
                 if (value instanceof List<?>) {
                     for (Object v : (List<?>) value) {
-                        JComponent valueField = createInputField(v);
+                        JComponent valueField = new MultiValuePropertyInputField(createInputField(v), this, bgColor);
                         valueComponents.add(valueField);
                         add(valueField);
                     }
+
+                    JPanel addPanel = new JPanel(new BorderLayout());
+                    addPanel.setBackground(bgColor);
+                    JButton addButton = new JButton(ICON_ADD);
+                    addButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            addNewValue();
+                            setStatus(StatusFlag.Update);
+                        }
+                    });
+                    addPanel.add(addButton, BorderLayout.LINE_END);
+                    add(addPanel);
+
+                    updatePositions();
                 }
             }
-
-            add(new JSeparator(SwingConstants.HORIZONTAL));
 
             setMaximumSize(new Dimension(Short.MAX_VALUE, getPreferredSize().height));
         }
@@ -244,16 +296,70 @@ public class PropertyEditorFrame extends JFrame {
         protected JComponent createInputField(Object value) {
             switch (propDef.getPropertyType()) {
             case INTEGER:
-                return new IntegerPropertyInputField(value, this);
+                return new IntegerPropertyInputField(value, this, bgColor);
             case DECIMAL:
-                return new DecimalPropertyInputField(value, this);
+                return new DecimalPropertyInputField(value, this, bgColor);
             case DATETIME:
-                return new DateTimePropertyInputField(value, this);
+                return new DateTimePropertyInputField(value, this, bgColor);
             case BOOLEAN:
-                return new BooleanPropertyInputField(value, this);
+                return new BooleanPropertyInputField(value, this, bgColor);
             default:
-                return new StringPropertyInputField(value, this);
+                return new StringPropertyInputField(value, this, bgColor);
             }
+        }
+
+        private void updatePositions() {
+            int n = valueComponents.size();
+            for (int i = 0; i < n; i++) {
+                MultiValuePropertyInputField comp = (MultiValuePropertyInputField) valueComponents.get(i);
+                comp.updatePosition(i, i + 1 == n);
+            }
+        }
+
+        public void addNewValue() {
+            JComponent valueField = new MultiValuePropertyInputField(createInputField(null), this, bgColor);
+            valueComponents.add(valueField);
+            add(valueField, getComponentCount() - 1);
+
+            updatePositions();
+            setStatus(StatusFlag.Update);
+
+            revalidate();
+        }
+
+        public void removeValue(int pos) {
+            remove(valueComponents.remove(pos));
+
+            updatePositions();
+            setStatus(StatusFlag.Update);
+
+            revalidate();
+        }
+
+        public void moveUp(int pos) {
+            JComponent comp = valueComponents.get(pos);
+            Collections.swap(valueComponents, pos, pos - 1);
+
+            remove(comp);
+            add(comp, pos);
+
+            updatePositions();
+            setStatus(StatusFlag.Update);
+
+            revalidate();
+        }
+
+        public void moveDown(int pos) {
+            JComponent comp = valueComponents.get(pos);
+            Collections.swap(valueComponents, pos, pos + 1);
+
+            remove(comp);
+            add(comp, pos + 2);
+
+            updatePositions();
+            setStatus(StatusFlag.Update);
+
+            revalidate();
         }
 
         public String getId() {
@@ -309,6 +415,12 @@ public class PropertyEditorFrame extends JFrame {
                 return StatusFlag.DontChange;
             }
         }
+
+        public Dimension getMaximumSize() {
+            Dimension size = getPreferredSize();
+            size.width = Short.MAX_VALUE;
+            return size;
+        }
     }
 
     /**
@@ -324,7 +436,7 @@ public class PropertyEditorFrame extends JFrame {
     public static class StringPropertyInputField extends JTextField implements PropertyValue {
         private static final long serialVersionUID = 1L;
 
-        public StringPropertyInputField(final Object value, final UpdateStatus status) {
+        public StringPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
             super(value == null ? "" : value.toString());
 
             addKeyListener(new KeyListener() {
@@ -354,7 +466,8 @@ public class PropertyEditorFrame extends JFrame {
     public static class AbstractFormattedPropertyInputField extends JFormattedTextField implements PropertyValue {
         private static final long serialVersionUID = 1L;
 
-        public AbstractFormattedPropertyInputField(final Object value, final Format format, final UpdateStatus status) {
+        public AbstractFormattedPropertyInputField(final Object value, final Format format, final UpdateStatus status,
+                final Color bgColor) {
             super(format);
             if (value != null) {
                 setValue(value);
@@ -388,8 +501,8 @@ public class PropertyEditorFrame extends JFrame {
     public static class IntegerPropertyInputField extends AbstractFormattedPropertyInputField {
         private static final long serialVersionUID = 1L;
 
-        public IntegerPropertyInputField(final Object value, final UpdateStatus status) {
-            super(value, NumberFormat.getIntegerInstance(), status);
+        public IntegerPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
+            super(value, NumberFormat.getIntegerInstance(), status, bgColor);
             setHorizontalAlignment(JTextField.RIGHT);
         }
     }
@@ -400,8 +513,8 @@ public class PropertyEditorFrame extends JFrame {
     public static class DecimalPropertyInputField extends AbstractFormattedPropertyInputField {
         private static final long serialVersionUID = 1L;
 
-        public DecimalPropertyInputField(final Object value, final UpdateStatus status) {
-            super(value, NumberFormat.getInstance(), status);
+        public DecimalPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
+            super(value, NumberFormat.getInstance(), status, bgColor);
             setHorizontalAlignment(JTextField.RIGHT);
         }
     }
@@ -412,7 +525,7 @@ public class PropertyEditorFrame extends JFrame {
     public static class BooleanPropertyInputField extends JComboBox implements PropertyValue {
         private static final long serialVersionUID = 1L;
 
-        public BooleanPropertyInputField(final Object value, final UpdateStatus status) {
+        public BooleanPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
             super(new Object[] { true, false });
             setSelectedItem(value == null ? true : value);
 
@@ -450,15 +563,16 @@ public class PropertyEditorFrame extends JFrame {
             }
         }
 
-        private SpinnerNumberModel day;
-        private SpinnerListModel month;
-        private SpinnerNumberModel year;
-        private SpinnerNumberModel hour;
-        private SpinnerNumberModel min;
-        private SpinnerNumberModel sec;
+        private final SpinnerNumberModel day;
+        private final SpinnerListModel month;
+        private final SpinnerNumberModel year;
+        private final SpinnerNumberModel hour;
+        private final SpinnerNumberModel min;
+        private final SpinnerNumberModel sec;
 
-        public DateTimePropertyInputField(final Object value, final UpdateStatus status) {
-            setBackground(Color.WHITE);
+        public DateTimePropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
+            setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            setBackground(bgColor);
 
             GregorianCalendar cal = (value == null ? new GregorianCalendar() : (GregorianCalendar) value);
 
@@ -479,23 +593,26 @@ public class PropertyEditorFrame extends JFrame {
             year = new SpinnerNumberModel(cal.get(Calendar.YEAR), 0, 9999, 1);
             JSpinner yearSpinner = new JSpinner(year);
             yearSpinner.setEditor(new JSpinner.NumberEditor(yearSpinner, "#"));
-            editor = yearSpinner.getEditor();
+            yearSpinner.getEditor().setBackground(bgColor);
             addSpinner(yearSpinner, status);
 
             add(new JLabel("  "));
 
             hour = new SpinnerNumberModel(cal.get(Calendar.HOUR_OF_DAY), 0, 23, 1);
-            addSpinner(new JSpinner(hour), status);
+            JSpinner hourSpinner = new JSpinner(hour);
+            addSpinner(hourSpinner, status);
 
             add(new JLabel(":"));
 
             min = new SpinnerNumberModel(cal.get(Calendar.MINUTE), 0, 59, 1);
-            addSpinner(new JSpinner(min), status);
+            JSpinner minSpinner = new JSpinner(min);
+            addSpinner(minSpinner, status);
 
             add(new JLabel(":"));
 
             sec = new SpinnerNumberModel(cal.get(Calendar.SECOND), 0, 59, 1);
-            addSpinner(new JSpinner(sec), status);
+            JSpinner secSpinner = new JSpinner(sec);
+            addSpinner(secSpinner, status);
         }
 
         private void addSpinner(final JSpinner spinner, final UpdateStatus status) {
@@ -528,6 +645,76 @@ public class PropertyEditorFrame extends JFrame {
             result.set(Calendar.SECOND, sec.getNumber().intValue());
 
             return result;
+        }
+    }
+
+    /**
+     * Multi value property.
+     */
+    public static class MultiValuePropertyInputField extends JPanel implements PropertyValue {
+        private static final long serialVersionUID = 1L;
+
+        private static final ImageIcon ICON_UP = ClientHelper.getIcon("up.png");
+        private static final ImageIcon ICON_DOWN = ClientHelper.getIcon("down.png");
+        private static final ImageIcon ICON_REMOVE = ClientHelper.getIcon("remove.png");
+
+        private final JComponent component;
+        private int position;
+
+        private JButton upButton;
+        private JButton downButton;
+
+        public MultiValuePropertyInputField(final JComponent component, final MultivalueManager mutlivalueManager,
+                final Color bgColor) {
+            super();
+            this.component = component;
+
+            setLayout(new BorderLayout());
+            setBackground(bgColor);
+
+            add(component, BorderLayout.CENTER);
+
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+            buttonPanel.setBackground(bgColor);
+
+            upButton = new JButton(ICON_UP);
+            upButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mutlivalueManager.moveUp(MultiValuePropertyInputField.this.position);
+                }
+            });
+            buttonPanel.add(upButton);
+
+            downButton = new JButton(ICON_DOWN);
+            downButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mutlivalueManager.moveDown(MultiValuePropertyInputField.this.position);
+                }
+            });
+            buttonPanel.add(downButton);
+
+            JButton removeButton = new JButton(ICON_REMOVE);
+            removeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mutlivalueManager.removeValue(MultiValuePropertyInputField.this.position);
+                }
+            });
+            buttonPanel.add(removeButton);
+
+            add(buttonPanel, BorderLayout.LINE_END);
+        }
+
+        public void updatePosition(int position, boolean isLast) {
+            this.position = position;
+            upButton.setEnabled(position > 0);
+            downButton.setEnabled(!isLast);
+        }
+
+        public Object getPropertyValue() throws Exception {
+            return ((PropertyValue) component).getPropertyValue();
         }
     }
 }

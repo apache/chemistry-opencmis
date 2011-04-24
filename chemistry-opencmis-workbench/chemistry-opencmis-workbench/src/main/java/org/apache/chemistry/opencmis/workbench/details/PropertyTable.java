@@ -18,9 +18,13 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 
 import org.apache.chemistry.opencmis.client.api.Property;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.workbench.PropertyEditorFrame;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class PropertyTable extends AbstractDetailsTable {
@@ -33,6 +37,16 @@ public class PropertyTable extends AbstractDetailsTable {
     public PropertyTable(ClientModel model) {
         super();
         init(model, COLUMN_NAMES, COLUMN_WIDTHS);
+    }
+
+    @Override
+    public void doubleClickAction(MouseEvent e, int rowIndex) {
+        AllowableActions aa = getObject().getAllowableActions();
+
+        if ((aa == null) || (aa.getAllowableActions() == null)
+                || aa.getAllowableActions().contains(Action.CAN_UPDATE_PROPERTIES)) {
+            new PropertyEditorFrame(getClientModel(), getObject());
+        }
     }
 
     public int getDetailRowCount() {

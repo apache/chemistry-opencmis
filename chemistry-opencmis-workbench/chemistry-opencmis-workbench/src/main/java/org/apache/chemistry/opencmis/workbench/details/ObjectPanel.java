@@ -21,17 +21,18 @@ package org.apache.chemistry.opencmis.workbench.details;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.AbstractAtomPubService;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.AtomPubParser;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.ObjectServiceImpl;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.LinkAccess;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
@@ -48,8 +49,9 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private JTextField idField;
     private JTextField typeField;
     private JTextField basetypeField;
-    // private JTextField contentUrlField;
-    private JList allowableActionsList;
+    private JTextField contentUrlField;
+    private InfoList paths;
+    private InfoList allowableActionsList;
     private JButton refreshButton;
 
     public ObjectPanel(ClientModel model) {
@@ -69,7 +71,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             idField.setText("");
             typeField.setText("");
             basetypeField.setText("");
-            // contentUrlField.setText("");
+            paths.removeAll();
+            contentUrlField.setText("");
             allowableActionsList.removeAll();
             refreshButton.setEnabled(false);
         } else {
@@ -78,19 +81,54 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 idField.setText(object.getId());
                 typeField.setText(object.getType().getId());
                 basetypeField.setText(object.getBaseTypeId().toString());
-                // String docUrl = getDocumentURL(object,
-                // model.getClientSession().getSession());
-                // contentUrlField.setText(docUrl == null ? "" : docUrl);
-                if (object.getAllowableActions() != null) {
-                    allowableActionsList.setListData(object.getAllowableActions().getAllowableActions().toArray());
+
+                if (object instanceof FileableCmisObject) {
+                    if (object instanceof Folder) {
+                        paths.setList(Collections.singletonList(((Folder) object).getPath()));
+                    } else {
+                        paths.setList(Collections.singletonList(""));
+                        final FileableCmisObject pathObject = (FileableCmisObject) object;
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    List<String> pathsList = (pathObject).getPaths();
+                                    if ((pathsList == null) || (pathsList.size() == 0)) {
+                                        paths.setList(Collections.singletonList("(unfiled)"));
+                                    } else {
+                                        paths.setList(pathsList);
+                                    }
+                                } catch (Exception e) {
+                                    paths.setList(Collections.singletonList("(???)"));
+                                }
+                                ObjectPanel.this.revalidate();
+                            }
+                        });
+                    }
                 } else {
-                    allowableActionsList.setListData(new String[] { "(missing)" });
+                    paths.setList(Collections.singletonList("(not filable)"));
                 }
+
+                String docUrl = getDocumentURL(object, model.getClientSession().getSession());
+                if (docUrl != null) {
+                    contentUrlField.setText(docUrl);
+                } else {
+                    contentUrlField.setText("(not available)");
+                }
+
+                if (object.getAllowableActions() != null) {
+                    allowableActionsList.setList(object.getAllowableActions().getAllowableActions());
+                } else {
+                    allowableActionsList.setList(Collections.singletonList("(missing)"));
+                }
+
                 refreshButton.setEnabled(true);
             } catch (Exception e) {
                 ClientHelper.showError(this, e);
             }
         }
+
+        revalidate();
     }
 
     private void createGUI() {
@@ -100,8 +138,9 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         idField = addLine("Id:");
         typeField = addLine("Type:");
         basetypeField = addLine("Base Type:");
-        // contentUrlField = addLine("Content URL:");
-        allowableActionsList = addComponent("Allowable Actions:", new JList());
+        paths = addComponent("Paths:", new InfoList());
+        contentUrlField = addLink("Content URL:");
+        allowableActionsList = addComponent("Allowable Actions:", new InfoList());
         refreshButton = addComponent("", new JButton("Refresh"));
         refreshButton.setEnabled(false);
 
@@ -120,22 +159,11 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     }
 
     public String getDocumentURL(final CmisObject document, final Session session) {
-        String link = null;
-
-        if (!(session.getBinding().getObjectService() instanceof ObjectServiceImpl)) {
-            return null;
+        if (session.getBinding().getObjectService() instanceof LinkAccess) {
+            return ((LinkAccess) session.getBinding().getObjectService()).loadContentLink(session.getRepositoryInfo()
+                    .getId(), document.getId());
         }
 
-        try {
-            Method loadLink = AbstractAtomPubService.class.getDeclaredMethod("loadLink", new Class[] { String.class,
-                    String.class, String.class, String.class });
-            loadLink.setAccessible(true);
-            link = (String) loadLink.invoke(session.getBinding().getObjectService(), session.getRepositoryInfo()
-                    .getId(), document.getId(), AtomPubParser.LINK_REL_CONTENT, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return link;
+        return null;
     }
 }

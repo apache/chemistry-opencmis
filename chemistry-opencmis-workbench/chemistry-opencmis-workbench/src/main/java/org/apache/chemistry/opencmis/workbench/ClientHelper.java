@@ -76,7 +76,12 @@ public class ClientHelper {
             }
         }
 
-        JOptionPane.showMessageDialog(parent, ex.getClass().getSimpleName() + "\n" + ex.getMessage(), "Error",
+        String exceptionName = ex.getClass().getSimpleName();
+        if (ex instanceof CmisBaseException) {
+            exceptionName = ((CmisBaseException) ex).getExceptionName();
+        }
+
+        JOptionPane.showMessageDialog(parent, exceptionName + ":\n" + ex.getMessage(), "Error",
                 JOptionPane.ERROR_MESSAGE);
     }
 
@@ -159,6 +164,7 @@ public class ClientHelper {
             file = createTempFileFromDocument(object, streamId);
         } catch (Exception e) {
             showError(component, e);
+            return;
         }
 
         try {

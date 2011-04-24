@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.swing.event.EventListenerList;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
@@ -140,7 +141,16 @@ public class ClientModel {
             }
 
             if (!(folderObject instanceof Folder)) {
-                throw new Exception("Not a folder!");
+                if (folderObject instanceof FileableCmisObject) {
+                    List<Folder> parents = ((FileableCmisObject) folderObject).getParents();
+                    if (parents != null && parents.size() > 0) {
+                        folderObject = parents.get(0);
+                    } else {
+                        throw new Exception("The object is not a folder and not in a folder!");
+                    }
+                } else {
+                    throw new Exception("The object is a relationship and not in a folder!");
+                }
             }
 
             List<CmisObject> children = new ArrayList<CmisObject>();

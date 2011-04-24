@@ -129,6 +129,10 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
         return model.getCurrentObject();
     }
 
+    public ClientModel getClientModel() {
+        return model;
+    }
+
     public String[] getColumnNames() {
         return columnNames;
     }
