@@ -38,8 +38,12 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.text.DefaultEditorKit;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -55,7 +59,7 @@ public class ClientHelper {
 
     private static final Log log = LogFactory.getLog(ClientHelper.class);
     private static final int BUFFER_SIZE = 64 * 1024;
-    
+
     private ClientHelper() {
     }
 
@@ -83,6 +87,40 @@ public class ClientHelper {
 
         JOptionPane.showMessageDialog(parent, exceptionName + ":\n" + ex.getMessage(), "Error",
                 JOptionPane.ERROR_MESSAGE);
+    }
+
+    public static boolean isMacOSX() {
+        return System.getProperty("os.name").startsWith("Mac OS X");
+    }
+
+    public static void installKeyBindings() {
+        if (isMacOSX()) {
+            final KeyStroke copyKeyStroke = KeyStroke.getKeyStroke("meta pressed C");
+            final KeyStroke pasteKeyStroke = KeyStroke.getKeyStroke("meta pressed V");
+            final KeyStroke cutKeyStroke = KeyStroke.getKeyStroke("meta pressed X");
+            final KeyStroke allKeyStroke = KeyStroke.getKeyStroke("meta pressed A");
+
+            InputMap textFieldMap = (InputMap) UIManager.get("TextField.focusInputMap");
+            textFieldMap.put(copyKeyStroke, DefaultEditorKit.copyAction);
+            textFieldMap.put(pasteKeyStroke, DefaultEditorKit.pasteAction);
+            textFieldMap.put(cutKeyStroke, DefaultEditorKit.cutAction);
+            textFieldMap.put(allKeyStroke, DefaultEditorKit.selectAllAction);
+
+            InputMap formattedTextFieldMap = (InputMap) UIManager.get("FormattedTextField.focusInputMap");
+            formattedTextFieldMap.put(copyKeyStroke, DefaultEditorKit.copyAction);
+            formattedTextFieldMap.put(pasteKeyStroke, DefaultEditorKit.pasteAction);
+            formattedTextFieldMap.put(cutKeyStroke, DefaultEditorKit.cutAction);
+            formattedTextFieldMap.put(allKeyStroke, DefaultEditorKit.selectAllAction);
+
+            InputMap textAreaMap = (InputMap) UIManager.get("TextArea.focusInputMap");
+            textAreaMap.put(copyKeyStroke, DefaultEditorKit.copyAction);
+            textAreaMap.put(pasteKeyStroke, DefaultEditorKit.pasteAction);
+            textAreaMap.put(cutKeyStroke, DefaultEditorKit.cutAction);
+            textAreaMap.put(allKeyStroke, DefaultEditorKit.selectAllAction);
+
+            InputMap passwordFieldMap = (InputMap) UIManager.get("PasswordField.focusInputMap");
+            passwordFieldMap.put(pasteKeyStroke, DefaultEditorKit.pasteAction);
+        }
     }
 
     public static ImageIcon getIcon(String name) {

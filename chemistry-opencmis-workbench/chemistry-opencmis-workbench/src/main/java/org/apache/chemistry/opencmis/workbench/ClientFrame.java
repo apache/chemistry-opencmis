@@ -96,6 +96,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
     public ClientFrame() {
         super();
+        ClientHelper.installKeyBindings();
 
         model = new ClientModel();
         createGUI();
