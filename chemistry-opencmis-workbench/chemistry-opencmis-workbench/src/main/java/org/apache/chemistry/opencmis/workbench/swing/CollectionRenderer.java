@@ -72,7 +72,7 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
             } else {
                 sb.append(o.toString());
             }
-            // sb.append("</span><br/>");
+            sb.append("</span><br/>");
         }
         // sb.append("</html>");
 
