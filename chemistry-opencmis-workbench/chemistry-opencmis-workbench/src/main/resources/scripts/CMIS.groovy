@@ -97,8 +97,8 @@ class CMIS {
         CmisObject object = getObject(id)
         
         if(object.getAllowableActions() == null || 
-            object.getAllowableActions().getAllowableActions() == null || 
-            object.getAllowableActions().getAllowableActions().isEmpty()) {
+        object.getAllowableActions().getAllowableActions() == null || 
+        object.getAllowableActions().getAllowableActions().isEmpty()) {
             println "- no allowable actions -"
             return
         }
@@ -109,23 +109,23 @@ class CMIS {
     }
     
     void printVersions(id) {
-         Document doc = getDocument(id)
+        Document doc = getDocument(id)
         
-         List<Document> versions = doc.getAllVersions()
-         
-         if(versions == null || versions.isEmpty()) {
-             println "- no versions -"
-             return
-         }
-         
-         for(Document version: doc.getAllVersions()) {
-             println(version.getVersionLabel() + " (" + version.getId() +") [" + version.getType().getId() + "]")
-         }
+        List<Document> versions = doc.getAllVersions()
+        
+        if(versions == null || versions.isEmpty()) {
+            println "- no versions -"
+            return
+        }
+        
+        for(Document version: doc.getAllVersions()) {
+            println(version.getVersionLabel() + " (" + version.getId() +") [" + version.getType().getId() + "]")
+        }
     }
     
     void printChildren(id) {
         Folder folder = getFolder(id)
-       
+        
         boolean hasChildren = false
         for(CmisObject child: folder.getChildren()) {
             println(child.getName() + " (" + child.getId() +") [" + child.getType().getId() + "]")
@@ -139,7 +139,7 @@ class CMIS {
     
     void printRelationships(id) {
         CmisObject object = getObject(id)
-           
+        
         boolean hasRelationships = false
         for(CmisObject rel: object.getRelationships()) {
             println(rel.getName() + " (" + rel.getId() +") [" + rel.getType().getId() + "]")
@@ -152,18 +152,18 @@ class CMIS {
     }
     
     void printRenditions(id) {
-         Document doc = getDocument(id)
+        Document doc = getDocument(id)
         
-         List<Rendition> renditons = doc.getRenditions()
-         
-         if(renditons == null || renditons.isEmpty()) {
-             println "- no renditions -"
-             return
-         }
-         
-         for(Rendition rendition: renditons) {
-             println(rendition.getTitle() + " (MIME type: " + rendition.getMimeType() + ", length: "  + rendition.getLength() + " bytes)")
-         }
+        List<Rendition> renditons = doc.getRenditions()
+        
+        if(renditons == null || renditons.isEmpty()) {
+            println "- no renditions -"
+            return
+        }
+        
+        for(Rendition rendition: renditons) {
+            println(rendition.getTitle() + " (MIME type: " + rendition.getMimeType() + ", length: "  + rendition.getLength() + " bytes)")
+        }
     }
     
     void printObjectSummary(id) {
@@ -260,6 +260,20 @@ class CMIS {
         def contentStream = new ContentStreamImpl(name, file.size(), mimetype, new FileInputStream(file))
         
         return parentFolder.createDocument(properties, contentStream, versioningState)
+    }
+    
+    Relationship createRelationship(source, target, name, type) {
+        CmisObject sourceObject = getObject(source)
+        CmisObject targetObject = getObject(target)
+        
+        def properties = [
+                    (PropertyIds.OBJECT_TYPE_ID): type,
+                    (PropertyIds.NAME): name,
+                    (PropertyIds.SOURCE_ID): sourceObject.id,
+                    (PropertyIds.TARGET_ID): targetObject.id
+                ]
+        
+        return getObject(session.createRelationship(properties));
     }
     
     void delete(id) {

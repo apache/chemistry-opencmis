@@ -18,19 +18,48 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import java.awt.event.MouseEvent;
+
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Relationship;
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class RelationshipTable extends AbstractDetailsTable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] COLUMN_NAMES = { "Name", "Type", "Source", "Target" };
-    private static final int[] COLUMN_WIDTHS = { 200, 200, 200, 200 };
+    private static final String[] COLUMN_NAMES = { "Name", "Type", "Relationship Id", "Source", "Target" };
+    private static final int[] COLUMN_WIDTHS = { 200, 200, 200, 200, 200 };
 
     public RelationshipTable(ClientModel model) {
         super();
         init(model, COLUMN_NAMES, COLUMN_WIDTHS);
+    }
+
+    @Override
+    public void singleClickAction(MouseEvent e, int rowIndex, int colIndex) {
+        Relationship relationship = getObject().getRelationships().get(rowIndex);
+        ObjectId id = null;
+
+        if (colIndex == 2) {
+            id = relationship;
+        } else if (colIndex == 3) {
+            id = relationship.getSourceId();
+        } else if (colIndex == 4) {
+            id = relationship.getTargetId();
+        }
+
+        if ((id == null) || (id.getId() == null)) {
+            return;
+        }
+
+        try {
+            getClientModel().loadObject(id.getId());
+            setTab(0);
+        } catch (Exception ex) {
+            ClientHelper.showError(this, ex);
+        }
     }
 
     @Override
@@ -52,11 +81,22 @@ public class RelationshipTable extends AbstractDetailsTable {
         case 1:
             return relationship.getType().getId();
         case 2:
-            return (relationship.getSourceId() == null ? "?" : relationship.getSourceId().getId());
+            return relationship;
         case 3:
-            return (relationship.getTarget() == null ? "?" : relationship.getTarget().getId());
+            return relationship.getSourceId();
+        case 4:
+            return relationship.getTarget();
         }
 
         return null;
+    }
+
+    @Override
+    public Class<?> getDetailColumClass(int columnIndex) {
+        if ((columnIndex == 2) || (columnIndex == 3) || (columnIndex == 4)) {
+            return ObjectId.class;
+        }
+
+        return super.getDetailColumClass(columnIndex);
     }
 }

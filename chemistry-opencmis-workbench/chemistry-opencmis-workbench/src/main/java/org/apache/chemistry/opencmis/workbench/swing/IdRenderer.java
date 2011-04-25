@@ -19,19 +19,17 @@
 package org.apache.chemistry.opencmis.workbench.swing;
 
 import java.awt.Component;
-import java.util.Collection;
-import java.util.GregorianCalendar;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.apache.chemistry.opencmis.commons.definitions.Choice;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 
-public class CollectionRenderer extends DefaultTableCellRenderer {
+public class IdRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
 
-    public CollectionRenderer() {
+    public IdRenderer() {
         super();
     }
 
@@ -39,43 +37,19 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
         Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-        int height = (int) getPreferredSize().getHeight();
-        if (height > (getFontMetrics(getFont()).getHeight() + getInsets().bottom + getInsets().top)) {
-            if (table.getRowHeight(row) != height) {
-                table.setRowHeight(row, height);
-            }
-        }
+        comp.setForeground(isSelected ? ClientHelper.LINK_SELECTED_COLOR : ClientHelper.LINK_COLOR);
 
         return comp;
     }
 
-    @Override
-    protected void setValue(Object value) {
-        Collection<?> col = (Collection<?>) value;
-
-        if ((col == null) || (col.isEmpty())) {
-            super.setValue("");
-            return;
-        }
-
-        // build string
-        StringBuilder sb = new StringBuilder("<html>");
-        for (Object o : col) {
-            sb.append("<span>"); // workaround for a bug in Swing
-            if (o == null) {
-                sb.append("<i>null</i>");
-            } else if (o instanceof GregorianCalendar) {
-                sb.append(ClientHelper.getDateString((GregorianCalendar) o));
-            } else if (o instanceof Choice<?>) {
-                sb.append(((Choice<?>) o).getValue());
-            } else {
-                sb.append(o.toString());
+    public void setValue(Object value) {
+        String text = "";
+        if (value instanceof ObjectId) {
+            if (((ObjectId) value).getId() != null) {
+                text = ((ObjectId) value).getId();
             }
-            // sb.append("</span><br/>");
         }
-        // sb.append("</html>");
 
-        super.setValue(sb.toString());
+        setText(text);
     }
 }

@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -49,6 +50,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private JTextField idField;
     private JTextField typeField;
     private JTextField basetypeField;
+    private JTextField versionLabelField;
     private JTextField contentUrlField;
     private InfoList paths;
     private InfoList allowableActionsList;
@@ -71,6 +73,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             idField.setText("");
             typeField.setText("");
             basetypeField.setText("");
+            versionLabelField.setText("");
             paths.removeAll();
             contentUrlField.setText("");
             allowableActionsList.removeAll();
@@ -81,6 +84,15 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 idField.setText(object.getId());
                 typeField.setText(object.getType().getId());
                 basetypeField.setText(object.getBaseTypeId().toString());
+                if (object instanceof Document) {
+                    try {
+                        versionLabelField.setText(((Document) object).getVersionLabel());
+                    } catch (Exception e) {
+                        versionLabelField.setText("???");
+                    }
+                } else {
+                    versionLabelField.setText("");
+                }
 
                 if (object instanceof FileableCmisObject) {
                     if (object instanceof Folder) {
@@ -139,6 +151,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         idField = addLine("Id:");
         typeField = addLine("Type:");
         basetypeField = addLine("Base Type:");
+        versionLabelField = addLine("Version Label:");
         paths = addComponent("Paths:", new InfoList());
         contentUrlField = addLink("Content URL:");
         allowableActionsList = addComponent("Allowable Actions:", new InfoList());

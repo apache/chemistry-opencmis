@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.io.BufferedOutputStream;
@@ -56,6 +57,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class ClientHelper {
+
+    public static final Color LINK_COLOR = new Color(105, 29, 21);
+    public static final Color LINK_SELECTED_COLOR = new Color(255, 255, 255);
 
     private static final Log log = LogFactory.getLog(ClientHelper.class);
     private static final int BUFFER_SIZE = 64 * 1024;

@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -92,6 +93,28 @@ public class VersionTable extends AbstractDetailsTable {
     }
 
     @Override
+    public void singleClickAction(MouseEvent e, int rowIndex, int colIndex) {
+        if (colIndex != 5) {
+            return;
+        }
+
+        String versionId = null;
+        lock.readLock().lock();
+        try {
+            versionId = versions.get(rowIndex).getId();
+        } finally {
+            lock.readLock().unlock();
+        }
+
+        try {
+            getClientModel().loadObject(versionId);
+            setTab(0);
+        } catch (Exception ex) {
+            ClientHelper.showError(this, ex);
+        }
+    }
+
+    @Override
     public void doubleClickAction(MouseEvent e, int rowIndex) {
         lock.readLock().lock();
         try {
@@ -142,7 +165,7 @@ public class VersionTable extends AbstractDetailsTable {
         case 4:
             return version.isLatestMajorVersion();
         case 5:
-            return version.getId();
+            return version;
         case 6:
             return version.getContentStreamFileName();
         case 7:
@@ -158,6 +181,8 @@ public class VersionTable extends AbstractDetailsTable {
     public Class<?> getDetailColumClass(int columnIndex) {
         if ((columnIndex == 2) || (columnIndex == 3) || (columnIndex == 4)) {
             return Boolean.class;
+        } else if (columnIndex == 5) {
+            return ObjectId.class;
         } else if (columnIndex == 8) {
             return Long.class;
         }

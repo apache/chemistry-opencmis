@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -26,23 +27,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.Collection;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
 import org.apache.chemistry.opencmis.workbench.swing.CollectionRenderer;
+import org.apache.chemistry.opencmis.workbench.swing.IdRenderer;
 
 public abstract class AbstractDetailsTable extends JTable implements ObjectListener {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Cursor HAND_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+    private static final Cursor DEFAULT_CURSOR = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 
     private ClientModel model;
     private String[] columnNames;
@@ -56,6 +65,7 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
         setModel(new DetailsTableModel(this));
 
         setDefaultRenderer(Collection.class, new CollectionRenderer());
+        setDefaultRenderer(ObjectId.class, new IdRenderer());
         setAutoResizeMode(AUTO_RESIZE_OFF);
         setAutoCreateRowSorter(true);
 
@@ -97,10 +107,15 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
             }
 
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    int row = getSelectedRow();
-                    if ((row > -1) && (row < getModel().getRowCount())) {
-                        doubleClickAction(e, row);
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    int row = rowAtPoint(e.getPoint());
+                    int column = columnAtPoint(e.getPoint());
+                    if (row > -1 && column > -1) {
+                        if (e.getClickCount() == 1) {
+                            singleClickAction(e, row, column);
+                        } else if (e.getClickCount() == 2) {
+                            doubleClickAction(e, row);
+                        }
                     }
                 }
             }
@@ -117,6 +132,22 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
                 if (e.isPopupTrigger()) {
                     popup.show(e.getComponent(), e.getX(), e.getY());
                 }
+            }
+        });
+
+        addMouseMotionListener(new MouseMotionListener() {
+            public void mouseMoved(MouseEvent e) {
+                int row = rowAtPoint(e.getPoint());
+                int column = columnAtPoint(e.getPoint());
+                if (row > -1 && getDetailColumClass(column) == ObjectId.class) {
+                    setCursor(HAND_CURSOR);
+                } else {
+                    setCursor(DEFAULT_CURSOR);
+                }
+
+            }
+
+            public void mouseDragged(MouseEvent e) {
             }
         });
     }
@@ -145,7 +176,14 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
         return String.class;
     }
 
+    public void singleClickAction(MouseEvent e, int rowIndex, int colIndex) {
+    }
+
     public void doubleClickAction(MouseEvent e, int rowIndex) {
+    }
+
+    public void setTab(int tab) {
+        ((JTabbedPane) getParent().getParent().getParent()).setSelectedIndex(tab);
     }
 
     static class DetailsTableModel extends AbstractTableModel {

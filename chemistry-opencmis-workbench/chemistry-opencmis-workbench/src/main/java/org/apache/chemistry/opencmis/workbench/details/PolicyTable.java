@@ -18,39 +18,66 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import java.awt.event.MouseEvent;
+
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Policy;
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class PolicyTable extends AbstractDetailsTable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String[] COLUMN_NAMES = { "Name", "Id" };
-	private static final int[] COLUMN_WIDTHS = { 200, 400 };
+    private static final String[] COLUMN_NAMES = { "Name", "Id" };
+    private static final int[] COLUMN_WIDTHS = { 200, 400 };
 
-	public PolicyTable(ClientModel model) {
-		super();
-		init(model, COLUMN_NAMES, COLUMN_WIDTHS);
-	}
+    public PolicyTable(ClientModel model) {
+        super();
+        init(model, COLUMN_NAMES, COLUMN_WIDTHS);
+    }
 
-	public int getDetailRowCount() {
-		if (getObject().getPolicies() == null) {
-			return 0;
-		}
+    @Override
+    public void singleClickAction(MouseEvent e, int rowIndex, int colIndex) {
+        if (colIndex != 1) {
+            return;
+        }
 
-		return getObject().getPolicies().size();
-	}
+        try {
+            getClientModel().loadObject(getObject().getPolicies().get(rowIndex).getId());
+            setTab(0);
+        } catch (Exception ex) {
+            ClientHelper.showError(this, ex);
+        }
+    }
 
-	public Object getDetailValueAt(int rowIndex, int columnIndex) {
-		Policy policy = getObject().getPolicies().get(rowIndex);
+    public int getDetailRowCount() {
+        if (getObject().getPolicies() == null) {
+            return 0;
+        }
 
-		switch (columnIndex) {
-		case 0:
-			return policy.getName();
-		case 1:
-			return policy.getId();
-		}
+        return getObject().getPolicies().size();
+    }
 
-		return null;
-	}
+    public Object getDetailValueAt(int rowIndex, int columnIndex) {
+        Policy policy = getObject().getPolicies().get(rowIndex);
+
+        switch (columnIndex) {
+        case 0:
+            return policy.getName();
+        case 1:
+            return policy;
+        }
+
+        return null;
+    }
+
+    @Override
+    public Class<?> getDetailColumClass(int columnIndex) {
+        if (columnIndex == 1) {
+            return ObjectId.class;
+        }
+
+        return super.getDetailColumClass(columnIndex);
+    }
 }

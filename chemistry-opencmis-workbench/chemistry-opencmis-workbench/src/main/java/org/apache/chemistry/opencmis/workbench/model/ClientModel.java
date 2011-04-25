@@ -174,8 +174,7 @@ public class ClientModel {
     public synchronized void loadObject(String objectId) throws Exception {
         try {
             Session session = clientSession.getSession();
-            CmisObject object = session.getObject(session.createObjectId(objectId),
-                    clientSession.getObjectOperationContext());
+            CmisObject object = session.getObject(objectId, clientSession.getObjectOperationContext());
             object.refreshIfOld(OLD);
 
             setCurrentObject(object);
