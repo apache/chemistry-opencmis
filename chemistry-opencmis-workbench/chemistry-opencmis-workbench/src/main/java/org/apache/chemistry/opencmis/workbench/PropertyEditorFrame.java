@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -514,7 +515,7 @@ public class PropertyEditorFrame extends JFrame {
         private static final long serialVersionUID = 1L;
 
         public DecimalPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
-            super(value, NumberFormat.getInstance(), status, bgColor);
+            super(value, new DecimalFormat("#,##0.##########"), status, bgColor);
             setHorizontalAlignment(JTextField.RIGHT);
         }
     }

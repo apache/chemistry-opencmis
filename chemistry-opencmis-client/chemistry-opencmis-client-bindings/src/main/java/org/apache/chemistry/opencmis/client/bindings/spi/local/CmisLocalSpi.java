@@ -93,7 +93,7 @@ public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
             factory = (CmisServiceFactory) Class.forName(serviceFactoryClassname).newInstance();
             factory.init(parameters);
         } catch (Exception e) {
-            throw new CmisConnectionException("Factory cannot be created!", e);
+            throw new CmisConnectionException("Factory cannot be created: " + e.getMessage(), e);
         }
 
         repositoryService = new RepositoryServiceImpl(session, factory);
