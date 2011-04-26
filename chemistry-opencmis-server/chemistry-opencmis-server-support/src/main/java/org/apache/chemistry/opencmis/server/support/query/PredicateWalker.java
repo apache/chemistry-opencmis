@@ -89,4 +89,6 @@ public interface PredicateWalker extends PredicateWalkerBase {
 
     Object walkCol(Tree node);
 
+    Object walkId(Tree node);
+
 }

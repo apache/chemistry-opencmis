@@ -131,6 +131,8 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
             return walkList(node);
         case CmisQlStrictLexer.COL:
             return walkCol(node);
+        case CmisQlStrictLexer.ID:
+            return walkId(node);
         default:
             return walkOtherExpr(node);
         }
@@ -290,6 +292,10 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
     }
 
     public Object walkCol(Tree node) {
+        return null;
+    }
+
+    public Object walkId(Tree node) {
         return null;
     }
 

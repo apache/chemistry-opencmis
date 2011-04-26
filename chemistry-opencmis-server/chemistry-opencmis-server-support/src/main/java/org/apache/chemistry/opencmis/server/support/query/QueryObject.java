@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -66,6 +67,7 @@ public class QueryObject {
 
     // where part
     protected final Map<Integer, CmisSelector> columnReferences = new HashMap<Integer, CmisSelector>();
+    protected final Map<Integer, String> typeReferences = new HashMap<Integer, String>();
 
     // order by part
     protected final List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
@@ -135,6 +137,10 @@ public class QueryObject {
         return columnReferences.get(token);
     }
 
+    public String getTypeReference(Integer token) {
+        return typeReferences.get(token);
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }
@@ -199,8 +205,8 @@ public class QueryObject {
         return Collections.unmodifiableMap(froms);
     }
 
-    public String getTypeQueryName(String alias) {
-        return froms.get(alias);
+    public String getTypeQueryName(String qualifier) {
+        return froms.get(qualifier);
     }
 
     public TypeDefinition getTypeDefinitionFromQueryName(String queryName) {
@@ -305,13 +311,18 @@ public class QueryObject {
 
     public void addWhereReference(Tree node, CmisSelector reference) {
         LOG.debug("add node to where: " + System.identityHashCode(node));
-
         columnReferences.put(node.getTokenStartIndex(), reference);
         whereReferences.add(reference);
     }
 
     public List<CmisSelector> getWhereReferences() {
         return Collections.unmodifiableList(whereReferences);
+    }
+
+    public void addWhereTypeReference(Tree node, String qualifier) {
+        if (node != null) {
+            typeReferences.put(node.getTokenStartIndex(), qualifier);
+        }
     }
 
     // ///////////////////////////////////////////////////////
@@ -392,6 +403,33 @@ public class QueryObject {
                             // qualified select: SELECT t.p FROM
                             validateColumnReferenceAndResolveType(colRef);
                         }
+                    }
+                }
+            }
+
+            // Replace types used as qualifiers (IN_TREE, IN_FOLDER,
+            // CONTAINS) by their corresponding alias (correlation name)
+            for (Entry<Integer, String> en: typeReferences.entrySet()) {
+                Integer obj = en.getKey();
+                String qualifier = en.getValue();
+                String typeQueryName = getReferencedTypeQueryName(qualifier);
+                if (typeQueryName == null) {
+                    throw new CmisQueryException(qualifier
+                            + " is neither a type query name nor an alias.");
+                }
+                if (typeQueryName.equals(qualifier)) {
+                    // try to find an alias for it
+                    String alias = null;
+                    for (Entry<String, String> e : froms.entrySet()) {
+                        String q = e.getKey();
+                        String tqn = e.getValue();
+                        if (!tqn.equals(q) && typeQueryName.equals(tqn)) {
+                            alias = q;
+                            break;
+                        }
+                    }
+                    if (alias != null) {
+                        typeReferences.put(obj, alias);
                     }
                 }
             }
@@ -488,17 +526,22 @@ public class QueryObject {
 
     // return type query name for a referenced column (which can be the name
     // itself or an alias
-    protected String getReferencedTypeQueryName(String typeQueryNameOrAlias) {
-        String typeQueryName = froms.get(typeQueryNameOrAlias);
+    protected String getReferencedTypeQueryName(String qualifier) {
+        String typeQueryName = froms.get(qualifier);
         if (null == typeQueryName) {
             // if an alias was defined but still the original is used we have to
             // search case: SELECT T.p FROM T AS TAlias
+            String q = null;
             for (String tqn : froms.values()) {
-                if (typeQueryNameOrAlias.equals(tqn)) {
-                    return tqn;
+                if (qualifier.equals(tqn)) {
+                    if (q != null) {
+                        throw new CmisQueryException(qualifier
+                                + " is an ambiguous type query name.");
+                    }
+                    q = tqn;
                 }
             }
-            return null;
+            return q;
         } else {
             return typeQueryName;
         }

@@ -257,8 +257,17 @@ search_condition
             queryObj.addWhereReference($mvcr.start, $mvcr.result);
       }
     | ^(CONTAINS qualifier? text_search_expression)
+      {
+            queryObj.addWhereTypeReference($qualifier.start, $qualifier.value);
+      }
     | ^(IN_FOLDER qualifier? search_condition)
+      {
+            queryObj.addWhereTypeReference($qualifier.start, $qualifier.value);
+      }
     | ^(IN_TREE qualifier? search_condition)
+      {
+            queryObj.addWhereTypeReference($qualifier.start, $qualifier.value);
+      }
     | ^(IN column_reference in_value_list)
       {
             queryObj.addWhereReference($column_reference.start, $column_reference.result);

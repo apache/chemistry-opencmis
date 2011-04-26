@@ -603,7 +603,7 @@ public class EvalQueryTest extends AbstractServiceTest {
             res = doQuery(statement);
             fail("Unknown type in folder should throw exception");
         } catch (Exception e) {
-            assertTrue(e.toString().contains("must be in FROM list"));
+            assertTrue(e.toString().contains("is neither a type query name nor an alias"));
             log.debug("expected Exception: " + e);
         }
     }
@@ -632,7 +632,7 @@ public class EvalQueryTest extends AbstractServiceTest {
             res = doQuery(statement);
             fail("Unknown type in folder should throw exception");
         } catch (Exception e) {
-            assertTrue(e.toString().contains("must be in FROM list"));
+            assertTrue(e.toString().contains("is neither a type query name nor an alias"));
             log.debug("expected Exception: " + e);
         }
     }
