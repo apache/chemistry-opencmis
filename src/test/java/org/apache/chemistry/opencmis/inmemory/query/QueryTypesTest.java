@@ -20,12 +20,15 @@ package org.apache.chemistry.opencmis.inmemory.query;
 
 import static org.junit.Assert.*;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
+import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
@@ -41,6 +44,16 @@ public class QueryTypesTest extends AbstractQueryTest {
 
     private static final Log LOG = LogFactory.getLog(QueryTypesTest.class);
     private TypeManagerImpl tm;
+    private TestPredicateWalker pw;
+
+    public static class TestPredicateWalker extends AbstractPredicateWalker {
+        List<Integer> ids = new LinkedList<Integer>();
+        @Override
+        public Object walkId(Tree node) {
+            ids.add(node.getTokenStartIndex());
+            return null;
+        }
+    }
 
     @Before
     public void setUp() {
@@ -54,7 +67,9 @@ public class QueryTypesTest extends AbstractQueryTest {
         }
 
         // initialize query object with type manager
-        super.setUp(new QueryObject(tm), null);
+        // and test the abstract predicate walker
+        pw = new TestPredicateWalker();
+        super.setUp(new QueryObject(tm), pw);
     }
 
     @After
@@ -167,6 +182,37 @@ public class QueryTypesTest extends AbstractQueryTest {
         colRef = ((ColumnReference) selects.get(1));
         assertEquals(colRef.getTypeDefinition(), myType);
         assertTrue(colRef.getPropertyQueryName().equals(STRING_PROP));
+    }
+
+    @Test
+    public void resolveTypesWithTwoFromsSameTypeCorrectlyQualified()
+            throws Exception {
+        String statement = "SELECT A.Title FROM BookType A JOIN BookType B";
+
+        CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
+        Map<String, String> types = queryObj.getTypes();
+        assertEquals(2, types.size());
+        List<CmisSelector> selects = queryObj.getSelectReferences();
+        assertEquals(1, selects.size());
+        ColumnReference colRef = ((ColumnReference) selects.get(0));
+        assertEquals(bookType, colRef.getTypeDefinition());
+        assertEquals(TITLE_PROP, colRef.getPropertyQueryName());
+        assertEquals("A", colRef.getQualifier());
+    }
+
+    @Test
+    public void resolveTypesWithTwoFromsSameTypeAmbiguouslyQualified()
+            throws Exception {
+        String statement = "SELECT BookType.Title FROM BookType A JOIN BookType B";
+        try {
+            traverseStatement(statement);
+            fail("Select with an ambiguously qualified property should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof RecognitionException);
+            assertTrue(e.toString().contains(
+                    "BookType is an ambiguous type query name"));
+        }
     }
 
     @Test
@@ -461,4 +507,75 @@ public class QueryTypesTest extends AbstractQueryTest {
             }
         }
     }
+
+    @Test
+    public void resolveTypeQualifiers1() throws Exception {
+        String statement = "SELECT Title FROM BookType WHERE IN_TREE(BookType, 'foo')";
+        CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
+        assertEquals("BookType", queryObj.getTypeReference(pw.ids.get(0)));
+    }
+
+    @Test
+    public void resolveTypeQualifiers2() throws Exception {
+        String statement = "SELECT Title FROM BookType B WHERE IN_TREE(B, 'foo')";
+        CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
+        assertEquals("B", queryObj.getTypeReference(pw.ids.get(0)));
+    }
+
+    @Test
+    public void resolveTypeQualifiers3() throws Exception {
+        String statement = "SELECT Title FROM BookType B WHERE IN_TREE(BookType, 'foo')";
+        CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
+        assertEquals("B", queryObj.getTypeReference(pw.ids.get(0)));
+    }
+
+    @Test
+    public void resolveTypeQualifiers4() throws Exception {
+        String statement = "SELECT Title FROM BookType B WHERE IN_TREE(dummy, 'foo')";
+        try {
+            traverseStatement(statement);
+            fail("invalid correlation name should fail");
+        } catch (Exception e) {
+            assertTrue(e instanceof RecognitionException);
+            assertTrue(e.toString().contains(
+                    "dummy is neither a type query name nor an alias"));
+        }
+    }
+
+    @Test
+    public void resolveTypeQualifiers5() throws Exception {
+        String statement = "SELECT B1.Title FROM BookType B1 JOIN BookType B2"
+                + " WHERE IN_TREE(B1, 'foo') OR IN_TREE(B2, 'bar')";
+        CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
+        assertEquals("B1", queryObj.getTypeReference(pw.ids.get(0)));
+        assertEquals("B2", queryObj.getTypeReference(pw.ids.get(1)));
+    }
+
+    @Test
+    public void resolveTypeQualifiers6() throws Exception {
+        String statement = "SELECT B.Title FROM BookType B JOIN MyDocType D"
+                + " WHERE IN_TREE(MyDocType, 'foo')";
+        CmisQueryWalker walker = traverseStatement(statement);
+        assertNotNull(walker);
+        assertEquals("D", queryObj.getTypeReference(pw.ids.get(0)));
+    }
+
+    @Test
+    public void resolveTypeQualifiers7() throws Exception {
+        String statement = "SELECT B1.Title FROM BookType B1 JOIN BookType B2"
+                + " WHERE IN_TREE(BookType, 'foo')";
+        try {
+            traverseStatement(statement);
+            fail("ambiguous correlation name should fail");
+        } catch (Exception e) {
+            assertTrue(e instanceof RecognitionException);
+            assertTrue(e.toString().contains(
+                    "BookType is an ambiguous type query name"));
+        }
+    }
+
 }
