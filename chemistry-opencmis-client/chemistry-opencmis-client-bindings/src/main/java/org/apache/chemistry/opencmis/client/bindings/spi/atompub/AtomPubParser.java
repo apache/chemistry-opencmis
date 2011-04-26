@@ -18,6 +18,35 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_DOCUMENT_TYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_FOLDER_TYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_POLICY_TYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_RELATIONSHIP_TYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.CONTENT_SRC;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.LINK_HREF;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.LINK_REL;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.LINK_TYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ACL;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ALLOWABLEACTIONS;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CHILDREN;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_COLLECTION;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_COLLECTION_TYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ENTRY;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_FEED;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_LINK;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_NUM_ITEMS;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_OBJECT;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_PATH_SEGMENT;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_RELATIVE_PATH_SEGMENT;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPOSITORY_INFO;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_SERVICE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_TEMPLATE_TEMPLATE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_TEMPLATE_TYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_TYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_URI_TEMPLATE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_WORKSPACE;
+
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -54,8 +83,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypePolicyDefinitionT
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeRelationshipDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumPropertiesBase;
 
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.*;
-
 /**
  * AtomPub Parser.
  */
@@ -64,15 +91,15 @@ public class AtomPubParser {
     // public constants
     public static final String LINK_REL_CONTENT = "@@content@@";
 
-    private final InputStream fStream;
-    private AtomBase fParseResult;
+    private final InputStream stream;
+    private AtomBase parseResult;
 
     public AtomPubParser(InputStream stream) {
         if (stream == null) {
             throw new IllegalArgumentException("No stream.");
         }
 
-        fStream = stream;
+        this.stream = stream;
     }
 
     /**
@@ -80,50 +107,65 @@ public class AtomPubParser {
      */
     public void parse() throws Exception {
         XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLStreamReader parser = factory.createXMLStreamReader(fStream);
+        XMLStreamReader parser = factory.createXMLStreamReader(stream);
 
-        while (true) {
-            int event = parser.getEventType();
-            if (event == XMLStreamReader.START_ELEMENT) {
-                QName name = parser.getName();
+        try {
+            while (true) {
+                int event = parser.getEventType();
+                if (event == XMLStreamReader.START_ELEMENT) {
+                    QName name = parser.getName();
 
-                if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
-                    if (TAG_FEED.equals(name.getLocalPart())) {
-                        fParseResult = parseFeed(parser);
-                        break;
-                    } else if (TAG_ENTRY.equals(name.getLocalPart())) {
-                        fParseResult = parseEntry(parser);
-                        break;
+                    if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+                        if (TAG_FEED.equals(name.getLocalPart())) {
+                            parseResult = parseFeed(parser);
+                            break;
+                        } else if (TAG_ENTRY.equals(name.getLocalPart())) {
+                            parseResult = parseEntry(parser);
+                            break;
+                        }
+                    } else if (Constants.NAMESPACE_CMIS.equals(name.getNamespaceURI())) {
+                        if (TAG_ALLOWABLEACTIONS.equals(name.getLocalPart())) {
+                            parseResult = parseAllowableActions(parser);
+                            break;
+                        } else if (TAG_ACL.equals(name.getLocalPart())) {
+                            parseResult = parseACL(parser);
+                            break;
+                        }
+                    } else if (Constants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
+                        if (TAG_SERVICE.equals(name.getLocalPart())) {
+                            parseResult = parseServiceDoc(parser);
+                            break;
+                        }
                     }
-                } else if (Constants.NAMESPACE_CMIS.equals(name.getNamespaceURI())) {
-                    if (TAG_ALLOWABLEACTIONS.equals(name.getLocalPart())) {
-                        fParseResult = parseAllowableActions(parser);
-                        break;
-                    } else if (TAG_ACL.equals(name.getLocalPart())) {
-                        fParseResult = parseACL(parser);
-                        break;
-                    }
-                } else if (Constants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
-                    if (TAG_SERVICE.equals(name.getLocalPart())) {
-                        fParseResult = parseServiceDoc(parser);
-                        break;
-                    }
+                }
+
+                if (!next(parser)) {
+                    break;
                 }
             }
 
-            if (!next(parser)) {
-                break;
+            parser.close();
+        } finally {
+            // make sure the stream is read and closed in all cases
+            try {
+                byte[] buffer = new byte[4096];
+                while (stream.read(buffer) > -1) {
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                stream.close();
+            } catch (Exception e) {
             }
         }
-
-        parser.close();
     }
 
     /**
      * Return the parse results.
      */
     public AtomBase getResults() {
-        return fParseResult;
+        return parseResult;
     }
 
     /**
