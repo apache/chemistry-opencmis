@@ -250,7 +250,7 @@ class CMIS {
         CmisObject parentFolder = getFolder(parent)
         
         def name = file.getName()
-        def mimetype = org.apache.chemistry.opencmis.workbench.model.MIMETypes.getMIMEType(file)
+        def mimetype = org.apache.chemistry.opencmis.commons.impl.MimeTypes.getMIMEType(file)
         
         def properties = [
                     (PropertyIds.OBJECT_TYPE_ID): type,
