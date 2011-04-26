@@ -330,7 +330,7 @@ public class LoginDialog extends JDialog {
     private void createCompressionButtons(Container pane) {
         JPanel compressionContainer = new JPanel();
         compressionContainer.setLayout(new BoxLayout(compressionContainer, BoxLayout.LINE_AXIS));
-        boolean compression = (System.getProperty(SYSPROP_BINDING, "compression").equalsIgnoreCase("on"));
+        boolean compression = !(System.getProperty(SYSPROP_BINDING, "compression").equalsIgnoreCase("off"));
         compressionOnButton = new JRadioButton("On", compression);
         compressionOffButton = new JRadioButton("Off", !compression);
         ButtonGroup compressionGroup = new ButtonGroup();
