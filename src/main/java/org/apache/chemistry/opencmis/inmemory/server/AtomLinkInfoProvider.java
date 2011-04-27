@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
@@ -36,6 +37,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 
 /**
  * For the Atom binding more information might be required than the result of a
@@ -142,7 +144,10 @@ public class AtomLinkInfoProvider {
     }
 
     public void fillInformationForAtomLinks(String repositoryId, StoredObject so, ObjectInfoImpl objectInfo) {
-        fillInformationForAtomLinks(repositoryId, so, null, objectInfo);
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, null, false,
+                IncludeRelationships.NONE, null, false, false, null);
+        fillInformationForAtomLinks(repositoryId, so, od, objectInfo);
     }
 
     /**
