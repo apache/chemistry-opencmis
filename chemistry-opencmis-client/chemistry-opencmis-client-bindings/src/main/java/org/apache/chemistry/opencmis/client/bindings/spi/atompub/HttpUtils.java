@@ -227,6 +227,18 @@ public class HttpUtils {
                     StringBuilder sb = new StringBuilder();
 
                     try {
+                        String encoding = getContentEncoding();
+                        if (encoding != null) {
+                            if (encoding.toLowerCase().trim().equals("gzip")) {
+                                try {
+                                    errorStream = new GZIPInputStream(errorStream, 4096);
+                                } catch (IOException e) {
+                                }
+                            } else if (encoding.toLowerCase().trim().equals("deflate")) {
+                                errorStream = new InflaterInputStream(errorStream, new Inflater(true), 4096);
+                            }
+                        }
+
                         InputStreamReader reader = new InputStreamReader(errorStream);
                         char[] buffer = new char[4096];
                         int b;
