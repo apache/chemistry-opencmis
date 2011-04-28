@@ -31,9 +31,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Default cache implementation.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
  */
 public class CacheImpl implements Cache {
 
@@ -41,31 +38,31 @@ public class CacheImpl implements Cache {
 
     private static final long serialVersionUID = 1L;
 
-    private List<Class<?>> fLevels;
-    private List<Map<String, String>> fLevelParameters;
+    private List<Class<?>> levels;
+    private List<Map<String, String>> levelParameters;
 
-    private final String fName;
+    private final String name;
 
-    private CacheLevel fRoot;
+    private CacheLevel root;
 
-    private final ReentrantReadWriteLock fLock = new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
      * Constructor.
      */
     public CacheImpl() {
-        fName = "Cache";
+        this.name = "Cache";
     }
 
     /**
      * Constructor.
      */
     public CacheImpl(String name) {
-        fName = name;
+        this.name = name;
     }
 
     public void initialize(String[] cacheLevelConfig) {
-        if (fLevels != null) {
+        if (levels != null) {
             throw new IllegalStateException("Cache already initialize!");
         }
 
@@ -73,10 +70,10 @@ public class CacheImpl implements Cache {
             throw new IllegalArgumentException("Cache config must not be empty!");
         }
 
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
         try {
-            fLevels = new ArrayList<Class<?>>();
-            fLevelParameters = new ArrayList<Map<String, String>>();
+            levels = new ArrayList<Class<?>>();
+            levelParameters = new ArrayList<Map<String, String>>();
 
             // build level lists
             for (String config : cacheLevelConfig) {
@@ -89,9 +86,9 @@ public class CacheImpl implements Cache {
             }
 
             // create root
-            fRoot = createCacheLevel(0);
+            root = createCacheLevel(0);
         } finally {
-            fLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
@@ -109,14 +106,14 @@ public class CacheImpl implements Cache {
             throw new IllegalArgumentException("Class '" + className + "' does not implement the CacheLevel interface!");
         }
 
-        fLevels.add(clazz);
+        levels.add(clazz);
 
         // process parameters
         if (parameters == null) {
-            fLevelParameters.add(null);
+            levelParameters.add(null);
         } else {
             Map<String, String> parameterMap = new HashMap<String, String>();
-            fLevelParameters.add(parameterMap);
+            levelParameters.add(parameterMap);
 
             for (String pair : parameters.split(",")) {
                 String[] keyValue = pair.split("=");
@@ -136,15 +133,15 @@ public class CacheImpl implements Cache {
         }
 
         // check level depth
-        if (fLevels.size() != keys.length) {
+        if (levels.size() != keys.length) {
             throw new IllegalArgumentException("Wrong number of keys!");
         }
 
         Object result = null;
 
-        fLock.readLock().lock();
+        lock.readLock().lock();
         try {
-            CacheLevel cacheLevel = fRoot;
+            CacheLevel cacheLevel = root;
 
             // follow the branch
             for (int i = 0; i < keys.length - 1; i++) {
@@ -162,7 +159,7 @@ public class CacheImpl implements Cache {
             // get the value
             result = cacheLevel.get(keys[keys.length - 1]);
         } finally {
-            fLock.readLock().unlock();
+            lock.readLock().unlock();
         }
 
         return result;
@@ -175,13 +172,13 @@ public class CacheImpl implements Cache {
         }
 
         // check level depth
-        if (fLevels.size() != keys.length) {
+        if (levels.size() != keys.length) {
             throw new IllegalArgumentException("Wrong number of keys!");
         }
 
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
         try {
-            CacheLevel cacheLevel = fRoot;
+            CacheLevel cacheLevel = root;
 
             // follow the branch
             for (int i = 0; i < keys.length - 1; i++) {
@@ -199,11 +196,11 @@ public class CacheImpl implements Cache {
 
             cacheLevel.put(value, keys[keys.length - 1]);
 
-            if (log.isDebugEnabled()) {
-                log.debug(fName + ": put [" + getFormattedKeys(keys) + "] = " + value);
+            if (log.isTraceEnabled()) {
+                log.trace(name + ": put [" + getFormattedKeys(keys) + "] = " + value);
             }
         } finally {
-            fLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
@@ -212,9 +209,9 @@ public class CacheImpl implements Cache {
             return;
         }
 
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
         try {
-            CacheLevel cacheLevel = fRoot;
+            CacheLevel cacheLevel = root;
 
             // follow the branch
             for (int i = 0; i < keys.length - 1; i++) {
@@ -231,11 +228,11 @@ public class CacheImpl implements Cache {
 
             cacheLevel.remove(keys[keys.length - 1]);
 
-            if (log.isDebugEnabled()) {
-                log.debug(fName + ": removed [" + getFormattedKeys(keys) + "]");
+            if (log.isTraceEnabled()) {
+                log.trace(name + ": removed [" + getFormattedKeys(keys) + "]");
             }
         } finally {
-            fLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
@@ -244,9 +241,9 @@ public class CacheImpl implements Cache {
             return -1;
         }
 
-        fLock.readLock().lock();
+        lock.readLock().lock();
         try {
-            CacheLevel cacheLevel = fRoot;
+            CacheLevel cacheLevel = root;
 
             // follow the branch
             for (int i = 0; i < keys.length - 1; i++) {
@@ -261,18 +258,18 @@ public class CacheImpl implements Cache {
                 cacheLevel = (CacheLevel) level;
             }
         } finally {
-            fLock.readLock().unlock();
+            lock.readLock().unlock();
         }
 
         return keys.length;
     }
 
     public void writeLock() {
-        fLock.writeLock().lock();
+        lock.writeLock().lock();
     }
 
     public void writeUnlock() {
-        fLock.writeLock().unlock();
+        lock.writeLock().unlock();
     }
 
     // ---- internal ----
@@ -281,12 +278,12 @@ public class CacheImpl implements Cache {
      * Creates a cache level object.
      */
     private CacheLevel createCacheLevel(int level) {
-        if ((level < 0) || (level >= fLevels.size())) {
+        if ((level < 0) || (level >= levels.size())) {
             throw new IllegalArgumentException("Cache level doesn't fit the configuration!");
         }
 
         // get the class and create an instance
-        Class<?> clazz = fLevels.get(level);
+        Class<?> clazz = levels.get(level);
         CacheLevel cacheLevel = null;
         try {
             cacheLevel = (CacheLevel) clazz.newInstance();
@@ -295,14 +292,14 @@ public class CacheImpl implements Cache {
         }
 
         // initialize it
-        cacheLevel.initialize(fLevelParameters.get(level));
+        cacheLevel.initialize(levelParameters.get(level));
 
         return cacheLevel;
     }
 
     @Override
     public String toString() {
-        return (fRoot == null ? "(no cache root)" : fRoot.toString());
+        return (root == null ? "(no cache root)" : root.toString());
     }
 
     // ---- internal ----
