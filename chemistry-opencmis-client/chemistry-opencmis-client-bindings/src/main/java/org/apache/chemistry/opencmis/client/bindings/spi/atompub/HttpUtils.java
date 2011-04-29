@@ -208,10 +208,10 @@ public class HttpUtils {
         private BigInteger length;
 
         public Response(int responseCode, String responseMessage, Map<String, List<String>> headers,
-                InputStream stream, InputStream errorStream) {
+                InputStream responseStream, InputStream errorStream) {
             this.responseCode = responseCode;
             this.responseMessage = responseMessage;
-            this.stream = stream;
+            stream = responseStream;
 
             this.headers = new HashMap<String, List<String>>();
             if (headers != null) {
@@ -258,9 +258,9 @@ public class HttpUtils {
                     }
                 }
 
-                if (stream != null) {
+                if (responseStream != null) {
                     try {
-                        stream.close();
+                        responseStream.close();
                     } catch (IOException e) {
                     }
                 }
@@ -284,26 +284,28 @@ public class HttpUtils {
                         // if the stream is gzip encoded, decode it
                         length = null;
                         try {
-                            this.stream = new GZIPInputStream(stream, 4096);
+                            stream = new GZIPInputStream(stream, 4096);
                         } catch (IOException e) {
                             errorContent = e.getMessage();
+                            stream = null;
                             try {
-                                stream.close();
+                                responseStream.close();
                             } catch (IOException ec) {
                             }
                         }
                     } else if (encoding.toLowerCase().trim().equals("deflate")) {
                         // if the stream is deflate encoded, decode it
                         length = null;
-                        this.stream = new InflaterInputStream(stream, new Inflater(true), 4096);
+                        stream = new InflaterInputStream(stream, new Inflater(true), 4096);
                     }
                 }
 
                 String transferEncoding = getContentTransferEncoding();
-                if ((transferEncoding != null) && (transferEncoding.toLowerCase().trim().equals("base64"))) {
+                if ((stream != null) && (transferEncoding != null)
+                        && (transferEncoding.toLowerCase().trim().equals("base64"))) {
                     // if the stream is base64 encoded, decode it
                     length = null;
-                    this.stream = new Base64.InputStream(stream);
+                    stream = new Base64.InputStream(stream);
                 }
             }
         }
