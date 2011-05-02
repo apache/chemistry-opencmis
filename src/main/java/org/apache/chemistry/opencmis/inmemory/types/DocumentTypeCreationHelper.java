@@ -194,6 +194,7 @@ public class DocumentTypeCreationHelper {
 
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CONTENT_STREAM_FILE_NAME,
                 "CMIS Content Stream File Name Property");
+        propS.setUpdatability(Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
         propId = PropertyCreationHelper.createIdDefinition(PropertyIds.CONTENT_STREAM_ID, "CMIS Stream Id Property");
