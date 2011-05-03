@@ -74,7 +74,7 @@ WS (SOAP) Binding: <a href="services/RepositoryService"> All Services</a>
 AtomPub Binding: <a href="atom"> 
 <% 
 String reqStr = request.getRequestURL().toString();
-out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "atom/");
+out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "atom");
 %>
 </a>
 </p>
