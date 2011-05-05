@@ -435,7 +435,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         CmisTestResult f;
 
-        f = createResult(FAILURE, "Property is null!");
+        f = createResult(FAILURE, "Property is not included in response!");
         addResult(results, assertNotNull(property, null, f));
 
         if (property != null) {
