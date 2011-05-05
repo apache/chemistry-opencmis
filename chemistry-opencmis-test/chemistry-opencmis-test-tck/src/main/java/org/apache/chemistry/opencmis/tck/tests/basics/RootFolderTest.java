@@ -55,7 +55,7 @@ public class RootFolderTest extends AbstractSessionTest {
         addResult(assertStringNotEmpty(ri.getRootFolderId(), success, failure));
 
         // get the root folder
-        Folder rootFolder = session.getRootFolder();
+        Folder rootFolder = session.getRootFolder(SELECT_ALL_NO_CACHE_OC);
 
         if (rootFolder == null) {
             addResult(createResult(FAILURE, "Root folder is not available!"));
