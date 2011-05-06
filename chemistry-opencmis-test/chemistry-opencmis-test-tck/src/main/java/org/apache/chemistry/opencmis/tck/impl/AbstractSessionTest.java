@@ -30,10 +30,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
+import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
@@ -400,6 +402,90 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             // allowable actions
             f = createResult(FAILURE, "Object has no CAN_GET_PROPERTIES allowable action!");
             addResult(results, assertAllowableAction(object, Action.CAN_GET_PROPERTIES, null, f));
+
+            if (object instanceof Document) {
+                if ((object.getAllowableActions() != null)
+                        && (object.getAllowableActions().getAllowableActions() != null)) {
+                    if (object.getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_OUT)
+                            && object.getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_IN)) {
+                        addResult(
+                                results,
+                                createResult(FAILURE,
+                                        "Document object has CAN_CHECK_OUT and CAN_CHECK_IN allowable actions!"));
+                    }
+                    if (object.getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_OUT)
+                            && object.getAllowableActions().getAllowableActions().contains(Action.CAN_CANCEL_CHECK_OUT)) {
+                        addResult(
+                                results,
+                                createResult(FAILURE,
+                                        "Document object has CAN_CHECK_OUT and CAN_CANCEL_CHECK_OUT allowable actions!"));
+                    }
+                }
+            } else {
+                f = createResult(FAILURE, "Non-Document object has CAN_CHECK_IN allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_IN, null, f));
+
+                f = createResult(FAILURE, "Non-Document object has CAN_CHECK_OUT allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_OUT, null, f));
+
+                f = createResult(FAILURE, "Non-Document object has CAN_CANCEL_CHECK_OUT allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_CANCEL_CHECK_OUT, null, f));
+
+                f = createResult(FAILURE, "Non-Document object has CAN_GET_CONTENT_STREAM allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_CONTENT_STREAM, null, f));
+
+                f = createResult(FAILURE, "Non-Document object has CAN_DELETE_CONTENT_STREAM allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_CONTENT_STREAM, null, f));
+
+                f = createResult(FAILURE, "Non-Document object has CAN_GET_ALL_VERSIONS allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_ALL_VERSIONS, null, f));
+            }
+
+            if (object instanceof Folder) {
+                Folder folder = (Folder) object;
+                if (folder.isRootFolder()) {
+                    f = createResult(FAILURE, "Root folder has CAN_DELETE_OBJECT allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_OBJECT, null, f));
+
+                    f = createResult(FAILURE, "Root folder has CAN_GET_FOLDER_PARENT allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_GET_FOLDER_PARENT, null, f));
+                }
+            } else {
+                f = createResult(FAILURE, "Non-Folder object has CAN_GET_DESCENDANTS allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_DESCENDANTS, null, f));
+
+                f = createResult(FAILURE, "Non-Folder object has CAN_GET_FOLDER_PARENT allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_FOLDER_PARENT, null, f));
+
+                f = createResult(FAILURE, "Non-Folder object has CAN_GET_CHILDREN allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_CHILDREN, null, f));
+
+                f = createResult(FAILURE, "Non-Folder object has CAN_DELETE_TREE allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_TREE, null, f));
+
+                f = createResult(FAILURE, "Non-Folder object has CAN_GET_FOLDER_PARENT allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_FOLDER_PARENT, null, f));
+
+                f = createResult(FAILURE, "Non-Folder object has CAN_CREATE_DOCUMENT allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_CREATE_DOCUMENT, null, f));
+
+                f = createResult(FAILURE, "Non-Folder object has CAN_CREATE_FOLDER allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_CREATE_FOLDER, null, f));
+            }
+
+            if (!(object instanceof Document) && !(object instanceof Policy)) {
+                f = createResult(FAILURE, "Non-Document/Policy object has CAN_ADD_OBJECT_TO_FOLDER allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_ADD_OBJECT_TO_FOLDER, null, f));
+
+                f = createResult(FAILURE,
+                        "Non-Document/Policy object has CAN_REMOVE_OBJECT_FROM_FOLDER allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_REMOVE_OBJECT_FROM_FOLDER, null, f));
+            }
+
+            if (!(object instanceof FileableCmisObject)) {
+                f = createResult(FAILURE, "Non-Fileable object has CAN_MOVE_OBJECT allowable action!");
+                addResult(results, assertNotAllowableAction(object, Action.CAN_MOVE_OBJECT, null, f));
+            }
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
