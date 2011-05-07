@@ -58,5 +58,5 @@ public interface AuthenticationProvider {
      * @param headers
      *            the HTTP headers
      */
-    void setResponseHeaders(String url, Map<String, List<String>> headers);
+    void putResponseHeaders(String url, Map<String, List<String>> headers);
 }

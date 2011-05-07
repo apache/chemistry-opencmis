@@ -190,7 +190,7 @@ public class HttpUtils {
 
             // forward response HTTP headers
             if (authProvider != null) {
-                authProvider.setResponseHeaders(url.toString(), conn.getHeaderFields());
+                authProvider.putResponseHeaders(url.toString(), conn.getHeaderFields());
             }
 
             // get the response
