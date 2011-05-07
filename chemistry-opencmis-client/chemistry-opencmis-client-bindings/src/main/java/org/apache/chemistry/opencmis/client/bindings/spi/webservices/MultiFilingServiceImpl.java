@@ -44,14 +44,6 @@ public class MultiFilingServiceImpl extends AbstractWebServicesService implement
         this.portProvider = portProvider;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.MultiFilingService#addObjectToFolder
-     * (java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         MultiFilingServicePort port = portProvider.getMultiFilingServicePort();
@@ -66,17 +58,11 @@ public class MultiFilingServiceImpl extends AbstractWebServicesService implement
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.MultiFilingService#removeObjectFromFolder
-     * (java.lang.String, java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         MultiFilingServicePort port = portProvider.getMultiFilingServicePort();
 
@@ -90,7 +76,8 @@ public class MultiFilingServiceImpl extends AbstractWebServicesService implement
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
-
 }

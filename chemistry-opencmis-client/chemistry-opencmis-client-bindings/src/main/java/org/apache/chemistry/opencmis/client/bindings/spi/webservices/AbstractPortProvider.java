@@ -21,11 +21,15 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.MessageContext;
 
+import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -49,6 +53,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningServicePort;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -133,6 +138,18 @@ public abstract class AbstractPortProvider {
      */
     public ACLServicePort getACLServicePort() {
         return (ACLServicePort) getPortObject(SessionParameter.WEBSERVICES_ACL_SERVICE);
+    }
+
+    public void endCall(Object portObject) {
+        AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
+        if (authProvider != null) {
+            BindingProvider bp = (BindingProvider) portObject;
+            String url = (String) bp.getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+            @SuppressWarnings("unchecked")
+            Map<String, List<String>> headers = (Map<String, List<String>>) bp.getResponseContext().get(
+                    MessageContext.HTTP_RESPONSE_HEADERS);
+            authProvider.setResponseHeaders(url, headers);
+        }
     }
 
     // ---- internal ----

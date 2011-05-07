@@ -22,7 +22,7 @@ package org.apache.chemistry.opencmis.commons.spi;
  * Entry point for all CMIS binding related operations. It provides access to
  * the service interface objects which are very similar to the CMIS 1.0 domain
  * model.
- *
+ * 
  * <p>
  * Each instance of this class represents a session. A session comprises of a
  * connection to one CMIS endpoint over one binding for one particular user and
@@ -84,6 +84,11 @@ public interface CmisBinding {
     BindingsObjectFactory getObjectFactory();
 
     /**
+     * Gets the authentication provider.
+     */
+    AuthenticationProvider getAuthenticationProvider();
+
+    /**
      * Clears all caches of the current CMIS binding session.
      */
     void clearAllCaches();
@@ -91,7 +96,7 @@ public interface CmisBinding {
     /**
      * Clears all caches of the current CMIS binding session that are related to
      * the given repository.
-     *
+     * 
      * @param repositoryId
      *            the repository id
      */

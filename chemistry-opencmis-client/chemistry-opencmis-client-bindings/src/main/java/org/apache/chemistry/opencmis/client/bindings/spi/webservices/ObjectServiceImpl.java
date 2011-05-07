@@ -66,18 +66,6 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         this.portProvider = portProvider;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createDocument(java
-     * .lang.String, org.apache.opencmis.client.provider.PropertiesData,
-     * java.lang.String, org.apache.opencmis.client.provider.ContentStreamData,
-     * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addACEs,
             Acl removeACEs, ExtensionsData extension) {
@@ -87,9 +75,9 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             javax.xml.ws.Holder<String> objectId = new javax.xml.ws.Holder<String>();
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
-            port.createDocument(repositoryId, convert(properties), folderId, convert(contentStream), convert(
-                    EnumVersioningState.class, versioningState), policies, convert(addACEs), convert(removeACEs),
-                    portExtension, objectId);
+            port.createDocument(repositoryId, convert(properties), folderId, convert(contentStream),
+                    convert(EnumVersioningState.class, versioningState), policies, convert(addACEs),
+                    convert(removeACEs), portExtension, objectId);
 
             setExtensionValues(portExtension, extension);
 
@@ -98,21 +86,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createDocumentFromSource
-     * (java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.PropertiesData, java.lang.String,
-     * org.apache.opencmis.commons.enums.VersioningState, java.util.List,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addACEs, Acl removeACEs,
             ExtensionsData extension) {
@@ -122,9 +100,9 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             javax.xml.ws.Holder<String> objectId = new javax.xml.ws.Holder<String>();
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
-            port.createDocumentFromSource(repositoryId, sourceId, convert(properties), folderId, convert(
-                    EnumVersioningState.class, versioningState), policies, convert(addACEs), convert(removeACEs),
-                    portExtension, objectId);
+            port.createDocumentFromSource(repositoryId, sourceId, convert(properties), folderId,
+                    convert(EnumVersioningState.class, versioningState), policies, convert(addACEs),
+                    convert(removeACEs), portExtension, objectId);
 
             setExtensionValues(portExtension, extension);
 
@@ -133,20 +111,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createFolder(java.lang
-     * .String, org.apache.opencmis.client.provider.PropertiesData,
-     * java.lang.String, java.util.List,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addACEs, Acl removeACEs, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
@@ -165,20 +134,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createPolicy(java.lang
-     * .String, org.apache.opencmis.client.provider.PropertiesData,
-     * java.lang.String, java.util.List,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addACEs, Acl removeACEs, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
@@ -197,19 +157,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#createRelationship(
-     * java.lang.String, org.apache.opencmis.client.provider.PropertiesData,
-     * java.util.List, org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addACEs,
             Acl removeACEs, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
@@ -228,19 +180,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#updateProperties(java
-     * .lang.String, org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.PropertiesData,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
@@ -259,17 +203,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#deleteObject(java.lang
-     * .String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
 
@@ -283,40 +221,27 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#deleteTree(java.lang
-     * .String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.UnfileObject, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
 
         try {
-            return convert(port.deleteTree(repositoryId, folderId, allVersions, convert(EnumUnfileObject.class,
-                    unfileObjects), continueOnFailure, convert(extension)));
+            return convert(port.deleteTree(repositoryId, folderId, allVersions,
+                    convert(EnumUnfileObject.class, unfileObjects), continueOnFailure, convert(extension)));
         } catch (CmisException e) {
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getAllowableActions
-     * (java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
 
@@ -326,17 +251,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getContentStream(java
-     * .lang.String, java.lang.String, java.lang.String, java.math.BigInteger,
-     * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
@@ -347,69 +266,47 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getObject(java.lang
-     * .String, java.lang.String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.lang.Boolean, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeACL, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
 
         try {
-            return convert(port.getObject(repositoryId, objectId, filter, includeAllowableActions, convert(
-                    EnumIncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
+            return convert(port.getObject(repositoryId, objectId, filter, includeAllowableActions,
+                    convert(EnumIncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
                     includeACL, convert(extension)));
         } catch (CmisException e) {
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getObjectByPath(java
-     * .lang.String, java.lang.String, java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.lang.Boolean, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeACL, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
 
         try {
-            return convert(port.getObjectByPath(repositoryId, path, filter, includeAllowableActions, convert(
-                    EnumIncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
+            return convert(port.getObjectByPath(repositoryId, path, filter, includeAllowableActions,
+                    convert(EnumIncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
                     includeACL, convert(extension)));
         } catch (CmisException e) {
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getProperties(java.
-     * lang.String, java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
 
@@ -419,17 +316,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#getRenditions(java.
-     * lang.String, java.lang.String, java.lang.String, java.math.BigInteger,
-     * java.math.BigInteger, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
@@ -454,17 +345,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#moveObject(java.lang
-     * .String, org.apache.opencmis.client.provider.Holder, java.lang.String,
-     * java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
@@ -481,19 +366,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#setContentStream(java
-     * .lang.String, org.apache.opencmis.client.provider.Holder,
-     * java.lang.Boolean, org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.ContentStreamData,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
@@ -513,18 +390,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ObjectService#deleteContentStream
-     * (java.lang.String, org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.Holder,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();
@@ -543,6 +413,8 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 }

@@ -53,13 +53,6 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         this.portProvider = portProvider;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfos
-     * (org.apache.opencmis.client.provider .ExtensionsData)
-     */
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         RepositoryServicePort port = portProvider.getRepositoryServicePort();
 
@@ -81,18 +74,13 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
 
         return infos;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getRepositoryInfo
-     * (java.lang.String, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         RepositoryServicePort port = portProvider.getRepositoryServicePort();
 
@@ -102,17 +90,11 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getTypeDefinition
-     * (java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         RepositoryServicePort port = portProvider.getRepositoryServicePort();
 
@@ -122,18 +104,11 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getTypeChildren
-     * (java.lang.String, java.lang.String, java.lang.Boolean,
-     * java.math.BigInteger, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         RepositoryServicePort port = portProvider.getRepositoryServicePort();
@@ -145,17 +120,11 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryService#getTypeDescendants
-     * (java.lang.String, java.lang.String, java.math.BigInteger,
-     * java.lang.Boolean, org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         RepositoryServicePort port = portProvider.getRepositoryServicePort();
@@ -167,7 +136,8 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
-
 }

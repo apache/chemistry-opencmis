@@ -23,58 +23,41 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.w3c.dom.Element;
 
 /**
  * Authentication provider class.
  */
-public abstract class AbstractAuthenticationProvider implements Serializable {
+public abstract class AbstractAuthenticationProvider implements AuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Session fSession;
+    private Session session;
 
     /**
      * Sets the {@link Session} the authentication provider lives in.
      */
     public void setSession(Session session) {
-        fSession = session;
+        this.session = session;
     }
 
     /**
      * Returns {@link Session}.
      */
     public Session getSession() {
-        return fSession;
+        return session;
     }
 
-    /**
-     * Returns a set of HTTP headers (key-value pairs) that should be added to a
-     * HTTP call. This will be called by the AtomPub and the Web Services
-     * binding. You might want to check the binding in use before you set the
-     * headers.
-     * 
-     * @param url
-     *            the URL of the HTTP call
-     * 
-     * @return the HTTP headers or <code>null</code> if no additional headers
-     *         should be set
-     */
     public Map<String, List<String>> getHTTPHeaders(String url) {
         return null;
     }
 
-    /**
-     * Returns a SOAP header that should be added to a Web Services call.
-     * 
-     * @param portObject
-     *            the port object
-     * 
-     * @return the SOAP headers or <code>null</code> if no additional headers
-     *         should be set
-     */
     public Element getSOAPHeaders(Object portObject) {
         return null;
+    }
+
+    public void setResponseHeaders(String url, Map<String, List<String>> headers) {
     }
 
     /**

@@ -76,6 +76,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
@@ -92,6 +94,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
@@ -113,6 +117,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
@@ -140,6 +146,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
@@ -156,6 +164,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
@@ -170,6 +180,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 }

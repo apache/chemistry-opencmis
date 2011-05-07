@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
@@ -51,7 +52,7 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
 
     /**
      * Constructor.
-     *
+     * 
      * @param sessionParameters
      *            the session parameters
      */
@@ -159,6 +160,10 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
 
     public BindingsObjectFactory getObjectFactory() {
         return objectFactory;
+    }
+
+    public AuthenticationProvider getAuthenticationProvider() {
+        return CmisBindingsHelper.getAuthenticationProvider(session);
     }
 
     public void clearAllCaches() {

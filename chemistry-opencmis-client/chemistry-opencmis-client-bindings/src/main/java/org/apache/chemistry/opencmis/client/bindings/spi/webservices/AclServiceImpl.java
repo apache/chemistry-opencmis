@@ -45,38 +45,22 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
         this.portProvider = portProvider;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ACLService#applyACL(java.lang.String,
-     * java.lang.String, org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.client.provider.AccessControlList,
-     * org.apache.opencmis.commons.enums.ACLPropagation,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public Acl applyAcl(String repositoryId, String objectId, Acl addACEs, Acl removeACEs,
             AclPropagation aclPropagation, ExtensionsData extension) {
         ACLServicePort port = portProvider.getACLServicePort();
 
         try {
-            return convert(port.applyACL(repositoryId, objectId, convert(addACEs), convert(removeACEs), convert(
-                    EnumACLPropagation.class, aclPropagation), convert(extension)));
+            return convert(port.applyACL(repositoryId, objectId, convert(addACEs), convert(removeACEs),
+                    convert(EnumACLPropagation.class, aclPropagation), convert(extension)));
         } catch (CmisException e) {
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ACLService#getACL(java.lang.String,
-     * java.lang.String, java.lang.Boolean,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         ACLServicePort port = portProvider.getACLServicePort();
 
@@ -86,6 +70,8 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 }

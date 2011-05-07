@@ -35,12 +35,12 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -115,7 +115,7 @@ public class HttpUtils {
             }
 
             // authenticate
-            AbstractAuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
+            AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
             if (authProvider != null) {
                 Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(url.toString());
                 if (httpHeaders != null) {
@@ -186,6 +186,11 @@ public class HttpUtils {
             InputStream inputStream = null;
             if ((respCode == 200) || (respCode == 201) || (respCode == 203) || (respCode == 206)) {
                 inputStream = conn.getInputStream();
+            }
+
+            // forward response HTTP headers
+            if (authProvider != null) {
+                authProvider.setResponseHeaders(url.toString(), conn.getHeaderFields());
             }
 
             // get the response

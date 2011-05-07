@@ -29,7 +29,6 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.MTOMFeature;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -44,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningService;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
@@ -136,7 +136,7 @@ public class PortProvider extends AbstractPortProvider {
             }
 
             // add SOAP and HTTP authentication headers
-            AbstractAuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
+            AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
             Map<String, List<String>> httpHeaders = null;
             if (authProvider != null) {
                 // SOAP header

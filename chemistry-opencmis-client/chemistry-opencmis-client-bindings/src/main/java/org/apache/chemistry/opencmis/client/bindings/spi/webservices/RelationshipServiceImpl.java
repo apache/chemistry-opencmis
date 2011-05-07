@@ -47,31 +47,21 @@ public class RelationshipServiceImpl extends AbstractWebServicesService implemen
         this.portProvider = portProvider;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RelationshipService#
-     * getObjectRelationships(java.lang.String, java.lang.String,
-     * java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.RelationshipDirection,
-     * java.lang.String, java.lang.String, java.lang.Boolean,
-     * java.math.BigInteger, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         RelationshipServicePort port = portProvider.getRelationshipServicePort();
 
         try {
-            return convert(port.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes, convert(
-                    EnumRelationshipDirection.class, relationshipDirection), typeId, filter, includeAllowableActions,
-                    maxItems, skipCount, convert(extension)));
+            return convert(port.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes,
+                    convert(EnumRelationshipDirection.class, relationshipDirection), typeId, filter,
+                    includeAllowableActions, maxItems, skipCount, convert(extension)));
         } catch (CmisException e) {
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
-
 }

@@ -51,16 +51,6 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
         this.portProvider = portProvider;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.DiscoveryService#getContentChanges
-     * (java.lang.String, org.apache.opencmis.client.provider.Holder,
-     * java.lang.Boolean, java.lang.String, java.lang.Boolean,
-     * java.lang.Boolean, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeACL, BigInteger maxItems, ExtensionsData extension) {
         DiscoveryServicePort port = portProvider.getDiscoveryServicePort();
@@ -79,33 +69,26 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.DiscoveryService#query(java.lang.
-     * String, java.lang.String, java.lang.Boolean, java.lang.Boolean,
-     * org.apache.opencmis.commons.enums.IncludeRelationships, java.lang.String,
-     * java.math.BigInteger, java.math.BigInteger,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         DiscoveryServicePort port = portProvider.getDiscoveryServicePort();
 
         try {
-            return convert(port.query(repositoryId, statement, searchAllVersions, includeAllowableActions, convert(
-                    EnumIncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
-                    convert(extension)));
+            return convert(port.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
+                    convert(EnumIncludeRelationships.class, includeRelationships), renditionFilter, maxItems,
+                    skipCount, convert(extension)));
         } catch (CmisException e) {
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
-
 }

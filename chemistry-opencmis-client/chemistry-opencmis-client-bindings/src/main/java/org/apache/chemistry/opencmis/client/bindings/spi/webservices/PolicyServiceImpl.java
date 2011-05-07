@@ -50,14 +50,6 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
         this.portProvider = portProvider;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PolicyService#applyPolicy(java.lang
-     * .String, java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         PolicyServicePort port = portProvider.getPolicyServicePort();
 
@@ -71,17 +63,11 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PolicyService#removePolicy(java.lang
-     * .String, java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         PolicyServicePort port = portProvider.getPolicyServicePort();
 
@@ -95,17 +81,11 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PolicyService#getAppliedPolicies(
-     * java.lang.String, java.lang.String, java.lang.String,
-     * org.apache.opencmis.client.provider.ExtensionsData)
-     */
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
         PolicyServicePort port = portProvider.getPolicyServicePort();
@@ -115,7 +95,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
                     convert(extension));
 
             List<ObjectData> result = new ArrayList<ObjectData>();
-            
+
             // no list?
             if (policyList == null) {
                 return result;
@@ -131,6 +111,8 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
             throw convertException(e);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
         }
     }
 }
