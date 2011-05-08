@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -400,91 +401,137 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
 
             // allowable actions
-            f = createResult(FAILURE, "Object has no CAN_GET_PROPERTIES allowable action!");
-            addResult(results, assertAllowableAction(object, Action.CAN_GET_PROPERTIES, null, f));
+            if ((object.getAllowableActions() == null) || (object.getAllowableActions().getAllowableActions() == null)) {
+                addResult(results, createResult(FAILURE, "Object has no allowable actions!"));
+            } else {
+                Set<Action> actions = object.getAllowableActions().getAllowableActions();
 
-            if (object instanceof Document) {
-                if ((object.getAllowableActions() != null)
-                        && (object.getAllowableActions().getAllowableActions() != null)) {
-                    if (object.getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_OUT)
-                            && object.getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_IN)) {
+                f = createResult(FAILURE, "Object has no CAN_GET_PROPERTIES allowable action!");
+                addResult(results, assertAllowableAction(object, Action.CAN_GET_PROPERTIES, null, f));
+
+                if (object instanceof Document) {
+                    if (actions.contains(Action.CAN_CHECK_OUT) && actions.contains(Action.CAN_CHECK_IN)) {
                         addResult(
                                 results,
                                 createResult(FAILURE,
                                         "Document object has CAN_CHECK_OUT and CAN_CHECK_IN allowable actions!"));
                     }
-                    if (object.getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_OUT)
-                            && object.getAllowableActions().getAllowableActions().contains(Action.CAN_CANCEL_CHECK_OUT)) {
+
+                    if (actions.contains(Action.CAN_CHECK_OUT) && actions.contains(Action.CAN_CANCEL_CHECK_OUT)) {
                         addResult(
                                 results,
                                 createResult(FAILURE,
                                         "Document object has CAN_CHECK_OUT and CAN_CANCEL_CHECK_OUT allowable actions!"));
                     }
+
+                    Document doc = (Document) object;
+                    if (doc.isVersionSeriesCheckedOut() != null) {
+                        if (doc.isVersionSeriesCheckedOut().booleanValue()) {
+                            f = createResult(WARNING, "Document is checked out and has CAN_CHECK_OUT allowable action!");
+                            addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_OUT, null, f));
+
+                            if (doc.getVersionSeriesCheckedOutId() == null) {
+                                addResult(
+                                        results,
+                                        createResult(WARNING,
+                                                "Document is checked out and but the property cmis:versionSeriesCheckedOutId is not set!"));
+                            } else {
+                                if (doc.getVersionSeriesCheckedOutId().equals(object.getId())) {
+                                    // object is PWC
+                                    f = createResult(FAILURE, "PWC doesn't have CAN_CHECK_IN allowable action!");
+                                    addResult(results, assertAllowableAction(object, Action.CAN_CHECK_IN, null, f));
+
+                                    f = createResult(FAILURE, "PWC doesn't have CAN_CANCEL_CHECK_OUT allowable action!");
+                                    addResult(results,
+                                            assertAllowableAction(object, Action.CAN_CANCEL_CHECK_OUT, null, f));
+                                } else {
+                                    // object is not PWC
+                                    f = createResult(WARNING, "Non-PWC has CAN_CHECK_IN allowable action!");
+                                    addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_IN, null, f));
+
+                                    f = createResult(WARNING, "Non-PWC has CAN_CANCEL_CHECK_OUT allowable action!");
+                                    addResult(results,
+                                            assertNotAllowableAction(object, Action.CAN_CANCEL_CHECK_OUT, null, f));
+                                }
+                            }
+                        } else {
+                            f = createResult(FAILURE,
+                                    "Document is not checked out and has CAN_CHECK_IN allowable action!");
+                            addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_IN, null, f));
+
+                            f = createResult(FAILURE,
+                                    "Document is not checked out and has CAN_CANCEL_CHECK_OUT allowable action!");
+                            addResult(results, assertNotAllowableAction(object, Action.CAN_CANCEL_CHECK_OUT, null, f));
+                        }
+                    } else {
+                        addResult(results, createResult(FAILURE, "Property cmis:isVersionSeriesCheckedOut is not set!"));
+                    }
+                } else {
+                    f = createResult(FAILURE, "Non-Document object has CAN_CHECK_IN allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_IN, null, f));
+
+                    f = createResult(FAILURE, "Non-Document object has CAN_CHECK_OUT allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_OUT, null, f));
+
+                    f = createResult(FAILURE, "Non-Document object has CAN_CANCEL_CHECK_OUT allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_CANCEL_CHECK_OUT, null, f));
+
+                    f = createResult(FAILURE, "Non-Document object has CAN_GET_CONTENT_STREAM allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_GET_CONTENT_STREAM, null, f));
+
+                    f = createResult(FAILURE, "Non-Document object has CAN_DELETE_CONTENT_STREAM allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_CONTENT_STREAM, null, f));
+
+                    f = createResult(FAILURE, "Non-Document object has CAN_GET_ALL_VERSIONS allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_GET_ALL_VERSIONS, null, f));
                 }
-            } else {
-                f = createResult(FAILURE, "Non-Document object has CAN_CHECK_IN allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_IN, null, f));
 
-                f = createResult(FAILURE, "Non-Document object has CAN_CHECK_OUT allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_OUT, null, f));
+                if (object instanceof Folder) {
+                    Folder folder = (Folder) object;
+                    if (folder.isRootFolder()) {
+                        f = createResult(FAILURE, "Root folder has CAN_DELETE_OBJECT allowable action!");
+                        addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_OBJECT, null, f));
 
-                f = createResult(FAILURE, "Non-Document object has CAN_CANCEL_CHECK_OUT allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_CANCEL_CHECK_OUT, null, f));
+                        f = createResult(FAILURE, "Root folder has CAN_GET_FOLDER_PARENT allowable action!");
+                        addResult(results, assertNotAllowableAction(object, Action.CAN_GET_FOLDER_PARENT, null, f));
+                    }
+                } else {
+                    f = createResult(FAILURE, "Non-Folder object has CAN_GET_DESCENDANTS allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_GET_DESCENDANTS, null, f));
 
-                f = createResult(FAILURE, "Non-Document object has CAN_GET_CONTENT_STREAM allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_CONTENT_STREAM, null, f));
-
-                f = createResult(FAILURE, "Non-Document object has CAN_DELETE_CONTENT_STREAM allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_CONTENT_STREAM, null, f));
-
-                f = createResult(FAILURE, "Non-Document object has CAN_GET_ALL_VERSIONS allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_ALL_VERSIONS, null, f));
-            }
-
-            if (object instanceof Folder) {
-                Folder folder = (Folder) object;
-                if (folder.isRootFolder()) {
-                    f = createResult(FAILURE, "Root folder has CAN_DELETE_OBJECT allowable action!");
-                    addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_OBJECT, null, f));
-
-                    f = createResult(FAILURE, "Root folder has CAN_GET_FOLDER_PARENT allowable action!");
+                    f = createResult(FAILURE, "Non-Folder object has CAN_GET_FOLDER_PARENT allowable action!");
                     addResult(results, assertNotAllowableAction(object, Action.CAN_GET_FOLDER_PARENT, null, f));
+
+                    f = createResult(FAILURE, "Non-Folder object has CAN_GET_CHILDREN allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_GET_CHILDREN, null, f));
+
+                    f = createResult(FAILURE, "Non-Folder object has CAN_DELETE_TREE allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_TREE, null, f));
+
+                    f = createResult(FAILURE, "Non-Folder object has CAN_GET_FOLDER_PARENT allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_GET_FOLDER_PARENT, null, f));
+
+                    f = createResult(FAILURE, "Non-Folder object has CAN_CREATE_DOCUMENT allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_CREATE_DOCUMENT, null, f));
+
+                    f = createResult(FAILURE, "Non-Folder object has CAN_CREATE_FOLDER allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_CREATE_FOLDER, null, f));
                 }
-            } else {
-                f = createResult(FAILURE, "Non-Folder object has CAN_GET_DESCENDANTS allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_DESCENDANTS, null, f));
 
-                f = createResult(FAILURE, "Non-Folder object has CAN_GET_FOLDER_PARENT allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_FOLDER_PARENT, null, f));
+                if (!(object instanceof Document) && !(object instanceof Policy)) {
+                    f = createResult(FAILURE,
+                            "Non-Document/Policy object has CAN_ADD_OBJECT_TO_FOLDER allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_ADD_OBJECT_TO_FOLDER, null, f));
 
-                f = createResult(FAILURE, "Non-Folder object has CAN_GET_CHILDREN allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_CHILDREN, null, f));
+                    f = createResult(FAILURE,
+                            "Non-Document/Policy object has CAN_REMOVE_OBJECT_FROM_FOLDER allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_REMOVE_OBJECT_FROM_FOLDER, null, f));
+                }
 
-                f = createResult(FAILURE, "Non-Folder object has CAN_DELETE_TREE allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_TREE, null, f));
-
-                f = createResult(FAILURE, "Non-Folder object has CAN_GET_FOLDER_PARENT allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_GET_FOLDER_PARENT, null, f));
-
-                f = createResult(FAILURE, "Non-Folder object has CAN_CREATE_DOCUMENT allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_CREATE_DOCUMENT, null, f));
-
-                f = createResult(FAILURE, "Non-Folder object has CAN_CREATE_FOLDER allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_CREATE_FOLDER, null, f));
-            }
-
-            if (!(object instanceof Document) && !(object instanceof Policy)) {
-                f = createResult(FAILURE, "Non-Document/Policy object has CAN_ADD_OBJECT_TO_FOLDER allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_ADD_OBJECT_TO_FOLDER, null, f));
-
-                f = createResult(FAILURE,
-                        "Non-Document/Policy object has CAN_REMOVE_OBJECT_FROM_FOLDER allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_REMOVE_OBJECT_FROM_FOLDER, null, f));
-            }
-
-            if (!(object instanceof FileableCmisObject)) {
-                f = createResult(FAILURE, "Non-Fileable object has CAN_MOVE_OBJECT allowable action!");
-                addResult(results, assertNotAllowableAction(object, Action.CAN_MOVE_OBJECT, null, f));
+                if (!(object instanceof FileableCmisObject)) {
+                    f = createResult(FAILURE, "Non-Fileable object has CAN_MOVE_OBJECT allowable action!");
+                    addResult(results, assertNotAllowableAction(object, Action.CAN_MOVE_OBJECT, null, f));
+                }
             }
         }
 
