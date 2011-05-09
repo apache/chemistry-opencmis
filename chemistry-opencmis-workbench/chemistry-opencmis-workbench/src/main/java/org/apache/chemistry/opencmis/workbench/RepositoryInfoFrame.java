@@ -61,7 +61,7 @@ public class RepositoryInfoFrame extends JFrame {
             return;
         }
 
-        add(new JScrollPane(new RepositoryInfoPanel(repInfo)));
+        add(new JScrollPane(new RepositoryInfoPanel(model, repInfo)));
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
@@ -76,8 +76,8 @@ public class RepositoryInfoFrame extends JFrame {
 
         private final RepositoryInfo repInfo;
 
-        public RepositoryInfoPanel(RepositoryInfo repInfo) {
-            super();
+        public RepositoryInfoPanel(ClientModel model, RepositoryInfo repInfo) {
+            super(model);
 
             this.repInfo = repInfo;
             createGUI();
@@ -92,12 +92,12 @@ public class RepositoryInfoFrame extends JFrame {
             addLine("Vendor:").setText(repInfo.getVendorName());
             addLine("Product:").setText(repInfo.getProductName() + " " + repInfo.getProductVersion());
             addLine("CMIS Version:").setText(repInfo.getCmisVersionSupported());
-            addLine("Root folder Id:").setText(repInfo.getRootFolderId());
+            addId("Root folder Id:").setText(repInfo.getRootFolderId());
             addLine("Latest change token:").setText(repInfo.getLatestChangeLogToken());
-            addLine("Thin client URI:").setText(repInfo.getThinClientUri());
+            addLink("Thin client URI:").setText(repInfo.getThinClientUri());
             addLine("Principal id anonymous:").setText(repInfo.getPrincipalIdAnonymous());
             addLine("Principal id anyone:").setText(repInfo.getPrincipalIdAnyone());
-            addCheckBox("Changes incomplete:").setSelected(is(repInfo.getChangesIncomplete()));
+            addYesNoLabel("Changes incomplete:").setValue(is(repInfo.getChangesIncomplete()));
             addLine("Changes on type:").setText(
                     repInfo.getChangesOnType() == null ? "" : repInfo.getChangesOnType().toString());
 
@@ -106,17 +106,16 @@ public class RepositoryInfoFrame extends JFrame {
 
                 addLine("Capabilities", true).setText("");
 
-                addCheckBox("Get descendants supported:").setSelected(is(cap.isGetDescendantsSupported()));
-                addCheckBox("Get folder tree supported:").setSelected(is(cap.isGetFolderTreeSupported()));
-                addCheckBox("Unfiling supported:").setSelected(is(cap.isUnfilingSupported()));
-                addCheckBox("Multifiling supported:").setSelected(is(cap.isMultifilingSupported()));
-                addCheckBox("Version specific filing supported:").setSelected(
-                        is(cap.isVersionSpecificFilingSupported()));
+                addYesNoLabel("Get descendants supported:").setValue(is(cap.isGetDescendantsSupported()));
+                addYesNoLabel("Get folder tree supported:").setValue(is(cap.isGetFolderTreeSupported()));
+                addYesNoLabel("Unfiling supported:").setValue(is(cap.isUnfilingSupported()));
+                addYesNoLabel("Multifiling supported:").setValue(is(cap.isMultifilingSupported()));
+                addYesNoLabel("Version specific filing supported:").setValue(is(cap.isVersionSpecificFilingSupported()));
                 addLine("Query:").setText(str(cap.getQueryCapability()));
                 addLine("Joins:").setText(str(cap.getJoinCapability()));
-                addCheckBox("All versions searchable:").setSelected(is(cap.isAllVersionsSearchableSupported()));
-                addCheckBox("PWC searchable:").setSelected(is(cap.isPwcSearchableSupported()));
-                addCheckBox("PWC updatable:").setSelected(is(cap.isPwcUpdatableSupported()));
+                addYesNoLabel("All versions searchable:").setValue(is(cap.isAllVersionsSearchableSupported()));
+                addYesNoLabel("PWC searchable:").setValue(is(cap.isPwcSearchableSupported()));
+                addYesNoLabel("PWC updatable:").setValue(is(cap.isPwcUpdatableSupported()));
                 addLine("Content stream updates:").setText(str(cap.getContentStreamUpdatesCapability()));
                 addLine("Renditions:").setText(str(cap.getRenditionsCapability()));
                 addLine("Changes:").setText(str(cap.getChangesCapability()));
@@ -126,7 +125,7 @@ public class RepositoryInfoFrame extends JFrame {
             if (repInfo.getAclCapabilities() != null) {
                 AclCapabilities cap = repInfo.getAclCapabilities();
 
-                addLine("ACL Capabilities", true).setText("");
+                addLine("ACL Capabilities:", true).setText("");
 
                 addLine("Supported permissions:").setText(str(cap.getSupportedPermissions()));
                 addLine("ACL propagation:").setText(str(cap.getAclPropagation()));
@@ -143,7 +142,7 @@ public class RepositoryInfoFrame extends JFrame {
 
                     JTable permTable = new JTable(data, new String[] { "Permission", "Description" });
                     permTable.setFillsViewportHeight(true);
-                    addComponent("Permissions", new JScrollPane(permTable));
+                    addComponent("Permissions:", new JScrollPane(permTable));
                 }
 
                 if (cap.getPermissionMapping() != null) {
@@ -158,7 +157,7 @@ public class RepositoryInfoFrame extends JFrame {
 
                     JTable permMapTable = new JTable(data, new String[] { "Key", "Permissions" });
                     permMapTable.setFillsViewportHeight(true);
-                    addComponent("Permission mapping", new JScrollPane(permMapTable));
+                    addComponent("Permission mapping:", new JScrollPane(permMapTable));
                 }
             }
         }

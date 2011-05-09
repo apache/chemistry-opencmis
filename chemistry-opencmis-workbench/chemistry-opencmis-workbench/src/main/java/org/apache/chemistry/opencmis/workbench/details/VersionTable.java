@@ -94,14 +94,14 @@ public class VersionTable extends AbstractDetailsTable {
 
     @Override
     public void singleClickAction(MouseEvent e, int rowIndex, int colIndex) {
-        if (colIndex != 5) {
+        if (getColumnClass(colIndex) != ObjectId.class) {
             return;
         }
 
         String versionId = null;
         lock.readLock().lock();
         try {
-            versionId = versions.get(rowIndex).getId();
+            versionId = versions.get(getRowSorter().convertRowIndexToModel(rowIndex)).getId();
         } finally {
             lock.readLock().unlock();
         }
@@ -119,9 +119,11 @@ public class VersionTable extends AbstractDetailsTable {
         lock.readLock().lock();
         try {
             if (e.isShiftDown()) {
-                ClientHelper.download(this.getParent(), versions.get(rowIndex), null);
+                ClientHelper.download(this.getParent(), versions.get(getRowSorter().convertRowIndexToModel(rowIndex)),
+                        null);
             } else {
-                ClientHelper.open(this.getParent(), versions.get(rowIndex), null);
+                ClientHelper
+                        .open(this.getParent(), versions.get(getRowSorter().convertRowIndexToModel(rowIndex)), null);
             }
         } finally {
             lock.readLock().unlock();

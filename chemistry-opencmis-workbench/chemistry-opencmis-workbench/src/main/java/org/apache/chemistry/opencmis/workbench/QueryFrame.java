@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,13 +52,20 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.text.NumberFormatter;
 
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
+import org.apache.chemistry.opencmis.client.runtime.ObjectIdImpl;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.swing.IdRenderer;
 
 public class QueryFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Cursor HAND_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+    private static final Cursor DEFAULT_CURSOR = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 
     private static final String WINDOW_TITLE = "CMIS Query";
     private static final String DEFAULT_QUERY = "SELECT * FROM cmis:document";
@@ -143,6 +151,7 @@ public class QueryFrame extends JFrame {
 
         // table
         resultsTable = new JTable();
+        resultsTable.setDefaultRenderer(ObjectIdImpl.class, new IdRenderer());
         resultsTable.setFillsViewportHeight(true);
         resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -177,6 +186,15 @@ public class QueryFrame extends JFrame {
             }
 
             public void mouseClicked(MouseEvent e) {
+                int row = resultsTable.rowAtPoint(e.getPoint());
+                int column = resultsTable.columnAtPoint(e.getPoint());
+                if (row > -1 && resultsTable.getColumnClass(column) == ObjectIdImpl.class) {
+                    try {
+                        model.loadObject(((ObjectId) resultsTable.getValueAt(row, column)).getId());
+                    } catch (Exception ex) {
+                        ClientHelper.showError(QueryFrame.this, ex);
+                    }
+                }
             }
 
             public void mousePressed(MouseEvent e) {
@@ -191,6 +209,21 @@ public class QueryFrame extends JFrame {
                 if (e.isPopupTrigger()) {
                     popup.show(e.getComponent(), e.getX(), e.getY());
                 }
+            }
+        });
+
+        resultsTable.addMouseMotionListener(new MouseMotionListener() {
+            public void mouseMoved(MouseEvent e) {
+                int row = resultsTable.rowAtPoint(e.getPoint());
+                int column = resultsTable.columnAtPoint(e.getPoint());
+                if (row > -1 && resultsTable.getColumnClass(column) == ObjectIdImpl.class) {
+                    resultsTable.setCursor(HAND_CURSOR);
+                } else {
+                    resultsTable.setCursor(DEFAULT_CURSOR);
+                }
+            }
+
+            public void mouseDragged(MouseEvent e) {
             }
         });
 
@@ -230,7 +263,11 @@ public class QueryFrame extends JFrame {
                 rtm.setColumnCount(Math.max(rtm.getColumnCount(), qr.getProperties().size()));
 
                 for (PropertyData<?> prop : qr.getProperties()) {
-                    rtm.setValue(row, prop.getQueryName(), prop.getFirstValue());
+                    if (PropertyIds.OBJECT_ID.equals(prop.getId()) && (prop.getFirstValue() != null)) {
+                        rtm.setValue(row, prop.getQueryName(), new ObjectIdImpl(prop.getFirstValue().toString()));
+                    } else {
+                        rtm.setValue(row, prop.getQueryName(), prop.getFirstValue());
+                    }
                 }
 
                 row++;

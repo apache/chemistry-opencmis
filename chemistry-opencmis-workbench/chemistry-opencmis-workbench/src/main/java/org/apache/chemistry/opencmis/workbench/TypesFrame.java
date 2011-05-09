@@ -78,7 +78,7 @@ public class TypesFrame extends JFrame {
             }
         });
 
-        typePanel = new TypeSplitPane();
+        typePanel = new TypeSplitPane(model);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(typesTree), typePanel);
         splitPane.setDividerLocation(300);

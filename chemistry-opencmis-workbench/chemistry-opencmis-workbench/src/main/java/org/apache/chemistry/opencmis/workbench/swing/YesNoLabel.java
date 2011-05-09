@@ -16,31 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.workbench.details;
+package org.apache.chemistry.opencmis.workbench.swing;
 
-import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.workbench.TypeSplitPane;
-import org.apache.chemistry.opencmis.workbench.model.ClientModel;
-import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
-import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
+import javax.swing.Icon;
+import javax.swing.JLabel;
 
-public class TypesPanel extends TypeSplitPane implements ObjectListener {
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
+
+public class YesNoLabel extends JLabel {
 
     private static final long serialVersionUID = 1L;
 
-    public TypesPanel(ClientModel model) {
-        super(model);
-        model.addObjectListener(this);
+    public static final Icon TRUE_ICON = ClientHelper.getIcon("yes.png");
+    public static final Icon FALSE_ICON = ClientHelper.getIcon("no.png");
+
+    public static final String YES_TEXT = "Yes";
+    public static final String NO_TEXT = "No";
+
+    private boolean value = true;
+
+    public YesNoLabel() {
+        super(YES_TEXT, TRUE_ICON, LEFT);
     }
 
-    @Override
-    public void objectLoaded(ClientModelEvent event) {
-        CmisObject object = getClientModel().getCurrentObject();
+    public boolean getValue() {
+        return value;
+    }
 
-        if (object == null) {
-            setType(null);
-        } else {
-            setType(object.getType());
+    public void setValue(boolean value) {
+        if (this.value != value) {
+            this.value = value;
+            setIcon(value ? TRUE_ICON : FALSE_ICON);
+            setText(value ? YES_TEXT : NO_TEXT);
+            invalidate();
         }
     }
 }

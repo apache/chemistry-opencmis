@@ -39,12 +39,13 @@ public class PolicyTable extends AbstractDetailsTable {
 
     @Override
     public void singleClickAction(MouseEvent e, int rowIndex, int colIndex) {
-        if (colIndex != 1) {
+        if (getColumnClass(colIndex) != ObjectId.class) {
             return;
         }
 
         try {
-            getClientModel().loadObject(getObject().getPolicies().get(rowIndex).getId());
+            getClientModel().loadObject(
+                    getObject().getPolicies().get(getRowSorter().convertRowIndexToModel(rowIndex)).getId());
             setTab(0);
         } catch (Exception ex) {
             ClientHelper.showError(this, ex);

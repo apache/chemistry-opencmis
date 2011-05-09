@@ -61,7 +61,7 @@ public class FolderTable extends JTable implements FolderListener {
     private static final String[] COLUMN_NAMES = { "", "Name", "Type", "Content Type", "Size", "Creation Date",
             "Created by", "Modification Date", "Modified by", "Id" };
     private static final int[] COLUMN_WIDTHS = { 24, 200, 150, 150, 80, 180, 100, 180, 100, 300 };
-    private static final int ID_COLUMN = 9;
+    public static final int ID_COLUMN = 9;
 
     private final ClientModel model;
 
@@ -96,7 +96,7 @@ public class FolderTable extends JTable implements FolderListener {
 
                 int row = getSelectedRow();
                 if (row > -1) {
-                    String id = getValueAt(row, ID_COLUMN).toString();
+                    String id = getModel().getValueAt(getRowSorter().convertRowIndexToModel(row), ID_COLUMN).toString();
 
                     try {
                         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -153,7 +153,7 @@ public class FolderTable extends JTable implements FolderListener {
     private void doAction(boolean alternate) {
         int row = getSelectedRow();
         if ((row > -1) && (row < model.getCurrentChildren().size())) {
-            String id = getValueAt(row, ID_COLUMN).toString();
+            String id = getModel().getValueAt(getRowSorter().convertRowIndexToModel(row), ID_COLUMN).toString();
             CmisObject object = model.getFromCurrentChildren(id);
 
             if (object instanceof Document) {

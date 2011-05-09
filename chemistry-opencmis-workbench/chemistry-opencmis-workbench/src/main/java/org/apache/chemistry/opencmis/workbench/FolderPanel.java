@@ -36,122 +36,135 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.FolderListener;
+import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
 
-public class FolderPanel extends JPanel implements FolderListener {
+public class FolderPanel extends JPanel implements FolderListener, ObjectListener {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ClientModel model;
+    private final ClientModel model;
 
-	private String parentId;
+    private String parentId;
 
-	private JButton upButton;
-	private JTextField pathField;
-	private JButton goButton;
-	private FolderTable folderTable;
+    private JButton upButton;
+    private JTextField pathField;
+    private JButton goButton;
+    private FolderTable folderTable;
 
-	public FolderPanel(ClientModel model) {
-		super();
+    public FolderPanel(ClientModel model) {
+        super();
 
-		this.model = model;
-		model.addFolderListener(this);
-		createGUI();
-	}
+        this.model = model;
+        model.addFolderListener(this);
+        model.addObjectListener(this);
+        createGUI();
+    }
 
-	public void folderLoaded(ClientModelEvent event) {
-		Folder currentFolder = event.getClientModel().getCurrentFolder();
+    public void folderLoaded(ClientModelEvent event) {
+        Folder currentFolder = event.getClientModel().getCurrentFolder();
 
-		if (currentFolder != null) {
-			String path = currentFolder.getPath();
-			pathField.setText(path);
+        if (currentFolder != null) {
+            String path = currentFolder.getPath();
+            pathField.setText(path);
 
-			Folder parent = currentFolder.getFolderParent();
-			if (parent == null) {
-				parentId = null;
-				upButton.setEnabled(false);
-			} else {
-				parentId = parent.getId();
-				upButton.setEnabled(true);
-			}
-		} else {
-			pathField.setText("???");
-			parentId = null;
-			upButton.setEnabled(false);
-		}
-	}
+            Folder parent = currentFolder.getFolderParent();
+            if (parent == null) {
+                parentId = null;
+                upButton.setEnabled(false);
+            } else {
+                parentId = parent.getId();
+                upButton.setEnabled(true);
+            }
+        } else {
+            pathField.setText("???");
+            parentId = null;
+            upButton.setEnabled(false);
+        }
+    }
 
-	private void createGUI() {
-		setLayout(new BorderLayout());
+    public void objectLoaded(ClientModelEvent event) {
+        if ((folderTable.getSelectedRow() > -1) && (event.getClientModel().getCurrentObject() != null)) {
+            String selId = folderTable.getValueAt(folderTable.getSelectedRow(), FolderTable.ID_COLUMN).toString();
+            String curId = event.getClientModel().getCurrentObject().getId();
 
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-		panel.setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
+            if (!curId.equals(selId)) {
+                folderTable.clearSelection();
+            }
+        }
+    }
 
-		upButton = new JButton("up");
-		upButton.setEnabled(false);
-		upButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-					model.loadFolder(parentId, false);
-					model.loadObject(model.getCurrentFolder().getId());
-				} catch (Exception ex) {
-					ClientHelper.showError(null, ex);
-					return;
-				} finally {
-					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				}
-			}
-		});
-		panel.add(upButton);
+    private void createGUI() {
+        setLayout(new BorderLayout());
 
-		pathField = new JTextField("");
-		pathField.addKeyListener(new KeyListener() {
-			public void keyTyped(KeyEvent e) {
-			}
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
 
-			public void keyReleased(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					loadFolder();
-				}
-			}
+        upButton = new JButton("up");
+        upButton.setEnabled(false);
+        upButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    model.loadFolder(parentId, false);
+                    model.loadObject(model.getCurrentFolder().getId());
+                } catch (Exception ex) {
+                    ClientHelper.showError(null, ex);
+                    return;
+                } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
+        panel.add(upButton);
 
-			public void keyPressed(KeyEvent e) {
-			}
-		});
-		panel.add(pathField);
+        pathField = new JTextField("");
+        pathField.addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {
+            }
 
-		goButton = new JButton("go");
-		goButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadFolder();
-			}
-		});
-		panel.add(goButton);
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    loadFolder();
+                }
+            }
 
-		add(panel, BorderLayout.PAGE_START);
+            public void keyPressed(KeyEvent e) {
+            }
+        });
+        panel.add(pathField);
 
-		folderTable = new FolderTable(model);
-		folderTable.setFillsViewportHeight(true);
-		model.addFolderListener(folderTable);
+        goButton = new JButton("go");
+        goButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                loadFolder();
+            }
+        });
+        panel.add(goButton);
 
-		add(new JScrollPane(folderTable), BorderLayout.CENTER);
-	}
+        add(panel, BorderLayout.PAGE_START);
 
-	private void loadFolder() {
-		try {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			String id = pathField.getText().trim();
-			if (id.length() == 0) {
-				id = "/";
-			}
-			model.loadFolder(id, id.startsWith("/"));
-			model.loadObject(model.getCurrentFolder().getId());
-		} catch (Exception ex) {
-			ClientHelper.showError(null, ex);
-			return;
-		} finally {
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
-	}
+        folderTable = new FolderTable(model);
+        folderTable.setFillsViewportHeight(true);
+        model.addFolderListener(folderTable);
+
+        add(new JScrollPane(folderTable), BorderLayout.CENTER);
+    }
+
+    private void loadFolder() {
+        try {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            String id = pathField.getText().trim();
+            if (id.length() == 0) {
+                id = "/";
+            }
+            model.loadFolder(id, id.startsWith("/"));
+            model.loadObject(model.getCurrentFolder().getId());
+        } catch (Exception ex) {
+            ClientHelper.showError(null, ex);
+            return;
+        } finally {
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
 }

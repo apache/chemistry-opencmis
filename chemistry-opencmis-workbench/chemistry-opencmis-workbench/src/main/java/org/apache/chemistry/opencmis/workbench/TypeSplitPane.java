@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -36,23 +35,34 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CollectionRenderer;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
+import org.apache.chemistry.opencmis.workbench.swing.YesNoLabel;
 
 public class TypeSplitPane extends JSplitPane {
 
     private static final long serialVersionUID = 1L;
 
+    private final ClientModel model;
+
     private TypeInfoPanel typePanel;
     private PropertyDefinitionTable propertyDefinitionTable;
 
-    public TypeSplitPane() {
+    public TypeSplitPane(ClientModel model) {
         super(JSplitPane.VERTICAL_SPLIT);
+
+        this.model = model;
+
         createGUI();
     }
 
+    protected ClientModel getClientModel() {
+        return model;
+    }
+
     private void createGUI() {
-        typePanel = new TypeInfoPanel();
+        typePanel = new TypeInfoPanel(model);
         propertyDefinitionTable = new PropertyDefinitionTable();
 
         setLeftComponent(new JScrollPane(typePanel));
@@ -77,18 +87,18 @@ public class TypeSplitPane extends JSplitPane {
         private JTextField localNameField;
         private JTextField queryNameField;
         private JTextField baseTypeField;
-        private JCheckBox creatableBox;
-        private JCheckBox fileableBox;
-        private JCheckBox queryableBox;
-        private JCheckBox aclBox;
-        private JCheckBox policyBox;
-        private JCheckBox versionableBox;
+        private YesNoLabel creatableLabel;
+        private YesNoLabel fileableLabel;
+        private YesNoLabel queryableLabel;
+        private YesNoLabel aclLabel;
+        private YesNoLabel policyLabel;
+        private YesNoLabel versionableLabel;
         private JTextField contentStreamAllowedField;
         private JTextField allowedSourceTypesField;
         private JTextField allowedTargetTypesField;
 
-        public TypeInfoPanel() {
-            super();
+        public TypeInfoPanel(ClientModel model) {
+            super(model);
             createGUI();
         }
 
@@ -101,21 +111,21 @@ public class TypeSplitPane extends JSplitPane {
                 localNameField.setText(type.getLocalName());
                 queryNameField.setText(type.getQueryName());
                 baseTypeField.setText(type.getBaseTypeId().value());
-                creatableBox.setSelected(is(type.isCreatable()));
-                fileableBox.setSelected(is(type.isFileable()));
-                queryableBox.setSelected(is(type.isQueryable()));
-                aclBox.setSelected(is(type.isControllableAcl()));
-                policyBox.setSelected(is(type.isControllablePolicy()));
+                creatableLabel.setValue(is(type.isCreatable()));
+                fileableLabel.setValue(is(type.isFileable()));
+                queryableLabel.setValue(is(type.isQueryable()));
+                aclLabel.setValue(is(type.isControllableAcl()));
+                policyLabel.setValue(is(type.isControllablePolicy()));
 
                 if (type instanceof DocumentTypeDefinition) {
                     DocumentTypeDefinition docType = (DocumentTypeDefinition) type;
-                    versionableBox.setVisible(true);
-                    versionableBox.setSelected(is(docType.isVersionable()));
+                    versionableLabel.setVisible(true);
+                    versionableLabel.setValue(is(docType.isVersionable()));
                     contentStreamAllowedField.setVisible(true);
                     contentStreamAllowedField.setText(docType.getContentStreamAllowed() == null ? "???" : docType
                             .getContentStreamAllowed().toString());
                 } else {
-                    versionableBox.setVisible(false);
+                    versionableLabel.setVisible(false);
                     contentStreamAllowedField.setVisible(false);
                 }
 
@@ -139,12 +149,12 @@ public class TypeSplitPane extends JSplitPane {
                 localNameField.setText("");
                 queryNameField.setText("");
                 baseTypeField.setText("");
-                creatableBox.setSelected(false);
-                fileableBox.setSelected(false);
-                queryableBox.setSelected(false);
-                aclBox.setSelected(false);
-                policyBox.setSelected(false);
-                versionableBox.setVisible(false);
+                creatableLabel.setValue(false);
+                fileableLabel.setValue(false);
+                queryableLabel.setValue(false);
+                aclLabel.setValue(false);
+                policyLabel.setValue(false);
+                versionableLabel.setVisible(false);
                 contentStreamAllowedField.setVisible(false);
                 allowedSourceTypesField.setVisible(false);
                 allowedTargetTypesField.setVisible(false);
@@ -163,12 +173,12 @@ public class TypeSplitPane extends JSplitPane {
             localNameField = addLine("Local Name:");
             queryNameField = addLine("Query Name:");
             baseTypeField = addLine("Base Type:");
-            creatableBox = addCheckBox("Creatable:");
-            fileableBox = addCheckBox("Fileable:");
-            queryableBox = addCheckBox("Queryable:");
-            aclBox = addCheckBox("ACL controlable:");
-            policyBox = addCheckBox("Policy controlable:");
-            versionableBox = addCheckBox("Versionable:");
+            creatableLabel = addYesNoLabel("Creatable:");
+            fileableLabel = addYesNoLabel("Fileable:");
+            queryableLabel = addYesNoLabel("Queryable:");
+            aclLabel = addYesNoLabel("ACL controlable:");
+            policyLabel = addYesNoLabel("Policy controlable:");
+            versionableLabel = addYesNoLabel("Versionable:");
             contentStreamAllowedField = addLine("Content stream allowed:");
             allowedSourceTypesField = addLine("Allowed source types:");
             allowedTargetTypesField = addLine("Allowed target types:");

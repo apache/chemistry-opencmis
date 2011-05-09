@@ -139,7 +139,7 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
             public void mouseMoved(MouseEvent e) {
                 int row = rowAtPoint(e.getPoint());
                 int column = columnAtPoint(e.getPoint());
-                if (row > -1 && getDetailColumClass(column) == ObjectId.class) {
+                if (row > -1 && getColumnClass(column) == ObjectId.class) {
                     setCursor(HAND_CURSOR);
                 } else {
                     setCursor(DEFAULT_CURSOR);

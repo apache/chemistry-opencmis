@@ -33,7 +33,6 @@ import java.util.Collection;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,14 +43,25 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public abstract class InfoPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private final ClientModel model;
+
     private JPanel gridPanel;
     private GridBagConstraints gbc;
     private Font boldFont;
+
+    public InfoPanel(ClientModel model) {
+        this.model = model;
+    }
+
+    protected ClientModel getClientModel() {
+        return model;
+    }
 
     protected void setupGUI() {
         setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -98,6 +108,67 @@ public abstract class InfoPanel extends JPanel {
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         gridPanel.add(textField, gbc);
+
+        return textField;
+    }
+
+    protected JTextField addId(final String label) {
+        final JTextField textField = addLine(label, false);
+
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String id = textField.getText();
+                if (id.length() > 0 && !id.startsWith("(")) {
+                    textField.setForeground(ClientHelper.LINK_COLOR);
+                    textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                } else {
+                    textField.setForeground(UIManager.getColor("textForeground"));
+                    textField.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+
+        textField.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+                    String id = textField.getText();
+                    if (id.length() > 0 && !id.startsWith("(")) {
+                        try {
+                            getClientModel().loadObject(id);
+                        } catch (Exception ex) {
+                            ClientHelper.showError(InfoPanel.this, ex);
+                        }
+                    }
+                }
+            }
+        });
 
         return textField;
     }
@@ -165,12 +236,11 @@ public abstract class InfoPanel extends JPanel {
         return textField;
     }
 
-    protected JCheckBox addCheckBox(String label) {
-        JCheckBox checkBox = new JCheckBox();
-        checkBox.setEnabled(false);
+    protected YesNoLabel addYesNoLabel(String label) {
+        YesNoLabel ynl = new YesNoLabel();
 
         JLabel textLable = new JLabel(label);
-        textLable.setLabelFor(checkBox);
+        textLable.setLabelFor(ynl);
 
         gbc.gridy++;
 
@@ -180,14 +250,20 @@ public abstract class InfoPanel extends JPanel {
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        gridPanel.add(checkBox, gbc);
+        gridPanel.add(ynl, gbc);
 
-        return checkBox;
+        return ynl;
     }
 
     protected <T extends JComponent> T addComponent(String label, T comp) {
         JLabel textLable = new JLabel(label);
-        textLable.setLabelFor(comp);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder());
+        panel.setOpaque(false);
+        panel.add(comp);
+        textLable.setLabelFor(panel);
 
         gbc.gridy++;
 
@@ -197,7 +273,7 @@ public abstract class InfoPanel extends JPanel {
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        gridPanel.add(comp, gbc);
+        gridPanel.add(panel, gbc);
 
         return comp;
     }

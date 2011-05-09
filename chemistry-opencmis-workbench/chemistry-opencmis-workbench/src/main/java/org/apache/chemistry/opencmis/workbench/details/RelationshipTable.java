@@ -39,17 +39,11 @@ public class RelationshipTable extends AbstractDetailsTable {
 
     @Override
     public void singleClickAction(MouseEvent e, int rowIndex, int colIndex) {
-        Relationship relationship = getObject().getRelationships().get(rowIndex);
-        ObjectId id = null;
-
-        if (colIndex == 2) {
-            id = relationship;
-        } else if (colIndex == 3) {
-            id = relationship.getSourceId();
-        } else if (colIndex == 4) {
-            id = relationship.getTargetId();
+        if (getColumnClass(colIndex) != ObjectId.class) {
+            return;
         }
 
+        ObjectId id = (ObjectId) getValueAt(rowIndex, colIndex);
         if ((id == null) || (id.getId() == null)) {
             return;
         }

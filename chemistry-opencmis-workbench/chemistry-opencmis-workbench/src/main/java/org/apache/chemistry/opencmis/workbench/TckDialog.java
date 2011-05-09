@@ -73,8 +73,9 @@ public class TckDialog {
             return;
         }
 
-        JOptionPane.showMessageDialog(owner, "The TCK is brand new and incomplete. Don't trust the results, yet!",
-                "TCK Warning", JOptionPane.WARNING_MESSAGE);
+        // JOptionPane.showMessageDialog(owner,
+        // "The TCK is brand new and incomplete. Don't trust the results, yet!",
+        // "TCK Warning", JOptionPane.WARNING_MESSAGE);
 
         new TckSelectDialog();
     }

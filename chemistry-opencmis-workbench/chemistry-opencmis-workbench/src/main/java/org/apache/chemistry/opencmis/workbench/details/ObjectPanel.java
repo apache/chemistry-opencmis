@@ -44,29 +44,27 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
     private static final long serialVersionUID = 1L;
 
-    private final ClientModel model;
-
     private JTextField nameField;
     private JTextField idField;
     private JTextField typeField;
     private JTextField basetypeField;
     private JTextField versionLabelField;
+    private JTextField pwcField;
     private JTextField contentUrlField;
     private InfoList paths;
     private InfoList allowableActionsList;
     private JButton refreshButton;
 
     public ObjectPanel(ClientModel model) {
-        super();
+        super(model);
 
-        this.model = model;
         model.addObjectListener(this);
 
         createGUI();
     }
 
     public void objectLoaded(ClientModelEvent event) {
-        CmisObject object = model.getCurrentObject();
+        CmisObject object = getClientModel().getCurrentObject();
 
         if (object == null) {
             nameField.setText("");
@@ -74,6 +72,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             typeField.setText("");
             basetypeField.setText("");
             versionLabelField.setText("");
+            pwcField.setText("");
             paths.removeAll();
             contentUrlField.setText("");
             allowableActionsList.removeAll();
@@ -85,12 +84,23 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 typeField.setText(object.getType().getId());
                 basetypeField.setText(object.getBaseTypeId().toString());
                 if (object instanceof Document) {
+                    Document doc = (Document) object;
+
                     try {
-                        versionLabelField.setText(((Document) object).getVersionLabel());
+                        versionLabelField.setText(doc.getVersionLabel());
                     } catch (Exception e) {
                         versionLabelField.setText("???");
                     }
+
+                    if (doc.isVersionSeriesCheckedOut() == null) {
+                        pwcField.setText("");
+                    } else if (doc.isVersionSeriesCheckedOut().booleanValue()) {
+                        pwcField.setText(doc.getVersionSeriesCheckedOutId());
+                    } else {
+                        pwcField.setText("(not checked out)");
+                    }
                 } else {
+                    pwcField.setText("");
                     versionLabelField.setText("");
                 }
 
@@ -122,7 +132,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     paths.setList(Collections.singletonList("(not filable)"));
                 }
 
-                String docUrl = getDocumentURL(object, model.getClientSession().getSession());
+                String docUrl = getDocumentURL(object, getClientModel().getClientSession().getSession());
                 if (docUrl != null) {
                     contentUrlField.setText(docUrl);
                 } else {
@@ -148,11 +158,12 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         setupGUI();
 
         nameField = addLine("Name:", true);
-        idField = addLine("Id:");
+        idField = addId("Id:");
         typeField = addLine("Type:");
         basetypeField = addLine("Base Type:");
-        versionLabelField = addLine("Version Label:");
         paths = addComponent("Paths:", new InfoList());
+        versionLabelField = addLine("Version Label:");
+        pwcField = addId("PWC:");
         contentUrlField = addLink("Content URL:");
         allowableActionsList = addComponent("Allowable Actions:", new InfoList());
         refreshButton = addComponent("", new JButton("Refresh"));
@@ -162,7 +173,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    model.reloadObject();
+                    getClientModel().reloadObject();
                 } catch (Exception ex) {
                     ClientHelper.showError(null, ex);
                 } finally {
