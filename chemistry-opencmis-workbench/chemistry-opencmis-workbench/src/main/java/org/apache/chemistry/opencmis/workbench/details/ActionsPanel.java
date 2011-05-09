@@ -23,6 +23,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.workbench.actions.ApplyPolicyPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CancelCheckOutPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CheckInPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CheckOutPanel;
@@ -31,6 +32,7 @@ import org.apache.chemistry.opencmis.workbench.actions.DeletePanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeleteTreePanel;
 import org.apache.chemistry.opencmis.workbench.actions.MovePanel;
 import org.apache.chemistry.opencmis.workbench.actions.PropertyUpdatePanel;
+import org.apache.chemistry.opencmis.workbench.actions.RemovePolicyPanel;
 import org.apache.chemistry.opencmis.workbench.actions.SetContentStreamPanel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
@@ -51,6 +53,8 @@ public class ActionsPanel extends JPanel implements ObjectListener {
     private CheckInPanel checkInPanel;
     private SetContentStreamPanel setContentStreamPanel;
     private DeleteContentStreamPanel deleteContentStreamPanel;
+    private ApplyPolicyPanel applyPolicyPanel;
+    private RemovePolicyPanel removePolicyPanel;
 
     public ActionsPanel(ClientModel model) {
         super();
@@ -90,6 +94,12 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
         deleteContentStreamPanel.setObject(object);
         deleteContentStreamPanel.setVisible(deleteContentStreamPanel.isAllowed());
+
+        applyPolicyPanel.setObject(object);
+        applyPolicyPanel.setVisible(applyPolicyPanel.isAllowed());
+
+        removePolicyPanel.setObject(object);
+        removePolicyPanel.setVisible(removePolicyPanel.isAllowed());
     }
 
     private void createGUI() {
@@ -122,5 +132,11 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
         deleteContentStreamPanel = new DeleteContentStreamPanel(model);
         add(deleteContentStreamPanel);
+
+        applyPolicyPanel = new ApplyPolicyPanel(model);
+        add(applyPolicyPanel);
+
+        removePolicyPanel = new RemovePolicyPanel(model);
+        add(removePolicyPanel);
     }
 }
