@@ -308,7 +308,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             // get the property definition
             PropertyDefinition<?> definition = type.getPropertyDefinitions().get(id);
             if (definition == null) {
-                throw new IllegalArgumentException("Property +'" + id + "' is not valid for this type!");
+                throw new IllegalArgumentException("Property '" + id + "' is not valid for this type!");
             }
 
             // check updatability
