@@ -890,7 +890,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 f = createResult(FAILURE, "Content stream allowed flag is not set!");
                 addResult(results, assertNotNull(docType.getContentStreamAllowed(), null, f));
             } else if (BaseTypeId.CMIS_FOLDER.equals(type.getBaseTypeId())) {
-                // nothing to do
+                if (type.isFileable() != null) {
+                    f = createResult(FAILURE, "Folder types must be fileable!");
+                    addResult(results, assertIsTrue(type.isFileable(), null, f));
+                }
             } else if (BaseTypeId.CMIS_RELATIONSHIP.equals(type.getBaseTypeId())) {
                 RelationshipTypeDefinition relType = (RelationshipTypeDefinition) type;
 
@@ -924,6 +927,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                                             "Allowed Target Type Ids contain a type id that doesn't exist: " + typeId));
                         }
                     }
+                }
+
+                if (type.isFileable() != null) {
+                    f = createResult(FAILURE, "Relationship types must not be fileable!");
+                    addResult(results, assertIsFalse(type.isFileable(), null, f));
                 }
             } else if (BaseTypeId.CMIS_POLICY.equals(type.getBaseTypeId())) {
                 // nothing to do

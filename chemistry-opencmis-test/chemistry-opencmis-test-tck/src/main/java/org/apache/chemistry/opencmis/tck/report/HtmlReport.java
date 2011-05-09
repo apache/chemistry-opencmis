@@ -40,7 +40,7 @@ public class HtmlReport extends AbstractCmisTestReport {
     public void createReport(Map<String, String> parameters, List<CmisTestGroup> groups, Writer writer)
             throws IOException {
         writer.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n");
-        writer.write("<html><head>\n<title>Report</title>\n");
+        writer.write("<html><head>\n<title>OpenCMIS TCK Report</title>\n");
         writer.write("<style TYPE=\"text/css\">\n");
         writer.write(".tckResultINFO { margin-left: 5px; margin-right: 5px; }\n");
         writer.write(".tckResultSKIPPED { margin-left: 5px; margin-right: 5px; background-color: #FFFFFF; }\n");
