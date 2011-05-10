@@ -163,17 +163,22 @@ public class FolderTest extends TestCase {
         fRoot = (FolderImpl) fStore.getRootFolder();
         f1 = (FolderImpl) fStore.createFolder("Folder 1");
         fRoot.addChildFolder(f1);
+        f1.persist();
 
         f2 = (FolderImpl) fStore.createFolder("Folder 2");
         fRoot.addChildFolder(f2);
+        f2.persist();
 
         f3 = (FolderImpl) fStore.createFolder("Folder 3");
         fRoot.addChildFolder(f3);
+        f3.persist();
 
         f4 = (FolderImpl) fStore.createFolder("Folder 4");
         fRoot.addChildFolder(f4);
+        f4.persist();
 
         f11 = (FolderImpl) fStore.createFolder("Folder 1.1");
         f1.addChildFolder(f11);
+        f11.persist();
     }
 }

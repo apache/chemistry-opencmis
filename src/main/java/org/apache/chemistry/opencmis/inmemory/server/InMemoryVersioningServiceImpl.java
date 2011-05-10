@@ -82,15 +82,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         DocumentVersion pwc = verDoc.getPwc();
 
-        if (null != contentStream) {
-            pwc.setContent(contentStream, false);
-        }
-
-        if (null != properties && null != properties.getProperties()) {
-            pwc.setCustomProperties(properties.getProperties());
-        }
-
-        verDoc.checkIn(major, checkinComment, user);
+        verDoc.checkIn(major, properties, contentStream, checkinComment, user);
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -231,7 +223,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+
+        TypeDefinition td = fStoreManager.getTypeById(repositoryId, latestVersionObject.getTypeId()).getTypeDefinition();
         Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, td,
                 requestedIds, true);
 

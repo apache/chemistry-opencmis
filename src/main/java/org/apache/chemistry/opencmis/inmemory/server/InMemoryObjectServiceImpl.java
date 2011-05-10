@@ -784,13 +784,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             DocumentVersion version = verDoc.addVersion(contentStream, versioningState, user);
             if (null != folder) {
                 folder.addChildDocument(verDoc); // add document to folder and
-            // set parent in doc
-            } else {
-                verDoc.persist();
             }
             version.createSystemBasePropertiesWhenCreated(propMap, user);
             version.setCustomProperties(propMap);
             version.persist();
+            verDoc.persist();
             so = version; // return the version and not the version series to
             // caller
         } else {
@@ -801,10 +799,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             doc.setCustomProperties(propMap);
             if (null != folder) {
                 folder.addChildDocument(doc); // add document to folder and set
-            // parent in doc
-            } else {
-                doc.persist();
             }
+            doc.persist();
             so = doc;
         }
 
@@ -879,6 +875,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         newFolder.setCustomProperties(properties.getProperties());
         parent.addChildFolder(newFolder);
         LOG.debug("stop createFolder()");
+        newFolder.persist();
         return newFolder;
     }
 

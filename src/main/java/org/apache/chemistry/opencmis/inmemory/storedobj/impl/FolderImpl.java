@@ -67,7 +67,6 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
                 throw new CmisNameConstraintViolationException("Cannot create folder " + name + ". Name already exists in parent folder");
             }
             folder.setParent(this);
-            folder.persist();
         } finally {
             fObjStore.unlock();
         }
@@ -111,7 +110,6 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
                 throw new CmisInvalidArgumentException("Cannot create document, object is not fileable.");
             }
 
-            so.persist();
         } finally {
             fObjStore.unlock();
         }
