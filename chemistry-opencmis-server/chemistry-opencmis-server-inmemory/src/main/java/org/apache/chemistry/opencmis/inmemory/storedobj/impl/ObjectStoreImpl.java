@@ -249,8 +249,8 @@ public class ObjectStoreImpl implements ObjectStore {
         return folder;
     }
 
-    public List<VersionedDocument> getCheckedOutDocuments(String orderBy) {
-        List<VersionedDocument> res = new ArrayList<VersionedDocument>();
+    public List<StoredObject> getCheckedOutDocuments(String orderBy) {
+        List<StoredObject> res = new ArrayList<StoredObject>();
 
         for (StoredObject so : fStoredObjectMap.values()) {
             if (so instanceof VersionedDocument) {

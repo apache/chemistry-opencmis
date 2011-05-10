@@ -128,14 +128,14 @@ public class InMemoryAbstractServiceImpl {
 
     protected void testCheckedOutByCurrentUser(String user, VersionedDocument verDoc) {
         if (!user.equals(verDoc.getCheckedOutBy())) {
-            throw new CmisUpdateConflictException("Object can't be checked-in, user " + verDoc.getCheckedOutBy()
+            throw new CmisUpdateConflictException("User " + verDoc.getCheckedOutBy()
                     + " has checked out the document.");
         }
     }
 
     protected void testIsCheckedOut(VersionedDocument verDoc) {
         if (!verDoc.isCheckedOut()) {
-            throw new CmisUpdateConflictException("Canot check-in: Document " + verDoc.getId() + " is not checked out.");
+            throw new CmisUpdateConflictException("Document " + verDoc.getId() + " is not checked out.");
         }
     }
 

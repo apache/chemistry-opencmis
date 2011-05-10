@@ -108,7 +108,7 @@ public interface ObjectStore {
      *            orderBy specification according to CMIS spec.
      * @return list of checked out documents in the repository
      */
-    List<VersionedDocument> getCheckedOutDocuments(String orderBy);
+    List<StoredObject> getCheckedOutDocuments(String orderBy);
     
     /**
      * Clear repository and remove all data.

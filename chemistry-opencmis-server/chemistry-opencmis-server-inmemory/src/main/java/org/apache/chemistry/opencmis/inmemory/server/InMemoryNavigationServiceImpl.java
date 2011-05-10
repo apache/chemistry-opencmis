@@ -85,9 +85,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         String user = context.getUsername();
         if (null == folderId) {
-            List<VersionedDocument> checkedOuts = fStoreManager.getObjectStore(repositoryId).getCheckedOutDocuments(
+            List<StoredObject> checkedOuts = fStoreManager.getObjectStore(repositoryId).getCheckedOutDocuments(
                     orderBy);
-            for (VersionedDocument checkedOut : checkedOuts) {
+            for (StoredObject checkedOut : checkedOuts) {
                 TypeDefinition td = fStoreManager.getTypeById(repositoryId, checkedOut.getTypeId()).getTypeDefinition();
                 ObjectData od = PropertyCreationHelper.getObjectData(td, checkedOut, filter, user,
                         includeAllowableActions, includeRelationships, renditionFilter, false, false, extension);

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -91,7 +92,7 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         fCheckedOutUser = null;
     }
 
-    public void checkIn(boolean isMajor, String checkinComment, String user) {
+    public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment, String user) {
         if (fIsCheckedOut) {
             if (fCheckedOutUser.equals(user)) {
                 fIsCheckedOut = false;
@@ -106,6 +107,13 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         }
 
         DocumentVersion pwc = getPwc();
+        
+        if (null != content)
+            pwc.setContent(content, false);
+
+        if (null != properties && null != properties.getProperties())
+            pwc.setCustomProperties(properties.getProperties());
+
         pwc.setCheckinComment(checkinComment);
         pwc.commit(isMajor);
     }
