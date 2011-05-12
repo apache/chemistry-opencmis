@@ -35,7 +35,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
  * Calendar cal = ...
  * Folder folder = ...
  * 
- * QueryStatement qs = session.createQueryStatement("SELECT ?, ? FROM ? WHERE ? > ? AND IN_FOLDER(?) OR ? IN (?)");
+ * QueryStatement qs = session.createQueryStatement("SELECT ?, ? FROM ? WHERE ? > TIMESTAMP ? AND IN_FOLDER(?) OR ? IN (?)");
  * 
  * qs.setProperty(1, "cmis:document", "cmis:name");
  * qs.setProperty(2, "cmis:document", "cmis:objectId");
