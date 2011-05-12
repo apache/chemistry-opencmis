@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
+import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
@@ -575,6 +576,10 @@ public class SessionImpl implements Session, Serializable {
         });
     }
 
+    public QueryStatement createQueryStatement(final String statement) {
+        return new QueryStatementImpl(this, statement);
+    }
+
     public String setExtensionContext(String context) {
         throw new CmisRuntimeException("not implemented");
     }
@@ -697,9 +702,9 @@ public class SessionImpl implements Session, Serializable {
         }
 
         String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
-                objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
-                folderId.getId(), objectFactory.convertPolicies(policies),
-                objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
+                objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY), folderId.getId(),
+                objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+                objectFactory.convertAces(removeAces), null);
 
         if (newId == null) {
             return null;

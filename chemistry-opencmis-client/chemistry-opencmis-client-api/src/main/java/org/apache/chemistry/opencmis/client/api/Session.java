@@ -290,6 +290,16 @@ public interface Session {
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context);
 
     /**
+     * Creates a query statement.
+     * 
+     * @param statement
+     *            the query statement with placeholders ('?').
+     * 
+     * @see QueryStatement
+     */
+    QueryStatement createQueryStatement(String statement);
+
+    /**
      * Returns the content changes.
      * 
      * @param changeLogToken
