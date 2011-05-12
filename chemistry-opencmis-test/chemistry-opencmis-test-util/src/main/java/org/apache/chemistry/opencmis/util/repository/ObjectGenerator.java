@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.util.repository;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
+import org.apache.chemistry.opencmis.util.content.LoreIpsum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -113,6 +115,11 @@ public class ObjectGenerator {
      * size of content in KB, if 0 create documents without content
      */
     private int fContentSizeInK = 0;
+    
+    /**
+     * true: use Lore Ipsum generator, false: use static text
+     */
+    private boolean useLoreIpsum = true;
 
     private static final String NAMEPROPVALPREFIXDOC = "My_Document-";
     private static final String NAMEPROPVALPREFIXFOLDER = "My_Folder-";
@@ -168,6 +175,14 @@ public class ObjectGenerator {
 
     public void setContentSizeInKB(int sizeInK) {
         fContentSizeInK = sizeInK;
+    }
+    
+    public boolean getLoreIpsumGenerator() {
+        return useLoreIpsum;
+    }
+    
+    public void setLoreIpsumGenerator(boolean use) {
+        useLoreIpsum = use;
     }
 
     public void setCleanUpAfterCreate(boolean doCleanup) {
@@ -416,7 +431,7 @@ public class ObjectGenerator {
         Properties props = createDocumentProperties(no, level);
         String id = null;
         if (fContentSizeInK > 0) {
-            contentStream = createContent();
+            contentStream = useLoreIpsum ? createContent() : createContentStaticText();
         }
         try {
             fTimeLoggerCreateDoc.start();
@@ -461,6 +476,18 @@ public class ObjectGenerator {
     }
 
     private ContentStream createContent() {
+        ContentStreamImpl content = new ContentStreamImpl();
+        content.setFileName("data.txt");
+        content.setMimeType("text/plain");
+        int len = fContentSizeInK * 1024; // size of document in K
+        
+        LoreIpsum ipsum = new LoreIpsum();
+        String text = ipsum.generateParagraphsPlainText(len, 80, true);
+        content.setStream(new ByteArrayInputStream(text.getBytes()));
+        return content;
+    }
+
+    private ContentStream createContentStaticText() {
         ContentStreamImpl content = new ContentStreamImpl();
         content.setFileName("data.txt");
         content.setMimeType("text/plain");
