@@ -838,8 +838,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             f = createResult(FAILURE, "Local name is not set!");
             addResult(results, assertStringNotEmpty(type.getLocalName(), null, f));
 
-            f = createResult(FAILURE, "Local namespace is not set!");
-            addResult(results, assertStringNotEmpty(type.getLocalNamespace(), null, f));
+            // f = createResult(FAILURE, "Local namespace is not set!");
+            // addResult(results, assertStringNotEmpty(type.(), null, f));
 
             f = createResult(FAILURE, "Query name is not set!");
             addResult(results, assertStringNotEmpty(type.getQueryName(), null, f));
@@ -1124,8 +1124,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             f = createResult(WARNING, "Local name is not set!");
             addResult(results, assertStringNotEmpty(propDef.getLocalName(), null, f));
 
-            f = createResult(WARNING, "Local namespace is not set!");
-            addResult(results, assertStringNotEmpty(propDef.getLocalNamespace(), null, f));
+            // f = createResult(WARNING, "Local namespace is not set!");
+            // addResult(results,
+            // assertStringNotEmpty(propDef.getLocalNamespace(), null, f));
 
             f = createResult(FAILURE, "Query name is not set!");
             addResult(results, assertStringNotEmpty(propDef.getQueryName(), null, f));
