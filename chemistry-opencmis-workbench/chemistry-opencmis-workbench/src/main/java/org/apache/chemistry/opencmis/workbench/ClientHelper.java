@@ -482,13 +482,13 @@ public class ClientHelper {
         }
     }
 
-    public static void runJavaScriptScript(final Component parent, final ClientModel model, final File file,
-            final Writer out) {
+    public static void runJSR223Script(final Component parent, final ClientModel model, final File file,
+            final String ext, final Writer out) {
         try {
             parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             ScriptEngineManager mgr = new ScriptEngineManager();
-            ScriptEngine engine = mgr.getEngineByExtension("js");
+            ScriptEngine engine = mgr.getEngineByExtension(ext);
             engine.getContext().setWriter(out);
             engine.getContext().setErrorWriter(out);
             engine.put("session", model.getClientSession().getSession());

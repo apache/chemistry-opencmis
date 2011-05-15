@@ -29,8 +29,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -55,6 +59,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
     private static final long serialVersionUID = 1L;
 
+    private final Set<String> scriptExtensions;
+
     private JTextField nameField;
     private JTextField idField;
     private JTextField typeField;
@@ -75,6 +81,13 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         super(model);
 
         model.addObjectListener(this);
+
+        // get all installed script engines
+        scriptExtensions = new HashSet<String>();
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        for (ScriptEngineFactory sef : mgr.getEngineFactories()) {
+            scriptExtensions.addAll(sef.getExtensions());
+        }
 
         createGUI();
     }
@@ -166,7 +179,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
                 if (object instanceof Document) {
                     String name = object.getName().toLowerCase();
-                    if (name.endsWith(".groovy") || name.endsWith(".js")) {
+                    int x = name.lastIndexOf('.');
+                    if ((x > -1) && (scriptExtensions.contains(name.substring(x + 1)))) {
                         scriptPanel.setVisible(true);
                         scriptOutput.setVisible(false);
                     } else {
@@ -242,7 +256,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                         if (console != null) {
                             console.loadScriptFile(file);
                         }
-                    } else if (name.endsWith(".js")) {
+                    } else {
                         ClientHelper.open(ObjectPanel.this, doc, null);
                     }
                 } catch (Exception ex) {
@@ -259,16 +273,14 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     Document doc = (Document) getClientModel().getCurrentObject();
                     File file = ClientHelper.createTempFileFromDocument(doc, null);
+                    String name = doc.getName().toLowerCase();
+                    String ext = name.substring(name.lastIndexOf('.') + 1);
+
                     scriptOutput.setText("");
                     scriptOutput.setVisible(true);
                     scriptOutput.invalidate();
 
-                    String name = doc.getName().toLowerCase();
-                    if (name.endsWith(".groovy")) {
-                        ClientHelper.runGroovyScript(ObjectPanel.this, getClientModel(), file, scriptOutputWriter);
-                    } else if (name.endsWith(".js")) {
-                        ClientHelper.runJavaScriptScript(ObjectPanel.this, getClientModel(), file, scriptOutputWriter);
-                    }
+                    ClientHelper.runJSR223Script(ObjectPanel.this, getClientModel(), file, ext, scriptOutputWriter);
                 } catch (Exception ex) {
                     ClientHelper.showError(null, ex);
                 } finally {
