@@ -112,6 +112,13 @@
             <artifactId>org.osgi.core</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>chemistry-opencmis-test-util</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
