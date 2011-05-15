@@ -4,7 +4,7 @@
         <project>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>1.7.6</version>
+            <version>1.8.0</version>
             <name>Groovy</name>
             <licenses>
                 <license>
