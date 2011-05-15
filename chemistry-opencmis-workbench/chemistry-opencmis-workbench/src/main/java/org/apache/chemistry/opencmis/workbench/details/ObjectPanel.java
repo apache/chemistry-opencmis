@@ -65,11 +65,11 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private InfoList paths;
     private InfoList allowableActionsList;
     private JButton refreshButton;
-    private JPanel groovyPanel;
-    private JButton groovyOpenButton;
-    private JButton groovyRunButton;
-    private JTextArea groovyOutput;
-    private JTextAreaWriter groovyOutputWriter;
+    private JPanel scriptPanel;
+    private JButton scriptOpenButton;
+    private JButton scriptRunButton;
+    private JTextArea scriptOutput;
+    private JTextAreaWriter scriptOutputWriter;
 
     public ObjectPanel(ClientModel model) {
         super(model);
@@ -93,7 +93,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             contentUrlField.setText("");
             allowableActionsList.removeAll();
             refreshButton.setEnabled(false);
-            groovyPanel.setVisible(false);
+            scriptPanel.setVisible(false);
         } else {
             try {
                 nameField.setText(object.getName());
@@ -164,11 +164,14 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
                 refreshButton.setEnabled(true);
 
-                if ((object instanceof Document) && (object.getName().toLowerCase().endsWith(".groovy"))) {
-                    groovyPanel.setVisible(true);
-                    groovyOutput.setVisible(false);
-                } else {
-                    groovyPanel.setVisible(false);
+                if (object instanceof Document) {
+                    String name = object.getName().toLowerCase();
+                    if (name.endsWith(".groovy") || name.endsWith(".js")) {
+                        scriptPanel.setVisible(true);
+                        scriptOutput.setVisible(false);
+                    } else {
+                        scriptPanel.setVisible(false);
+                    }
                 }
             } catch (Exception e) {
                 ClientHelper.showError(this, e);
@@ -193,25 +196,25 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         refreshButton = addComponent("", new JButton("Refresh"));
         refreshButton.setEnabled(false);
 
-        groovyPanel = addComponent("", new JPanel(new BorderLayout()));
-        groovyPanel.setOpaque(false);
-        groovyPanel.setVisible(false);
+        scriptPanel = addComponent("", new JPanel(new BorderLayout()));
+        scriptPanel.setOpaque(false);
+        scriptPanel.setVisible(false);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.setOpaque(false);
-        groovyPanel.add(buttonPanel, BorderLayout.PAGE_START);
-        groovyOpenButton = new JButton("Open Script");
-        buttonPanel.add(groovyOpenButton);
-        groovyRunButton = new JButton("Run Script");
-        buttonPanel.add(groovyRunButton);
+        scriptPanel.add(buttonPanel, BorderLayout.PAGE_START);
+        scriptOpenButton = new JButton("Open Script");
+        buttonPanel.add(scriptOpenButton);
+        scriptRunButton = new JButton("Run Script");
+        buttonPanel.add(scriptRunButton);
 
-        groovyOutput = new JTextArea(null, 1, 80);
-        groovyOutput.setEditable(false);
-        groovyOutput.setFont(Font.decode("Monospaced"));
-        groovyOutput.setBorder(BorderFactory.createTitledBorder(""));
-        groovyOutputWriter = new JTextAreaWriter(groovyOutput);
-        groovyPanel.add(groovyOutput, BorderLayout.CENTER);
+        scriptOutput = new JTextArea(null, 1, 80);
+        scriptOutput.setEditable(false);
+        scriptOutput.setFont(Font.decode("Monospaced"));
+        scriptOutput.setBorder(BorderFactory.createTitledBorder(""));
+        scriptOutputWriter = new JTextAreaWriter(scriptOutput);
+        scriptPanel.add(scriptOutput, BorderLayout.CENTER);
 
         refreshButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -226,15 +229,21 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             }
         });
 
-        groovyOpenButton.addActionListener(new ActionListener() {
+        scriptOpenButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     Document doc = (Document) getClientModel().getCurrentObject();
-                    File file = ClientHelper.createTempFileFromDocument(doc, null);
-                    Console console = ClientHelper.openConsole(ObjectPanel.this, getClientModel(), null);
-                    if (console != null) {
-                        console.loadScriptFile(file);
+
+                    String name = doc.getName().toLowerCase();
+                    if (name.endsWith(".groovy")) {
+                        File file = ClientHelper.createTempFileFromDocument(doc, null);
+                        Console console = ClientHelper.openConsole(ObjectPanel.this, getClientModel(), null);
+                        if (console != null) {
+                            console.loadScriptFile(file);
+                        }
+                    } else if (name.endsWith(".js")) {
+                        ClientHelper.open(ObjectPanel.this, doc, null);
                     }
                 } catch (Exception ex) {
                     ClientHelper.showError(null, ex);
@@ -244,16 +253,22 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             }
         });
 
-        groovyRunButton.addActionListener(new ActionListener() {
+        scriptRunButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     Document doc = (Document) getClientModel().getCurrentObject();
                     File file = ClientHelper.createTempFileFromDocument(doc, null);
-                    groovyOutput.setText("");
-                    groovyOutput.setVisible(true);
-                    groovyOutput.invalidate();
-                    ClientHelper.runGroovyScript(ObjectPanel.this, getClientModel(), file, groovyOutputWriter);
+                    scriptOutput.setText("");
+                    scriptOutput.setVisible(true);
+                    scriptOutput.invalidate();
+
+                    String name = doc.getName().toLowerCase();
+                    if (name.endsWith(".groovy")) {
+                        ClientHelper.runGroovyScript(ObjectPanel.this, getClientModel(), file, scriptOutputWriter);
+                    } else if (name.endsWith(".js")) {
+                        ClientHelper.runJavaScriptScript(ObjectPanel.this, getClientModel(), file, scriptOutputWriter);
+                    }
                 } catch (Exception ex) {
                     ClientHelper.showError(null, ex);
                 } finally {

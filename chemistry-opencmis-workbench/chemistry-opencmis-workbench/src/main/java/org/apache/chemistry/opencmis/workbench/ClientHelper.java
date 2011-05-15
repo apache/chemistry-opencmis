@@ -34,10 +34,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
@@ -48,6 +50,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JFileChooser;
@@ -471,6 +475,26 @@ public class ClientHelper {
             binding.setVariable("binding", model.getClientSession().getSession().getBinding());
             binding.setVariable("out", out);
             gse.run(file.getName(), binding);
+        } catch (Exception ex) {
+            ClientHelper.showError(null, ex);
+        } finally {
+            parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
+
+    public static void runJavaScriptScript(final Component parent, final ClientModel model, final File file,
+            final Writer out) {
+        try {
+            parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+            ScriptEngineManager mgr = new ScriptEngineManager();
+            ScriptEngine engine = mgr.getEngineByExtension("js");
+            engine.getContext().setWriter(out);
+            engine.getContext().setErrorWriter(out);
+            engine.put("session", model.getClientSession().getSession());
+            engine.put("binding", model.getClientSession().getSession().getBinding());
+            engine.put("out", new PrintWriter(out));
+            engine.eval(new FileReader(file));
         } catch (Exception ex) {
             ClientHelper.showError(null, ex);
         } finally {
