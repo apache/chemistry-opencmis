@@ -69,9 +69,9 @@
                         <alias>webstart</alias>
 
                         <validity>365</validity>
-                        <dnameCn>ECM JPaaS Serivce</dnameCn>
-                        <dnameOu>TIP Core CSI ECM</dnameOu>
-                        <dnameO>SAP AG</dnameO>
+                        <dnameCn>OpenCMIS Development Team</dnameCn>
+                        <dnameOu>Apache Chemistry OpenCMIS</dnameOu>
+                        <dnameO>The Apache Software Foundation</dnameO>
 
                         <verify>true</verify>
 
