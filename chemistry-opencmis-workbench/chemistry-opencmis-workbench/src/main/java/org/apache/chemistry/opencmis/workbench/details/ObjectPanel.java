@@ -18,13 +18,24 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import groovy.ui.Console;
+
+import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -54,6 +65,11 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private InfoList paths;
     private InfoList allowableActionsList;
     private JButton refreshButton;
+    private JPanel groovyPanel;
+    private JButton groovyOpenButton;
+    private JButton groovyRunButton;
+    private JTextArea groovyOutput;
+    private JTextAreaWriter groovyOutputWriter;
 
     public ObjectPanel(ClientModel model) {
         super(model);
@@ -77,6 +93,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             contentUrlField.setText("");
             allowableActionsList.removeAll();
             refreshButton.setEnabled(false);
+            groovyPanel.setVisible(false);
         } else {
             try {
                 nameField.setText(object.getName());
@@ -146,6 +163,13 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 }
 
                 refreshButton.setEnabled(true);
+
+                if ((object instanceof Document) && (object.getName().toLowerCase().endsWith(".groovy"))) {
+                    groovyPanel.setVisible(true);
+                    groovyOutput.setVisible(false);
+                } else {
+                    groovyPanel.setVisible(false);
+                }
             } catch (Exception e) {
                 ClientHelper.showError(this, e);
             }
@@ -169,6 +193,26 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         refreshButton = addComponent("", new JButton("Refresh"));
         refreshButton.setEnabled(false);
 
+        groovyPanel = addComponent("", new JPanel(new BorderLayout()));
+        groovyPanel.setOpaque(false);
+        groovyPanel.setVisible(false);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.setOpaque(false);
+        groovyPanel.add(buttonPanel, BorderLayout.PAGE_START);
+        groovyOpenButton = new JButton("Open Script");
+        buttonPanel.add(groovyOpenButton);
+        groovyRunButton = new JButton("Run Script");
+        buttonPanel.add(groovyRunButton);
+
+        groovyOutput = new JTextArea(null, 1, 80);
+        groovyOutput.setEditable(false);
+        groovyOutput.setFont(Font.decode("Monospaced"));
+        groovyOutput.setBorder(BorderFactory.createTitledBorder(""));
+        groovyOutputWriter = new JTextAreaWriter(groovyOutput);
+        groovyPanel.add(groovyOutput, BorderLayout.CENTER);
+
         refreshButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -181,6 +225,43 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 }
             }
         });
+
+        groovyOpenButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    Document doc = (Document) getClientModel().getCurrentObject();
+                    File file = ClientHelper.createTempFileFromDocument(doc, null);
+                    Console console = ClientHelper.openConsole(ObjectPanel.this, getClientModel(), null);
+                    if (console != null) {
+                        console.loadScriptFile(file);
+                    }
+                } catch (Exception ex) {
+                    ClientHelper.showError(null, ex);
+                } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
+
+        groovyRunButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    Document doc = (Document) getClientModel().getCurrentObject();
+                    File file = ClientHelper.createTempFileFromDocument(doc, null);
+                    groovyOutput.setText("");
+                    groovyOutput.setVisible(true);
+                    groovyOutput.invalidate();
+                    ClientHelper.runGroovyScript(ObjectPanel.this, getClientModel(), file, groovyOutputWriter);
+                } catch (Exception ex) {
+                    ClientHelper.showError(null, ex);
+                } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
+
     }
 
     public String getDocumentURL(final CmisObject document, final Session session) {
@@ -190,5 +271,31 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         }
 
         return null;
+    }
+
+    private static class JTextAreaWriter extends Writer {
+        private final JTextArea textArea;
+
+        public JTextAreaWriter(JTextArea textArea) {
+            this.textArea = textArea;
+        }
+
+        @Override
+        public void write(final char[] cbuf, final int off, final int len) throws IOException {
+            final String s = new String(cbuf, off, len);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    textArea.append(s);
+                }
+            });
+        }
+
+        @Override
+        public void flush() throws IOException {
+        }
+
+        @Override
+        public void close() throws IOException {
+        }
     }
 }

@@ -18,9 +18,17 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import groovy.lang.Binding;
+import groovy.ui.Console;
+import groovy.util.GroovyScriptEngine;
+
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Desktop.Action;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,6 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Writer;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +51,8 @@ import java.util.Properties;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -53,6 +65,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
+import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -390,6 +403,78 @@ public class ClientHelper {
                 stream.close();
             } catch (IOException ioe) {
             }
+        }
+    }
+
+    public static Console openConsole(final Component parent, final ClientModel model, final String file) {
+        try {
+            parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+            Console console = new Console(parent.getClass().getClassLoader());
+            console.setVariable("session", model.getClientSession().getSession());
+            console.setVariable("binding", model.getClientSession().getSession().getBinding());
+
+            console.run();
+
+            JMenu cmisMenu = new JMenu("CMIS");
+            console.getFrame().getRootPane().getJMenuBar().add(cmisMenu);
+
+            addConsoleMenu(cmisMenu, "CMIS 1.0 Specification", new URI(
+                    "http://docs.oasis-open.org/cmis/CMIS/v1.0/os/cmis-spec-v1.0.html"));
+            addConsoleMenu(cmisMenu, "OpenCMIS Documentation",
+                    new URI("http://chemistry.apache.org/java/opencmis.html"));
+            addConsoleMenu(
+                    cmisMenu,
+                    "OpenCMIS Client API JavaDoc",
+                    new URI(
+                            "http://incubator.apache.org/chemistry/javadoc/org/apache/chemistry/opencmis/client/api/package-summary.html"));
+
+            console.getInputArea().setText(ClientHelper.readFileAndRemoveHeader(file));
+
+            return console;
+        } catch (Exception ex) {
+            ClientHelper.showError(null, ex);
+            return null;
+        } finally {
+            parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
+
+    private static void addConsoleMenu(JMenu menu, String title, final URI url) {
+        if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Action.BROWSE)) {
+            return;
+        }
+
+        JMenuItem menuItem = new JMenuItem(title);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(url);
+                } catch (IOException e1) {
+                }
+            }
+        });
+
+        menu.add(menuItem);
+    }
+
+    public static void runGroovyScript(final Component parent, final ClientModel model, final File file,
+            final Writer out) {
+        try {
+            parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+            String[] roots = new String[] { file.getParentFile().getAbsolutePath() };
+            GroovyScriptEngine gse = new GroovyScriptEngine(roots, parent.getClass().getClassLoader());
+            Binding binding = new Binding();
+            binding.setVariable("session", model.getClientSession().getSession());
+            binding.setVariable("binding", model.getClientSession().getSession().getBinding());
+            binding.setVariable("out", out);
+            gse.run(file.getName(), binding);
+        } catch (Exception ex) {
+            ClientHelper.showError(null, ex);
+        } finally {
+            parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 

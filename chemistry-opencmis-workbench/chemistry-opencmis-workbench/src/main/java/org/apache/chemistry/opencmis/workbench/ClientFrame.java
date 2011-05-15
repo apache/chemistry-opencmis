@@ -18,21 +18,15 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
-import groovy.ui.Console;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.Desktop.Action;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.IOException;
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -40,7 +34,6 @@ import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
@@ -193,7 +186,7 @@ public class ClientFrame extends JFrame implements WindowListener {
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    openConsole(file);
+                    ClientHelper.openConsole(ClientFrame.this, model, file);
                 }
             });
             toolbarConsolePopup.add(menuItem);
@@ -319,56 +312,6 @@ public class ClientFrame extends JFrame implements WindowListener {
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         }
-    }
-
-    private void openConsole(String file) {
-        try {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-            Console console = new Console(this.getClass().getClassLoader());
-            console.setVariable("session", model.getClientSession().getSession());
-            console.setVariable("binding", model.getClientSession().getSession().getBinding());
-
-            console.run();
-
-            JMenu cmisMenu = new JMenu("CMIS");
-            console.getFrame().getRootPane().getJMenuBar().add(cmisMenu);
-
-            addConsoleMenu(cmisMenu, "CMIS 1.0 Specification", new URI(
-                    "http://docs.oasis-open.org/cmis/CMIS/v1.0/os/cmis-spec-v1.0.html"));
-            addConsoleMenu(cmisMenu, "OpenCMIS Documentation",
-                    new URI("http://chemistry.apache.org/java/opencmis.html"));
-            addConsoleMenu(
-                    cmisMenu,
-                    "OpenCMIS Client API JavaDoc",
-                    new URI(
-                            "http://incubator.apache.org/chemistry/javadoc/org/apache/chemistry/opencmis/client/api/package-summary.html"));
-
-            console.getInputArea().setText(ClientHelper.readFileAndRemoveHeader(file));
-        } catch (Exception ex) {
-            ClientHelper.showError(null, ex);
-        } finally {
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-    }
-
-    private void addConsoleMenu(JMenu menu, String title, final URI url) {
-        if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Action.BROWSE)) {
-            return;
-        }
-
-        JMenuItem menuItem = new JMenuItem(title);
-        menuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Desktop.getDesktop().browse(url);
-                } catch (IOException e1) {
-                }
-            }
-        });
-
-        menu.add(menuItem);
     }
 
     private List<FileEntry> readScriptLibrary() {
