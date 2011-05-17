@@ -95,7 +95,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                          org.apache.chemistry.opencmis.commons.impl*;version=${project.version}
+                          org.apache.chemistry.opencmis.commons.impl.*;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                           org.apache.commons.codec.*;version="[1.4,2.0)",
