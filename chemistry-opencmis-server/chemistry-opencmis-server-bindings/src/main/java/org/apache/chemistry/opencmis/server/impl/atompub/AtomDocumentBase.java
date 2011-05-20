@@ -34,27 +34,24 @@ import org.apache.commons.codec.binary.Base64;
 
 /**
  * Atom base class.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AtomDocumentBase extends XMLDocumentBase {
 
-    private static final String ID_PREFIX = "http://opencmis.org/";
-    private static final String ID_DUMMY = "http://opencmis.org/no-id";
+    private static final String ID_PREFIX = "http://chemistry.apache.org/";
+    private static final String ID_DUMMY = "http://chemistry.apache.org/no-id";
 
-    private SimpleDateFormat fDateFormater;
+    private SimpleDateFormat dateFormater;
 
     /**
      * Formats a DateTime.
      */
     public String formatDate(long millis) {
-        if (fDateFormater == null) {
-            fDateFormater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
-            fDateFormater.setTimeZone(TimeZone.getTimeZone("UTC"));
+        if (dateFormater == null) {
+            dateFormater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+            dateFormater.setTimeZone(TimeZone.getTimeZone("UTC"));
         }
 
-        return fDateFormater.format(millis);
+        return dateFormater.format(millis);
     }
 
     /**

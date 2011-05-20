@@ -28,9 +28,6 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 
 /**
  * Base class for XML documents.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class XMLDocumentBase {
 
@@ -40,24 +37,24 @@ public abstract class XMLDocumentBase {
     public static final String PREFIX_APP = "app";
     public static final String PREFIX_XSI = "xsi";
 
-    private XMLStreamWriter fWriter;
+    private XMLStreamWriter writer;
 
     /**
      * Sets the namespaces for the document.
      */
     public void setNamespaces() throws XMLStreamException {
-        fWriter.setPrefix(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
-        fWriter.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
-        fWriter.setPrefix(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
-        fWriter.setPrefix(PREFIX_APP, Constants.NAMESPACE_APP);
-        fWriter.setPrefix(PREFIX_XSI, Constants.NAMESPACE_XSI);
+        writer.setPrefix(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
+        writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
+        writer.setPrefix(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
+        writer.setPrefix(PREFIX_APP, Constants.NAMESPACE_APP);
+        writer.setPrefix(PREFIX_XSI, Constants.NAMESPACE_XSI);
     }
 
     /**
      * Writes the namespace declaration of the given URI to the current tag.
      */
     public void writeNamespace(String namespaceUri) throws XMLStreamException {
-        fWriter.writeNamespace(fWriter.getPrefix(namespaceUri), namespaceUri);
+        writer.writeNamespace(writer.getPrefix(namespaceUri), namespaceUri);
     }
 
     /**
@@ -66,10 +63,10 @@ public abstract class XMLDocumentBase {
     public void startDocument(OutputStream out) throws XMLStreamException {
         // create a writer
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        fWriter = factory.createXMLStreamWriter(out);
+        writer = factory.createXMLStreamWriter(out, "UTF-8");
 
         // start the document
-        fWriter.writeStartDocument();
+        writer.writeStartDocument("UTF-8", "1.0");
         setNamespaces();
     }
 
@@ -77,28 +74,28 @@ public abstract class XMLDocumentBase {
      * Finishes the document.
      */
     public void endDocument() throws XMLStreamException {
-        if (fWriter == null) {
+        if (writer == null) {
             return;
         }
 
         // end the document
-        fWriter.writeEndDocument();
+        writer.writeEndDocument();
 
         // we are done.
-        fWriter.close();
+        writer.close();
     }
 
     /**
      * Returns the writer object.
      */
     public XMLStreamWriter getWriter() {
-        return fWriter;
+        return writer;
     }
 
     /**
      * Sets the writer object.
      */
     protected void setWriter(XMLStreamWriter writer) {
-        fWriter = writer;
+        this.writer = writer;
     }
 }
