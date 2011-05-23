@@ -144,7 +144,6 @@ public class QueryTranslatorTest {
                     "select * from cmis:document where NOT(NOT IN_FOLDER('folderId') OR cmis:creationDate = TIMESTAMP '" +
                     CalendarHelper.toString(date) + "')"));
 
-        // fixme: need fix for CMIS-344
         assertEquals(
             "/jcr:root//element(*,jcr:document)[jcr:contains(., '\u4E2D\u6587')]",
             queryTranslator.translateToXPath("select * from cmis:document where contains('\u4E2D\u6587')"));

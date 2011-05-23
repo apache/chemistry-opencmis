@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
@@ -176,7 +177,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
             return;
         }
 
-        boolean requiresCheckOut = true; // getRepositoryInfo().getCapabilities().getContentStreamUpdatesCapability() == CapabilityContentStreamUpdates.PWCONLY;
+        boolean requiresCheckOut = getRepositoryInfo().getCapabilities().getContentStreamUpdatesCapability() == CapabilityContentStreamUpdates.PWCONLY;
 
         boolean isVersionable = isVersionable(getDefaultDocumentType());
 
@@ -418,7 +419,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
         allVersions = getBinding().getVersioningService().getAllVersions(getTestRepositoryId(), docId,
                 getVersionSeriesId(docId), "*", Boolean.FALSE, null);
         assertNotNull(allVersions);
-//        assertEquals(2, allVersions.size());
+        assertEquals(2, allVersions.size());
 
         // delete document
         delete(docId, true);

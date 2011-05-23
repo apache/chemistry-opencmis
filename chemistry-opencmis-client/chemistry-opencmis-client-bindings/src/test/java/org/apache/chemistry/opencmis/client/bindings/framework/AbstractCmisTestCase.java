@@ -75,8 +75,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     public static final String DEFAULT_TESTS_ENABLED = "true";
     public static final String DEFAULT_USERNAME = "admin";
     public static final String DEFAULT_PASSWORD = "admin";
-    public static final String DEFAULT_ATOMPUB_URL = "http://localhost:7402/cmis/repository";
-//    public static final String DEFAULT_ATOMPUB_URL = "http://localhost:8080/chemistry-opencmis-server-jcr/atom";
+    public static final String DEFAULT_ATOMPUB_URL = "http://localhost:8080/chemistry-opencmis-server-jcr/atom";
     public static final String DEFAULT_WEBSERVICES_URLPREFIX = "http://localhost:8080/cmis/services/";
     public static final String DEFAULT_DOCTYPE = "cmis:document";
     public static final String DEFAULT_FOLDERTYPE = "cmis:folder";
