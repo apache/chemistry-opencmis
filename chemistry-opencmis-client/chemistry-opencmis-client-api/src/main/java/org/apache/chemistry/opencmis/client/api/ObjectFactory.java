@@ -31,18 +31,23 @@ import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 
 /**
  * A factory to create CMIS objects.
- *
+ * 
  * @see org.apache.chemistry.opencmis.client.api.Session#getObjectFactory()
  */
 public interface ObjectFactory {
 
     void initialize(Session session, Map<String, String> parameters);
+
+    // repository info
+
+    RepositoryInfo convertRepositoryInfo(RepositoryInfo repositoryInfo);
 
     // ACL and ACE
 

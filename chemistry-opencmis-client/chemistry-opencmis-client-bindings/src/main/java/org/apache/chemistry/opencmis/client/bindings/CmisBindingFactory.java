@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingImpl;
+import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
@@ -81,22 +82,42 @@ public final class CmisBindingFactory {
      * the session parameters.
      */
     public CmisBinding createCmisBinding(Map<String, String> sessionParameters) {
+        return createCmisBinding(sessionParameters, null);
+    }
+
+    /**
+     * Creates a CMIS binding instance. A binding class has to be provided in
+     * the session parameters.
+     */
+    public CmisBinding createCmisBinding(Map<String, String> sessionParameters,
+            AbstractAuthenticationProvider authenticationProvider) {
         checkSessionParameters(sessionParameters, true);
 
         addDefaultParameters(sessionParameters);
 
-        return new CmisBindingImpl(sessionParameters);
+        return new CmisBindingImpl(sessionParameters, authenticationProvider);
     }
 
     /**
      * Creates a default CMIS AtomPub binding instance.
      */
     public CmisBinding createCmisAtomPubBinding(Map<String, String> sessionParameters) {
+        return createCmisAtomPubBinding(sessionParameters, null);
+    }
+
+    /**
+     * Creates a default CMIS AtomPub binding instance with a custom
+     * authentication provider.
+     */
+    public CmisBinding createCmisAtomPubBinding(Map<String, String> sessionParameters,
+            AbstractAuthenticationProvider authenticationProvider) {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_ATOMPUB);
-        if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
-            sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
+        if (authenticationProvider == null) {
+            if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
+                sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
+            }
         }
         if (!sessionParameters.containsKey(SessionParameter.AUTH_HTTP_BASIC)) {
             sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
@@ -106,18 +127,29 @@ public final class CmisBindingFactory {
 
         check(sessionParameters, SessionParameter.ATOMPUB_URL);
 
-        return new CmisBindingImpl(sessionParameters);
+        return new CmisBindingImpl(sessionParameters, authenticationProvider);
     }
 
     /**
      * Creates a default CMIS Web Services binding instance.
      */
     public CmisBinding createCmisWebServicesBinding(Map<String, String> sessionParameters) {
+        return createCmisWebServicesBinding(sessionParameters, null);
+    }
+
+    /**
+     * Creates a default CMIS Web Services binding instance with a custom
+     * authentication provider.
+     */
+    public CmisBinding createCmisWebServicesBinding(Map<String, String> sessionParameters,
+            AbstractAuthenticationProvider authenticationProvider) {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_WEBSERVICES);
-        if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
-            sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
+        if (authenticationProvider == null) {
+            if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
+                sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
+            }
         }
         if (!sessionParameters.containsKey(SessionParameter.AUTH_SOAP_USERNAMETOKEN)) {
             sessionParameters.put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, "true");
@@ -137,7 +169,7 @@ public final class CmisBindingFactory {
         check(sessionParameters, SessionParameter.WEBSERVICES_REPOSITORY_SERVICE);
         check(sessionParameters, SessionParameter.WEBSERVICES_VERSIONING_SERVICE);
 
-        return new CmisBindingImpl(sessionParameters);
+        return new CmisBindingImpl(sessionParameters, authenticationProvider);
     }
 
     /**

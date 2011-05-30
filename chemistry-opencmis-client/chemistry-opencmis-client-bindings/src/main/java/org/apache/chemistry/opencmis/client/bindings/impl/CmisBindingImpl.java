@@ -57,6 +57,18 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
      *            the session parameters
      */
     public CmisBindingImpl(Map<String, String> sessionParameters) {
+        this(sessionParameters, null);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @param authenticationProvider
+     *            an authentication provider instance
+     */
+    public CmisBindingImpl(Map<String, String> sessionParameters, AbstractAuthenticationProvider authenticationProvider) {
         // some checks first
         if (sessionParameters == null) {
             throw new IllegalArgumentException("Session parameters must be set!");
@@ -71,25 +83,30 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
             session.put(entry.getKey(), entry.getValue());
         }
 
-        // create authentication provider and add it session
-        String authProvider = sessionParameters.get(SessionParameter.AUTHENTICATION_PROVIDER_CLASS);
-        if (authProvider != null) {
-            Object authProviderObj = null;
+        if (authenticationProvider == null) {
+            // create authentication provider and add it session
+            String authProvider = sessionParameters.get(SessionParameter.AUTHENTICATION_PROVIDER_CLASS);
+            if (authProvider != null) {
+                Object authProviderObj = null;
 
-            try {
-                authProviderObj = Class.forName(authProvider).newInstance();
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Could not load authentication provider: " + e, e);
+                try {
+                    authProviderObj = Class.forName(authProvider).newInstance();
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Could not load authentication provider: " + e, e);
+                }
+
+                if (!(authProviderObj instanceof AbstractAuthenticationProvider)) {
+                    throw new IllegalArgumentException(
+                            "Authentication provider does not extend AbstractAuthenticationProvider!");
+                }
+
+                session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT,
+                        (AbstractAuthenticationProvider) authProviderObj);
+                ((AbstractAuthenticationProvider) authProviderObj).setSession(session);
             }
-
-            if (!(authProviderObj instanceof AbstractAuthenticationProvider)) {
-                throw new IllegalArgumentException(
-                        "Authentication provider does not extend AbstractAuthenticationProvider!");
-            }
-
-            session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT,
-                    (AbstractAuthenticationProvider) authProviderObj);
-            ((AbstractAuthenticationProvider) authProviderObj).setSession(session);
+        } else {
+            session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT, authenticationProvider);
+            authenticationProvider.setSession(session);
         }
 
         // set up caches

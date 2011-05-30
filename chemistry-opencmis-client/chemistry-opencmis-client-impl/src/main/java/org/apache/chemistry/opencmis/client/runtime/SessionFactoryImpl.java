@@ -35,7 +35,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * <p>
  * <code>
  * SessionFactory sf = new SessionFactoryImpl();<br>
- * Session s = sf.create(...);
+ * Session s = sf.createSession(...);
  * </code>
  * <p>
  * Alternative factory lookup methods:
@@ -57,14 +57,14 @@ public class SessionFactoryImpl implements SessionFactory {
 
     @SuppressWarnings("unchecked")
     public <T extends Session> T createSession(Map<String, String> parameters) {
-        SessionImpl session = new SessionImpl(parameters);
+        SessionImpl session = new SessionImpl(parameters, null, null, null);
         session.connect();
 
         return (T) session;
     }
 
     public List<Repository> getRepositories(Map<String, String> parameters) {
-        CmisBinding binding = CmisBindingHelper.createBinding(parameters);
+        CmisBinding binding = CmisBindingHelper.createBinding(parameters, null);
 
         List<RepositoryInfo> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(null);
 

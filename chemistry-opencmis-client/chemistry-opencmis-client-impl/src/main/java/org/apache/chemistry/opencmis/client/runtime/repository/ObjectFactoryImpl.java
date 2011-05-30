@@ -66,6 +66,7 @@ import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
@@ -111,6 +112,12 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
      */
     protected BindingsObjectFactory getBindingsObjectFactory() {
         return session.getBinding().getObjectFactory();
+    }
+
+    // repository info
+
+    public RepositoryInfo convertRepositoryInfo(RepositoryInfo repositoryInfo) {
+        return repositoryInfo;
     }
 
     // ACL and ACE

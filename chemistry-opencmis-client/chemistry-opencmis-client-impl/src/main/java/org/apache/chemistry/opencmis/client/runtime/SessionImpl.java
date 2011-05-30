@@ -44,6 +44,7 @@ import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
+import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.ObjectFactoryImpl;
@@ -113,9 +114,14 @@ public class SessionImpl implements Session, Serializable {
     private Locale locale = null;
 
     /*
-     * helper factory (serializable)
+     * Object factory (serializable)
      */
     private final ObjectFactory objectFactory;
+
+    /*
+     * Authentication provider (serializable)
+     */
+    private final AbstractAuthenticationProvider authenticationProvider;
 
     /*
      * Object cache (serializable)
@@ -136,7 +142,8 @@ public class SessionImpl implements Session, Serializable {
     /**
      * Constructor.
      */
-    public SessionImpl(Map<String, String> parameters) {
+    public SessionImpl(Map<String, String> parameters, ObjectFactory objectFactory,
+            AbstractAuthenticationProvider authenticationProvider, Cache cache) {
         if (parameters == null) {
             throw new IllegalArgumentException("No parameters provided!");
         }
@@ -144,16 +151,11 @@ public class SessionImpl implements Session, Serializable {
         this.parameters = parameters;
         this.locale = determineLocale(parameters);
 
-        this.objectFactory = createObjectFactory();
-        this.cache = createCache();
+        this.objectFactory = (objectFactory == null ? createObjectFactory() : objectFactory);
+        this.authenticationProvider = authenticationProvider;
+        this.cache = (cache == null ? createCache() : cache);
 
         cachePathOmit = Boolean.parseBoolean(parameters.get(SessionParameter.CACHE_PATH_OMIT));
-    }
-
-    private static String determineRepositoryId(Map<String, String> parameters) {
-        String repositoryId = parameters.get(SessionParameter.REPOSITORY_ID);
-        // if null then the provider will return a repository id (lazy)
-        return repositoryId;
     }
 
     private static Locale determineLocale(Map<String, String> parameters) {
@@ -598,15 +600,16 @@ public class SessionImpl implements Session, Serializable {
     public void connect() {
         lock.writeLock().lock();
         try {
-            this.binding = CmisBindingHelper.createBinding(this.parameters);
+            this.binding = CmisBindingHelper.createBinding(parameters, authenticationProvider);
 
             /* get initial repository id from session parameter */
-            String repositoryId = determineRepositoryId(this.parameters);
+            String repositoryId = parameters.get(SessionParameter.REPOSITORY_ID);
             if (repositoryId == null) {
                 throw new IllegalStateException("Repository Id is not set!");
             }
 
-            repositoryInfo = getBinding().getRepositoryService().getRepositoryInfo(repositoryId, null);
+            repositoryInfo = objectFactory.convertRepositoryInfo(getBinding().getRepositoryService().getRepositoryInfo(
+                    repositoryId, null));
         } finally {
             lock.writeLock().unlock();
         }

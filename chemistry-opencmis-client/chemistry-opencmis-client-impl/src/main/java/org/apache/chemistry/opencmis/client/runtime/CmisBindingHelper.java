@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.runtime;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
+import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -37,7 +38,8 @@ public class CmisBindingHelper {
     /**
      * Creates a {@link CmisBinding} object.
      */
-    public static CmisBinding createBinding(Map<String, String> parameters) {
+    public static CmisBinding createBinding(Map<String, String> parameters,
+            AbstractAuthenticationProvider authenticationProvider) {
         if (parameters == null || parameters.isEmpty()) {
             throw new CmisRuntimeException("Session parameter not set!");
         }
@@ -50,13 +52,13 @@ public class CmisBindingHelper {
 
         switch (bt) {
         case ATOMPUB:
-            return createAtomPubBinding(parameters);
+            return createAtomPubBinding(parameters, authenticationProvider);
         case WEBSERVICES:
-            return createWebServiceBinding(parameters);
+            return createWebServiceBinding(parameters, authenticationProvider);
         case LOCAL:
             return createLocalBinding(parameters);
         case CUSTOM:
-            return createCustomBinding(parameters);
+            return createCustomBinding(parameters, authenticationProvider);
         default:
             throw new CmisRuntimeException("Ambiguous session parameter: " + parameters);
         }
@@ -65,9 +67,10 @@ public class CmisBindingHelper {
     /**
      * Creates a binding with custom parameters.
      */
-    private static CmisBinding createCustomBinding(Map<String, String> parameters) {
+    private static CmisBinding createCustomBinding(Map<String, String> parameters,
+            AbstractAuthenticationProvider authenticationProvider) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisBinding(parameters);
+        CmisBinding binding = factory.createCmisBinding(parameters, authenticationProvider);
 
         return binding;
     }
@@ -75,9 +78,10 @@ public class CmisBindingHelper {
     /**
      * Creates a Web Services binding.
      */
-    private static CmisBinding createWebServiceBinding(Map<String, String> parameters) {
+    private static CmisBinding createWebServiceBinding(Map<String, String> parameters,
+            AbstractAuthenticationProvider authenticationProvider) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisWebServicesBinding(parameters);
+        CmisBinding binding = factory.createCmisWebServicesBinding(parameters, authenticationProvider);
 
         return binding;
     }
@@ -85,9 +89,10 @@ public class CmisBindingHelper {
     /**
      * Creates an AtomPub binding.
      */
-    private static CmisBinding createAtomPubBinding(Map<String, String> parameters) {
+    private static CmisBinding createAtomPubBinding(Map<String, String> parameters,
+            AbstractAuthenticationProvider authenticationProvider) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisAtomPubBinding(parameters);
+        CmisBinding binding = factory.createCmisAtomPubBinding(parameters, authenticationProvider);
 
         return binding;
     }
