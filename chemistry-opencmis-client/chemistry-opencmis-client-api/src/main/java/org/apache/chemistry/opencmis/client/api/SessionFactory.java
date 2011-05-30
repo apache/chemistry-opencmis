@@ -21,6 +21,9 @@ package org.apache.chemistry.opencmis.client.api;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+
 /**
  * Entry point into the OpenCMIS Client API. The <code>SessionFactory</code>
  * class implementation needs to be retrieved by any runtime lookup call. This
@@ -54,22 +57,25 @@ import java.util.Map;
 public interface SessionFactory {
 
     /**
-     * Obtain a new session using parameter configuration.
+     * Creates a new session.
      * 
      * @param T
-     *            A from the {@code Session} interface derived sub type
+     *            a class implementing the {@link Session} interface
      * @param parameters
      *            a {@code Map} of name/value pairs with parameters for the
-     *            session. See class {@code SessionParameter}.
-     * @return a {@code Session} to the CMIS repository specified by the {@code
-     *         parameters}.
+     *            session
+     * @return a {@link Session} connected to the CMIS repository
+     * @throws CmisBaseException
+     *             if the connection could not be established
+     * 
+     * @see SessionParameter
      */
-    <T extends Session> T createSession(Map<String, String> parameters);
+    Session createSession(Map<String, String> parameters);
 
     /**
      * Returns all repositories that are available at the endpoint. See
-     * {@link #createSession(Map)} for parameter details. The parameter {@code
-     * SessionParameter.REPOSITORY_ID} should not be set.
+     * {@link #createSession(Map)} for parameter details. The parameter
+     * {@code SessionParameter.REPOSITORY_ID} should not be set.
      */
     List<Repository> getRepositories(Map<String, String> parameters);
 }

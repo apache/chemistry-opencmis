@@ -22,11 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
+import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
+import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.repository.RepositoryImpl;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
@@ -55,22 +60,59 @@ public class SessionFactoryImpl implements SessionFactory {
         return new SessionFactoryImpl();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Session> T createSession(Map<String, String> parameters) {
-        SessionImpl session = new SessionImpl(parameters, null, null, null);
+    public Session createSession(Map<String, String> parameters) {
+        return createSession(parameters, null, null, null);
+    }
+
+    /**
+     * Creates a new session. The provided object factory, authentication
+     * provider and cache instance override the values in the session parameters
+     * if they are not <code>null</code>.
+     * 
+     * @param T
+     *            a class implementing the {@link Session} interface
+     * @param parameters
+     *            a {@code Map} of name/value pairs with parameters for the
+     *            session
+     * @param objectFactory
+     *            an object factory instance
+     * @param authenticationProvider
+     *            an authentication provider instance
+     * @param cache
+     *            a cache instance
+     * @return a {@link Session} connected to the CMIS repository
+     * @throws CmisBaseException
+     *             if the connection could not be established
+     * 
+     * @see SessionParameter
+     */
+    public Session createSession(Map<String, String> parameters, ObjectFactory objectFactory,
+            AbstractAuthenticationProvider authenticationProvider, Cache cache) {
+        SessionImpl session = new SessionImpl(parameters, objectFactory, authenticationProvider, cache);
         session.connect();
 
-        return (T) session;
+        return session;
     }
 
     public List<Repository> getRepositories(Map<String, String> parameters) {
+        return getRepositories(parameters, null, null, null);
+    }
+
+    /**
+     * Returns all repositories that are available at the endpoint. See
+     * {@link #createSession(Map, ObjectFactory, AbstractAuthenticationProvider, Cache)}
+     * for parameter details. The parameter
+     * {@code SessionParameter.REPOSITORY_ID} should not be set.
+     */
+    public List<Repository> getRepositories(Map<String, String> parameters, ObjectFactory objectFactory,
+            AbstractAuthenticationProvider authenticationProvider, Cache cache) {
         CmisBinding binding = CmisBindingHelper.createBinding(parameters, null);
 
         List<RepositoryInfo> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(null);
 
         List<Repository> result = new ArrayList<Repository>();
         for (RepositoryInfo data : repositoryInfos) {
-            result.add(new RepositoryImpl(data, parameters, this));
+            result.add(new RepositoryImpl(data, parameters, this, objectFactory, authenticationProvider, cache));
         }
 
         return result;
