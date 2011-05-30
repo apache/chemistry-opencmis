@@ -343,7 +343,7 @@ public class ClientHelper {
             return "";
         }
 
-        InputStream stream = file.getClass().getResourceAsStream(file);
+        InputStream stream = ClientHelper.class.getResourceAsStream(file);
         if (stream == null) {
             return "";
         } else {
@@ -383,7 +383,7 @@ public class ClientHelper {
     }
 
     public static List<FileEntry> readFileProperties(String propertiesFile, String path) {
-        InputStream stream = propertiesFile.getClass().getResourceAsStream(propertiesFile);
+        InputStream stream = ClientHelper.class.getResourceAsStream(propertiesFile);
         if (stream == null) {
             return null;
         }
