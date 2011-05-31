@@ -24,7 +24,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomBase;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
@@ -60,7 +60,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
     /**
      * Constructor.
      */
-    public NavigationServiceImpl(Session session) {
+    public NavigationServiceImpl(BindingSession session) {
         setSession(session);
     }
 

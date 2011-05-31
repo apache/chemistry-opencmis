@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
@@ -48,7 +48,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
     /**
      * Constructor.
      */
-    public PolicyServiceImpl(Session session) {
+    public PolicyServiceImpl(BindingSession session) {
         setSession(session);
     }
 

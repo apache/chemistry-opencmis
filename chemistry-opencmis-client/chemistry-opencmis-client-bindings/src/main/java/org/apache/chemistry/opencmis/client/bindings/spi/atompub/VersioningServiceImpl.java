@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
@@ -56,7 +56,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
     /**
      * Constructor.
      */
-    public VersioningServiceImpl(Session session) {
+    public VersioningServiceImpl(BindingSession session) {
         setSession(session);
     }
 

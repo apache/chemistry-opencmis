@@ -25,7 +25,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.setExtensionV
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -45,7 +45,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
     /**
      * Constructor.
      */
-    public PolicyServiceImpl(Session session, AbstractPortProvider portProvider) {
+    public PolicyServiceImpl(BindingSession session, AbstractPortProvider portProvider) {
         setSession(session);
         this.portProvider = portProvider;
     }

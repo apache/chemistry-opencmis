@@ -20,7 +20,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
@@ -31,7 +31,7 @@ public class MultiFilingServiceImpl extends AbstractLocalService implements Mult
     /**
      * Constructor.
      */
-    public MultiFilingServiceImpl(Session session, CmisServiceFactory factory) {
+    public MultiFilingServiceImpl(BindingSession session, CmisServiceFactory factory) {
         setSession(session);
         setServiceFactory(factory);
     }

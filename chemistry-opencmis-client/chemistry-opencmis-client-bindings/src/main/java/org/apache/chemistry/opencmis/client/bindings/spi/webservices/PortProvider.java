@@ -29,7 +29,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.MTOMFeature;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
@@ -66,7 +66,7 @@ public class PortProvider extends AbstractPortProvider {
     /**
      * Constructor.
      */
-    public PortProvider(Session session) {
+    public PortProvider(BindingSession session) {
         this.session = session;
 
         useCompression = false;

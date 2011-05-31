@@ -30,7 +30,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
@@ -75,7 +75,7 @@ public abstract class AbstractPortProvider {
 
     protected static final int CHUNK_SIZE = 64 * 1024;
 
-    protected Session session;
+    protected BindingSession session;
 
     /**
      * Return the Repository Service port object.

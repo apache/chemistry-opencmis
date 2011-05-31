@@ -23,7 +23,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -45,7 +45,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
     /**
      * Constructor.
      */
-    public ObjectServiceImpl(Session session, CmisServiceFactory factory) {
+    public ObjectServiceImpl(BindingSession session, CmisServiceFactory factory) {
         setSession(session);
         setServiceFactory(factory);
     }

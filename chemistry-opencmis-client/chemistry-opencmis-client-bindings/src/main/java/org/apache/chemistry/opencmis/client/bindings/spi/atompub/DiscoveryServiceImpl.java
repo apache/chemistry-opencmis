@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
@@ -52,7 +52,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
     /**
      * Constructor.
      */
-    public DiscoveryServiceImpl(Session session) {
+    public DiscoveryServiceImpl(BindingSession session) {
         setSession(session);
     }
 

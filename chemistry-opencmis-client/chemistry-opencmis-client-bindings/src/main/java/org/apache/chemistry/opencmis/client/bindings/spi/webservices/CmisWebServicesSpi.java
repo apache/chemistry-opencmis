@@ -18,9 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
-import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpiFactory;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
@@ -36,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * CMIS Web Services SPI implementation.
  */
-public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
+public class CmisWebServicesSpi implements CmisSpi {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,10 +54,7 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
     /**
      * Constructor.
      */
-    public CmisWebServicesSpi() {
-    }
-
-    public CmisSpi getSpiInstance(Session session) {
+    public CmisWebServicesSpi(BindingSession session) {
         if (log.isDebugEnabled()) {
             log.debug("Initializing Web Services SPI...");
         }
@@ -74,8 +70,6 @@ public class CmisWebServicesSpi implements CmisSpiFactory, CmisSpi {
         relationshipService = new RelationshipServiceImpl(session, portProvider);
         policyService = new PolicyServiceImpl(session, portProvider);
         aclService = new AclServiceImpl(session, portProvider);
-
-        return this;
     }
 
     public RepositoryService getRepositoryService() {

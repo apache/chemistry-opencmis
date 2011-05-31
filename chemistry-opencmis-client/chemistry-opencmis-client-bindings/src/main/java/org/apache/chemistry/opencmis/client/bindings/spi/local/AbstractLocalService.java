@@ -24,7 +24,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -35,7 +35,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
  */
 public abstract class AbstractLocalService {
 
-    private Session session;
+    private BindingSession session;
     private CmisServiceFactory factory;
 
     private String user;
@@ -44,7 +44,7 @@ public abstract class AbstractLocalService {
     /**
      * Sets the current session.
      */
-    protected void setSession(Session session) {
+    protected void setSession(BindingSession session) {
         this.session = session;
 
         Object userObj = session.get(SessionParameter.USER);
@@ -57,7 +57,7 @@ public abstract class AbstractLocalService {
     /**
      * Gets the current session.
      */
-    protected Session getSession() {
+    protected BindingSession getSession() {
         return session;
     }
 

@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
@@ -71,7 +71,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     /**
      * Constructor.
      */
-    public ObjectServiceImpl(Session session) {
+    public ObjectServiceImpl(BindingSession session) {
         setSession(session);
     }
 

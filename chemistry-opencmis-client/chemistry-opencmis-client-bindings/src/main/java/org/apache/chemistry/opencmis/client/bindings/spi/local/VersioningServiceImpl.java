@@ -22,7 +22,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
@@ -39,7 +39,7 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
     /**
      * Constructor.
      */
-    public VersioningServiceImpl(Session session, CmisServiceFactory factory) {
+    public VersioningServiceImpl(BindingSession session, CmisServiceFactory factory) {
         setSession(session);
         setServiceFactory(factory);
     }

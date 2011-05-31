@@ -18,10 +18,11 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.impl;
 
+import java.lang.reflect.Constructor;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
-import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpiFactory;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -53,7 +54,7 @@ public final class CmisBindingsHelper {
      * 
      * @return the SPI object
      */
-    public static CmisSpi getSPI(Session session) {
+    public static CmisSpi getSPI(BindingSession session) {
         // fetch from session
         CmisSpi spi = (CmisSpi) session.get(SPI_OBJECT);
         if (spi != null) {
@@ -70,18 +71,9 @@ public final class CmisBindingsHelper {
 
             // ok, we have to create it...
             try {
-                String spiFactoryName = (String) session.get(SessionParameter.BINDING_SPI_CLASS);
-                Class<?> spiFactoryClass = Class.forName(spiFactoryName);
-                Object spiFactory = spiFactoryClass.newInstance();
-
-                if (!(spiFactory instanceof CmisSpiFactory)) {
-                    throw new CmisRuntimeException("Not a CMISSPIFactory class!");
-                }
-
-                spi = ((CmisSpiFactory) spiFactory).getSpiInstance(session);
-                if (spi == null) {
-                    throw new CmisRuntimeException("SPI factory returned null!");
-                }
+                String spiName = (String) session.get(SessionParameter.BINDING_SPI_CLASS);
+                Constructor<?> c = Class.forName(spiName).getConstructor(BindingSession.class);
+                spi = (CmisSpi) c.newInstance(session);
             } catch (CmisBaseException e) {
                 throw e;
             } catch (Exception e) {
@@ -101,21 +93,21 @@ public final class CmisBindingsHelper {
      * Returns the authentication provider from the session or <code>null</code>
      * if no authentication provider is set.
      */
-    public static AbstractAuthenticationProvider getAuthenticationProvider(Session session) {
+    public static AbstractAuthenticationProvider getAuthenticationProvider(BindingSession session) {
         return (AbstractAuthenticationProvider) session.get(AUTHENTICATION_PROVIDER_OBJECT);
     }
 
     /**
      * Returns the repository info cache from the session.
      */
-    public static RepositoryInfoCache getRepositoryInfoCache(Session session) {
+    public static RepositoryInfoCache getRepositoryInfoCache(BindingSession session) {
         return (RepositoryInfoCache) session.get(REPOSITORY_INFO_CACHE);
     }
 
     /**
      * Returns the type definition cache from the session.
      */
-    public static TypeDefinitionCache getTypeDefinitionCache(Session session) {
+    public static TypeDefinitionCache getTypeDefinitionCache(BindingSession session) {
         return (TypeDefinitionCache) session.get(TYPE_DEFINTION_CACHE);
     }
 }

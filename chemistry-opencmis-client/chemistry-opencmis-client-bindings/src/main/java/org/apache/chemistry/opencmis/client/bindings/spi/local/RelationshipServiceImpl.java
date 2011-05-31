@@ -22,7 +22,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -35,7 +35,7 @@ public class RelationshipServiceImpl extends AbstractLocalService implements Rel
     /**
      * Constructor.
      */
-    public RelationshipServiceImpl(Session session, CmisServiceFactory factory) {
+    public RelationshipServiceImpl(BindingSession session, CmisServiceFactory factory) {
         setSession(session);
         setServiceFactory(factory);
     }

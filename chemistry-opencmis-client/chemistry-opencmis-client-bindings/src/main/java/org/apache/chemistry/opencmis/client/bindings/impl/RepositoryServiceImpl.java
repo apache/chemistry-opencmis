@@ -24,7 +24,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -41,12 +41,12 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final Session session;
+    private final BindingSession session;
 
     /**
      * Constructor.
      */
-    public RepositoryServiceImpl(Session session) {
+    public RepositoryServiceImpl(BindingSession session) {
         this.session = session;
     }
 

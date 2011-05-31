@@ -24,7 +24,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.setHolderValu
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -46,7 +46,7 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
     /**
      * Constructor.
      */
-    public DiscoveryServiceImpl(Session session, AbstractPortProvider portProvider) {
+    public DiscoveryServiceImpl(BindingSession session, AbstractPortProvider portProvider) {
         setSession(session);
         this.portProvider = portProvider;
     }

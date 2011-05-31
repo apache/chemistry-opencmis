@@ -24,12 +24,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 
 /**
  * CMIS binding session implementation.
  */
-public class SessionImpl implements Session {
+public class SessionImpl implements BindingSession {
 
     private static final long serialVersionUID = 1L;
 

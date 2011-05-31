@@ -25,7 +25,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -48,7 +48,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
     /**
      * Constructor.
      */
-    public RepositoryServiceImpl(Session session, AbstractPortProvider portProvider) {
+    public RepositoryServiceImpl(BindingSession session, AbstractPortProvider portProvider) {
         setSession(session);
         this.portProvider = portProvider;
     }

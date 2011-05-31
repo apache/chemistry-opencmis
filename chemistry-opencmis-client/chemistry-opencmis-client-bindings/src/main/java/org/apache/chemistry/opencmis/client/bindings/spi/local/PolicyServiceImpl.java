@@ -22,7 +22,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -34,7 +34,7 @@ public class PolicyServiceImpl extends AbstractLocalService implements PolicySer
     /**
      * Constructor.
      */
-    public PolicyServiceImpl(Session session, CmisServiceFactory factory) {
+    public PolicyServiceImpl(BindingSession session, CmisServiceFactory factory) {
         setSession(session);
         setServiceFactory(factory);
     }

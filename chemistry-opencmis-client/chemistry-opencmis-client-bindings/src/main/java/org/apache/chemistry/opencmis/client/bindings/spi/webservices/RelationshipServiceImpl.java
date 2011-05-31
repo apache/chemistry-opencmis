@@ -22,7 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -42,7 +42,7 @@ public class RelationshipServiceImpl extends AbstractWebServicesService implemen
     /**
      * Constructor.
      */
-    public RelationshipServiceImpl(Session session, AbstractPortProvider portProvider) {
+    public RelationshipServiceImpl(BindingSession session, AbstractPortProvider portProvider) {
         setSession(session);
         this.portProvider = portProvider;
     }

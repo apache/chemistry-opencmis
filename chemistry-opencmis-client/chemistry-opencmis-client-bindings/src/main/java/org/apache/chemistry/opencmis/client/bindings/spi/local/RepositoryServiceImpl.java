@@ -23,7 +23,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -41,7 +41,7 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
     /**
      * Constructor.
      */
-    public RepositoryServiceImpl(Session session, CmisServiceFactory factory) {
+    public RepositoryServiceImpl(BindingSession session, CmisServiceFactory factory) {
         setSession(session);
         setServiceFactory(factory);
     }

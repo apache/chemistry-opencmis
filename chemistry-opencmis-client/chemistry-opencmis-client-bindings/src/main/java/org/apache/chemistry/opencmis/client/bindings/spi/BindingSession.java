@@ -24,7 +24,7 @@ import java.util.Collection;
 /**
  * CMIS provider session interface.
  */
-public interface Session extends Serializable {
+public interface BindingSession extends Serializable {
 
     /**
      * Returns all keys.

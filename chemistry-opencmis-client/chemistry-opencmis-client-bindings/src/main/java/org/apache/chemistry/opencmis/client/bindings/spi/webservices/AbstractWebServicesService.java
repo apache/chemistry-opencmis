@@ -28,7 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
@@ -51,19 +51,19 @@ import org.w3c.dom.Node;
  */
 public abstract class AbstractWebServicesService {
 
-    private Session fSession;
+    private BindingSession fSession;
 
     /**
      * Sets the current session.
      */
-    protected void setSession(Session session) {
+    protected void setSession(BindingSession session) {
         fSession = session;
     }
 
     /**
      * Gets the current session.
      */
-    protected Session getSession() {
+    protected BindingSession getSession() {
         return fSession;
     }
 

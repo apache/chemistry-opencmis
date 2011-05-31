@@ -20,7 +20,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
@@ -33,7 +33,7 @@ public class AclServiceImpl extends AbstractLocalService implements AclService {
     /**
      * Constructor.
      */
-    public AclServiceImpl(Session session, CmisServiceFactory factory) {
+    public AclServiceImpl(BindingSession session, CmisServiceFactory factory) {
         setSession(session);
         setServiceFactory(factory);
     }

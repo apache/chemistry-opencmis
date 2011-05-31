@@ -23,9 +23,8 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
-import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpiFactory;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
@@ -44,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * * CMIS local SPI implementation.
  */
-public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
+public class CmisLocalSpi implements CmisSpi {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,10 +64,7 @@ public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
     /**
      * Constructor.
      */
-    public CmisLocalSpi() {
-    }
-
-    public CmisSpi getSpiInstance(Session session) {
+    public CmisLocalSpi(BindingSession session) {
         if (log.isDebugEnabled()) {
             log.debug("Initializing local SPI...");
         }
@@ -104,8 +100,6 @@ public class CmisLocalSpi implements CmisSpiFactory, CmisSpi {
         multiFilingService = new MultiFilingServiceImpl(session, factory);
         relationshipService = new RelationshipServiceImpl(session, factory);
         policyService = new PolicyServiceImpl(session, factory);
-
-        return this;
     }
 
     public RepositoryService getRepositoryService() {

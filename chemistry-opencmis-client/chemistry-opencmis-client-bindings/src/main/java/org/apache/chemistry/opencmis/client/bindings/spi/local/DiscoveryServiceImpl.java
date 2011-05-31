@@ -22,7 +22,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -36,7 +36,7 @@ public class DiscoveryServiceImpl extends AbstractLocalService implements Discov
     /**
      * Constructor.
      */
-    public DiscoveryServiceImpl(Session session, CmisServiceFactory factory) {
+    public DiscoveryServiceImpl(BindingSession session, CmisServiceFactory factory) {
         setSession(session);
         setServiceFactory(factory);
     }

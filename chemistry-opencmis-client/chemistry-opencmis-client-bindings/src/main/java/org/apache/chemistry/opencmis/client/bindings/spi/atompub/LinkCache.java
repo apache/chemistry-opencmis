@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.client.bindings.cache.impl.CacheImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.ContentTypeCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.LruCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -71,7 +71,7 @@ public class LinkCache implements Serializable {
     /**
      * Constructor.
      */
-    public LinkCache(Session session) {
+    public LinkCache(BindingSession session) {
         int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES, CACHE_SIZE_REPOSITORIES);
         if (repCount < 1) {
             repCount = CACHE_SIZE_REPOSITORIES;

@@ -23,7 +23,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.local;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
@@ -40,7 +40,7 @@ public class NavigationServiceImpl extends AbstractLocalService implements Navig
     /**
      * Constructor.
      */
-    public NavigationServiceImpl(Session session, CmisServiceFactory factory) {
+    public NavigationServiceImpl(BindingSession session, CmisServiceFactory factory) {
         setSession(session);
         setServiceFactory(factory);
     }

@@ -33,19 +33,19 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
 
     private static final long serialVersionUID = 1L;
 
-    private Session session;
+    private BindingSession session;
 
     /**
-     * Sets the {@link Session} the authentication provider lives in.
+     * Sets the {@link BindingSession} the authentication provider lives in.
      */
-    public void setSession(Session session) {
+    public void setSession(BindingSession session) {
         this.session = session;
     }
 
     /**
-     * Returns {@link Session}.
+     * Returns {@link BindingSession}.
      */
-    public Session getSession() {
+    public BindingSession getSession() {
         return session;
     }
 

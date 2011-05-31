@@ -24,7 +24,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
@@ -50,7 +50,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     /**
      * Constructor.
      */
-    public NavigationServiceImpl(Session session, AbstractPortProvider portProvider) {
+    public NavigationServiceImpl(BindingSession session, AbstractPortProvider portProvider) {
         setSession(session);
         this.portProvider = portProvider;
     }

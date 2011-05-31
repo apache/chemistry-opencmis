@@ -28,7 +28,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -61,7 +61,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
     /**
      * Constructor.
      */
-    public ObjectServiceImpl(Session session, AbstractPortProvider portProvider) {
+    public ObjectServiceImpl(BindingSession session, AbstractPortProvider portProvider) {
         setSession(session);
         this.portProvider = portProvider;
     }

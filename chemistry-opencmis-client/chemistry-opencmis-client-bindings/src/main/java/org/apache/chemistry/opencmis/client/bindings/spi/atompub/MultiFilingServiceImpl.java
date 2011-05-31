@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
 import java.io.OutputStream;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -36,7 +36,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
     /**
      * Constructor.
      */
-    public MultiFilingServiceImpl(Session session) {
+    public MultiFilingServiceImpl(BindingSession session) {
         setSession(session);
     }
 

@@ -27,7 +27,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.setHolderValu
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
@@ -53,7 +53,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
     /**
      * Constructor.
      */
-    public VersioningServiceImpl(Session session, AbstractPortProvider portProvider) {
+    public VersioningServiceImpl(BindingSession session, AbstractPortProvider portProvider) {
         setSession(session);
         this.portProvider = portProvider;
     }

@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
@@ -46,7 +46,7 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Session session;
+    private BindingSession session;
     private final BindingsObjectFactory objectFactory;
     private final RepositoryService repositoryServiceWrapper;
 

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomBase;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
@@ -85,19 +85,19 @@ public class AbstractAtomPubService implements LinkAccess {
     protected static final String NAME_RELATIVE_PATH_SEGMENT = "relativePathSegment";
     protected static final String NAME_NUM_ITEMS = "numItems";
 
-    private Session session;
+    private BindingSession session;
 
     /**
      * Sets the current session.
      */
-    protected void setSession(Session session) {
+    protected void setSession(BindingSession session) {
         this.session = session;
     }
 
     /**
      * Gets the current session.
      */
-    protected Session getSession() {
+    protected BindingSession getSession() {
         return session;
     }
 

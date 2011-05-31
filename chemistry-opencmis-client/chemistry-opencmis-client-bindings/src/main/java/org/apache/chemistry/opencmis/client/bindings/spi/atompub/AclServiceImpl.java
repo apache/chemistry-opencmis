@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
@@ -37,7 +37,7 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
     /**
      * Constructor.
      */
-    public AclServiceImpl(Session session) {
+    public AclServiceImpl(BindingSession session) {
         setSession(session);
     }
 

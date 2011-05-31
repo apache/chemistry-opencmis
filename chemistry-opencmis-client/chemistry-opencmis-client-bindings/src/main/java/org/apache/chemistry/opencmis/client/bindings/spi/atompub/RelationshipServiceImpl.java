@@ -23,7 +23,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
@@ -46,7 +46,7 @@ public class RelationshipServiceImpl extends AbstractAtomPubService implements R
     /**
      * Constructor.
      */
-    public RelationshipServiceImpl(Session session) {
+    public RelationshipServiceImpl(BindingSession session) {
         setSession(session);
     }
 

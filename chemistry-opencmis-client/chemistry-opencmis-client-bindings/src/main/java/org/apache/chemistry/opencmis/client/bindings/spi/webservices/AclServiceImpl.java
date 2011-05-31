@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
@@ -40,7 +40,7 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
     /**
      * Constructor.
      */
-    public AclServiceImpl(Session session, AbstractPortProvider portProvider) {
+    public AclServiceImpl(BindingSession session, AbstractPortProvider portProvider) {
         setSession(session);
         this.portProvider = portProvider;
     }

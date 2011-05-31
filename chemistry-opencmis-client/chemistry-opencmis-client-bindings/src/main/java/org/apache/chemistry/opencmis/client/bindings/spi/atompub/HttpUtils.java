@@ -35,7 +35,7 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
@@ -56,29 +56,29 @@ public class HttpUtils {
     private HttpUtils() {
     }
 
-    public static Response invokeGET(UrlBuilder url, Session session) {
+    public static Response invokeGET(UrlBuilder url, BindingSession session) {
         return invoke(url, "GET", null, null, null, session, null, null);
     }
 
-    public static Response invokeGET(UrlBuilder url, Session session, BigInteger offset, BigInteger length) {
+    public static Response invokeGET(UrlBuilder url, BindingSession session, BigInteger offset, BigInteger length) {
         return invoke(url, "GET", null, null, null, session, offset, length);
     }
 
-    public static Response invokePOST(UrlBuilder url, String contentType, Output writer, Session session) {
+    public static Response invokePOST(UrlBuilder url, String contentType, Output writer, BindingSession session) {
         return invoke(url, "POST", contentType, null, writer, session, null, null);
     }
 
     public static Response invokePUT(UrlBuilder url, String contentType, Map<String, String> headers, Output writer,
-            Session session) {
+            BindingSession session) {
         return invoke(url, "PUT", contentType, headers, writer, session, null, null);
     }
 
-    public static Response invokeDELETE(UrlBuilder url, Session session) {
+    public static Response invokeDELETE(UrlBuilder url, BindingSession session) {
         return invoke(url, "DELETE", null, null, null, session, null, null);
     }
 
     private static Response invoke(UrlBuilder url, String method, String contentType, Map<String, String> headers,
-            Output writer, Session session, BigInteger offset, BigInteger length) {
+            Output writer, BindingSession session, BigInteger offset, BigInteger length) {
         try {
             // log before connect
             if (log.isDebugEnabled()) {

@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 /**
  * Default factory for a CMIS binding instance.
  */
-public final class CmisBindingFactory {
+public class CmisBindingFactory {
 
     /** Default CMIS AtomPub binding SPI implementation */
     public static final String BINDING_SPI_ATOMPUB = "org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubSpi";
@@ -46,9 +46,9 @@ public final class CmisBindingFactory {
     private Map<String, String> defaults;
 
     /**
-     * Private constructor -- it's a factory.
+     * Constructor.
      */
-    private CmisBindingFactory() {
+    public CmisBindingFactory() {
         defaults = createNewDefaultParameters();
     }
 
