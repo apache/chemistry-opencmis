@@ -55,7 +55,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
  * </blockquote>
  * </p>
  */
-public interface QueryStatement {
+public interface QueryStatement extends Cloneable {
 
     /**
      * Sets the designated parameter to the query name of the given type id.

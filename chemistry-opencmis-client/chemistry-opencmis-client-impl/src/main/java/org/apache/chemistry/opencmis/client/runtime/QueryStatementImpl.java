@@ -327,6 +327,19 @@ public class QueryStatementImpl implements QueryStatement {
         return session.query(toQueryString(), searchAllVersions, context);
     }
 
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        QueryStatementImpl qs = new QueryStatementImpl(session, statement);
+        qs.parametersMap.putAll(parametersMap);
+
+        return qs;
+    }
+
+    @Override
+    public String toString() {
+        return toQueryString();
+    }
+
     // --- internal ---
 
     private static String escape(String str) {
