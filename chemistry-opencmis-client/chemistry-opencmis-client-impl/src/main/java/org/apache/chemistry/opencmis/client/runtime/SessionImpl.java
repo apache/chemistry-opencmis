@@ -644,9 +644,6 @@ public class SessionImpl implements Session, Serializable {
 
     public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
-        if ((folderId != null) && (folderId.getId() == null)) {
-            throw new IllegalArgumentException("Folder Id must be set!");
-        }
         if ((properties == null) || (properties.isEmpty())) {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
@@ -718,9 +715,6 @@ public class SessionImpl implements Session, Serializable {
 
     public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
             List<Ace> addAces, List<Ace> removeAces) {
-        if ((folderId != null) && (folderId.getId() == null)) {
-            throw new IllegalArgumentException("Folder Id must be set!");
-        }
         if ((properties == null) || (properties.isEmpty())) {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
