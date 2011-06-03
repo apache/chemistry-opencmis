@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisInvalidArgumentException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "invalidArgument";
 
     public CmisInvalidArgumentException() {
         super();
@@ -61,6 +62,6 @@ public class CmisInvalidArgumentException extends CmisBaseException {
     
     @Override
     public String getExceptionName() {
-        return "invalidArgument";
+        return EXCEPTION_NAME;
     }
 }

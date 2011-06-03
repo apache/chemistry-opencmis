@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisPermissionDeniedException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "permissionDenied";
 
     public CmisPermissionDeniedException() {
         super();
@@ -61,6 +62,6 @@ public class CmisPermissionDeniedException extends CmisBaseException {
     
     @Override
     public String getExceptionName() {
-        return "permissionDenied";
+        return EXCEPTION_NAME;
     }
 }

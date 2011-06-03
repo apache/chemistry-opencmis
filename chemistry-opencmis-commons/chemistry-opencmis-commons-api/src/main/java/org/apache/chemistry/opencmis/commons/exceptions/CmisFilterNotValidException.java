@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisFilterNotValidException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "filterNotValid";
 
     public CmisFilterNotValidException() {
         super();
@@ -46,7 +47,7 @@ public class CmisFilterNotValidException extends CmisBaseException {
     public CmisFilterNotValidException(String message, BigInteger code, String errorContent) {
         super(message, code, errorContent);
     }
-    
+
     public CmisFilterNotValidException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -58,9 +59,9 @@ public class CmisFilterNotValidException extends CmisBaseException {
     public CmisFilterNotValidException(String message) {
         super(message, BigInteger.ZERO);
     }
-    
+
     @Override
     public String getExceptionName() {
-        return "filterNotValid";
+        return EXCEPTION_NAME;
     }
 }

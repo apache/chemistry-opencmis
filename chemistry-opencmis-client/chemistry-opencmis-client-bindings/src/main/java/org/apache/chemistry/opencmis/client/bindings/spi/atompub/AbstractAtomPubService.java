@@ -51,11 +51,18 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisFilterNotValidException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
@@ -401,20 +408,71 @@ public class AbstractAtomPubService implements LinkAccess {
      * Converts a HTTP status code into an Exception.
      */
     protected CmisBaseException convertStatusCode(int code, String message, String errorContent, Throwable t) {
+        String exception = extractException(errorContent);
+        message = extractErrorMessage(message, errorContent);
+
         switch (code) {
         case 400:
+            if (CmisFilterNotValidException.EXCEPTION_NAME.equals(exception)) {
+                return new CmisFilterNotValidException(message, errorContent, t);
+            }
             return new CmisInvalidArgumentException(message, errorContent, t);
         case 404:
             return new CmisObjectNotFoundException(message, errorContent, t);
         case 403:
+            if (CmisStreamNotSupportedException.EXCEPTION_NAME.equals(exception)) {
+                return new CmisStreamNotSupportedException(message, errorContent, t);
+            }
             return new CmisPermissionDeniedException(message, errorContent, t);
         case 405:
             return new CmisNotSupportedException(message, errorContent, t);
         case 409:
+            if (CmisContentAlreadyExistsException.EXCEPTION_NAME.equals(exception)) {
+                return new CmisContentAlreadyExistsException(message, errorContent, t);
+            } else if (CmisVersioningException.EXCEPTION_NAME.equals(exception)) {
+                return new CmisVersioningException(message, errorContent, t);
+            } else if (CmisUpdateConflictException.EXCEPTION_NAME.equals(exception)) {
+                return new CmisUpdateConflictException(message, errorContent, t);
+            } else if (CmisNameConstraintViolationException.EXCEPTION_NAME.equals(exception)) {
+                return new CmisNameConstraintViolationException(message, errorContent, t);
+            }
             return new CmisConstraintException(message, errorContent, t);
         default:
+            if (CmisStorageException.EXCEPTION_NAME.equals(exception)) {
+                return new CmisStorageException(message, errorContent, t);
+            }
             return new CmisRuntimeException(message, errorContent, t);
         }
+    }
+
+    protected String extractException(String errorContent) {
+        if (errorContent == null) {
+            return null;
+        }
+
+        int beginn = errorContent.indexOf("<!--exception-->");
+        int end = errorContent.indexOf("<!--/exception-->");
+
+        if ((beginn == -1) || (end == -1) || (beginn > end)) {
+            return null;
+        }
+
+        return errorContent.substring(beginn + "<!--exception-->".length(), end);
+    }
+
+    protected String extractErrorMessage(String message, String errorContent) {
+        if (errorContent == null) {
+            return message;
+        }
+
+        int beginn = errorContent.indexOf("<!--message-->");
+        int end = errorContent.indexOf("<!--/message-->");
+
+        if ((beginn == -1) || (end == -1) || (beginn > end)) {
+            return message;
+        }
+
+        return errorContent.substring(beginn + "<!--message-->".length(), end);
     }
 
     // ---- helpers ----

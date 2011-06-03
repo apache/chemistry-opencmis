@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisStorageException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "storage";
 
     public CmisStorageException() {
         super();
@@ -61,6 +62,6 @@ public class CmisStorageException extends CmisBaseException {
 
     @Override
     public String getExceptionName() {
-        return "storage";
+        return EXCEPTION_NAME;
     }
 }

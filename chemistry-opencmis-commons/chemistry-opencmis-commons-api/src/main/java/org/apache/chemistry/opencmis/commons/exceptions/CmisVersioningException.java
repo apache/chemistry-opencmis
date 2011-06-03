@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisVersioningException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "versioning";
 
     public CmisVersioningException() {
         super();
@@ -61,6 +62,6 @@ public class CmisVersioningException extends CmisBaseException {
 
     @Override
     public String getExceptionName() {
-        return "versioning";
+        return EXCEPTION_NAME;
     }
 }

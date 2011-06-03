@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisNotSupportedException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "notSupported";
 
     public CmisNotSupportedException() {
         super();
@@ -61,6 +62,6 @@ public class CmisNotSupportedException extends CmisBaseException {
     
     @Override
     public String getExceptionName() {
-        return "notSupported";
+        return EXCEPTION_NAME;
     }
 }

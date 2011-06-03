@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisObjectNotFoundException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "objectNotFound";
 
     public CmisObjectNotFoundException() {
         super();
@@ -61,6 +62,6 @@ public class CmisObjectNotFoundException extends CmisBaseException {
     
     @Override
     public String getExceptionName() {
-        return "objectNotFound";
+        return EXCEPTION_NAME;
     }
 }

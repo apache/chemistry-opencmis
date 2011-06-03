@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisContentAlreadyExistsException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "contentAlreadyExists";
 
     public CmisContentAlreadyExistsException() {
         super();
@@ -61,6 +62,6 @@ public class CmisContentAlreadyExistsException extends CmisBaseException {
 
     @Override
     public String getExceptionName() {
-        return "contentAlreadyExists";
+        return EXCEPTION_NAME;
     }
 }

@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisConnectionException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "connection";
 
     public CmisConnectionException() {
         super();
@@ -61,6 +62,6 @@ public class CmisConnectionException extends CmisBaseException {
 
     @Override
     public String getExceptionName() {
-        return "connection";
+        return EXCEPTION_NAME;
     }
 }

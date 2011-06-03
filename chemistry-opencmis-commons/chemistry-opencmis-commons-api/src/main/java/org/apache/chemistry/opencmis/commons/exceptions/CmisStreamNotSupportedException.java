@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisStreamNotSupportedException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "streamNotSupported";
 
     public CmisStreamNotSupportedException() {
         super();
@@ -61,6 +62,6 @@ public class CmisStreamNotSupportedException extends CmisBaseException {
     
     @Override
     public String getExceptionName() {
-        return "streamNotSupported";
+        return EXCEPTION_NAME;
     }
 }

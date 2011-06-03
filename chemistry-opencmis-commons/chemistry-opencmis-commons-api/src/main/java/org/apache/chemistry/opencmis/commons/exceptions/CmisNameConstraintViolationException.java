@@ -26,6 +26,7 @@ import java.math.BigInteger;
 public class CmisNameConstraintViolationException extends CmisBaseException {
 
     private static final long serialVersionUID = 1L;
+    public static final String EXCEPTION_NAME = "nameConstraintViolation";
 
     public CmisNameConstraintViolationException() {
         super();
@@ -61,6 +62,6 @@ public class CmisNameConstraintViolationException extends CmisBaseException {
     
     @Override
     public String getExceptionName() {
-        return "nameConstraintViolation";
+        return EXCEPTION_NAME;
     }
 }
