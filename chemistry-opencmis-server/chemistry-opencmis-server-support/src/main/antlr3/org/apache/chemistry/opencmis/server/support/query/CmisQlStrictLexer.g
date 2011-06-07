@@ -126,7 +126,20 @@ fragment ExactNumLit : Digits DOT Digits | Digits DOT | DOT Digits | Digits;
 fragment ApproxNumLit : ExactNumLit ('e'|'E') Sign Digits;
 NUM_LIT : Sign (ExactNumLit | ApproxNumLit);
 
-STRING_LIT : '\'' (~'\''|'\'\'')* '\'';
+fragment QUOTE: '\'';
+fragment BACKSL: '\\';
+
+// An escape sequence is two backslashes for backslash, backslash single quote for single quote
+// or single quote single quote for single quote
+fragment
+ESC 
+	: BACKSL (QUOTE | BACKSL)
+	| QUOTE QUOTE
+	;
+	
+STRING_LIT
+    :  QUOTE ( ESC | ~(BACKSL|QUOTE) )* QUOTE
+	;
 
 WS : ( ' ' | '\t' | '\r'? '\n' )+ { $channel=HIDDEN; };
 

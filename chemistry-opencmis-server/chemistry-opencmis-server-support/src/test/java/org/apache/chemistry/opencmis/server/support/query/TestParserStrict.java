@@ -266,6 +266,23 @@ public class TestParserStrict extends AbstractParserTest{
     public void testSTRING_LIT5() throws Exception {
         testLexerFail("STRING_LIT", "'ab'c'");
     }
+    
+    @Test
+    public void testSTRING_LIT6() throws Exception {
+        testLexerOk("STRING_LIT", "'That''s'");
+        testLexerOk("STRING_LIT", "'Gus'''");
+    }
+    
+    @Test
+    public void testSTRING_LIT7() throws Exception {
+        testLexerOk("STRING_LIT", "'That\\\'s'");
+        testLexerOk("STRING_LIT", "'Gus\\\'\'");
+    }
+
+    @Test
+    public void testSTRING_LIT8() throws Exception {
+        testLexerOk("STRING_LIT", "'c:\\\\temp'");
+    }
 
 
 //    BOOL_LIT:
