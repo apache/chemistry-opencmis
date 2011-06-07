@@ -190,7 +190,7 @@
         <module>chemistry-opencmis-test/chemistry-opencmis-test-browser</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-browser-app</module>        
         <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench</module>
-        <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench-webstart</module>
+        <!-- <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench-webstart</module> -->
         <module>chemistry-opencmis-dist</module>
     </modules>
 
