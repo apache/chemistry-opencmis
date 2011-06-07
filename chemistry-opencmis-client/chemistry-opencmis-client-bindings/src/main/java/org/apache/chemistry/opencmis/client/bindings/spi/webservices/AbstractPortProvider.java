@@ -148,7 +148,8 @@ public abstract class AbstractPortProvider {
             @SuppressWarnings("unchecked")
             Map<String, List<String>> headers = (Map<String, List<String>>) bp.getResponseContext().get(
                     MessageContext.HTTP_RESPONSE_HEADERS);
-            authProvider.putResponseHeaders(url, headers);
+            Integer statusCode = (Integer) bp.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE);
+            authProvider.putResponseHeaders(url, statusCode == null ? -1 : statusCode, headers);
         }
     }
 

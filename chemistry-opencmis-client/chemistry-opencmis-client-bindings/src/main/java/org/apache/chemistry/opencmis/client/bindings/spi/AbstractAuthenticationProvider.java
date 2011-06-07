@@ -57,7 +57,7 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         return null;
     }
 
-    public void putResponseHeaders(String url, Map<String, List<String>> headers) {
+    public void putResponseHeaders(String url, int statusCode, Map<String, List<String>> headers) {
     }
 
     /**

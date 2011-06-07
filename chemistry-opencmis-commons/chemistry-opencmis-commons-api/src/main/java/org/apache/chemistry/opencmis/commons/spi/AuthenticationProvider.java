@@ -55,8 +55,12 @@ public interface AuthenticationProvider {
     /**
      * Receives the HTTP headers after a call.
      * 
+     * @param url
+     *            the URL
+     * @param statusCode
+     *            the status code
      * @param headers
      *            the HTTP headers
      */
-    void putResponseHeaders(String url, Map<String, List<String>> headers);
+    void putResponseHeaders(String url, int statusCode, Map<String, List<String>> headers);
 }
