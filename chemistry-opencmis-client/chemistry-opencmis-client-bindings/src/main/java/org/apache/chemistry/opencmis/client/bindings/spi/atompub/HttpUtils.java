@@ -228,33 +228,36 @@ public class HttpUtils {
             // if there is an error page, get it
             if (errorStream != null) {
                 String contentType = getContentTypeHeader();
-                if ((contentType != null) && (contentType.toLowerCase().startsWith("text/"))) {
-                    StringBuilder sb = new StringBuilder();
+                if (contentType != null) {
+                    String contentTypeLower = contentType.toLowerCase().split(";")[0];
+                    if (contentTypeLower.startsWith("text/") || contentTypeLower.endsWith("+xml")) {
+                        StringBuilder sb = new StringBuilder();
 
-                    try {
-                        String encoding = getContentEncoding();
-                        if (encoding != null) {
-                            if (encoding.toLowerCase().trim().equals("gzip")) {
-                                try {
-                                    errorStream = new GZIPInputStream(errorStream, 4096);
-                                } catch (IOException e) {
+                        try {
+                            String encoding = getContentEncoding();
+                            if (encoding != null) {
+                                if (encoding.toLowerCase().trim().equals("gzip")) {
+                                    try {
+                                        errorStream = new GZIPInputStream(errorStream, 4096);
+                                    } catch (IOException e) {
+                                    }
+                                } else if (encoding.toLowerCase().trim().equals("deflate")) {
+                                    errorStream = new InflaterInputStream(errorStream, new Inflater(true), 4096);
                                 }
-                            } else if (encoding.toLowerCase().trim().equals("deflate")) {
-                                errorStream = new InflaterInputStream(errorStream, new Inflater(true), 4096);
                             }
-                        }
 
-                        InputStreamReader reader = new InputStreamReader(errorStream);
-                        char[] buffer = new char[4096];
-                        int b;
-                        while ((b = reader.read(buffer)) > -1) {
-                            sb.append(buffer, 0, b);
-                        }
-                        reader.close();
+                            InputStreamReader reader = new InputStreamReader(errorStream);
+                            char[] buffer = new char[4096];
+                            int b;
+                            while ((b = reader.read(buffer)) > -1) {
+                                sb.append(buffer, 0, b);
+                            }
+                            reader.close();
 
-                        errorContent = sb.toString();
-                    } catch (IOException e) {
-                        errorContent = "Unable to retrieve content: " + e.getMessage();
+                            errorContent = sb.toString();
+                        } catch (IOException e) {
+                            errorContent = "Unable to retrieve content: " + e.getMessage();
+                        }
                     }
                 } else {
                     try {
