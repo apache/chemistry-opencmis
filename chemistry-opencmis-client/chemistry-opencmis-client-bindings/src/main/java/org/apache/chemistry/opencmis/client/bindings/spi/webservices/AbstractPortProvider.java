@@ -28,13 +28,16 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.http.HTTPException;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisProxyAuthenticationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DiscoveryService;
@@ -249,8 +252,18 @@ public abstract class AbstractPortProvider {
         } catch (CmisBaseException ce) {
             throw ce;
         } catch (Exception e) {
-            throw new CmisConnectionException("Cannot initalize Web Services service object [" + serviceKey + "]: "
-                    + e.getMessage(), e);
+            String message = "Cannot initalize Web Services service object [" + serviceKey + "]: " + e.getMessage();
+
+            if (e instanceof HTTPException) {
+                HTTPException he = (HTTPException) e;
+                if (he.getStatusCode() == 401) {
+                    throw new CmisUnauthorizedException(message, e);
+                } else if (he.getStatusCode() == 407) {
+                    throw new CmisProxyAuthenticationException(message, e);
+                }
+            }
+
+            throw new CmisConnectionException(message, e);
         }
 
         return serviceObject;

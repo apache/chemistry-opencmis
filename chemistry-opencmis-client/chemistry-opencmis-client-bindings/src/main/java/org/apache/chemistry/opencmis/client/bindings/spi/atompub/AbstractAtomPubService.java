@@ -58,9 +58,11 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolat
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisProxyAuthenticationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -417,15 +419,19 @@ public class AbstractAtomPubService implements LinkAccess {
                 return new CmisFilterNotValidException(message, errorContent, t);
             }
             return new CmisInvalidArgumentException(message, errorContent, t);
-        case 404:
-            return new CmisObjectNotFoundException(message, errorContent, t);
+        case 401:
+            return new CmisUnauthorizedException(message, errorContent, t);
         case 403:
             if (CmisStreamNotSupportedException.EXCEPTION_NAME.equals(exception)) {
                 return new CmisStreamNotSupportedException(message, errorContent, t);
             }
             return new CmisPermissionDeniedException(message, errorContent, t);
+        case 404:
+            return new CmisObjectNotFoundException(message, errorContent, t);
         case 405:
             return new CmisNotSupportedException(message, errorContent, t);
+        case 407:
+            return new CmisProxyAuthenticationException(message, errorContent, t);
         case 409:
             if (CmisContentAlreadyExistsException.EXCEPTION_NAME.equals(exception)) {
                 return new CmisContentAlreadyExistsException(message, errorContent, t);
