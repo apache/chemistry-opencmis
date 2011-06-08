@@ -24,12 +24,12 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 
 public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
 
@@ -38,14 +38,14 @@ public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
     private final Map<String, String> parameters;
     private final SessionFactoryImpl sessionFactory;
     private final ObjectFactory objectFactory;
-    private final AbstractAuthenticationProvider authenticationProvider;
+    private final AuthenticationProvider authenticationProvider;
     private final Cache cache;
 
     /**
      * Constructor.
      */
     public RepositoryImpl(RepositoryInfo data, Map<String, String> parameters, SessionFactoryImpl sessionFactory,
-            ObjectFactory objectFactory, AbstractAuthenticationProvider authenticationProvider, Cache cache) {
+            ObjectFactory objectFactory, AuthenticationProvider authenticationProvider, Cache cache) {
         super(data);
 
         this.parameters = new HashMap<String, String>(parameters);

@@ -21,9 +21,9 @@ package org.apache.chemistry.opencmis.client.bindings.impl;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
-import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
+import org.apache.chemistry.opencmis.client.bindings.spi.SessionAwareAuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
@@ -68,7 +68,7 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
      * @param authenticationProvider
      *            an authentication provider instance
      */
-    public CmisBindingImpl(Map<String, String> sessionParameters, AbstractAuthenticationProvider authenticationProvider) {
+    public CmisBindingImpl(Map<String, String> sessionParameters, AuthenticationProvider authenticationProvider) {
         // some checks first
         if (sessionParameters == null) {
             throw new IllegalArgumentException("Session parameters must be set!");
@@ -95,18 +95,24 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
                     throw new IllegalArgumentException("Could not load authentication provider: " + e, e);
                 }
 
-                if (!(authProviderObj instanceof AbstractAuthenticationProvider)) {
+                if (!(authProviderObj instanceof AuthenticationProvider)) {
                     throw new IllegalArgumentException(
-                            "Authentication provider does not extend AbstractAuthenticationProvider!");
+                            "Authentication provider does not implement AuthenticationProvider!");
                 }
 
-                session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT,
-                        (AbstractAuthenticationProvider) authProviderObj);
-                ((AbstractAuthenticationProvider) authProviderObj).setSession(session);
+                session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT, (AuthenticationProvider) authProviderObj);
+
+                if (authProviderObj instanceof SessionAwareAuthenticationProvider) {
+                    ((SessionAwareAuthenticationProvider) authProviderObj).setSession(session);
+                }
             }
         } else {
             session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT, authenticationProvider);
-            authenticationProvider.setSession(session);
+
+            if (authenticationProvider instanceof SessionAwareAuthenticationProvider) {
+                ((SessionAwareAuthenticationProvider) authenticationProvider).setSession(session);
+            }
+
         }
 
         // set up caches

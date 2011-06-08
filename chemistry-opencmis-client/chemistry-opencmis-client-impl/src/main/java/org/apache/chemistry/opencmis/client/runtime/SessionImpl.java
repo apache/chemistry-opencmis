@@ -44,7 +44,6 @@ import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.ObjectFactoryImpl;
@@ -68,6 +67,7 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -121,7 +121,7 @@ public class SessionImpl implements Session, Serializable {
     /*
      * Authentication provider (serializable)
      */
-    private final AbstractAuthenticationProvider authenticationProvider;
+    private final AuthenticationProvider authenticationProvider;
 
     /*
      * Object cache (serializable)
@@ -143,7 +143,7 @@ public class SessionImpl implements Session, Serializable {
      * Constructor.
      */
     public SessionImpl(Map<String, String> parameters, ObjectFactory objectFactory,
-            AbstractAuthenticationProvider authenticationProvider, Cache cache) {
+            AuthenticationProvider authenticationProvider, Cache cache) {
         if (parameters == null) {
             throw new IllegalArgumentException("No parameters provided!");
         }

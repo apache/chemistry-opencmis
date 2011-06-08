@@ -20,12 +20,12 @@ package org.apache.chemistry.opencmis.client.bindings.impl;
 
 import java.lang.reflect.Constructor;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 
 /**
  * A collection of static methods that are used in multiple places within the
@@ -93,8 +93,8 @@ public final class CmisBindingsHelper {
      * Returns the authentication provider from the session or <code>null</code>
      * if no authentication provider is set.
      */
-    public static AbstractAuthenticationProvider getAuthenticationProvider(BindingSession session) {
-        return (AbstractAuthenticationProvider) session.get(AUTHENTICATION_PROVIDER_OBJECT);
+    public static AuthenticationProvider getAuthenticationProvider(BindingSession session) {
+        return (AuthenticationProvider) session.get(AUTHENTICATION_PROVIDER_OBJECT);
     }
 
     /**

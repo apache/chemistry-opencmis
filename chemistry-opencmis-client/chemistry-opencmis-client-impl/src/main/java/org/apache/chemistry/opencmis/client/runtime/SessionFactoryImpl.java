@@ -26,12 +26,12 @@ import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.repository.RepositoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
@@ -56,7 +56,7 @@ public class SessionFactoryImpl implements SessionFactory {
     protected SessionFactoryImpl() {
     }
 
-    public static SessionFactory newInstance() {
+    public static SessionFactoryImpl newInstance() {
         return new SessionFactoryImpl();
     }
 
@@ -87,7 +87,7 @@ public class SessionFactoryImpl implements SessionFactory {
      * @see SessionParameter
      */
     public Session createSession(Map<String, String> parameters, ObjectFactory objectFactory,
-            AbstractAuthenticationProvider authenticationProvider, Cache cache) {
+            AuthenticationProvider authenticationProvider, Cache cache) {
         SessionImpl session = new SessionImpl(parameters, objectFactory, authenticationProvider, cache);
         session.connect();
 
@@ -100,12 +100,12 @@ public class SessionFactoryImpl implements SessionFactory {
 
     /**
      * Returns all repositories that are available at the endpoint. See
-     * {@link #createSession(Map, ObjectFactory, AbstractAuthenticationProvider, Cache)}
+     * {@link #createSession(Map, ObjectFactory, AuthenticationProvider, Cache)}
      * for parameter details. The parameter
      * {@code SessionParameter.REPOSITORY_ID} should not be set.
      */
     public List<Repository> getRepositories(Map<String, String> parameters, ObjectFactory objectFactory,
-            AbstractAuthenticationProvider authenticationProvider, Cache cache) {
+            AuthenticationProvider authenticationProvider, Cache cache) {
         CmisBinding binding = CmisBindingHelper.createBinding(parameters, authenticationProvider);
 
         List<RepositoryInfo> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(null);

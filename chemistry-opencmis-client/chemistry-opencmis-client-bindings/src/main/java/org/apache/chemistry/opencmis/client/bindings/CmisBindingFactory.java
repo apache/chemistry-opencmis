@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingImpl;
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
@@ -90,7 +90,7 @@ public class CmisBindingFactory {
      * the session parameters.
      */
     public CmisBinding createCmisBinding(Map<String, String> sessionParameters,
-            AbstractAuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider) {
         checkSessionParameters(sessionParameters, true);
 
         addDefaultParameters(sessionParameters);
@@ -110,7 +110,7 @@ public class CmisBindingFactory {
      * authentication provider.
      */
     public CmisBinding createCmisAtomPubBinding(Map<String, String> sessionParameters,
-            AbstractAuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider) {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_ATOMPUB);
@@ -142,7 +142,7 @@ public class CmisBindingFactory {
      * authentication provider.
      */
     public CmisBinding createCmisWebServicesBinding(Map<String, String> sessionParameters,
-            AbstractAuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider) {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_WEBSERVICES);

@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.spi;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ import org.w3c.dom.Element;
 /**
  * Authentication provider interface.
  */
-public interface AuthenticationProvider {
+public interface AuthenticationProvider extends Serializable {
     /**
      * Returns a set of HTTP headers (key-value pairs) that should be added to a
      * HTTP call. This will be called by the AtomPub and the Web Services

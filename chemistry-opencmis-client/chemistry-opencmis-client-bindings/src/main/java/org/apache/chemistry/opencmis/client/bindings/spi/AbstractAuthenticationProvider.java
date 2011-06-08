@@ -18,18 +18,16 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.w3c.dom.Element;
 
 /**
  * Authentication provider class.
  */
-public abstract class AbstractAuthenticationProvider implements AuthenticationProvider, Serializable {
+public abstract class AbstractAuthenticationProvider implements SessionAwareAuthenticationProvider {
 
     private static final long serialVersionUID = 1L;
 
