@@ -172,7 +172,7 @@ public class AtomEntryParser {
         }
 
         XMLInputFactory factory = XMLInputFactory.newInstance();
-        factory.setProperty(XMLInputFactory.IS_COALESCING, "false");
+        factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
         XMLStreamReader parser = factory.createXMLStreamReader(stream);
 
         while (true) {
@@ -493,7 +493,8 @@ public class AtomEntryParser {
      * Checks if the given prefix is assigned to the given namespace.
      */
     @SuppressWarnings("unchecked")
-    private static void addNamespaceIfMissing(XMLStreamWriter writer, String prefix, String namespaceUri) throws Exception {
+    private static void addNamespaceIfMissing(XMLStreamWriter writer, String prefix, String namespaceUri)
+            throws Exception {
         if ((namespaceUri == null) || (namespaceUri.trim().length() == 0)) {
             return;
         }
