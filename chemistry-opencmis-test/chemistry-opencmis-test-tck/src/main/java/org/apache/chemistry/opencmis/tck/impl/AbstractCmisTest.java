@@ -196,6 +196,14 @@ public abstract class AbstractCmisTest implements CmisTest {
         return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Object is null!"));
     }
 
+    protected CmisTestResult assertStringNullOrEmpty(String str, CmisTestResult success, CmisTestResult failure) {
+        if ((str == null) || (str.length() == 0)) {
+            return success;
+        }
+
+        return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "String has this value: " + str));
+    }
+
     protected CmisTestResult assertStringNotEmpty(String str, CmisTestResult success, CmisTestResult failure) {
         if ((str != null) && (str.length() > 0)) {
             return success;

@@ -847,7 +847,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             if ((type.getId() != null) && (type.getBaseTypeId() != null)) {
                 if (type.getBaseTypeId().value().equals(type.getId())) {
                     f = createResult(FAILURE, "Base type has parent type!");
-                    addResult(results, assertNull(type.getParentTypeId(), null, f));
+                    addResult(results, assertStringNullOrEmpty(type.getParentTypeId(), null, f));
                 } else {
                     f = createResult(FAILURE, "Parent type is not set!");
                     addResult(results, assertStringNotEmpty(type.getParentTypeId(), null, f));
