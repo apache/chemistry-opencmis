@@ -55,6 +55,7 @@ public class LinkCache implements Serializable {
         KNOWN_LINKS.add(Constants.REL_EDITMEDIA);
         KNOWN_LINKS.add(Constants.REL_POLICIES);
         KNOWN_LINKS.add(Constants.REL_VERSIONHISTORY);
+        KNOWN_LINKS.add(Constants.REL_WORKINGCOPY);
         KNOWN_LINKS.add(AtomPubParser.LINK_REL_CONTENT);
     }
 

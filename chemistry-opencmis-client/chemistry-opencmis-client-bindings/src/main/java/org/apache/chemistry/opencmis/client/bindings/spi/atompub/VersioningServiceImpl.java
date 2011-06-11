@@ -118,6 +118,13 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
             throwLinkException(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
         }
 
+        // prefer working copy link if available
+        // (workaround for non-compliant repositories)
+        String wcLink = getLink(repositoryId, objectId, Constants.REL_WORKINGCOPY, Constants.MEDIATYPE_ENTRY);
+        if (wcLink != null) {
+            link = wcLink;
+        }
+
         delete(new UrlBuilder(link));
     }
 
@@ -134,6 +141,13 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 
         if (link == null) {
             throwLinkException(repositoryId, objectId.getValue(), Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
+        }
+
+        // prefer working copy link if available
+        // (workaround for non-compliant repositories)
+        String wcLink = getLink(repositoryId, objectId.getValue(), Constants.REL_WORKINGCOPY, Constants.MEDIATYPE_ENTRY);
+        if (wcLink != null) {
+            link = wcLink;
         }
 
         UrlBuilder url = new UrlBuilder(link);
