@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -78,7 +77,7 @@ import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 /**
  * Persistent model session.
  */
-public class SessionImpl implements Session, Serializable {
+public class SessionImpl implements Session {
 
     private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false, true, false,
             IncludeRelationships.NONE, null, true, null, true, 100);
