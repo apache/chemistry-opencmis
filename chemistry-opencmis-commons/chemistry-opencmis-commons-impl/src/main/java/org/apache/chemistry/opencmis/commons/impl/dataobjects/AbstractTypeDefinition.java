@@ -27,30 +27,27 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Abstract type definition data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractTypeDefinition extends AbstractExtensionData implements TypeDefinition, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
-    private String fId;
-    private String fLocalName;
-    private String fLocalNamespace;
-    private String fQueryName;
-    private String fDisplayName;
-    private String fDescription;
-    private BaseTypeId fBaseId;
-    private String fParentId;
-    private Boolean fIsCreatable;
-    private Boolean fIsFileable;
-    private Boolean fIsQueryable;
-    private Boolean fIsIncludedInSupertypeQuery;
-    private Boolean fIsFulltextIndexed;
-    private Boolean fIsControllableACL;
-    private Boolean fIsControllablePolicy;
-    private Map<String, PropertyDefinition<?>> fPropertyDefinitions;
+    private String id;
+    private String localName;
+    private String localNamespace;
+    private String queryName;
+    private String displayName;
+    private String description;
+    private BaseTypeId baseId;
+    private String parentId;
+    private Boolean isCreatable;
+    private Boolean isFileable;
+    private Boolean isQueryable;
+    private Boolean isIncludedInSupertypeQuery;
+    private Boolean isFulltextIndexed;
+    private Boolean isControllableACL;
+    private Boolean isControllablePolicy;
+    private Map<String, PropertyDefinition<?>> propertyDefinitions;
 
     public void initialize(TypeDefinition typeDefinition) {
         setId(typeDefinition.getId());
@@ -71,228 +68,136 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
         setPropertyDefinitions(typeDefinition.getPropertyDefinitions());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.TypeDefinitionData#getId()
-     */
     public String getId() {
-        return fId;
+        return id;
     }
 
     public void setId(String id) {
-        fId = id;
+        this.id = id;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionData#getLocalName()
-     */
     public String getLocalName() {
-        return fLocalName;
+        return localName;
     }
 
     public void setLocalName(String localName) {
-        fLocalName = localName;
+        this.localName = localName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionData#getLocalNamespace
-     * ()
-     */
     public String getLocalNamespace() {
-        return fLocalNamespace;
+        return localNamespace;
     }
 
     public void setLocalNamespace(String localNamespace) {
-        fLocalNamespace = localNamespace;
+        this.localNamespace = localNamespace;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionData#getQueryName()
-     */
     public String getQueryName() {
-        return fQueryName;
+        return queryName;
     }
 
     public void setQueryName(String queryName) {
-        fQueryName = queryName;
+        this.queryName = queryName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionData#getDisplayName()
-     */
     public String getDisplayName() {
-        return fDisplayName;
+        return displayName;
     }
 
     public void setDisplayName(String displayName) {
-        fDisplayName = displayName;
+        this.displayName = displayName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionData#getDescription()
-     */
     public String getDescription() {
-        return fDescription;
+        return description;
     }
 
     public void setDescription(String description) {
-        fDescription = description;
+        this.description = description;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.TypeDefinitionData#getBaseId()
-     */
     public BaseTypeId getBaseTypeId() {
-        return fBaseId;
+        return baseId;
     }
 
     public void setBaseTypeId(BaseTypeId baseId) {
-        fBaseId = baseId;
+        this.baseId = baseId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.TypeDefinitionData#getParentId()
-     */
     public String getParentTypeId() {
-        return fParentId;
+        return parentId;
     }
 
     public void setParentTypeId(String parentId) {
-        fParentId = parentId;
+        if (parentId == null || parentId.length() == 0) {
+            this.parentId = null;
+        } else {
+            this.parentId = parentId;
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.TypeDefinitionData#isCreatable()
-     */
     public Boolean isCreatable() {
-        return fIsCreatable;
+        return isCreatable;
     }
 
     public void setIsCreatable(Boolean isCreatable) {
-        fIsCreatable = isCreatable;
+        this.isCreatable = isCreatable;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.TypeDefinitionData#isFileable()
-     */
     public Boolean isFileable() {
-        return fIsFileable;
+        return isFileable;
     }
 
     public void setIsFileable(Boolean isFileable) {
-        fIsFileable = isFileable;
+        this.isFileable = isFileable;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.TypeDefinitionData#isQueryable()
-     */
     public Boolean isQueryable() {
-        return fIsQueryable;
+        return isQueryable;
     }
 
     public void setIsQueryable(Boolean isQueryable) {
-        fIsQueryable = isQueryable;
+        this.isQueryable = isQueryable;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.TypeDefinitionData#
-     * isIncludedInSupertypeQuery()
-     */
     public Boolean isIncludedInSupertypeQuery() {
-        return fIsIncludedInSupertypeQuery;
+        return isIncludedInSupertypeQuery;
     }
 
     public void setIsIncludedInSupertypeQuery(Boolean isIncludedInSupertypeQuery) {
-        fIsIncludedInSupertypeQuery = isIncludedInSupertypeQuery;
+        this.isIncludedInSupertypeQuery = isIncludedInSupertypeQuery;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionData#isFulltextIndexed
-     * ()
-     */
     public Boolean isFulltextIndexed() {
-        return fIsFulltextIndexed;
+        return isFulltextIndexed;
     }
 
     public void setIsFulltextIndexed(Boolean isFulltextIndexed) {
-        fIsFulltextIndexed = isFulltextIndexed;
+        this.isFulltextIndexed = isFulltextIndexed;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionData#isControllableACL
-     * ()
-     */
     public Boolean isControllableAcl() {
-        return fIsControllableACL;
+        return isControllableACL;
     }
 
     public void setIsControllableAcl(Boolean isControllableACL) {
-        fIsControllableACL = isControllableACL;
+        this.isControllableACL = isControllableACL;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionData#isControllablePolicy
-     * ()
-     */
     public Boolean isControllablePolicy() {
-        return fIsControllablePolicy;
+        return isControllablePolicy;
     }
 
     public void setIsControllablePolicy(Boolean isControllablePolicy) {
-        fIsControllablePolicy = isControllablePolicy;
+        this.isControllablePolicy = isControllablePolicy;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.TypeDefinitionData#getPropertyDefintions
-     * ()
-     */
     public Map<String, PropertyDefinition<?>> getPropertyDefinitions() {
-        return fPropertyDefinitions;
+        return propertyDefinitions;
     }
 
     public void setPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
-        fPropertyDefinitions = propertyDefinitions;
+        this.propertyDefinitions = propertyDefinitions;
     }
 
     /**
@@ -306,11 +211,11 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
             return;
         }
 
-        if (fPropertyDefinitions == null) {
-            fPropertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>();
+        if (this.propertyDefinitions == null) {
+            this.propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>();
         }
 
-        fPropertyDefinitions.put(propertyDefinition.getId(), propertyDefinition);
+        this.propertyDefinitions.put(propertyDefinition.getId(), propertyDefinition);
     }
 
     public AbstractTypeDefinition clone() {
@@ -322,20 +227,14 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Type Definition [base id=" + fBaseId + ", id=" + fId + ", display Name=" + fDisplayName
-                + ", description=" + fDescription + ", local name=" + fLocalName + ", local namespace="
-                + fLocalNamespace + ", query name=" + fQueryName + ", parent id=" + fParentId
-                + ", is controllable ACL=" + fIsControllableACL + ", is controllable policy=" + fIsControllablePolicy
-                + ", is creatable=" + fIsCreatable + ", is fileable=" + fIsFileable + ", is fulltext indexed="
-                + fIsFulltextIndexed + ", is included in supertype query=" + fIsIncludedInSupertypeQuery
-                + ", is queryable=" + fIsQueryable + ", property definitions=" + fPropertyDefinitions + "]"
-                + super.toString();
+        return "Type Definition [base id=" + baseId + ", id=" + id + ", display Name=" + displayName + ", description="
+                + description + ", local name=" + localName + ", local namespace=" + localNamespace + ", query name="
+                + queryName + ", parent id=" + parentId + ", is controllable ACL=" + isControllableACL
+                + ", is controllable policy=" + isControllablePolicy + ", is creatable=" + isCreatable
+                + ", is fileable=" + isFileable + ", is fulltext indexed=" + isFulltextIndexed
+                + ", is included in supertype query=" + isIncludedInSupertypeQuery + ", is queryable=" + isQueryable
+                + ", property definitions=" + propertyDefinitions + "]" + super.toString();
     }
 }

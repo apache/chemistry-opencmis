@@ -71,7 +71,7 @@ public class ObjectTypeHelper implements Serializable {
         if (parentType != null) {
             return parentType;
         }
-        if (objectType.getParentTypeId() == null) {
+        if (objectType.getParentTypeId() == null || objectType.getParentTypeId().length() == 0) {
             return null;
         }
         parentType = session.getTypeDefinition(objectType.getParentTypeId());
