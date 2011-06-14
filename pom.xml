@@ -65,7 +65,7 @@
     <distributionManagement>
         <site>
             <id>${site.staging.id}</id>
-            <url>${site.staging.protocol}://${site.staging.host}${site.staging.folder}</url>
+            <url>${site.staging.url}</url>
         </site>
     </distributionManagement>
 
@@ -200,7 +200,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.source>1.5</maven.compile.source>
         <maven.compile.target>1.5</maven.compile.target>
-        <docs.start.url>http://chemistry.apache.org/java/opencmis.html</docs.start.url>
+        <docs.start.url>${project.url}/opencmis.html</docs.start.url>
         <docs.download.directory>${project.build.directory}/downloaded-site</docs.download.directory>
         <!--  
             | Here we configure Maven documentation site (incl. Javadocs) deployment 
@@ -211,7 +211,7 @@
             
             | For details/changes see http://chemistry.apache.org/java/documentation-lifecycle.html
             |
-            | Note: Site label (or any other property) can be overriden on the command line to deploy to distinct location during site development
+            | Note: Site label (or any other property like site.staging.url) can be overriden on the command line to deploy to distinct location during site development
             -->
         <site.label>${project.version}</site.label>
         <site.staging.id>apache-site-staging</site.staging.id>
@@ -219,6 +219,7 @@
         <site.staging.protocol>svn:https</site.staging.protocol>
         <site.staging.host>svn.apache.org</site.staging.host>
         <site.staging.folder>/repos/asf/chemistry/site/trunk/content/java/${site.label}/maven/</site.staging.folder>
+        <site.staging.url>${site.staging.protocol}://${site.staging.host}${site.staging.folder}</site.staging.url>
         <parentBasedir>${project.basedir}</parentBasedir>
     </properties>
 
