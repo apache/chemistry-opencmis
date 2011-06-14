@@ -19,19 +19,19 @@
 -->
 <project name="OpenCMIS">
 
-	<publishDate position="left" />
-	<version position="right" />
+    <publishDate position="left" />
+    <version position="right" />
 
-	<bannerLeft>
-		<name>${project.name}</name>
-		<src>images/chemistry-logo.png</src>
-		<href>http://chemistry.apache.org/</href>
-	</bannerLeft>
+    <bannerLeft>
+        <name>${project.name}</name>
+        <src>images/chemistry-logo.png</src>
+        <href>http://chemistry.apache.org/java</href>
+    </bannerLeft>
 
     <bannerRight>
-		<name>The Apache Software Foundation</name>
-		<src>images/apache-logo.gif</src>
-		<href>http://chemistry.apache.org/</href>
+        <name>The Apache Software Foundation</name>
+        <src>images/apache-logo.gif</src>
+        <href>http://www.apache.org/</href>
 	</bannerRight>
 
 
@@ -41,18 +41,19 @@
     </poweredBy>
 
 
-	<skin>
-		<groupId>org.apache.maven.skins</groupId>
-		<artifactId>maven-default-skin</artifactId>
-	</skin>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-default-skin</artifactId>
+        <version>1.0</version>
+    </skin>
 
-	<body>
-		<menu ref="parent" inherit="top" />
+    <body>
+        <menu ref="parent" inherit="top" />
         <menu ref="modules" inherit="top" />
-		<menu ref="reports" inherit="top" />
+        <menu ref="reports" inherit="top" />
 
-		<menu name="Chemistry" inherit="top">
-			<item name="Main Website" href="http://chemistry.apache.org" />
-		</menu>
-	</body>
+        <menu name="Chemistry" inherit="top">
+            <item name="Main Website" href="http://chemistry.apache.org" />
+        </menu>
+    </body>
 </project>
