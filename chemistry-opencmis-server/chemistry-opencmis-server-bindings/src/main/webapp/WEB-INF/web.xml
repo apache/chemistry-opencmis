@@ -52,6 +52,8 @@
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 	
+	<!-- Browser Binding is deactivated until the implementation is complete. -->
+	<!--
 	<servlet>
 		<servlet-name>cmisbrowser</servlet-name>
 		<servlet-class>org.apache.chemistry.opencmis.server.impl.browser.CmisBrowserBindingServlet</servlet-class>
@@ -61,7 +63,7 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
-
+    -->
 
 	<servlet-mapping>
 		<servlet-name>cmisws</servlet-name>
@@ -73,10 +75,13 @@
 		<url-pattern>/atom/*</url-pattern>
 	</servlet-mapping>
 
+	<!-- Browser Binding is deactivated until the implementation is complete. -->
+	<!--
 	<servlet-mapping>
 		<servlet-name>cmisbrowser</servlet-name>
 		<url-pattern>/browser/*</url-pattern>
 	</servlet-mapping>
+	-->
 
 	<session-config>
 		<session-timeout>60</session-timeout>
