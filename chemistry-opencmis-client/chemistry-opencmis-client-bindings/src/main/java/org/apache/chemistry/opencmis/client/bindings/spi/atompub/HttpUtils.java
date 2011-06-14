@@ -157,17 +157,8 @@ public class HttpUtils {
             }
 
             // locale
-            if (session.get(SessionParameter.LOCALE_ISO639_LANGUAGE) instanceof String) {
-                String language = (String) session.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
-                String country = "";
-                if (session.get(SessionParameter.LOCALE_ISO3166_COUNTRY) instanceof String) {
-                    country = "-" + (String) session.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
-                }
-
-                String acceptLanguage = language + country;
-                if ((acceptLanguage.indexOf('\n') == -1) && (acceptLanguage.indexOf('\r') == -1)) {
-                    conn.setRequestProperty("Accept-Language", acceptLanguage);
-                }
+            if (session.get(CmisBindingsHelper.ACCEPT_LANGUAGE) instanceof String) {
+                conn.setRequestProperty("Accept-Language", session.get(CmisBindingsHelper.ACCEPT_LANGUAGE).toString());
             }
 
             // send data

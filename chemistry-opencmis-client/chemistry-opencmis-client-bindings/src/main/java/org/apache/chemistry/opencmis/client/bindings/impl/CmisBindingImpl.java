@@ -115,6 +115,28 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
 
         }
 
+        // locale
+        String language = sessionParameters.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
+        if (language != null) {
+            language = language.trim();
+            if (language.length() > 0) {
+                String country = sessionParameters.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
+                if (country != null) {
+                    country = country.trim();
+                    if (country.length() > 0) {
+                        country = "-" + country;
+                    }
+                } else {
+                    country = "";
+                }
+
+                String acceptLanguage = language + country;
+                if ((acceptLanguage.indexOf('\n') == -1) && (acceptLanguage.indexOf('\r') == -1)) {
+                    session.put(CmisBindingsHelper.ACCEPT_LANGUAGE, acceptLanguage);
+                }
+            }
+        }
+
         // set up caches
         clearAllCaches();
 

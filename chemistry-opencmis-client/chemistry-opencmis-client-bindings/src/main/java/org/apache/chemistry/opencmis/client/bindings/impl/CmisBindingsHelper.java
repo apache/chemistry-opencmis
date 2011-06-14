@@ -33,10 +33,11 @@ import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
  */
 public final class CmisBindingsHelper {
 
-    public static final String REPOSITORY_INFO_CACHE = "org.apache.chemistry.opencmis.bindings.repositoryInfoCache";
-    public static final String TYPE_DEFINTION_CACHE = "org.apache.chemistry.opencmis.bindings.typeDefintionCache";
-    public static final String SPI_OBJECT = "org.apache.chemistry.opencmis.bindings.spi.object";
-    public static final String AUTHENTICATION_PROVIDER_OBJECT = "org.apache.chemistry.opencmis.bindings.auth.object";
+    public static final String REPOSITORY_INFO_CACHE = "org.apache.chemistry.opencmis.binding.repositoryInfoCache";
+    public static final String TYPE_DEFINTION_CACHE = "org.apache.chemistry.opencmis.binding.typeDefintionCache";
+    public static final String SPI_OBJECT = "org.apache.chemistry.opencmis.binding.spi.object";
+    public static final String AUTHENTICATION_PROVIDER_OBJECT = "org.apache.chemistry.opencmis.binding.auth.object";
+    public static final String ACCEPT_LANGUAGE = "org.apache.chemistry.opencmis.binding.acceptLanguage";
 
     /**
      * Private constructor.

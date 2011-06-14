@@ -79,17 +79,8 @@ public class PortProvider extends AbstractPortProvider {
             useCompression = true;
         }
 
-        if (session.get(SessionParameter.LOCALE_ISO639_LANGUAGE) instanceof String) {
-            String language = (String) session.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
-            String country = "";
-            if (session.get(SessionParameter.LOCALE_ISO3166_COUNTRY) instanceof String) {
-                country = "-" + (String) session.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
-            }
-
-            acceptLanguage = language + country;
-            if ((acceptLanguage.indexOf('\n') > -1) || (acceptLanguage.indexOf('\r') > -1)) {
-                acceptLanguage = null;
-            }
+        if (session.get(CmisBindingsHelper.ACCEPT_LANGUAGE) instanceof String) {
+            acceptLanguage = session.get(CmisBindingsHelper.ACCEPT_LANGUAGE).toString();
         }
     }
 
