@@ -81,9 +81,9 @@ public class GettingStarted {
         // using the AtomPUB binding, but there are other options here,
         // or you can substitute your own URL
         parameter.put(SessionParameter.ATOMPUB_URL,
-//       "http://opencmis.cloudapp.net/inmemory/atom/");
+         "http://opencmis.cloudapp.net/inmemory/atom/");
 //       "http://cmis.alfresco.com/service/cmis");
-         "http://localhost:8080/alfresco/service/api/cmis");
+//       "http://localhost:8080/alfresco/service/api/cmis");
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
         // find all the repositories at this URL - there should only be one.
