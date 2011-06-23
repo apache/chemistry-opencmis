@@ -114,15 +114,15 @@ public final class JcrRepository {
      * Log into the underlying JCR repository.
      * 
      * @param credentials
-     * @param repositoryId
+     * @param workspaceName
      * @return
      * @throws LoginException
      * @throws NoSuchWorkspaceException
      * @throws RepositoryException
      */
-    public Session login(Credentials credentials, String repositoryId) {
+    public Session login(Credentials credentials, String workspaceName) {
         try {
-            return repository.login(credentials, repositoryId);
+            return repository.login(credentials, workspaceName);
         }
         catch (LoginException e) {
             log.debug(e.getMessage(), e);

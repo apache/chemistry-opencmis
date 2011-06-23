@@ -328,12 +328,12 @@ public class JcrService extends AbstractCmisService {
     
     //------------------------------------------< protected >---
 
-    protected Session login(String repositoryId) {
+    protected Session login(String workspaceName) {
         if (context == null) {
             throw new CmisRuntimeException("No user context!");
         }
 
-        Session session = sessions.get(repositoryId);
+        Session session = sessions.get(workspaceName);
         if (session == null) {
             String userName = context.getUsername();
             String password = context.getPassword();
@@ -341,8 +341,8 @@ public class JcrService extends AbstractCmisService {
                 ? null
                 : new SimpleCredentials(userName, password == null ? "".toCharArray() : password.toCharArray());
 
-            session = jcrRepository.login(credentials, repositoryId);
-            sessions.put(repositoryId, session);
+            session = jcrRepository.login(credentials, workspaceName);
+            sessions.put(workspaceName, session);
         }
         return session;
     }
