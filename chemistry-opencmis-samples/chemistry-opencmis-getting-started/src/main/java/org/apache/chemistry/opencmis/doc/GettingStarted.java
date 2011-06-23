@@ -82,8 +82,8 @@ public class GettingStarted {
         // or you can substitute your own URL
         parameter.put(SessionParameter.ATOMPUB_URL,
          "http://opencmis.cloudapp.net/inmemory/atom/");
-//       "http://cmis.alfresco.com/service/cmis");
-//       "http://localhost:8080/alfresco/service/api/cmis");
+        // "http://cmis.alfresco.com/service/cmis");
+//                "http://localhost:8080/alfresco/service/api/cmis");
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
         // find all the repositories at this URL - there should only be one.
@@ -165,7 +165,7 @@ public class GettingStarted {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
         // Get the contents of the document by path
         String path = newFolder.getPath() + "/" + textFileName;
         System.out.println("Getting object by path " + path);
@@ -177,6 +177,13 @@ public class GettingStarted {
         }
 
         System.out.println("Contents of " + doc.getName() + " are: " + content);
+        
+
+        // Create Document Object with no content stream
+        System.out.println("creating a document  called testNoContent with no ContentStream");
+        properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+        properties.put(PropertyIds.NAME, "testNoContent");
+        newFolder.createDocument(properties, null, VersioningState.NONE);
 
         // Create a new document and then update its name
         final String textFileName2 = "test2.txt";
@@ -364,21 +371,22 @@ public class GettingStarted {
             count++;
         }
 
-//        operationContext = new OperationContextImpl();
-//        operationContext.setMaxItemsPerPage(3);
-//        children1 = folderPaging.getChildren(operationContext);
-//        int pageNumber = 0;
-//        count = 1;
-//        while (count > 0) {
-//            count = 0;
-//            for (CmisObject child : children1.skipTo(
-//                    pageNumber * operationContext.getMaxItemsPerPage()).getPage()) {
-//                System.out.println("object " + count + " in page" + pageNumber + " is "
-//                        + child.getName());
-//                count++;
-//            }
-//            pageNumber++;
-//        }
+        // operationContext = new OperationContextImpl();
+        // operationContext.setMaxItemsPerPage(3);
+        // children1 = folderPaging.getChildren(operationContext);
+        // int pageNumber = 0;
+        // count = 1;
+        // while (count > 0) {
+        // count = 0;
+        // for (CmisObject child : children1.skipTo(
+        // pageNumber * operationContext.getMaxItemsPerPage()).getPage()) {
+        // System.out.println("object " + count + " in page" + pageNumber +
+        // " is "
+        // + child.getName());
+        // count++;
+        // }
+        // pageNumber++;
+        // }
 
         System.out.println("Getting complete result set in pages of 3");
         operationContext = new OperationContextImpl();
@@ -404,8 +412,9 @@ public class GettingStarted {
         System.out.println("\nTypes...");
         System.out.println("--------");
         // Look at the type definition
-        System.out.println("Getting type definition for doc type");
+        System.out.println("Getting type definition for doc");
         ObjectType objectType = session.getTypeDefinition(doc.getType().getId());
+        System.out.println("doc is of type " + objectType.getDisplayName());
         System.out.println("isBaseType() returns " + (objectType.isBaseType() ? "true" : "false"));
         ObjectType baseType = objectType.getBaseType();
         if (baseType == null) {
@@ -445,12 +454,25 @@ public class GettingStarted {
         // " ?:  "
         // + (doc.isLatestVersion() ? "yes" : "no"));
 
-        // get property by name
+        // get a property by id
+        System.out.println("get property by property id");
         Property<?> someProperty = props.get(0);
-        System.out
-                .println(someProperty.getDisplayName() + " property on " + doc.getName()
-                        + " (by getPropertValue()) is "
-                        + doc.getPropertyValue(someProperty.getQueryName()));
+        System.out.println(someProperty.getDisplayName() + " property on " + doc.getName()
+                + " (by getPropertValue()) is " + doc.getPropertyValue(someProperty.getId()));
+
+        // get a property by query name
+        System.out.println("get property by query name");
+        if (session.getRepositoryInfo().getCapabilities().getQueryCapability()
+                .equals(CapabilityQuery.METADATAONLY)) {
+            System.out.println("Full search not supported");
+        } else {
+            String query = "SELECT * FROM cmis:document WHERE cmis:name = 'test.txt'";
+            ItemIterable<QueryResult> queryResult = session.query(query, false);
+            for (QueryResult item : queryResult) {
+                System.out.println("property cmis:createdBy on test.txt is "
+                        + item.getPropertyByQueryName("cmis:createdBy").getFirstValue());
+            }
+        }
 
         GregorianCalendar calendar = doc.getCreationDate();
         String DATE_FORMAT = "yyyyMMdd";
@@ -772,7 +794,11 @@ public class GettingStarted {
                 // ignore
             }
             if (o != null) {
-                ((Folder) o).deleteTree(true, UnfileObject.DELETE, true);
+                try {
+                    ((Folder) o).deleteTree(true, UnfileObject.DELETE, true);
+                } catch (Exception e) {
+                    // Ignore any failures
+                }
             }
         }
 
