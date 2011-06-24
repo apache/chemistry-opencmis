@@ -49,7 +49,8 @@
 
     <body>
         <menu ref="parent" inherit="top" />
-        <menu ref="modules" inherit="top" />
+        <!-- Sub modules have no interesting information (all reports are aggregated at top level) so we comment them out for now -->
+        <!-- <menu ref="modules" inherit="top" /> -->
         <menu ref="reports" inherit="top" />
 
         <menu name="Chemistry" inherit="top">
