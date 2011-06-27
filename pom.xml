@@ -271,6 +271,8 @@
                     <preparationGoals>clean verify</preparationGoals>
                     <goals>deploy site</goals>
                     <arguments>-Papache-release</arguments>
+                    <!-- Add this profile to also deploy the site upon release -->
+                    <!-- <arguments>-Papache-release,site-deploy</arguments> -->
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <username>${apache.username}</username>
                     <password>${apache.password}</password>
@@ -544,6 +546,13 @@
                             </webResources>
                         </configuration>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>site-deploy</id>
+            <build>
+                <plugins>
                     <plugin>
                         <artifactId>maven-site-plugin</artifactId>
                         <inherited>false</inherited>
