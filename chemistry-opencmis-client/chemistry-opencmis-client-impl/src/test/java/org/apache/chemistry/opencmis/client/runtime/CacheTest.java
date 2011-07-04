@@ -109,7 +109,7 @@ public class CacheTest {
 
         Assert.assertNotNull(cache.getById(id, cacheKey));
 
-        Thread.currentThread().sleep(501);
+        Thread.currentThread().sleep(750);
 
         Assert.assertNull(cache.getById(id, cacheKey));
     }
