@@ -42,12 +42,14 @@ import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
@@ -58,6 +60,7 @@ import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
+import org.apache.chemistry.opencmis.server.support.query.StringUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -471,11 +474,6 @@ public class InMemoryQueryProcessor {
         }
 
         @Override
-        public Boolean walkContains(Tree qualNode, Tree colNode, Tree queryNode) {
-            throw new IllegalStateException("Operator CONTAINS not supported in InMemory server.");
-        }
-
-        @Override
         public Boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
             if (null != qualNode) {
                 getTableReference(qualNode);
@@ -536,8 +534,69 @@ public class InMemoryQueryProcessor {
         public List<Object> onLiteralList(Tree node) {
             return (List<Object>) walkExpr(node);
         }
+        
+        @Override
+        protected Boolean walkTextAnd(Tree node) {
+            List<Tree> terms = getChildrenAsList(node);
+            for (Tree term: terms) {
+                Boolean foundOnce = walkSearchExpr(term);
+                if (foundOnce== null || !foundOnce)
+                    return false;
+            }
+            return true;
+        }
+        
+        @Override
+        protected Boolean walkTextOr(Tree node) {
+            List<Tree> terms = getChildrenAsList(node);
+            for (Tree term: terms) {
+                Boolean foundOnce = walkSearchExpr(term);
+                if (foundOnce!= null && foundOnce)
+                    return true;
+            }
+            return false;
+        }
+        
+        @Override
+        protected Boolean walkTextMinus(Tree node) {
+            return !findText(node.getChild(0).getText());
+        }
+        
+        @Override
+        protected Boolean walkTextWord(Tree node) {
+            return findText(node.getText());
+        }
+        
+        @Override
+        protected Boolean walkTextPhrase(Tree node) {
+            String phrase = node.getText();
+            return findText(phrase.substring(1, phrase.length()-1));
+        }
+        
+        private List<Tree> getChildrenAsList(Tree node) {
+            List<Tree> res = new ArrayList<Tree>(node.getChildCount());
+            for (int i=0; i<node.getChildCount(); i++) {
+                Tree childNnode =  node.getChild(i);
+                res.add(childNnode);
+            }
+            return res;
+        }
+        
+        private boolean findText(String nodeText) {
+            Content cont;
+            String pattern = StringUtil.unescape(nodeText, null);
+            if (so instanceof Content && (cont=(Content)so).hasContent()) {
+                ContentStreamDataImpl cdi = (ContentStreamDataImpl) cont.getContent(0, -1);
+                byte[] ba = cdi.getBytes();
+                String text = new String(ba);
+                int match = text.indexOf(pattern);
+                return match >= 0;
+            }
+            return false;
+        }
+                
     }
-
+    
     private static boolean hasParent(Filing objInFolder, String folderId) {
         List<Folder> parents = objInFolder.getParents();
 

@@ -21,6 +21,9 @@ package org.apache.chemistry.opencmis.inmemory.query;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -45,6 +48,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 import org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.*;
 
@@ -120,7 +124,8 @@ public class QueryTestDataCreator {
                 put(PROP_ID_DATETIME, gc1);
                 put(PROP_ID_BOOLEAN, true);
             }};
-        doc1 = createDocument("alpha", rootFolderId, COMPLEX_TYPE, propertyMap1);
+        ContentStream content1 = createContent("I have a cat.");
+        doc1 = createDocument("alpha", rootFolderId, COMPLEX_TYPE, propertyMap1, content1);
         assertNotNull(doc1);
 
         final GregorianCalendar gc2 = new GregorianCalendar(TZ);
@@ -136,7 +141,8 @@ public class QueryTestDataCreator {
                 put(PROP_ID_DATETIME, gc2);
                 put(PROP_ID_BOOLEAN, false);
             }};
-        doc2 = createDocument("beta", rootFolderId, COMPLEX_TYPE, propertyMap2);
+        ContentStream content2 = createContent("I have a cat named Kitty Katty.");
+        doc2 = createDocument("beta", rootFolderId, COMPLEX_TYPE, propertyMap2, content2);
         assertNotNull(doc2);
 
         final Map<String, Object> propertyMap3 =
@@ -148,7 +154,9 @@ public class QueryTestDataCreator {
                 put(PROP_ID_DATETIME, new GregorianCalendar(TZ));
                 put(PROP_ID_BOOLEAN, true);
             }};
-        doc3 = createDocument("gamma", rootFolderId, COMPLEX_TYPE, propertyMap3);
+        
+        ContentStream content3 = createContent("I have a dog.");
+        doc3 = createDocument("gamma", rootFolderId, COMPLEX_TYPE, propertyMap3, content3);
         assertNotNull(doc3);
 
         final GregorianCalendar gc4 = new GregorianCalendar(TZ);
@@ -164,7 +172,8 @@ public class QueryTestDataCreator {
                 put(PROP_ID_DATETIME, gc4);
                 put(PROP_ID_BOOLEAN, true);
             }};
-        doc4 = createDocument("delta", rootFolderId, COMPLEX_TYPE, propertyMap4);
+        ContentStream content4 = createContent("I have a cat and a dog.");
+        doc4 = createDocument("delta", rootFolderId, COMPLEX_TYPE, propertyMap4, content4);
         assertNotNull(doc4);
 
         final GregorianCalendar gc5 = new GregorianCalendar(TZ);
@@ -180,7 +189,8 @@ public class QueryTestDataCreator {
                 put(PROP_ID_DATETIME, gc5);
                 put(PROP_ID_BOOLEAN, false);
             }};
-        doc5 = createDocument("epsilon", rootFolderId, COMPLEX_TYPE, propertyMap5);
+        ContentStream content5 = createContent("I hate having pets.");
+        doc5 = createDocument("epsilon", rootFolderId, COMPLEX_TYPE, propertyMap5, content5);
         assertNotNull(doc5);
 
     }
@@ -291,7 +301,8 @@ public class QueryTestDataCreator {
                 put(VERSION_PROPERTY_ID, "ver123");
             }};
 
-        String verIdV1 = createDocument("verdoc1", rootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID, propertyMap1, VersioningState.MAJOR);
+        String verIdV1 = createDocument("verdoc1", rootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
+                propertyMap1, VersioningState.MAJOR, null);
         ObjectData version = fObjSvc.getObject(repositoryId, verIdV1, "*", false, IncludeRelationships.NONE, null,
                 false, false, null);
 
@@ -333,11 +344,16 @@ public class QueryTestDataCreator {
     }
 
     private String createDocument(String name, String folderId, String typeId, Map<String, Object> properties) {
-        return createDocument(name, folderId, typeId, properties, VersioningState.NONE);
+        return createDocument(name, folderId, typeId, properties, VersioningState.NONE, null);
     }
 
-    private String createDocument(String name, String folderId, String typeId, Map<String, Object> properties, VersioningState verState) {
-        ContentStream contentStream = null;
+    private String createDocument(String name, String folderId, String typeId, Map<String, Object> properties,
+            ContentStream contentStream) {
+        return createDocument(name, folderId, typeId, properties, VersioningState.NONE, contentStream);
+    }
+
+    private String createDocument(String name, String folderId, String typeId, Map<String, Object> properties,
+            VersioningState verState, ContentStream contentStream) {
         List<String> policies = null;
         Acl addACEs = null;
         Acl removeACEs = null;
@@ -347,8 +363,8 @@ public class QueryTestDataCreator {
 
         String id = null;
         try {
-            id = fObjSvc.createDocument(repositoryId, props, folderId, contentStream, verState, policies,
-                    addACEs, removeACEs, extension);
+            id = fObjSvc.createDocument(repositoryId, props, folderId, contentStream, verState, policies, addACEs,
+                    removeACEs, extension);
             if (null == id) {
                 fail("createDocument failed.");
             }
@@ -428,4 +444,18 @@ public class QueryTestDataCreator {
         }
         return null;
     }
+    
+    private ContentStream createContent(String text) {
+        ContentStreamDataImpl content = new ContentStreamDataImpl(-1);
+        content.setFileName("data.txt");
+        content.setMimeType("text/plain");
+
+        try {
+            content.setContent(new ByteArrayInputStream(text.getBytes()));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to fill content stream with data", e);
+        }
+        return content;
+    }
+    
 }
