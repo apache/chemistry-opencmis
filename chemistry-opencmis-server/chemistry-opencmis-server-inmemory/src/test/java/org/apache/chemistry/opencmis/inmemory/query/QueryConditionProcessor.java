@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.inmemory.query;
 
+import java.util.List;
+
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.server.support.query.PredicateWalkerBase;
 
@@ -68,8 +70,15 @@ public interface QueryConditionProcessor extends PredicateWalkerBase {
     void onIsNotLike(Tree node, Tree colNode, Tree stringNode);
 
     // Functions:
-    void onContains(Tree node, Tree colNode, Tree paramNode);
+    void onContains(Tree node, Tree typeNode, Tree searchExprNode);
     void onInFolder(Tree node, Tree colNode, Tree paramNode);
     void onInTree(Tree node, Tree colNode, Tree paramNode);
     void onScore(Tree node);
+    
+    // full text search
+    void onTextAnd(Tree node, List<Tree> conjunctionNodes);
+    void onTextOr(Tree node, List<Tree> termNodes);
+    void onTextMinus(Tree node, Tree notNode);
+    void onTextWord(String word);
+    void onTextPhrase(String phrase);
 }

@@ -69,7 +69,7 @@ public abstract class AbstractQueryTest {
     }
 
     protected CmisQueryWalker traverseStatement(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-        walker =  queryUtil.traverseStatement(statement,queryObj, predicateWalker);
+        walker =  queryUtil.traverseStatement(statement, queryObj, predicateWalker);
         return walker;
     }
 
@@ -83,16 +83,16 @@ public abstract class AbstractQueryTest {
         return walker;
     }
 
-    protected Tree getWhereTree(Tree root) {
-        int count = root.getChildCount();
-        for (int i=0; i<count; i++) {
-            Tree child = root.getChild(i);
-            if (child.getType() == CmisQlStrictLexer.WHERE) {
-                return child;
-            }
-        }
-        return null;
-    }
+//    protected Tree getWhereTree(Tree root) {
+//        int count = root.getChildCount();
+//        for (int i=0; i<count; i++) {
+//            Tree child = root.getChild(i);
+//            if (child.getType() == CmisQlStrictLexer.WHERE) {
+//                return child;
+//            }
+//        }
+//        return null;
+//    }
 
     // Helper to create some types for testing
 

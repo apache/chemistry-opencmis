@@ -125,6 +125,10 @@ public class ContentStreamDataImpl implements ContentStream {
         return clone;
     }
 
+    public final byte[] getBytes() {
+        return fContent;
+    }
+    
     public List<CmisExtensionElement> getExtensions() {
         return null;
     }

@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
+import org.apache.chemistry.opencmis.server.support.query.TextSearchLexer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
@@ -69,6 +70,11 @@ public class ProcessQueryTest extends AbstractQueryTest {
         private static final String ON_IN_FOLDER  = "onInFolderWasCalled";
         private static final String ON_IN_TREE  = "onInTreeWasCalled";
         private static final String ON_SCORE = "onScoreWasCalled";
+        private static final String ON_TEXT_AND = "onTextAndWasCalled";
+        private static final String ON_TEXT_OR = "onTextOrWasCalled";
+        private static final String ON_TEXT_MINUS = "onTextMinusWasCalled";
+        private static final String ON_TEXT_PHRASE = "onTextPhraseWasCalled";
+        private static final String ON_TEXT_WORD = "onTextWordWasCalled";
 
 
         final Map<String, Integer> rulesTrackerMap =
@@ -99,6 +105,11 @@ public class ProcessQueryTest extends AbstractQueryTest {
                 put(ON_IN_FOLDER, 0);
                 put(ON_IN_TREE, 0);
                 put(ON_SCORE, 0);
+                put(ON_TEXT_AND, 0);
+                put(ON_TEXT_OR, 0);
+                put(ON_TEXT_MINUS, 0);
+                put(ON_TEXT_PHRASE, 0);
+                put(ON_TEXT_WORD, 0);
            }};
 
            private int counter;
@@ -107,23 +118,22 @@ public class ProcessQueryTest extends AbstractQueryTest {
            counter = 1;
        }
 
-
        @Override
-    public void onStartProcessing(Tree node) {
+       public void onStartProcessing(Tree node) {
             LOG.debug("TestQueryProcessor:onStartProcessing()");
             rulesTrackerMap.put(ON_START, counter++);
             assertEquals(CmisQlStrictLexer.WHERE, node.getParent().getType());
        }
 
        @Override
-    public void onStopProcessing() {
+       public void onStopProcessing() {
            LOG.debug("TestQueryProcessor:onStopProcessing()");
            rulesTrackerMap.put(ON_STOP, counter++);
        }
 
 
        @Override
-    public void onEquals(Tree eqNode, Tree leftNode, Tree rightNode) {
+       public void onEquals(Tree eqNode, Tree leftNode, Tree rightNode) {
            rulesTrackerMap.put(ON_EQUALS, counter++);
            assertEquals(CmisQlStrictLexer.EQ, eqNode.getType());
            assertTrue(CmisQlStrictLexer.COL==leftNode.getType() || CmisQlStrictLexer.SCORE==leftNode.getType());
@@ -131,7 +141,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onNotEquals(Tree neNode, Tree leftNode, Tree rightNode) {
+       public void onNotEquals(Tree neNode, Tree leftNode, Tree rightNode) {
            rulesTrackerMap.put(ON_NOT_EQUALS, counter++);
            assertEquals(CmisQlStrictLexer.NEQ, neNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
@@ -141,7 +151,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode) {
+       public void onLessOrEquals(Tree leqNode, Tree leftNode, Tree rightNode) {
            rulesTrackerMap.put(ON_LESS_OR_EQUALS, counter++);
            assertEquals(CmisQlStrictLexer.LTEQ, leqNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
@@ -151,7 +161,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onLessThan(Tree ltNode, Tree leftNode, Tree rightNode) {
+       public void onLessThan(Tree ltNode, Tree leftNode, Tree rightNode) {
            rulesTrackerMap.put(ON_LESS_THAN, counter++);
            assertEquals(CmisQlStrictLexer.LT, ltNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
@@ -161,7 +171,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode) {
+       public void onGreaterOrEquals(Tree geNode, Tree leftNode, Tree rightNode) {
            rulesTrackerMap.put(ON_GREATER_OR_EQUALS, counter++);
            assertEquals(CmisQlStrictLexer.GTEQ, geNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
@@ -171,7 +181,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode) {
+       public void onGreaterThan(Tree gtNode, Tree leftNode, Tree rightNode) {
            rulesTrackerMap.put(ON_GREATER_THAN, counter++);
            assertEquals(CmisQlStrictLexer.GT, gtNode.getType());
            assertEquals(CmisQlStrictLexer.COL, leftNode.getType());
@@ -181,25 +191,25 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onNot(Tree opNode, Tree leftNode) {
+       public void onNot(Tree opNode, Tree leftNode) {
            rulesTrackerMap.put(ON_NOT, counter++);
            assertEquals(CmisQlStrictLexer.NOT, opNode.getType());
        }
 
        @Override
-    public void onAnd(Tree opNode, Tree leftNode, Tree rightNode) {
+       public void onAnd(Tree opNode, Tree leftNode, Tree rightNode) {
            assertEquals(CmisQlStrictLexer.AND, opNode.getType());
            rulesTrackerMap.put(ON_AND, counter++);
        }
 
        @Override
-    public void onOr(Tree opNode, Tree leftNode, Tree rightNode) {
+       public void onOr(Tree opNode, Tree leftNode, Tree rightNode) {
            assertEquals(CmisQlStrictLexer.OR, opNode.getType());
            rulesTrackerMap.put(ON_OR, counter++);
        }
 
        @Override
-    public void onIn(Tree opNode, Tree colNode, Tree listNode) {
+       public void onIn(Tree opNode, Tree colNode, Tree listNode) {
            assertEquals(CmisQlStrictLexer.IN, opNode.getType());
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IN_LIST, listNode.getType());
@@ -211,7 +221,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onNotIn(Tree node, Tree colNode, Tree listNode) {
+       public void onNotIn(Tree node, Tree colNode, Tree listNode) {
            assertEquals(CmisQlStrictLexer.NOT_IN, node.getType());
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IN_LIST, listNode.getType());
@@ -223,7 +233,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onEqAny(Tree node, Tree literalNode, Tree colNode) {
+       public void onEqAny(Tree node, Tree literalNode, Tree colNode) {
            assertEquals(CmisQlStrictLexer.EQ_ANY, node.getType());
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertTrue(isLiteral(literalNode));
@@ -233,7 +243,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onInAny(Tree node, Tree colNode, Tree listNode) {
+       public void onInAny(Tree node, Tree colNode, Tree listNode) {
            assertEquals(CmisQlStrictLexer.IN_ANY, node.getType());
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IN_LIST, listNode.getType());
@@ -245,7 +255,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onNotInAny(Tree node, Tree colNode, Tree listNode) {
+       public void onNotInAny(Tree node, Tree colNode, Tree listNode) {
            assertEquals(CmisQlStrictLexer.NOT_IN_ANY, node.getType());
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IN_LIST, listNode.getType());
@@ -257,21 +267,21 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onIsNull(Tree nullNode, Tree colNode) {
+       public void onIsNull(Tree nullNode, Tree colNode) {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IS_NULL, nullNode.getType());
            rulesTrackerMap.put(ON_IS_NULL, counter++);
        }
 
        @Override
-    public void onIsNotNull(Tree notNullNode, Tree colNode) {
+       public void onIsNotNull(Tree notNullNode, Tree colNode) {
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.IS_NOT_NULL, notNullNode.getType());
            rulesTrackerMap.put(ON_IS_NOT_NULL, counter++);
        }
 
        @Override
-    public void onIsLike(Tree node, Tree colNode, Tree stringNode) {
+       public void onIsLike(Tree node, Tree colNode, Tree stringNode) {
            assertEquals(CmisQlStrictLexer.LIKE, node.getType());
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, stringNode.getType());
@@ -281,7 +291,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onIsNotLike(Tree node, Tree colNode, Tree stringNode) {
+       public void onIsNotLike(Tree node, Tree colNode, Tree stringNode) {
            assertEquals(CmisQlStrictLexer.NOT_LIKE, node.getType());
            assertEquals(CmisQlStrictLexer.COL, colNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, stringNode.getType());
@@ -291,15 +301,15 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onContains(Tree node, Tree colNode, Tree paramNode) {
+       public void onContains(Tree node, Tree typeNode, Tree searchExprNode) {
            assertEquals(CmisQlStrictLexer.CONTAINS, node.getType());
-           assertTrue(colNode==null || CmisQlStrictLexer.STRING_LIT == paramNode.getType());
-           assertEquals(CmisQlStrictLexer.STRING_LIT, paramNode.getType());
+           assertTrue( null != searchExprNode);
            rulesTrackerMap.put(ON_CONTAINS, counter++);
+           super.onContains(node, typeNode, searchExprNode);
        }
 
        @Override
-    public void onInFolder(Tree node, Tree colNode, Tree paramNode) {
+       public void onInFolder(Tree node, Tree colNode, Tree paramNode) {
            assertEquals(CmisQlStrictLexer.IN_FOLDER, node.getType());
            assertTrue(colNode==null || CmisQlStrictLexer.STRING_LIT == paramNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, paramNode.getType());
@@ -307,7 +317,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onInTree(Tree node, Tree colNode, Tree paramNode) {
+       public void onInTree(Tree node, Tree colNode, Tree paramNode) {
            assertEquals(CmisQlStrictLexer.IN_TREE, node.getType());
            assertTrue(colNode==null || CmisQlStrictLexer.STRING_LIT == paramNode.getType());
            assertEquals(CmisQlStrictLexer.STRING_LIT, paramNode.getType());
@@ -315,9 +325,43 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-    public void onScore(Tree node) {
+       public void onScore(Tree node) {
            assertEquals(CmisQlStrictLexer.SCORE, node.getType());
            rulesTrackerMap.put(ON_SCORE, counter++);
+       }
+
+       @Override
+       public void onTextAnd(Tree node, List<Tree> conjunctionNodes) {
+           assertEquals(TextSearchLexer.TEXT_AND, node.getType());
+           assertTrue(conjunctionNodes.size() >= 2);
+           rulesTrackerMap.put(ON_TEXT_AND, counter++);
+       }
+
+       @Override
+       public void onTextOr(Tree node, List<Tree> termNodes) {
+           assertEquals(TextSearchLexer.TEXT_OR, node.getType());
+           assertTrue(termNodes.size() >= 2);
+           rulesTrackerMap.put(ON_TEXT_OR, counter++);
+       }
+
+       @Override
+       public void onTextMinus(Tree node, Tree notNode) {
+           assertEquals(TextSearchLexer.TEXT_MINUS, node.getType());
+           assertTrue(notNode.getType() == TextSearchLexer.TEXT_SEARCH_PHRASE_STRING_LIT ||
+                   notNode.getType() == TextSearchLexer.TEXT_SEARCH_WORD_LIT);
+           rulesTrackerMap.put(ON_TEXT_MINUS, counter++);
+       }
+
+       @Override
+       public void onTextWord(String word) {
+           assertTrue(word != null && word.length() > 0);
+           rulesTrackerMap.put(ON_TEXT_WORD, counter++);
+       }
+
+       @Override
+       public void onTextPhrase(String phrase) {
+           assertTrue(phrase != null && phrase.length() > 0);
+           rulesTrackerMap.put(ON_TEXT_PHRASE, counter++);
        }
 
 
@@ -509,13 +553,13 @@ public class ProcessQueryTest extends AbstractQueryTest {
     @Test
     public void testOnContainsWasCalled1() {
         String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE CONTAINS('Hello')";
-        testStatement(statement, TestQueryProcessor.ON_CONTAINS);
+        testStatementMultiRule(statement, TestQueryProcessor.ON_CONTAINS);
     }
 
     @Test
     public void testOnContainsWasCalled2() {
         String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE CONTAINS(BookType, 'Harry')";
-        testStatement(statement, TestQueryProcessor.ON_CONTAINS);
+        testStatementMultiRule(statement, TestQueryProcessor.ON_CONTAINS);
     }
 
     @Test
@@ -546,6 +590,36 @@ public class ProcessQueryTest extends AbstractQueryTest {
     public void testOnScoreCalled() {
         String statement = "SELECT BookType.Title, BookType.Author FROM BookType WHERE SCORE()=100";
         testStatementMultiRule(statement, TestQueryProcessor.ON_SCORE);
+    }
+
+    @Test
+    public void testOnTextWordLiteral() {
+        String statement = "SELECT * FROM BookType WHERE CONTAINS('abc')";
+        testStatementMultiRule(statement, TestQueryProcessor.ON_TEXT_WORD);
+    }
+
+    @Test
+    public void testOnTextPhraseLiteral() {
+        String statement = "SELECT * FROM BookType WHERE CONTAINS('\\'abc\\'')";
+        testStatementMultiRule(statement, TestQueryProcessor.ON_TEXT_PHRASE);
+    }
+
+    @Test
+    public void testOnTextAnd() {
+        String statement = "SELECT * FROM BookType WHERE CONTAINS('abc def')";
+        testStatementMultiRule(statement, TestQueryProcessor.ON_TEXT_AND);
+    }
+
+    @Test
+    public void testOnTextOr() {
+        String statement = "SELECT * FROM BookType WHERE CONTAINS('abc OR def')";
+        testStatementMultiRule(statement, TestQueryProcessor.ON_TEXT_OR);
+    }
+
+    @Test
+    public void testOnTextMinus() {
+        String statement = "SELECT * FROM BookType WHERE CONTAINS('abc -def')";
+        testStatementMultiRule(statement, TestQueryProcessor.ON_TEXT_MINUS);
     }
 
     // private helper functions

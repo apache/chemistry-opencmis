@@ -25,6 +25,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
 import org.apache.chemistry.opencmis.server.support.query.PredicateWalkerBase;
+import org.apache.chemistry.opencmis.server.support.query.TextSearchLexer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -159,7 +160,7 @@ public class ParseTreeWalker<T> implements PredicateWalkerBase {
                 if (node.getChildCount() == 1) {
                     return evaluator.contains(
                             null,
-                            walkExpr(evaluator.op(), node.getChild(0)));
+                            walkExprTextSearch(evaluator.op(), node.getChild(0)));
                 }
                 else {
                     return evaluator.contains(
@@ -207,6 +208,23 @@ public class ParseTreeWalker<T> implements PredicateWalkerBase {
                 return evaluator.list(walkList(evaluator, node));
             case CmisQlStrictLexer.COL:
                 return walkCol(evaluator, node);
+            default:
+                return walkOtherExpr(evaluator, node);
+        }
+    }
+    
+    private T walkExprTextSearch(Evaluator<T> evaluator, Tree node) {
+        switch (node.getType()) {
+            case TextSearchLexer.TEXT_AND:
+                return walkTextAnd(evaluator, node);
+            case TextSearchLexer.TEXT_OR:
+                return walkTextOr(evaluator, node);
+            case TextSearchLexer.TEXT_MINUS:
+                return walkTextMinus(evaluator, node);
+            case TextSearchLexer.TEXT_SEARCH_WORD_LIT:
+                return walkTextWord(evaluator, node);
+            case TextSearchLexer.TEXT_SEARCH_PHRASE_STRING_LIT:
+                return walkTextPhrase(evaluator, node);
             default:
                 return walkOtherExpr(evaluator, node);
         }
@@ -266,6 +284,31 @@ public class ParseTreeWalker<T> implements PredicateWalkerBase {
 
     private T walkCol(Evaluator<T> evaluator, Tree node) {
         return evaluator.col(node.getChild(0).getText());
+    }
+
+    private T walkTextAnd(Evaluator<T> evaluator2, Tree node) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    private T walkTextOr(Evaluator<T> evaluator2, Tree node) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    private T walkTextMinus(Evaluator<T> evaluator2, Tree node) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    private T walkTextWord(Evaluator<T> evaluator2, Tree node) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    private T walkTextPhrase(Evaluator<T> evaluator2, Tree node) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

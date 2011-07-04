@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
 import org.apache.chemistry.opencmis.server.support.query.FunctionReference;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
+import org.apache.chemistry.opencmis.server.support.query.TextSearchLexer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
@@ -347,9 +348,8 @@ public class QueryParseTest extends AbstractQueryTest {
         String statement = "SELECT p1, p2, p3.t3 mycol FROM MyType AS MyAlias WHERE p1='abc' and p2=123 ORDER BY abc.def ASC";
 
         try {
-            getWalker(statement);
-            Tree parserTree = (Tree) walker.getTreeNodeStream().getTreeSource();
-            Tree whereTree = getWhereTree(parserTree);
+            traverseStatementAndCatchExc(statement);
+            Tree whereTree = walker.getWherePredicateTree(); // getWhereTree(parserTree);
             printTree(whereTree);
             LOG.info("Evaluate WHERE subtree: ...");
             evalWhereTree(whereTree);
@@ -472,6 +472,8 @@ public class QueryParseTest extends AbstractQueryTest {
     public void whereTestContains() {
         String statement = "SELECT p1 FROM MyType WHERE CONTAINS('Beethoven')";
         checkTreeWhere(statement);
+        Tree tree = findSearchExpression(statement);
+        printSearchTree(tree, statement);
     }
 
     @Test
@@ -527,24 +529,65 @@ public class QueryParseTest extends AbstractQueryTest {
             fail("Parsing statement " + statement + " should fail with RecognitionException, but was: " + e.getClass());
         }
     }
-
+    
+    @Test
+    public void whereTestContains2() {
+        String statement = "SELECT p1 FROM MyType WHERE CONTAINS('Beethoven OR \\'Johann Sebastian\\' Mozart -Cage AND Orff')";
+        checkTreeWhere(statement);
+        Tree tree = findSearchExpression(statement);
+        printSearchTree(tree, statement);
+    }
+    
     private void checkTreeWhere(String statement) {
         LOG.info("\ncheckTreeWhere: " + statement);
         traverseStatementAndCatchExc(statement);
-        Tree walkerTree = (Tree) walker.getTreeNodeStream().getTreeSource();
-        Tree whereTree = getWhereTree(walkerTree);
+        Tree whereTree = walker.getWherePredicateTree();
         evalWhereTree(whereTree);
+    }
+    
+    private Tree findSearchExpression(String statement) {
+        traverseStatementAndCatchExc(statement);
+        Tree whereTree = walker.getWherePredicateTree(); 
+        return findTextSearchNode(whereTree);
+    }
+    
+    private Tree findTextSearchNode(Tree node) {
+        int count = node.getChildCount();
+        if (node.getType() == CmisQlStrictLexer.CONTAINS) {
+            return node;
+        } else {
+            for (int i=0; i<count; i++) {
+                Tree child = node.getChild(i);
+                node = findTextSearchNode(child); // recursive descent
+                if (null != node)
+                    return node;
+            }
+            return null;
+        }        
     }
 
     private void evalWhereTree(Tree root) {
         int count = root.getChildCount();
-        for (int i=0; i<count; i++) {
-            Tree child = root.getChild(i);
-            evaluateWhereNode(child);
-            evalWhereTree(child); // recursive descent
+        if (root.getType() == CmisQlStrictLexer.CONTAINS) {
+            evalSearchExprTree(root);
+        } else {
+            for (int i=0; i<count; i++) {
+                Tree child = root.getChild(i);
+                evaluateWhereNode(child);
+                evalWhereTree(child); // recursive descent
+            }
         }
     }
-
+    
+    private void evalSearchExprTree(Tree root) {
+        int count = root.getChildCount();
+        for (int i=0; i<count; i++) {
+            Tree child = root.getChild(i);
+            evaluateSearchExprNode(child);
+            evalSearchExprTree(child); // recursive descent
+        }
+    }
+    
     private void printTree(Tree tree, String statement) {
         LOG.info("Printing the abstract syntax tree for statement:");
         LOG.info("  " + statement);
@@ -600,7 +643,7 @@ public class QueryParseTest extends AbstractQueryTest {
             return "#ORDER_BY";
 
         case CmisQlStrictLexer.WHERE:
-            case CmisQlStrictLexer.LT:
+        case CmisQlStrictLexer.LT:
         case CmisQlStrictLexer.STAR:
         case CmisQlStrictLexer.BOOL_LIT:
         case CmisQlStrictLexer.INNER:
@@ -654,7 +697,37 @@ public class QueryParseTest extends AbstractQueryTest {
         }
     }
 
+    private void printSearchTree(Tree tree, String searchExpr) {
+        LOG.info("Printhing the abstract syntax tree for the search expression in CONTAINS :");
+        LOG.info(searchExpr);
+        printSearchTree(tree);
+    }
 
+    private void printSearchTree(Tree node) {
+        LOG.info(indentString() + printSearchNode(node));
+        ++indent;
+        int count = node.getChildCount();
+        for (int i=0;i<count;i++) {
+            Tree child = node.getChild(i);
+            printSearchTree(child);
+        }
+        --indent;
+    }
+
+    private static String printSearchNode(Tree node) {
+        switch (node.getType()) {
+        case TextSearchLexer.TEXT_AND:
+        case TextSearchLexer.TEXT_OR:
+        case TextSearchLexer.TEXT_SEARCH_PHRASE_STRING_LIT:
+        case TextSearchLexer.TEXT_SEARCH_WORD_LIT:            
+            return node.toString();
+        case TextSearchLexer.TEXT_MINUS:
+            return "MINUS";
+         default:
+             return "Unknown token: " +  node.toString();
+        }
+    }
+    
     // Ensure that we receive only valid tokens and nodes in the where clause:
     private void evaluateWhereNode(Tree node) {
         LOG.info("evaluating node: " + node.toString());
@@ -762,6 +835,26 @@ public class QueryParseTest extends AbstractQueryTest {
         }
     }
 
+    // Ensure that we receive only valid tokens and nodes in the where clause:
+    private void evaluateSearchExprNode(Tree node) {
+        LOG.info("evaluating text search expression node: " + node.toString());
+        switch (node.getType()) {
+        case TextSearchLexer.TEXT_AND:
+        case TextSearchLexer.TEXT_OR:
+            assertTrue(node.getChildCount() >= 2 );
+            break;
+        case TextSearchLexer.TEXT_MINUS:
+            assertEquals(1, node.getChildCount());
+            break;
+        case TextSearchLexer.TEXT_SEARCH_PHRASE_STRING_LIT:
+        case TextSearchLexer.TEXT_SEARCH_WORD_LIT:
+            evalStringLiteral(node);
+            break;
+        default:
+            fail("[Unexpected node in text search expression: " + node.toString() + "]");         
+        }
+    }
+        
     private void evalInAny(Tree node) {
     }
 

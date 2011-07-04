@@ -229,9 +229,11 @@ quantified_in_predicate:
       )
     ;
 
-text_search_predicate:
+text_search_predicate :// returns [CommonTree result]:
     CONTAINS LPAR (qualifier COMMA)? text_search_expression RPAR
-      -> ^(CONTAINS qualifier? text_search_expression)
+      -> ^(CONTAINS qualifier? text_search_expression) //{ 
+//      $result = StringUtil.parseTextSearchPredicate($text_search_expression.text)
+//    }
     ;
 
 // end where

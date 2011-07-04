@@ -70,6 +70,7 @@ import org.apache.commons.logging.LogFactory;
 
     private QueryObject queryObj;
     private Tree wherePredicateTree;
+    private boolean doFullTextParse = true;
 
     public Tree getWherePredicateTree() {
         return wherePredicateTree;
@@ -85,6 +86,25 @@ import org.apache.commons.logging.LogFactory;
         throws RecognitionException
     {
         throw e;
+    }
+
+	public void setDoFullTextParse(boolean value) {
+		doFullTextParse = value;
+	}
+	
+	public boolean getDoFullTextParse() {
+		return doFullTextParse;
+	}
+	
+    private static CommonTree parseTextSearchPredicate(String expr) throws RecognitionException {
+        String unescapedExpr = StringUtil.unescape(expr.substring(1, expr.length()-1), null);
+        CharStream input = new ANTLRStringStream(unescapedExpr);
+        TokenSource lexer = new TextSearchLexer(input);
+        TokenStream tokens = new CommonTokenStream(lexer);
+        TextSearchParser parser = new TextSearchParser(tokens);
+
+        TextSearchParser.text_search_expression_return parsedStatement = parser.text_search_expression();
+        return (CommonTree) parsedStatement.getTree();
     }
 
 }
@@ -294,8 +314,18 @@ in_value_list returns [Object inList]
     }
     ;
 
-text_search_expression:
-    STRING_LIT; // TODO: extend grammar with full text part
+text_search_expression
+@init {
+    CommonTree tse = null;
+}
+@after {
+   $tree = tse;
+} :
+    STRING_LIT
+    {
+        tse = doFullTextParse ? parseTextSearchPredicate($STRING_LIT.text) : $STRING_LIT;
+    }
+    ;
 
 
 literal returns [Object value]:

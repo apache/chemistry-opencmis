@@ -22,6 +22,7 @@ package org.apache.chemistry.opencmis.jcr.query;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
+import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
@@ -81,8 +82,8 @@ public abstract class QueryTranslator {
         QueryUtil queryUtil = new QueryUtil();
         queryObject = new QueryObject(typeManager);
         ParseTreeWalker<XPathBuilder> parseTreeWalker = new ParseTreeWalker<XPathBuilder>(evaluator);
-        queryUtil.traverseStatementAndCatchExc(statement, queryObject, parseTreeWalker);
-
+        CmisQueryWalker walker = queryUtil.traverseStatementAndCatchExc(statement, queryObject, parseTreeWalker);
+        walker.setDoFullTextParse(false);
         XPathBuilder parseResult = parseTreeWalker.getResult();
         TypeDefinition fromType = getFromName(queryObject);
 

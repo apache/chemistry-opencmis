@@ -751,6 +751,52 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains("V 2.0", PropertyIds.VERSION_LABEL, res));
     }
 
+    @Test
+    public void testContainsWord() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('cat')";
+        ObjectList res = doQuery(statement);
+        assertEquals(3, res.getObjects().size());
+        assertTrue(resultContains("alpha", res));
+        assertTrue(resultContains("beta", res));
+        assertTrue(resultContains("delta", res));
+    }
+
+    @Test
+    public void testContainsPhrase() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('\\'Kitty Katty\\'')";
+        ObjectList res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("beta", res));
+    }
+
+    @Test
+    public void testContainsNot() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('-cat')";
+        ObjectList res = doQuery(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContains("gamma", res));
+        assertTrue(resultContains("epsilon", res));
+    }
+
+    @Test
+    public void testContainsOr() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('cat OR dog')";
+        ObjectList res = doQuery(statement);
+        assertEquals(4, res.getObjects().size());
+        assertTrue(resultContains("alpha", res));
+        assertTrue(resultContains("beta", res));
+        assertTrue(resultContains("gamma", res));
+        assertTrue(resultContains("delta", res));
+    }
+
+    @Test
+    public void testContainsAnd() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('cat dog')";
+        ObjectList res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("delta", res));
+    }
+
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
         ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,

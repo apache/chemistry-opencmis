@@ -138,6 +138,24 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         }
     }
 
+    public Boolean walkSearchExpr(Tree node) {
+        switch (node.getType()) {
+        case TextSearchLexer.TEXT_AND:
+            return walkTextAnd(node);
+        case TextSearchLexer.TEXT_OR:
+            return walkTextOr(node);
+        case TextSearchLexer.TEXT_MINUS:
+            return walkTextMinus(node);
+        case TextSearchLexer.TEXT_SEARCH_WORD_LIT:
+            return walkTextWord(node);
+        case TextSearchLexer.TEXT_SEARCH_PHRASE_STRING_LIT:
+            return walkTextPhrase(node);
+        default:
+            walkOtherExpr(node);
+            return null;
+        }
+    }
+
     /** For extensibility. */
     protected Object walkOtherExpr(Tree node) {
         throw new CmisRuntimeException("Unknown node type: " + node.getType() + " (" + node.getText() + ")");
@@ -233,10 +251,9 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
 
     public Boolean walkContains(Tree opNode, Tree qualNode, Tree queryNode) {
         if (qualNode != null) {
-            walkExpr(qualNode);
+            return walkSearchExpr(qualNode);
         }
-        walkExpr(queryNode);
-        return false;
+        return walkSearchExpr(queryNode);
     }
 
     public Boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
@@ -298,5 +315,24 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
     public Object walkId(Tree node) {
         return null;
     }
-
+    
+    protected Boolean walkTextAnd(Tree node) {
+        return null;
+    }
+    
+    protected Boolean walkTextOr(Tree node) {
+        return null;
+    }
+    
+    protected Boolean walkTextMinus(Tree node) {
+        return null;
+    }
+    
+    protected Boolean walkTextWord(Tree node) {
+        return null;
+    }
+    
+    protected Boolean walkTextPhrase(Tree node) {
+        return null;
+    }
 }
