@@ -257,15 +257,15 @@ public class LoreIpsumTest {
 
     @Test 
     public void testGenerate() {
-    	LOG.info("Generate new text: ");
+    	LOG.debug("Generate new text: ");
     	String newDict = "me you he the One two three four five six Seven eight nine ten eleven twelve "
        		+ "Thirteen fourteen fifteen sixteen Seventeen eighteen nineteen twenty joe fred some";
     	String[] newParagraphs = new String[4];
     	generator.setDictionary(newDict);
     	for (int i=0; i<newParagraphs.length; i++) {
     		newParagraphs[i] = generator.generateParagraph(false);
-    		LOG.info(newParagraphs[i]);
-    		LOG.info("");
+    		LOG.debug(newParagraphs[i]);
+    		LOG.debug("");
     	}
     	assertFalse(newParagraphs[0].equals(newParagraphs[1]));
     	assertFalse(newParagraphs[0].equals(newParagraphs[2]));
@@ -277,105 +277,105 @@ public class LoreIpsumTest {
     
     @Test 
     public void testGenerateLoreIpsum() {
-    	LOG.info("Generate new Lore Ipsum text: ");
+    	LOG.debug("Generate new Lore Ipsum text: ");
     	LoreIpsum ipsum = new LoreIpsum();
     	String[] newParagraphs = new String[4];
     	for (int i=0; i<newParagraphs.length; i++) {
     		newParagraphs[i] = ipsum.generateParagraph(false);
-    		LOG.info(newParagraphs[i]);
-    		LOG.info("");
-    		LOG.info("");
+    		LOG.debug(newParagraphs[i]);
+    		LOG.debug("");
+    		LOG.debug("");
     	}
     }
     
     @Test 
     public void testGenerateLoreIpsumHtml1() {
-    	LOG.info("Generate new Lore Ipsum as html paragraphs:");
+    	LOG.debug("Generate new Lore Ipsum as html paragraphs:");
     	LoreIpsum ipsum = new LoreIpsum();
     	String output = ipsum.generateParagraphsHtml(2048, true);
-    	LOG.info(output);
-    	LOG.info("");
+    	LOG.debug(output);
+    	LOG.debug("");
     }
     
     @Test 
     public void testGenerateLoreIpsumHtml2() {
-    	LOG.info("Generate new Lore Ipsum as one html paragraph:");
+    	LOG.debug("Generate new Lore Ipsum as one html paragraph:");
     	LoreIpsum ipsum = new LoreIpsum();
     	String output = ipsum.generateOneParagraphHtml(2048, true);
-    	LOG.info(output);
-    	LOG.info("");
+    	LOG.debug(output);
+    	LOG.debug("");
     }
     
     @Test 
     public void testGenerateLoreIpsumHtml3() {
-        LOG.info("Generate new Lore Ipsum as full html document: ");
+        LOG.debug("Generate new Lore Ipsum as full html document: ");
     	LoreIpsum ipsum = new LoreIpsum();
     	String output = ipsum.generateParagraphsFullHtml(2048, true);
-    	LOG.info(output);
-    	LOG.info("");
+    	LOG.debug(output);
+    	LOG.debug("");
     }
     
     @Test 
     public void testGenerateLoreIpsumPlainText() {
-    	LOG.info("Generate new Lore Ipsum as plain text: ");
+    	LOG.debug("Generate new Lore Ipsum as plain text: ");
     	LoreIpsum ipsum = new LoreIpsum();
     	String output = ipsum.generateParagraphsPlainText(2048, true);
-    	LOG.info(output);
-    	LOG.info("");
+    	LOG.debug(output);
+    	LOG.debug("");
     }
     
     @Test 
     public void testGenerateLoreIpsumPlainTextFormatted() {
-    	LOG.info("Generate new Lore Ipsum as plain text with 60 columns: ");
+    	LOG.debug("Generate new Lore Ipsum as plain text with 60 columns: ");
     	LoreIpsum ipsum = new LoreIpsum();
     	String output = ipsum.generateParagraphsPlainText(256, 60, false);
-    	LOG.info(output);
-    	LOG.info("");
+    	LOG.debug(output);
+    	LOG.debug("");
     }
         
     @Test 
     public void testGenerateLoreIpsumHtml1Writer() throws IOException {
-        LOG.info("Generate new Lore Ipsum as html paragraphs with PrintWriter:");
+        LOG.debug("Generate new Lore Ipsum as html paragraphs with PrintWriter:");
         LoreIpsum ipsum = new LoreIpsum();
         StringWriter writer = new StringWriter();
         ipsum.generateParagraphsHtml(writer, 2048, true);
-        LOG.info(writer.toString());
-        LOG.info("End Test.");
+        LOG.debug(writer.toString());
+        LOG.debug("End Test.");
     }
     
     @Test 
     public void testGenerateLoreIpsumHtml2Writer() throws IOException  {
-        LOG.info("Generate new Lore Ipsum as full html paragraph with PrintWriter:");
+        LOG.debug("Generate new Lore Ipsum as full html paragraph with PrintWriter:");
         LoreIpsum ipsum = new LoreIpsum();
         StringWriter writer = new StringWriter();
         ipsum.generateParagraphsFullHtml(writer, 2048, true);
-        LOG.info(writer.toString());
-        LOG.info("End Test.");
+        LOG.debug(writer.toString());
+        LOG.debug("End Test.");
     }
     
     @Test 
     public void testGenerateLoreIpsumPlainTextWriter() throws IOException  {
-        LOG.info("Generate new Lore Ipsum as plain text with PrintWriter: ");
+        LOG.debug("Generate new Lore Ipsum as plain text with PrintWriter: ");
         LoreIpsum ipsum = new LoreIpsum();
         StringWriter writer = new StringWriter();
         ipsum.generateParagraphsPlainText(writer, 2048, true);
-        LOG.info(writer.toString());
-        LOG.info("End Test.");
+        LOG.debug(writer.toString());
+        LOG.debug("End Test.");
     }
     
     @Test 
     public void testGenerateLoreIpsumPlainTextFormattedWriter() throws IOException {
-        LOG.info("Generate new Lore Ipsum as plain text with 60 columns with PrintWriter: ");
+        LOG.debug("Generate new Lore Ipsum as plain text with 60 columns with PrintWriter: ");
         LoreIpsum ipsum = new LoreIpsum();
         StringWriter writer = new StringWriter();
         ipsum.generateParagraphsPlainText(writer, 256, 60, false);
-        LOG.info(writer.toString());
-        LOG.info("End Test.");
+        LOG.debug(writer.toString());
+        LOG.debug("End Test.");
     }
     
     @Test 
     public void testGenerateLoreIpsumGerman() throws Exception {
-    	LOG.info("Generate new Lore Ipsum Ferry Tale: ");
+    	LOG.debug("Generate new Lore Ipsum Ferry Tale: ");
     	InputStream is = this.getClass().getResourceAsStream("/HaenselUndGretel.txt");
     	
     	// read stream into a string
@@ -393,8 +393,8 @@ public class LoreIpsumTest {
     	
     	LoreIpsum ipsum = new LoreIpsum(sample.toString());
     	String output = ipsum.generateParagraphsPlainText(4096, 80, false);
-    	LOG.info(output);
-        LOG.info("End Test.");
+    	LOG.debug(output);
+        LOG.debug("End Test.");
     }
     
 }
