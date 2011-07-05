@@ -55,6 +55,8 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -80,10 +82,10 @@ public class GettingStarted {
         // connection settings - we're connecting to a public cmis repo,
         // using the AtomPUB binding, but there are other options here,
         // or you can substitute your own URL
-        parameter.put(SessionParameter.ATOMPUB_URL,
-         "http://opencmis.cloudapp.net/inmemory/atom/");
+        parameter.put(SessionParameter.ATOMPUB_URL, 
+        "http://repo.opencmis.org/inmemory/atom/");
         // "http://cmis.alfresco.com/service/cmis");
-//                "http://localhost:8080/alfresco/service/api/cmis");
+//         "http://localhost:8080/alfresco/service/api/cmis");
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
         // find all the repositories at this URL - there should only be one.
@@ -165,7 +167,7 @@ public class GettingStarted {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         // Get the contents of the document by path
         String path = newFolder.getPath() + "/" + textFileName;
         System.out.println("Getting object by path " + path);
@@ -177,7 +179,6 @@ public class GettingStarted {
         }
 
         System.out.println("Contents of " + doc.getName() + " are: " + content);
-        
 
         // Create Document Object with no content stream
         System.out.println("creating a document  called testNoContent with no ContentStream");
@@ -214,28 +215,34 @@ public class GettingStarted {
         System.out.println("renamed to " + doc2.getName());
 
         // Update the content stream
-        content = "This is some updated test content for our renamed second document.";
-        buf = null;
-        try {
-            buf = content.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        input = new ByteArrayInputStream(buf);
-        contentStream = session.getObjectFactory().createContentStream("test3.txt", buf.length,
-                mimetype, input);
-        properties = new HashMap<String, Object>();
-        properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
-        properties.put(PropertyIds.NAME, "test3.txt");
-        doc2.setContentStream(contentStream, true);
+        if (!session.getRepositoryInfo().getCapabilities().getContentStreamUpdatesCapability()
+                .equals(CapabilityContentStreamUpdates.ANYTIME)) {
+            System.out.println("update without checkout not supported in this repository");
+        } else {
+            System.out.println("updating content stream");
+            content = "This is some updated test content for our renamed second document.";
+            buf = null;
+            try {
+                buf = content.getBytes("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            input = new ByteArrayInputStream(buf);
+            contentStream = session.getObjectFactory().createContentStream("test3.txt", buf.length,
+                    mimetype, input);
+            properties = new HashMap<String, Object>();
+            properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+            properties.put(PropertyIds.NAME, "test3.txt");
+            doc2.setContentStream(contentStream, true);
 
-        // did it work?
-        try {
-            content = getContentAsString(doc2.getContentStream());
-        } catch (IOException e) {
-            e.printStackTrace();
+            // did it work?
+            try {
+                content = getContentAsString(doc2.getContentStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Contents of " + doc2.getName() + " are: " + content);
         }
-        System.out.println("Contents of " + doc2.getName() + " are: " + content);
 
         // Force and handle a CmisInvalidArgumentException exception
         System.out.println("\nExceptions...");
@@ -717,9 +724,9 @@ public class GettingStarted {
                             || o.getBaseType().getId().equals("cmis:folder")) {
                         stack.push((Folder) o);
                     } else {
-                        OperationContext context = session.createOperationContext();
-                        context.setRenditionFilterString("cmis:thumbnail");
-                        CmisObject oo = session.getObject(o.getId(), context);
+                        operationContext = session.createOperationContext();
+                        operationContext.setRenditionFilterString("cmis:thumbnail");
+                        CmisObject oo = session.getObject(o.getId(), operationContext);
                         List<Rendition> rl = oo.getRenditions();
                         if (!rl.isEmpty()) {
                             System.out.println("found  " + o.getName() + " of type "

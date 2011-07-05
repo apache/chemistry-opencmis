@@ -44,7 +44,7 @@ public class Hello {
 
         // connection settings - we're connecting to a public cmis repo,
         // using the AtomPUB binding
-        parameter.put(SessionParameter.ATOMPUB_URL, " http://opencmis.cloudapp.net/inmemory/atom/");
+        parameter.put(SessionParameter.ATOMPUB_URL, " http://repo.opencmis.org/inmemory/atom/");
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
         // find all the repositories at this URL - there should only be one.
