@@ -621,7 +621,7 @@ public class JSONConverter {
         result.put(JSON_PROPERTYTYPE_UPDATABILITY, propertyDef.getUpdatability().value());
         result.put(JSON_PROPERTYTYPE_INHERITED, propertyDef.isInherited());
         result.put(JSON_PROPERTYTYPE_REQUIRED, propertyDef.isRequired());
-        result.put(JSON_PROPERTYTYPE_REQUIRED, propertyDef.isQueryable());
+        result.put(JSON_PROPERTYTYPE_QUERYABLE, propertyDef.isQueryable());
         result.put(JSON_PROPERTYTYPE_OPENCHOICE, propertyDef.isOpenChoice());
 
         // TODO: add type specific details
