@@ -74,7 +74,8 @@ public final class SessionParameter {
     // --- connection ---
 
     public static final String COMPRESSION = "org.apache.chemistry.opencmis.binding.compression";
-
+    public static final String CLIENT_COMPRESSION = "org.apache.chemistry.opencmis.binding.clientcompression";
+    
     public static final String CONNECT_TIMEOUT = "org.apache.chemistry.opencmis.binding.connecttimeout";
     public static final String READ_TIMEOUT = "org.apache.chemistry.opencmis.binding.readtimeout";
 

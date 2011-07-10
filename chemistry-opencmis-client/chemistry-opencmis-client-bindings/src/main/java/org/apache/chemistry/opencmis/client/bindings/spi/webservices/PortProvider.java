@@ -61,6 +61,7 @@ public class PortProvider extends AbstractPortProvider {
     private static final Log log = LogFactory.getLog(PortProvider.class);
 
     private boolean useCompression;
+    private boolean useClientCompression;
     private String acceptLanguage;
 
     /**
@@ -69,15 +70,11 @@ public class PortProvider extends AbstractPortProvider {
     public PortProvider(BindingSession session) {
         this.session = session;
 
-        useCompression = false;
-        if ((session.get(SessionParameter.COMPRESSION) instanceof String)
-                && (Boolean.parseBoolean((String) session.get(SessionParameter.COMPRESSION)))) {
-            useCompression = true;
-        }
-        if ((session.get(SessionParameter.COMPRESSION) instanceof Boolean)
-                && ((Boolean) session.get(SessionParameter.COMPRESSION)).booleanValue()) {
-            useCompression = true;
-        }
+        Object compression = session.get(SessionParameter.COMPRESSION);
+        useCompression = (compression != null) && Boolean.parseBoolean(compression.toString());
+
+        Object clientCompression = session.get(SessionParameter.CLIENT_COMPRESSION);
+        useClientCompression = (clientCompression != null) && Boolean.parseBoolean(clientCompression.toString());
 
         if (session.get(CmisBindingsHelper.ACCEPT_LANGUAGE) instanceof String) {
             acceptLanguage = session.get(CmisBindingsHelper.ACCEPT_LANGUAGE).toString();
@@ -146,6 +143,14 @@ public class PortProvider extends AbstractPortProvider {
                     httpHeaders = new HashMap<String, List<String>>();
                 }
                 httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
+            }
+
+            // client compression
+            if (useClientCompression) {
+                if (httpHeaders == null) {
+                    httpHeaders = new HashMap<String, List<String>>();
+                }
+                httpHeaders.put("Content-Encoding", Collections.singletonList("gzip"));
             }
 
             // locale

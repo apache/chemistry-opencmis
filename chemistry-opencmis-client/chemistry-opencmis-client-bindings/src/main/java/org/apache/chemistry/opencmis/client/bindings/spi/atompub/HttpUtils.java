@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
@@ -148,12 +149,9 @@ public class HttpUtils {
             }
 
             // compression
-            if ((session.get(SessionParameter.COMPRESSION) instanceof String)
-                    && (Boolean.parseBoolean((String) session.get(SessionParameter.COMPRESSION)))) {
-                conn.setRequestProperty("Accept-Encoding", "gzip");
-            } else if ((session.get(SessionParameter.COMPRESSION) instanceof Boolean)
-                    && ((Boolean) session.get(SessionParameter.COMPRESSION)).booleanValue()) {
-                conn.setRequestProperty("Accept-Encoding", "gzip");
+            Object compression = session.get(SessionParameter.COMPRESSION);
+            if ((compression != null) && Boolean.parseBoolean(compression.toString())) {
+                conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             }
 
             // locale
@@ -164,7 +162,18 @@ public class HttpUtils {
             // send data
             if (writer != null) {
                 conn.setChunkedStreamingMode(BUFFER_SIZE);
-                OutputStream out = new BufferedOutputStream(conn.getOutputStream(), BUFFER_SIZE);
+
+                OutputStream connOut = null;
+
+                Object clientCompression = session.get(SessionParameter.CLIENT_COMPRESSION);
+                if ((clientCompression != null) && Boolean.parseBoolean(clientCompression.toString())) {
+                    conn.setRequestProperty("Content-Encoding", "gzip");
+                    connOut = new GZIPOutputStream(conn.getOutputStream(), 4096);
+                } else {
+                    connOut = conn.getOutputStream();
+                }
+
+                OutputStream out = new BufferedOutputStream(connOut, BUFFER_SIZE);
                 writer.write(out);
                 out.flush();
             }

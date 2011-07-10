@@ -87,6 +87,8 @@ public class LoginDialog extends JDialog {
     private JRadioButton authenticationNTLMButton;
     private JRadioButton compressionOnButton;
     private JRadioButton compressionOffButton;
+    private JRadioButton clientCompressionOnButton;
+    private JRadioButton clientCompressionOffButton;
     private JTextArea sessionParameterTextArea;
     private JButton loadRepositoryButton;
     private JButton loginButton;
@@ -133,7 +135,9 @@ public class LoginDialog extends JDialog {
 
         createCompressionButtons(basicPanel);
 
-        makeCompactGrid(basicPanel, 6, 2, 5, 10, 5, 5);
+        createClientCompressionButtons(basicPanel);
+
+        makeCompactGrid(basicPanel, 7, 2, 5, 10, 5, 5);
 
         loginTabs.addTab("Basic", basicPanel);
 
@@ -345,6 +349,24 @@ public class LoginDialog extends JDialog {
         pane.add(compressionContainer);
     }
 
+    private void createClientCompressionButtons(Container pane) {
+        JPanel clientCompressionContainer = new JPanel();
+        clientCompressionContainer.setLayout(new BoxLayout(clientCompressionContainer, BoxLayout.LINE_AXIS));
+        boolean clientCompression = (System.getProperty(SYSPROP_BINDING, "clientcompression").equalsIgnoreCase("on"));
+        clientCompressionOnButton = new JRadioButton("On", clientCompression);
+        clientCompressionOffButton = new JRadioButton("Off", !clientCompression);
+        ButtonGroup clientCompressionGroup = new ButtonGroup();
+        clientCompressionGroup.add(clientCompressionOnButton);
+        clientCompressionGroup.add(clientCompressionOffButton);
+        clientCompressionContainer.add(clientCompressionOnButton);
+        clientCompressionContainer.add(Box.createRigidArea(new Dimension(10, 0)));
+        clientCompressionContainer.add(clientCompressionOffButton);
+        JLabel clientCompressionLabel = new JLabel("Client Compression:", JLabel.TRAILING);
+
+        pane.add(clientCompressionLabel);
+        pane.add(clientCompressionContainer);
+    }
+
     private JButton createButton(String title) {
         JButton button = new JButton(title);
         button.setPreferredSize(new Dimension(Short.MAX_VALUE, 30));
@@ -418,7 +440,7 @@ public class LoginDialog extends JDialog {
         }
 
         return ClientSession.createSessionParameters(url, binding, username, password, authentication,
-                compressionOnButton.isSelected());
+                compressionOnButton.isSelected(), clientCompressionOnButton.isSelected());
     }
 
     private Map<String, String> createExpertSessionParameters() {

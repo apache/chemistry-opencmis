@@ -102,7 +102,7 @@ public class ClientSession {
     }
 
     public static Map<String, String> createSessionParameters(String url, BindingType binding, String username,
-            String password, Authentication authentication, boolean compression) {
+            String password, Authentication authentication, boolean compression, boolean clientCompression) {
         Map<String, String> parameters = new LinkedHashMap<String, String>();
 
         if (binding == BindingType.WEBSERVICES) {
@@ -136,6 +136,10 @@ public class ClientSession {
 
         if (compression) {
             parameters.put(SessionParameter.COMPRESSION, "true");
+        }
+
+        if (clientCompression) {
+            parameters.put(SessionParameter.CLIENT_COMPRESSION, "true");
         }
 
         // get additional workbench properties from system properties
