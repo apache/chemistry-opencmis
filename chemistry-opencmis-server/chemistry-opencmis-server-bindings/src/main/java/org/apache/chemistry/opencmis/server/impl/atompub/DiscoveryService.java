@@ -145,7 +145,13 @@ public class DiscoveryService {
 
         response.setStatus(statusCode);
         response.setContentType(Constants.MEDIATYPE_FEED);
-        response.setHeader("Content-Location", location.toString());
+
+        // The Content-Location header is optional (CMIS specification 3.7.2.1).
+        // Since it can cause problems with long query statements it is
+        // deactivated.
+        // response.setHeader("Content-Location", location.toString());
+
+        // The Location header is not optional (CMIS specification 3.7.2.1).
         response.setHeader("Location", location.toString());
 
         // write XML
