@@ -103,7 +103,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         Session session;
 
         Map<String, String> parameters = getParameters();
-        if (parameters.containsKey(SessionParameter.REPOSITORY_ID)) {
+        String repId = parameters.get(SessionParameter.REPOSITORY_ID);
+        if ((repId != null) && (repId.length() > 0)) {
             session = factory.createSession(parameters);
         } else {
             session = factory.getRepositories(parameters).get(0).createSession();
