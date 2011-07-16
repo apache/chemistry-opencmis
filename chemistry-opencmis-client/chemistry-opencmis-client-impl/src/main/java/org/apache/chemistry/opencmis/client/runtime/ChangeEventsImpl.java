@@ -25,8 +25,8 @@ import org.apache.chemistry.opencmis.client.api.ChangeEvents;
 
 public class ChangeEventsImpl implements ChangeEvents {
 
-    private String latestChangeLogToken = null;
-    private List<ChangeEvent> events = null;
+    private String latestChangeLogToken;
+    private List<ChangeEvent> events;
     private boolean hasMoreItems = false;
     private long totalNumItems = -1;
 

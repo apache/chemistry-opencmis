@@ -54,15 +54,15 @@ public class CacheTest extends TestCase {
 
         valueObj = cache.get("l1", "l2a", "l3", "l4");
         assertTrue(valueObj instanceof String);
-        assertTrue(value1 == valueObj);
+        assertSame(value1, valueObj);
 
         valueObj = cache.get("l1", "l2b", "l3", "l4");
         assertTrue(valueObj instanceof String);
-        assertTrue(value2 == valueObj);
+        assertSame(value2, valueObj);
 
         valueObj = cache.get("l1", "l2c", "l3", "l4");
         assertTrue(valueObj instanceof String);
-        assertTrue(value3 == valueObj);
+        assertSame(value3, valueObj);
 
         // remove leaf
         cache.remove("l1", "l2", "l3", "l4");
@@ -73,7 +73,7 @@ public class CacheTest extends TestCase {
         cache.put(value1, "l1", "l2", "l3", "l4");
         valueObj = cache.get("l1", "l2", "l3", "l4");
         assertTrue(valueObj instanceof String);
-        assertTrue(value1 == valueObj);
+        assertSame(value1, valueObj);
 
         // remove branch
         cache.remove("l1", "l2");

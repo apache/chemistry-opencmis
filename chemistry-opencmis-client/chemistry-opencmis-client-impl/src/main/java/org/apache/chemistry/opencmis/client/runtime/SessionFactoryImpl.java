@@ -69,8 +69,6 @@ public class SessionFactoryImpl implements SessionFactory {
      * provider and cache instance override the values in the session parameters
      * if they are not <code>null</code>.
      * 
-     * @param T
-     *            a class implementing the {@link Session} interface
      * @param parameters
      *            a {@code Map} of name/value pairs with parameters for the
      *            session

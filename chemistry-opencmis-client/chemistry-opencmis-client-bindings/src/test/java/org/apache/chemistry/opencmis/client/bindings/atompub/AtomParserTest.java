@@ -127,24 +127,24 @@ public class AtomParserTest extends TestCase {
     }
 
     protected void assertEquals(CmisProperty expected, CmisProperty actual) throws Exception {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
-        if ((expected == null) || (actual == null)) {
+        if (expected == null || actual == null) {
             fail("Property is null!");
         }
 
         assertEquals(expected.getPropertyDefinitionId(), actual.getPropertyDefinitionId());
-        assertEquals(expected.getClass(), actual.getClass());
+        assertSame(expected.getClass(), actual.getClass());
 
-        Method m1 = expected.getClass().getMethod("getValue", new Class<?>[0]);
-        List<?> values1 = (List<?>) m1.invoke(expected, new Object[0]);
+        Method m1 = expected.getClass().getMethod("getValue");
+        List<?> values1 = (List<?>) m1.invoke(expected);
         assertNotNull(values1);
         assertFalse(values1.isEmpty());
 
-        Method m2 = actual.getClass().getMethod("getValue", new Class<?>[0]);
-        List<?> values2 = (List<?>) m2.invoke(actual, new Object[0]);
+        Method m2 = actual.getClass().getMethod("getValue");
+        List<?> values2 = (List<?>) m2.invoke(actual);
         assertNotNull(values2);
         assertFalse(values2.isEmpty());
 

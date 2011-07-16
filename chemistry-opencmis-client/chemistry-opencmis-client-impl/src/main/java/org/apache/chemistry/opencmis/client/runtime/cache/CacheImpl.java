@@ -51,7 +51,7 @@ public class CacheImpl implements Cache {
     private LinkedHashMap<String, CacheItem<Map<String, CmisObject>>> objectMap;
     private LinkedHashMap<String, CacheItem<String>> pathToIdMap;
 
-    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
      * Default constructor.

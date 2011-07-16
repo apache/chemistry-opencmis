@@ -33,7 +33,7 @@ public class SessionImpl implements BindingSession {
 
     private static final long serialVersionUID = 1L;
 
-    private Map<String, Object> data;
+    private final Map<String, Object> data;
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 

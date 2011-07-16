@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  */
 public class SimpleReadWriteTests extends AbstractSimpleReadWriteTests {
 
-    private Set<String> fTests;
+    private final Set<String> fTests;
 
     public SimpleReadWriteTests() {
         fTests = new HashSet<String>();

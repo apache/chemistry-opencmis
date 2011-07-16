@@ -217,12 +217,12 @@ public abstract class AbstractPortProvider {
      * Creates a service object.
      */
     protected Service initServiceObject(String serviceKey) {
-        Service serviceObject = null;
 
         if (log.isDebugEnabled()) {
             log.debug("Initializing Web Service " + serviceKey + "...");
         }
 
+        Service serviceObject;
         try {
             // get WSDL URL
             URL wsdlUrl = new URL((String) session.get(serviceKey));

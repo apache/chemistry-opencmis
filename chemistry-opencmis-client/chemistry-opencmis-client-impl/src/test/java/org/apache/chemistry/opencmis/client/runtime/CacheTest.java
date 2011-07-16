@@ -20,13 +20,11 @@ package org.apache.chemistry.opencmis.client.runtime;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
@@ -34,6 +32,8 @@ import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.Assert.*;
 
 public class CacheTest {
 
@@ -54,28 +54,28 @@ public class CacheTest {
         cache.put(obj1, cacheKey);
 
         // access object
-        Assert.assertTrue(cache.containsId(id, cacheKey));
+        assertTrue(cache.containsId(id, cacheKey));
 
         // access object
         CmisObject obj2 = cache.getById(id, cacheKey);
-        Assert.assertEquals(obj1, obj2);
+        assertEquals(obj1, obj2);
 
         // clear cache
         cache.clear();
 
         // access object (not found)
-        Assert.assertFalse(cache.containsId(id, cacheKey));
+        assertFalse(cache.containsId(id, cacheKey));
 
         // access object (not found)
         CmisObject obj4 = cache.getById(id, cacheKey);
-        Assert.assertNull(obj4);
+        assertNull(obj4);
     }
 
     @Test
     public void cacheSizeTest() {
         int cacheSize = 50000;
         Cache cache = createCache(cacheSize, 3600 * 1000);
-        Assert.assertEquals(cacheSize, cache.getCacheSize());
+        assertEquals(cacheSize, cache.getCacheSize());
     }
 
     @Test
@@ -90,10 +90,10 @@ public class CacheTest {
             cache.put(obj, cacheKey);
         }
 
-        Assert.assertNull(cache.getById("id0", cacheKey)); // thrown out
-        Assert.assertNotNull(cache.getById("id1", cacheKey));
-        Assert.assertNotNull(cache.getById("id2", cacheKey));
-        Assert.assertNotNull(cache.getById("id3", cacheKey));
+        assertNull(cache.getById("id0", cacheKey)); // thrown out
+        assertNotNull(cache.getById("id1", cacheKey));
+        assertNotNull(cache.getById("id2", cacheKey));
+        assertNotNull(cache.getById("id3", cacheKey));
     }
 
     @SuppressWarnings("static-access")
@@ -107,15 +107,15 @@ public class CacheTest {
         CmisObject obj = this.createCmisObject(id);
         cache.put(obj, cacheKey);
 
-        Assert.assertNotNull(cache.getById(id, cacheKey));
+        assertNotNull(cache.getById(id, cacheKey));
 
         Thread.currentThread().sleep(750);
 
-        Assert.assertNull(cache.getById(id, cacheKey));
+        assertNull(cache.getById(id, cacheKey));
     }
 
     @Test
-    public void serializationTest() throws IOException, ClassNotFoundException {
+    public void serializationTest() throws Exception {
         int cacheSize = 10;
         Cache cache = createCache(cacheSize, 3600 * 1000);
 
@@ -138,7 +138,7 @@ public class CacheTest {
         for (int k = 0; k < cacheSize; k++) {
             CmisObject o1 = cache.getById("id" + k, cacheKey);
             CmisObject o2 = cache2.getById("id" + k, cacheKey);
-            Assert.assertEquals(o1.getId(), o2.getId());
+            assertEquals(o1.getId(), o2.getId());
         }
     }
 
@@ -146,7 +146,6 @@ public class CacheTest {
      * Create a Mock for testing Cache is sufficient.
      *
      * @param id
-     * @param path
      * @return a mocked object
      */
     private static CmisObject createCmisObject(final String id) {

@@ -34,7 +34,7 @@ public abstract class AbstractMapCacheLevel implements CacheLevel {
 
     private Map<String, Object> fMap;
     private boolean fFallbackEnabled = false;
-    private String fFallbackKey = null;
+    private String fFallbackKey;
     private boolean fSingleValueEnabled = false;
 
     public abstract void initialize(Map<String, String> parameters);

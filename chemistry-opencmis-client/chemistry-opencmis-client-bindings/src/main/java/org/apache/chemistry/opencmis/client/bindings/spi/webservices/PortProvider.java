@@ -60,8 +60,9 @@ public class PortProvider extends AbstractPortProvider {
 
     private static final Log log = LogFactory.getLog(PortProvider.class);
 
-    private boolean useCompression;
-    private boolean useClientCompression;
+    private final boolean useCompression;
+    private final boolean useClientCompression;
+
     private String acceptLanguage;
 
     /**
@@ -85,13 +86,13 @@ public class PortProvider extends AbstractPortProvider {
      * Creates a port object.
      */
     protected Object createPortObject(Service service) {
-        Object portObject = null;
 
         if (log.isDebugEnabled()) {
             log.debug("Creating Web Service port object of " + (service == null ? "???" : service.getServiceName())
                     + "...");
         }
 
+        Object portObject;
         try {
             if (service instanceof RepositoryService) {
                 portObject = ((RepositoryService) service).getRepositoryServicePort(new MTOMFeature());

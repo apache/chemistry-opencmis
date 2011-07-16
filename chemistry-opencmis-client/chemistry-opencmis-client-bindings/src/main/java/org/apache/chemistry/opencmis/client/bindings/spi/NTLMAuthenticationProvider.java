@@ -81,7 +81,7 @@ public class NTLMAuthenticationProvider extends AbstractAuthenticationProvider {
      */
     static class OpenCMISAuthenticator extends Authenticator {
 
-        private PasswordAuthentication passwordAuthentication = null;
+        private PasswordAuthentication passwordAuthentication;
 
         /**
          * Resets the user and password. The next request will not be

@@ -27,8 +27,8 @@ import org.apache.chemistry.opencmis.client.api.ItemIterable;
  */
 public abstract class AbstractIterable<T> implements ItemIterable<T> {
 
-    private AbstractPageFetcher<T> pageFetcher;
-    private long skipCount;
+    private final AbstractPageFetcher<T> pageFetcher;
+    private final long skipCount;
     private AbstractIterator<T> iterator;
 
     protected AbstractIterable(AbstractPageFetcher<T> pageFetcher) {

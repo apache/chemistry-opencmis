@@ -43,7 +43,6 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
 
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
-        Acl result = null;
 
         // fetch the current ACL
         Acl originalAces = getAcl(repositoryId, objectId, false, null);
@@ -58,12 +57,12 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
 
         // update ACL
         AtomAcl acl = updateAcl(repositoryId, objectId, newACL, aclPropagation);
-        result = convert(acl.getACL(), null);
+        Acl result = convert(acl.getACL(), null);
 
         return result;
     }
 
-    public org.apache.chemistry.opencmis.commons.data.Acl getAcl(String repositoryId, String objectId,
+    public Acl getAcl(String repositoryId, String objectId,
             Boolean onlyBasicPermissions, ExtensionsData extension) {
 
         // find the link

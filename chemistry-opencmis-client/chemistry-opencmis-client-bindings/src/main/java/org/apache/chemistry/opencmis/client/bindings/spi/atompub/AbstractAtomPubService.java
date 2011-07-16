@@ -456,14 +456,14 @@ public class AbstractAtomPubService implements LinkAccess {
             return null;
         }
 
-        int beginn = errorContent.indexOf("<!--exception-->");
+        int begin = errorContent.indexOf("<!--exception-->");
         int end = errorContent.indexOf("<!--/exception-->");
 
-        if ((beginn == -1) || (end == -1) || (beginn > end)) {
+        if (begin == -1 || end == -1 || begin > end) {
             return null;
         }
 
-        return errorContent.substring(beginn + "<!--exception-->".length(), end);
+        return errorContent.substring(begin + "<!--exception-->".length(), end);
     }
 
     protected String extractErrorMessage(String message, String errorContent) {
@@ -471,14 +471,14 @@ public class AbstractAtomPubService implements LinkAccess {
             return message;
         }
 
-        int beginn = errorContent.indexOf("<!--message-->");
+        int begin = errorContent.indexOf("<!--message-->");
         int end = errorContent.indexOf("<!--/message-->");
 
-        if ((beginn == -1) || (end == -1) || (beginn > end)) {
+        if (begin == -1 || end == -1 || begin > end) {
             return message;
         }
 
-        return errorContent.substring(beginn + "<!--message-->".length(), end);
+        return errorContent.substring(begin + "<!--message-->".length(), end);
     }
 
     // ---- helpers ----
@@ -669,7 +669,7 @@ public class AbstractAtomPubService implements LinkAccess {
     private static Map<String, Set<String>> convertAclToMap(Acl acl) {
         Map<String, Set<String>> result = new HashMap<String, Set<String>>();
 
-        if ((acl == null) || (acl.getAces() == null)) {
+        if (acl == null || acl.getAces() == null) {
             return result;
         }
 
@@ -681,7 +681,7 @@ public class AbstractAtomPubService implements LinkAccess {
             }
 
             // although a principal must not be null, check it
-            if ((ace.getPrincipal() == null) || (ace.getPrincipal().getId() == null)) {
+            if (ace.getPrincipal() == null || ace.getPrincipal().getId() == null) {
                 // ignore
                 continue;
             }
@@ -748,7 +748,6 @@ public class AbstractAtomPubService implements LinkAccess {
             ReturnVersion returnVersion, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
-        ObjectData result = null;
 
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(Constants.PARAM_ID, objectIdOrPath);
@@ -769,7 +768,7 @@ public class AbstractAtomPubService implements LinkAccess {
 
         UrlBuilder url = new UrlBuilder(link);
         // workaround for missing template parameter in the CMIS spec
-        if ((returnVersion != null) && (returnVersion != ReturnVersion.THIS)) {
+        if (returnVersion != null && returnVersion != ReturnVersion.THIS) {
             url.addParameter(Constants.PARAM_RETURN_VERSION, returnVersion);
         }
 
@@ -783,6 +782,7 @@ public class AbstractAtomPubService implements LinkAccess {
         }
 
         lockLinks();
+        ObjectData result = null;
         try {
             // clean up cache
             removeLinks(repositoryId, entry.getId());
@@ -806,7 +806,6 @@ public class AbstractAtomPubService implements LinkAccess {
      * Retrieves a type definition.
      */
     protected TypeDefinition getTypeDefinitionInternal(String repositoryId, String typeId) {
-        TypeDefinition result = null;
 
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(Constants.PARAM_ID, typeId);
@@ -826,6 +825,7 @@ public class AbstractAtomPubService implements LinkAccess {
         }
 
         lockTypeLinks();
+        TypeDefinition result = null;
         try {
             // clean up cache
             removeTypeLinks(repositoryId, entry.getId());

@@ -292,7 +292,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
 
         assertNotNull(repository.getCapabilities());
 
-        return (repository.getCapabilities().getAclCapability() != CapabilityAcl.NONE);
+        return repository.getCapabilities().getAclCapability() != CapabilityAcl.NONE;
     }
 
     /**
@@ -303,7 +303,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
 
         assertNotNull(repository.getCapabilities());
 
-        return (repository.getCapabilities().getAclCapability() == CapabilityAcl.MANAGE);
+        return repository.getCapabilities().getAclCapability() == CapabilityAcl.MANAGE;
     }
 
     /**
@@ -318,7 +318,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             return false;
         }
 
-        return (repository.getCapabilities().getRenditionsCapability() != CapabilityRenditions.NONE);
+        return repository.getCapabilities().getRenditionsCapability() != CapabilityRenditions.NONE;
     }
 
     /**
@@ -333,7 +333,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             return false;
         }
 
-        return repository.getCapabilities().isGetDescendantsSupported().booleanValue();
+        return repository.getCapabilities().isGetDescendantsSupported();
     }
 
     /**
@@ -348,7 +348,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             return false;
         }
 
-        return repository.getCapabilities().isGetFolderTreeSupported().booleanValue();
+        return repository.getCapabilities().isGetFolderTreeSupported();
     }
 
     /**
@@ -363,7 +363,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             return false;
         }
 
-        return (repository.getCapabilities().getChangesCapability() != CapabilityChanges.NONE);
+        return repository.getCapabilities().getChangesCapability() != CapabilityChanges.NONE;
     }
 
     /**
@@ -378,7 +378,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             return false;
         }
 
-        return (repository.getCapabilities().getQueryCapability() != CapabilityQuery.NONE);
+        return repository.getCapabilities().getQueryCapability() != CapabilityQuery.NONE;
     }
 
     /**
@@ -394,7 +394,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             return false;
         }
 
-        return (relType != null);
+        return relType != null;
     }
 
     /**
@@ -409,7 +409,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             return false;
         }
 
-        return (relType != null);
+        return relType != null;
     }
 
     /**
@@ -847,13 +847,13 @@ public abstract class AbstractCmisTestCase extends TestCase {
         Boolean isVersionable = ((DocumentTypeDefinition) type).isVersionable();
         assertNotNull(isVersionable);
 
-        return isVersionable.booleanValue();
+        return isVersionable;
     }
 
     // ---- asserts ----
 
     protected void assertEquals(TypeDefinition expected, TypeDefinition actual, boolean checkPropertyDefintions) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
@@ -878,7 +878,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             return;
         }
 
-        if ((expected.getPropertyDefinitions() == null) && (actual.getPropertyDefinitions() == null)) {
+        if (expected.getPropertyDefinitions() == null && actual.getPropertyDefinitions() == null) {
             return;
         }
 
@@ -900,7 +900,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     protected void assertEquals(PropertyDefinition<?> expected, PropertyDefinition<?> actual) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
@@ -932,7 +932,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     protected void assertEquals(Properties expected, Properties actual) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
@@ -944,11 +944,11 @@ public abstract class AbstractCmisTestCase extends TestCase {
             fail("Actual properties data is null!");
         }
 
-        if ((expected.getProperties() == null) && (actual.getProperties() == null)) {
+        if (expected.getProperties() == null && actual.getProperties() == null) {
             return;
         }
 
-        if ((expected.getProperties() == null) || (actual.getProperties() == null)) {
+        if (expected.getProperties() == null || actual.getProperties() == null) {
             fail("Properties are null!");
         }
 
@@ -976,11 +976,11 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     protected void assertEquals(PropertyData<?> expected, PropertyData<?> actual) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
-        if ((expected == null) || (actual == null)) {
+        if (expected == null || actual == null) {
             fail("Properties data is null!");
         }
 
@@ -1051,7 +1051,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     protected void assertEquals(AllowableActions expected, AllowableActions actual) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
@@ -1087,7 +1087,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     protected void assertEquals(Acl expected, Acl actual) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
@@ -1099,7 +1099,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             fail("Actual ACL data is null!");
         }
 
-        if ((expected.getAces() == null) && (actual.getAces() == null)) {
+        if (expected.getAces() == null && actual.getAces() == null) {
             return;
         }
 
@@ -1120,7 +1120,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     protected void assertEquals(Ace expected, Ace actual) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
@@ -1142,7 +1142,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     protected void assertEquals(RenditionData expected, RenditionData actual) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
@@ -1188,7 +1188,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     }
 
     protected void assertEqualLists(List<?> expected, List<?> actual) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 

@@ -26,7 +26,7 @@ import java.io.Serializable;
 public class TransientWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private transient Object object = null;
+    private transient Object object;
 
     public TransientWrapper(Object object) {
         this.object = object;

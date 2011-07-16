@@ -91,7 +91,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         if ((objectType.getPropertyDefinitions() == null) || objectType.getPropertyDefinitions().size() < 9) {
             // there must be at least the 9 standard properties that all objects
             // have
-            throw new IllegalArgumentException("Object type must have property defintions!");
+            throw new IllegalArgumentException("Object type must have property definitions!");
         }
 
         this.session = session;
@@ -288,13 +288,12 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     }
 
     public ObjectId updateProperties(Map<String, ?> properties, boolean refresh) {
-        if ((properties == null) || (properties.isEmpty())) {
+        if (properties == null || properties.isEmpty()) {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
 
-        String newObjectId = null;
-
         readLock();
+        String newObjectId = null;
         try {
             String objectId = getObjectId();
             Holder<String> objectIdHolder = new Holder<String>(objectId);

@@ -59,8 +59,6 @@ public interface SessionFactory {
     /**
      * Creates a new session.
      * 
-     * @param T
-     *            a class implementing the {@link Session} interface
      * @param parameters
      *            a {@code Map} of name/value pairs with parameters for the
      *            session
@@ -78,4 +76,5 @@ public interface SessionFactory {
      * {@code SessionParameter.REPOSITORY_ID} should not be set.
      */
     List<Repository> getRepositories(Map<String, String> parameters);
+
 }

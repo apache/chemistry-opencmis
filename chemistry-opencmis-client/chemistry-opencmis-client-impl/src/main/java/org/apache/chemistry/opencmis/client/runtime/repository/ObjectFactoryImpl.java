@@ -95,7 +95,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Session session = null;
+    private Session session;
 
     /**
      * Default constructor.

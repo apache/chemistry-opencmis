@@ -35,6 +35,8 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyServicePort;
 import org.apache.chemistry.opencmis.commons.spi.PolicyService;
 
+import javax.xml.ws.Holder;
+
 /**
  * Policy Service Web Services client.
  */
@@ -54,7 +56,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
         PolicyServicePort port = portProvider.getPolicyServicePort();
 
         try {
-            javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+            Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.applyPolicy(repositoryId, policyId, objectId, portExtension);
 
@@ -72,7 +74,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
         PolicyServicePort port = portProvider.getPolicyServicePort();
 
         try {
-            javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+            Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.removePolicy(repositoryId, policyId, objectId, portExtension);
 

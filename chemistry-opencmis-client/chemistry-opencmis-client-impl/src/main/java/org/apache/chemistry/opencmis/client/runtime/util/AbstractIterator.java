@@ -34,9 +34,9 @@ public abstract class AbstractIterator<T> implements Iterator<T> {
     private int skipOffset;
     private final AbstractPageFetcher<T> pageFetcher;
 
-    private Page<T> page = null;
-    private Long totalNumItems = null;
-    private Boolean hasMoreItems = null;
+    private Page<T> page;
+    private Long totalNumItems;
+    private Boolean hasMoreItems;
 
     /**
      * Construct

@@ -18,10 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,6 +31,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class ItemIterableTest {
 
@@ -197,11 +195,11 @@ public class ItemIterableTest {
         assertNotNull(p);
         Iterator<String> i = p.iterator();
         assertNotNull(i);
-        assertEquals(true, p.getHasMoreItems());
+        assertTrue(p.getHasMoreItems());
         for (int idx = 0; i.hasNext() && idx < (pageSize + 1); idx++) {
             i.next();
         }
-        assertEquals(false, p.getHasMoreItems());
+        assertFalse(p.getHasMoreItems());
     }
 
     @Test

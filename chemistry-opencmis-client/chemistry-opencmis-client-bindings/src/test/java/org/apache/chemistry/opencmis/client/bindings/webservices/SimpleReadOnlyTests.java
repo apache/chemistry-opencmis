@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  */
 public class SimpleReadOnlyTests extends AbstractSimpleReadOnlyTests {
 
-    private Set<String> fTests;
+    private final Set<String> fTests;
 
     public SimpleReadOnlyTests() {
         fTests = new HashSet<String>();

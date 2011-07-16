@@ -29,6 +29,8 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort;
 import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
 
+import javax.xml.ws.Holder;
+
 /**
  * MultiFiling Service Web Services client.
  */
@@ -49,7 +51,7 @@ public class MultiFilingServiceImpl extends AbstractWebServicesService implement
         MultiFilingServicePort port = portProvider.getMultiFilingServicePort();
 
         try {
-            javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+            Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.addObjectToFolder(repositoryId, objectId, folderId, allVersions, portExtension);
 
@@ -67,7 +69,7 @@ public class MultiFilingServiceImpl extends AbstractWebServicesService implement
         MultiFilingServicePort port = portProvider.getMultiFilingServicePort();
 
         try {
-            javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+            Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.removeObjectFromFolder(repositoryId, objectId, folderId, portExtension);
 

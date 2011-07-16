@@ -37,19 +37,17 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CmisWebServicesSpi implements CmisSpi {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Log log = LogFactory.getLog(CmisWebServicesSpi.class);
 
-    private RepositoryService repositoryService;
-    private NavigationService navigationService;
-    private ObjectService objectService;
-    private VersioningService versioningService;
-    private DiscoveryService discoveryService;
-    private MultiFilingService multiFilingService;
-    private RelationshipService relationshipService;
-    private PolicyService policyService;
-    private AclService aclService;
+    private final RepositoryService repositoryService;
+    private final NavigationService navigationService;
+    private final ObjectService objectService;
+    private final VersioningService versioningService;
+    private final DiscoveryService discoveryService;
+    private final MultiFilingService multiFilingService;
+    private final RelationshipService relationshipService;
+    private final PolicyService policyService;
+    private final AclService aclService;
 
     /**
      * Constructor.

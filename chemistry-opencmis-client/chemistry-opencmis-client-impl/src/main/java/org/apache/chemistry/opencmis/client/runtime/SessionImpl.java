@@ -100,17 +100,17 @@ public class SessionImpl implements Session {
     /*
      * session parameter (serializable)
      */
-    private Map<String, String> parameters = null;
+    private Map<String, String> parameters;
 
     /*
      * CMIS binding (serializable)
      */
-    private CmisBinding binding = null;
+    private CmisBinding binding;
 
     /*
      * Session Locale, determined from session parameter (serializable)
      */
-    private Locale locale = null;
+    private Locale locale;
 
     /*
      * Object factory (serializable)
