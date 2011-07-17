@@ -34,6 +34,7 @@ import org.apache.tools.ant.Task;
  * CMIS TCK Ant Task.
  */
 public class CmisTckAntTask extends Task {
+
     private static final String REPORT_TEXT = "text";
     private static final String REPORT_XML = "xml";
     private static final String REPORT_HTML = "html";

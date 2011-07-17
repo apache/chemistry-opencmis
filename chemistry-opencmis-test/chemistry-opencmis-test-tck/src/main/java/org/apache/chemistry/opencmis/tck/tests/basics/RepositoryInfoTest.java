@@ -36,6 +36,7 @@ import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
  * Repository info test.
  */
 public class RepositoryInfoTest extends AbstractSessionTest {
+
     @Override
     public void init(Map<String, String> parameters) {
         super.init(parameters);

@@ -45,6 +45,7 @@ import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
@@ -151,14 +152,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      * Creates a folder.
      */
     protected Folder createFolder(Folder parent, String name, String objectTypeId) {
-        Folder result = null;
-
-        CmisTestResult f;
 
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
 
+        Folder result = null;
         try {
             // create the folder
             result = parent.createFolder(properties);
@@ -181,7 +180,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             // check object parents
             List<Folder> objectParents = result.getParents();
 
-            f = createResult(FAILURE, "Newly created folder has no or more than one parent! Id: " + result.getId(),
+            CmisTestResult f = createResult(FAILURE, "Newly created folder has no or more than one parent! Id: " + result.getId(),
                     true);
             addResult(assertEquals(1, objectParents.size(), null, f));
 
@@ -427,7 +426,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                     Document doc = (Document) object;
                     if (doc.isVersionSeriesCheckedOut() != null) {
-                        if (doc.isVersionSeriesCheckedOut().booleanValue()) {
+                        if (doc.isVersionSeriesCheckedOut()) {
                             f = createResult(WARNING, "Document is checked out and has CAN_CHECK_OUT allowable action!");
                             addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_OUT, null, f));
 
@@ -544,8 +543,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
     protected CmisTestResult assertAllowableAction(CmisObject object, Action action, CmisTestResult success,
             CmisTestResult failure) {
-        if ((object.getAllowableActions() != null) && (object.getAllowableActions().getAllowableActions() != null)) {
-            if (object.getAllowableActions().getAllowableActions().contains(action)) {
+        AllowableActions allowableActions = object.getAllowableActions();
+        if (allowableActions != null && allowableActions.getAllowableActions() != null) {
+            if (allowableActions.getAllowableActions().contains(action)) {
                 return success;
             }
         }
@@ -555,8 +555,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
     protected CmisTestResult assertNotAllowableAction(CmisObject object, Action action, CmisTestResult success,
             CmisTestResult failure) {
-        if ((object.getAllowableActions() != null) && (object.getAllowableActions().getAllowableActions() != null)) {
-            if (!object.getAllowableActions().getAllowableActions().contains(action)) {
+        AllowableActions allowableActions = object.getAllowableActions();
+        if (allowableActions != null && allowableActions.getAllowableActions() != null) {
+            if (!allowableActions.getAllowableActions().contains(action)) {
                 return success;
             }
         }

@@ -32,6 +32,7 @@ import org.junit.Test;
  * Base class for tests.
  */
 public abstract class AbstractCmisTest implements CmisTest {
+
     private Map<String, String> parameters;
     private AbstractCmisTestGroup group;
     private String name;
@@ -145,11 +146,11 @@ public abstract class AbstractCmisTest implements CmisTest {
     // --- asserts ----
 
     protected boolean isEqual(Object expected, Object actual) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return true;
         }
 
-        if ((expected != null) && expected.equals(actual)) {
+        if (expected != null && expected.equals(actual)) {
             return true;
         }
 
@@ -157,7 +158,7 @@ public abstract class AbstractCmisTest implements CmisTest {
     }
 
     protected CmisTestResult assertIsTrue(Boolean test, CmisTestResult success, CmisTestResult failure) {
-        if ((test != null) && (test.booleanValue())) {
+        if (test != null && test) {
             return success;
         }
 
@@ -169,7 +170,7 @@ public abstract class AbstractCmisTest implements CmisTest {
     }
 
     protected CmisTestResult assertIsFalse(Boolean test, CmisTestResult success, CmisTestResult failure) {
-        if ((test != null) && (!test.booleanValue())) {
+        if (test != null && !test) {
             return success;
         }
 
@@ -197,7 +198,7 @@ public abstract class AbstractCmisTest implements CmisTest {
     }
 
     protected CmisTestResult assertStringNullOrEmpty(String str, CmisTestResult success, CmisTestResult failure) {
-        if ((str == null) || (str.length() == 0)) {
+        if (str == null || str.length() == 0) {
             return success;
         }
 
@@ -205,7 +206,7 @@ public abstract class AbstractCmisTest implements CmisTest {
     }
 
     protected CmisTestResult assertStringNotEmpty(String str, CmisTestResult success, CmisTestResult failure) {
-        if ((str != null) && (str.length() > 0)) {
+        if (str != null && str.length() > 0) {
             return success;
         }
 
@@ -217,7 +218,7 @@ public abstract class AbstractCmisTest implements CmisTest {
     }
 
     protected CmisTestResult assertListNotEmpty(List<?> list, CmisTestResult success, CmisTestResult failure) {
-        if ((list != null) && (list.size() > 0)) {
+        if (list != null && list.size() > 0) {
             return success;
         }
 
@@ -253,7 +254,7 @@ public abstract class AbstractCmisTest implements CmisTest {
 
     protected CmisTestResult assertEqualLists(List<?> expected, List<?> actual, CmisTestResult success,
             CmisTestResult failure) {
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return success;
         }
 

@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.tck.impl.WrapperCmisTestGroup;
  * Base class for runners.
  */
 public abstract class AbstractRunner {
+
     public static final String OVERRIDE_KEY = "org.apache.chemistry";
     public static final String DEFAULT_TCK_GROUPS = "/cmis-tck-groups.txt";
 
@@ -64,7 +65,7 @@ public abstract class AbstractRunner {
     }
 
     public void loadParameters(File file) throws Exception {
-        if ((file == null) || (!file.isFile())) {
+        if (file == null || !file.isFile()) {
             throw new IllegalArgumentException("File not found!");
         }
 
@@ -85,7 +86,7 @@ public abstract class AbstractRunner {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
-                if (line.startsWith("#") || (line.length() == 0)) {
+                if (line.startsWith("#") || line.length() == 0) {
                     continue;
                 }
 
@@ -119,7 +120,7 @@ public abstract class AbstractRunner {
     }
 
     public void loadGroups(File file) throws Exception {
-        if ((file == null) || (!file.isFile())) {
+        if (file == null || !file.isFile()) {
             throw new IllegalArgumentException("File not found!");
         }
 
@@ -139,7 +140,7 @@ public abstract class AbstractRunner {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
-                if (line.startsWith("#") || (line.length() == 0)) {
+                if (line.startsWith("#") || line.length() == 0) {
                     continue;
                 }
 
@@ -216,7 +217,7 @@ public abstract class AbstractRunner {
                 }
             }
 
-            if ((group == null) || (!group.isEnabled())) {
+            if (group == null || !group.isEnabled()) {
                 continue;
             }
 

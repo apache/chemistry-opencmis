@@ -29,6 +29,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 public class SecurityTest extends AbstractSessionTest {
+
     @Override
     public void init(Map<String, String> parameters) {
         super.init(parameters);
@@ -43,7 +44,7 @@ public class SecurityTest extends AbstractSessionTest {
 
         addResult(createInfoResult("Binding: " + binding));
 
-        f = createResult(WARNING, "HTTPS is not used. Credentials might be transfered as plain text!");
+        f = createResult(WARNING, "HTTPS is not used. Credentials might be transferred as plain text!");
 
         switch (binding) {
         case ATOMPUB:

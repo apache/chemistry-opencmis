@@ -31,6 +31,7 @@ import org.junit.Test;
  * Base class for test groups.
  */
 public abstract class AbstractCmisTestGroup implements CmisTestGroup {
+
     private Map<String, String> parameters;
     private String name;
     private final List<CmisTest> tests = new ArrayList<CmisTest>();
@@ -83,7 +84,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
         try {
             preRun();
             for (CmisTest test : tests) {
-                if ((test == null) || (!test.isEnabled())) {
+                if (test == null || !test.isEnabled()) {
                     continue;
                 }
 

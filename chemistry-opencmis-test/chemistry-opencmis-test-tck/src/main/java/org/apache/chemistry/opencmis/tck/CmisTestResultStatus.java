@@ -22,6 +22,7 @@ package org.apache.chemistry.opencmis.tck;
  * CMIS TCK Test Result Status.
  */
 public enum CmisTestResultStatus {
+
     INFO(0), // no check, just for reports
     SKIPPED(1), // check has been skipped
     OK(2), // check passed
@@ -31,7 +32,7 @@ public enum CmisTestResultStatus {
 
     private final int level;
 
-    private CmisTestResultStatus(int level) {
+    CmisTestResultStatus(int level) {
         this.level = level;
     }
 

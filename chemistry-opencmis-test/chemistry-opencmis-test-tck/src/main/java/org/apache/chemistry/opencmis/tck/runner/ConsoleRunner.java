@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.tck.report.TextReport;
  * Session parameters file name and group list file name.
  */
 public class ConsoleRunner extends AbstractRunner {
+
     public ConsoleRunner(String[] args) throws Exception {
         if (args.length < 1) {
             setParameters(null);

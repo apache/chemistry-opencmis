@@ -126,7 +126,7 @@ public class WebRunnerServlet extends HttpServlet {
     }
 
     private static class WebProgressMonitor implements CmisTestProgressMonitor {
-        private PrintWriter pw;
+        private final PrintWriter pw;
 
         public WebProgressMonitor(PrintWriter pw) {
             this.pw = pw;

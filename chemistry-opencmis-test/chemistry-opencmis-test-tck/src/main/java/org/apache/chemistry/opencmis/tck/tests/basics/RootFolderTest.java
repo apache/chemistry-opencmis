@@ -36,6 +36,7 @@ import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
  * Basic root folder tests.
  */
 public class RootFolderTest extends AbstractSessionTest {
+
     @Override
     public void init(Map<String, String> parameters) {
         super.init(parameters);
