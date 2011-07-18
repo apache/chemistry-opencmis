@@ -68,6 +68,8 @@ public class LoginDialog extends JDialog {
     public static final String SYSPROP_BINDING = ClientSession.WORKBENCH_PREFIX + "binding";
     public static final String SYSPROP_AUTHENTICATION = ClientSession.WORKBENCH_PREFIX + "authentication";
     public static final String SYSPROP_COMPRESSION = ClientSession.WORKBENCH_PREFIX + "compression";
+    public static final String SYSPROP_CLIENTCOMPRESSION = ClientSession.WORKBENCH_PREFIX + "clientcompression";
+    public static final String SYSPROP_COOKIES = ClientSession.WORKBENCH_PREFIX + "cookies";
     public static final String SYSPROP_USER = ClientSession.WORKBENCH_PREFIX + "user";
     public static final String SYSPROP_PASSWORD = ClientSession.WORKBENCH_PREFIX + "password";
 
@@ -89,6 +91,8 @@ public class LoginDialog extends JDialog {
     private JRadioButton compressionOffButton;
     private JRadioButton clientCompressionOnButton;
     private JRadioButton clientCompressionOffButton;
+    private JRadioButton cookiesOnButton;
+    private JRadioButton cookiesOffButton;
     private JTextArea sessionParameterTextArea;
     private JButton loadRepositoryButton;
     private JButton loginButton;
@@ -137,7 +141,9 @@ public class LoginDialog extends JDialog {
 
         createClientCompressionButtons(basicPanel);
 
-        makeCompactGrid(basicPanel, 7, 2, 5, 10, 5, 5);
+        createCookieButtons(basicPanel);
+
+        makeCompactGrid(basicPanel, 8, 2, 5, 10, 5, 5);
 
         loginTabs.addTab("Basic", basicPanel);
 
@@ -334,7 +340,7 @@ public class LoginDialog extends JDialog {
     private void createCompressionButtons(Container pane) {
         JPanel compressionContainer = new JPanel();
         compressionContainer.setLayout(new BoxLayout(compressionContainer, BoxLayout.LINE_AXIS));
-        boolean compression = !(System.getProperty(SYSPROP_BINDING, "compression").equalsIgnoreCase("off"));
+        boolean compression = !(System.getProperty(SYSPROP_COMPRESSION, "on").equalsIgnoreCase("off"));
         compressionOnButton = new JRadioButton("On", compression);
         compressionOffButton = new JRadioButton("Off", !compression);
         ButtonGroup compressionGroup = new ButtonGroup();
@@ -352,7 +358,7 @@ public class LoginDialog extends JDialog {
     private void createClientCompressionButtons(Container pane) {
         JPanel clientCompressionContainer = new JPanel();
         clientCompressionContainer.setLayout(new BoxLayout(clientCompressionContainer, BoxLayout.LINE_AXIS));
-        boolean clientCompression = (System.getProperty(SYSPROP_BINDING, "clientcompression").equalsIgnoreCase("on"));
+        boolean clientCompression = (System.getProperty(SYSPROP_CLIENTCOMPRESSION, "off").equalsIgnoreCase("on"));
         clientCompressionOnButton = new JRadioButton("On", clientCompression);
         clientCompressionOffButton = new JRadioButton("Off", !clientCompression);
         ButtonGroup clientCompressionGroup = new ButtonGroup();
@@ -365,6 +371,24 @@ public class LoginDialog extends JDialog {
 
         pane.add(clientCompressionLabel);
         pane.add(clientCompressionContainer);
+    }
+
+    private void createCookieButtons(Container pane) {
+        JPanel cookiesContainer = new JPanel();
+        cookiesContainer.setLayout(new BoxLayout(cookiesContainer, BoxLayout.LINE_AXIS));
+        boolean cookies = (System.getProperty(SYSPROP_COOKIES, "off").equalsIgnoreCase("on"));
+        cookiesOnButton = new JRadioButton("On", cookies);
+        cookiesOffButton = new JRadioButton("Off", !cookies);
+        ButtonGroup cookiesGroup = new ButtonGroup();
+        cookiesGroup.add(cookiesOnButton);
+        cookiesGroup.add(cookiesOffButton);
+        cookiesContainer.add(cookiesOnButton);
+        cookiesContainer.add(Box.createRigidArea(new Dimension(10, 0)));
+        cookiesContainer.add(cookiesOffButton);
+        JLabel cookiesLabel = new JLabel("Cookies:", JLabel.TRAILING);
+
+        pane.add(cookiesLabel);
+        pane.add(cookiesContainer);
     }
 
     private JButton createButton(String title) {
@@ -440,7 +464,7 @@ public class LoginDialog extends JDialog {
         }
 
         return ClientSession.createSessionParameters(url, binding, username, password, authentication,
-                compressionOnButton.isSelected(), clientCompressionOnButton.isSelected());
+                compressionOnButton.isSelected(), clientCompressionOnButton.isSelected(), cookiesOnButton.isSelected());
     }
 
     private Map<String, String> createExpertSessionParameters() {

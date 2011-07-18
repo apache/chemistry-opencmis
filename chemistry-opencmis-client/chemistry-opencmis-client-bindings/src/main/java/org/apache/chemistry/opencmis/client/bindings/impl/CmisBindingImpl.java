@@ -85,12 +85,12 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
 
         if (authenticationProvider == null) {
             // create authentication provider and add it session
-            String authProvider = sessionParameters.get(SessionParameter.AUTHENTICATION_PROVIDER_CLASS);
-            if (authProvider != null) {
+            String authProviderClassName = sessionParameters.get(SessionParameter.AUTHENTICATION_PROVIDER_CLASS);
+            if (authProviderClassName != null) {
                 Object authProviderObj = null;
 
                 try {
-                    authProviderObj = Class.forName(authProvider).newInstance();
+                    authProviderObj = Class.forName(authProviderClassName).newInstance();
                 } catch (Exception e) {
                     throw new IllegalArgumentException("Could not load authentication provider: " + e, e);
                 }
@@ -99,20 +99,8 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
                     throw new IllegalArgumentException(
                             "Authentication provider does not implement AuthenticationProvider!");
                 }
-
-                session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT, (AuthenticationProvider) authProviderObj);
-
-                if (authProviderObj instanceof SessionAwareAuthenticationProvider) {
-                    ((SessionAwareAuthenticationProvider) authProviderObj).setSession(session);
-                }
+                authenticationProvider = (AuthenticationProvider) authProviderObj;
             }
-        } else {
-            session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT, authenticationProvider);
-
-            if (authenticationProvider instanceof SessionAwareAuthenticationProvider) {
-                ((SessionAwareAuthenticationProvider) authenticationProvider).setSession(session);
-            }
-
         }
 
         // locale
@@ -148,6 +136,14 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
 
         // set up repository service
         repositoryServiceWrapper = new RepositoryServiceImpl(session);
+
+        // add authentication provider to session
+        if (authenticationProvider != null) {
+            session.put(CmisBindingsHelper.AUTHENTICATION_PROVIDER_OBJECT, authenticationProvider);
+            if (authenticationProvider instanceof SessionAwareAuthenticationProvider) {
+                ((SessionAwareAuthenticationProvider) authenticationProvider).setSession(session);
+            }
+        }
     }
 
     public RepositoryService getRepositoryService() {

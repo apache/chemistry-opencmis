@@ -29,8 +29,9 @@ import java.util.TimeZone;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.chemistry.opencmis.client.bindings.spi.cookies.CmisCookieManager;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.commons.codec.binary.Base64;
+import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -47,53 +48,52 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     private static final String WSSE_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
     private static final String WSU_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
 
+    private boolean sendBasicAuth;
+    private boolean sendUsernameToken;
+    private CmisCookieManager cookieManager;
+
+    @Override
+    public void setSession(BindingSession session) {
+        super.setSession(session);
+
+        sendBasicAuth = isTrue(SessionParameter.AUTH_HTTP_BASIC);
+        sendUsernameToken = isTrue(SessionParameter.AUTH_SOAP_USERNAMETOKEN);
+
+        if (isTrue(SessionParameter.COOKIES)) {
+            cookieManager = new CmisCookieManager();
+        }
+    }
+
     @Override
     public Map<String, List<String>> getHTTPHeaders(String url) {
-        Map<String, List<String>> result = null;
+        Map<String, List<String>> result = new HashMap<String, List<String>>();
 
-        // only send HTTP header if configured
-        if (!isTrue(SessionParameter.AUTH_HTTP_BASIC)) {
-            return null;
-        }
+        // authentication
+        if (sendBasicAuth) {
+            // get user and password
+            String user = getUser();
+            String password = getPassword();
 
-        result = new HashMap<String, List<String>>();
-
-        // get user and password
-        String user = getUser();
-        String password = getPassword();
-
-        // if no user is set, don't set HTTP header
-        if (user != null) {
-            if (password == null) {
-                password = "";
+            // if no user is set, don't set basic auth header
+            if (user != null) {
+                result.put("Authorization", createBasicAuthHeaderValue(user, password));
             }
 
-            try {
-                String authHeader = "Basic "
-                        + new String(Base64.encodeBase64((user + ":" + password).getBytes("ISO-8859-1")), "ISO-8859-1");
-                result.put("Authorization", Collections.singletonList(authHeader));
-            } catch (UnsupportedEncodingException e) {
-                // shouldn't happen...
+            // get proxy user and password
+            String proxyUser = getProxyUser();
+            String proxyPassword = getProxyPassword();
+
+            // if no proxy user is set, don't set basic auth header
+            if (proxyUser != null) {
+                result.put("Proxy-Authorization", createBasicAuthHeaderValue(proxyUser, proxyPassword));
             }
         }
 
-        // get proxy user and password
-        String proxyUser = getProxyUser();
-        String proxyPassword = getProxyPassword();
-
-        // if no proxy user is set, don't set HTTP header
-        if (proxyUser != null) {
-            if (proxyPassword == null) {
-                proxyPassword = "";
-            }
-
-            try {
-                String authHeader = "Basic "
-                        + new String(Base64.encodeBase64((proxyUser + ":" + proxyPassword).getBytes("ISO-8859-1")),
-                                "ISO-8859-1");
-                result.put("Proxy-Authorization", Collections.singletonList(authHeader));
-            } catch (UnsupportedEncodingException e) {
-                // shouldn't happen...
+        // cookies
+        if (cookieManager != null) {
+            Map<String, List<String>> cookies = cookieManager.get(url, result);
+            if (!cookies.isEmpty()) {
+                result.putAll(cookies);
             }
         }
 
@@ -101,15 +101,22 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     }
 
     @Override
+    public void putResponseHeaders(String url, int statusCode, Map<String, List<String>> headers) {
+        if (cookieManager != null) {
+            cookieManager.put(url, headers);
+        }
+    }
+
+    @Override
     public Element getSOAPHeaders(Object portObject) {
+        // only send SOAP header if configured
+        if (!sendUsernameToken) {
+            return null;
+        }
+
         // get user and password
         String user = getUser();
         String password = getPassword();
-
-        // only send SOAP header if configured
-        if (!isTrue(SessionParameter.AUTH_SOAP_USERNAMETOKEN)) {
-            return null;
-        }
 
         // if no user is set, don't create SOAP header
         if (user == null) {
@@ -170,10 +177,28 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     }
 
     /**
+     * Creates a basic authentication header value from a username and a
+     * password.
+     */
+    protected List<String> createBasicAuthHeaderValue(String username, String password) {
+        if (password == null) {
+            password = "";
+        }
+
+        try {
+            return Collections.singletonList("Basic "
+                    + Base64.encodeBytes((username + ":" + password).getBytes("ISO-8859-1")));
+        } catch (UnsupportedEncodingException e) {
+            // shouldn't happen...
+            return Collections.emptyList();
+        }
+    }
+
+    /**
      * Returns <code>true</code> if the given parameter exists in the session
      * and is set to true, <code>false</code> otherwise.
      */
-    private boolean isTrue(String parameterName) {
+    protected boolean isTrue(String parameterName) {
         Object value = getSession().get(parameterName);
 
         if (value instanceof Boolean) {
