@@ -48,6 +48,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
@@ -76,7 +77,7 @@ public class AbstractServiceTest {
     protected VersioningService fVerSvc;
     protected MultiFilingService fMultiSvc;
     protected DiscoveryService fDiscSvc;
-    protected DummyCallContext fTestCallContext;
+    protected CallContext fTestCallContext;
     private String fTypeCreatorClassName;
 
     public AbstractServiceTest() {
@@ -373,7 +374,7 @@ public class AbstractServiceTest {
      *            configuration parameters for client provider interface and
      *            in-memory provider
      */
-    private void initializeUsingLocalBinding(Map<String, String> parameters) {
+    protected void initializeUsingLocalBinding(Map<String, String> parameters) {
 
         LOG.info("Initialize unit test using the local binding interface.");
 

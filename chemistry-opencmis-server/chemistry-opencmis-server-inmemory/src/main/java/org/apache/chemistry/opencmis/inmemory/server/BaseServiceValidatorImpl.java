@@ -161,7 +161,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         checkRepositoryId(repositoryId);
     }
 
-    public StoredObject getChildren(String repositoryId, String folderId, ExtensionsData extension) {
+    public StoredObject getChildren(CallContext context, String repositoryId, String folderId, ExtensionsData extension) {
 
         return checkStandardParameters(repositoryId, folderId);
     }
@@ -217,12 +217,15 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         return checkStandardParameters(repositoryId, folderId);
     }
 
-    public void createRelationship(CallContext context, String repositoryId, ExtensionsData extension) {
+    public StoredObject[] createRelationship(CallContext context, String repositoryId, String sourceId,
+    		String targetId, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
+        checkStandardParametersAllowNull(repositoryId, null);
+        return checkParams(repositoryId, sourceId, targetId);
     }
 
-    public void createPolicy(CallContext context, String repositoryId, String folderId, ExtensionsData extension) {
-        checkStandardParameters(repositoryId, folderId);
+    public StoredObject createPolicy(CallContext context, String repositoryId, String folderId, ExtensionsData extension) {
+    	 return checkStandardParameters(repositoryId, folderId);
     }
 
     public StoredObject getAllowableActions(CallContext context, String repositoryId, String objectId,

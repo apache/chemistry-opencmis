@@ -78,6 +78,10 @@ public abstract class AbstractSingleFilingImpl extends StoredObjectImpl implemen
         }
     }
 
+    public List<Folder> getParents(String user) {
+        return getParents();
+    }
+    
     public void setParent(Folder parent) {
         try {
             fObjStore.lock();

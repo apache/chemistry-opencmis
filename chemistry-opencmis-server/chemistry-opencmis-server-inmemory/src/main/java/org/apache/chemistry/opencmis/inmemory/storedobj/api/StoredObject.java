@@ -18,11 +18,17 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
+import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 
 /**
@@ -226,5 +232,41 @@ public interface StoredObject {
      *            parameters
      */
     void setCustomProperties(Map<String, PropertyData<?>> properties);
+    
+    /**
+     * get the Acl of the stored object
+     */
+    Acl getAcl();
+    
+    /**
+     * get the relationships of the object
+     * 
+     * @param includeSubRelationshipTypes
+     *            if true, relationships of a sub type will be returned as well
+     * @param relationshipDirection
+     * 			whether relationships where the object is the source, or the target or all 
+     *          are returned
+     * @param typeId
+     * 			the type of the relationship, may be null
+     * @param filter
+     * 			a property filter, "*" means all properties
+     * @param includeAllowableActions
+     * 			whether allowable actions should be returned
+     * @param maxItems
+     * @param skipCount
+     * @param extension
+     * @param user
+     * 			the id of the user calling the method 
+     */
+	ObjectList getObjectRelationships(
+			Boolean includeSubRelationshipTypes,
+			RelationshipDirection relationshipDirection, String typeId,
+			String filter, Boolean includeAllowableActions,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension, String user);
+	
+	/*
+     * get the allowable actions  of the object
+     */
+	AllowableActions getAllowableActions(String user);
 
 }

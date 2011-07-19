@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
@@ -36,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefiniti
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
@@ -290,18 +292,37 @@ public class TypeValidator {
 
     public static void validateAllowedChildObjectTypes(TypeDefinition childTypeDef, List<String> allowedChildTypes) {
 
-        if (null == allowedChildTypes)
-         {
-            return; // all types are allowed
-        }
-
-        for (String allowedChildType : allowedChildTypes) {
-            if (allowedChildType.equals(childTypeDef.getId())) {
-                return;
-            }
-        }
-        throw new RuntimeException("The requested type " + childTypeDef.getId() + " is not allowed in this folder");
+     	validateAllowedTypes(childTypeDef, allowedChildTypes, "in this folder");
     }
+    
+    public static void validateAllowedRelationshipTypes (RelationshipTypeDefinition relationshipTypeDef, TypeDefinition sourceTypeDef,
+ 		   TypeDefinition targetTypeDef)
+    {
+    	List<String> allowedSourceTypes = relationshipTypeDef.getAllowedSourceTypeIds();	
+    	validateAllowedTypes(sourceTypeDef, allowedSourceTypes, " as source type in this relationship");
+      	List<String> allowedTargetTypes = relationshipTypeDef.getAllowedTargetTypeIds();
+        validateAllowedTypes(targetTypeDef, allowedTargetTypes, " as target type in this relationship");	
+    }
+    
+    protected static void validateAllowedTypes(TypeDefinition typeDef, List<String> allowedTypes, String description)
+    {
+    	 if (null == allowedTypes || allowedTypes.size() == 0)
+             return; // all types are allowed
+
+         for (String allowedType : allowedTypes) {
+             if (allowedType.equals(typeDef.getId()))
+                 return;
+         }
+         throw new CmisConstraintException("The requested type " + typeDef.getId() + " is not allowed " + description);
+     }
+    	 
+    public static void  validateAcl(TypeDefinition typeDef, Acl addACEs, Acl removeACEs)
+    {
+    	if (!typeDef.isControllableAcl() && (addACEs != null || removeACEs != null))
+    	{
+    		throw new CmisConstraintException("acl set for type: " + typeDef.getDisplayName() + " that is not controllableACL");
+    	}
+    	}
 
     private static List<String> getMandatoryPropDefs(Map<String, PropertyDefinition<?>> propDefs) {
         List<String> res = new ArrayList<String>();

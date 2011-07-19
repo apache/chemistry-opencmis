@@ -93,7 +93,7 @@ public class VersioningTest extends AbstractServiceTest {
          * thread local context that can be accessed from everywhere
          * RuntimeContext.attachCfg(ctx);
          */
-        fTestCallContext.put(CallContext.USERNAME, user);
+    	((DummyCallContext) fTestCallContext).put(CallContext.USERNAME, user);
     }
 
     @Test
@@ -534,13 +534,13 @@ public class VersioningTest extends AbstractServiceTest {
         assertEquals(versioningState == VersioningState.MAJOR, bVal);
 
         PropertyId pdid = (PropertyId) props.get(PropertyIds.VERSION_SERIES_ID);
-        assertNotNull(pdb);
+        assertNotNull(pdid);
         String sVal = pdid.getFirstValue();
-        if (typeDef.isVersionable()) {
-            assertFalse(docId.equals(sVal));
-        } else {
-            assertEquals(docId, sVal);
-        }
+//        if (typeDef.isVersionable())  // need not be
+//            assertFalse(docId.equals(sVal));
+//        else
+//            assertEquals(docId, sVal);
+
 
         pdb = (PropertyBoolean) props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
         assertNotNull(pdb);

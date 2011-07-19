@@ -40,7 +40,7 @@ public interface CmisServiceValidator {
     void getTypeDefinition(CallContext context, String repositoryId, String typeId,
             ExtensionsData extension);
 
-    StoredObject getChildren(String repositoryId, String folderId, ExtensionsData extension);
+    StoredObject getChildren(CallContext context, String repositoryId, String folderId, ExtensionsData extension);
 
     StoredObject getDescendants(CallContext context, String repositoryId, String folderId,
             ExtensionsData extension);
@@ -66,9 +66,11 @@ public interface CmisServiceValidator {
     StoredObject createFolder(CallContext context, String repositoryId, String folderId,
             ExtensionsData extension);
 
-    void createRelationship(CallContext context, String repositoryId, ExtensionsData extension);
+    // relationship has no parent, returns source and target object
+    StoredObject[] createRelationship(CallContext context, String repositoryId, String sourceId, 
+    		 String targetId, ExtensionsData extension);
 
-    void createPolicy(CallContext context, String repositoryId, String folderId,
+    StoredObject createPolicy(CallContext context, String repositoryId, String folderId,
             ExtensionsData extension);
 
     StoredObject getAllowableActions(CallContext context, String repositoryId, String objectId,
@@ -156,8 +158,8 @@ public interface CmisServiceValidator {
     StoredObject create(CallContext context, String repositoryId, String folderId,
             ExtensionsData extension);
 
-    StoredObject deleteObjectOrCancelCheckOut(CallContext context, String repositoryId,
-            String objectId, ExtensionsData extension);
+//    StoredObject deleteObjectOrCancelCheckOut(CallContext context, String repositoryId,
+//            String objectId, ExtensionsData extension);
 
     StoredObject applyAcl(CallContext context, String repositoryId, String objectId);
 

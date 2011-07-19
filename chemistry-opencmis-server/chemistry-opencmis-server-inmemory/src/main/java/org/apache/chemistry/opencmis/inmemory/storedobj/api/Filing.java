@@ -38,12 +38,14 @@ public interface Filing {
     String PATH_SEPARATOR = "/";
 
     /**
-     * return a list of parents. for single parent object this list must contain
+     * return a list of parents the principal has access to. for single parent object this list must contain
      * only one element. returns an empty list if this is an unfiled document.
      * 
+     * @param user
+     * 		user id
      * @return list of parent folders
      */
-    List<Folder> getParents();
+    List<Folder> getParents(String user);
     
     /**
      * usually true except for the root folder, optimized call that just tests

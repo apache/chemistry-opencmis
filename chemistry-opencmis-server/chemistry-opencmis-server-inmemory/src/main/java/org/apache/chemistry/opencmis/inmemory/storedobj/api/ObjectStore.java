@@ -19,6 +19,13 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
 import java.util.List;
+import java.util.Map;
+
+import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
  * @author Jens
@@ -47,7 +54,7 @@ public interface ObjectStore {
      *            the path to the object
      * @return the stored object with this path
      */
-    StoredObject getObjectByPath(String path);
+    StoredObject getObjectByPath(String path, String user);
 
     /**
      * get an object by its id
@@ -62,9 +69,11 @@ public interface ObjectStore {
      * Deletes an object from the store. For a folders the folder must be empty.
      * 
      * @param objectId
+     * @param user 
+     * @param allVersions is TRUE all version of the document are deleted, otherwise just this one
      */
-    void deleteObject(String objectId);
-
+    void deleteObject(String objectId, Boolean allVersions, String user);
+       
     /**
      * Create a document as initial step. The document is created but still
      * temporary It is not yet persisted and does not have an id yet. After this
@@ -73,9 +82,21 @@ public interface ObjectStore {
      * 
      * @param name
      *            name of the document
+     * @param propMap
+     * 			  map of properties   
+     * @param user
+     * 			  the user who creates the document
+     * @param folder
+     * 			  the parent folder 
+     * @param addACEs
+     * 			  aces that are added 
+     * @param removeACEs 
+     *            aces that are removed
      * @return document object
      */
-    Document createDocument(String name);
+     Document createDocument(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
+ 			Acl addACEs, Acl removeACEs);
+
 
     /**
      * Create a folder as initial step. The folder is created but still
@@ -85,9 +106,20 @@ public interface ObjectStore {
      * 
      * @param name
      *            name of the folder
+     * @param propMap
+     * 			  map of properties   
+     * @param user
+     * 			  the user who creates the document
+     * @param folder
+     * 			  the parent folder 
+     * @param addACEs
+     * 			  aces that are added 
+     * @param removeACEs 
+     *            aces that are removed
      * @return folder object
      */
-    Folder createFolder(String name);
+    Folder createFolder(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
+			Acl addACEs, Acl removeACEs);
 
     /**
      * Create a document that supports versions as initial step. The document is
@@ -97,19 +129,22 @@ public interface ObjectStore {
      * 
      * @param name
      *            name of the document
+     *             * @param propMap
+     * 			  map of properities   
+     * @param user
+     * 			  the user who creates the document
+     * @param folder
+     * 			  the parent folder 
+     * @param addACEs
+     * 			  aces that are added 
+     * @param removeACEs 
+     *            aces that are removed
      * @return versioned document object
      */
-    VersionedDocument createVersionedDocument(String name);
+    DocumentVersion createVersionedDocument(String name,
+			Map<String, PropertyData<?>> propMap, String user, Folder folder,
+			Acl addACEs, Acl removeACEs, ContentStream contentStream, VersioningState versioningState);
 
-    /**
-     * Return a list of all documents that are checked out in the repository.
-     * 
-     * @param orderBy
-     *            orderBy specification according to CMIS spec.
-     * @return list of checked out documents in the repository
-     */
-    List<StoredObject> getCheckedOutDocuments(String orderBy);
-    
     /**
      * Clear repository and remove all data.
      */
@@ -121,4 +156,44 @@ public interface ObjectStore {
      *      number of stored objects
      */
     long getObjectCount();
+    
+    /**
+     * Create a relationship. The relationship is
+     * created but still temporary. It is not yet persisted and does not have an
+     * id yet. After this call additional actions can take place (like assigning
+     * properties and a type) before it is persisted.
+     * 
+     * @param sourceObject
+     *            source of the relationship
+     * @param targetObject
+     *            target of the relationship
+     * @param propMap
+     * 			  map of properities   
+     * @param user
+     * 			  the user who creates the document
+     * @param folder
+     * 			  the parent folder 
+     * @param addACEs
+     * 			  aces that are added 
+     * @param removeACEs 
+     *            aces that are removed
+     * @return versioned document object
+     */
+    StoredObject createRelationship(StoredObject sourceObject, StoredObject targetObject, 
+    		Map<String, PropertyData<?>> propMap,
+			String user, Acl addACEs, Acl removeACEs);
+    
+    /**
+     * Return a list of all documents that are checked out in the repository.
+     * 
+     * @param orderBy
+     *            orderBy specification according to CMIS spec.
+     * @param user
+     * 			user id of user calling
+     * @param includeRelationships
+     * 			if true include all relationships in the response
+     * @return list of checked out documents in the repository
+     */
+    List<StoredObject> getCheckedOutDocuments(String orderBy, String user, IncludeRelationships includeRelationships);
+    
 }

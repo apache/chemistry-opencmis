@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
@@ -86,14 +87,17 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         String user = context.getUsername();
         if (null == folderId) {
             List<StoredObject> checkedOuts = fStoreManager.getObjectStore(repositoryId).getCheckedOutDocuments(
-                    orderBy);
+                    orderBy, context.getUsername(), includeRelationships);
             for (StoredObject checkedOut : checkedOuts) {
                 TypeDefinition td = fStoreManager.getTypeById(repositoryId, checkedOut.getTypeId()).getTypeDefinition();
+//                DocumentVersion workingCopy = ((VersionedDocument) checkedOut).getPwc();
+//                if (null == workingCopy)
+//                	throw new CmisConstraintException("document " + checkedOut + " is checked out but has no working copy");       
                 ObjectData od = PropertyCreationHelper.getObjectData(td, checkedOut, filter, user,
                         includeAllowableActions, includeRelationships, renditionFilter, false, false, extension);
                 if (context.isObjectInfoRequired()) {
                     ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-                    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, checkedOut, objectInfo);
+                    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, /* workingCopy */ checkedOut, objectInfo);
                     objectInfos.addObjectInfo(objectInfo);
                 }
                 odList.add(od);
@@ -130,7 +134,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getChildren()");
 
-        validator.getChildren(repositoryId, folderId, extension);
+        validator.getChildren(context,repositoryId, folderId, extension);
 
         int maxItemsInt = maxItems == null ? -1 : maxItems.intValue();
         int skipCountInt = skipCount == null ? -1 : skipCount.intValue();
@@ -185,7 +189,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                     + folderId);
         }
 
-        ObjectData res = getFolderParentIntern(repositoryId, folder, filter, context.isObjectInfoRequired() ? objectInfos : null);
+        ObjectData res = getFolderParentIntern(repositoryId, folder, filter, false, 
+        		IncludeRelationships.NONE, context.getUsername(), context.isObjectInfoRequired() ? objectInfos : null);
         if (res == null) {
             throw new CmisInvalidArgumentException("Cannot get parent of a root folder");
         }
@@ -247,7 +252,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             return Collections.emptyList();
         }
 
-        result = getObjectParentsIntern(repositoryId, spo, filter, context.isObjectInfoRequired() ? objectInfos : null);
+        result = getObjectParentsIntern(repositoryId, spo, filter, 
+        		context.isObjectInfoRequired() ? objectInfos : null, includeAllowableActions, includeRelationships,
+				context.getUsername());
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -285,8 +292,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             return null; // it is a document and has no children
         }
 
-        List<? extends StoredObject> children = folderOnly ? folder.getFolderChildren(maxItems, skipCount) : folder
-                .getChildren(maxItems, skipCount);
+        List<? extends StoredObject> children = folderOnly ? folder.getFolderChildren(maxItems, skipCount, user) : folder
+                .getChildren(maxItems, skipCount, user);
 
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
 
@@ -297,12 +304,15 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 oifd.setPathSegment(spo.getName());
             }
             if (includeAllowableActions != null && includeAllowableActions) {
-                AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
+             //   AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
+                AllowableActions allowableActions = spo.getAllowableActions(user);
                 objectData.setAllowableActions(allowableActions);
             }
-            if (includeRelationships != null && includeRelationships != IncludeRelationships.NONE) {
-                objectData.setRelationships(null /* f.getRelationships() */);
-            }
+//            if (includeRelationships != null && includeRelationships != IncludeRelationships.NONE) {
+//                objectData.setRelationships(null /* f.getRelationships() */);
+//            }
+            objectData.setRelationships(DataObjectCreator.getRelationships(includeRelationships, spo, user));
+            
             if (renditionFilter != null && renditionFilter.length() > 0) {
                 objectData.setRelationships(null /*
                                                   * f.getRenditions(renditionFilter
@@ -371,11 +381,13 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     private List<ObjectParentData> getObjectParentsIntern(String repositoryId, Filing sop, String filter,
-            ObjectInfoHandler objectInfos) {
+            ObjectInfoHandler objectInfos, Boolean includeAllowableActions, 
+            IncludeRelationships includeRelationships, String user) {
 
         List<ObjectParentData> result = null;
         if (sop instanceof SingleFiling) {
-            ObjectData parent = getFolderParentIntern(repositoryId, (SingleFiling) sop, filter, objectInfos);
+            ObjectData parent = getFolderParentIntern(repositoryId, (SingleFiling) sop, filter, 
+            		includeAllowableActions, includeRelationships, user, objectInfos);
             if (null != parent) {
                 ObjectParentDataImpl parentData = new ObjectParentDataImpl();
                 parentData.setObject(parent);
@@ -396,12 +408,20 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         } else if (sop instanceof MultiFiling) {
             result = new ArrayList<ObjectParentData>();
             MultiFiling multiParentObj = (MultiFiling) sop;
-            List<Folder> parents = multiParentObj.getParents();
+            List<Folder> parents = multiParentObj.getParents(user);
             if (null != parents) {
                 for (Folder parent : parents) {
                     ObjectParentDataImpl parentData = new ObjectParentDataImpl();
                     ObjectDataImpl objData = new ObjectDataImpl();
                     copyFilteredProperties(repositoryId, parent, filter, objData);
+                    
+                    objData.setRelationships(DataObjectCreator.getRelationships(includeRelationships, parent, user));                  
+                    
+                    if (includeAllowableActions != null && includeAllowableActions) {
+                        //  AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
+                      	AllowableActions allowableActions = parent.getAllowableActions(user);
+                      	objData.setAllowableActions(allowableActions);
+                      }
                     parentData.setObject(objData);
                     parentData.setRelativePathSegment(multiParentObj.getPathSegment());
                     result.add(parentData);
@@ -417,7 +437,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     private ObjectData getFolderParentIntern(String repositoryId, SingleFiling sop, String filter,
-            ObjectInfoHandler objectInfos) {
+    		Boolean includeAllowableActions, IncludeRelationships includeRelationships, 
+    		String user, ObjectInfoHandler objectInfos) {
 
         ObjectDataImpl parent = new ObjectDataImpl();
 
@@ -428,6 +449,15 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         copyFilteredProperties(repositoryId, parentFolder, filter, parent);
+        
+        parent.setRelationships(DataObjectCreator.getRelationships(includeRelationships, parentFolder, user));
+        
+        if (includeAllowableActions != null && includeAllowableActions) {
+            //  AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
+          	AllowableActions allowableActions = parentFolder.getAllowableActions(user);
+          	parent.setAllowableActions(allowableActions);
+          }
+        
         if (objectInfos != null) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, parentFolder, objectInfo);

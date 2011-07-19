@@ -239,8 +239,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         }
     }
 
-    public List<Folder> getParents() {
-        return fContainer.getParents();
+    public List<Folder> getParents(String user) {
+        return fContainer.getParents(user);
     }
 
     public String getPathSegment() {
@@ -266,5 +266,6 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     public boolean hasParent() {
       return true;
     }
+
 
 }

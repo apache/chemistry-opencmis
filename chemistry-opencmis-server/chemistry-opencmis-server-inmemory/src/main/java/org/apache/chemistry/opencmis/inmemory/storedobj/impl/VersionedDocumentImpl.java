@@ -112,7 +112,7 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
             pwc.setContent(content, false);
 
         if (null != properties && null != properties.getProperties())
-            pwc.setCustomProperties(properties.getProperties());
+            ((DocumentVersionImpl)pwc).setCustomProperties(properties.getProperties());
 
         pwc.setCheckinComment(checkinComment);
         pwc.commit(isMajor);

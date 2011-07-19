@@ -220,13 +220,13 @@ public class InMemoryService extends AbstractCmisService {
 
     @Override
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
-        fObjSvc.deleteObjectOrCancelCheckOut(getCallContext(), repositoryId, objectId, allVersions, extension);
+        fObjSvc.deleteObject(getCallContext(), repositoryId, objectId, allVersions, extension);
     }
 
     @Override
     public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
             ExtensionsData extension) {
-        fObjSvc.deleteObjectOrCancelCheckOut(getCallContext(), repositoryId, objectId, allVersions, extension);
+        fObjSvc.deleteObject(getCallContext(), repositoryId, objectId, allVersions, extension);
     }
 
     @Override
