@@ -73,6 +73,12 @@
             <artifactId>chemistry-opencmis-server-bindings</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
@@ -99,6 +105,13 @@
         
         <dependency>
             <artifactId>chemistry-opencmis-server-inmemory</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <artifactId>chemistry-opencmis-server-inmemory-war</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
             <type>war</type>

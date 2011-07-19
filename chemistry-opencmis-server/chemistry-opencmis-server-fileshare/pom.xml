@@ -51,7 +51,7 @@
                         </overlay>
                         <overlay>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+                            <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -72,7 +72,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+            <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>

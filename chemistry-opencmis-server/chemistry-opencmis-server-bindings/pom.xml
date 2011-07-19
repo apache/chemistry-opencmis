@@ -51,9 +51,6 @@
 							org.apache.chemistry.opencmis.server.shared.*;version=${project.version}
 						</Export-Package>
 						<Import-Package>
-							org.apache.chemistry.opencmis.commons.*;version="[0.4.0,2.0)",
-							org.apache.commons.codec.*,
-							org.json.*,
 							*
 						</Import-Package>
 						<Bundle-DocURL>${project.url}</Bundle-DocURL>

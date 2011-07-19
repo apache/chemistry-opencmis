@@ -93,21 +93,16 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>chemistry-opencmis-server-bindings</artifactId>
 			<version>${project.version}</version>
-			<type>war</type>
+			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>chemistry-opencmis-server-support</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.antlr</groupId> -->
-		<!-- <artifactId>antlr-runtime</artifactId> -->
-		<!-- <version>3.1.3</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.antlr</groupId>
-			<artifactId>com.springsource.org.antlr.runtime</artifactId>
+			<artifactId>antlr-runtime</artifactId>
 			<version>3.1.3</version>
 		</dependency>
 		<dependency>
