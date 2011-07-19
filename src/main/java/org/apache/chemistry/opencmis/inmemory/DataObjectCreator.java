@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,10 +28,12 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
@@ -46,6 +49,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  *         as return values for the service object calls
  */
 public class DataObjectCreator {
+
+	 public static BigInteger MINUS_ONE = BigInteger.valueOf(-1L);
 
     // Utility class
     private DataObjectCreator() {
@@ -142,10 +147,8 @@ public class DataObjectCreator {
         return polIds;
     }
 
-    public static List<ObjectData> fillRelationships(IncludeRelationships includeRelationships, StoredObject so) {
-        // TODO: to be completed if relationships are implemented
-        List<ObjectData> relationships = new ArrayList<ObjectData>();
-        return relationships;
+    public static List<ObjectData> fillRelationships(IncludeRelationships includeRelationships, StoredObject so, String user) {
+        return getRelationships(includeRelationships, so, user);
     }
 
     public static List<RenditionData> fillRenditions(StoredObject so) {
@@ -158,5 +161,24 @@ public class DataObjectCreator {
         // TODO: to be completed if change information is implemented
         ChangeEventInfo changeEventInfo = new ChangeEventInfoDataImpl();
         return changeEventInfo;
+    }
+    
+    public static List<ObjectData> getRelationships(IncludeRelationships includeRelationships,
+    		StoredObject spo, String user)
+    {
+         if (includeRelationships != IncludeRelationships.NONE) 
+        {
+        	RelationshipDirection relationshipDirection = RelationshipDirection.SOURCE;
+        	// source is default
+        	if (includeRelationships == IncludeRelationships.TARGET)
+        		relationshipDirection = RelationshipDirection.TARGET;
+        	else if (includeRelationships == IncludeRelationships.BOTH)
+        		relationshipDirection = RelationshipDirection.EITHER;  // either and both!!
+        	
+            ObjectList relationships = spo.getObjectRelationships(false, relationshipDirection,
+            		null, null, false, MINUS_ONE, MINUS_ONE, null, user);
+           return relationships.getObjects();
+        }
+         return null;
     }
 }

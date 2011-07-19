@@ -394,7 +394,7 @@ public class StoreManagerImpl implements StoreManager {
         ObjectList objList = queryProcessor.query(tm, objectStore, user, repositoryId, statement, searchAllVersions,
                 includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount);
 
-        LOG.debug("Query result, number of matching objects: " + objList.getNumItems());
+   //     LOG.debug("Query result, number of matching objects: " + objList.getNumItems());
         return objList;
     }
 

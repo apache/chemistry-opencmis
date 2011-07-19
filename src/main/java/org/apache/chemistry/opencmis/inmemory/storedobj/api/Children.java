@@ -29,33 +29,6 @@ import java.util.List;
 public interface Children {
 
     /**
-     * Create a subfolder in an existing folder. This call persists parent and
-     * child folder as transactional step.
-     * 
-     * @param folder
-     *            new child folder
-     */
-    void addChildFolder(Folder folder);
-
-    /**
-     * Add a document to a folder. This call persists the folder and the
-     * document as a transactional step.
-     * 
-     * @param doc
-     *            document to be added
-     */
-    void addChildDocument(Document doc);
-
-    /**
-     * Add a versioned document to a folder. This call persists the folder and
-     * the document as a transactional step.
-     * 
-     * @param doc
-     *            document to be added
-     */
-    void addChildDocument(VersionedDocument doc);
-
-    /**
      * get all the children of this folder. To support paging an initial offset
      * and a maximum number of children to retrieve can be passed
      * 
@@ -63,9 +36,10 @@ public interface Children {
      *            max. number of items to return
      * @param skipCount
      *            initial offset where to start fetching
+     * @param user 
      * @return list of children objects
      */
-    List<StoredObject> getChildren(int maxItems, int skipCount);
+    List<StoredObject> getChildren(int maxItems, int skipCount, String user );
 
     /**
      * get all the children of this folder which are folders. To support paging
@@ -76,9 +50,10 @@ public interface Children {
      *            max. number of items to return
      * @param skipCount
      *            initial offset where to start fetching
+     * @param user 
      * @return list of children folders
      */
-    List<Folder> getFolderChildren(int maxItems, int skipCount);
+    List<Folder> getFolderChildren(int maxItems, int skipCount, String user);
 
     /**
      * indicate if a child with the given name exists in this folder

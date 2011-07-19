@@ -95,7 +95,7 @@ public class InMemoryQueryProcessor {
         // iterate over all the objects and check for each if the query matches
         for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
             StoredObject so = objectStore.getObjectById(objectId);
-            match(so, searchAllVersions == null ? true : searchAllVersions.booleanValue());
+            match(so, user, searchAllVersions == null ? true : searchAllVersions.booleanValue());
         }
 
         ObjectList objList = buildResultList(tm, user, includeAllowableActions, includeRelationships, renditionFilter,
@@ -217,7 +217,7 @@ public class InMemoryQueryProcessor {
      * @param so
      *            object stored in the in-memory repository
      */
-    private void match(StoredObject so, boolean searchAllVersions) {
+    private void match(StoredObject so, String user, boolean searchAllVersions) {
         // log.debug("checkMatch() for object: " + so.getId());
         // first check if type is matching...
         String queryName = queryObj.getTypes().values().iterator().next(); // as
@@ -240,14 +240,14 @@ public class InMemoryQueryProcessor {
         }
         // ... then check expression...
         if (typeMatches && !skip) {
-            evalWhereTree(whereTree, so);
+            evalWhereTree(whereTree, user, so);
         }
     }
 
-    private void evalWhereTree(Tree node, StoredObject so) {
+    private void evalWhereTree(Tree node, String user, StoredObject so) {
         boolean match = true;
         if (null != node) {
-            match = evalWhereNode(so, node);
+            match = evalWhereNode(so, user, node);
         }
         if (match)
          {
@@ -264,16 +264,18 @@ public class InMemoryQueryProcessor {
      *            node in where clause
      * @return true if it matches, false if it not matches
      */
-    boolean evalWhereNode(StoredObject so, Tree node) {
-        return new InMemoryWhereClauseWalker(so).walkPredicate(node);
+    boolean evalWhereNode(StoredObject so, String user, Tree node) {
+        return new InMemoryWhereClauseWalker(so, user).walkPredicate(node);
     }
 
     public class InMemoryWhereClauseWalker extends AbstractPredicateWalker {
 
         protected final StoredObject so;
+        protected final String user;
 
-        public InMemoryWhereClauseWalker(StoredObject so) {
+        public InMemoryWhereClauseWalker(StoredObject so, String user) {
             this.so = so;
+            this.user = user;
         }
 
         @Override
@@ -488,7 +490,7 @@ public class InMemoryQueryProcessor {
 
             // check if object is in folder
             if (so instanceof Filing) {
-                return hasParent((Filing) so, folderId);
+                return hasParent((Filing) so, folderId, user);
             } else {
                 return false;
             }
@@ -509,7 +511,7 @@ public class InMemoryQueryProcessor {
 
             // check if object is in folder
             if (so instanceof Filing) {
-                return hasAncestor((Filing) so, folderId);
+                return hasAncestor((Filing) so, folderId, user);
             } else {
                 return false;
             }
@@ -597,8 +599,8 @@ public class InMemoryQueryProcessor {
                 
     }
     
-    private static boolean hasParent(Filing objInFolder, String folderId) {
-        List<Folder> parents = objInFolder.getParents();
+    private static boolean hasParent(Filing objInFolder, String folderId, String user) {
+        List<Folder> parents = objInFolder.getParents(user);
 
         for (Folder folder : parents) {
             if (folderId.equals(folder.getId())) {
@@ -608,8 +610,8 @@ public class InMemoryQueryProcessor {
         return false;
     }
 
-    private boolean hasAncestor(Filing objInFolder, String folderId) {
-        List<Folder> parents = objInFolder.getParents();
+    private boolean hasAncestor(Filing objInFolder, String folderId, String user) {
+        List<Folder> parents = objInFolder.getParents(user);
 
         for (Folder folder : parents) {
             if (folderId.equals(folder.getId())) {
@@ -617,7 +619,7 @@ public class InMemoryQueryProcessor {
             }
         }
         for (Folder folder : parents) {
-            if (hasAncestor(folder, folderId)) {
+            if (hasAncestor(folder, folderId, user)) {
                 return true;
             }
         }

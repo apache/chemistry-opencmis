@@ -49,6 +49,7 @@ public class FolderTest extends TestCase {
     private FolderImpl f4;
     private FolderImpl f11;
     private static final String TEST_REPOSITORY_ID = "TestRepositoryId";
+    private static final String USER = "user";
 
     @Before
     protected void setUp() throws Exception {
@@ -59,7 +60,7 @@ public class FolderTest extends TestCase {
     @Test
     public void testCreatAndGetFolders() {
         try {
-            Folder childFolder = fStore.createFolder("Folder 1");
+            Folder childFolder = createFolder("Folder 1");
             fRoot.addChildFolder(childFolder);
             fail("Should throw exception if folder already exists.");
         } catch (Exception e) {
@@ -72,17 +73,17 @@ public class FolderTest extends TestCase {
         assertEquals(Filing.PATH_SEPARATOR, fRoot.getPath());
         assertEquals("/Folder 1", f1.getPath());
         assertEquals("/Folder 1/Folder 1.1", f11.getPath());
-        StoredObject fTest = fStore.getObjectByPath("/");
+        StoredObject fTest = fStore.getObjectByPath("/", USER);
         assertEquals(fRoot, fTest);
-        fTest = fStore.getObjectByPath("/Folder 1");
+        fTest = fStore.getObjectByPath("/Folder 1", USER);
         assertEquals(f1, fTest);
-        fTest = fStore.getObjectByPath("/Folder 1/Folder 1.1");
+        fTest = fStore.getObjectByPath("/Folder 1/Folder 1.1", USER);
         assertEquals(f11, fTest);
-        List<StoredObject> subFolders = fRoot.getChildren(-1, -1);
+        List<StoredObject> subFolders = fRoot.getChildren(-1, -1, "user");
         assertEquals(4, subFolders.size());
-        subFolders = f2.getChildren(-1, -1);
+        subFolders = f2.getChildren(-1, -1, "user");
         assertEquals(0, subFolders.size());
-        subFolders = f1.getChildren(-1, -1);
+        subFolders = f1.getChildren(-1, -1, "user");
         assertEquals(1, subFolders.size());
     }
 
@@ -94,8 +95,8 @@ public class FolderTest extends TestCase {
         f2.rename(newName);
         assertEquals(f2.getName(), newName);
         assertEquals(f2.getPath(), Filing.PATH_SEPARATOR + newName);
-        assertNull(fStore.getObjectByPath(oldPath));
-        assertEquals(f2, fStore.getObjectByPath(Filing.PATH_SEPARATOR + newName));
+        assertNull(fStore.getObjectByPath(oldPath, USER));
+        assertEquals(f2, fStore.getObjectByPath(Filing.PATH_SEPARATOR + newName, USER));
         try {
             f2.rename("Folder 3");
             fail("Should not allow to rename a folder to an existing name");
@@ -107,8 +108,8 @@ public class FolderTest extends TestCase {
         f11.rename(newName);
         assertEquals(f11.getName(), newName);
         assertEquals(f11.getPath(), "/Folder 1/Folder B");
-        assertNull(fStore.getObjectByPath(oldPath));
-        assertEquals(f11, fStore.getObjectByPath("/Folder 1/Folder B"));
+        assertNull(fStore.getObjectByPath(oldPath, USER));
+        assertEquals(f11, fStore.getObjectByPath("/Folder 1/Folder B", USER));
         try {
             f2.rename(newName);
             fail("Should not allow to rename a folder to an existing name");
@@ -133,9 +134,9 @@ public class FolderTest extends TestCase {
         String oldPath = f1.getPath();
         Folder f1Parent = f1.getParent();
         f1.move(f1Parent, f3);
-        assertNull(fStore.getObjectByPath(oldPath));
+        assertNull(fStore.getObjectByPath(oldPath, USER));
         assertEquals(f1.getPath(), "/Folder 3/Folder 1");
-        assertEquals(f1, fStore.getObjectByPath("/Folder 3/Folder 1"));
+        assertEquals(f1, fStore.getObjectByPath("/Folder 3/Folder 1", USER));
 
         f2.rename("Folder 1");
         try {
@@ -149,11 +150,11 @@ public class FolderTest extends TestCase {
     @Test
     public void testDeleteFolder() {
         String oldPath = f2.getPath();
-        fStore.deleteObject(f2.getId());
-        assertNull(fStore.getObjectByPath(oldPath));
+        fStore.deleteObject(f2.getId(), true, "TestUser");
+        assertNull(fStore.getObjectByPath(oldPath, USER));
 
         try {
-            fStore.deleteObject(f1.getId());
+            fStore.deleteObject(f1.getId(), true, "TestUser");
             fail("Should not be possible to move folder that has children");
         } catch (Exception e) {
         }
@@ -161,24 +162,28 @@ public class FolderTest extends TestCase {
 
     private void createFolders() {
         fRoot = (FolderImpl) fStore.getRootFolder();
-        f1 = (FolderImpl) fStore.createFolder("Folder 1");
+        f1 = (FolderImpl) createFolder("Folder 1");
         fRoot.addChildFolder(f1);
         f1.persist();
 
-        f2 = (FolderImpl) fStore.createFolder("Folder 2");
+        f2 = (FolderImpl) createFolder("Folder 2");
         fRoot.addChildFolder(f2);
         f2.persist();
 
-        f3 = (FolderImpl) fStore.createFolder("Folder 3");
+        f3 = (FolderImpl) createFolder("Folder 3");
         fRoot.addChildFolder(f3);
         f3.persist();
 
-        f4 = (FolderImpl) fStore.createFolder("Folder 4");
+        f4 = (FolderImpl) createFolder("Folder 4");
         fRoot.addChildFolder(f4);
         f4.persist();
 
-        f11 = (FolderImpl) fStore.createFolder("Folder 1.1");
+        f11 = (FolderImpl) createFolder("Folder 1.1");
         f1.addChildFolder(f11);
         f11.persist();
+    }
+    
+    private Folder createFolder(String name) {
+    	return fStore.createFolder(name, null, "user", null, null, null);    	
     }
 }

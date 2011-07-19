@@ -26,7 +26,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
@@ -101,7 +106,7 @@ public class ObjectStoreImpl implements ObjectStore {
         return fRootFolder;
     }
 
-    public StoredObject getObjectByPath(String path) {
+    public StoredObject getObjectByPath(String path, String user) {
         for (StoredObject so : fStoredObjectMap.values()) {
             if (so instanceof SingleFiling) {
                 String soPath = ((SingleFiling) so).getPath();
@@ -110,7 +115,7 @@ public class ObjectStoreImpl implements ObjectStore {
                 }
             } else if (so instanceof MultiFiling) {
                 MultiFiling mfo = (MultiFiling) so;
-                List<Folder> parents = mfo.getParents();
+                List<Folder> parents = mfo.getParents(user);
                 for (Folder parent : parents) {
                     String parentPath = parent.getPath();
                     String mfPath = parentPath.equals(Folder.PATH_SEPARATOR) ? parentPath + mfo.getPathSegment()
@@ -132,7 +137,7 @@ public class ObjectStoreImpl implements ObjectStore {
         return so;
     }
 
-    public void deleteObject(String objectId) {
+    public void deleteObject(String objectId, Boolean allVersions, String user) {
         String path = objectId; // currently the same
         StoredObject obj = fStoredObjectMap.get(path);
 
@@ -141,7 +146,7 @@ public class ObjectStoreImpl implements ObjectStore {
         }
 
         if (obj instanceof FolderImpl) {
-            deleteFolder(objectId);
+        	deleteFolder(objectId, user);
         } else if (obj instanceof DocumentVersion) {
             DocumentVersion vers = (DocumentVersion) obj;
             VersionedDocument parentDoc = vers.getParentDocument();
@@ -162,19 +167,6 @@ public class ObjectStoreImpl implements ObjectStore {
             throw new CmisInvalidArgumentException("Cannot delete object with id  " + vers.getId() + ". Object does not exist.");
         }
     }
-
-    // public void changePath(StoredObject obj, String oldPath, String newPath)
-    // {
-    // fStoredObjectMap.remove(oldPath);
-    // fStoredObjectMap.put(newPath, obj);
-    // }
-
-    // /////////////////////////////////////////
-    // methods used by folders and documents, but not for public use
-
-    // void storeObject(String id, StoredObject sop) {
-    // fStoredObjectMap.put(id, sop);
-    // }
 
     public String storeObject(StoredObject so) {
         String id = so.getId();
@@ -229,28 +221,63 @@ public class ObjectStoreImpl implements ObjectStore {
         fRootFolder = rootFolder;
     }
 
-    public Document createDocument(String name) {
-        Document doc = new DocumentImpl(this);
+    public Document createDocument(String name,
+			Map<String, PropertyData<?>> propMap, String user, Folder folder,
+			Acl addACEs, Acl removeACEs)  {
+    	DocumentImpl doc = new DocumentImpl(this);
+        doc.createSystemBasePropertiesWhenCreated(propMap, user);
+        doc.setCustomProperties(propMap);
         doc.setRepositoryId(fRepositoryId);
         doc.setName(name);
+        if (null != folder) {
+            ((FolderImpl)folder).addChildDocument(doc); // add document to folder and
+        }
         return doc;
     }
 
-    public VersionedDocument createVersionedDocument(String name) {
-        VersionedDocument doc = new VersionedDocumentImpl(this);
+    public DocumentVersion createVersionedDocument(String name,
+    		Map<String, PropertyData<?>> propMap, String user, Folder folder,
+			Acl addACEs, Acl removeACEs, ContentStream contentStream, VersioningState versioningState) {
+    	VersionedDocumentImpl doc = new VersionedDocumentImpl(this);
+        doc.createSystemBasePropertiesWhenCreated(propMap, user);
+        doc.setCustomProperties(propMap);
         doc.setRepositoryId(fRepositoryId);
         doc.setName(name);
-        return doc;
+        DocumentVersion version = doc.addVersion(contentStream, versioningState, user);
+        if (null != folder) {
+        	((FolderImpl)folder).addChildDocument(doc); // add document to folder and set
+        }
+        version.createSystemBasePropertiesWhenCreated(propMap, user);
+        version.setCustomProperties(propMap);
+        doc.persist();
+        return version;
     }
 
-    public Folder createFolder(String name) {
-        Folder folder = new FolderImpl(this, name, null);
+    public Folder createFolder(String name,
+			Map<String, PropertyData<?>> propMap, String user, Folder parent,
+			Acl addACEs, Acl removeACEs) {
+    	
+    	FolderImpl folder = new FolderImpl(this, name, null);
+        if (null != propMap) {
+        	folder.createSystemBasePropertiesWhenCreated(propMap, user);
+        	folder.setCustomProperties(propMap);
+        }
         folder.setRepositoryId(fRepositoryId);
+        if (null != parent) {
+        	((FolderImpl)parent).addChildFolder(folder); // add document to folder and set
+        }
         return folder;
     }
 
-    public List<StoredObject> getCheckedOutDocuments(String orderBy) {
-        List<StoredObject> res = new ArrayList<StoredObject>();
+    public Folder createFolder(String name) {
+  	  Folder folder = new FolderImpl(this, name, null);
+        folder.setRepositoryId(fRepositoryId);
+        return folder;
+	}
+    
+	public List<StoredObject> getCheckedOutDocuments(String orderBy,
+			String user, IncludeRelationships includeRelationships) {
+	    List<StoredObject> res = new ArrayList<StoredObject>();
 
         for (StoredObject so : fStoredObjectMap.values()) {
             if (so instanceof VersionedDocument) {
@@ -264,7 +291,7 @@ public class ObjectStoreImpl implements ObjectStore {
         return res;
     }
 
-    private void deleteFolder(String folderId) {
+    private void deleteFolder(String folderId, String user) {
         StoredObject folder = fStoredObjectMap.get(folderId);
         if (folder == null) {
             throw new CmisInvalidArgumentException("Unknown object with id:  " + folderId);
@@ -276,12 +303,19 @@ public class ObjectStoreImpl implements ObjectStore {
         }
 
         // check if children exist
-        List<StoredObject> children = ((Folder) folder).getChildren(-1, -1);
+        List<StoredObject> children = ((Folder) folder).getChildren(-1, -1, user);
         if (children != null && !children.isEmpty()) {
             throw new CmisConstraintException("Cannot delete folder with id:  " + folderId + ". Folder is not empty.");
         }
 
         fStoredObjectMap.remove(folderId);
     }
+
+	public StoredObject createRelationship(StoredObject sourceObject,
+			StoredObject targetObject, Map<String, PropertyData<?>> propMap,
+			String user, Acl addACEs, Acl removeACEs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

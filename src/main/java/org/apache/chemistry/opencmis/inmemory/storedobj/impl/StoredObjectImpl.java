@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -27,8 +28,14 @@ import java.util.TimeZone;
 import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
@@ -368,5 +375,25 @@ public class StoredObjectImpl implements StoredObject {
         // but after this call the id should be set.
         fId = fObjStore.storeObject(this);
     }
+
+	public Acl getAcl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ObjectList getObjectRelationships(
+			Boolean includeSubRelationshipTypes,
+			RelationshipDirection relationshipDirection, String typeId,
+			String filter, Boolean includeAllowableActions,
+			BigInteger maxItems, BigInteger skipCount,
+			ExtensionsData extension, String user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AllowableActions getAllowableActions(String user) {
+		AllowableActions actions = DataObjectCreator.fillAllowableActions(this, user);
+		return actions;
+	}
 
 }

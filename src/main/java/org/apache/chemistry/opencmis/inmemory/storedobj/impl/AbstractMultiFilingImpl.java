@@ -83,6 +83,16 @@ public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implement
         return fParents;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#getParents()
+     */
+    public List<Folder> getParents(String user) {
+        return fParents;
+    }
+
     public boolean hasParent() {
       return null != fParents && !fParents.isEmpty();
     }

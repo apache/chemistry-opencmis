@@ -195,8 +195,6 @@ public class PropertyCreationHelper {
         so.fillProperties(properties, objectFactory, requestedIds);
 
         String typeId = so.getTypeId();
-        // (String) props.getProperties().get(PropertyIds.CMIS_OBJECT_TYPE_ID).
-        // getFirstValue();
         if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, requestedIds)) {
             if (td == null) {
                 log.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
@@ -293,7 +291,7 @@ public class PropertyCreationHelper {
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
-            AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
+        	AllowableActions allowableActions = so.getAllowableActions(user);
             od.setAllowableActions(allowableActions);
         }
         if (null != includeACL && includeACL) {
@@ -306,7 +304,7 @@ public class PropertyCreationHelper {
         }
 
         if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
-            od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so));
+            od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so, user));
         }
 
         if (renditionFilter != null && renditionFilter.length() > 0) {
@@ -321,8 +319,7 @@ public class PropertyCreationHelper {
 
     public static ObjectData getObjectDataQueryResult(TypeDefinition typeDef, StoredObject so, String user,
             Map<String, String> requestedProperties, Map<String, String> requestedFuncs,
-            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter
-            ) {
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter) {
 
         ObjectDataImpl od = new ObjectDataImpl();
 
@@ -331,12 +328,13 @@ public class PropertyCreationHelper {
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
-            AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
+        	 //     AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
+        	AllowableActions allowableActions = so.getAllowableActions(user);
             od.setAllowableActions(allowableActions);
         }
 
         if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
-            od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so));
+            od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so, user));
         }
 
         if (renditionFilter != null && renditionFilter.length() > 0) {

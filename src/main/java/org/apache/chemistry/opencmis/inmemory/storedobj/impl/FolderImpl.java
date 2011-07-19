@@ -115,12 +115,12 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         }
     }
 
-    public List<StoredObject> getChildren(int maxItems, int skipCount) {
+    public List<StoredObject> getChildren(int maxItems, int skipCount, String user) {
         List<StoredObject> result = new ArrayList<StoredObject>();
         for (String id : fObjStore.getIds()) {
             StoredObject obj = fObjStore.getObject(id);
             Filing pathObj = (Filing) obj;
-            if (pathObj.getParents().contains(this)) {
+            if (pathObj.getParents(user).contains(this)) {
                 if (pathObj instanceof VersionedDocument) {
                     DocumentVersion ver = ((VersionedDocument) pathObj).getLatestVersion(false);
                     result.add(ver);
@@ -145,7 +145,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         return result;
     }
 
-    public List<Folder> getFolderChildren(int maxItems, int skipCount) {
+    public List<Folder> getFolderChildren(int maxItems, int skipCount, String user) {
         List<Folder> result = new ArrayList<Folder>();
         for (String id : fObjStore.getIds()) {
             StoredObject obj = fObjStore.getObject(id);
@@ -168,7 +168,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
             StoredObject obj = fObjStore.getObject(id);
             if (obj instanceof Filing) {
                 Filing pathObj = (Filing) obj;
-                if (pathObj.getParents().contains(this) && obj.getName().equals(name)) {
+                if (pathObj.getParents(null).contains(this) && obj.getName().equals(name)) {
                     return true;
                 }
             }
