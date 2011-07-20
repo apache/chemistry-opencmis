@@ -44,16 +44,11 @@
 			<artifactId>chemistry-opencmis-commons-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.antlr</groupId> -->
-<!-- 			<artifactId>antlr-runtime</artifactId> -->
-<!-- 			<version>3.2</version> -->
-<!-- 		</dependency> -->
-		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>com.springsource.org.antlr</artifactId>
-			<version>3.1.3</version>
-		</dependency>
+ 		<dependency>
+ 			<groupId>org.antlr</groupId>
+ 			<artifactId>antlr-runtime</artifactId>
+ 			<version>3.2</version>
+ 		</dependency>
 	</dependencies>
 
 	<build>
