@@ -41,6 +41,8 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
+import org.apache.chemistry.opencmis.client.api.Relationship;
+import org.apache.chemistry.opencmis.client.api.RelationshipType;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -50,19 +52,27 @@ import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
 public class GettingStarted {
     public static void main(String args[]) {
@@ -84,9 +94,14 @@ public class GettingStarted {
         // or you can substitute your own URL
         parameter.put(SessionParameter.ATOMPUB_URL, 
         "http://repo.opencmis.org/inmemory/atom/");
+        // "http://cmis.alfresco.com/cmisatom");
         // "http://cmis.alfresco.com/service/cmis");
-//         "http://localhost:8080/alfresco/service/api/cmis");
+        // "http://localhost:8080/alfresco/service/api/cmis");
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+
+        System.out.println("Accessing ATOMPUB_URL: " + parameter.get(SessionParameter.ATOMPUB_URL)
+                + " userid: " + parameter.get(SessionParameter.USER) + " password: "
+                + parameter.get(SessionParameter.PASSWORD));
 
         // find all the repositories at this URL - there should only be one.
         List<Repository> repositories = new ArrayList<Repository>();
@@ -378,36 +393,18 @@ public class GettingStarted {
             count++;
         }
 
-        // operationContext = new OperationContextImpl();
-        // operationContext.setMaxItemsPerPage(3);
-        // children1 = folderPaging.getChildren(operationContext);
-        // int pageNumber = 0;
-        // count = 1;
-        // while (count > 0) {
-        // count = 0;
-        // for (CmisObject child : children1.skipTo(
-        // pageNumber * operationContext.getMaxItemsPerPage()).getPage()) {
-        // System.out.println("object " + count + " in page" + pageNumber +
-        // " is "
-        // + child.getName());
-        // count++;
-        // }
-        // pageNumber++;
-        // }
-
         System.out.println("Getting complete result set in pages of 3");
         operationContext = new OperationContextImpl();
         operationContext.setMaxItemsPerPage(3);
         children1 = folderPaging.getChildren(operationContext);
         int pageNumber = 0;
         boolean finished = false;
+        count= 0;
         while (!finished) {
-            count = 0;
-            ItemIterable<CmisObject> currentPage = children1.skipTo(
-                    pageNumber * operationContext.getMaxItemsPerPage()).getPage();
+            ItemIterable<CmisObject> currentPage = children1.skipTo(count).getPage();
+            System.out.println("page " + pageNumber + " has " + currentPage.getPageNumItems() + " items");
             for (CmisObject item : currentPage) {
-                System.out.println("object " + count + " in page" + pageNumber + " is "
-                        + item.getName());
+                System.out.println("object " + count +  " is " + item.getName());
                 count++;
             }
             pageNumber++;
@@ -537,6 +534,30 @@ public class GettingStarted {
             }
         }
 
+        // Advanced use of types
+        System.out.println("\nAdvanced use of types...");
+        System.out.println("-------------------------");
+        System.out.println("Finding an existing document of an advanced type");
+        if (session.getRepositoryInfo().getCapabilities().getQueryCapability()
+                .equals(CapabilityQuery.METADATAONLY)) {
+            System.out.println("Full search not supported");
+        } else {
+            String query = "SELECT * FROM ia:calendarEvent";
+            ItemIterable<QueryResult> queryResult = session.query(query, false);
+            for (QueryResult item : queryResult) {
+                System.out.println("Found "
+                        + item.getPropertyByQueryName("cmis:name").getFirstValue() + " of type "
+                        + item.getPropertyByQueryName("cmis:objectTypeId").getFirstValue());
+                System.out.println("property ia:descriptionEvent is "
+                        + item.getPropertyByQueryName("ia:descriptionEvent").getFirstValue());
+                System.out.println("property ia:toDate is "
+                        + item.getPropertyByQueryName("ia:toDate").getFirstValue());
+                System.out.println("property ia:fromDate is "
+                        + item.getPropertyByQueryName("ia:fromDate").getFirstValue());
+            }
+        }
+
+        // Capabilities
         System.out.println("\nCapabilities...");
         System.out.println("---------------");
         // Check what capabilities our repository supports
@@ -631,9 +652,9 @@ public class GettingStarted {
             System.out.println("Unfiling not supported by this repository");
         } else {
             // remove our document from both folders
-            System.out.println("removing :" + doc.getName() + "from 'ADGNewFolder':-");
+            System.out.println("removing: " + doc.getName() + " from 'ADGNewFolder':-");
             doc.removeFromFolder(newFolder);
-            System.out.println("removing :" + doc.getName() + "from 'ADGNewFolder 2':-");
+            System.out.println("removing: " + doc.getName() + " from 'ADGNewFolder 2':-");
             doc.removeFromFolder(newFolder2);
             // Did it work?
             Document docTest = (Document) session.getObject(id);
@@ -643,6 +664,155 @@ public class GettingStarted {
 
         }
 
+        System.out.println("\nRelationships...");
+        System.out.println("-----------------");
+
+        // Check if the repo supports relationships
+        ObjectType relationshipType = null;
+        try {
+            relationshipType = session.getTypeDefinition("cmis:relationship");
+        } catch (CmisObjectNotFoundException e) {
+            relationshipType = null;
+        }
+
+        if (relationshipType == null) {
+            System.out.println("Repository does not support cmis:relationship objects");
+        } else {
+            ObjectType cmiscustomRelationshipType = null;
+            try {
+                cmiscustomRelationshipType = session.getTypeDefinition("R:cmiscustom:assoc");
+            } catch (CmisObjectNotFoundException e) {
+                cmiscustomRelationshipType = null;
+            }
+            if (cmiscustomRelationshipType == null) {
+                System.out.println("Repository does not support R:cmiscustom:assoc objects");
+            } else {
+
+                System.out.println("Creating folders for relationships example");
+
+                newFolderProps = new HashMap<String, String>();
+                newFolderProps.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
+                newFolderProps.put(PropertyIds.NAME, "ADGFolderAssociations");
+                Folder folderAssociations = root.createFolder(newFolderProps);
+
+                newFileProps = new HashMap<String, String>();
+                newFileProps.put(PropertyIds.OBJECT_TYPE_ID, "D:cmiscustom:document");
+                newFileProps.put(PropertyIds.NAME, "ADGFileSource");
+                Document sourceDoc = folderAssociations.createDocument(newFileProps, null,
+                        VersioningState.MAJOR);
+                newFileProps.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+                newFileProps.put(PropertyIds.NAME, "ADGFileTarget");
+                Document targetDoc = folderAssociations.createDocument(newFileProps, null,
+                        VersioningState.MAJOR);
+
+                Map<String, String> relProps = new HashMap<String, String>();
+                relProps.put("cmis:sourceId", sourceDoc.getId());
+                relProps.put("cmis:targetId", targetDoc.getId());
+                relProps.put("cmis:objectTypeId", "R:cmiscustom:assoc");
+                session.createRelationship(relProps, null, null, null);
+                System.out.println("created relationship");
+
+                operationContext = new OperationContextImpl();
+                operationContext.setIncludeRelationships(IncludeRelationships.BOTH);
+                ObjectType typeDefinition = session.getTypeDefinition("R:cmiscustom:assoc");
+                RelationshipDirection direction = RelationshipDirection.EITHER;
+                ItemIterable<Relationship> relationships = session.getRelationships(sourceDoc,
+                        true, direction, typeDefinition, operationContext);
+                int relationshipCount = 0;
+                for (Relationship relationship : relationships) {
+                    relationshipCount++;
+                    System.out.println("found relationship " + relationshipCount);
+
+                    // Look at allowable source and target type
+                    RelationshipType relType = (RelationshipType) relationship.getType();
+
+                    System.out.println(relType.getDisplayName()
+                            + " has the following allowed source types:");
+                    for (ObjectType objectType1 : relType.getAllowedSourceTypes()) {
+                        System.out.println("\t" + objectType1.getDisplayName() + " with QueryName "
+                                + objectType1.getQueryName());
+                    }
+
+                    System.out.println(relType.getDisplayName()
+                            + " has the following allowed target types:");
+                    for (ObjectType objectType1 : relType.getAllowedTargetTypes()) {
+                        System.out.println("\t" + objectType1.getDisplayName() + " with QueryName "
+                                + objectType1.getQueryName());
+                    }
+                }
+
+            }
+        }
+
+        System.out.println("\tAccess Control...");
+        System.out.println("-----------------");
+
+        // Check if the repo supports ACLs
+        if (!session.getRepositoryInfo().getCapabilities().getAclCapability()
+                .equals(CapabilityAcl.MANAGE)) {
+            System.out.println("Repository does not allow ACL management");
+        } else {
+            System.out.println("Repository allows ACL management");
+
+            System.out.println("Creating folders for permissions example");
+
+            newFolderProps = new HashMap<String, String>();
+            newFolderProps.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
+            newFolderProps.put(PropertyIds.NAME, "ADGFolderPermissions");
+            Folder folderAssociations = session.getRootFolder().createFolder(newFolderProps);
+
+            newFileProps = new HashMap<String, String>();
+            contentStream = new ContentStreamImpl("permissions.txt", null, "plain/text",
+                    new ByteArrayInputStream("some content".getBytes()));
+            newFileProps.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+            newFileProps.put(PropertyIds.NAME, "ADGFilePermissions");
+            Document testDoc = folderAssociations.createDocument(newFileProps, contentStream,
+                    VersioningState.MAJOR);
+
+            operationContext = new OperationContextImpl();
+            operationContext.setIncludeAcls(true);
+            testDoc = (Document) session.getObject(testDoc, operationContext);
+
+            System.out.println("ACL before adding an ace...");
+            for (Ace ace : testDoc.getAcl().getAces()) {
+                System.out.println("Found ace: " + ace.getPrincipalId() + " toString "
+                        + ace.toString());
+            }
+
+            List<String> permissions = new ArrayList<String>();
+            permissions.add("cmis:write");
+            String principal = "admin";
+            Ace aceIn = session.getObjectFactory().createAce(principal, permissions);
+            List<Ace> aceListIn = new ArrayList<Ace>();
+            aceListIn.add(aceIn);
+            testDoc.addAcl(aceListIn, AclPropagation.REPOSITORYDETERMINED);
+            testDoc = (Document) session.getObject(testDoc, operationContext);
+
+            System.out.println("ACL after adding an ace...");
+            for (Ace ace : testDoc.getAcl().getAces()) {
+                System.out.println("Found ace: " + ace.getPrincipalId() + " toString "
+                        + ace.toString());
+            }
+
+            System.out.println("getting ACL capabilities");
+            AclCapabilities aclCapabilities = session.getRepositoryInfo().getAclCapabilities();
+
+            System.out.println("Propogation for this repository is "
+                    + aclCapabilities.getAclPropagation().toString());
+
+            System.out.println("permissions for this repository are: ");
+            for (PermissionDefinition definition : aclCapabilities.getPermissions()) {
+                System.out.println(definition.toString());
+            }
+
+            System.out.println("\npermission mappings for this repository are: ");
+            Map<String, PermissionMapping> repoMapping = aclCapabilities.getPermissionMapping();
+            for (String key : repoMapping.keySet()) {
+                System.out.println(key + " maps to " + repoMapping.get(key).getPermissions());
+            }
+        }
+
+        // Versioning
         System.out.println("\nVersioning...");
         System.out.println("-------------");
         // Check whether a document is versionable
@@ -789,7 +959,8 @@ public class GettingStarted {
      */
     private static void cleanup(Session s) {
         System.out.println("Starting cleaning up repository");
-        String[] folders = { "ADGNewFolder", "ADGNewFolder 2", "ADGFolder1", "ADGFolderPaging" };
+        String[] folders = { "ADGNewFolder", "ADGNewFolder 2", "ADGFolder1", "ADGFolderPaging",
+                "ADGFolderAssociations", "ADGFolderPermissions" };
         for (int i = 0; i < folders.length; i++) {
             String path = "/" + folders[i];
 
