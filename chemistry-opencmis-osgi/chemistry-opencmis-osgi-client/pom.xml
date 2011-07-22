@@ -47,6 +47,9 @@
 						</Export-Package>
 						<Embed-Dependency>*</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
+						<Import-Package>
+							!*
+						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

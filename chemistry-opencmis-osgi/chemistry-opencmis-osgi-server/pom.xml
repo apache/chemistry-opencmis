@@ -37,19 +37,17 @@
 				<version>2.0.1</version>
 				<extensions>true</extensions>
 				<configuration>
-					<supportedProjectTypes>
-						<supportedProjectType>jar</supportedProjectType>
-						<supportedProjectType>bundle</supportedProjectType>
-						<supportedProjectType>war</supportedProjectType>
-					</supportedProjectTypes>
 					<instructions>
 						<Export-Package>
-						org.apache.chemistry.opencmis.server.impl;version=${project.version},
-						org.apache.chemistry.opencmis.server.impl.atompub;version=${project.version},
-						com.sun.xml.ws.transport.http.servlet
+							org.apache.chemistry.opencmis.server.impl;version=${project.version},
+							org.apache.chemistry.opencmis.server.impl.atompub;version=${project.version},
+							com.sun.xml.ws.transport.http.servlet
 						</Export-Package>
 						<Embed-Dependency>*</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
+						<Import-Package>
+							!*
+						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
