@@ -101,7 +101,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             repositoryDispatcher.addResource(SELECTOR_TYPE_DESCENDANTS, METHOD_GET,
                     RepositoryService.class, "getTypeDescendants");
             repositoryDispatcher.addResource(SELECTOR_TYPE_DEFINITION, METHOD_GET,
-                    RepositoryService.class, "getTypeDefintion");
+                    RepositoryService.class, "getTypeDefinition");
             repositoryDispatcher.addResource(SELECTOR_QUERY, METHOD_GET,
                     DiscoveryService.class, "query");
             repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST,
