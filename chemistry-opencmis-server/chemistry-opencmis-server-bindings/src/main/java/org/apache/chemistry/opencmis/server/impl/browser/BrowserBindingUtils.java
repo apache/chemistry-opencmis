@@ -76,7 +76,7 @@ public class BrowserBindingUtils {
 
     public static final String SELECTOR_TYPE_CHILDREN = "typeChildren";
     public static final String SELECTOR_TYPE_DESCENDANTS = "typeDescendants";
-    public static final String SELECTOR_TYPE_DEFINITION = "typeDefintion";
+    public static final String SELECTOR_TYPE_DEFINITION = "typeDefinition";
 
     public static final String SELECTOR_CONTENT = "content";
     public static final String SELECTOR_OBJECT = "object";

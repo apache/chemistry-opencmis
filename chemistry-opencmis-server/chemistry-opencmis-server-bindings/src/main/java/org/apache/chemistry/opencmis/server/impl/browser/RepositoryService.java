@@ -169,7 +169,7 @@ public final class RepositoryService {
     /**
      * getTypeDefintion.
      */
-    public static void getTypeDefintion(CallContext context, CmisService service, String repositoryId,
+    public static void getTypeDefinition(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
