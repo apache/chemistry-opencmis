@@ -180,8 +180,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             // check object parents
             List<Folder> objectParents = result.getParents();
 
-            CmisTestResult f = createResult(FAILURE, "Newly created folder has no or more than one parent! Id: " + result.getId(),
-                    true);
+            CmisTestResult f = createResult(FAILURE, "Newly created folder has no or more than one parent! Id: "
+                    + result.getId(), true);
             addResult(assertEquals(1, objectParents.size(), null, f));
 
             f = createResult(FAILURE, "First object parent of the newly created folder does not match parent! Id: "
@@ -199,7 +199,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             // check children of parent
             boolean found = false;
-            for (CmisObject child : parent.getChildren()) {
+            for (CmisObject child : parent.getChildren(SELECT_ALL_NO_CACHE_OC)) {
                 if (child == null) {
                     addResult(createResult(FAILURE, "Parent folder contains a null child!", true));
                 } else {
@@ -667,7 +667,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         if (isGetDescendantsSupported(session)) {
             long descendantsCount = 0;
-            List<Tree<FileableCmisObject>> descendants = folder.getDescendants(1);
+            List<Tree<FileableCmisObject>> descendants = folder.getDescendants(1, SELECT_ALL_NO_CACHE_OC);
 
             for (Tree<FileableCmisObject> child : descendants) {
                 descendantsCount++;
@@ -690,7 +690,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         if (isGetFolderTreeSupported(session)) {
             long folderTreeCount = 0;
-            List<Tree<FileableCmisObject>> folderTree = folder.getFolderTree(1);
+            List<Tree<FileableCmisObject>> folderTree = folder.getFolderTree(1, SELECT_ALL_NO_CACHE_OC);
 
             for (Tree<FileableCmisObject> child : folderTree) {
                 folderTreeCount++;

@@ -68,7 +68,7 @@ public class CreateAndDeleteFolderTest extends AbstractSessionTest {
         addResult(checkChildren(session, testFolder, "Test folder children check"));
 
         // check if all folders are there
-        ItemIterable<CmisObject> children = testFolder.getChildren();
+        ItemIterable<CmisObject> children = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC);
         List<String> childrenIds = new ArrayList<String>();
         for (CmisObject child : children) {
             if (child != null) {
