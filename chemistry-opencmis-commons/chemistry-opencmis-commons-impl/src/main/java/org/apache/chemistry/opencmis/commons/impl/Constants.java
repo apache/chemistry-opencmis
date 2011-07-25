@@ -136,6 +136,7 @@ public final class Constants {
     public static final String PARAM_SUB_RELATIONSHIP_TYPES = "includeSubRelationshipTypes";
     public static final String PARAM_TYPE_ID = "typeId";
     public static final String PARAM_UNFILE_OBJECTS = "unfileObjects";
+    public static final String PARAM_VERSION_SERIES_ID = "versionSeries";
     public static final String PARAM_VERSIONIG_STATE = "versioningState";
     public static final String PARAM_Q = "q";
     public static final String PARAM_SEARCH_ALL_VERSIONS = "searchAllVersions";

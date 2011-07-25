@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ENTRY;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_VERSIONS;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
@@ -99,20 +98,16 @@ public class VersioningService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
+        String versionSeriesId = getStringParameter(request, Constants.PARAM_VERSION_SERIES_ID);
         String filter = getStringParameter(request, Constants.PARAM_FILTER);
         Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
 
         // execute
-        List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, null, filter,
+        List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, versionSeriesId, filter,
                 includeAllowableActions, null);
 
-        if (versions == null) {
-            throw new CmisRuntimeException("Versions are null!");
-        }
-
-        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
-        if (objectInfo == null) {
-            throw new CmisRuntimeException("Version Series Info is missing!");
+        if (versions == null || versions.isEmpty()) {
+            throw new CmisRuntimeException("Version list is null or empty!");
         }
 
         // set headers
@@ -125,17 +120,20 @@ public class VersioningService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(), objectInfo
-                .getLastModificationDate(), null, null);
+        ObjectInfo latestObjectInfo = service.getObjectInfo(repositoryId, versions.get(0).getId());
+        ObjectInfo firstObjectInfo = service.getObjectInfo(repositoryId, versions.get(versions.size() - 1).getId());
+
+        feed.writeFeedElements(versionSeriesId, firstObjectInfo.getCreatedBy(), latestObjectInfo.getName(),
+                latestObjectInfo.getLastModificationDate(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
         feed.writeServiceLink(baseUrl.toString(), repositoryId);
 
-        feed.writeSelfLink(compileUrl(baseUrl, RESOURCE_VERSIONS, objectInfo.getId()), null);
-
-        feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, objectId));
+        if (objectId != null) {
+            feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, objectId));
+        }
 
         // write entries
         AtomEntry entry = new AtomEntry(feed.getWriter());
