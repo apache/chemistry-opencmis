@@ -912,41 +912,6 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
     }
 
     /**
-     * Gets the {@link ObjectInfo} about an object, checking the cache first.
-     * 
-     * @param repositoryId
-     *            the repository id
-     * @param object
-     *            the object
-     * @return the object info
-     */
-    protected ObjectInfo getObjectInfo(String repositoryId, ObjectData object) {
-        Map<String, ObjectInfo> oim = getObjectInfoMap();
-        ObjectInfo info = oim.get(object.getId());
-        if (info == null) {
-            try {
-                // switch off object info collection to avoid side effects
-                addObjectInfos = false;
-
-                // get the object info
-                info = getObjectInfoIntern(repositoryId, object);
-
-                // switch on object info collection
-                addObjectInfos = true;
-
-                // add object info
-                addObjectInfo(info);
-            } catch (Exception e) {
-                e.printStackTrace();
-                info = null;
-            } finally {
-                addObjectInfos = true;
-            }
-        }
-        return info;
-    }
-
-    /**
      * Collects the {@link ObjectInfo} about an object.
      * 
      * @param repositoryId
