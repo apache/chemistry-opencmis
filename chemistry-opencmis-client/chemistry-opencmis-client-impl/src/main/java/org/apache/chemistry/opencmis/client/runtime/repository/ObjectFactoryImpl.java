@@ -423,6 +423,17 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                     propertyData = bof.createPropertyDecimalData(id, (List<BigDecimal>) null);
                 } else if (firstValue instanceof BigDecimal) {
                     propertyData = bof.createPropertyDecimalData(id, (List<BigDecimal>) values);
+                } else if ((firstValue instanceof Float) || (firstValue instanceof Double)
+                        || (firstValue instanceof Byte) || (firstValue instanceof Short)
+                        || (firstValue instanceof Integer) || (firstValue instanceof Long)) {
+                    // we accept all kinds of integers
+                    // as well as floats and doubles
+                    List<BigDecimal> list = new ArrayList<BigDecimal>(values.size());
+                    for (Object v : values) {
+                        list.add(new BigDecimal(v.toString()));
+                    }
+
+                    propertyData = bof.createPropertyDecimalData(id, list);
                 } else {
                     throw new IllegalArgumentException("Property '" + id + "' is a Decimal property!");
                 }
