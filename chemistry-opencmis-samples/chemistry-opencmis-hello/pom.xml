@@ -52,7 +52,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-client-impl</artifactId>
-            <version>${project.version}</version>
+            <version>LATEST</version>
         </dependency>
     </dependencies>
 
