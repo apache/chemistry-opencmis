@@ -33,5 +33,6 @@ public class CRUDTestGroup extends AbstractSessionTestGroup {
         setName("CRUD Test Group");
 
         addTest(new CreateAndDeleteFolderTest());
+        addTest(new CreateAndDeleteDocumentTest());
     }
 }

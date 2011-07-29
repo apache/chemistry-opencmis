@@ -26,22 +26,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 /**
- * Simple folder test.
+ * Simple document test.
  */
-public class CreateAndDeleteFolderTest extends AbstractSessionTest {
+public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
+
+    private static final String CONTENT = "TCK test content.";
 
     @Override
     public void init(Map<String, String> parameters) {
         super.init(parameters);
-        setName("Create and Delete Folder Test");
+        setName("Create and Delete Document Test");
     }
 
     @Override
@@ -51,57 +55,68 @@ public class CreateAndDeleteFolderTest extends AbstractSessionTest {
         // create a test folder
         Folder testFolder = createTestFolder(session);
 
-        int numOfFolders = 20;
-        Map<String, Folder> folders = new HashMap<String, Folder>();
+        int numOfDocuments = 20;
+        Map<String, Document> documents = new HashMap<String, Document>();
         String[] propertiesToCheck = new String[] { PropertyIds.OBJECT_ID, PropertyIds.BASE_TYPE_ID,
                 PropertyIds.OBJECT_TYPE_ID };
 
-        // create folders
-        for (int i = 0; i < numOfFolders; i++) {
-            Folder newFolder = createFolder(session, testFolder, "folder" + i);
-            addResult(checkObject(session, newFolder, propertiesToCheck, "New folder object spec compliance. Id: "
-                    + newFolder.getId()));
-            folders.put(newFolder.getId(), newFolder);
+        // create documents
+        for (int i = 0; i < numOfDocuments; i++) {
+            Document newDocument = createDocument(session, testFolder, "doc" + i, CONTENT);
+            addResult(checkObject(session, newDocument, propertiesToCheck, "New folder object spec compliance. Id: "
+                    + newDocument.getId()));
+            documents.put(newDocument.getId(), newDocument);
         }
 
         // simple children test
         addResult(checkChildren(session, testFolder, "Test folder children check"));
 
-        // check if all folders are there
+        // check if all documents are there
         ItemIterable<CmisObject> children = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC);
         List<String> childrenIds = new ArrayList<String>();
         for (CmisObject child : children) {
             if (child != null) {
                 childrenIds.add(child.getId());
-                Folder folder = folders.get(child.getId());
+                Document document = documents.get(child.getId());
 
-                f = createResult(FAILURE, "Folder and test folder child don't match! Id: " + child.getId());
-                addResult(assertShallowEquals(folder, child, null, f));
+                f = createResult(FAILURE, "Document and test folder child don't match! Id: " + child.getId());
+                addResult(assertShallowEquals(document, child, null, f));
             }
         }
 
         f = createResult(FAILURE, "Number of created folders does not match the number of existing folders!");
-        addResult(assertEquals(numOfFolders, childrenIds.size(), null, f));
+        addResult(assertEquals(numOfDocuments, childrenIds.size(), null, f));
 
-        for (Folder folder : folders.values()) {
-            if (!childrenIds.contains(folder.getId())) {
+        for (Document document : documents.values()) {
+            if (!childrenIds.contains(document.getId())) {
                 addResult(createResult(FAILURE,
-                        "Created folder not found in test folder children! Id: " + folder.getId()));
+                        "Created document not found in test folder children! Id: " + document.getId()));
             }
         }
 
-        // delete all folders
-        for (Folder folder : folders.values()) {
-            // empty folders should be deleteable like this
-            folder.delete(true);
+        // check content
+        for (Document document : documents.values()) {
+            ContentStream contentStream = document.getContentStream();
+            if (contentStream == null) {
+                addResult(createResult(FAILURE, "Document has no content! Id: " + document.getId()));
+                continue;
+            }
 
-            f = createResult(FAILURE, "Folder should not exist anymore but it is still there! Id: " + folder.getId());
-            addResult(assertIsFalse(exists(folder), null, f));
+            // TODO: content checks
+        }
+
+        // delete all documents
+        for (Document document : documents.values()) {
+            document.delete(true);
+
+            f = createResult(FAILURE,
+                    "Document should not exist anymore but it is still there! Id: " + document.getId());
+            addResult(assertIsFalse(exists(document), null, f));
         }
 
         // delete the test folder
         deleteTestFolder();
 
-        addResult(createInfoResult("Tested the creation and deletion of " + numOfFolders + " folders."));
+        addResult(createInfoResult("Tested the creation and deletion of " + numOfDocuments + " documents."));
     }
 }

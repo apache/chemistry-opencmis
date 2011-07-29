@@ -29,6 +29,7 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
+import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 
 /**
  * HTML Report without header and footer.
@@ -110,6 +111,15 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
         if ((result.getStackTrace() != null) && (result.getStackTrace().length > 0)) {
             writer.write(" (" + result.getStackTrace()[0].getFileName() + ":"
                     + result.getStackTrace()[0].getLineNumber() + ")");
+
+            if (result.getStatus() == CmisTestResultStatus.UNEXPECTED_EXCEPTION) {
+                writer.write("\n<!--\n");
+                for (StackTraceElement ste : result.getStackTrace()) {
+                    writer.write(ste.getFileName() + ":" + ste.getLineNumber() + " (");
+                    writer.write(ste.getClassName() + "." + ste.getMethodName() + "())\n");
+                }
+                writer.write("-->\n");
+            }
         }
 
         writer.write("<br/>\n");

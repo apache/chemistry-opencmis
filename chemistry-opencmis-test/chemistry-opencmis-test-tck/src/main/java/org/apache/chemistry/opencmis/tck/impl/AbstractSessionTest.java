@@ -24,6 +24,8 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.UNEXPECTED_EXCEPTION;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
+import java.io.ByteArrayInputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -40,6 +42,7 @@ import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
+import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.Tree;
@@ -48,6 +51,7 @@ import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
@@ -58,10 +62,13 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 
@@ -78,6 +85,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         SELECT_ALL_NO_CACHE_OC.setIncludeAcls(true);
         SELECT_ALL_NO_CACHE_OC.setIncludePathSegments(true);
         SELECT_ALL_NO_CACHE_OC.setIncludePolicies(true);
+        SELECT_ALL_NO_CACHE_OC.setIncludeRelationships(IncludeRelationships.BOTH);
         SELECT_ALL_NO_CACHE_OC.setRenditionFilterString("*");
     }
 
@@ -120,7 +128,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             run(session);
         } catch (Exception e) {
             if (!(e instanceof FatalTestException)) {
-                addResult(createResult(UNEXPECTED_EXCEPTION, "Exception: " + e.getMessage(), e, true));
+                addResult(createResult(UNEXPECTED_EXCEPTION, "Exception: " + e, e, true));
             }
         }
     }
@@ -141,20 +149,19 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     /**
      * Creates a folder.
      */
-    protected Folder createFolder(Folder parent, String name) {
+    protected Folder createFolder(Session session, Folder parent, String name) {
         String objectTypeId = getParameters().get(TestParameters.DEFAULT_FOLDER_TYPE);
         if (objectTypeId == null) {
             objectTypeId = TestParameters.DEFAULT_FOLDER_TYPE_VALUE;
         }
 
-        return createFolder(parent, name, objectTypeId);
+        return createFolder(session, parent, name, objectTypeId);
     }
 
     /**
      * Creates a folder.
      */
-    protected Folder createFolder(Folder parent, String name, String objectTypeId) {
-
+    protected Folder createFolder(Session session, Folder parent, String name, String objectTypeId) {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
@@ -162,7 +169,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         Folder result = null;
         try {
             // create the folder
-            result = parent.createFolder(properties);
+            result = parent.createFolder(properties, null, null, null, SELECT_ALL_NO_CACHE_OC);
         } catch (CmisBaseException e) {
             addResult(createResult(UNEXPECTED_EXCEPTION, "Folder could not be created! Exception: " + e.getMessage(),
                     e, true));
@@ -177,7 +184,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 propertiesToCheck[i++] = propId;
             }
 
-            addResult(checkObject(result, propertiesToCheck, "New folder object spec compliance"));
+            addResult(checkObject(session, result, propertiesToCheck, "New folder object spec compliance"));
 
             // check object parents
             List<Folder> objectParents = result.getParents();
@@ -222,6 +229,70 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         } catch (CmisBaseException e) {
             addResult(createResult(UNEXPECTED_EXCEPTION,
                     "Newly created folder is invalid! Exception: " + e.getMessage(), e, true));
+        }
+
+        return result;
+    }
+
+    /**
+     * Creates a document.
+     */
+    protected Document createDocument(Session session, Folder parent, String name, String content) {
+        String objectTypeId = getParameters().get(TestParameters.DEFAULT_DOCUMENT_TYPE);
+        if (objectTypeId == null) {
+            objectTypeId = TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE;
+        }
+
+        return createDocument(session, parent, name, objectTypeId, content);
+    }
+
+    /**
+     * Creates a document.
+     */
+    protected Document createDocument(Session session, Folder parent, String name, String objectTypeId, String content) {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
+
+        TypeDefinition type = session.getTypeDefinition(objectTypeId);
+        if (!(type instanceof DocumentTypeDefinition)) {
+            addResult(createResult(FAILURE, "Type is not a document type! Type: " + objectTypeId, true));
+            return null;
+        }
+
+        DocumentTypeDefinition docType = (DocumentTypeDefinition) type;
+        VersioningState versioningState = (Boolean.TRUE.equals(docType.isVersionable()) ? VersioningState.MAJOR
+                : VersioningState.NONE);
+
+        byte[] contentBytes = null;
+        Document result = null;
+        try {
+            contentBytes = content.getBytes("UTF-8");
+            ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(contentBytes.length),
+                    "text/plain", new ByteArrayInputStream(contentBytes));
+
+            // create the document
+            result = parent.createDocument(properties, contentStream, versioningState, null, null, null,
+                    SELECT_ALL_NO_CACHE_OC);
+        } catch (Exception e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION, "Document could not be created! Exception: " + e.getMessage(),
+                    e, true));
+        }
+
+        try {
+            // check the new document
+            String[] propertiesToCheck = new String[result.getType().getPropertyDefinitions().size()];
+
+            int i = 0;
+            for (String propId : result.getType().getPropertyDefinitions().keySet()) {
+                propertiesToCheck[i++] = propId;
+            }
+
+            addResult(checkObject(session, result, propertiesToCheck, "New document object spec compliance"));
+
+        } catch (CmisBaseException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Newly created document is invalid! Exception: " + e.getMessage(), e, true));
         }
 
         return result;
@@ -294,7 +365,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     "Test folder could not be created! Exception: " + e.getMessage(), e, true));
         }
 
-        testFolder = createFolder(parent, name);
+        testFolder = createFolder(session, parent, name);
 
         return testFolder;
     }
@@ -343,7 +414,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return cap.isGetFolderTreeSupported().booleanValue();
     }
 
-    protected CmisTestResult checkObject(CmisObject object, String[] properties, String message) {
+    protected CmisTestResult checkObject(Session session, CmisObject object, String[] properties, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
         CmisTestResult f;
@@ -552,6 +623,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     addResult(results, assertNotAllowableAction(object, Action.CAN_MOVE_OBJECT, null, f));
                 }
             }
+
+            // check relationships
+            checkRelationships(session, results, object);
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
@@ -560,7 +634,29 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
 
-    protected CmisTestResult checkVersionHistory(CmisObject object, String[] properties, String message) {
+    private void checkRelationships(Session session, List<CmisTestResult> results, CmisObject object) {
+        if (object.getRelationships() != null) {
+            for (Relationship relationship : object.getRelationships()) {
+                if (relationship == null) {
+                    addResult(results, createResult(FAILURE, "A relationship in the relationship list is null!"));
+                }
+
+                String[] relPropertiesToCheck = new String[relationship.getType().getPropertyDefinitions().size()];
+
+                int i = 0;
+                for (String propId : relationship.getType().getPropertyDefinitions().keySet()) {
+                    relPropertiesToCheck[i++] = propId;
+                }
+
+                addResult(
+                        results,
+                        checkObject(session, session.getObject(relationship, SELECT_ALL_NO_CACHE_OC),
+                                relPropertiesToCheck, "Relationship check: " + relationship.getId()));
+            }
+        }
+    }
+
+    protected CmisTestResult checkVersionHistory(Session session, CmisObject object, String[] properties, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
         CmisTestResult f;
@@ -602,50 +698,149 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         f = createResult(FAILURE, "Version history must have at least one version!");
         addResult(results, assertIsTrue(versions.size() > 0, null, f));
 
-        // iterate through the version history and test each version document
-        int latestVersion = 0;
-        int latestMajorVersion = 0;
-        Set<String> versionLabels = new HashSet<String>();
-        for (int i = 0; i < versions.size(); i++) {
-            Document version = versions.get(i);
+        if (versions.size() > 0) {
+            // get latest version
+            Document lastestVersion = doc.getObjectOfLatestVersion(false, SELECT_ALL_NO_CACHE_OC);
+            addResult(results,
+                    checkObject(session, lastestVersion, properties, "Latest version check: " + lastestVersion.getId()));
 
-            f = createResult(FAILURE, "Version " + i + " is null!");
-            addResult(results, assertNotNull(version, null, f));
-            if (version == null) {
-                continue;
+            f = createResult(FAILURE, "Latest version is not flagged as latest version! Id: " + lastestVersion.getId());
+            addResult(results, assertIsTrue(lastestVersion.isLatestVersion(), null, f));
+
+            // get latest major version
+            Document lastestMajorVersion = doc.getObjectOfLatestVersion(true, SELECT_ALL_NO_CACHE_OC);
+            if (lastestMajorVersion != null) {
+                addResult(
+                        results,
+                        checkObject(session, lastestMajorVersion, properties, "Latest major version check: "
+                                + lastestMajorVersion.getId()));
+
+                f = createResult(FAILURE, "Latest major version is not flagged as latest major version! Id: "
+                        + lastestMajorVersion.getId());
+                addResult(results, assertIsTrue(lastestMajorVersion.isLatestMajorVersion(), null, f));
             }
 
-            checkObject(version, properties, message);
+            // iterate through the version history and test each version
+            // document
+            long creatationDate = Long.MAX_VALUE;
+            int latestVersion = 0;
+            int latestMajorVersion = 0;
+            long latestModificationDate = Long.MAX_VALUE;
+            int latestModifictaionIndex = Integer.MIN_VALUE;
+            Set<String> versionLabels = new HashSet<String>();
+            boolean found = false;
+            boolean foundLastestVersion = false;
+            boolean foundLastestMajorVersion = false;
+            for (int i = 0; i < versions.size(); i++) {
+                Document version = versions.get(i);
 
-            // check version id
-            f = createResult(FAILURE, "Version series id does not match (Id: " + version.getId() + ")");
-            addResult(results, assertEquals(versionSeriesId, version.getVersionSeriesId(), null, f));
+                f = createResult(FAILURE, "Version " + i + " is null!");
+                addResult(results, assertNotNull(version, null, f));
+                if (version == null) {
+                    continue;
+                }
 
-            // count latest versions and latest major versions
-            if (version.isLatestVersion()) {
-                latestVersion++;
+                addResult(results, checkObject(session, version, properties, "Version check: " + version.getId()));
+
+                // check version id
+                f = createResult(FAILURE, "Version series id does not match! Id: " + version.getId());
+                addResult(results, assertEquals(versionSeriesId, version.getVersionSeriesId(), null, f));
+
+                // check creation date
+                if (creatationDate == version.getCreationDate().getTimeInMillis()) {
+                    addResult(results, createResult(WARNING, "Two or more versions have the same creation date!"));
+                } else {
+                    f = createResult(FAILURE, "Version history order incorrect! Must be sorted bei creation date!");
+                    addResult(results,
+                            assertIsTrue(version.getCreationDate().getTimeInMillis() <= creatationDate, null, f));
+                }
+                version.getCreationDate().getTimeInMillis();
+
+                // count latest versions and latest major versions
+                if (version.isLatestVersion()) {
+                    latestVersion++;
+                }
+
+                if (version.isLatestMajorVersion()) {
+                    latestMajorVersion++;
+                }
+
+                // find latest modification date
+                if (latestModificationDate == version.getLastModificationDate().getTimeInMillis()) {
+                    addResult(results,
+                            createResult(WARNING, "Two or more versions have the same last modification date!"));
+                } else if (latestModificationDate < version.getLastModificationDate().getTimeInMillis()) {
+                    latestModificationDate = version.getLastModificationDate().getTimeInMillis();
+                    latestModifictaionIndex = i;
+                }
+
+                // check for version label duplicates
+                String versionLabel = version.getVersionLabel();
+                f = createResult(WARNING, "More than one version have this version label: " + versionLabel);
+                addResult(results, assertIsFalse(versionLabels.contains(versionLabel), null, f));
+
+                versionLabels.add(versionLabel);
+
+                // check PWC
+                if (version.getId().equals(version.getVersionSeriesCheckedOutId())) {
+                    f = createResult(FAILURE, "PWC must not be flagged as latest major version! Id: " + version.getId());
+                    addResult(results, assertIsFalse(version.isLatestMajorVersion(), null, f));
+                }
+
+                // found origin object?
+                if (version.getId().equals(object.getId())) {
+                    found = true;
+                }
+
+                // found latest version?
+                if (version.getId().equals(lastestVersion.getId())) {
+                    foundLastestVersion = true;
+                }
+
+                // found latest major version?
+                if (lastestMajorVersion != null && version.getId().equals(lastestMajorVersion.getId())) {
+                    foundLastestMajorVersion = true;
+                }
             }
 
-            if (version.isLatestMajorVersion()) {
-                latestMajorVersion++;
+            // check latest versions
+            f = createResult(FAILURE, "Version series id has " + latestVersion
+                    + " latest versions! There must be only one!");
+            addResult(results, assertEquals(1, latestVersion, null, f));
+
+            if (!foundLastestVersion) {
+                addResult(results, createResult(FAILURE, "Latest version not found in version history!"));
             }
 
-            // check for version label duplicates
-            String versionLabel = version.getVersionLabel();
-            f = createResult(WARNING, "More than one version have this version label: " + versionLabel);
-            addResult(results, assertIsFalse(versionLabels.contains(versionLabel), null, f));
+            // check latest major versions
+            if (lastestMajorVersion == null) {
+                f = createResult(FAILURE, "Version series id has " + latestMajorVersion
+                        + " latest major version(s) but getObjectOfLatestVersion() didn't return a major version!");
+                addResult(results, assertEquals(0, latestMajorVersion, null, f));
+            } else {
+                f = createResult(FAILURE, "Version series id has " + latestMajorVersion
+                        + " latest major versions but there should be exactly one!");
+                addResult(results, assertEquals(1, latestMajorVersion, null, f));
 
-            versionLabels.add(versionLabel);
+                if (!foundLastestMajorVersion) {
+                    addResult(results, createResult(FAILURE, "Latest major version not found in version history!"));
+                }
+            }
+
+            // check latest version
+            if (latestModifictaionIndex >= 0) {
+                f = createResult(
+                        FAILURE,
+                        "Version with the latest modification date is not flagged as latest version! Id: "
+                                + versions.get(latestModifictaionIndex));
+                addResult(results, assertIsTrue(versions.get(latestModifictaionIndex).isLatestVersion(), null, f));
+            }
+
+            // check if the origin object was found
+            if (!found) {
+                addResult(results, createResult(FAILURE, "Document not found in its version history!"));
+            }
         }
-
-        // check latest versions and latest major versions
-        f = createResult(FAILURE, "Version series id has " + latestVersion
-                + " latest versions! There must be only one!");
-        addResult(results, assertEquals(1, latestVersion, null, f));
-
-        f = createResult(FAILURE, "Version series id has " + latestMajorVersion
-                + " latest major versions! There must not be more than one!");
-        addResult(results, assertIsTrue(latestMajorVersion < 2, null, f));
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
@@ -769,7 +964,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 childrenFolderCount++;
             }
 
-            checkChild(results, folder, child);
+            checkChild(session, results, folder, child);
         }
 
         f = createResult(WARNING, "Number of children doesn't match the reported total number of items!");
@@ -787,7 +982,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 if (child == null) {
                     addResult(results, createResult(FAILURE, "Folder descendants contain a null tree!"));
                 } else {
-                    checkChild(results, folder, child.getItem());
+                    checkChild(session, results, folder, child.getItem());
                 }
             }
 
@@ -810,7 +1005,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 if (child == null) {
                     addResult(results, createResult(FAILURE, "Folder tree contains a null tree!"));
                 } else {
-                    checkChild(results, folder, child.getItem());
+                    checkChild(session, results, folder, child.getItem());
                 }
             }
 
@@ -828,7 +1023,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
 
-    private void checkChild(List<CmisTestResult> results, Folder folder, CmisObject child) {
+    private void checkChild(Session session, List<CmisTestResult> results, Folder folder, CmisObject child) {
         CmisTestResult f;
 
         if (child == null) {
@@ -841,9 +1036,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 propertiesToCheck[i++] = propId;
             }
 
-            addResult(results, checkObject(child, propertiesToCheck, "Child check: " + child.getId()));
-            addResult(results,
-                    checkVersionHistory(child, propertiesToCheck, "Child version history check: " + child.getId()));
+            addResult(results, checkObject(session, child, propertiesToCheck, "Child check: " + child.getId()));
+            addResult(
+                    results,
+                    checkVersionHistory(session, child, propertiesToCheck,
+                            "Child version history check: " + child.getId()));
 
             f = createResult(FAILURE, "Child is not fileable! Id: " + child.getId() + " / Type: "
                     + child.getType().getId());

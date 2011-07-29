@@ -70,7 +70,7 @@ public class RootFolderTest extends AbstractSessionTest {
             propertiesToCheck[i++] = propId;
         }
 
-        addResult(checkObject(rootFolder, propertiesToCheck, "Root folder object spec compliance"));
+        addResult(checkObject(session, rootFolder, propertiesToCheck, "Root folder object spec compliance"));
 
         // folder and path
         failure = createResult(FAILURE,
