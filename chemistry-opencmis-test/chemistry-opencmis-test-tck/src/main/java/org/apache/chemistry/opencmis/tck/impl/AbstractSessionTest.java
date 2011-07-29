@@ -25,7 +25,9 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.UNEXPECTED_
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -353,6 +355,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             f = createResult(FAILURE, "Object id is not set!");
             addResult(results, assertStringNotEmpty(object.getId(), null, f));
 
+            GregorianCalendar creationDate = null;
+            GregorianCalendar lastModificationDate = null;
+
             // properties
             for (String propId : properties) {
                 Property<?> prop = object.getProperty(propId);
@@ -398,6 +403,20 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                 // check property
                 addResult(results, checkProperty(prop, "Property " + propId, propertyCheck));
+
+                // catch creationDate and lastModificationDate
+                if (PropertyIds.CREATION_DATE.equals(propId)) {
+                    creationDate = (GregorianCalendar) prop.getFirstValue();
+                } else if (PropertyIds.LAST_MODIFICATION_DATE.equals(propId)) {
+                    lastModificationDate = (GregorianCalendar) prop.getFirstValue();
+                }
+            }
+
+            // check creationDate <= lastModificationDate
+            if (creationDate != null && lastModificationDate != null) {
+                f = createResult(FAILURE, "Last modification date precedes creation date!");
+                addResult(results,
+                        assertIsTrue(creationDate.getTimeInMillis() <= lastModificationDate.getTimeInMillis(), null, f));
             }
 
             // allowable actions
@@ -534,6 +553,99 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
             }
         }
+
+        CmisTestResultImpl result = createResult(getWorst(results), message);
+        result.getChildren().addAll(results);
+
+        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+    }
+
+    protected CmisTestResult checkVersionHistory(CmisObject object, String[] properties, String message) {
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if (object.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
+            // skip non-document objects
+            return null;
+        }
+
+        if (!Boolean.TRUE.equals(((DocumentTypeDefinition) object.getType()).isVersionable())) {
+            // skip non-versionable types
+            return null;
+        }
+
+        Document doc = (Document) object;
+
+        // check version series id
+        String versionSeriesId = doc.getVersionSeriesId();
+
+        f = createResult(FAILURE, "Versionable document has no version series id property!");
+        addResult(results, assertStringNotEmpty(versionSeriesId, null, f));
+        if (versionSeriesId == null) {
+            CmisTestResultImpl result = createResult(getWorst(results), message);
+            result.getChildren().addAll(results);
+            return result;
+        }
+
+        // get version history
+        List<Document> versions = doc.getAllVersions(SELECT_ALL_NO_CACHE_OC);
+
+        f = createResult(FAILURE, "Version history is null!");
+        addResult(results, assertNotNull(versions, null, f));
+        if (versions == null) {
+            CmisTestResultImpl result = createResult(getWorst(results), message);
+            result.getChildren().addAll(results);
+            return result;
+        }
+
+        f = createResult(FAILURE, "Version history must have at least one version!");
+        addResult(results, assertIsTrue(versions.size() > 0, null, f));
+
+        // iterate through the version history and test each version document
+        int latestVersion = 0;
+        int latestMajorVersion = 0;
+        Set<String> versionLabels = new HashSet<String>();
+        for (int i = 0; i < versions.size(); i++) {
+            Document version = versions.get(i);
+
+            f = createResult(FAILURE, "Version " + i + " is null!");
+            addResult(results, assertNotNull(version, null, f));
+            if (version == null) {
+                continue;
+            }
+
+            checkObject(version, properties, message);
+
+            // check version id
+            f = createResult(FAILURE, "Version series id does not match (Id: " + version.getId() + ")");
+            addResult(results, assertEquals(versionSeriesId, version.getVersionSeriesId(), null, f));
+
+            // count latest versions and latest major versions
+            if (version.isLatestVersion()) {
+                latestVersion++;
+            }
+
+            if (version.isLatestMajorVersion()) {
+                latestMajorVersion++;
+            }
+
+            // check for version label duplicates
+            String versionLabel = version.getVersionLabel();
+            f = createResult(WARNING, "More than one version have this version label: " + versionLabel);
+            addResult(results, assertIsFalse(versionLabels.contains(versionLabel), null, f));
+
+            versionLabels.add(versionLabel);
+        }
+
+        // check latest versions and latest major versions
+        f = createResult(FAILURE, "Version series id has " + latestVersion
+                + " latest versions! There must be only one!");
+        addResult(results, assertEquals(1, latestVersion, null, f));
+
+        f = createResult(FAILURE, "Version series id has " + latestMajorVersion
+                + " latest major versions! There must not be more than one!");
+        addResult(results, assertIsTrue(latestMajorVersion < 2, null, f));
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
@@ -730,6 +842,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
 
             addResult(results, checkObject(child, propertiesToCheck, "Child check: " + child.getId()));
+            addResult(results,
+                    checkVersionHistory(child, propertiesToCheck, "Child version history check: " + child.getId()));
 
             f = createResult(FAILURE, "Child is not fileable! Id: " + child.getId() + " / Type: "
                     + child.getType().getId());
