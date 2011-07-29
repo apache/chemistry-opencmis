@@ -193,6 +193,8 @@
         <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench</module>
         <!-- <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench-webstart</module> -->
         <module>chemistry-opencmis-dist</module>
+        <module>chemistry-opencmis-samples/chemistry-opencmis-hello</module>
+        <module>chemistry-opencmis-samples/chemistry-opencmis-getting-started</module>
     </modules>
 
 
