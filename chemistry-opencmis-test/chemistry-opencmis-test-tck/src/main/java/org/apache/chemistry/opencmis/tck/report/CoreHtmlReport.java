@@ -19,6 +19,8 @@
 package org.apache.chemistry.opencmis.tck.report;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -54,7 +57,7 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
                     value = "*****";
                 }
 
-                writer.write("<tr><td>" + p.getKey() + "</td><td>" + value + "</td></tr>\n");
+                writer.write("<tr><td>" + escape(p.getKey()) + "</td><td>" + escape(value) + "</td></tr>\n");
             }
             writer.write("</table>\n");
         }
@@ -82,7 +85,7 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
     }
 
     private void printGroupResults(CmisTestGroup group, Writer writer) throws IOException {
-        writer.write("\n<h3>" + group.getName() + "</h3>\n");
+        writer.write("\n<h3>" + escape(group.getName()) + "</h3>\n");
 
         if (group.getTests() != null) {
             for (CmisTest test : group.getTests()) {
@@ -92,7 +95,7 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
     }
 
     private void printTestResults(CmisTest test, Writer writer) throws IOException {
-        writer.write("\n<h4>" + test.getName() + " (" + test.getTime() + " ms)</h4>\n");
+        writer.write("\n<h4>" + escape(test.getName()) + " (" + test.getTime() + " ms)</h4>\n");
 
         if (test.getResults() != null) {
             for (CmisTestResult result : test.getResults()) {
@@ -106,28 +109,64 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
     private void printResult(CmisTestResult result, Writer writer) throws IOException {
         writer.write("<div class=\"tckResult" + result.getStatus().name() + "\">\n");
 
-        writer.write("<b>" + result.getStatus() + "</b>: " + result.getMessage());
+        writer.write("<b>" + result.getStatus() + "</b>: " + escape(result.getMessage()));
 
         if ((result.getStackTrace() != null) && (result.getStackTrace().length > 0)) {
-            writer.write(" (" + result.getStackTrace()[0].getFileName() + ":"
+            writer.write(" (" + escape(result.getStackTrace()[0].getFileName()) + ":"
                     + result.getStackTrace()[0].getLineNumber() + ")");
-
-            if (result.getStatus() == CmisTestResultStatus.UNEXPECTED_EXCEPTION) {
-                writer.write("\n<!--\n");
-                for (StackTraceElement ste : result.getStackTrace()) {
-                    writer.write(ste.getFileName() + ":" + ste.getLineNumber() + " (");
-                    writer.write(ste.getClassName() + "." + ste.getMethodName() + "())\n");
-                }
-                writer.write("-->\n");
-            }
         }
 
         writer.write("<br/>\n");
+
+        if (result.getStatus() == CmisTestResultStatus.UNEXPECTED_EXCEPTION && result.getException() != null) {
+            final Writer sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter(sw);
+            result.getException().printStackTrace(pw);
+
+            writer.write("\n<!--\nStacktrace:\n\n" + escape(sw.toString()) + "-->\n");
+
+            if (result.getException() instanceof CmisBaseException) {
+                CmisBaseException cbe = (CmisBaseException) result.getException();
+                if (cbe.getErrorContent() != null) {
+                    writer.write("\n<!--\nError Content:\n\n" + escape(cbe.getErrorContent()) + "-->\n");
+                }
+            }
+        }
 
         for (CmisTestResult child : result.getChildren()) {
             printResult(child, writer);
         }
 
         writer.write("</div>\n");
+    }
+
+    protected String escape(String s) {
+        if (s == null) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            switch (c) {
+            case '\"':
+                sb.append("&quot;");
+                break;
+            case '&':
+                sb.append("&amp;");
+                break;
+            case '<':
+                sb.append("&lt;");
+                break;
+            case '>':
+                sb.append("&lt;");
+                break;
+            default:
+                sb.append(c);
+            }
+        }
+
+        return sb.toString();
     }
 }

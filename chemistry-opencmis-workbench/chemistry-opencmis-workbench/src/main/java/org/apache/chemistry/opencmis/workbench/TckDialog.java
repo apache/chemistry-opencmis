@@ -20,12 +20,11 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,8 +46,8 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestProgressMonitor;
-import org.apache.chemistry.opencmis.tck.report.HtmlReport;
 import org.apache.chemistry.opencmis.tck.runner.AbstractRunner;
+import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 /**
@@ -291,21 +290,8 @@ public class TckDialog {
         @Override
         public void done() {
             try {
-                // create report
-                File tempReportFile = File.createTempFile("cmistck", ".html");
-                tempReportFile.deleteOnExit();
-
-                HtmlReport report = new HtmlReport();
-                report.createReport(runner.getParameters(), runner.getGroups(), tempReportFile);
-
-                // show report
-                Desktop desktop = Desktop.getDesktop();
-                if (!desktop.isSupported(Desktop.Action.OPEN)) {
-                    JOptionPane.showMessageDialog(owner, "Report: " + tempReportFile.getAbsolutePath(), "Report",
-                            JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    desktop.open(tempReportFile);
-                }
+                SwingReport report = new SwingReport(null, 700, 500);
+                report.createReport(runner.getParameters(), runner.getGroups(), (Writer) null);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(owner, "Error: " + e.getMessage(), "Report Error",
                         JOptionPane.ERROR_MESSAGE);

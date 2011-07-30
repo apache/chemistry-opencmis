@@ -68,7 +68,9 @@ public class XmlReport extends AbstractCmisTestReport {
             for (Map.Entry<String, String> p : (new TreeMap<String, String>(parameters)).entrySet()) {
                 xml.writeStartElement(TAG_PARAMETER);
                 xml.writeAttribute(ATTR_KEY, p.getKey());
-                xml.writeAttribute(ATTR_VALUE, p.getValue());
+                if (p.getValue() != null) {
+                    xml.writeAttribute(ATTR_VALUE, p.getValue());
+                }
                 xml.writeEndElement();
             }
 

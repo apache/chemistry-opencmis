@@ -28,9 +28,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.script.ScriptEngineFactory;
@@ -49,7 +52,10 @@ import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.LinkAccess;
+import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.checks.ObjectComplianceTestGroup;
+import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
@@ -70,7 +76,9 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private JTextField contentUrlField;
     private InfoList paths;
     private InfoList allowableActionsList;
+    private JPanel buttonPanel;
     private JButton refreshButton;
+    private JButton checkButton;
     private JPanel scriptPanel;
     private JButton scriptOpenButton;
     private JButton scriptRunButton;
@@ -106,6 +114,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             contentUrlField.setText("");
             allowableActionsList.removeAll();
             refreshButton.setEnabled(false);
+            checkButton.setEnabled(false);
             scriptPanel.setVisible(false);
         } else {
             try {
@@ -176,6 +185,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 }
 
                 refreshButton.setEnabled(true);
+                checkButton.setEnabled(true);
 
                 if (object instanceof Document) {
                     String name = object.getName().toLowerCase();
@@ -207,21 +217,30 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         pwcField = addId("PWC:");
         contentUrlField = addLink("Content URL:");
         allowableActionsList = addComponent("Allowable Actions:", new InfoList());
-        refreshButton = addComponent("", new JButton("Refresh"));
+
+        buttonPanel = addComponent("", new JPanel(new BorderLayout()));
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.setOpaque(false);
+
+        refreshButton = new JButton("Refresh");
         refreshButton.setEnabled(false);
+        buttonPanel.add(refreshButton);
+        checkButton = new JButton("Check specification compliance");
+        checkButton.setEnabled(false);
+        buttonPanel.add(checkButton);
 
         scriptPanel = addComponent("", new JPanel(new BorderLayout()));
         scriptPanel.setOpaque(false);
         scriptPanel.setVisible(false);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
-        buttonPanel.setOpaque(false);
-        scriptPanel.add(buttonPanel, BorderLayout.PAGE_START);
+        JPanel scriptButtonPanel = new JPanel();
+        scriptButtonPanel.setLayout(new BoxLayout(scriptButtonPanel, BoxLayout.LINE_AXIS));
+        scriptButtonPanel.setOpaque(false);
+        scriptPanel.add(scriptButtonPanel, BorderLayout.PAGE_START);
         scriptOpenButton = new JButton("Open Script");
-        buttonPanel.add(scriptOpenButton);
+        scriptButtonPanel.add(scriptOpenButton);
         scriptRunButton = new JButton("Run Script");
-        buttonPanel.add(scriptRunButton);
+        scriptButtonPanel.add(scriptRunButton);
 
         scriptOutput = new JTextArea(null, 1, 80);
         scriptOutput.setEditable(false);
@@ -235,6 +254,30 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     getClientModel().reloadObject();
+                } catch (Exception ex) {
+                    ClientHelper.showError(null, ex);
+                } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
+
+        checkButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+                    Map<String, String> parameters = new HashMap<String, String>(getClientModel().getClientSession()
+                            .getSessionParameters());
+                    String objectId = getClientModel().getCurrentObject().getId();
+
+                    ObjectComplianceTestGroup octg = new ObjectComplianceTestGroup(parameters, objectId);
+                    octg.run();
+
+                    List<CmisTestGroup> groups = new ArrayList<CmisTestGroup>();
+                    groups.add(octg);
+                    SwingReport report = new SwingReport(null, 700, 500);
+                    report.createReport(parameters, groups, (Writer) null);
                 } catch (Exception ex) {
                     ClientHelper.showError(null, ex);
                 } finally {

@@ -63,14 +63,7 @@ public class RootFolderTest extends AbstractSessionTest {
             return;
         }
 
-        String[] propertiesToCheck = new String[rootFolder.getType().getPropertyDefinitions().size()];
-
-        int i = 0;
-        for (String propId : rootFolder.getType().getPropertyDefinitions().keySet()) {
-            propertiesToCheck[i++] = propId;
-        }
-
-        addResult(checkObject(session, rootFolder, propertiesToCheck, "Root folder object spec compliance"));
+        addResult(checkObject(session, rootFolder, getAllProperties(rootFolder), "Root folder object spec compliance"));
 
         // folder and path
         failure = createResult(FAILURE,

@@ -117,7 +117,7 @@ public abstract class AbstractCmisTest implements CmisTest {
 
             results.add(result);
             if (result.isFatal()) {
-                throw new FatalTestException();
+                throw new FatalTestException(result.getMessage());
             }
         }
     }

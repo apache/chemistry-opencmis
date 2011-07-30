@@ -16,20 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.tck.impl;
+package org.apache.chemistry.opencmis.workbench.checks;
 
-/**
- * This exception will be thrown if a result is fatal and the test has to be
- * stopped.
- */
-public class FatalTestException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
+import java.util.Map;
 
-    public FatalTestException() {
-        super();
+import org.apache.chemistry.opencmis.tck.impl.AbstractCmisTestGroup;
+
+public class ObjectComplianceTestGroup extends AbstractCmisTestGroup {
+
+    private String objectId;
+
+    public ObjectComplianceTestGroup(Map<String, String> parameters, String objectId) throws Exception {
+        this.objectId = objectId;
+        init(parameters);
     }
 
-    public FatalTestException(String msg) {
-        super(msg);
+    @Override
+    public void init(Map<String, String> parameters) throws Exception {
+        super.init(parameters);
+
+        setName("Object Compliance Test Group");
+
+        addTest(new ObjectComplianceCheck(objectId));
     }
 }

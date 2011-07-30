@@ -144,6 +144,19 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return ri;
     }
 
+    // --- helpers ---
+
+    protected String[] getAllProperties(CmisObject object) {
+        String[] propertiesk = new String[object.getType().getPropertyDefinitions().size()];
+
+        int i = 0;
+        for (String propId : object.getType().getPropertyDefinitions().keySet()) {
+            propertiesk[i++] = propId;
+        }
+
+        return propertiesk;
+    }
+
     // --- handy create and delete methods ---
 
     /**
@@ -635,23 +648,25 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     }
 
     private void checkRelationships(Session session, List<CmisTestResult> results, CmisObject object) {
+        if (object instanceof Relationship) {
+            if (object.getRelationships() != null && !object.getRelationships().isEmpty()) {
+                addResult(results, createResult(FAILURE, "A relationship has relationships!"));
+                return;
+            }
+        }
+
         if (object.getRelationships() != null) {
             for (Relationship relationship : object.getRelationships()) {
                 if (relationship == null) {
                     addResult(results, createResult(FAILURE, "A relationship in the relationship list is null!"));
+                    continue;
                 }
 
-                String[] relPropertiesToCheck = new String[relationship.getType().getPropertyDefinitions().size()];
-
-                int i = 0;
-                for (String propId : relationship.getType().getPropertyDefinitions().keySet()) {
-                    relPropertiesToCheck[i++] = propId;
-                }
-
+                CmisObject fullRelationshipObject = session.getObject(relationship, SELECT_ALL_NO_CACHE_OC);
                 addResult(
                         results,
-                        checkObject(session, session.getObject(relationship, SELECT_ALL_NO_CACHE_OC),
-                                relPropertiesToCheck, "Relationship check: " + relationship.getId()));
+                        checkObject(session, fullRelationshipObject, getAllProperties(fullRelationshipObject),
+                                "Relationship check: " + fullRelationshipObject.getId()));
             }
         }
     }
@@ -742,6 +757,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                 addResult(results, checkObject(session, version, properties, "Version check: " + version.getId()));
 
+                // check first entry
+                if (i == 0) {
+                    f = createResult(FAILURE,
+                            "First version history entry is not the latest version! Id: " + version.getId());
+                    addResult(results, assertIsTrue(version.isLatestVersion(), null, f));
+                }
+
                 // check version id
                 f = createResult(FAILURE, "Version series id does not match! Id: " + version.getId());
                 addResult(results, assertEquals(versionSeriesId, version.getVersionSeriesId(), null, f));
@@ -785,6 +807,18 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 if (version.getId().equals(version.getVersionSeriesCheckedOutId())) {
                     f = createResult(FAILURE, "PWC must not be flagged as latest major version! Id: " + version.getId());
                     addResult(results, assertIsFalse(version.isLatestMajorVersion(), null, f));
+                }
+
+                // check checked out
+                boolean checkedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
+                if (checkedOut) {
+                    f = createResult(FAILURE, "Version series is marked as checked out but the PWC id is not set! Id: "
+                            + version.getId());
+                    addResult(results, assertStringNotEmpty(doc.getVersionSeriesCheckedOutId(), null, f));
+                } else {
+                    f = createResult(FAILURE, "Version series is not marked as checked out but the PWC id is set! Id: "
+                            + version.getId());
+                    addResult(results, assertNull(doc.getVersionSeriesCheckedOutId(), null, f));
                 }
 
                 // found origin object?
@@ -1672,7 +1706,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             results.add(result);
             if (result.isFatal()) {
-                throw new FatalTestException();
+                throw new FatalTestException(result.getMessage());
             }
         }
     }

@@ -19,15 +19,18 @@
 package org.apache.chemistry.opencmis.tck.report;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
+import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 
 /**
  * Text Report.
@@ -96,6 +99,19 @@ public class TextReport extends AbstractCmisTestReport {
         }
 
         writer.write("\n");
+
+        if (result.getStatus() == CmisTestResultStatus.UNEXPECTED_EXCEPTION && result.getException() != null) {
+            writer.write("\nStacktrace:\n\n");
+            result.getException().printStackTrace(new PrintWriter(writer));
+
+            if (result.getException() instanceof CmisBaseException) {
+                CmisBaseException cbe = (CmisBaseException) result.getException();
+                if (cbe.getErrorContent() != null) {
+                    writer.write("\nError Content:\n\n");
+                    writer.write(cbe.getErrorContent());
+                }
+            }
+        }
 
         if (result.getException() != null) {
             printIntend(level, writer);
