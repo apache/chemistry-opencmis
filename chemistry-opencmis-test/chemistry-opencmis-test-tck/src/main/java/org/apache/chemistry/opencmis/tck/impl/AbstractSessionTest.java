@@ -25,6 +25,7 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.UNEXPECTED_
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -62,6 +63,7 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -639,6 +641,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             // check relationships
             checkRelationships(session, results, object);
+
+            // check document content
+            checkDocumentContent(session, results, object);
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
@@ -668,6 +673,95 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         checkObject(session, fullRelationshipObject, getAllProperties(fullRelationshipObject),
                                 "Relationship check: " + fullRelationshipObject.getId()));
             }
+        }
+    }
+
+    private void checkDocumentContent(Session session, List<CmisTestResult> results, CmisObject object) {
+        if (!(object instanceof Document)) {
+            // only documents have content
+            return;
+        }
+
+        CmisTestResult f;
+
+        Document doc = (Document) object;
+        DocumentTypeDefinition type = (DocumentTypeDefinition) doc.getType();
+
+        boolean hasContentProperties = (doc.getContentStreamFileName() != null) || (doc.getContentStreamId() != null)
+                || (doc.getContentStreamLength() > -1) || (doc.getContentStreamMimeType() != null);
+
+        if (hasContentProperties) {
+            if (type.getContentStreamAllowed() == ContentStreamAllowed.NOTALLOWED) {
+                addResult(
+                        results,
+                        createResult(FAILURE,
+                                "Content properties have values but the document type doesn't allow content!"));
+            }
+        } else {
+            if (type.getContentStreamAllowed() == ContentStreamAllowed.REQUIRED) {
+                addResult(results,
+                        createResult(FAILURE, "Content properties are not set but the document type demands content!"));
+            }
+        }
+
+        ContentStream contentStream = doc.getContentStream();
+
+        if (contentStream == null) {
+            if (hasContentProperties) {
+                addResult(results,
+                        createResult(FAILURE, "Content properties have values but the document has no content!"));
+            }
+
+            if (type.getContentStreamAllowed() == ContentStreamAllowed.REQUIRED) {
+                addResult(results,
+                        createResult(FAILURE, "The document type demands content but the document has no content!"));
+            }
+
+            return;
+        }
+
+        if (type.getContentStreamAllowed() == ContentStreamAllowed.NOTALLOWED) {
+            addResult(results, createResult(FAILURE, "Document type doesn't allow content but document has content!"));
+        }
+
+        f = createResult(FAILURE, "Content file names don't match!");
+        addResult(results, assertEquals(doc.getContentStreamFileName(), contentStream.getFileName(), null, f));
+
+        if (doc.getContentStreamLength() > -1 && contentStream.getLength() > -1) {
+            f = createResult(FAILURE, "Content lengths don't match!");
+            addResult(results, assertEquals(doc.getContentStreamLength(), contentStream.getLength(), null, f));
+        }
+        f = createResult(FAILURE, "Content MIME types don't match!");
+        addResult(results, assertEquals(doc.getContentStreamMimeType(), contentStream.getMimeType(), null, f));
+
+        InputStream stream = contentStream.getStream();
+        if (stream == null) {
+            addResult(results, createResult(FAILURE, "Docuemnt has no content stream!"));
+            return;
+        }
+
+        try {
+            long bytes = 0;
+            byte[] buffer = new byte[64 * 1024];
+            int b = stream.read(buffer);
+            while (b > -1) {
+                bytes += b;
+                b = stream.read(buffer);
+            }
+            stream.close();
+
+            if (doc.getContentStreamLength() > -1) {
+                f = createResult(FAILURE,
+                        "Content stream length property value doesn't match the actual content length!");
+                addResult(results, assertEquals(doc.getContentStreamLength(), bytes, null, f));
+            }
+
+            if (contentStream.getLength() > -1) {
+                f = createResult(FAILURE, "Content length value doesn't match the actual content length!");
+                addResult(results, assertEquals(contentStream.getLength(), bytes, null, f));
+            }
+        } catch (Exception e) {
+            addResult(results, createResult(FAILURE, "Reading content failed: " + e, e, false));
         }
     }
 
