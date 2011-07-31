@@ -295,34 +295,15 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         List<? extends StoredObject> children = folderOnly ? folder.getFolderChildren(maxItems, skipCount, user) : folder
                 .getChildren(maxItems, skipCount, user);
 
-        List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-
         for (StoredObject spo : children) {
             ObjectInFolderDataImpl oifd = new ObjectInFolderDataImpl();
-            ObjectDataImpl objectData = new ObjectDataImpl();
             if (includePathSegments != null && includePathSegments) {
                 oifd.setPathSegment(spo.getName());
             }
-            if (includeAllowableActions != null && includeAllowableActions) {
-             //   AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
-                AllowableActions allowableActions = spo.getAllowableActions(user);
-                objectData.setAllowableActions(allowableActions);
-            }
-//            if (includeRelationships != null && includeRelationships != IncludeRelationships.NONE) {
-//                objectData.setRelationships(null /* f.getRelationships() */);
-//            }
-            objectData.setRelationships(DataObjectCreator.getRelationships(includeRelationships, spo, user));
-            
-            if (renditionFilter != null && renditionFilter.length() > 0) {
-                objectData.setRelationships(null /*
-                                                  * f.getRenditions(renditionFilter
-                                                  * )
-                                                  */);
-            }
 
-            TypeDefinition td = fStoreManager.getTypeById(repositoryId, spo.getTypeId()).getTypeDefinition();
-            Properties props = PropertyCreationHelper.getPropertiesFromObject(spo, td, requestedIds, true);
-            objectData.setProperties(props);
+            TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, spo.getTypeId()).getTypeDefinition();
+            ObjectData objectData = PropertyCreationHelper.getObjectData(typeDef, spo, filter, user, includeAllowableActions, 
+                    includeRelationships, renditionFilter, false, true, null);
 
             oifd.setObject(objectData);
             folderList.add(oifd);
@@ -392,13 +373,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 ObjectParentDataImpl parentData = new ObjectParentDataImpl();
                 parentData.setObject(parent);
                 String path = ((SingleFiling) sop).getPath();
-                int beginIndex = path.lastIndexOf(Filing.PATH_SEPARATOR) + 1; // Note
-                // :
-                // if
-                // /
-                // not
-                // found
-                // results in 0
+                int beginIndex = path.lastIndexOf(Filing.PATH_SEPARATOR) + 1; 
+                //   Note: if not found results in 0
                 String relPathSeg = path.substring(beginIndex, path.length());
                 parentData.setRelativePathSegment(relPathSeg);
                 result = Collections.singletonList((ObjectParentData) parentData);
@@ -412,16 +388,10 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             if (null != parents) {
                 for (Folder parent : parents) {
                     ObjectParentDataImpl parentData = new ObjectParentDataImpl();
-                    ObjectDataImpl objData = new ObjectDataImpl();
-                    copyFilteredProperties(repositoryId, parent, filter, objData);
-                    
-                    objData.setRelationships(DataObjectCreator.getRelationships(includeRelationships, parent, user));                  
-                    
-                    if (includeAllowableActions != null && includeAllowableActions) {
-                        //  AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
-                      	AllowableActions allowableActions = parent.getAllowableActions(user);
-                      	objData.setAllowableActions(allowableActions);
-                      }
+                    TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, parent.getTypeId()).getTypeDefinition();
+                    ObjectData objData = PropertyCreationHelper.getObjectData(typeDef, parent, filter, user, includeAllowableActions, 
+                            IncludeRelationships.NONE, "", false, true, null);
+
                     parentData.setObject(objData);
                     parentData.setRelativePathSegment(multiParentObj.getPathSegment());
                     result.add(parentData);
