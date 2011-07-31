@@ -94,6 +94,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     private final SessionFactory factory = SessionFactoryImpl.newInstance();
     private Folder testFolder;
 
+    private Boolean supportsRelationships;
+    private Boolean supportsPolicies;
+
     public BindingType getBinding() {
         if (getParameters() == null) {
             return null;
@@ -429,6 +432,32 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return cap.isGetFolderTreeSupported().booleanValue();
     }
 
+    protected boolean hasRelationships(Session session) {
+        if (supportsRelationships == null) {
+            try {
+                session.getTypeDefinition(BaseTypeId.CMIS_RELATIONSHIP.value());
+                supportsRelationships = Boolean.TRUE;
+            } catch (CmisObjectNotFoundException e) {
+                supportsRelationships = Boolean.FALSE;
+            }
+        }
+
+        return supportsRelationships.booleanValue();
+    }
+
+    protected boolean hasPolicies(Session session) {
+        if (supportsPolicies == null) {
+            try {
+                session.getTypeDefinition(BaseTypeId.CMIS_POLICY.value());
+                supportsPolicies = Boolean.TRUE;
+            } catch (CmisObjectNotFoundException e) {
+                supportsPolicies = Boolean.FALSE;
+            }
+        }
+
+        return supportsPolicies.booleanValue();
+    }
+
     protected CmisTestResult checkObject(Session session, CmisObject object, String[] properties, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
@@ -636,6 +665,22 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 if (!(object instanceof FileableCmisObject)) {
                     f = createResult(FAILURE, "Non-Fileable object has CAN_MOVE_OBJECT allowable action!");
                     addResult(results, assertNotAllowableAction(object, Action.CAN_MOVE_OBJECT, null, f));
+                }
+
+                // get allowable actions again
+                AllowableActions allowableActions = session.getBinding().getObjectService()
+                        .getAllowableActions(session.getRepositoryInfo().getId(), object.getId(), null);
+
+                if (allowableActions.getAllowableActions() == null) {
+                    addResult(results,
+                            createResult(FAILURE, "getAllowableActions() didn't returned allowable actions!"));
+                } else {
+                    f = createResult(FAILURE,
+                            "Object allowable actions don't match the allowable actions returned by getAllowableActions()!");
+                    addResult(
+                            results,
+                            assertEqualSet(object.getAllowableActions().getAllowableActions(),
+                                    allowableActions.getAllowableActions(), null, f));
                 }
             }
 

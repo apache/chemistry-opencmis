@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -274,11 +275,41 @@ public abstract class AbstractCmisTest implements CmisTest {
         }
 
         for (int i = 0; i < expected.size(); i++) {
-            if (!isEqual(expected, actual)) {
+            if (!isEqual(expected.get(i), actual.get(i))) {
                 return addResultChild(
                         failure,
-                        createResult(CmisTestResultStatus.INFO, "expected list item[" + i + "]: " + expected
-                                + " / actual list item[" + i + "]: " + actual));
+                        createResult(CmisTestResultStatus.INFO, "expected list item[" + i + "]: " + expected.get(i)
+                                + " / actual list item[" + i + "]: " + actual.get(i)));
+            }
+        }
+
+        return success;
+    }
+
+    protected CmisTestResult assertEqualSet(Set<?> expected, Set<?> actual, CmisTestResult success,
+            CmisTestResult failure) {
+        if (expected == null && actual == null) {
+            return success;
+        }
+
+        if (expected == null) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Expected set is null!"));
+        }
+
+        if (actual == null) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Actual set is null!"));
+        }
+
+        if (expected.size() != actual.size()) {
+            return addResultChild(
+                    failure,
+                    createResult(CmisTestResultStatus.INFO, "Set sizes don't match! expected: " + expected.size()
+                            + " / actual: " + actual.size()));
+        }
+
+        for (Object o : expected) {
+            if (!actual.contains(o)) {
+                return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Item not in actual set: " + o));
             }
         }
 
