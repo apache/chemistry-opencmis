@@ -294,8 +294,9 @@ public class PropertyCreationHelper {
         	AllowableActions allowableActions = so.getAllowableActions(user);
             od.setAllowableActions(allowableActions);
         }
+        
         if (null != includeACL && includeACL) {
-            od.setAcl(null);
+            od.setAcl(so.getAcl());
         }
         od.setIsExactAcl(true);
 
