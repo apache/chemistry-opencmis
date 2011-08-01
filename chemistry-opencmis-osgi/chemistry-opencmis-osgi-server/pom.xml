@@ -25,13 +25,6 @@
 
 	<packaging>bundle</packaging>
 
-	<properties>
-		<parentBasedir>../../</parentBasedir>
-		<maven.compile.source>1.6</maven.compile.source>
-        <maven.compile.target>1.6</maven.compile.target>
-		
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -41,29 +34,35 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package></Export-Package>
 						<Embed-Dependency>
-							*;inline=false
+							*;scope=compile,runtime;inline=false
 						</Embed-Dependency>
 						<Embed-Transitive>false</Embed-Transitive>
 						<Import-Package>
-                            org.apache.commons.codec.*;version="[1.4,2.0)",
-                            org.apache.commons.logging.*;version="[1.1,2.0)",
-                            javax.servlet.*;version="[2.5,3.0)",
-                            org.apache.commons.lang.*;version="[2.4.0,3.0.0)";resolution:=optional,
-                            com.sun.xml.ws.*;version="[2.1.7,3.0)";resolution:=optional,
-							!*
+							!org.apache.chemistry.opencmis.client.bindings;version=${project.version},
+							!antlr.collections.impl,
+							!org.antlr.*,
+							org.apache.avalon.framework.logger;resolution:=optional,
+							org.json.simple;resolution:=optional,
+							org.apache.log;resolution:=optional,
+							com.sun.xml.ws.*;resolution:=optional,
+							joptsimple;resolution:=optional,
+							org.apache.commons.codec.*;version="[1.4,2.0)",
+							org.apache.commons.logging.*;version="[1.1,2.0)",
+							org.apache.commons.fileupload.*;version="[1.2.0,2.0)";resolution:=optional,
+							org.apache.commons.lang.*;version="[2.5.0,3.0)";resolution:=optional,
+							*
 						</Import-Package>
-						<Private-Package>!*</Private-Package>
 						<_exportcontents>
 							org.apache.chemistry.opencmis.commons.impl.*;version=${project.version};-noimport:=true,
 							org.apache.chemistry.opencmis.commons.*;version=${project.version};-noimport:=true,
 							org.apache.chemistry.opencmis.server.shared.*;version=${project.version};-noimport:=true,
 							org.apache.chemistry.opencmis.server.impl.*;version=${project.version};-noimport:=true,
 							org.apache.chemistry.opencmis.inmemory.server.*;version=${project.version};-noimport:=true,
-                            com.sun.xml.ws.*;version="[2.1.7,3.0)";-noimport:=true
+							com.sun.xml.ws.*;version="[2.1.7,3.0)";resolution:=optional
 						</_exportcontents>
 						<Embed-Directory>lib</Embed-Directory>
+						<Bundle-DocURL>${project.url}</Bundle-DocURL>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -100,6 +99,11 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>chemistry-opencmis-test-util</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-runtime</artifactId>
+			<version>3.2</version>
 		</dependency>
 	</dependencies>
 
