@@ -23,3 +23,5 @@
 
 org.apache.chemistry.opencmis.tck.tests.basics.BasicsTestGroup
 org.apache.chemistry.opencmis.tck.tests.crud.CRUDTestGroup
+org.apache.chemistry.opencmis.tck.tests.versioning.VersioningTestGroup
+org.apache.chemistry.opencmis.tck.tests.query.QueryTestGroup
