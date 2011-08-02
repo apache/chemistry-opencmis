@@ -1243,6 +1243,26 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     f = createResult(FAILURE, "Folder is not found in childs parents! Id: " + child.getId());
                     addResult(results, assertIsTrue(parents.size() > 0, null, f));
                 }
+
+                // get object by id and compare
+                CmisObject objectById = session.getObject(child.getId(), SELECT_ALL_NO_CACHE_OC);
+
+                f = createResult(FAILURE, "Child and object fetched by id don't match! Id: " + child.getId());
+                addResult(results, assertEquals(child, objectById, null, f));
+
+                // get object by path and compare
+                List<String> paths = ((FileableCmisObject) child).getPaths();
+
+                if (paths == null || paths.isEmpty()) {
+                    addResult(results, createResult(FAILURE, "Child has no path! " + child.getId()));
+                } else {
+                    for (String path : paths) {
+                        CmisObject objectByPath = session.getObjectByPath(path);
+
+                        f = createResult(FAILURE, "Child and object fetched by path don't match! Id: " + child.getId());
+                        addResult(results, assertEquals(child, objectByPath, null, f));
+                    }
+                }
             }
 
             f = createResult(FAILURE, "Child has no CAN_GET_OBJECT_PARENTS allowable action! Id: " + child.getId());
@@ -1819,6 +1839,110 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         f = createResult(FAILURE, "Open choice flags don't match!");
         addResult(results, assertEquals(expected.isOpenChoice(), actual.isOpenChoice(), null, f));
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEquals(CmisObject expected, CmisObject actual, CmisTestResult success,
+            CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected object is null, but actual object is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual object is null, but expected object is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (expected.getProperties().size() != actual.getProperties().size()) {
+            f = createResult(FAILURE, "Number of properties don't match");
+            addResult(results, assertEquals(expected.getProperties().size(), actual.getProperties().size(), null, f));
+        } else {
+            for (Property<?> expectedProperty : expected.getProperties()) {
+                Property<?> actualProperty = actual.getProperty(expectedProperty.getId());
+
+                f = createResult(FAILURE, "Properties don't match! Property: " + expectedProperty.getId());
+                addResult(results, assertEquals(expectedProperty, actualProperty, null, f));
+            }
+        }
+
+        // TODO: compare allowable actions
+        // TODO: compare ACLs
+        // TODO: compare renditions
+        // TODO: compare policies
+        // TODO: compare relationships
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEquals(Property<?> expected, Property<?> actual, CmisTestResult success,
+            CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected property is null, but actual property is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual property is null, but expected property is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        f = createResult(FAILURE, "Property definitions don't match!");
+        addResult(results, assertEquals(expected.getDefinition(), actual.getDefinition(), null, f));
+
+        f = createResult(FAILURE, "Property values don't match!");
+        addResult(results, assertEqualLists(expected.getValues(), actual.getValues(), null, f));
 
         if (getWorst(results).getLevel() <= OK.getLevel()) {
             for (CmisTestResult result : results) {

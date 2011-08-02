@@ -18,7 +18,9 @@
  */
 package org.apache.chemistry.opencmis.tck.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -144,6 +146,21 @@ public abstract class AbstractCmisTest implements CmisTest {
         return result;
     }
 
+    // --- helpers ----
+
+    protected String formatValue(Object o) {
+        if (o == null) {
+            return "null";
+        }
+
+        if (o instanceof Calendar) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            return sdf.format(((Calendar) o).getTime());
+        }
+
+        return o.toString();
+    }
+
     // --- asserts ----
 
     protected boolean isEqual(Object expected, Object actual) {
@@ -235,8 +252,10 @@ public abstract class AbstractCmisTest implements CmisTest {
             return success;
         }
 
-        return addResultChild(failure,
-                createResult(CmisTestResultStatus.INFO, "expected: " + expected + " / actual: " + actual));
+        return addResultChild(
+                failure,
+                createResult(CmisTestResultStatus.INFO, "expected: " + formatValue(expected) + " / actual: "
+                        + formatValue(actual)));
     }
 
     protected CmisTestResult assertContains(Collection<?> collection, Object value, CmisTestResult success,
@@ -250,7 +269,7 @@ public abstract class AbstractCmisTest implements CmisTest {
         }
 
         return addResultChild(failure,
-                createResult(CmisTestResultStatus.INFO, "Collection does not contain '" + value + "'"));
+                createResult(CmisTestResultStatus.INFO, "Collection does not contain '" + formatValue(value) + "'"));
     }
 
     protected CmisTestResult assertEqualLists(List<?> expected, List<?> actual, CmisTestResult success,
@@ -278,8 +297,9 @@ public abstract class AbstractCmisTest implements CmisTest {
             if (!isEqual(expected.get(i), actual.get(i))) {
                 return addResultChild(
                         failure,
-                        createResult(CmisTestResultStatus.INFO, "expected list item[" + i + "]: " + expected.get(i)
-                                + " / actual list item[" + i + "]: " + actual.get(i)));
+                        createResult(CmisTestResultStatus.INFO, "expected list item[" + i + "]: "
+                                + formatValue(expected.get(i)) + " / actual list item[" + i + "]: "
+                                + formatValue(actual.get(i))));
             }
         }
 
@@ -309,7 +329,8 @@ public abstract class AbstractCmisTest implements CmisTest {
 
         for (Object o : expected) {
             if (!actual.contains(o)) {
-                return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Item not in actual set: " + o));
+                return addResultChild(failure,
+                        createResult(CmisTestResultStatus.INFO, "Item not in actual set: " + formatValue(o)));
             }
         }
 
