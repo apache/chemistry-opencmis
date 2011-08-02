@@ -36,22 +36,25 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
  * Text Report.
  */
 public class TextReport extends AbstractCmisTestReport {
+    public static String NL = System.getProperty("line.separator");
+
     public TextReport() {
+
     }
 
     @Override
     public void createReport(Map<String, String> parameters, List<CmisTestGroup> groups, Writer writer)
             throws IOException {
-        writer.write("***************************************************************\n");
-        writer.write("Test Report: " + (new Date()) + "\n");
+        writer.write("***************************************************************" + NL);
+        writer.write("Test Report: " + (new Date()) + NL);
 
-        writer.write("***************************************************************\n");
+        writer.write("***************************************************************" + NL);
         if (parameters != null) {
             for (Map.Entry<String, String> p : (new TreeMap<String, String>(parameters)).entrySet()) {
-                writer.write(p.getKey() + " = " + p.getValue() + "\n");
+                writer.write(p.getKey() + " = " + p.getValue() + NL);
             }
         }
-        writer.write("***************************************************************\n");
+        writer.write("***************************************************************" + NL);
 
         if (groups != null) {
             for (CmisTestGroup group : groups) {
@@ -63,9 +66,9 @@ public class TextReport extends AbstractCmisTestReport {
     }
 
     private void printGroupResults(CmisTestGroup group, Writer writer) throws IOException {
-        writer.write("===============================================================\n");
-        writer.write(group.getName() + "\n");
-        writer.write("===============================================================\n");
+        writer.write("===============================================================" + NL);
+        writer.write(group.getName() + NL);
+        writer.write("===============================================================" + NL);
 
         if (group.getTests() != null) {
             for (CmisTest test : group.getTests()) {
@@ -75,18 +78,18 @@ public class TextReport extends AbstractCmisTestReport {
     }
 
     private void printTestResults(CmisTest test, Writer writer) throws IOException {
-        writer.write("---------------------------------------------------------------\n");
-        writer.write(test.getName() + " (" + test.getTime() + " ms)\n");
-        writer.write("---------------------------------------------------------------\n\n");
+        writer.write("---------------------------------------------------------------" + NL);
+        writer.write(test.getName() + " (" + test.getTime() + " ms)" + NL);
+        writer.write("---------------------------------------------------------------" + NL + NL);
 
         if (test.getResults() != null) {
             for (CmisTestResult result : test.getResults()) {
                 printResult(1, result, writer);
-                writer.write("\n");
+                writer.write(NL);
             }
         }
 
-        writer.write("\n");
+        writer.write(NL);
     }
 
     private void printResult(int level, CmisTestResult result, Writer writer) throws IOException {
@@ -98,16 +101,16 @@ public class TextReport extends AbstractCmisTestReport {
                     + result.getStackTrace()[0].getLineNumber() + ")");
         }
 
-        writer.write("\n");
+        writer.write(NL);
 
         if (result.getStatus() == CmisTestResultStatus.UNEXPECTED_EXCEPTION && result.getException() != null) {
-            writer.write("\nStacktrace:\n\n");
+            writer.write(NL + "Stacktrace:" + NL + NL);
             result.getException().printStackTrace(new PrintWriter(writer));
 
             if (result.getException() instanceof CmisBaseException) {
                 CmisBaseException cbe = (CmisBaseException) result.getException();
                 if (cbe.getErrorContent() != null) {
-                    writer.write("\nError Content:\n\n");
+                    writer.write(NL + "Error Content:" + NL + NL);
                     writer.write(cbe.getErrorContent());
                 }
             }
@@ -115,17 +118,17 @@ public class TextReport extends AbstractCmisTestReport {
 
         if (result.getException() != null) {
             printIntend(level, writer);
-            writer.write("Exception: " + result.getException().getMessage() + "\n");
+            writer.write("Exception: " + result.getException().getMessage() + NL);
         }
 
         if (result.getRequest() != null) {
             printIntend(level, writer);
-            writer.write("Request: " + result.getRequest() + "\n");
+            writer.write("Request: " + result.getRequest() + NL);
         }
 
         if (result.getRequest() != null) {
             printIntend(level, writer);
-            writer.write("Response: " + result.getRequest() + "\n");
+            writer.write("Response: " + result.getRequest() + NL);
         }
 
         for (CmisTestResult child : result.getChildren()) {
