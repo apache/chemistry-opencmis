@@ -16,10 +16,6 @@ rem limitations under the License.
 
 rem @version@
 
-cd %~dp0
+cd %~dp0\lib
 
-if exist "lib\@workbench.jar@" goto run
-move /Y lib\chemistry-opencmis-workbench*.jar lib\@workbench.jar@
-
-:run
-start /B javaw -jar lib\@workbench.jar@
+start /B javaw -classpath "*" org.apache.chemistry.opencmis.workbench.Workbench

@@ -31,11 +31,12 @@ fi
 
 
 SCRIPT_DIR=$(dirname "$0")
-cd "$SCRIPT_DIR"
+cd "$SCRIPT_DIR/lib"
 
-if ! [ -f lib/@workbench.jar@ ];
-then
-mv -f lib/chemistry-opencmis-workbench*.jar lib/@workbench.jar@
-fi
+jars=($(ls *.jar))
+WCP=""
+for i in "${jars[@]}"; do
+  WCP="$i:${WCP}"
+done
 
-exec $JAVA -jar lib/@workbench.jar@ &
+exec $JAVA -classpath $WCP org.apache.chemistry.opencmis.workbench.Workbench &
