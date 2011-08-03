@@ -177,7 +177,7 @@ public class DataObjectCreator {
         	
             ObjectList relationships = spo.getObjectRelationships(false, relationshipDirection,
             		null, null, false, MINUS_ONE, MINUS_ONE, null, user);
-           return relationships.getObjects();
+           return (relationships == null? null : relationships.getObjects());
         }
          return null;
     }

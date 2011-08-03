@@ -50,6 +50,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -356,7 +357,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
             return null;
         }
 
-        List<Folder> parents = super.getParents();
+        List<Folder> parents = getParents();
         if ((parents == null) || (parents.isEmpty())) {
             return null;
         }
@@ -397,6 +398,40 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         }
 
         return path;
+    }
+
+    @Override
+    public List<Folder> getParents() {
+        if (isRootFolder()) {
+            return Collections.emptyList();
+        }
+
+        String objectId = getObjectId();
+
+        ObjectData bindingParent = getBinding().getNavigationService().getFolderParent(getRepositoryId(), objectId,
+                getPropertyQueryName(PropertyIds.OBJECT_ID), null);
+
+        if (bindingParent.getProperties() == null) {
+            // should not happen...
+            throw new CmisRuntimeException("Repository sent invalid data!");
+        }
+
+        // get id property
+        PropertyData<?> idProperty = bindingParent.getProperties().getProperties().get(PropertyIds.OBJECT_ID);
+        if (!(idProperty instanceof PropertyId)) {
+            // the repository sent an object without a valid object id...
+            throw new CmisRuntimeException("Repository sent invalid data! No object id!");
+        }
+
+        // fetch the object and make sure it is a folder
+        ObjectId parentId = getSession().createObjectId((String) idProperty.getFirstValue());
+        CmisObject parentFolder = getSession().getObject(parentId);
+        if (!(parentFolder instanceof Folder)) {
+            // the repository sent an object that is not a folder...
+            throw new CmisRuntimeException("Repository sent invalid data! Object is not a folder!");
+        }
+
+        return Collections.singletonList((Folder) parentFolder);
     }
 
     @Override
