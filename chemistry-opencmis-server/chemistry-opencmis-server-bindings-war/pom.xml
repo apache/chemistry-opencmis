@@ -19,14 +19,46 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>chemistry-opencmis-server-bindings</artifactId>
-    <name>OpenCMIS Server Implementation</name>
-    
-    <packaging>jar</packaging>
+    <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
+    <name>OpenCMIS Server Implementation WAR packaging</name>
+    <packaging>war</packaging>
 
     <properties>
         <parentBasedir>../../</parentBasedir>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>chemistry-opencmis-commons-impl</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <includes>wsdl/*.xsd, wsdl/*.wsdl</includes>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.basedir}/src/main/webapp/WEB-INF</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -43,6 +75,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-server-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>chemistry-opencmis-server-bindings</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

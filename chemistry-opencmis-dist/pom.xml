@@ -73,8 +73,15 @@
             <artifactId>chemistry-opencmis-server-bindings</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
+        
         <dependency>
             <artifactId>chemistry-opencmis-server-support</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
@@ -101,7 +108,25 @@
             <artifactId>chemistry-opencmis-server-inmemory</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>chemistry-opencmis-server-inmemory-war</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
             <type>war</type>
+        </dependency>
+ 
+         <dependency>
+            <artifactId>chemistry-opencmis-osgi-client</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        
+         <dependency>
+            <artifactId>chemistry-opencmis-osgi-server</artifactId>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <version>${project.version}</version>
         </dependency>
         
     </dependencies>

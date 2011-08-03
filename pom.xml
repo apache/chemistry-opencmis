@@ -181,7 +181,9 @@
         <module>chemistry-opencmis-client/chemistry-opencmis-client-bindings</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-support</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-bindings</module>
+        <module>chemistry-opencmis-server/chemistry-opencmis-server-bindings-war</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-inmemory</module>
+        <module>chemistry-opencmis-server/chemistry-opencmis-server-inmemory-war</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-fileshare</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-jcr</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-fit</module>
@@ -191,10 +193,11 @@
         <module>chemistry-opencmis-test/chemistry-opencmis-test-browser</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-browser-app</module>        
         <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench</module>
+        <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-client</module>
+        <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-server</module>
         <!-- <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench-webstart</module> -->
         <module>chemistry-opencmis-dist</module>
     </modules>
-
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
