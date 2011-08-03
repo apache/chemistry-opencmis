@@ -52,6 +52,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.inmemory.types.PropertyUtil;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
@@ -524,11 +525,13 @@ public class InMemoryQueryProcessor {
             // System.identityHashCode(leftChild) + " is " + leftChild);
             ColumnReference colRef = getColumnReference(leftChild);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-            if (lVal instanceof List<?>) {
+            Object val = PropertyUtil.getProperty(so, colRef.getPropertyId());
+            if (val==null) {
+                return null;
+            }if (val instanceof List<?>) {
                 throw new IllegalStateException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
             } else {
-                return InMemoryQueryProcessor.this.compareTo(pd, lVal, rVal);
+                return InMemoryQueryProcessor.this.compareTo(pd, val, rVal);
             }
         }
 
@@ -626,8 +629,7 @@ public class InMemoryQueryProcessor {
         return false;
     }
 
-    protected int compareTo(PropertyDefinition<?> td, PropertyData<?> lVal, Object rVal) {
-        Object lValue = lVal.getFirstValue();
+    protected int compareTo(PropertyDefinition<?> td, Object lValue, Object rVal) {
         switch (td.getPropertyType()) {
         case BOOLEAN:
             if (rVal instanceof Boolean) {
@@ -637,7 +639,7 @@ public class InMemoryQueryProcessor {
             }
             break;
         case INTEGER: {
-            Long lLongValue = ((BigInteger) lVal.getFirstValue()).longValue();
+            Long lLongValue = ((BigInteger) lValue).longValue();
             if (rVal instanceof Long) {
                 return (lLongValue).compareTo((Long) rVal);
             } else if (rVal instanceof Double) {
@@ -659,7 +661,7 @@ public class InMemoryQueryProcessor {
             }
             break;
         case DECIMAL: {
-            Double lDoubleValue = ((BigDecimal) lVal.getFirstValue()).doubleValue();
+            Double lDoubleValue = ((BigDecimal) lValue).doubleValue();
             if (rVal instanceof Double) {
                 return lDoubleValue.compareTo((Double) rVal);
             } else if (rVal instanceof Long) {
