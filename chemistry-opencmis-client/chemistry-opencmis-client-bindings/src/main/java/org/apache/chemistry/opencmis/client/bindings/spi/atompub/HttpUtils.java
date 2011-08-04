@@ -161,7 +161,7 @@ public class HttpUtils {
 
             // send data
             if (writer != null) {
-                conn.setChunkedStreamingMode(BUFFER_SIZE);
+                conn.setChunkedStreamingMode(64 * 1024);
 
                 OutputStream connOut = null;
 
