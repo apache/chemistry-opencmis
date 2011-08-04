@@ -35,7 +35,7 @@
                 <executions>
                     <execution>
                         <id>unpack</id>
-                        <phase>initialize</phase>
+                        <phase>pack</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
