@@ -390,7 +390,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                     ObjectParentDataImpl parentData = new ObjectParentDataImpl();
                     TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, parent.getTypeId()).getTypeDefinition();
                     ObjectData objData = PropertyCreationHelper.getObjectData(typeDef, parent, filter, user, includeAllowableActions, 
-                            IncludeRelationships.NONE, "", false, true, null);
+                            includeRelationships, "", false, true, null);
 
                     parentData.setObject(objData);
                     parentData.setRelativePathSegment(multiParentObj.getPathSegment());

@@ -334,6 +334,9 @@ public class PropertyCreationHelper {
             od.setAllowableActions(allowableActions);
         }
 
+        od.setAcl(so.getAcl());
+        od.setIsExactAcl(true);
+        
         if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
             od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so, user));
         }
