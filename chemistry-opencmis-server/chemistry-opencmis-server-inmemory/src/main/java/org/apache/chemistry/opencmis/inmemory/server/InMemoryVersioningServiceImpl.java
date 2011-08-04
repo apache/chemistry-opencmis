@@ -151,7 +151,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             if (!(so instanceof VersionedDocument)) {
               so = validator.getObject(context, repositoryId, objectId, extension);  
               ObjectData objData = getObject(context, repositoryId, objectId, filter, includeAllowableActions,
-                      extension, objectInfos);
+                      IncludeRelationships.NONE,extension, objectInfos);
               res.add(objData);
             }
     
@@ -160,7 +160,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             List<DocumentVersion> versions = verDoc.getAllVersions();
             for (DocumentVersion version : versions) {
                 ObjectData objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
-                        extension, objectInfos);
+                        IncludeRelationships.NONE,extension, objectInfos);
                 res.add(objData);
             }
 
@@ -188,10 +188,10 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             VersionedDocument verDoc = (VersionedDocument) so;
             DocumentVersion latestVersion = verDoc.getLatestVersion(major);
             objData = getObject(context, repositoryId, latestVersion.getId(), filter, includeAllowableActions,
-                    extension, objectInfos);
+                    includeRelationships, extension, objectInfos);
         } else if (so instanceof Document) {
-            objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions, extension,
-                    objectInfos);
+            objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions,
+                    includeRelationships, extension, objectInfos);
         } else {
             throw new CmisInvalidArgumentException("Object is not instance of a document (version series)");
         }
@@ -232,9 +232,10 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     private ObjectData getObject(CallContext context, String repositoryId, String objectId, String filter,
-            Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, ExtensionsData extension,
+            ObjectInfoHandler objectInfos) {
 
         return fObjectService.getObject(context, repositoryId, objectId, filter, includeAllowableActions,
-                IncludeRelationships.NONE, null, false, includeAllowableActions, extension, objectInfos);
+                includeRelationships, null, false, includeAllowableActions, extension, objectInfos);
     }
 }

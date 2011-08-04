@@ -548,7 +548,7 @@ public class VersioningTest extends AbstractServiceTest {
         assertEquals(versioningState == VersioningState.CHECKEDOUT, bVal);
 
         PropertyString pds = (PropertyString) props.get(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY);
-        assertNotNull(pdb);
+        assertNotNull(pds);
         sVal = pds.getFirstValue();
         if (versioningState == VersioningState.CHECKEDOUT) {
             assertTrue(sVal != null && sVal.length() > 0);
