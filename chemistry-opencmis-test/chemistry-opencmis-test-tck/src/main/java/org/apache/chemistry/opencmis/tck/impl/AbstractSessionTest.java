@@ -500,7 +500,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     propertyCheck = PropertyCheckEnum.MUST_BE_SET;
                 }
 
-                // special cases
+                // special case: parent
                 if (PropertyIds.PARENT_ID.equals(propId)) {
                     if (object instanceof Folder) {
                         if (((Folder) object).isRootFolder()) {
@@ -598,7 +598,16 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                             addResult(results, assertNotAllowableAction(object, Action.CAN_CANCEL_CHECK_OUT, null, f));
                         }
                     } else {
-                        addResult(results, createResult(FAILURE, "Property cmis:isVersionSeriesCheckedOut is not set!"));
+                        addResult(results, createResult(WARNING, "Property cmis:isVersionSeriesCheckedOut is not set!"));
+                    }
+
+                    if (Boolean.TRUE.equals(doc.isImmutable())) {
+                        f = createResult(FAILURE,
+                                "Document is immutable and has CAN_UPDATE_PROPERTIES allowable action!");
+                        addResult(results, assertNotAllowableAction(object, Action.CAN_UPDATE_PROPERTIES, null, f));
+
+                        f = createResult(FAILURE, "Document is immutable and has CAN_DELETE_OBJECT allowable action!");
+                        addResult(results, assertNotAllowableAction(object, Action.CAN_DELETE_OBJECT, null, f));
                     }
                 } else {
                     f = createResult(FAILURE, "Non-Document object has CAN_CHECK_IN allowable action!");
@@ -732,6 +741,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         Document doc = (Document) object;
         DocumentTypeDefinition type = (DocumentTypeDefinition) doc.getType();
 
+        // check ContentStreamAllowed flag
         boolean hasContentProperties = (doc.getContentStreamFileName() != null) || (doc.getContentStreamId() != null)
                 || (doc.getContentStreamLength() > -1) || (doc.getContentStreamMimeType() != null);
 
@@ -749,6 +759,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
         }
 
+        // get the content stream
         ContentStream contentStream = doc.getContentStream();
 
         if (contentStream == null) {
@@ -769,6 +780,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             addResult(results, createResult(FAILURE, "Document type doesn't allow content but document has content!"));
         }
 
+        // file name check
         f = createResult(FAILURE, "Content file names don't match!");
         addResult(results, assertEquals(doc.getContentStreamFileName(), contentStream.getFileName(), null, f));
 
@@ -776,9 +788,20 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             f = createResult(FAILURE, "Content lengths don't match!");
             addResult(results, assertEquals(doc.getContentStreamLength(), contentStream.getLength(), null, f));
         }
+
+        // MIME type check
         f = createResult(FAILURE, "Content MIME types don't match!");
         addResult(results, assertEquals(doc.getContentStreamMimeType(), contentStream.getMimeType(), null, f));
 
+        if (contentStream.getMimeType() != null) {
+            f = createResult(FAILURE, "Content MIME types is invalid: " + contentStream.getMimeType());
+            addResult(
+                    results,
+                    assertIsTrue(contentStream.getMimeType().length() > 2
+                            && contentStream.getMimeType().indexOf('/') > 0, null, f));
+        }
+
+        // check stream
         InputStream stream = contentStream.getStream();
         if (stream == null) {
             addResult(results, createResult(FAILURE, "Docuemnt has no content stream!"));
@@ -795,6 +818,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
             stream.close();
 
+            // check content length
             if (doc.getContentStreamLength() > -1) {
                 f = createResult(FAILURE,
                         "Content stream length property value doesn't match the actual content length!");
@@ -949,15 +973,26 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
 
                 // check checked out
-                boolean checkedOut = Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut());
-                if (checkedOut) {
-                    f = createResult(FAILURE, "Version series is marked as checked out but the PWC id is not set! Id: "
-                            + version.getId());
+                if (Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut())) {
+                    f = createResult(WARNING,
+                            "Version series is marked as checked out but cmis:versionSeriesCheckedOutId is not set! Id: "
+                                    + version.getId());
                     addResult(results, assertStringNotEmpty(doc.getVersionSeriesCheckedOutId(), null, f));
-                } else {
-                    f = createResult(FAILURE, "Version series is not marked as checked out but the PWC id is set! Id: "
-                            + version.getId());
+
+                    f = createResult(WARNING,
+                            "Version series is marked as checked out but cmis:versionSeriesCheckedOutBy is not set! Id: "
+                                    + version.getId());
+                    addResult(results, assertStringNotEmpty(doc.getVersionSeriesCheckedOutBy(), null, f));
+                } else if (Boolean.FALSE.equals(doc.isVersionSeriesCheckedOut())) {
+                    f = createResult(FAILURE,
+                            "Version series is not marked as checked out but cmis:versionSeriesCheckedOutId is set! Id: "
+                                    + version.getId());
                     addResult(results, assertNull(doc.getVersionSeriesCheckedOutId(), null, f));
+
+                    f = createResult(FAILURE,
+                            "Version series is not marked as checked out but cmis:versionSeriesCheckedOutIdBy is set! Id: "
+                                    + version.getId());
+                    addResult(results, assertNull(doc.getVersionSeriesCheckedOutBy(), null, f));
                 }
 
                 // found origin object?
@@ -1892,7 +1927,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
         }
 
-        // TODO: compare allowable actions
+        f = createResult(FAILURE, "Allowable actions don't match!");
+        addResult(results, assertEquals(expected.getAllowableActions(), actual.getAllowableActions(), null, f));
+
         // TODO: compare ACLs
         // TODO: compare renditions
         // TODO: compare policies
@@ -1943,6 +1980,49 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         f = createResult(FAILURE, "Property values don't match!");
         addResult(results, assertEqualLists(expected.getValues(), actual.getValues(), null, f));
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEquals(AllowableActions expected, AllowableActions actual, CmisTestResult success,
+            CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected allowable actions are null, but actual allowable actions are not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual allowable actions are null, but expected allowable actions are not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        f = createResult(FAILURE, "Allowable action sets don't match!");
+        addResult(results, assertEqualSet(expected.getAllowableActions(), actual.getAllowableActions(), null, f));
 
         if (getWorst(results).getLevel() <= OK.getLevel()) {
             for (CmisTestResult result : results) {

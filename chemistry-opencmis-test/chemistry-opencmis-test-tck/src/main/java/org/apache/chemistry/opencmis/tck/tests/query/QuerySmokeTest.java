@@ -28,6 +28,8 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -90,8 +92,19 @@ public class QuerySmokeTest extends AbstractSessionTest {
                     continue;
                 }
 
-                f = createResult(FAILURE, "QUery property not result set: " + propDef.getQueryName());
-                addResult(results, assertNotNull(qr.getPropertyByQueryName(propDef.getQueryName()), null, f));
+                PropertyData<?> pd = qr.getPropertyByQueryName(propDef.getQueryName());
+
+                if (pd == null) {
+                    addResult(results,
+                            createResult(FAILURE, "Query property not in result set: " + propDef.getQueryName()));
+                } else {
+                    if (PropertyIds.OBJECT_ID.equals(propDef.getId())
+                            || PropertyIds.OBJECT_TYPE_ID.equals(propDef.getId())
+                            || PropertyIds.BASE_TYPE_ID.equals(propDef.getId())) {
+                        f = createResult(FAILURE, "Query property must not be empty: " + propDef.getQueryName());
+                        addResult(results, assertStringNotEmpty((String) pd.getFirstValue(), null, f));
+                    }
+                }
             }
         }
 
