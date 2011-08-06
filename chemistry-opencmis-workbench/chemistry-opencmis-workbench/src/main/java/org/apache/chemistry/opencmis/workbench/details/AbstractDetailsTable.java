@@ -19,14 +19,10 @@
 package org.apache.chemistry.opencmis.workbench.details;
 
 import java.awt.Cursor;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Collection;
 
@@ -40,6 +36,7 @@ import javax.swing.table.TableColumn;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
@@ -82,30 +79,11 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
 
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                StringBuilder sb = new StringBuilder();
-                int rows = getDetailRowCount();
-                for (int row = 0; row < rows; row++) {
-                    int cols = getColumnNames().length;
-                    for (int col = 0; col < cols; col++) {
-                        sb.append(getDetailValueAt(row, col));
-                        sb.append("|");
-                    }
-                    sb.append("\n");
-                }
-
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Transferable transferable = new StringSelection(sb.toString());
-                clipboard.setContents(transferable, null);
+                ClientHelper.copyTableToClipboard(AbstractDetailsTable.this);
             }
         });
 
-        addMouseListener(new MouseListener() {
-            public void mouseExited(MouseEvent e) {
-            }
-
-            public void mouseEntered(MouseEvent e) {
-            }
-
+        addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     int row = rowAtPoint(e.getPoint());

@@ -22,14 +22,10 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -161,30 +157,11 @@ public class QueryFrame extends JFrame {
 
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                StringBuilder sb = new StringBuilder();
-                int rows = resultsTable.getModel().getColumnCount();
-                for (int row = 0; row < rows; row++) {
-                    int cols = resultsTable.getModel().getColumnCount();
-                    for (int col = 0; col < cols; col++) {
-                        sb.append(resultsTable.getModel().getValueAt(row, col));
-                        sb.append("|");
-                    }
-                    sb.append("\n");
-                }
-
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Transferable transferable = new StringSelection(sb.toString());
-                clipboard.setContents(transferable, null);
+                ClientHelper.copyTableToClipboard(resultsTable);
             }
         });
 
-        resultsTable.addMouseListener(new MouseListener() {
-            public void mouseExited(MouseEvent e) {
-            }
-
-            public void mouseEntered(MouseEvent e) {
-            }
-
+        resultsTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int row = resultsTable.rowAtPoint(e.getPoint());
                 int column = resultsTable.columnAtPoint(e.getPoint());

@@ -27,6 +27,10 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedOutputStream;
@@ -45,6 +49,7 @@ import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -58,12 +63,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -336,6 +343,85 @@ public class ClientHelper {
         }
 
         return null;
+    }
+
+    public static void copyTableToClipboard(JTable table) {
+        final String newline = System.getProperty("line.separator");
+
+        final StringBuilder sb = new StringBuilder();
+        final int rows = table.getModel().getRowCount();
+        final int cols = table.getModel().getColumnCount();
+
+        for (int col = 0; col < cols; col++) {
+            if (col > 0) {
+                sb.append(",");
+            }
+
+            sb.append(formatCSVValue(table.getModel().getColumnName(col)));
+        }
+
+        sb.append(newline);
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (col > 0) {
+                    sb.append(",");
+                }
+
+                Object value = table.getModel().getValueAt(row, col);
+                sb.append(formatCSVValue(value));
+            }
+            sb.append(newline);
+        }
+
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable transferable = new StringSelection(sb.toString());
+        clipboard.setContents(transferable, null);
+    }
+
+    private static String formatCSVValue(Object value) {
+        if (value == null) {
+            return "";
+        } else if (value instanceof GregorianCalendar) {
+            return getDateString((GregorianCalendar) value);
+        } else if (value instanceof String) {
+            String s = value.toString();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append('\"');
+
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+                sb.append(c);
+                if (c == '\"') {
+                    sb.append('\"');
+                }
+            }
+
+            sb.append('\"');
+
+            return sb.toString();
+        } else if (value instanceof Collection<?>) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("[");
+
+            for (Object v : (Collection<?>) value) {
+                if (sb.length() > 1) {
+                    sb.append(",");
+                }
+                sb.append(formatCSVValue(v));
+            }
+
+            sb.append("]");
+
+            return sb.toString();
+        } else if (value instanceof ObjectId) {
+            return formatCSVValue(((ObjectId) value).getId());
+        } else if (value instanceof ImageIcon) {
+            return "<icon>";
+        }
+
+        return value.toString();
     }
 
     public static String readFileAndRemoveHeader(String file) {

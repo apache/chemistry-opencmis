@@ -22,6 +22,8 @@ import java.awt.Cursor;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -37,6 +39,8 @@ import java.util.Map;
 import javax.swing.DropMode;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
@@ -88,6 +92,16 @@ public class FolderTable extends JTable implements FolderListener {
             column.setPreferredWidth(COLUMN_WIDTHS[i]);
         }
 
+        final JPopupMenu popup = new JPopupMenu();
+        JMenuItem menuItem = new JMenuItem("Copy to clipboard");
+        popup.add(menuItem);
+
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ClientHelper.copyTableToClipboard(FolderTable.this);
+            }
+        });
+
         getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting()) {
@@ -115,6 +129,20 @@ public class FolderTable extends JTable implements FolderListener {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     doAction(e.isShiftDown());
+                }
+            }
+
+            public void mousePressed(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            private void maybeShowPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    popup.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
         });
