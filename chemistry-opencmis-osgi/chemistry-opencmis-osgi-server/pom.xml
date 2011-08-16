@@ -63,6 +63,7 @@
 						</_exportcontents>
 						<Embed-Directory>lib</Embed-Directory>
 						<Bundle-DocURL>${project.url}</Bundle-DocURL>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
 					</instructions>
 				</configuration>
 			</plugin>
