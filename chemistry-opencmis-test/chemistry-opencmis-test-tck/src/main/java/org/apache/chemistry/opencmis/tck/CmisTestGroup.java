@@ -40,6 +40,11 @@ public interface CmisTestGroup {
      * Returns the name of the test group.
      */
     String getName();
+    
+    /**
+     * Returns the description of the test group.
+     */
+    String getDescription();
 
     /**
      * Returns the all tests in this group.

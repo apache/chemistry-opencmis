@@ -39,6 +39,7 @@ public abstract class AbstractCmisTest implements CmisTest {
     private Map<String, String> parameters;
     private AbstractCmisTestGroup group;
     private String name;
+    private String description;
     private boolean isEnabled = true;
     private List<CmisTestResult> results;
     private long time;
@@ -58,6 +59,14 @@ public abstract class AbstractCmisTest implements CmisTest {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setGroup(AbstractCmisTestGroup group) {

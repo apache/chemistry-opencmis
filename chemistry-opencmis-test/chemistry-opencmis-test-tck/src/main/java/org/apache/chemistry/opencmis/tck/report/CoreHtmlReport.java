@@ -85,17 +85,33 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
     }
 
     private void printGroupResults(CmisTestGroup group, Writer writer) throws IOException {
-        writer.write("\n<h3>" + escape(group.getName()) + "</h3>\n");
+        if (!group.isEnabled()) {
+            return;
+        }
+
+        writer.write("\n<hr>\n<h3>" + escape(group.getName()) + "</h3>\n");
+
+        if (group.getDescription() != null) {
+            writer.write("\n<p><i>" + escape(group.getDescription()) + "</i></p>\n");
+        }
 
         if (group.getTests() != null) {
             for (CmisTest test : group.getTests()) {
                 printTestResults(test, writer);
             }
-        }
+        }        
     }
 
     private void printTestResults(CmisTest test, Writer writer) throws IOException {
+        if (!test.isEnabled()) {
+            return;
+        }
+
         writer.write("\n<h4>" + escape(test.getName()) + " (" + test.getTime() + " ms)</h4>\n");
+
+        if (test.getDescription() != null) {
+            writer.write("\n<p><i>" + escape(test.getDescription()) + "</i></p>\n");
+        }
 
         if (test.getResults() != null) {
             for (CmisTestResult result : test.getResults()) {

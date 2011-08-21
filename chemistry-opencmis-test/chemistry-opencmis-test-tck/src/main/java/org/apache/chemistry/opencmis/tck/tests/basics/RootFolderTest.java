@@ -41,6 +41,7 @@ public class RootFolderTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Root Folder Test");
+        setDescription("Checks the root folder and its children for specification compliance.");
     }
 
     @Override

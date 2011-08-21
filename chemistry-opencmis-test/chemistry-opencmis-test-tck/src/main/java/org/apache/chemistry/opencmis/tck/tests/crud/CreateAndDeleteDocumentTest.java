@@ -46,6 +46,7 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Create and Delete Document Test");
+        setDescription("Creates a few documents, checks the newly created documents and their parent and finally deletes the created documents.");
     }
 
     @Override

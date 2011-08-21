@@ -559,6 +559,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     }
 
                     Document doc = (Document) object;
+                    DocumentTypeDefinition docType = (DocumentTypeDefinition) doc.getType();
                     if (doc.isVersionSeriesCheckedOut() != null) {
                         if (doc.isVersionSeriesCheckedOut()) {
                             f = createResult(WARNING, "Document is checked out and has CAN_CHECK_OUT allowable action!");
@@ -596,11 +597,25 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                             f = createResult(FAILURE,
                                     "Document is not checked out and has CAN_CANCEL_CHECK_OUT allowable action!");
                             addResult(results, assertNotAllowableAction(object, Action.CAN_CANCEL_CHECK_OUT, null, f));
+
+                            // versionable check
+                            if (docType.isVersionable()) {
+                                if (Boolean.TRUE.equals(doc.isLatestVersion())) {
+                                    f = createResult(WARNING,
+                                            "Document is versionable and not checked but has no CAN_CHECK_OUT allowable action!");
+                                    addResult(results, assertAllowableAction(object, Action.CAN_CHECK_OUT, null, f));
+                                }
+                            } else {
+                                f = createResult(FAILURE,
+                                        "Document is not versionable but has CAN_CHECK_OUT allowable action!");
+                                addResult(results, assertNotAllowableAction(object, Action.CAN_CHECK_OUT, null, f));
+                            }
                         }
                     } else {
                         addResult(results, createResult(WARNING, "Property cmis:isVersionSeriesCheckedOut is not set!"));
                     }
 
+                    // immutable check
                     if (Boolean.TRUE.equals(doc.isImmutable())) {
                         f = createResult(FAILURE,
                                 "Document is immutable and has CAN_UPDATE_PROPERTIES allowable action!");

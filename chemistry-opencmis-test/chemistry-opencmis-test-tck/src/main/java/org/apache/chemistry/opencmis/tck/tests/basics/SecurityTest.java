@@ -34,6 +34,7 @@ public class SecurityTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Security Test");
+        setDescription("Checks if HTTPS is used.");
     }
 
     @Override

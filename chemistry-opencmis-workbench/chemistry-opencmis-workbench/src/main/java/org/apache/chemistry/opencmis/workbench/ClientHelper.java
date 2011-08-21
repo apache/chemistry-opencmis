@@ -277,8 +277,9 @@ public class ClientHelper {
             filename = "content";
         }
 
-        if (filename.indexOf('.') == -1) {
-            filename = filename + MimeTypes.getExtension(content.getMimeType());
+        String ext = MimeTypes.getExtension(content.getMimeType());
+        if (ext.length() > 0 && !filename.endsWith(ext)) {
+            filename = filename + ext;
         }
 
         File tempFile = ClientHelper.createTempFile(filename);

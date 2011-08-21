@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.workbench;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.Authenticator;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -28,6 +29,8 @@ import javax.swing.UIManager.LookAndFeelInfo;
 public class Workbench {
 
     public Workbench() throws InterruptedException, InvocationTargetException {
+        // turn off existing Authenticators (-> Web Start)
+        Authenticator.setDefault(null);
 
         // set up Swing
         try {

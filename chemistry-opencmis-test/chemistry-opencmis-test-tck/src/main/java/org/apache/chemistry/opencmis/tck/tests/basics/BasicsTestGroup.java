@@ -32,6 +32,7 @@ public class BasicsTestGroup extends AbstractSessionTestGroup {
         super.init(parameters);
 
         setName("Basics Test Group");
+        setDescription("Basic tests.");
 
         addTest(new SecurityTest());
         addTest(new RepositoryInfoTest());

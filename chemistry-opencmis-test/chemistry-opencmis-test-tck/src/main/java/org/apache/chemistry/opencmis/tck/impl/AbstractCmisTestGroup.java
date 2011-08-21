@@ -34,6 +34,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
 
     private Map<String, String> parameters;
     private String name;
+    private String description;
     private final List<CmisTest> tests = new ArrayList<CmisTest>();
     private boolean isEnabled = true;
     private CmisTestProgressMonitor progressMonitor;
@@ -54,6 +55,14 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
     public List<CmisTest> getTests() {
         return tests;
     }

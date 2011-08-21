@@ -43,6 +43,7 @@ public class TypesTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Types Test");
+        setDescription("Checks all types exposed by the repository for specification compliance.");
     }
 
     @Override

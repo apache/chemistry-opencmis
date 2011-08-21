@@ -36,12 +36,15 @@ public class CheckedOutTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Checked out Test");
+        setDescription("Calls getCheckedOutDocs() and checks the returned objects.");
     }
 
     @Override
     public void run(Session session) {
         ItemIterable<Document> pwcs = session.getCheckedOutDocs(SELECT_ALL_NO_CACHE_OC);
         if (pwcs != null) {
+
+            int i = 0;
             for (Document pwc : pwcs) {
                 String[] propertiesToCheck = getAllProperties(pwc);
                 addResult(checkObject(session, pwc, propertiesToCheck, "PWC check: " + pwc.getId()));
@@ -51,7 +54,11 @@ public class CheckedOutTest extends AbstractSessionTest {
                         addResult(createResult(FAILURE, "PWC is not latest version! Id: " + pwc.getId()));
                     }
                 }
+
+                i++;
             }
+
+            addResult(createInfoResult(i + " checked out documents."));
         }
     }
 }

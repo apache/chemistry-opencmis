@@ -37,6 +37,11 @@ public interface CmisTest {
     String getName();
 
     /**
+     * Returns the description of the test group.
+     */
+    String getDescription();
+    
+    /**
      * Runs the test.
      */
     void run() throws Exception;

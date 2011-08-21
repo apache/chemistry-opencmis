@@ -91,6 +91,10 @@ public class XmlReport extends AbstractCmisTestReport {
     }
 
     private void printGroupResults(CmisTestGroup group, XMLStreamWriter xml) throws Exception {
+        if (!group.isEnabled()) {
+            return;
+        }
+
         xml.writeStartElement(TAG_GROUP);
         xml.writeAttribute(ATTR_NAME, group.getName());
 
@@ -104,6 +108,10 @@ public class XmlReport extends AbstractCmisTestReport {
     }
 
     private void printTestResults(CmisTest test, XMLStreamWriter xml) throws Exception {
+        if (!test.isEnabled()) {
+            return;
+        }
+
         xml.writeStartElement(TAG_TEST);
         xml.writeAttribute(ATTR_NAME, test.getName());
         xml.writeAttribute(ATTR_TIME, "" + test.getTime());

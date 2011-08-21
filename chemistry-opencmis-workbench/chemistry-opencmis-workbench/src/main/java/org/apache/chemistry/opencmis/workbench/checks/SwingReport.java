@@ -108,9 +108,17 @@ public class SwingReport extends AbstractCmisTestReport {
             DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Groups");
 
             for (CmisTestGroup group : groups) {
+                if (!group.isEnabled()) {
+                    continue;
+                }
+
                 DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode(group);
                 rootNode.add(groupNode);
                 for (CmisTest test : group.getTests()) {
+                    if (!test.isEnabled()) {
+                        continue;
+                    }
+
                     DefaultMutableTreeNode testNode = new DefaultMutableTreeNode(test);
                     groupNode.add(testNode);
                     populateResultBranch(testNode, test.getResults());

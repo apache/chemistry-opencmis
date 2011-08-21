@@ -31,6 +31,7 @@ public class CRUDTestGroup extends AbstractSessionTestGroup {
         super.init(parameters);
 
         setName("CRUD Test Group");
+        setDescription("Create, Read, Update, and Delete tests.");
 
         addTest(new CreateAndDeleteFolderTest());
         addTest(new CreateAndDeleteDocumentTest());

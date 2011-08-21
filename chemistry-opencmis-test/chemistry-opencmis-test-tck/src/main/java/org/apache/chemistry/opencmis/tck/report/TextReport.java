@@ -66,6 +66,10 @@ public class TextReport extends AbstractCmisTestReport {
     }
 
     private void printGroupResults(CmisTestGroup group, Writer writer) throws IOException {
+        if (!group.isEnabled()) {
+            return;
+        }
+
         writer.write("===============================================================" + NL);
         writer.write(group.getName() + NL);
         writer.write("===============================================================" + NL);
@@ -78,6 +82,10 @@ public class TextReport extends AbstractCmisTestReport {
     }
 
     private void printTestResults(CmisTest test, Writer writer) throws IOException {
+        if (!test.isEnabled()) {
+            return;
+        }
+
         writer.write("---------------------------------------------------------------" + NL);
         writer.write(test.getName() + " (" + test.getTime() + " ms)" + NL);
         writer.write("---------------------------------------------------------------" + NL + NL);

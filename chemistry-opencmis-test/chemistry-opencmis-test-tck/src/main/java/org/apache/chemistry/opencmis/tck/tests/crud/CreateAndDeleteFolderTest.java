@@ -42,6 +42,7 @@ public class CreateAndDeleteFolderTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Create and Delete Folder Test");
+        setDescription("Creates a few folders, checks the newly created folders and their parent and finally deletes the created folders.");
     }
 
     @Override

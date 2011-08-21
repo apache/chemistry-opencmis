@@ -31,6 +31,7 @@ public class VersioningTestGroup extends AbstractSessionTestGroup {
         super.init(parameters);
 
         setName("Versioning Test Group");
+        setDescription("Versioning tests.");
 
         addTest(new CheckedOutTest());
     }

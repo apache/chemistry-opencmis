@@ -41,6 +41,7 @@ public class RepositoryInfoTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Repository Info Test");
+        setDescription("Gets and checks the repository info.");
     }
 
     @Override

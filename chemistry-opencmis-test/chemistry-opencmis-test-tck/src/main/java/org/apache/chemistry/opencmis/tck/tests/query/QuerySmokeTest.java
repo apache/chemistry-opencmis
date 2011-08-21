@@ -47,21 +47,26 @@ public class QuerySmokeTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Query Smoke Test");
+        setDescription("Performs a simple query and checks if the format of the results is correct. It does not check if the result are complete!");
     }
 
     @Override
     public void run(Session session) {
+        CmisTestResult f;
+
         String testType = "cmis:document";
+        String statement = "SELECT * FROM " + testType;
+        int pageSize = 100;
 
         if (supportsQuery(session)) {
-            ItemIterable<QueryResult> resultSet = session.query("SELECT * FROM " + testType, false);
+            ItemIterable<QueryResult> resultSet = session.query(statement, false);
 
             if (resultSet == null) {
                 addResult(createResult(FAILURE, "Query result set is null! (OpenCMIS issue???)"));
             } else {
                 int i = 0;
                 // testing 100 results should be sufficient for this test
-                for (QueryResult qr : resultSet.getPage(100)) {
+                for (QueryResult qr : resultSet.getPage(pageSize)) {
                     if (qr == null) {
                         addResult(createResult(FAILURE, "Query result is null! (OpenCMIS issue???)"));
                     } else {
@@ -71,6 +76,13 @@ public class QuerySmokeTest extends AbstractSessionTest {
                     }
                     i++;
                 }
+
+                f = createResult(FAILURE, "More query results (" + i + ") than expected (page size = " + pageSize
+                        + ")!");
+                addResult(assertIsFalse((i > pageSize), null, f));
+
+                addResult(createInfoResult(i + " query results for \"" + statement + "\" (page size = " + pageSize
+                        + ")"));
             }
         } else {
             addResult(createInfoResult("Query not supported!"));
