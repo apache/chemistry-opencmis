@@ -80,6 +80,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 public abstract class AbstractSessionTest extends AbstractCmisTest {
 
     public static final OperationContext SELECT_ALL_NO_CACHE_OC = new OperationContextImpl();
+    public static final OperationContext SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME;
     static {
         SELECT_ALL_NO_CACHE_OC.setFilterString("*");
         SELECT_ALL_NO_CACHE_OC.setCacheEnabled(false);
@@ -89,6 +90,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         SELECT_ALL_NO_CACHE_OC.setIncludePolicies(true);
         SELECT_ALL_NO_CACHE_OC.setIncludeRelationships(IncludeRelationships.BOTH);
         SELECT_ALL_NO_CACHE_OC.setRenditionFilterString("*");
+
+        SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME = new OperationContextImpl(SELECT_ALL_NO_CACHE_OC);
+        SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME.setOrderBy("cmis:name");
     }
 
     private final SessionFactory factory = SessionFactoryImpl.newInstance();
@@ -1179,7 +1183,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         long childrenCount = 0;
         long childrenFolderCount = 0;
-        ItemIterable<CmisObject> children = folder.getChildren(SELECT_ALL_NO_CACHE_OC);
+        ItemIterable<CmisObject> children = folder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME);
+
+        int orderByNameIssues = 0;
+        String lastName = null;
 
         for (CmisObject child : children) {
             childrenCount++;
@@ -1188,10 +1195,22 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
 
             checkChild(session, results, folder, child);
+
+            if (lastName != null && child.getName() != null) {
+                if (child.getName().compareToIgnoreCase(lastName) < 0) {
+                    orderByNameIssues++;
+                }
+            }
+
+            lastName = child.getName();
         }
 
         f = createResult(WARNING, "Number of children doesn't match the reported total number of items!");
         addResult(results, assertEquals(childrenCount, children.getTotalNumItems(), null, f));
+
+        f = createResult(WARNING,
+                "Children should be ordered by cmis:name, but they are not! (It might be a collation mismtach.)");
+        addResult(results, assertEquals(0, orderByNameIssues, null, f));
 
         // getDescendants
 
