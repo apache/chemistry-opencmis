@@ -53,6 +53,8 @@ public final class SessionParameter {
     public static final String WEBSERVICES_ACL_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.ACLService";
     public static final String WEBSERVICES_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.memoryThreshold";
 
+    public static final String WEBSERVICES_PORT_PROVIDER_CLASS = "org.apache.chemistry.opencmis.binding.webservices.portprovider.classname";
+    
     /** Factory class name for the local binding. */
     public static final String LOCAL_FACTORY = "org.apache.chemistry.opencmis.binding.local.classname";
 

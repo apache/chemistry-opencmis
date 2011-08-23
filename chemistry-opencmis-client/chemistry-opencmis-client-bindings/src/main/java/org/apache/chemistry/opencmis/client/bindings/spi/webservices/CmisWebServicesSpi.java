@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
@@ -57,7 +58,27 @@ public class CmisWebServicesSpi implements CmisSpi {
             log.debug("Initializing Web Services SPI...");
         }
 
-        AbstractPortProvider portProvider = new PortProvider(session);
+        AbstractPortProvider portProvider = null;
+
+        String portProviderClass = (String) session.get(SessionParameter.WEBSERVICES_PORT_PROVIDER_CLASS);
+        if (portProviderClass == null) {
+            portProvider = new PortProvider();
+        } else {
+            Object portProviderObj = null;
+
+            try {
+                portProviderObj = Class.forName(portProviderClass).newInstance();
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Could not load port provider: " + e, e);
+            }
+
+            if (!(portProviderObj instanceof AbstractPortProvider)) {
+                throw new IllegalArgumentException("Port provider does not implement AbstractPortProvider!");
+            }
+            portProvider = (AbstractPortProvider) portProviderObj;
+        }
+
+        portProvider.setSession(session);
 
         repositoryService = new RepositoryServiceImpl(session, portProvider);
         navigationService = new NavigationServiceImpl(session, portProvider);

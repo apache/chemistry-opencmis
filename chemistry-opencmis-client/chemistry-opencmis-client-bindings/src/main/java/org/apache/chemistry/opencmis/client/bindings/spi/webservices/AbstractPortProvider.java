@@ -78,7 +78,28 @@ public abstract class AbstractPortProvider {
 
     protected static final int CHUNK_SIZE = 64 * 1024;
 
-    protected BindingSession session;
+    private BindingSession session;
+    protected boolean useCompression;
+    protected boolean useClientCompression;
+    protected String acceptLanguage;
+
+    public BindingSession getSession() {
+        return session;
+    }
+
+    public void setSession(BindingSession session) {
+        this.session = session;
+
+        Object compression = session.get(SessionParameter.COMPRESSION);
+        useCompression = (compression != null) && Boolean.parseBoolean(compression.toString());
+
+        Object clientCompression = session.get(SessionParameter.CLIENT_COMPRESSION);
+        useClientCompression = (clientCompression != null) && Boolean.parseBoolean(clientCompression.toString());
+
+        if (session.get(CmisBindingsHelper.ACCEPT_LANGUAGE) instanceof String) {
+            acceptLanguage = session.get(CmisBindingsHelper.ACCEPT_LANGUAGE).toString();
+        }
+    }
 
     /**
      * Return the Repository Service port object.

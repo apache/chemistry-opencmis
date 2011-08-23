@@ -29,7 +29,6 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.MTOMFeature;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
-import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
@@ -57,30 +56,7 @@ import com.sun.xml.ws.developer.WSBindingProvider;
  * Provides CMIS Web Services port objects. Handles authentication headers.
  */
 public class PortProvider extends AbstractPortProvider {
-
     private static final Log log = LogFactory.getLog(PortProvider.class);
-
-    private final boolean useCompression;
-    private final boolean useClientCompression;
-
-    private String acceptLanguage;
-
-    /**
-     * Constructor.
-     */
-    public PortProvider(BindingSession session) {
-        this.session = session;
-
-        Object compression = session.get(SessionParameter.COMPRESSION);
-        useCompression = (compression != null) && Boolean.parseBoolean(compression.toString());
-
-        Object clientCompression = session.get(SessionParameter.CLIENT_COMPRESSION);
-        useClientCompression = (clientCompression != null) && Boolean.parseBoolean(clientCompression.toString());
-
-        if (session.get(CmisBindingsHelper.ACCEPT_LANGUAGE) instanceof String) {
-            acceptLanguage = session.get(CmisBindingsHelper.ACCEPT_LANGUAGE).toString();
-        }
-    }
 
     /**
      * Creates a port object.
@@ -99,11 +75,7 @@ public class PortProvider extends AbstractPortProvider {
             } else if (service instanceof NavigationService) {
                 portObject = ((NavigationService) service).getNavigationServicePort(new MTOMFeature());
             } else if (service instanceof ObjectService) {
-                int threshold = 4 * 1024 * 1024;
-                try {
-                    threshold = Integer.parseInt((String) session.get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD));
-                } catch (Exception e) {
-                }
+                int threshold = getSession().get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD, 4 * 1024 * 1024);
                 portObject = ((ObjectService) service).getObjectServicePort(new MTOMFeature(),
                         new StreamingAttachmentFeature(null, true, threshold));
                 ((BindingProvider) portObject).getRequestContext().put(
@@ -125,7 +97,7 @@ public class PortProvider extends AbstractPortProvider {
             }
 
             // add SOAP and HTTP authentication headers
-            AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
+            AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(getSession());
             Map<String, List<String>> httpHeaders = null;
             if (authProvider != null) {
                 // SOAP header
@@ -168,12 +140,12 @@ public class PortProvider extends AbstractPortProvider {
             }
 
             // timeouts
-            int connectTimeout = session.get(SessionParameter.CONNECT_TIMEOUT, -1);
+            int connectTimeout = getSession().get(SessionParameter.CONNECT_TIMEOUT, -1);
             if (connectTimeout >= 0) {
                 ((BindingProvider) portObject).getRequestContext().put(JAXWSProperties.CONNECT_TIMEOUT, connectTimeout);
             }
 
-            int readTimeout = session.get(SessionParameter.READ_TIMEOUT, -1);
+            int readTimeout = getSession().get(SessionParameter.READ_TIMEOUT, -1);
             if (readTimeout >= 0) {
                 ((BindingProvider) portObject).getRequestContext()
                         .put("com.sun.xml.ws.request.timeout", connectTimeout);
