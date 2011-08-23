@@ -46,7 +46,7 @@ public class ObjectComplianceCheck extends AbstractSessionTest {
 
     @Override
     public void run(Session session) throws Exception {
-        CmisObject object = session.getObject(objectId);
+        CmisObject object = session.getObject(objectId, SELECT_ALL_NO_CACHE_OC);
         String[] propertiesToCheck = getAllProperties(object);
 
         addResult(checkObject(session, object, propertiesToCheck, "Object check: " + object.getId()));
