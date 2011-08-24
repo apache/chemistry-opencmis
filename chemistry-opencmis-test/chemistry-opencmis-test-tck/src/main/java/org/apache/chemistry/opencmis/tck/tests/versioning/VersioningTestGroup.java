@@ -33,6 +33,7 @@ public class VersioningTestGroup extends AbstractSessionTestGroup {
         setName("Versioning Test Group");
         setDescription("Versioning tests.");
 
+        addTest(new VersioningSmokeTest());
         addTest(new CheckedOutTest());
     }
 }
