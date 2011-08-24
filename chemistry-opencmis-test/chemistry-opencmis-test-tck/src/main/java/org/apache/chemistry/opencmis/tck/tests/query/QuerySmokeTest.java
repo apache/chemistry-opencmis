@@ -20,20 +20,23 @@ package org.apache.chemistry.opencmis.tck.tests.query;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.OK;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 import org.apache.chemistry.opencmis.tck.impl.CmisTestResultImpl;
@@ -47,18 +50,37 @@ public class QuerySmokeTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Query Smoke Test");
-        setDescription("Performs a simple query and checks if the format of the results is correct. It does not check if the result are complete!");
+        setDescription("Performs a simple query and checks if the format of the results is correct. It does not check if the results are complete!");
     }
 
     @Override
     public void run(Session session) {
         CmisTestResult f;
 
-        String testType = "cmis:document";
-        String statement = "SELECT * FROM " + testType;
-        int pageSize = 100;
-
         if (supportsQuery(session)) {
+            String testType = "cmis:document";
+            String statement = "SELECT * FROM " + testType;
+
+            ObjectType type = session.getTypeDefinition(testType);
+
+            f = createResult(FAILURE, "Test type definition '" + testType + "'not found!");
+            addResult(assertNotNull(type, null, f));
+            if (type == null) {
+                return;
+            }
+
+            PropertyDefinition<?> objectIdPropDef = type.getPropertyDefinitions().get(PropertyIds.OBJECT_ID);
+
+            f = createResult(FAILURE, "Object Id property definition does not exist!");
+            addResult(assertNotNull(objectIdPropDef, null, f));
+
+            String objectIdQueryName = null;
+            if (objectIdPropDef != null) {
+                objectIdQueryName = objectIdPropDef.getQueryName();
+            }
+
+            int pageSize = 100;
+
             ItemIterable<QueryResult> resultSet = session.query(statement, false);
 
             if (resultSet == null) {
@@ -70,8 +92,20 @@ public class QuerySmokeTest extends AbstractSessionTest {
                     if (qr == null) {
                         addResult(createResult(FAILURE, "Query result is null! (OpenCMIS issue???)"));
                     } else {
-                        addResult(checkQueryResult(session, qr, testType, "Query result: " + i));
+                        addResult(checkQueryResult(session, qr, type, "Query result: " + i));
 
+                        if (objectIdQueryName != null) {
+                            String objectId = (String) qr.getPropertyByQueryName(objectIdQueryName).getFirstValue();
+
+                            try {
+                                CmisObject object = session.getObject(objectId, SELECT_ALL_NO_CACHE_OC);
+                                addResult(checkObject(session, object, getAllProperties(object),
+                                        "Query hit check. Id: " + objectId));
+                            } catch (CmisObjectNotFoundException e) {
+                                addResult(createResult(FAILURE,
+                                        "Query hit references an object that doesn't exist. Id: " + objectId, e, false));
+                            }
+                        }
                         // TODO: check more
                     }
                     i++;
@@ -85,11 +119,11 @@ public class QuerySmokeTest extends AbstractSessionTest {
                         + ")"));
             }
         } else {
-            addResult(createInfoResult("Query not supported!"));
+            addResult(createResult(SKIPPED, "Query not supported. Test Skipped!"));
         }
     }
 
-    protected CmisTestResult checkQueryResult(Session session, QueryResult qr, String typeId, String message) {
+    protected CmisTestResult checkQueryResult(Session session, QueryResult qr, ObjectType type, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
         CmisTestResult f;
@@ -97,8 +131,6 @@ public class QuerySmokeTest extends AbstractSessionTest {
         if (qr.getProperties().isEmpty()) {
             addResult(results, createResult(FAILURE, "Query result is empty!"));
         } else {
-            TypeDefinition type = session.getTypeDefinition(typeId);
-
             for (PropertyDefinition<?> propDef : type.getPropertyDefinitions().values()) {
                 if (propDef.getQueryName() == null) {
                     continue;

@@ -31,8 +31,9 @@ public class QueryTestGroup extends AbstractSessionTestGroup {
         super.init(parameters);
 
         setName("Query Test Group");
-        setDescription("Query tests.");
+        setDescription("Query and content changes tests.");
 
         addTest(new QuerySmokeTest());
+        addTest(new ContentChangesSmokeTest());
     }
 }

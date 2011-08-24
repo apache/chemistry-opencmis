@@ -135,7 +135,6 @@ public class TckDialog {
             ((DefaultTreeModel) groupTree.getModel()).reload();
 
             groupTree.setRootVisible(false);
-            groupTree.setPreferredSize(new Dimension(300, 200));
             groupTree.setCellRenderer(new TestTreeNodeRender());
             groupTree.setCellEditor(new TestTreeNodeEditor());
             groupTree.setEditable(true);
@@ -182,6 +181,7 @@ public class TckDialog {
             // config panel
             final JPanel configPanel = new JPanel();
             configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.PAGE_AXIS));
+            configPanel.setPreferredSize(new Dimension(getWidth() / 2, 500));
             configPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
             final JComboBox folderComboBox = addComboBox(configPanel, "Test folder type:",
@@ -202,10 +202,11 @@ public class TckDialog {
 
             add(configPanel);
 
-            final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(groupTree),
-                    configPanel);
-            splitPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            add(splitPane, BorderLayout.CENTER);
+            final JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            mainPanel.add(new JScrollPane(groupTree), BorderLayout.CENTER);
+            mainPanel.add(configPanel, BorderLayout.LINE_END);
+            add(mainPanel, BorderLayout.CENTER);
 
             final JButton runButton = new JButton("Run TCK");
             runButton.setDefaultCapable(true);

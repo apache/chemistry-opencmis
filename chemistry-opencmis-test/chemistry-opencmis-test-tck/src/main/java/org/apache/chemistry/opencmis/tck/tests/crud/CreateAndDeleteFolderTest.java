@@ -29,7 +29,6 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -49,59 +48,59 @@ public class CreateAndDeleteFolderTest extends AbstractSessionTest {
     public void run(Session session) {
         CmisTestResult f;
 
+        int numOfFolders = 20;
+
         // create a test folder
         Folder testFolder = createTestFolder(session);
 
-        int numOfFolders = 20;
-        Map<String, Folder> folders = new HashMap<String, Folder>();
-        String[] propertiesToCheck = new String[] { PropertyIds.OBJECT_ID, PropertyIds.BASE_TYPE_ID,
-                PropertyIds.OBJECT_TYPE_ID };
+        try {
+            Map<String, Folder> folders = new HashMap<String, Folder>();
 
-        // create folders
-        for (int i = 0; i < numOfFolders; i++) {
-            Folder newFolder = createFolder(session, testFolder, "folder" + i);
-            addResult(checkObject(session, newFolder, propertiesToCheck, "New folder object spec compliance. Id: "
-                    + newFolder.getId()));
-            folders.put(newFolder.getId(), newFolder);
-        }
-
-        // simple children test
-        addResult(checkChildren(session, testFolder, "Test folder children check"));
-
-        // check if all folders are there
-        ItemIterable<CmisObject> children = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC);
-        List<String> childrenIds = new ArrayList<String>();
-        for (CmisObject child : children) {
-            if (child != null) {
-                childrenIds.add(child.getId());
-                Folder folder = folders.get(child.getId());
-
-                f = createResult(FAILURE, "Folder and test folder child don't match! Id: " + child.getId());
-                addResult(assertShallowEquals(folder, child, null, f));
+            // create folders
+            for (int i = 0; i < numOfFolders; i++) {
+                Folder newFolder = createFolder(session, testFolder, "folder" + i);
+                folders.put(newFolder.getId(), newFolder);
             }
-        }
 
-        f = createResult(FAILURE, "Number of created folders does not match the number of existing folders!");
-        addResult(assertEquals(numOfFolders, childrenIds.size(), null, f));
+            // simple children test
+            addResult(checkChildren(session, testFolder, "Test folder children check"));
 
-        for (Folder folder : folders.values()) {
-            if (!childrenIds.contains(folder.getId())) {
-                addResult(createResult(FAILURE,
-                        "Created folder not found in test folder children! Id: " + folder.getId()));
+            // check if all folders are there
+            ItemIterable<CmisObject> children = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC);
+            List<String> childrenIds = new ArrayList<String>();
+            for (CmisObject child : children) {
+                if (child != null) {
+                    childrenIds.add(child.getId());
+                    Folder folder = folders.get(child.getId());
+
+                    f = createResult(FAILURE, "Folder and test folder child don't match! Id: " + child.getId());
+                    addResult(assertShallowEquals(folder, child, null, f));
+                }
             }
+
+            f = createResult(FAILURE, "Number of created folders does not match the number of existing folders!");
+            addResult(assertEquals(numOfFolders, childrenIds.size(), null, f));
+
+            for (Folder folder : folders.values()) {
+                if (!childrenIds.contains(folder.getId())) {
+                    addResult(createResult(FAILURE,
+                            "Created folder not found in test folder children! Id: " + folder.getId()));
+                }
+            }
+
+            // delete all folders
+            for (Folder folder : folders.values()) {
+                // empty folders should be deleteable like this
+                folder.delete(true);
+
+                f = createResult(FAILURE,
+                        "Folder should not exist anymore but it is still there! Id: " + folder.getId());
+                addResult(assertIsFalse(exists(folder), null, f));
+            }
+        } finally {
+            // delete the test folder
+            deleteTestFolder();
         }
-
-        // delete all folders
-        for (Folder folder : folders.values()) {
-            // empty folders should be deleteable like this
-            folder.delete(true);
-
-            f = createResult(FAILURE, "Folder should not exist anymore but it is still there! Id: " + folder.getId());
-            addResult(assertIsFalse(exists(folder), null, f));
-        }
-
-        // delete the test folder
-        deleteTestFolder();
 
         addResult(createInfoResult("Tested the creation and deletion of " + numOfFolders + " folders."));
     }

@@ -24,8 +24,12 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.UNEXPECTED_EXCEPTION;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -166,6 +170,32 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return propertiesk;
     }
 
+    protected String getStringFromContentStream(ContentStream contentStream) throws IOException {
+        if (contentStream == null || contentStream.getStream() == null) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Reader reader = new InputStreamReader(contentStream.getStream(), "UTF-8");
+
+        try {
+            final char[] buffer = new char[64 * 1024];
+            int b;
+            while (true) {
+                b = reader.read(buffer, 0, buffer.length);
+                if (b > 0) {
+                    sb.append(buffer, 0, b);
+                } else if (b == -1) {
+                    break;
+                }
+            }
+        } finally {
+            reader.close();
+        }
+
+        return sb.toString();
+    }
+
     // --- handy create and delete methods ---
 
     /**
@@ -257,6 +287,20 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     }
 
     /**
+     * Counts the children in a folder.
+     */
+    protected int countFolderChildren(Folder folder) {
+        int count = 0;
+
+        for (@SuppressWarnings("unused")
+        CmisObject object : folder.getChildren()) {
+            count++;
+        }
+
+        return count;
+    }
+
+    /**
      * Creates a document.
      */
     protected Document createDocument(Session session, Folder parent, String name, String content) {
@@ -272,6 +316,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      * Creates a document.
      */
     protected Document createDocument(Session session, Folder parent, String name, String objectTypeId, String content) {
+        if (content == null) {
+            content = "";
+        }
+
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
@@ -312,6 +360,17 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             addResult(checkObject(session, result, propertiesToCheck, "New document object spec compliance"));
 
+            // check content
+            try {
+                String fetchedContent = getStringFromContentStream(result.getContentStream());
+                if (!content.equals(fetchedContent)) {
+                    addResult(createResult(FAILURE,
+                            "Content of newly created document doesn't match the orign content!"));
+                }
+            } catch (IOException e) {
+                addResult(createResult(UNEXPECTED_EXCEPTION,
+                        "Content of newly created document couldn't be read! Exception: " + e.getMessage(), e, true));
+            }
         } catch (CmisBaseException e) {
             addResult(createResult(UNEXPECTED_EXCEPTION,
                     "Newly created document is invalid! Exception: " + e.getMessage(), e, true));
@@ -782,7 +841,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         ContentStream contentStream = doc.getContentStream();
 
         if (contentStream == null) {
-            if (hasContentProperties) {
+            if (hasContentProperties && doc.getContentStreamLength() > 0) {
                 addResult(results,
                         createResult(FAILURE, "Content properties have values but the document has no content!"));
             }
@@ -809,10 +868,33 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         // MIME type check
+        String docMimeType = doc.getContentStreamMimeType();
+        if (docMimeType != null) {
+            int x = docMimeType.indexOf(';');
+            if (x > -1) {
+                docMimeType = docMimeType.substring(0, x);
+            }
+            docMimeType = docMimeType.trim();
+        }
+
+        String contentMimeType = contentStream.getMimeType();
+        if (contentMimeType != null) {
+            int x = contentMimeType.indexOf(';');
+            if (x > -1) {
+                contentMimeType = contentMimeType.substring(0, x);
+            }
+            contentMimeType = contentMimeType.trim();
+        }
+
         f = createResult(FAILURE, "Content MIME types don't match!");
-        addResult(results, assertEquals(doc.getContentStreamMimeType(), contentStream.getMimeType(), null, f));
+        addResult(results, assertEquals(docMimeType, contentMimeType, null, f));
 
         if (contentStream.getMimeType() != null) {
+            if (contentMimeType.equals(docMimeType)) {
+                f = createResult(WARNING, "Content MIME types don't match!");
+                addResult(results, assertEquals(doc.getContentStreamMimeType(), contentStream.getMimeType(), null, f));
+            }
+
             f = createResult(FAILURE, "Content MIME types is invalid: " + contentStream.getMimeType());
             addResult(
                     results,
@@ -2057,6 +2139,111 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         f = createResult(FAILURE, "Allowable action sets don't match!");
         addResult(results, assertEqualSet(expected.getAllowableActions(), actual.getAllowableActions(), null, f));
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEquals(ContentStream expected, ContentStream actual, CmisTestResult success,
+            CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected stream is null, but actual stream is not!");
+            addResultChild(failure, f);
+
+            try {
+                actual.getStream().close();
+            } catch (Exception e) {
+            }
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual object is null, but expected object is not!");
+            addResultChild(failure, f);
+
+            try {
+                expected.getStream().close();
+            } catch (Exception e) {
+            }
+
+            return failure;
+        }
+
+        f = createResult(WARNING, "Filenames don't match!");
+        addResult(results, assertEquals(expected.getFileName(), actual.getFileName(), null, f));
+
+        f = createResult(FAILURE, "MIME types don't match!");
+        addResult(results, assertEquals(expected.getMimeType(), actual.getMimeType(), null, f));
+
+        f = createResult(WARNING, "Lengths don't match!");
+        addResult(results, assertEquals(expected.getBigLength(), actual.getBigLength(), null, f));
+
+        boolean match = true;
+
+        BufferedInputStream as = new BufferedInputStream(actual.getStream());
+        BufferedInputStream es = new BufferedInputStream(expected.getStream());
+
+        try {
+            int ab = 0;
+            int eb = 0;
+
+            while (true) {
+                if (ab > -1) {
+                    ab = as.read();
+                }
+
+                if (eb > -1) {
+                    eb = es.read();
+                }
+
+                if (ab == -1 && eb == -1) {
+                    break;
+                }
+
+                if (ab != eb) {
+                    match = false;
+                }
+            }
+        } catch (Exception e) {
+            f = createResult(UNEXPECTED_EXCEPTION, e.getMessage(), e, false);
+            addResultChild(failure, f);
+        }
+
+        if (!match) {
+            f = createResult(FAILURE, "Content streams don't match!");
+            addResultChild(failure, f);
+        }
+
+        try {
+            actual.getStream().close();
+        } catch (Exception e) {
+        }
+
+        try {
+            expected.getStream().close();
+        } catch (Exception e) {
+        }
 
         if (getWorst(results).getLevel() <= OK.getLevel()) {
             for (CmisTestResult result : results) {
