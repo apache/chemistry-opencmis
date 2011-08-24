@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -120,6 +121,10 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
     }
 
     public FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId) {
+        return move(sourceFolderId, targetFolderId, getSession().getDefaultContext());
+    }
+    
+    public FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId, OperationContext context) {
         String objectId = getObjectId();
         Holder<String> objectIdHolder = new Holder<String>(objectId);
 
@@ -138,7 +143,7 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
             return null;
         }
 
-        CmisObject movedObject = getSession().getObject(getSession().createObjectId(objectIdHolder.getValue()));
+        CmisObject movedObject = getSession().getObject(objectIdHolder.getValue(), context);
         if (!(movedObject instanceof FileableCmisObject)) {
             throw new CmisRuntimeException("Moved object is invalid!");
         }

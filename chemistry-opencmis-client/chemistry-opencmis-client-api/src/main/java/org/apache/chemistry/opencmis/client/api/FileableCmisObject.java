@@ -32,6 +32,11 @@ public interface FileableCmisObject extends CmisObject {
      */
     FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId);
 
+    /**
+     * Moves the object.
+     */
+    FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId, OperationContext context);
+
     // navigation service
 
     /**
