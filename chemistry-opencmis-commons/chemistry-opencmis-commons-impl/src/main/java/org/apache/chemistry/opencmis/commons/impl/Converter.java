@@ -1903,7 +1903,9 @@ public final class Converter {
 
         List<GregorianCalendar> result = new ArrayList<GregorianCalendar>();
         for (XMLGregorianCalendar cal : calendar) {
-            result.add(cal.toGregorianCalendar());
+            if (cal != null) {
+                result.add(cal.toGregorianCalendar());
+            }
         }
 
         return result;
