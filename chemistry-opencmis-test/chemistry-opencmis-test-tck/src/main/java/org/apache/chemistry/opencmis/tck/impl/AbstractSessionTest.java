@@ -55,6 +55,8 @@ import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
@@ -351,14 +353,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         try {
             // check the new document
-            String[] propertiesToCheck = new String[result.getType().getPropertyDefinitions().size()];
-
-            int i = 0;
-            for (String propId : result.getType().getPropertyDefinitions().keySet()) {
-                propertiesToCheck[i++] = propId;
-            }
-
-            addResult(checkObject(session, result, propertiesToCheck, "New document object spec compliance"));
+            addResult(checkObject(session, result, getAllProperties(result), "New document object spec compliance"));
 
             // check content
             try {
@@ -434,7 +429,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         Folder parent = null;
         try {
-            CmisObject parentObject = session.getObjectByPath(testFolderParentPath);
+            CmisObject parentObject = session.getObjectByPath(testFolderParentPath, SELECT_ALL_NO_CACHE_OC);
             if (!(parentObject instanceof Folder)) {
                 addResult(createResult(FAILURE, "Parent folder of the test folder is actually not a folder! Path: "
                         + testFolderParentPath, true));
@@ -771,11 +766,53 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
             }
 
+            // check ACL
+            if (object.getAcl() != null && object.getAcl().getAces() != null) {
+                addResult(results, checkACL(session, object.getAcl(), "ACL"));
+            }
+
             // check relationships
             checkRelationships(session, results, object);
 
             // check document content
             checkDocumentContent(session, results, object);
+        }
+
+        CmisTestResultImpl result = createResult(getWorst(results), message);
+        result.getChildren().addAll(results);
+
+        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+    }
+
+    protected CmisTestResult checkACL(Session session, Acl acl, String message) {
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        f = createResult(FAILURE, "ACL is null!");
+        addResult(results, assertNotNull(acl, null, f));
+
+        if (acl != null) {
+
+            f = createResult(FAILURE, "List of ACEs is null!");
+            addResult(results, assertNotNull(acl.getAces(), null, f));
+
+            if (acl.getAces() != null) {
+                for (Ace ace : acl.getAces()) {
+                    f = createResult(FAILURE, "ACE with empty principal id!");
+                    addResult(results, assertStringNotEmpty(ace.getPrincipalId(), null, f));
+
+                    f = createResult(FAILURE, "ACE with empty permission list!");
+                    addResult(results, assertListNotEmpty(ace.getPermissions(), null, f));
+
+                    if (ace.getPermissions() != null) {
+                        for (String permission : ace.getPermissions()) {
+                            f = createResult(FAILURE, "ACE with empty permission entry!");
+                            addResult(results, assertStringNotEmpty(permission, null, f));
+                        }
+                    }
+                }
+            }
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
@@ -1408,7 +1445,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     addResult(results, createResult(FAILURE, "Child has no path! " + child.getId()));
                 } else {
                     for (String path : paths) {
-                        CmisObject objectByPath = session.getObjectByPath(path);
+                        CmisObject objectByPath = session.getObjectByPath(path, SELECT_ALL_NO_CACHE_OC);
 
                         f = createResult(FAILURE, "Child and object fetched by path don't match! Id: " + child.getId());
                         addResult(results, assertEquals(child, objectByPath, null, f));
