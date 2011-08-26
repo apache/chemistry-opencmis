@@ -50,6 +50,7 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
+import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.Tree;
@@ -849,6 +850,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             // check document content
             checkDocumentContent(session, results, object);
+
+            // check renditions
+            if (object.getRenditions() != null) {
+                addResult(results, checkRenditions(session, object, "Rendition check"));
+            }
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
@@ -1042,7 +1048,93 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
         } catch (Exception e) {
             addResult(results, createResult(FAILURE, "Reading content failed: " + e, e, false));
+        } finally {
+            try {
+                stream.close();
+            } catch (Exception e) {
+            }
         }
+    }
+
+    protected CmisTestResult checkRenditions(Session session, CmisObject object, String message) {
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if (object.getRenditions() != null) {
+
+            for (Rendition rend : object.getRenditions()) {
+                f = createResult(FAILURE, "A rendition in the list of renditions is null!");
+                addResult(results, assertNotNull(rend, null, f));
+
+                if (rend != null) {
+                    f = createResult(FAILURE, "A rendition has an empty stream id!");
+                    addResult(results, assertStringNotEmpty(rend.getStreamId(), null, f));
+
+                    f = createResult(FAILURE, "A rendition has an empty kind! Stream id: " + rend.getStreamId());
+                    addResult(results, assertStringNotEmpty(rend.getKind(), null, f));
+
+                    f = createResult(FAILURE, "A rendition has an empty MIME type! Stream id: " + rend.getStreamId());
+                    addResult(results, assertStringNotEmpty(rend.getMimeType(), null, f));
+
+                    if ("cmis:thumbnail".equals(rend.getKind())) {
+                        f = createResult(WARNING,
+                                "A rendition is of kind 'cmis:thumbnail' but the height is not set or has an invalid value! Stream id: "
+                                        + rend.getStreamId());
+                        addResult(results, assertIsTrue(rend.getHeight() > 0, null, f));
+
+                        f = createResult(WARNING,
+                                "A rendition is of kind 'cmis:thumbnail' but the width is not set or has an invalid value! Stream id: "
+                                        + rend.getStreamId());
+                        addResult(results, assertIsTrue(rend.getWidth() > 0, null, f));
+                    }
+
+                    // check the content
+                    ContentStream contentStream = rend.getContentStream();
+                    f = createResult(FAILURE, "A rendition has no content stream! Stream id: " + rend.getStreamId());
+                    addResult(results, assertNotNull(contentStream, null, f));
+
+                    if (contentStream != null) {
+                        InputStream stream = contentStream.getStream();
+
+                        f = createResult(FAILURE, "A rendition has no stream! Stream id: " + rend.getStreamId());
+                        addResult(results, assertNotNull(stream, null, f));
+
+                        if (stream != null) {
+                            try {
+                                long bytes = 0;
+                                byte[] buffer = new byte[64 * 1024];
+                                int b = stream.read(buffer);
+                                while (b > -1) {
+                                    bytes += b;
+                                    b = stream.read(buffer);
+                                }
+                                stream.close();
+
+                                // check content length
+                                if (rend.getLength() > -1) {
+                                    f = createResult(FAILURE,
+                                            "Rendition content stream lengthÏ value doesn't match the actual content length!");
+                                    addResult(results, assertEquals(rend.getLength(), bytes, null, f));
+                                }
+                            } catch (Exception e) {
+                                addResult(results, createResult(FAILURE, "Reading content failed: " + e, e, false));
+                            } finally {
+                                try {
+                                    stream.close();
+                                } catch (Exception e) {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        CmisTestResultImpl result = createResult(getWorst(results), message);
+        result.getChildren().addAll(results);
+
+        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
 
     protected CmisTestResult checkVersionHistory(Session session, CmisObject object, String[] properties, String message) {
