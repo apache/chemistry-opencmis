@@ -27,6 +27,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
@@ -45,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 /**
  * CMIS Navigation Service.
  */
+@MTOM
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.NavigationServicePort")
 public class NavigationService extends AbstractService implements NavigationServicePort {
     @Resource

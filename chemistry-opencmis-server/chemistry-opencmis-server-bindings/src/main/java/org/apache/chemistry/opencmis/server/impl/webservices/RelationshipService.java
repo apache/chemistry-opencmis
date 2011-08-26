@@ -25,6 +25,7 @@ import java.math.BigInteger;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
@@ -37,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 /**
  * CMIS Relationship Service.
  */
+@MTOM
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipServicePort")
 public class RelationshipService extends AbstractService implements RelationshipServicePort {
     @Resource
@@ -50,9 +52,9 @@ public class RelationshipService extends AbstractService implements Relationship
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes, convert(
-                    RelationshipDirection.class, relationshipDirection), typeId, filter, includeAllowableActions,
-                    maxItems, skipCount, convert(extension)));
+            return convert(service.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes,
+                    convert(RelationshipDirection.class, relationshipDirection), typeId, filter,
+                    includeAllowableActions, maxItems, skipCount, convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
         } finally {

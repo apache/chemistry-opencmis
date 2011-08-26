@@ -32,6 +32,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
@@ -46,11 +47,11 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRenditionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteTreeResponse.FailedToDelete;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUnfileObject;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumVersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteTreeResponse.FailedToDelete;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 
 import com.sun.xml.ws.developer.StreamingAttachment;
@@ -58,6 +59,7 @@ import com.sun.xml.ws.developer.StreamingAttachment;
 /**
  * CMIS Object Service.
  */
+@MTOM
 @StreamingAttachment(parseEagerly = true, memoryThreshold = 4 * 1024 * 1204)
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort")
 public class ObjectService extends AbstractService implements ObjectServicePort {
@@ -75,8 +77,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             ExtensionsData extData = convertExtensionHolder(extension);
 
             String id = service.createDocument(repositoryId, convert(properties), folderId, convert(contentStream),
-                    convert(VersioningState.class, versioningState), policies, convert(addAces, null), convert(
-                            removeAces, null), extData);
+                    convert(VersioningState.class, versioningState), policies, convert(addAces, null),
+                    convert(removeAces, null), extData);
 
             if (objectId != null) {
                 objectId.value = id;
@@ -101,8 +103,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             ExtensionsData extData = convertExtensionHolder(extension);
 
             String id = service.createDocumentFromSource(repositoryId, sourceId, convert(properties), folderId,
-                    convert(VersioningState.class, versioningState), policies, convert(addAces, null), convert(
-                            removeAces, null), extData);
+                    convert(VersioningState.class, versioningState), policies, convert(addAces, null),
+                    convert(removeAces, null), extData);
 
             if (objectId != null) {
                 objectId.value = id;
@@ -125,8 +127,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            String id = service.createFolder(repositoryId, convert(properties), folderId, policies, convert(addAces,
-                    null), convert(removeAces, null), extData);
+            String id = service.createFolder(repositoryId, convert(properties), folderId, policies,
+                    convert(addAces, null), convert(removeAces, null), extData);
 
             if (objectId != null) {
                 objectId.value = id;
@@ -149,8 +151,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            String id = service.createPolicy(repositoryId, convert(properties), folderId, policies, convert(addAces,
-                    null), convert(removeAces, null), extData);
+            String id = service.createPolicy(repositoryId, convert(properties), folderId, policies,
+                    convert(addAces, null), convert(removeAces, null), extData);
 
             if (objectId != null) {
                 objectId.value = id;
@@ -235,8 +237,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.deleteTree(repositoryId, folderId, allVersions, convert(UnfileObject.class,
-                    unfileObjects), continueOnFailure, convert(extension)));
+            return convert(service.deleteTree(repositoryId, folderId, allVersions,
+                    convert(UnfileObject.class, unfileObjects), continueOnFailure, convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -280,9 +282,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.getObject(repositoryId, objectId, filter, includeAllowableActions, convert(
-                    IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds, includeAcl,
-                    convert(extension)));
+            return convert(service.getObject(repositoryId, objectId, filter, includeAllowableActions,
+                    convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
+                    includeAcl, convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -297,9 +299,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.getObjectByPath(repositoryId, path, filter, includeAllowableActions, convert(
-                    IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds, includeAcl,
-                    convert(extension)));
+            return convert(service.getObjectByPath(repositoryId, path, filter, includeAllowableActions,
+                    convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
+                    includeAcl, convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
         } finally {

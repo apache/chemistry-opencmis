@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
@@ -35,6 +36,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 /**
  * CMIS MultiFiling Service.
  */
+@MTOM
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort")
 public class MultiFilingService extends AbstractService implements MultiFilingServicePort {
     @Resource

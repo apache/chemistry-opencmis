@@ -23,6 +23,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
@@ -37,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 /**
  * CMIS ACL Service.
  */
+@MTOM
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort")
 public class AclService extends AbstractService implements ACLServicePort {
     @Resource

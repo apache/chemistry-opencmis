@@ -28,6 +28,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
@@ -43,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 /**
  * CMIS Repository Service.
  */
+@MTOM
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort")
 public class RepositoryService extends AbstractService implements RepositoryServicePort {
     @Resource

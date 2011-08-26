@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -48,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 /**
  * CMIS Versioning Service.
  */
+@MTOM
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningServicePort")
 public class VersioningService extends AbstractService implements VersioningServicePort {
     @Resource

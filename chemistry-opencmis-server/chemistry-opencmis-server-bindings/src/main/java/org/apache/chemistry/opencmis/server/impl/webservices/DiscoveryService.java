@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -41,6 +42,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 /**
  * CMIS Discovery Service.
  */
+@MTOM
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.DiscoveryServicePort")
 public class DiscoveryService extends AbstractService implements DiscoveryServicePort {
     @Resource
@@ -77,8 +79,8 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.query(repositoryId, statement, searchAllVersions, includeAllowableActions, convert(
-                    IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
+            return convert(service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
+                    convert(IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
                     convert(extension)));
         } catch (Exception e) {
             throw convertException(e);
