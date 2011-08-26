@@ -82,6 +82,9 @@ public class CopyTest extends AbstractSessionTest {
             int count2 = countFolderChildren(folder2);
             f = createResult(FAILURE, "Target folder should have exactly one child but has " + count2 + " children!");
             addResult(assertEquals(1, count2, null, f));
+            
+            deleteObject(doc2);
+            deleteObject(doc1);
         } finally {
             // clean up
             deleteTestFolder();

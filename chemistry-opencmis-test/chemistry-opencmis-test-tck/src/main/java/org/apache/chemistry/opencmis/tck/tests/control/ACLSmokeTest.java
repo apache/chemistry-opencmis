@@ -45,7 +45,7 @@ public class ACLSmokeTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("ACL Test");
-        setDescription("Creates an object and check if the cmis:read ACE is applied!");
+        setDescription("Creates a document and checks its ACL.");
     }
 
     @Override

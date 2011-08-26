@@ -16,30 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.tck.tests.crud;
+package org.apache.chemistry.opencmis.tck.tests.filing;
 
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTestGroup;
 
 /**
- * This test group contains simple Create, Read, Update and Delete tests.
+ * This test group contains multifiling and unfiling tests.
  */
-public class CRUDTestGroup extends AbstractSessionTestGroup {
+public class FilingTestGroup extends AbstractSessionTestGroup {
     @Override
     public void init(Map<String, String> parameters) throws Exception {
         super.init(parameters);
 
-        setName("CRUD Test Group");
-        setDescription("Create, Read, Update, and Delete tests.");
+        setName("Filing Test Group");
+        setDescription("Multifiling anf Unfiling tests.");
 
-        addTest(new CreateAndDeleteFolderTest());
-        addTest(new CreateAndDeleteDocumentTest());
-        addTest(new CreateAndDeleteRelationshipTest());
-        addTest(new UpdateSmokeTest());
-        addTest(new SetAndDeleteContentTest());
-        addTest(new CopyTest());
-        addTest(new MoveTest());
-        addTest(new DeleteTreeTest());
+        addTest(new MultifilingTest());
+        addTest(new UnfilingTest());
     }
 }

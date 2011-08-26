@@ -52,7 +52,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingWorker;
@@ -192,6 +191,10 @@ public class TckDialog {
                     BaseTypeId.CMIS_DOCUMENT.value(), TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE);
             configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
 
+            final JComboBox relationshipComboBox = addComboBox(configPanel, "Test relationship type:",
+                    BaseTypeId.CMIS_RELATIONSHIP.value(), TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE);
+            configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
+
             configPanel.add(new JLabel("Test folder path:"));
             final JTextField testParentFolderField = new JTextField(TestParameters.DEFAULT_TEST_FOLDER_PARENT_VALUE);
             testParentFolderField.setMaximumSize(new Dimension(Short.MAX_VALUE, 10));
@@ -225,6 +228,10 @@ public class TckDialog {
                         parameters.put(TestParameters.DEFAULT_FOLDER_TYPE, (String) folderComboBox.getSelectedItem());
                         parameters.put(TestParameters.DEFAULT_DOCUMENT_TYPE,
                                 (String) documentComboBox.getSelectedItem());
+                        if (relationshipComboBox.isEnabled()) {
+                            parameters.put(TestParameters.DEFAULT_RELATIONSHIP_TYPE,
+                                    (String) relationshipComboBox.getSelectedItem());
+                        }
                         parameters.put(TestParameters.DEFAULT_TEST_FOLDER_PARENT, testParentFolderField.getText());
 
                         runner.setParameters(parameters);
@@ -278,6 +285,7 @@ public class TckDialog {
             comboBox.setSelectedItem(defaultTypeId);
             comboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
             comboBox.setMaximumSize(new Dimension(Short.MAX_VALUE, 10));
+            comboBox.setEnabled(typeIds.length > 0);
             panel.add(comboBox);
 
             return comboBox;

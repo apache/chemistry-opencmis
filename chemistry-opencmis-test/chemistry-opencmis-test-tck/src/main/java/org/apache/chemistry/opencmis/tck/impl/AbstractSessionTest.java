@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +45,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
@@ -59,6 +61,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
@@ -75,6 +78,7 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -366,6 +370,51 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 addResult(createResult(UNEXPECTED_EXCEPTION,
                         "Content of newly created document couldn't be read! Exception: " + e.getMessage(), e, true));
             }
+        } catch (CmisBaseException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Newly created document is invalid! Exception: " + e.getMessage(), e, true));
+        }
+
+        return result;
+    }
+
+    /**
+     * Creates a relationship.
+     */
+    protected Relationship createRelationship(Session session, String name, ObjectId source, ObjectId target) {
+        String objectTypeId = getParameters().get(TestParameters.DEFAULT_RELATIONSHIP_TYPE);
+        if (objectTypeId == null) {
+            objectTypeId = TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE;
+        }
+
+        return createRelationship(session, name, source, target, objectTypeId);
+    }
+
+    /**
+     * Creates a relationship.
+     */
+    protected Relationship createRelationship(Session session, String name, ObjectId source, ObjectId target,
+            String objectTypeId) {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
+        properties.put(PropertyIds.SOURCE_ID, source.getId());
+        properties.put(PropertyIds.TARGET_ID, target.getId());
+
+        ObjectId relId;
+        Relationship result = null;
+
+        try {
+            relId = session.createRelationship(properties);
+            result = (Relationship) session.getObject(relId, SELECT_ALL_NO_CACHE_OC);
+        } catch (Exception e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Relationship could not be created! Exception: " + e.getMessage(), e, true));
+        }
+
+        try {
+            // check the new relationship
+            addResult(checkObject(session, result, getAllProperties(result), "New document object spec compliance"));
         } catch (CmisBaseException e) {
             addResult(createResult(UNEXPECTED_EXCEPTION,
                     "Newly created document is invalid! Exception: " + e.getMessage(), e, true));
@@ -769,6 +818,30 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             // check ACL
             if (object.getAcl() != null && object.getAcl().getAces() != null) {
                 addResult(results, checkACL(session, object.getAcl(), "ACL"));
+            }
+
+            // check policies
+            if (hasPolicies(session)) {
+                try {
+                    List<ObjectData> appliedPolicies = session.getBinding().getPolicyService()
+                            .getAppliedPolicies(session.getRepositoryInfo().getId(), object.getId(), "*", null);
+
+                    if (appliedPolicies == null) {
+                        appliedPolicies = Collections.emptyList();
+                    }
+
+                    List<Policy> objectPolicies = object.getPolicies();
+                    if (objectPolicies == null) {
+                        objectPolicies = Collections.emptyList();
+                    }
+
+                    f = createResult(FAILURE,
+                            "The number of policies returned by getAppliedPolicies() and the number of object policies don't match!");
+                    addResult(results, assertEquals(appliedPolicies.size(), objectPolicies.size(), null, f));
+                } catch (CmisNotSupportedException e) {
+                    addResult(results,
+                            createResult(WARNING, "getAppliedPolicies() not supported for object: " + object.getId()));
+                }
             }
 
             // check relationships

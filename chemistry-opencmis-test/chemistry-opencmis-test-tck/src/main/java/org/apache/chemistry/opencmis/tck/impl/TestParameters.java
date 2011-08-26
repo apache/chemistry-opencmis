@@ -25,6 +25,9 @@ public class TestParameters {
     public static final String DEFAULT_DOCUMENT_TYPE = "org.apache.chemistry.opencmis.tck.default.documentType";
     public static final String DEFAULT_DOCUMENT_TYPE_VALUE = "cmis:document";
 
+    public static final String DEFAULT_RELATIONSHIP_TYPE = "org.apache.chemistry.opencmis.tck.default.relationshipType";
+    public static final String DEFAULT_RELATIONSHIP_TYPE_VALUE = "cmis:relationship";
+
     public static final String DEFAULT_TEST_FOLDER_PARENT = "org.apache.chemistry.opencmis.tck.default.testFolderParent";
     public static final String DEFAULT_TEST_FOLDER_PARENT_VALUE = "/";
 }

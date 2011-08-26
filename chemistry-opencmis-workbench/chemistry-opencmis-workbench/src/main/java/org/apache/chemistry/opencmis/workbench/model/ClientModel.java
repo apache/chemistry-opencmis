@@ -48,6 +48,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 
 public class ClientModel {
@@ -250,10 +251,16 @@ public class ClientModel {
     public synchronized List<ObjectType> getCreateableTypes(String rootTypeId) {
         List<ObjectType> result = new ArrayList<ObjectType>();
 
+        ObjectType rootType = null;
+        try {
+            rootType = clientSession.getSession().getTypeDefinition(rootTypeId);
+        } catch (CmisObjectNotFoundException e) {
+            return result;
+        }
+
         List<Tree<ObjectType>> types = clientSession.getSession().getTypeDescendants(rootTypeId, -1, false);
         addType(types, result);
 
-        ObjectType rootType = clientSession.getSession().getTypeDefinition(rootTypeId);
         boolean isCreatable = (rootType.isCreatable() == null ? true : rootType.isCreatable().booleanValue());
         if (isCreatable) {
             result.add(rootType);
