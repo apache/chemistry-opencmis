@@ -96,13 +96,14 @@
                          <configuration>
                              <target>
                                  <property name="version" value="${maven.version}" />
-                                 <property name="timestamp" value="${maven.build.timestamp}" />
+                                 <property name="timestamp" value="${timestamp}" />
+                                 <property name="revision" value="${buildNumber}" />
                                  <property name="basedir" value="${maven.basedir}" />
                                  <property name="targetdir" value="${project.build.directory}" />
                                  <property name="workbench.jar" value="${project.artifactId}-${project.version}.${project.packaging}" />
                                  
                                  <!-- build timestamp -->
-                                 <echo file="${targetdir}/generated-resources/META-INF/build-timestamp.txt">Version: ${project.version} / Build: ${timestamp}</echo>
+                                 <echo file="${targetdir}/generated-resources/META-INF/build-timestamp.txt">Version: ${project.version} / Revision: ${revision} / Build: ${timestamp}</echo>
                                  
                                  <!-- start scripts -->
                                  <mkdir dir="${targetdir}/start" />
@@ -111,7 +112,7 @@
                                  </copy>
                                  <replace dir="${targetdir}/start">
                                      <replacefilter token="@workbench.jar@" value="${workbench.jar}" />
-                                     <replacefilter token="@version@" value="Version: ${project.version} / Build: ${timestamp}" />
+                                     <replacefilter token="@version@" value="Version: ${project.version} / Revision: ${revision} / Build: ${timestamp}" />
                                  </replace>
                                  <chmod dir="${targetdir}/start" perm="+x" includes="**/*.sh" />
                              </target>

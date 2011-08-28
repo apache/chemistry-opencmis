@@ -26,6 +26,42 @@
         <parentBasedir>../../</parentBasedir>
     </properties>
     
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <property name="version" value="${maven.version}" />
+                                <property name="timestamp" value="${timestamp}" />
+                                <property name="revision" value="${buildNumber}" />
+                                <property name="targetdir" value="${project.build.directory}" />
+                                 
+                                 <!-- build timestamp -->
+                                 <echo file="${targetdir}/generated-resources/META-INF/build-timestamp.txt">Version: ${project.version} / Revision: ${revision} / Build: ${timestamp}</echo>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
     <dependencies>
         <dependency>
             <groupId>org.apache.chemistry.opencmis</groupId>

@@ -40,6 +40,8 @@ public abstract class AbstractRunner {
 
     public static final String OVERRIDE_KEY = "org.apache.chemistry";
     public static final String DEFAULT_TCK_GROUPS = "/cmis-tck-groups.txt";
+    public static final String TCK_BUILD_TIMESTAMP = "/META-INF/build-timestamp.txt";
+    public static final String TCK_BUILD_TIMESTAMP_PARAMETER = "org.apache.chemistry.opencmis.tck.timestamp";
 
     private Map<String, String> parameters;
     private final List<CmisTestGroup> groups = new ArrayList<CmisTestGroup>();
@@ -62,6 +64,8 @@ public abstract class AbstractRunner {
             parameters.put(key.toString(), System.getProperties().getProperty(key.toString()));
         }
 
+        // set TCK build timestamp
+        parameters.put(TCK_BUILD_TIMESTAMP_PARAMETER, loadTCKTimestamp());
     }
 
     public void loadParameters(File file) throws Exception {
@@ -111,6 +115,27 @@ public abstract class AbstractRunner {
 
     public Map<String, String> getParameters() {
         return parameters;
+    }
+
+    private String loadTCKTimestamp() {
+        StringBuilder result = new StringBuilder();
+
+        InputStream stream = getClass().getResourceAsStream(TCK_BUILD_TIMESTAMP);
+        if (stream != null) {
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+
+                String s = null;
+                while ((s = br.readLine()) != null) {
+                    result.append(s);
+                }
+
+                br.close();
+            } catch (Exception e) {
+            }
+        }
+
+        return result.toString();
     }
 
     // --- groups ---
