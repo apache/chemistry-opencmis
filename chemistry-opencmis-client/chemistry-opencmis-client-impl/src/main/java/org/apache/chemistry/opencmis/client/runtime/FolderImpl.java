@@ -401,7 +401,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
     }
 
     @Override
-    public List<Folder> getParents() {
+    public List<Folder> getParents(OperationContext context) {
         if (isRootFolder()) {
             return Collections.emptyList();
         }
@@ -424,8 +424,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         }
 
         // fetch the object and make sure it is a folder
-        ObjectId parentId = getSession().createObjectId((String) idProperty.getFirstValue());
-        CmisObject parentFolder = getSession().getObject(parentId);
+        CmisObject parentFolder = getSession().getObject((String) idProperty.getFirstValue(), context);
         if (!(parentFolder instanceof Folder)) {
             // the repository sent an object that is not a folder...
             throw new CmisRuntimeException("Repository sent invalid data! Object is not a folder!");

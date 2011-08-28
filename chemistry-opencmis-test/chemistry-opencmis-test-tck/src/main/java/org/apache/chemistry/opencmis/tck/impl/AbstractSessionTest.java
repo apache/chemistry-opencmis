@@ -376,6 +376,22 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     "Newly created document is invalid! Exception: " + e.getMessage(), e, true));
         }
 
+        if (parent != null) {
+            List<Folder> parents = result.getParents(SELECT_ALL_NO_CACHE_OC);
+            boolean found = false;
+            for (Folder folder : parents) {
+                if (parent.getId().equals(folder.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                addResult(createResult(FAILURE,
+                        "The folder the document has been created in is not in the list of the document parents!"));
+            }
+        }
+
         return result;
     }
 
@@ -1601,7 +1617,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 CmisObject objectById = session.getObject(child.getId(), SELECT_ALL_NO_CACHE_OC);
 
                 f = createResult(FAILURE, "Child and object fetched by id don't match! Id: " + child.getId());
-                addResult(results, assertEquals(child, objectById, null, f));
+                addResult(results, assertEquals(child, objectById, null, f, false, false));
 
                 // get object by path and compare
                 List<String> paths = ((FileableCmisObject) child).getPaths();
@@ -1612,8 +1628,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     for (String path : paths) {
                         CmisObject objectByPath = session.getObjectByPath(path, SELECT_ALL_NO_CACHE_OC);
 
-                        f = createResult(FAILURE, "Child and object fetched by path don't match! Id: " + child.getId());
-                        addResult(results, assertEquals(child, objectByPath, null, f));
+                        f = createResult(FAILURE, "Child and object fetched by path don't match! Id: " + child.getId()
+                                + " / Path: " + path);
+                        addResult(results, assertEquals(child, objectByPath, null, f, false, false));
+
+                        f = createResult(FAILURE, "Object fetched by id and object fetched by path don't match! Id: "
+                                + child.getId() + " / Path: " + path);
+                        addResult(results, assertEquals(objectById, objectByPath, null, f, true, true));
                     }
                 }
             }
@@ -2209,7 +2230,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     }
 
     protected CmisTestResult assertEquals(CmisObject expected, CmisObject actual, CmisTestResult success,
-            CmisTestResult failure) {
+            CmisTestResult failure, boolean checkAcls, boolean checkPolicies) {
 
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
@@ -2248,10 +2269,75 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         f = createResult(FAILURE, "Allowable actions don't match!");
         addResult(results, assertEquals(expected.getAllowableActions(), actual.getAllowableActions(), null, f));
 
-        // TODO: compare ACLs
-        // TODO: compare renditions
-        // TODO: compare policies
-        // TODO: compare relationships
+        if (checkAcls) {
+            f = createResult(FAILURE, "ACLs don't match!");
+            addResult(results, assertEquals(expected.getAcl(), actual.getAcl(), null, f));
+        }
+
+        if (checkPolicies) {
+            f = createResult(FAILURE, "Policies don't match!");
+            addResult(results, assertEqualObjectList(expected.getPolicies(), actual.getPolicies(), null, f));
+        }
+
+        f = createResult(FAILURE, "Relationships don't match!");
+        addResult(results, assertEqualObjectList(expected.getRelationships(), actual.getRelationships(), null, f));
+
+        f = createResult(FAILURE, "Renditions don't match!");
+        addResult(results, assertEqualRenditionLists(expected.getRenditions(), actual.getRenditions(), null, f));
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEqualObjectList(List<? extends CmisObject> expected,
+            List<? extends CmisObject> actual, CmisTestResult success, CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected list of CMIS objects is null, but actual list of CMIS objects is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual list of CMIS objects is null, but expected list of CMIS objects is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (expected.size() != actual.size()) {
+            addResult(
+                    results,
+                    createResult(
+                            CmisTestResultStatus.INFO,
+                            "Object list sizes don't match! expected: " + expected.size() + " / actual: "
+                                    + actual.size()));
+        } else {
+            for (int i = 0; i < expected.size(); i++) {
+                f = createResult(FAILURE, "Objects at position " + i + "  dont't match!");
+                addResult(results, assertEquals(expected.get(i), actual.get(i), null, f, true, false));
+            }
+        }
 
         if (getWorst(results).getLevel() <= OK.getLevel()) {
             for (CmisTestResult result : results) {
@@ -2341,6 +2427,254 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         f = createResult(FAILURE, "Allowable action sets don't match!");
         addResult(results, assertEqualSet(expected.getAllowableActions(), actual.getAllowableActions(), null, f));
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEquals(Acl expected, Acl actual, CmisTestResult success, CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected ACL is null, but actual ACL is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual ACL is null, but expected ACL is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        f = createResult(FAILURE, "ACEs don't match!");
+        addResult(results, assertEqualAceLists(expected.getAces(), actual.getAces(), null, f));
+
+        f = createResult(FAILURE, "Exact flags dont't match!");
+        addResult(results, assertEquals(expected.isExact(), actual.isExact(), null, f));
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEqualAceLists(List<Ace> expected, List<Ace> actual, CmisTestResult success,
+            CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if (expected == null && actual == null) {
+            return success;
+        }
+
+        if (expected == null) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Expected ACE list is null!"));
+        }
+
+        if (actual == null) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Actual ACE list is null!"));
+        }
+
+        if (expected.size() != actual.size()) {
+            addResult(
+                    results,
+                    createResult(CmisTestResultStatus.INFO, "ACE list sizes don't match! expected: " + expected.size()
+                            + " / actual: " + actual.size()));
+        } else {
+            for (int i = 0; i < expected.size(); i++) {
+                f = createResult(FAILURE, "ACEs at position " + i + "  dont't match!");
+                addResult(results, assertEquals(expected.get(i), actual.get(i), null, f));
+            }
+        }
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEquals(Ace expected, Ace actual, CmisTestResult success, CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected ACE is null, but actual ACE is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual ACE is null, but expected ACE is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        f = createResult(FAILURE, "Principal ids dont't match!");
+        addResult(results, assertEquals(expected.getPrincipalId(), actual.getPrincipalId(), null, f));
+
+        f = createResult(FAILURE, "Permissions dont't match!");
+        addResult(results, assertEqualLists(expected.getPermissions(), actual.getPermissions(), null, f));
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEqualRenditionLists(List<Rendition> expected, List<Rendition> actual,
+            CmisTestResult success, CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if (expected == null && actual == null) {
+            return success;
+        }
+
+        if (expected == null) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Expected rendition list is null!"));
+        }
+
+        if (actual == null) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Actual rendition list is null!"));
+        }
+
+        if (expected.size() != actual.size()) {
+            addResult(
+                    results,
+                    createResult(
+                            CmisTestResultStatus.INFO,
+                            "Rendition list sizes don't match! expected: " + expected.size() + " / actual: "
+                                    + actual.size()));
+        } else {
+            for (int i = 0; i < expected.size(); i++) {
+                f = createResult(FAILURE, "Renditions at position " + i + "  dont't match!");
+                addResult(results, assertEquals(expected.get(i), actual.get(i), null, f));
+            }
+        }
+
+        if (getWorst(results).getLevel() <= OK.getLevel()) {
+            for (CmisTestResult result : results) {
+                addResultChild(success, result);
+            }
+
+            return success;
+        } else {
+            for (CmisTestResult result : results) {
+                addResultChild(failure, result);
+            }
+
+            return failure;
+        }
+    }
+
+    protected CmisTestResult assertEquals(Rendition expected, Rendition actual, CmisTestResult success,
+            CmisTestResult failure) {
+
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if ((expected == null) && (actual == null)) {
+            return success;
+        }
+
+        if (expected == null) {
+            f = createResult(FAILURE, "Expected rendition is null, but actual rendition is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        if (actual == null) {
+            f = createResult(FAILURE, "Actual rendition is null, but expected rendition is not!");
+            addResultChild(failure, f);
+
+            return failure;
+        }
+
+        f = createResult(FAILURE, "Stream ids dont't match!");
+        addResult(results, assertEquals(expected.getStreamId(), actual.getStreamId(), null, f));
+
+        f = createResult(FAILURE, "Kinds dont't match!");
+        addResult(results, assertEquals(expected.getKind(), actual.getKind(), null, f));
+
+        f = createResult(FAILURE, "MIME types dont't match!");
+        addResult(results, assertEquals(expected.getMimeType(), actual.getMimeType(), null, f));
+
+        f = createResult(FAILURE, "Titles dont't match!");
+        addResult(results, assertEquals(expected.getTitle(), actual.getTitle(), null, f));
+
+        f = createResult(FAILURE, "Lengths dont't match!");
+        addResult(results, assertEquals(expected.getLength(), actual.getLength(), null, f));
+
+        f = createResult(FAILURE, "Heights dont't match!");
+        addResult(results, assertEquals(expected.getBigHeight(), actual.getBigHeight(), null, f));
+
+        f = createResult(FAILURE, "Widths dont't match!");
+        addResult(results, assertEquals(expected.getBigWidth(), actual.getBigWidth(), null, f));
+
+        f = createResult(FAILURE, "Rendition document ids dont't match!");
+        addResult(results, assertEquals(expected.getRenditionDocumentId(), actual.getRenditionDocumentId(), null, f));
 
         if (getWorst(results).getLevel() <= OK.getLevel()) {
             for (CmisTestResult result : results) {

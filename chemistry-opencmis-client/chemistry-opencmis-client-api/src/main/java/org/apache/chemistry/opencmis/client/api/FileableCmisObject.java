@@ -45,6 +45,11 @@ public interface FileableCmisObject extends CmisObject {
     List<Folder> getParents();
 
     /**
+     * Returns the parents of this object.
+     */
+    List<Folder> getParents(OperationContext context);
+
+    /**
      * Returns the paths of this object.
      */
     List<String> getPaths();
