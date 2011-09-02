@@ -113,7 +113,7 @@ public class AuthHandler implements MessageHandler<MessageHandlerContext> {
 
             for (Object uno : sht.getValue().getAny()) {
                 if ((uno instanceof JAXBElement) && ((JAXBElement<?>) uno).getValue() instanceof UsernameTokenType) {
-                    UsernameTokenType utt = (UsernameTokenType) ((JAXBElement<UsernameTokenType>) uno).getValue();
+                    UsernameTokenType utt = ((JAXBElement<UsernameTokenType>) uno).getValue();
                     username = utt.getUsername().getValue();
 
                     for (Object po : utt.getAny()) {

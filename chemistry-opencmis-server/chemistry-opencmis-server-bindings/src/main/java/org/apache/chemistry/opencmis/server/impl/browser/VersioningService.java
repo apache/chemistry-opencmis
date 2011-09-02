@@ -18,6 +18,10 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWABLE_ACTIONS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
@@ -28,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.impl.browser.json.JSONConverter;
@@ -42,16 +45,13 @@ public class VersioningService {
     private VersioningService() {
     }
 
-    /**
-     * getAllVersions.
-     */
     @SuppressWarnings("unchecked")
     public static void getAllVersions(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String objectId = (String) context.get(BrowserBindingUtils.CONTEXT_OBJECT_ID);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String filter = getStringParameter(request, PARAM_FILTER);
+        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
 
         // execute
         List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, null, filter,
@@ -68,6 +68,6 @@ public class VersioningService {
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
-        BrowserBindingUtils.writeJSON(jsonVersions, request, response);
+        writeJSON(jsonVersions, request, response);
     }
 }

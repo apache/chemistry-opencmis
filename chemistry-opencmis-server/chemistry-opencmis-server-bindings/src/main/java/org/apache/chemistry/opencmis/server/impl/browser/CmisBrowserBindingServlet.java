@@ -18,7 +18,11 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.*;
+import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.ERROR_EXCEPTION;
+import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.ERROR_MESSAGE;
+import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.ERROR_STACKTRACE;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -93,7 +97,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         rootDispatcher = new Dispatcher();
 
         try {
-            repositoryDispatcher.addResource("", METHOD_GET, RepositoryService.class, "getRepositoryInfo");
+            repositoryDispatcher.addResource("", METHOD_GET,
+                    RepositoryService.class, "getRepositoryInfo");
             repositoryDispatcher.addResource(SELECTOR_LAST_RESULT, METHOD_GET,
                     RepositoryService.class, "getLastResult");
             repositoryDispatcher.addResource(SELECTOR_TYPE_CHILDREN, METHOD_GET,
@@ -106,7 +111,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     DiscoveryService.class, "query");
             repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST,
                     DiscoveryService.class, "query");
-            repositoryDispatcher.addResource(CMISACTION_CREATEDOCUMENT, METHOD_POST,
+            repositoryDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST,
                     ObjectService.class, "createDocument");
 
             rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class,
@@ -123,10 +128,17 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     NavigationService.class, "getObjectParents");
             rootDispatcher.addResource(SELECTOR_VERSIONS, METHOD_GET,
                     VersioningService.class, "getAllVersions");
-            rootDispatcher.addResource(CMISACTION_CREATEDOCUMENT, METHOD_POST,
+
+            rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST,
                     ObjectService.class, "createDocument");
-            rootDispatcher.addResource(CMISACTION_CREATEFOLDER, METHOD_POST,
+            rootDispatcher.addResource(CMISACTION_CREATE_FOLDER, METHOD_POST,
                     ObjectService.class, "createFolder");
+            rootDispatcher.addResource(CMISACTION_SET_CONTENT, METHOD_POST,
+                    ObjectService.class, "setContentStream");
+            rootDispatcher.addResource(CMISACTION_DELETE, METHOD_POST,
+                    ObjectService.class, "deleteObject");
+            rootDispatcher.addResource(CMISACTION_DELETE_TREE, METHOD_POST,
+                    ObjectService.class, "deleteTree");
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);
         }
@@ -144,7 +156,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {
-                if ((context == null) || (context.getUsername() == null)) {
+                if (context == null || context.getUsername() == null) {
                     response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\"");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
                 } else {
@@ -203,11 +215,11 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             boolean methodFound = false;
 
             if (METHOD_GET.equals(method)) {
-                String selector = HttpUtils.getStringParameter(request, BrowserBindingUtils.PARAM_SELECTOR);
-                String objectId = getStringParameter(request, Constants.PARAM_OBJECT_ID);
+                String selector = getStringParameter(request, PARAM_SELECTOR);
+                String objectId = getStringParameter(request, PARAM_OBJECT_ID);
 
                 // add object id and object base type id to context
-                BrowserBindingUtils.prepareContext(context, callUrl, service, repositoryId, objectId, null, request);
+                prepareContext(context, callUrl, service, repositoryId, objectId, null, request);
 
                 // dispatch
                 if (callUrl == CallUrl.REPOSITORY) {
@@ -221,8 +233,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     // set default method if necessary
                     if (selector == null) {
                         try {
-                            BaseTypeId basetype = BaseTypeId.fromValue((String) context
-                                    .get(BrowserBindingUtils.CONTEXT_BASETYPE_ID));
+                            BaseTypeId basetype = BaseTypeId.fromValue((String) context.get(CONTEXT_BASETYPE_ID));
                             switch (basetype) {
                             case CMIS_DOCUMENT:
                                 selector = SELECTOR_CONTENT;
@@ -245,16 +256,16 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             } else if (METHOD_POST.equals(method)) {
                 POSTHttpServletRequestWrapper postRequest = new POSTHttpServletRequestWrapper(request);
 
-                String cmisaction = HttpUtils.getStringParameter(postRequest, BrowserBindingUtils.CONTROL_CMISACTION);
-                String objectId = HttpUtils.getStringParameter(postRequest, BrowserBindingUtils.CONTROL_OBJECT_ID);
-                String transaction = HttpUtils.getStringParameter(postRequest, BrowserBindingUtils.CONTROL_TRANSACTION);
+                String cmisaction = getStringParameter(postRequest, CONTROL_CMISACTION);
+                String objectId = getStringParameter(postRequest, CONTROL_OBJECT_ID);
+                String transaction = getStringParameter(postRequest, CONTROL_TRANSACTION);
 
-                if ((cmisaction == null) || (cmisaction.length() == 0)) {
+                if (cmisaction == null || cmisaction.length() == 0) {
                     throw new CmisNotSupportedException("Unknown action");
                 }
 
                 // add object id and object base type id to context
-                BrowserBindingUtils.prepareContext(context, callUrl, service, repositoryId, objectId, transaction,
+                prepareContext(context, callUrl, service, repositoryId, objectId, transaction,
                         postRequest);
 
                 // dispatch
@@ -330,24 +341,24 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         }
 
         response.setStatus(statusCode);
-        response.setContentType(BrowserBindingUtils.JSON_MIME_TYPE);
+        response.setContentType(JSON_MIME_TYPE);
         if (context != null) {
-            BrowserBindingUtils.setCookie(request, response, context.getRepositoryId(),
-                    (String) context.get(BrowserBindingUtils.CONTEXT_TRANSACTION),
-                    BrowserBindingUtils.createCookieValue(statusCode, null, exceptionName, ex.getMessage()));
+            setCookie(request, response, context.getRepositoryId(),
+                    (String) context.get(CONTEXT_TRANSACTION),
+                    createCookieValue(statusCode, null, exceptionName, ex.getMessage()));
         }
 
         JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put(JSONConstants.ERROR_EXCEPTION, exceptionName);
-        jsonResponse.put(JSONConstants.ERROR_MESSAGE, ex.getMessage());
+        jsonResponse.put(ERROR_EXCEPTION, exceptionName);
+        jsonResponse.put(ERROR_MESSAGE, ex.getMessage());
 
         String st = ExceptionHelper.getStacktraceAsString(ex);
         if (st != null) {
-            jsonResponse.put(JSONConstants.ERROR_STACKTRACE, st);
+            jsonResponse.put(ERROR_STACKTRACE, st);
         }
 
         try {
-            BrowserBindingUtils.writeJSON(jsonResponse, request, response);
+            writeJSON(jsonResponse, request, response);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

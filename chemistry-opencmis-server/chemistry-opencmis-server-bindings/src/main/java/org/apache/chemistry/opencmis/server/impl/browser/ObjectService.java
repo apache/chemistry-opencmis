@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import static org.apache.chemistry.opencmis.commons.impl.Constants.*;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.*;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -36,11 +38,11 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.server.impl.browser.json.JSONConverter;
 import org.json.simple.JSONObject;
 
@@ -54,26 +56,23 @@ public final class ObjectService {
     private ObjectService() {
     }
 
-    /**
-     * createDocument.
-     */
     public static void createDocument(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String folderId = (String) context.get(BrowserBindingUtils.CONTEXT_OBJECT_ID);
-        VersioningState versioningState = getEnumParameter(request, Constants.PARAM_VERSIONIG_STATE,
+        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
+        VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE,
                 VersioningState.class);
-        String transaction = getStringParameter(request, BrowserBindingUtils.PARAM_TRANSACTION);
+        String transaction = getStringParameter(request, PARAM_TRANSACTION);
 
         ControlParser cp = new ControlParser(request);
 
         TypeCache typeCache = new TypeCache(repositoryId, service);
 
         String newObjectId = service.createDocument(repositoryId,
-                BrowserBindingUtils.createProperties(cp, null, typeCache), folderId,
-                BrowserBindingUtils.createContentStream(request), versioningState,
-                BrowserBindingUtils.createPolicies(cp), BrowserBindingUtils.createAddAcl(cp),
-                BrowserBindingUtils.createRemoveAcl(cp), null);
+                createProperties(cp, null, typeCache), folderId,
+                createContentStream(request), versioningState,
+                createPolicies(cp), createAddAcl(cp),
+                createRemoveAcl(cp), null);
 
         ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
         if (objectInfo == null) {
@@ -88,29 +87,26 @@ public final class ObjectService {
         JSONObject jsonObject = JSONConverter.convert(object, typeCache);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
-        BrowserBindingUtils.setCookie(request, response, repositoryId, transaction,
-                BrowserBindingUtils.createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+        setCookie(request, response, repositoryId, transaction,
+                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
-        BrowserBindingUtils.writeJSON(jsonObject, request, response);
+        writeJSON(jsonObject, request, response);
     }
 
-    /**
-     * createFolder.
-     */
     public static void createFolder(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String folderId = (String) context.get(BrowserBindingUtils.CONTEXT_OBJECT_ID);
-        String transaction = getStringParameter(request, BrowserBindingUtils.PARAM_TRANSACTION);
+        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
+        String transaction = getStringParameter(request, PARAM_TRANSACTION);
 
         ControlParser cp = new ControlParser(request);
 
         TypeCache typeCache = new TypeCache(repositoryId, service);
 
         String newObjectId = service.createFolder(repositoryId,
-                BrowserBindingUtils.createProperties(cp, null, typeCache), folderId,
-                BrowserBindingUtils.createPolicies(cp), BrowserBindingUtils.createAddAcl(cp),
-                BrowserBindingUtils.createRemoveAcl(cp), null);
+                createProperties(cp, null, typeCache), folderId,
+                createPolicies(cp), createAddAcl(cp),
+                createRemoveAcl(cp), null);
 
         ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
         if (objectInfo == null) {
@@ -125,32 +121,29 @@ public final class ObjectService {
         JSONObject jsonObject = JSONConverter.convert(object, typeCache);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
-        BrowserBindingUtils.setCookie(request, response, repositoryId, transaction,
-                BrowserBindingUtils.createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+        setCookie(request, response, repositoryId, transaction,
+                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
-        BrowserBindingUtils.writeJSON(jsonObject, request, response);
+        writeJSON(jsonObject, request, response);
     }
 
-    /**
-     * getObject.
-     */
     public static void getObject(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String objectId = (String) context.get(BrowserBindingUtils.CONTEXT_OBJECT_ID);
-        ReturnVersion returnVersion = getEnumParameter(request, Constants.PARAM_RETURN_VERSION, ReturnVersion.class);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        ReturnVersion returnVersion = getEnumParameter(request, PARAM_RETURN_VERSION, ReturnVersion.class);
+        String filter = getStringParameter(request, PARAM_FILTER);
+        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
+        IncludeRelationships includeRelationships = getEnumParameter(request, PARAM_RELATIONSHIPS,
                 IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        Boolean includePolicyIds = getBooleanParameter(request, Constants.PARAM_POLICY_IDS);
-        Boolean includeAcl = getBooleanParameter(request, Constants.PARAM_ACL);
+        String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
+        Boolean includePolicyIds = getBooleanParameter(request, PARAM_POLICY_IDS);
+        Boolean includeAcl = getBooleanParameter(request, PARAM_ACL);
 
         // execute
-        ObjectData object = null;
+        ObjectData object;
 
-        if ((returnVersion == ReturnVersion.LATEST) || (returnVersion == ReturnVersion.LASTESTMAJOR)) {
+        if (returnVersion == ReturnVersion.LATEST || returnVersion == ReturnVersion.LASTESTMAJOR) {
             object = service.getObjectOfLatestVersion(repositoryId, objectId, null,
                     returnVersion == ReturnVersion.LASTESTMAJOR, filter, includeAllowableActions, includeRelationships,
                     renditionFilter, includePolicyIds, includeAcl, null);
@@ -167,17 +160,14 @@ public final class ObjectService {
         JSONObject jsonObject = JSONConverter.convert(object, typeCache);
 
         response.setStatus(HttpServletResponse.SC_OK);
-        BrowserBindingUtils.writeJSON(jsonObject, request, response);
+        writeJSON(jsonObject, request, response);
     }
 
-    /**
-     * getContentStream.
-     */
     public static void getContentStream(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String objectId = (String) context.get(BrowserBindingUtils.CONTEXT_OBJECT_ID);
-        String streamId = getStringParameter(request, Constants.PARAM_STREAM_ID);
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String streamId = getStringParameter(request, PARAM_STREAM_ID);
 
         BigInteger offset = context.getOffset();
         BigInteger length = context.getLength();
@@ -185,17 +175,17 @@ public final class ObjectService {
         // execute
         ContentStream content = service.getContentStream(repositoryId, objectId, streamId, offset, length, null);
 
-        if ((content == null) || (content.getStream() == null)) {
+        if (content == null || content.getStream() == null) {
             throw new CmisRuntimeException("Content stream is null!");
         }
 
         String contentType = content.getMimeType();
         if (contentType == null) {
-            contentType = Constants.MEDIATYPE_OCTETSTREAM;
+            contentType = MEDIATYPE_OCTETSTREAM;
         }
 
         // set headers
-        if ((offset == null) && (length == null)) {
+        if (offset == null && length == null) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
@@ -215,4 +205,40 @@ public final class ObjectService {
         in.close();
         out.flush();
     }
+
+    public static void deleteObject(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        // TODO: more parameters
+
+        service.deleteObject(repositoryId, objectId, null, null);
+
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    }
+
+    public static void deleteTree(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        // TODO: more parameters
+
+        service.deleteTree(repositoryId, objectId, null, null, null, null);
+
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    }
+
+    // TODO: doesn't work
+    public static void setContentStream(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+
+        // execute
+        service.setContentStream(repositoryId, new Holder<String>(objectId),
+                true, null, createContentStream(request), null);
+
+        getObject(context, service, repositoryId, request, response);
+    }
+
 }

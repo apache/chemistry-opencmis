@@ -50,9 +50,6 @@ public class Dispatcher implements Serializable {
 
     private final Map<String, Method> methodMap = new HashMap<String, Method>();
 
-    public Dispatcher() {
-    }
-
     /**
      * Connects a resource and HTTP method with a class and a class method.
      */

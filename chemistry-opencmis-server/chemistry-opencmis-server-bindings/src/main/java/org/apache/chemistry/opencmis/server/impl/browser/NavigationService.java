@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import static org.apache.chemistry.opencmis.commons.impl.Constants.*;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
@@ -55,16 +57,16 @@ public final class NavigationService {
     public static void getChildren(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String folderId = (String) context.get(BrowserBindingUtils.CONTEXT_OBJECT_ID);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        String orderBy = getStringParameter(request, Constants.PARAM_ORDER_BY);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
+        String filter = getStringParameter(request, PARAM_FILTER);
+        String orderBy = getStringParameter(request, PARAM_ORDER_BY);
+        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
+        IncludeRelationships includeRelationships = getEnumParameter(request, PARAM_RELATIONSHIPS,
                 IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
-        BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
-        BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
+        String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
+        Boolean includePathSegment = getBooleanParameter(request, PARAM_PATH_SEGMENT);
+        BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
+        BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
 
         // execute
         ObjectInFolderList children = service.getChildren(repositoryId, folderId, filter, orderBy,
@@ -89,14 +91,14 @@ public final class NavigationService {
     public static void getDescendants(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String folderId = (String) context.get(BrowserBindingUtils.CONTEXT_OBJECT_ID);
-        BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
+        BigInteger depth = getBigIntegerParameter(request, PARAM_DEPTH);
+        String filter = getStringParameter(request, PARAM_FILTER);
+        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
+        IncludeRelationships includeRelationships = getEnumParameter(request, PARAM_RELATIONSHIPS,
                 IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
+        String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
+        Boolean includePathSegment = getBooleanParameter(request, PARAM_PATH_SEGMENT);
 
         // execute
         List<ObjectInFolderContainer> descendants = service.getDescendants(repositoryId, folderId, depth, filter,
@@ -123,14 +125,14 @@ public final class NavigationService {
     public static void getFolderTree(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String folderId = (String) context.get(BrowserBindingUtils.CONTEXT_OBJECT_ID);
-        BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
+        BigInteger depth = getBigIntegerParameter(request, PARAM_DEPTH);
+        String filter = getStringParameter(request, PARAM_FILTER);
+        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
+        IncludeRelationships includeRelationships = getEnumParameter(request, PARAM_RELATIONSHIPS,
                 IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
+        String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
+        Boolean includePathSegment = getBooleanParameter(request, PARAM_PATH_SEGMENT);
 
         // execute
         List<ObjectInFolderContainer> folderTree = service.getFolderTree(repositoryId, folderId, depth, filter,
@@ -157,13 +159,13 @@ public final class NavigationService {
     public static void getObjectParents(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String objectId = (String) context.get(BrowserBindingUtils.CONTEXT_OBJECT_ID);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String filter = getStringParameter(request, PARAM_FILTER);
+        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
+        IncludeRelationships includeRelationships = getEnumParameter(request, PARAM_RELATIONSHIPS,
                 IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        Boolean includeRelativePathSegment = getBooleanParameter(request, Constants.PARAM_RELATIVE_PATH_SEGMENT);
+        String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
+        Boolean includeRelativePathSegment = getBooleanParameter(request, PARAM_RELATIVE_PATH_SEGMENT);
 
         // execute
         List<ObjectParentData> parents = service.getObjectParents(repositoryId, objectId, filter,

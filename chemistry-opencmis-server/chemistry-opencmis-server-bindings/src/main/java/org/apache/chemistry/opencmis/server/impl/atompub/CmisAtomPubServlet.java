@@ -53,16 +53,19 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.*;
+import static org.apache.chemistry.opencmis.server.shared.Dispatcher.*;
+
 /**
  * CMIS AtomPub servlet.
  */
 public class CmisAtomPubServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-
     public static final String PARAM_CALL_CONTEXT_HANDLER = "callContextHandler";
 
     private static final Log LOG = LogFactory.getLog(CmisAtomPubServlet.class.getName());
+
+    private static final long serialVersionUID = 1L;
 
     private Dispatcher dispatcher;
     private CallContextHandler callContextHandler;
@@ -86,68 +89,71 @@ public class CmisAtomPubServlet extends HttpServlet {
         dispatcher = new Dispatcher();
 
         try {
-            dispatcher.addResource(AtomPubUtils.RESOURCE_TYPES, Dispatcher.METHOD_GET, RepositoryService.class,
+            dispatcher.addResource(RESOURCE_TYPES, METHOD_GET, RepositoryService.class,
                     "getTypeChildren");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_TYPESDESC, Dispatcher.METHOD_GET, RepositoryService.class,
+            dispatcher.addResource(RESOURCE_TYPESDESC, METHOD_GET, RepositoryService.class,
                     "getTypeDescendants");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_TYPE, Dispatcher.METHOD_GET, RepositoryService.class,
+            dispatcher.addResource(RESOURCE_TYPE, METHOD_GET, RepositoryService.class,
                     "getTypeDefinition");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_CHILDREN, Dispatcher.METHOD_GET, NavigationService.class,
+            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_GET, NavigationService.class,
                     "getChildren");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_DESCENDANTS, Dispatcher.METHOD_GET, NavigationService.class,
+            dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_GET, NavigationService.class,
                     "getDescendants");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_FOLDERTREE, Dispatcher.METHOD_GET, NavigationService.class,
+            dispatcher.addResource(RESOURCE_FOLDERTREE, METHOD_GET, NavigationService.class,
                     "getFolderTree");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_PARENTS, Dispatcher.METHOD_GET, NavigationService.class,
+            dispatcher.addResource(RESOURCE_PARENTS, METHOD_GET, NavigationService.class,
                     "getObjectParents");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_CHECKEDOUT, Dispatcher.METHOD_GET, NavigationService.class,
+            dispatcher.addResource(RESOURCE_CHECKEDOUT, METHOD_GET, NavigationService.class,
                     "getCheckedOutDocs");
-            dispatcher
-                    .addResource(AtomPubUtils.RESOURCE_ENTRY, Dispatcher.METHOD_GET, ObjectService.class, "getObject");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_OBJECTBYID, Dispatcher.METHOD_GET, ObjectService.class,
+            dispatcher.addResource(RESOURCE_ENTRY, METHOD_GET, ObjectService.class,
                     "getObject");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_OBJECTBYPATH, Dispatcher.METHOD_GET, ObjectService.class,
+            dispatcher.addResource(RESOURCE_OBJECTBYID, METHOD_GET, ObjectService.class,
+                    "getObject");
+            dispatcher.addResource(RESOURCE_OBJECTBYPATH, METHOD_GET, ObjectService.class,
                     "getObjectByPath");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_ALLOWABLEACIONS, Dispatcher.METHOD_GET, ObjectService.class,
+            dispatcher.addResource(RESOURCE_ALLOWABLEACIONS, METHOD_GET, ObjectService.class,
                     "getAllowableActions");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_CONTENT, Dispatcher.METHOD_GET, ObjectService.class,
+            dispatcher.addResource(RESOURCE_CONTENT, METHOD_GET, ObjectService.class,
                     "getContentStream");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_CONTENT, Dispatcher.METHOD_PUT, ObjectService.class,
+            dispatcher.addResource(RESOURCE_CONTENT, METHOD_PUT, ObjectService.class,
                     "setContentStream");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_CONTENT, Dispatcher.METHOD_DELETE, ObjectService.class,
+            dispatcher.addResource(RESOURCE_CONTENT, METHOD_DELETE, ObjectService.class,
                     "deleteContentStream");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_CHILDREN, Dispatcher.METHOD_POST, ObjectService.class,
+            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_POST, ObjectService.class,
                     "create");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_RELATIONSHIPS, Dispatcher.METHOD_POST, ObjectService.class,
+            dispatcher.addResource(RESOURCE_RELATIONSHIPS, METHOD_POST, ObjectService.class,
                     "createRelationship");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, Dispatcher.METHOD_PUT, ObjectService.class,
+            dispatcher.addResource(RESOURCE_ENTRY, METHOD_PUT, ObjectService.class,
                     "updateProperties");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_ENTRY, Dispatcher.METHOD_DELETE, ObjectService.class,
+            dispatcher.addResource(RESOURCE_ENTRY, METHOD_DELETE, ObjectService.class,
                     "deleteObject");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_DESCENDANTS, Dispatcher.METHOD_DELETE, ObjectService.class,
+            dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_DELETE, ObjectService.class,
                     "deleteTree");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_CHECKEDOUT, Dispatcher.METHOD_POST, VersioningService.class,
+            dispatcher.addResource(RESOURCE_CHECKEDOUT, METHOD_POST, VersioningService.class,
                     "checkOut");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_VERSIONS, Dispatcher.METHOD_GET, VersioningService.class,
+            dispatcher.addResource(RESOURCE_VERSIONS, METHOD_GET, VersioningService.class,
                     "getAllVersions");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_VERSIONS, Dispatcher.METHOD_DELETE, VersioningService.class,
+            dispatcher.addResource(RESOURCE_VERSIONS, METHOD_DELETE, VersioningService.class,
                     "deleteAllVersions");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_QUERY, Dispatcher.METHOD_GET, DiscoveryService.class, "query");
-            dispatcher
-                    .addResource(AtomPubUtils.RESOURCE_QUERY, Dispatcher.METHOD_POST, DiscoveryService.class, "query");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_CHANGES, Dispatcher.METHOD_GET, DiscoveryService.class,
+            dispatcher.addResource(RESOURCE_QUERY, METHOD_GET, DiscoveryService.class,
+                    "query");
+            dispatcher.addResource(RESOURCE_QUERY, METHOD_POST, DiscoveryService.class,
+                    "query");
+            dispatcher.addResource(RESOURCE_CHANGES, METHOD_GET, DiscoveryService.class,
                     "getContentChanges");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_RELATIONSHIPS, Dispatcher.METHOD_GET,
-                    RelationshipService.class, "getObjectRelationships");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_UNFILED, Dispatcher.METHOD_POST, MultiFilingService.class,
+            dispatcher.addResource(RESOURCE_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
+                    "getObjectRelationships");
+            dispatcher.addResource(RESOURCE_UNFILED, METHOD_POST, MultiFilingService.class,
                     "removeObjectFromFolder");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_ACL, Dispatcher.METHOD_GET, AclService.class, "getAcl");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_ACL, Dispatcher.METHOD_PUT, AclService.class, "applyAcl");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_POLICIES, Dispatcher.METHOD_GET, PolicyService.class,
+            dispatcher.addResource(RESOURCE_ACL, METHOD_GET, AclService.class,
+                    "getAcl");
+            dispatcher.addResource(RESOURCE_ACL, METHOD_PUT, AclService.class,
+                    "applyAcl");
+            dispatcher.addResource(RESOURCE_POLICIES, METHOD_GET, PolicyService.class,
                     "getAppliedPolicies");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_POLICIES, Dispatcher.METHOD_POST, PolicyService.class,
+            dispatcher.addResource(RESOURCE_POLICIES, METHOD_POST, PolicyService.class,
                     "applyPolicy");
-            dispatcher.addResource(AtomPubUtils.RESOURCE_POLICIES, Dispatcher.METHOD_DELETE, PolicyService.class,
+            dispatcher.addResource(RESOURCE_POLICIES, METHOD_DELETE, PolicyService.class,
                     "removePolicy");
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);

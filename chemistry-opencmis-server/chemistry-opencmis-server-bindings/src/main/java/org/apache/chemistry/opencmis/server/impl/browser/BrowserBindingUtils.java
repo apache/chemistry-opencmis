@@ -87,13 +87,18 @@ public class BrowserBindingUtils {
     public static final String SELECTOR_QUERY = "query";
     public static final String SELECTOR_VERSIONS = "versions";
 
-    public static final String CMISACTION_CREATEDOCUMENT = "createDocument";
-    public static final String CMISACTION_CREATEFOLDER = "createFolder";
+    public static final String CMISACTION_CREATE_DOCUMENT = "createDocument";
+    public static final String CMISACTION_CREATE_FOLDER = "createFolder";
+    public static final String CMISACTION_CREATE_RELATIONSHIP = "createRelationship";
+    public static final String CMISACTION_CREATE_POLICY = "createPolicy";
+    public static final String CMISACTION_SET_CONTENT = "setContent";
+    public static final String CMISACTION_DELETE = "delete";
+    public static final String CMISACTION_DELETE_TREE = "deleteTree";
     public static final String CMISACTION_QUERY = "query";
 
     public static final String PARAM_SELECTOR = "selector";
     public static final String PARAM_TRANSACTION = "transaction";
-    public static final String PARAM_CLIENTTOKEN = "clientToken";
+    public static final String PARAM_CLIENT_TOKEN = "clientToken";
 
     public static final String CONTROL_CMISACTION = "cmisaction";
     public static final String CONTROL_TRANSACTION = "transaction";
@@ -108,10 +113,10 @@ public class BrowserBindingUtils {
     public static final String CONTROL_CONTENT_TYPE = "contenttype";
     public static final String CONTROL_FILENAME = "filename";
 
-    public static final String CONTEXT_OBJECT_ID = "org.apache.chemistry.openmis.browserbinding.objectId";
-    public static final String CONTEXT_OBJECT_TYPE_ID = "org.apache.chemistry.openmis.browserbinding.objectTypeId";
-    public static final String CONTEXT_BASETYPE_ID = "org.apache.chemistry.openmis.browserbinding.basetypeId";
-    public static final String CONTEXT_TRANSACTION = "org.apache.chemistry.openmis.browserbinding.transaction";
+    public static final String CONTEXT_OBJECT_ID = "org.apache.chemistry.opencmis.browserbinding.objectId";
+    public static final String CONTEXT_OBJECT_TYPE_ID = "org.apache.chemistry.opencmis.browserbinding.objectTypeId";
+    public static final String CONTEXT_BASETYPE_ID = "org.apache.chemistry.opencmis.browserbinding.basetypeId";
+    public static final String CONTEXT_TRANSACTION = "org.apache.chemistry.opencmis.browserbinding.transaction";
 
     public enum CallUrl {
         SERVICE, REPOSITORY, ROOT
@@ -138,7 +143,7 @@ public class BrowserBindingUtils {
     }
 
     public static UrlBuilder compileRootUrl(HttpServletRequest request, String repositoryId) {
-        return compileRepositoryUrl(request, repositoryId).addPathSegment(BrowserBindingUtils.ROOT_PATH_FRAGMENT);
+        return compileRepositoryUrl(request, repositoryId).addPathSegment(ROOT_PATH_FRAGMENT);
     }
 
     /**
@@ -422,7 +427,7 @@ public class BrowserBindingUtils {
      * Transforms the transaction into a cookie name.
      */
     public static String getCookieName(String transaction) {
-        if ((transaction == null) || (transaction.length() == 0)) {
+        if (transaction == null || transaction.length() == 0) {
             return "cmis%";
         }
 
@@ -450,11 +455,11 @@ public class BrowserBindingUtils {
      */
     public static void setCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId,
             String transaction, String value, int expiry) {
-        if ((transaction != null) && (transaction.length() > 0)) {
-            Cookie tansactionCookie = new Cookie(BrowserBindingUtils.getCookieName(transaction), value);
-            tansactionCookie.setMaxAge(expiry);
-            tansactionCookie.setPath(request.getContextPath() + request.getServletPath() + "/" + repositoryId);
-            response.addCookie(tansactionCookie);
+        if (transaction != null && transaction.length() > 0) {
+            Cookie transactionCookie = new Cookie(getCookieName(transaction), value);
+            transactionCookie.setMaxAge(expiry);
+            transactionCookie.setPath(request.getContextPath() + request.getServletPath() + "/" + repositoryId);
+            response.addCookie(transactionCookie);
         }
     }
 
@@ -479,7 +484,7 @@ public class BrowserBindingUtils {
         response.setContentType(JSON_MIME_TYPE);
         response.setCharacterEncoding("UTF-8");
 
-        String clientToken = getStringParameter(request, PARAM_CLIENTTOKEN);
+        String clientToken = getStringParameter(request, PARAM_CLIENT_TOKEN);
         if (clientToken != null) {
             if (!clientToken.matches("[A-Za-z0-9._\\[\\]]*")) {
                 throw new CmisInvalidArgumentException("Invalid clientToken name!");

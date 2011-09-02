@@ -138,9 +138,6 @@ public final class RepositoryService {
         BrowserBindingUtils.writeJSON(jsonTypeList, request, response);
     }
 
-    /**
-     * getTypeDescendants.
-     */
     @SuppressWarnings("unchecked")
     public static void getTypeDescendants(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -166,9 +163,6 @@ public final class RepositoryService {
         BrowserBindingUtils.writeJSON(jsonTypeTree, request, response);
     }
 
-    /**
-     * getTypeDefintion.
-     */
     public static void getTypeDefinition(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters

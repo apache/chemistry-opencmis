@@ -45,9 +45,6 @@ public class DiscoveryService {
     private DiscoveryService() {
     }
 
-    /**
-     * query.
-     */
     public static void query(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         // get parameters
