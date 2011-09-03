@@ -24,6 +24,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convertPolicy
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -367,8 +369,44 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         HttpUtils.Response resp = HttpUtils.invokeDELETE(url, getSession());
 
         // check response code
-        if ((resp.getResponseCode() == 200) || (resp.getResponseCode() == 202) || (resp.getResponseCode() == 204)) {
+        if (resp.getResponseCode() == 200 || resp.getResponseCode() == 202 || resp.getResponseCode() == 204) {
             return new FailedToDeleteDataImpl();
+        }
+
+        // If the server returned an internal server error, get the remaining
+        // children of the folder. We only retrieve the first level, since
+        // getDescendants() is not supported by all repositories.
+        if (resp.getResponseCode() == 500) {
+            link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+
+            if (link != null) {
+                url = new UrlBuilder(link);
+                // we only want the object ids
+                url.addParameter(Constants.PARAM_FILTER, "cmis:objectId");
+                url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, false);
+                url.addParameter(Constants.PARAM_RELATIONSHIPS, IncludeRelationships.NONE);
+                url.addParameter(Constants.PARAM_RENDITION_FILTER, "cmis:none");
+                url.addParameter(Constants.PARAM_PATH_SEGMENT, false);
+                // 1000 children should be enough to indicate a problem
+                url.addParameter(Constants.PARAM_MAX_ITEMS, 1000);
+                url.addParameter(Constants.PARAM_SKIP_COUNT, 0);
+
+                // read and parse
+                resp = read(url);
+                AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+
+                // prepare result
+                FailedToDeleteDataImpl result = new FailedToDeleteDataImpl();
+                List<String> ids = new ArrayList<String>();
+                result.setIds(ids);
+
+                // get the children ids
+                for (AtomEntry entry : feed.getEntries()) {
+                    ids.add(entry.getId());
+                }
+
+                return result;
+            }
         }
 
         throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
