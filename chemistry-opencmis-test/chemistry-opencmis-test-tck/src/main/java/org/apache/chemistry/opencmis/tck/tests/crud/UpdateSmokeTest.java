@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -63,7 +64,8 @@ public class UpdateSmokeTest extends AbstractSessionTest {
             Map<String, Object> properties = new HashMap<String, Object>();
             properties.put(PropertyIds.NAME, NAME2);
 
-            Document doc2 = (Document) doc1.updateProperties(properties);
+            ObjectId newId = doc1.updateProperties(properties, false);
+            Document doc2 = (Document) session.getObject(newId, SELECT_ALL_NO_CACHE_OC);
 
             addResult(checkObject(session, doc2, getAllProperties(doc2), "Updated document compliance"));
 
