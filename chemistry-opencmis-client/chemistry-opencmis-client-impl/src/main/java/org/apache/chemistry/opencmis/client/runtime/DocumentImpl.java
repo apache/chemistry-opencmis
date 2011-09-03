@@ -308,6 +308,11 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
             return null;
         }
 
+        // handle incompliant repositories
+        if (contentStream == null) {
+            return null;
+        }
+
         // the AtomPub binding doesn't return a file name
         // -> get the file name from properties, if present
         String filename = contentStream.getFileName();

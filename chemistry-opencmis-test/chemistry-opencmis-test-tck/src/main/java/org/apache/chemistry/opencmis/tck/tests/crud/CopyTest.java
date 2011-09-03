@@ -26,7 +26,9 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -62,8 +64,13 @@ public class CopyTest extends AbstractSessionTest {
             // create document
             Document doc1 = createDocument(session, folder1, "copytestdoc.txt", "copy test");
 
+            VersioningState versioningState = VersioningState.MAJOR;
+            if (!((DocumentTypeDefinition) doc1.getType()).isVersionable()) {
+                versioningState = VersioningState.NONE;
+            }
+
             // copy
-            Document doc2 = doc1.copy(folder2, null, null, null, null, null, SELECT_ALL_NO_CACHE_OC);
+            Document doc2 = doc1.copy(folder2, null, versioningState, null, null, null, SELECT_ALL_NO_CACHE_OC);
 
             if (doc2 == null) {
                 addResult(createResult(FAILURE, "Copied document is null!"));
@@ -82,7 +89,7 @@ public class CopyTest extends AbstractSessionTest {
             int count2 = countFolderChildren(folder2);
             f = createResult(FAILURE, "Target folder should have exactly one child but has " + count2 + " children!");
             addResult(assertEquals(1, count2, null, f));
-            
+
             deleteObject(doc2);
             deleteObject(doc1);
         } finally {
