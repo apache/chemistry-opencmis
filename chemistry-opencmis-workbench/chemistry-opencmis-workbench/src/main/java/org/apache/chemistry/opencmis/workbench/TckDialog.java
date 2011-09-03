@@ -69,6 +69,8 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestProgressMonitor;
+import org.apache.chemistry.opencmis.tck.CmisTestResult;
+import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 import org.apache.chemistry.opencmis.tck.impl.TestParameters;
 import org.apache.chemistry.opencmis.tck.runner.AbstractRunner;
 import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
@@ -85,13 +87,24 @@ public class TckDialog {
     private final ClientModel model;
     private final TckDialogRunner runner;
 
+    private Map<CmisTestResultStatus, Integer> status;
+
     private JProgressBar groupsProgressBar;
     private JProgressBar testsProgressBar;
+    private JLabel statusLabel;
 
     public TckDialog(Frame owner, ClientModel model) {
         this.owner = owner;
         this.model = model;
         this.runner = new TckDialogRunner(model, this);
+
+        status = new HashMap<CmisTestResultStatus, Integer>();
+        status.put(CmisTestResultStatus.INFO, 0);
+        status.put(CmisTestResultStatus.SKIPPED, 0);
+        status.put(CmisTestResultStatus.OK, 0);
+        status.put(CmisTestResultStatus.WARNING, 0);
+        status.put(CmisTestResultStatus.FAILURE, 0);
+        status.put(CmisTestResultStatus.UNEXPECTED_EXCEPTION, 0);
 
         try {
             runner.loadDefaultTckGroups();
@@ -242,13 +255,13 @@ public class TckDialog {
                 }
             });
 
-            final JPanel runbuttonPanel = new JPanel();
-            runbuttonPanel.setLayout(new BoxLayout(runbuttonPanel, BoxLayout.PAGE_AXIS));
-            runbuttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3));
+            final JPanel runButtonPanel = new JPanel();
+            runButtonPanel.setLayout(new BoxLayout(runButtonPanel, BoxLayout.PAGE_AXIS));
+            runButtonPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3));
             runButton.setMaximumSize(new Dimension(Short.MAX_VALUE, 30));
-            runbuttonPanel.add(runButton);
+            runButtonPanel.add(runButton);
 
-            add(runbuttonPanel, BorderLayout.PAGE_END);
+            add(runButtonPanel, BorderLayout.PAGE_END);
 
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             pack();
@@ -508,6 +521,9 @@ public class TckDialog {
 
             progressPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
+            statusLabel = new JLabel();
+            progressPanel.add(statusLabel);
+
             add(progressPanel, BorderLayout.CENTER);
 
             JButton cancelButton = new JButton("Cancel");
@@ -518,7 +534,13 @@ public class TckDialog {
                 }
             });
 
-            add(cancelButton, BorderLayout.PAGE_END);
+            final JPanel cancelButtonPanel = new JPanel();
+            cancelButtonPanel.setLayout(new BoxLayout(cancelButtonPanel, BoxLayout.PAGE_AXIS));
+            cancelButtonPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3));
+            cancelButton.setMaximumSize(new Dimension(Short.MAX_VALUE, 30));
+            cancelButtonPanel.add(cancelButton);
+
+            add(cancelButtonPanel, BorderLayout.PAGE_END);
 
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             pack();
@@ -568,6 +590,48 @@ public class TckDialog {
         public void endTest(CmisTest test) {
             testsProgressBar.setString("");
             testsProgressBar.setValue(testsProgressBar.getValue() + 1);
+
+            for (CmisTestResult tr : test.getResults()) {
+                int x = status.get(tr.getStatus());
+                status.put(tr.getStatus(), x + 1);
+            }
+
+            StringBuilder sb = new StringBuilder("<html>");
+            int x;
+
+            x = status.get(CmisTestResultStatus.INFO);
+            if (x > 0) {
+                sb.append("<font color='#000000'>[Info: " + x + "]</font>  ");
+            }
+
+            x = status.get(CmisTestResultStatus.SKIPPED);
+            if (x > 0) {
+                sb.append("<font color='#444444'>[Skipped: " + x + "]</font>  ");
+            }
+
+            x = status.get(CmisTestResultStatus.OK);
+            if (x > 0) {
+                sb.append("<font color='#009900'>[Ok: " + x + "]</font>  ");
+            }
+
+            x = status.get(CmisTestResultStatus.WARNING);
+            if (x > 0) {
+                sb.append("<font color='#999900'>[Warning: " + x + "]</font>  ");
+            }
+
+            x = status.get(CmisTestResultStatus.FAILURE);
+            if (x > 0) {
+                sb.append("<font color='#996000'>[Failure: " + x + "]</font>  ");
+            }
+
+            x = status.get(CmisTestResultStatus.UNEXPECTED_EXCEPTION);
+            if (x > 0) {
+                sb.append("<font color='#990000'>[Exception: " + x + "]</font>  ");
+            }
+
+            sb.append("</html>");
+
+            statusLabel.setText(sb.toString());
         }
 
         public void message(String msg) {
