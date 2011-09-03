@@ -178,6 +178,7 @@ public class LoginDialog extends JDialog {
 
         loadRepositoryButton = createButton("Load Repositories");
         buttonPanel.add(loadRepositoryButton);
+        getRootPane().setDefaultButton(loadRepositoryButton);
 
         createRepositoryBox(buttonPanel);
 
@@ -203,13 +204,16 @@ public class LoginDialog extends JDialog {
 
                         repositoryBox.setEnabled(true);
                         loginButton.setEnabled(true);
+                        getRootPane().setDefaultButton(loginButton);
                     } else {
                         repositoryBox.setEnabled(false);
                         loginButton.setEnabled(false);
+                        getRootPane().setDefaultButton(loadRepositoryButton);
                     }
                 } catch (Exception ex) {
                     repositoryBox.setEnabled(false);
                     loginButton.setEnabled(false);
+                    getRootPane().setDefaultButton(loadRepositoryButton);
 
                     ClientHelper.showError(getOwner(), ex);
                 } finally {
@@ -229,11 +233,13 @@ public class LoginDialog extends JDialog {
                 } catch (Exception ex) {
                     repositoryBox.setEnabled(false);
                     loginButton.setEnabled(false);
+                    getRootPane().setDefaultButton(loadRepositoryButton);
 
                     ClientHelper.showError(getOwner(), ex);
 
                 } finally {
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    getRootPane().setDefaultButton(loadRepositoryButton);
                 }
             }
         });
@@ -267,6 +273,8 @@ public class LoginDialog extends JDialog {
                 sessionParameterTextArea.setCaretPosition(0);
             }
         });
+
+        ClientHelper.installEscapeBinding(this, getRootPane(), false);
 
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         pack();
@@ -502,6 +510,7 @@ public class LoginDialog extends JDialog {
         repositoryBox.removeAllItems();
         repositoryBox.setEnabled(false);
         loginButton.setEnabled(false);
+        getRootPane().setDefaultButton(loadRepositoryButton);
 
         setLocationRelativeTo(getOwner());
         setVisible(true);

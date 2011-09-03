@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -69,8 +70,9 @@ public class ChangeLogFrame extends JFrame {
         setLayout(new BorderLayout());
 
         JPanel inputPanel = new JPanel(new BorderLayout());
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
-        inputPanel.add(new JLabel("Change Log Token:"), BorderLayout.LINE_START);
+        inputPanel.add(new JLabel("Change Log Token: "), BorderLayout.LINE_START);
 
         changeLogTokenField = new JTextField();
         try {
@@ -106,11 +108,14 @@ public class ChangeLogFrame extends JFrame {
             }
         });
         inputPanel.add(loadButton, BorderLayout.LINE_END);
+        getRootPane().setDefaultButton(loadButton);
 
         add(inputPanel, BorderLayout.PAGE_START);
 
         changeLogTable = new ChangeLogTable();
         add(new JScrollPane(changeLogTable), BorderLayout.CENTER);
+
+        ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();

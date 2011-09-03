@@ -86,6 +86,8 @@ public class LogFrame extends JFrame {
         });
         inputPanel.add(levelBox);
 
+        ClientHelper.installEscapeBinding(this, getRootPane(), false);
+
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         pack();
 

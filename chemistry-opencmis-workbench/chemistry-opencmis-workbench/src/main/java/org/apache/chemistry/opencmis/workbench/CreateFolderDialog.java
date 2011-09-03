@@ -32,46 +32,47 @@ import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
 
 public class CreateFolderDialog extends CreateDialog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JTextField nameField;
-	private JComboBox typeBox;
+    private JTextField nameField;
+    private JComboBox typeBox;
 
-	public CreateFolderDialog(Frame owner, ClientModel model) {
-		super(owner, "Create Folder", model);
-		createGUI();
-	}
+    public CreateFolderDialog(Frame owner, ClientModel model) {
+        super(owner, "Create Folder", model);
+        createGUI();
+    }
 
-	private void createGUI() {
-		final CreateFolderDialog thisDialog = this;
+    private void createGUI() {
+        final CreateFolderDialog thisDialog = this;
 
-		nameField = new JTextField(60);
-		createRow("Name:", nameField, 0);
+        nameField = new JTextField(60);
+        createRow("Name:", nameField, 0);
 
-		typeBox = new JComboBox(getTypes(BaseTypeId.CMIS_FOLDER.value()));
-		typeBox.setSelectedIndex(0);
-		createRow("Type:", typeBox, 1);
+        typeBox = new JComboBox(getTypes(BaseTypeId.CMIS_FOLDER.value()));
+        typeBox.setSelectedIndex(0);
+        createRow("Type:", typeBox, 1);
 
-		JButton createButton = new JButton("Create Folder");
-		createButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				String name = nameField.getText();
-				String type = ((ObjectTypeItem) typeBox.getSelectedItem())
-						.getObjectType().getId();
+        JButton createButton = new JButton("Create Folder");
+        createButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                String name = nameField.getText();
+                String type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType().getId();
 
-				try {
-					getClientModel().createFolder(name, type);
-					getClientModel().reloadFolder();
+                try {
+                    getClientModel().createFolder(name, type);
+                    getClientModel().reloadFolder();
 
-					thisDialog.setVisible(false);
-					thisDialog.dispose();
-				} catch (Exception e) {
-					ClientHelper.showError(null, e);
-				}
-			}
-		});
-		createRow("", createButton, 3);
+                    thisDialog.setVisible(false);
+                    thisDialog.dispose();
+                } catch (Exception e) {
+                    ClientHelper.showError(null, e);
+                }
+            }
+        });
+        createRow("", createButton, 3);
 
-		showDialog();
-	}
+        getRootPane().setDefaultButton(createButton);
+
+        showDialog();
+    }
 }

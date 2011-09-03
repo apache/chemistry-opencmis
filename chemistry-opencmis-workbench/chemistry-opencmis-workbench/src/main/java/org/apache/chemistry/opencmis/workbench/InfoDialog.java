@@ -75,9 +75,11 @@ public class InfoDialog extends JDialog {
         ta.setEditable(false);
         ta.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         JScrollPane readmePane = new JScrollPane(ta);
-        readmePane.setBorder(BorderFactory.createEmptyBorder(0,5,5,5));
-        
+        readmePane.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+
         add(readmePane);
+
+        ClientHelper.installEscapeBinding(this, getRootPane(), false);
 
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         pack();

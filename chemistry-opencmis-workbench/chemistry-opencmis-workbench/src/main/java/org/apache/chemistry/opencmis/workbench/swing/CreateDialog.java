@@ -32,77 +32,80 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public abstract class CreateDialog extends JDialog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ClientModel model;
-	private final JPanel panel;
+    private final ClientModel model;
+    private final JPanel panel;
 
-	public CreateDialog(Frame owner, String title, ClientModel model) {
-		super(owner, title, true);
-		this.model = model;
+    public CreateDialog(Frame owner, String title, ClientModel model) {
+        super(owner, title, true);
+        this.model = model;
 
-		setLayout(new BorderLayout());
-		panel = new JPanel(new GridBagLayout());
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		add(panel, BorderLayout.CENTER);
-	}
+        setLayout(new BorderLayout());
+        panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(panel, BorderLayout.CENTER);
+    }
 
-	protected ClientModel getClientModel() {
-		return model;
-	}
+    protected ClientModel getClientModel() {
+        return model;
+    }
 
-	protected void createRow(String label, JComponent comp, int row) {
-		JLabel textLabel = new JLabel(label);
-		textLabel.setLabelFor(comp);
+    protected void createRow(String label, JComponent comp, int row) {
+        JLabel textLabel = new JLabel(label);
+        textLabel.setLabelFor(comp);
 
-		GridBagConstraints c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.LINE_START;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = row;
-		panel.add(textLabel, c);
-		c.gridx = 1;
-		panel.add(comp, c);
-	}
+        GridBagConstraints c = new GridBagConstraints();
+        c.anchor = GridBagConstraints.LINE_START;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = row;
+        panel.add(textLabel, c);
+        c.gridx = 1;
+        panel.add(comp, c);
+    }
 
-	public void showDialog() {
-		panel.invalidate();
+    public void showDialog() {
+        panel.invalidate();
 
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		pack();
-		setLocationRelativeTo(null);
-		setVisible(true);
-	}
+        ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
-	protected Object[] getTypes(String rootTypeId) {
-		List<ObjectType> types = model.getCreateableTypes(rootTypeId);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
 
-		Object[] result = new Object[types.size()];
+    protected Object[] getTypes(String rootTypeId) {
+        List<ObjectType> types = model.getCreateableTypes(rootTypeId);
 
-		int i = 0;
-		for (final ObjectType type : types) {
-			result[i] = new ObjectTypeItem() {
-				public ObjectType getObjectType() {
-					return type;
-				}
+        Object[] result = new Object[types.size()];
 
-				@Override
-				public String toString() {
-					return type.getDisplayName() + " (" + type.getId() + ")";
-				}
-			};
+        int i = 0;
+        for (final ObjectType type : types) {
+            result[i] = new ObjectTypeItem() {
+                public ObjectType getObjectType() {
+                    return type;
+                }
 
-			i++;
-		}
+                @Override
+                public String toString() {
+                    return type.getDisplayName() + " (" + type.getId() + ")";
+                }
+            };
 
-		return result;
-	}
+            i++;
+        }
 
-	public interface ObjectTypeItem {
-		ObjectType getObjectType();
-	}
+        return result;
+    }
+
+    public interface ObjectTypeItem {
+        ObjectType getObjectType();
+    }
 }

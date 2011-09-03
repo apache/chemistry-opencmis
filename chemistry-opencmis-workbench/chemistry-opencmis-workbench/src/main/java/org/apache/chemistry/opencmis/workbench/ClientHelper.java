@@ -28,6 +28,7 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -57,12 +58,15 @@ import java.util.Properties;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -149,6 +153,24 @@ public class ClientHelper {
             InputMap passwordFieldMap = (InputMap) UIManager.get("PasswordField.focusInputMap");
             passwordFieldMap.put(pasteKeyStroke, DefaultEditorKit.pasteAction);
         }
+    }
+
+    public static void installEscapeBinding(final Window window, final JRootPane rootPane, final boolean dispose) {
+        final KeyStroke stroke = KeyStroke.getKeyStroke("ESCAPE");
+        final InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        inputMap.put(stroke, "ESCAPE");
+        rootPane.getActionMap().put("ESCAPE", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (dispose) {
+                    window.dispose();
+                } else {
+                    window.setVisible(false);
+                }
+            }
+        });
     }
 
     public static ImageIcon getIcon(String name) {

@@ -133,6 +133,8 @@ public class CreateDocumentDialog extends CreateDialog {
             setFile(file);
         }
 
+        getRootPane().setDefaultButton(createButton);
+        
         showDialog();
     }
 

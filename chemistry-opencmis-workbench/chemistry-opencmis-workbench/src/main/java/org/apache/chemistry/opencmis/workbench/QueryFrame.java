@@ -206,6 +206,10 @@ public class QueryFrame extends JFrame {
 
         add(new JSplitPane(JSplitPane.VERTICAL_SPLIT, inputPanel, new JScrollPane(resultsTable)));
 
+        getRootPane().setDefaultButton(queryButton);
+        
+        ClientHelper.installEscapeBinding(this, getRootPane(), true);
+        
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
 

@@ -85,6 +85,8 @@ public class TypesFrame extends JFrame {
 
         add(splitPane);
 
+        ClientHelper.installEscapeBinding(this, getRootPane(), true);
+
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
 

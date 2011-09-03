@@ -63,6 +63,8 @@ public class RepositoryInfoFrame extends JFrame {
 
         add(new JScrollPane(new RepositoryInfoPanel(model, repInfo)));
 
+        ClientHelper.installEscapeBinding(this, getRootPane(), true);
+
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
 
@@ -110,7 +112,8 @@ public class RepositoryInfoFrame extends JFrame {
                 addYesNoLabel("Get folder tree supported:").setValue(is(cap.isGetFolderTreeSupported()));
                 addYesNoLabel("Unfiling supported:").setValue(is(cap.isUnfilingSupported()));
                 addYesNoLabel("Multifiling supported:").setValue(is(cap.isMultifilingSupported()));
-                addYesNoLabel("Version specific filing supported:").setValue(is(cap.isVersionSpecificFilingSupported()));
+                addYesNoLabel("Version specific filing supported:")
+                        .setValue(is(cap.isVersionSpecificFilingSupported()));
                 addLine("Query:").setText(str(cap.getQueryCapability()));
                 addLine("Joins:").setText(str(cap.getJoinCapability()));
                 addYesNoLabel("All versions searchable:").setValue(is(cap.isAllVersionsSearchableSupported()));

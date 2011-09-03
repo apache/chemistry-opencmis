@@ -263,6 +263,10 @@ public class TckDialog {
 
             add(runButtonPanel, BorderLayout.PAGE_END);
 
+            getRootPane().setDefaultButton(runButton);
+
+            ClientHelper.installEscapeBinding(this, getRootPane(), true);
+
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             pack();
             setLocationRelativeTo(null);
@@ -541,6 +545,8 @@ public class TckDialog {
             cancelButtonPanel.add(cancelButton);
 
             add(cancelButtonPanel, BorderLayout.PAGE_END);
+
+            getRootPane().setDefaultButton(cancelButton);
 
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             pack();

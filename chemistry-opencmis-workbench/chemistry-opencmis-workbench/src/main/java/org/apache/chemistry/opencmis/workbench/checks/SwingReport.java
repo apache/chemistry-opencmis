@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.tck.report.AbstractCmisTestReport;
 import org.apache.chemistry.opencmis.tck.report.HtmlReport;
 import org.apache.chemistry.opencmis.tck.report.TextReport;
 import org.apache.chemistry.opencmis.tck.report.XmlReport;
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
 
 /**
  * Swing Report.
@@ -183,6 +184,8 @@ public class SwingReport extends AbstractCmisTestReport {
             });
 
             add(reportPanel, BorderLayout.PAGE_END);
+
+            ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             pack();
