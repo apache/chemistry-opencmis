@@ -18,7 +18,7 @@
 # @version@
 
 if [ -z "$JAVA_HOME" ]; then
-  j=`which java 2>/dev/null`
+  j=$(which java 2>/dev/null)
   if [ -z "$j" ]; then
  	echo "Unable to locate Java!"
     exit 1
@@ -33,9 +33,8 @@ fi
 SCRIPT_DIR=$(dirname "$0")
 cd "$SCRIPT_DIR/lib"
 
-jars=($(ls *.jar))
-WCP=""
-for i in "${jars[@]}"; do
+WCP="."
+for i in *.jar; do
   WCP="$i:${WCP}"
 done
 
