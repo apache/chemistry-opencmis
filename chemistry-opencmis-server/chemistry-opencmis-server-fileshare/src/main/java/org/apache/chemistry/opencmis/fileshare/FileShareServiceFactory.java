@@ -61,9 +61,6 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
 
     private ThreadLocal<CmisServiceWrapper<FileShareService>> threadLocalService = new ThreadLocal<CmisServiceWrapper<FileShareService>>();
 
-    public FileShareServiceFactory() {
-    }
-
     @Override
     public void init(Map<String, String> parameters) {
         repositoryMap = new RepositoryMap();

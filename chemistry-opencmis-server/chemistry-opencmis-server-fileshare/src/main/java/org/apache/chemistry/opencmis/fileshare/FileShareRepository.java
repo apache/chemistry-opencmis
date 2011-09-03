@@ -932,7 +932,7 @@ public class FileShareRepository {
         }
 
         if (file.length() == 0) {
-            return null;
+            throw new CmisConstraintException("Document has no content!");
         }
 
         InputStream stream = null;
