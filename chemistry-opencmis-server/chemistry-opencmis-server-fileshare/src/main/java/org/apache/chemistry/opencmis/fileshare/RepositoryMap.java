@@ -28,18 +28,15 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 /**
  * Repository map.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RepositoryMap {
 
-    private final Map<String, FileShareRepository> fMap;
-    private final Map<String, String> fLogins;
+    private final Map<String, FileShareRepository> map;
+    private final Map<String, String> logins;
 
     public RepositoryMap() {
-        fMap = new HashMap<String, FileShareRepository>();
-        fLogins = new HashMap<String, String>();
+        map = new HashMap<String, FileShareRepository>();
+        logins = new HashMap<String, String>();
     }
 
     /**
@@ -50,7 +47,7 @@ public class RepositoryMap {
             return;
         }
 
-        fMap.put(fsr.getRepositoryId(), fsr);
+        map.put(fsr.getRepositoryId(), fsr);
     }
 
     /**
@@ -58,7 +55,7 @@ public class RepositoryMap {
      */
     public FileShareRepository getRepository(String repositoryId) {
         // get repository object
-        FileShareRepository result = fMap.get(repositoryId);
+        FileShareRepository result = map.get(repositoryId);
         if (result == null) {
             throw new CmisObjectNotFoundException("Unknown repository '" + repositoryId + "'!");
         }
@@ -80,7 +77,7 @@ public class RepositoryMap {
      * Returns all repository objects.
      */
     public Collection<FileShareRepository> getRepositories() {
-        return fMap.values();
+        return map.values();
     }
 
     /**
@@ -91,14 +88,14 @@ public class RepositoryMap {
             return;
         }
 
-        fLogins.put(username.trim(), password);
+        logins.put(username.trim(), password);
     }
 
     /**
      * Authenticates a user against the configured logins.
      */
     private boolean authenticate(String username, String password) {
-        String pwd = fLogins.get(username);
+        String pwd = logins.get(username);
         if (pwd == null) {
             return false;
         }

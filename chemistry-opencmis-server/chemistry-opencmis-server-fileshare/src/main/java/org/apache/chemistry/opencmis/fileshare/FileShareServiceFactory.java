@@ -1,4 +1,3 @@
-package org.apache.chemistry.opencmis.fileshare;
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +18,7 @@ package org.apache.chemistry.opencmis.fileshare;
  * under the License.
  *
  */
-
+package org.apache.chemistry.opencmis.fileshare;
 
 import java.io.File;
 import java.math.BigInteger;

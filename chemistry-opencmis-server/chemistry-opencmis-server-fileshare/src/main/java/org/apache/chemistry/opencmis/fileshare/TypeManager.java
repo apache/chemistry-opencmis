@@ -59,22 +59,19 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Type Manager.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
  */
 public class TypeManager {
-    public static final String DOCUMENT_TYPE_ID = "cmis:document";
-    public static final String FOLDER_TYPE_ID = "cmis:folder";
-    public static final String RELATIONSHIP_TYPE_ID = "cmis:relationship";
-    public static final String POLICY_TYPE_ID = "cmis:policy";
+    public static final String DOCUMENT_TYPE_ID = BaseTypeId.CMIS_DOCUMENT.value();
+    public static final String FOLDER_TYPE_ID = BaseTypeId.CMIS_FOLDER.value();
+    public static final String RELATIONSHIP_TYPE_ID = BaseTypeId.CMIS_RELATIONSHIP.value();
+    public static final String POLICY_TYPE_ID = BaseTypeId.CMIS_POLICY.value();
 
     private static final String NAMESPACE = "http://opencmis.org/fileshare";
 
     private static final Log log = LogFactory.getLog(TypeManager.class);
 
-    private Map<String, TypeDefinitionContainerImpl> fTypes;
-    private List<TypeDefinitionContainer> fTypesList;
+    private Map<String, TypeDefinitionContainerImpl> types;
+    private List<TypeDefinitionContainer> typesList;
 
     public TypeManager() {
         setup();
@@ -84,8 +81,8 @@ public class TypeManager {
      * Creates the base types.
      */
     private void setup() {
-        fTypes = new HashMap<String, TypeDefinitionContainerImpl>();
-        fTypesList = new ArrayList<TypeDefinitionContainer>();
+        types = new HashMap<String, TypeDefinitionContainerImpl>();
+        typesList = new ArrayList<TypeDefinitionContainer>();
 
         // folder type
         FolderTypeDefinitionImpl folderType = new FolderTypeDefinitionImpl();
@@ -179,10 +176,10 @@ public class TypeManager {
 
     private static void addBasePropertyDefinitions(AbstractTypeDefinition type) {
         type.addPropertyDefinition(createPropDef(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
-                PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, true));
+                PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_ID, "Object Id", "Object Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READONLY, false, true));
+                Cardinality.SINGLE, Updatability.READONLY, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_TYPE_ID, "Type Id", "Type Id", PropertyType.ID,
                 Cardinality.SINGLE, Updatability.ONCREATE, false, true));
@@ -191,17 +188,17 @@ public class TypeManager {
                 Cardinality.SINGLE, Updatability.READWRITE, false, true));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CREATED_BY, "Created By", "Created By",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, true));
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CREATION_DATE, "Creation Date", "Creation Date",
-                PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, false, true));
+                PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFIED_BY, "Last Modified By", "Last Modified By",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, true));
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFICATION_DATE, "Last Modification Date",
-                "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY,
-                false, true));
+                "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, false,
+                false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CHANGE_TOKEN, "Change Token", "Change Token",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
@@ -241,18 +238,21 @@ public class TypeManager {
 
         type.addPropertyDefinition(createPropDef(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
                 "Is Verison Series Checked Out", "Is Verison Series Checked Out", PropertyType.BOOLEAN,
-                Cardinality.SINGLE, Updatability.READONLY, false, true));
+                Cardinality.SINGLE, Updatability.READONLY, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
                 "Version Series Checked Out Id", "Version Series Checked Out Id", PropertyType.ID, Cardinality.SINGLE,
                 Updatability.READONLY, false, false));
 
+        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY,
+                "Version Series Checked Out By", "Version Series Checked Out By", PropertyType.STRING,
+                Cardinality.SINGLE, Updatability.READONLY, false, false));
+
         type.addPropertyDefinition(createPropDef(PropertyIds.CHECKIN_COMMENT, "Checkin Comment", "Checkin Comment",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_LENGTH, "Content Stream Length",
-                "Content Stream Length", PropertyType.INTEGER, Cardinality.SINGLE, Updatability.READONLY,
-                false, false));
+                "Content Stream Length", PropertyType.INTEGER, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_MIME_TYPE, "MIME Type", "MIME Type",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
@@ -311,6 +311,7 @@ public class TypeManager {
         result.setIsInherited(inherited);
         result.setIsRequired(required);
         result.setIsQueryable(false);
+        result.setIsOrderable(false);
         result.setQueryName(id);
 
         return result;
@@ -331,13 +332,13 @@ public class TypeManager {
         // find base type
         TypeDefinition baseType = null;
         if (type.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
-            baseType = copyTypeDefintion(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition());
+            baseType = copyTypeDefintion(types.get(DOCUMENT_TYPE_ID).getTypeDefinition());
         } else if (type.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
-            baseType = copyTypeDefintion(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition());
+            baseType = copyTypeDefintion(types.get(FOLDER_TYPE_ID).getTypeDefinition());
         } else if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
-            baseType = copyTypeDefintion(fTypes.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
+            baseType = copyTypeDefintion(types.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
         } else if (type.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
-            baseType = copyTypeDefintion(fTypes.get(POLICY_TYPE_ID).getTypeDefinition());
+            baseType = copyTypeDefintion(types.get(POLICY_TYPE_ID).getTypeDefinition());
         } else {
             return false;
         }
@@ -366,7 +367,7 @@ public class TypeManager {
             return;
         }
 
-        if (fTypes.containsKey(type.getId())) {
+        if (types.containsKey(type.getId())) {
             // can't overwrite a type
             return;
         }
@@ -376,7 +377,7 @@ public class TypeManager {
 
         // add to parent
         if (type.getParentTypeId() != null) {
-            TypeDefinitionContainerImpl tdc = fTypes.get(type.getParentTypeId());
+            TypeDefinitionContainerImpl tdc = types.get(type.getParentTypeId());
             if (tdc != null) {
                 if (tdc.getChildren() == null) {
                     tdc.setChildren(new ArrayList<TypeDefinitionContainer>());
@@ -385,8 +386,8 @@ public class TypeManager {
             }
         }
 
-        fTypes.put(type.getId(), tc);
-        fTypesList.add(tc);
+        types.put(type.getId(), tc);
+        typesList.add(tc);
     }
 
     /**
@@ -408,18 +409,18 @@ public class TypeManager {
 
         if (typeId == null) {
             if (skip < 1) {
-                result.getList().add(copyTypeDefintion(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition()));
+                result.getList().add(copyTypeDefintion(types.get(FOLDER_TYPE_ID).getTypeDefinition()));
                 max--;
             }
             if ((skip < 2) && (max > 0)) {
-                result.getList().add(copyTypeDefintion(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition()));
+                result.getList().add(copyTypeDefintion(types.get(DOCUMENT_TYPE_ID).getTypeDefinition()));
                 max--;
             }
 
             result.setHasMoreItems((result.getList().size() + skip) < 2);
             result.setNumItems(BigInteger.valueOf(2));
         } else {
-            TypeDefinitionContainer tc = fTypes.get(typeId);
+            TypeDefinitionContainer tc = types.get(typeId);
             if ((tc == null) || (tc.getChildren() == null)) {
                 return result;
             }
@@ -468,14 +469,14 @@ public class TypeManager {
         boolean ipd = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
 
         if (typeId == null) {
-            result.add(getTypesDescendants(d, fTypes.get(FOLDER_TYPE_ID), ipd));
-            result.add(getTypesDescendants(d, fTypes.get(DOCUMENT_TYPE_ID), ipd));
+            result.add(getTypesDescendants(d, types.get(FOLDER_TYPE_ID), ipd));
+            result.add(getTypesDescendants(d, types.get(DOCUMENT_TYPE_ID), ipd));
             // result.add(getTypesDescendants(depth,
             // fTypes.get(RELATIONSHIP_TYPE_ID), includePropertyDefinitions));
             // result.add(getTypesDescendants(depth, fTypes.get(POLICY_TYPE_ID),
             // includePropertyDefinitions));
         } else {
-            TypeDefinitionContainer tc = fTypes.get(typeId);
+            TypeDefinitionContainer tc = types.get(typeId);
             if (tc != null) {
                 result.add(getTypesDescendants(d, tc, ipd));
             }
@@ -515,7 +516,7 @@ public class TypeManager {
      * For internal use.
      */
     public TypeDefinition getType(String typeId) {
-        TypeDefinitionContainer tc = fTypes.get(typeId);
+        TypeDefinitionContainer tc = types.get(typeId);
         if (tc == null) {
             return null;
         }
@@ -527,7 +528,7 @@ public class TypeManager {
      * CMIS getTypeDefinition.
      */
     public TypeDefinition getTypeDefinition(CallContext context, String typeId) {
-        TypeDefinitionContainer tc = fTypes.get(typeId);
+        TypeDefinitionContainer tc = types.get(typeId);
         if (tc == null) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
         }
