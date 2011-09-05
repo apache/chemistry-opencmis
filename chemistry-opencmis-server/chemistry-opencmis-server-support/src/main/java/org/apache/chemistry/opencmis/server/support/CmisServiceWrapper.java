@@ -258,7 +258,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     /**
-     * Returns <code>true<code> if <code>value</code> is <code>null</code>.
+     * Returns <code>true</code> if <code>value</code> is <code>null</code>.
      */
     protected Boolean getDefaultTrue(Boolean value) {
         if (value == null) {
@@ -269,7 +269,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     /**
-     * Returns <code>false<code> if <code>value</code> is <code>null</code>.
+     * Returns <code>false</code> if <code>value</code> is <code>null</code>.
      */
     protected Boolean getDefaultFalse(Boolean value) {
         if (value == null) {
@@ -280,7 +280,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     /**
-     * Returns the <code>IncludeRelationships.NONE<code> if <code>value</code>
+     * Returns the <code>IncludeRelationships.NONE</code> if <code>value</code>
      * is <code>null</code>.
      */
     protected IncludeRelationships getDefault(IncludeRelationships value) {
@@ -292,7 +292,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     /**
-     * Returns the <code>VersioningState.MAJOR<code> if <code>value</code> is
+     * Returns the <code>VersioningState.MAJOR</code> if <code>value</code> is
      * <code>null</code>.
      */
     protected VersioningState getDefault(VersioningState value) {
@@ -304,7 +304,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     /**
-     * Returns the <code>UnfileObjects.DELETE<code> if <code>value</code> is
+     * Returns the <code>UnfileObjects.DELETE</code> if <code>value</code> is
      * <code>null</code>.
      */
     protected UnfileObject getDefault(UnfileObject value) {
@@ -317,7 +317,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
 
     /**
      * Returns the
-     * <code>AclPropagation.REPOSITORYDETERMINED<code> if <code>value</code> is
+     * <code>AclPropagation.REPOSITORYDETERMINED</code> if <code>value</code> is
      * <code>null</code>.
      */
     protected AclPropagation getDefault(AclPropagation value) {
@@ -330,7 +330,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
 
     /**
      * Returns the
-     * <code>RelationshipDirection.SOURCE<code> if <code>value</code> is
+     * <code>RelationshipDirection.SOURCE</code> if <code>value</code> is
      * <code>null</code> .
      */
     protected RelationshipDirection getDefault(RelationshipDirection value) {

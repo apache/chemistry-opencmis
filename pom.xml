@@ -487,7 +487,7 @@
                   <groups>
                       <group>
                           <title>OpenCMIS Client API</title>
-                          <packages>org.apache.chemistry.opencmis.client.api</packages>
+                          <packages>org.apache.chemistry.opencmis.client.api:org.apache.chemistry.opencmis.client.util</packages>
                       </group>
                       <group>
                           <title>OpenCMIS Commons API</title>
@@ -502,15 +502,11 @@
                           <packages>org.apache.chemistry.opencmis.commons.server:org.apache.chemistry.opencmis.commons.impl.server:org.apache.chemistry.opencmis.server.support:org.apache.chemistry.opencmis.server.support.query</packages>
                       </group>
                       <group>
-                          <title>OpenCMIS Workbench</title>
-                          <packages>&gt;org.apache.chemistry.opencmis.workbench</packages>
-                      </group>
-                      <group>
                           <title>OpenCMIS TCK</title>
-                          <packages>&gt;org.apache.chemistry.opencmis.tck</packages>
+                          <packages>org.apache.chemistry.opencmis.tck*</packages>
                       </group>
                     </groups>
-                    <excludePackageNames>org.apache.chemistry.opencmis.commons.impl:org.apache.chemistry.opencmis.commons.impl.dataobjects:org.apache.chemistry.opencmis.client.runtime:org.apache.chemistry.opencmis.client.runtime.*:org.apache.chemistry.opencmis.commons.impl.jaxb:org.apache.chemistry.opencmis.client.bindings.impl:org.apache.chemistry.opencmis.client.bindings.cache:org.apache.chemistry.opencmis.client.bindings.spi:org.apache.chemistry.opencmis.server.impl:org.apache.chemistry.opencmis.fit:org.apache.chemistry.opencmis.util.repository:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.inmemory:org.apache.chemistry.opencmis.browser:org.apache.chemistry.opencmis.commander</excludePackageNames>
+                    <excludePackageNames>org.apache.chemistry.opencmis.commons.impl:org.apache.chemistry.opencmis.commons.impl.dataobjects:org.apache.chemistry.opencmis.client.runtime:org.apache.chemistry.opencmis.client.runtime.*:org.apache.chemistry.opencmis.commons.impl.jaxb:org.apache.chemistry.opencmis.client.bindings.impl:org.apache.chemistry.opencmis.client.bindings.cache:org.apache.chemistry.opencmis.client.bindings.spi:org.apache.chemistry.opencmis.server.impl:org.apache.chemistry.opencmis.fit:org.apache.chemistry.opencmis.util.repository:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.inmemory:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.jcr:org.apache.chemistry.opencmis.browser:org.apache.chemistry.opencmis.workbench:org.apache.chemistry.opencmis.commander:org.apache.chemistry.opencmis.client.osgi</excludePackageNames>
                 </configuration>
             </plugin>
         </plugins>

@@ -76,6 +76,14 @@ public interface Session extends Serializable {
     /**
      * Returns the current default operation parameters for filtering, paging
      * and caching.
+     * 
+     * <p>
+     * <em>Please note:</em> The returned object is not thread-safe and should
+     * only be modified right after the session has been created and before the
+     * session object has been used. In order to change the default context in
+     * thread-safe manner, create a new {@link OperationContext} object and use
+     * {@link #setDefaultContext(OperationContext)} to apply it.
+     * </p>
      */
     OperationContext getDefaultContext();
 
