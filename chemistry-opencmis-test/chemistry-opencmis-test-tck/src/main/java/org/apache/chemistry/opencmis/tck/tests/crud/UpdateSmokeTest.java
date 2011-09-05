@@ -28,6 +28,9 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -56,15 +59,25 @@ public class UpdateSmokeTest extends AbstractSessionTest {
 
             // create document
             Document doc1 = createDocument(session, testFolder, NAME1, "rename me!");
+            Document workDoc = doc1;
 
             f = createResult(FAILURE, "Document name doesn't match with given name!");
             addResult(assertEquals(NAME1, doc1.getName(), null, f));
+
+            // test if check out is required
+            boolean checkedout = false;
+            DocumentTypeDefinition type = (DocumentTypeDefinition) doc1.getType();
+            PropertyDefinition<?> namePropDef = type.getPropertyDefinitions().get(PropertyIds.NAME);
+            if (namePropDef.getUpdatability() == Updatability.WHENCHECKEDOUT) {
+                workDoc = (Document) session.getObject(doc1.checkOut(), SELECT_ALL_NO_CACHE_OC);
+                checkedout = true;
+            }
 
             // update
             Map<String, Object> properties = new HashMap<String, Object>();
             properties.put(PropertyIds.NAME, NAME2);
 
-            ObjectId newId = doc1.updateProperties(properties, false);
+            ObjectId newId = workDoc.updateProperties(properties, false);
             Document doc2 = (Document) session.getObject(newId, SELECT_ALL_NO_CACHE_OC);
 
             addResult(checkObject(session, doc2, getAllProperties(doc2), "Updated document compliance"));
@@ -72,8 +85,16 @@ public class UpdateSmokeTest extends AbstractSessionTest {
             f = createResult(FAILURE, "Document name doesn't match updated value!");
             addResult(assertEquals(NAME2, doc2.getName(), null, f));
 
+            // cancel a possible check out
+            if (checkedout) {
+                workDoc.cancelCheckOut();
+            }
+
             // delete
             deleteObject(doc2);
+            if (!doc1.getId().equals(doc2.getId())) {
+                deleteObject(doc1);
+            }
         } finally {
             // clean up
             deleteTestFolder();
