@@ -28,6 +28,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -63,30 +64,32 @@ public class VersionTable extends AbstractDetailsTable {
         if (getObject() instanceof Document) {
             final Document doc = (Document) getObject();
 
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        List<Document> newVersions = doc.getAllVersions(getClientModel().getClientSession()
-                                .geVersionOperationContext());
-
-                        lock.writeLock().lock();
+            if (doc.getAllowableActions().getAllowableActions().contains(Action.CAN_GET_ALL_VERSIONS)) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
                         try {
-                            versions = newVersions;
+                            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                            List<Document> newVersions = doc.getAllVersions(getClientModel().getClientSession()
+                                    .geVersionOperationContext());
+
+                            lock.writeLock().lock();
+                            try {
+                                versions = newVersions;
+                            } finally {
+                                lock.writeLock().unlock();
+                            }
+                        } catch (Exception ex) {
+                            if (!(ex instanceof CmisNotSupportedException)) {
+                                ClientHelper.showError(null, ex);
+                            }
                         } finally {
-                            lock.writeLock().unlock();
+                            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         }
-                    } catch (Exception ex) {
-                        if (!(ex instanceof CmisNotSupportedException)) {
-                            ClientHelper.showError(null, ex);
-                        }
-                    } finally {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                        ((DetailsTableModel) getModel()).fireTableDataChanged();
                     }
-                    ((DetailsTableModel) getModel()).fireTableDataChanged();
-                }
-            });
+                });
+            }
         }
 
         super.objectLoaded(event);
