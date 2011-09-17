@@ -33,7 +33,7 @@
             <includes>
                 <include>org.apache.chemistry.opencmis:chemistry-opencmis-test-browser-app</include>
                 <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-fileshare</include>
-                <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-inmemory</include>
+                <include>org.apache.chemistry.opencmis:chemistry-opencmis-server-inmemory-war</include>
                 <include>org.apache.chemistry.opencmis:chemistry-opencmis-osgi-server</include>
             </includes>
             <outputDirectory></outputDirectory>
