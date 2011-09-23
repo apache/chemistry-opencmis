@@ -82,7 +82,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         DocumentVersion pwc = verDoc.getPwc();
 
-        verDoc.checkIn(major, properties, contentStream, checkinComment, user);
+        TypeDefinition typeDef = getTypeDefinition(repositoryId, pwc);
+        verDoc.checkIn(major, properties, contentStream, checkinComment, user, typeDef);
 
         // To be able to provide all Atom links in the response we need
         // additional information:

@@ -125,19 +125,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter("*");
-
-     //   TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        
         Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds, true);
 
-        PropertiesImpl newPD = new PropertiesImpl();
-        // copy all existing properties
-        for (PropertyData<?> prop : existingProps.getProperties().values()) {
-            newPD.addProperty(prop);
-        }
-        // overwrite all new properties
-        for (PropertyData<?> prop : properties.getProperties().values()) {
-            newPD.addProperty(prop);
-        }
+        PropertiesImpl newPD = PropertyCreationHelper.copyProperties(existingProps.getProperties(),
+                properties.getProperties());
 
         String res = createDocument(context, repositoryId, newPD, folderId, content, versioningState, policies,
                 addAces, removeAces, null);
@@ -597,38 +589,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         boolean hasUpdatedName = false;
         boolean hasUpdatedOtherProps = false;
 
-        for (String key : properties.getProperties().keySet()) {
-            if (key.equals(PropertyIds.NAME))
-             {
-                continue; // ignore here
-            }
-
-            PropertyData<?> value = properties.getProperties().get(key);
-            PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
-            if (value.getValues() == null || value.getFirstValue() == null) {
-                // delete property
-                // check if a required a property
-                if (propDef.isRequired()) {
-                    throw new CmisConstraintException(
-                            "updateProperties failed, following property can't be deleted, because it is required: "
-                                    + key);
-                }
-                oldProperties.remove(key);
-                hasUpdatedOtherProps = true;
-            } else {
-                if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT) && !isCheckedOut) {
-                    throw new CmisConstraintException(
-                            "updateProperties failed, following property can't be updated, because it is not checked-out: "
-                                    + key);
-                } else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
-                    throw new CmisConstraintException(
-                            "updateProperties failed, following property can't be updated, because it is not writable: "
-                                    + key);
-                }
-                oldProperties.put(key, value);
-                hasUpdatedOtherProps = true;
-            }
-        }
+        hasUpdatedOtherProps = PropertyCreationHelper.updateProperties(oldProperties, properties.getProperties(),
+                typeDef, isCheckedOut);
+        
 
         // get name from properties and perform special rename to check if
         // path already exists
