@@ -57,8 +57,7 @@ public class CmisLocalSpi implements CmisSpi {
     private final MultiFilingService multiFilingService;
     private final RelationshipService relationshipService;
     private final PolicyService policyService;
-
-    private AclService aclService;
+    private final AclService aclService;
 
     /**
      * Constructor.
@@ -99,6 +98,7 @@ public class CmisLocalSpi implements CmisSpi {
         multiFilingService = new MultiFilingServiceImpl(session, factory);
         relationshipService = new RelationshipServiceImpl(session, factory);
         policyService = new PolicyServiceImpl(session, factory);
+        aclService = new AclServiceImpl(session, factory);
     }
 
     public RepositoryService getRepositoryService() {
