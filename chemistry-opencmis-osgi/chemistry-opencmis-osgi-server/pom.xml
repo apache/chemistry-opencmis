@@ -89,6 +89,8 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>chemistry-opencmis-server-bindings</artifactId>
 			<version>${project.version}</version>
+            <type>jar</type>
+            <classifier>classes</classifier>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
