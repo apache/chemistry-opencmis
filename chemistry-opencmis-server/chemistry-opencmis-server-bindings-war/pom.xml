@@ -61,7 +61,9 @@
     </build>
 
     <dependencies>
-        <dependency>
+    
+    
+     <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-commons-api</artifactId>
             <version>${project.version}</version>
@@ -75,11 +77,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-server-support</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>chemistry-opencmis-server-bindings</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
