@@ -1,0 +1,213 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.inmemory.FilterParser;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+
+public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements VersionedDocument {
+
+    private boolean fIsCheckedOut;
+    private String fCheckedOutUser;
+    private final List<DocumentVersion> fVersions;
+
+    public VersionedDocumentImpl(ObjectStoreImpl objStore) {
+        super(objStore);
+        fVersions = new ArrayList<DocumentVersion>();
+        fIsCheckedOut = false;
+    }
+
+    public DocumentVersion addVersion(ContentStream content, VersioningState verState, String user) {
+
+        if (isCheckedOut()) {
+            throw new CmisConstraintException("Cannot add a version to document, document is checked out.");
+        }
+
+        Map<String, PropertyData<?>> existingProps = fVersions.size() == 0 ? fProperties : getLatestVersion(false)
+                .getProperties();
+        
+        DocumentVersionImpl ver = new DocumentVersionImpl(fRepositoryId, this, content, verState, fObjStore);
+        PropertiesImpl newProps = PropertyCreationHelper.copyProperties(existingProps, null);
+        fProperties = newProps.getProperties();
+        
+        ver.setSystemBasePropertiesWhenCreatedDirect(getName(), getTypeId(), user); // copy
+        // name and type id from version series.
+        ver.persist();
+        fVersions.add(ver);
+        if (verState == VersioningState.CHECKEDOUT) {
+            fCheckedOutUser = user;
+            fIsCheckedOut = true;
+        }
+
+        return ver;
+    }
+
+    public boolean deleteVersion(DocumentVersion version) {
+        if (fIsCheckedOut) {
+            throw new CmisInvalidArgumentException("version cannot be deleted if document is checked-out: " + version.getId());
+        }
+        boolean found = fVersions.remove(version);
+        if (!found) {
+            throw new CmisInvalidArgumentException("Version is not contained in the document:" + version.getId());
+        }
+
+        return !fVersions.isEmpty();
+    }
+
+    public void cancelCheckOut(String user) {
+        DocumentVersion pwc = getPwc();
+        fVersions.remove(pwc);
+        fObjStore.removeVersion(pwc);
+        fIsCheckedOut = false;
+        fCheckedOutUser = null;
+    }
+
+    public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment,
+            String user, TypeDefinition typeDef) {
+        if (fIsCheckedOut) {
+            if (fCheckedOutUser.equals(user)) {
+                fIsCheckedOut = false;
+                fCheckedOutUser = null;
+            } else {
+                throw new CmisConstraintException("Error: Can't checkin. Document " + getId() + " user " + user
+                        + " has not checked out the document");
+            }
+        } else {
+            throw new CmisConstraintException("Error: Can't cancel checkout, Document " + getId()
+                    + " is not checked out.");
+        }
+
+        DocumentVersion pwc = getPwc();
+
+        if (properties != null) {
+            // we do not allow a rename on check-in
+            PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
+            if (pd != null) {
+                throw new CmisInvalidArgumentException("Error: Name can't be changed during a check-in (Document " + getId()
+                        + ").");
+            }
+
+            PropertyCreationHelper.updateProperties(pwc.getProperties(), properties.getProperties(), typeDef, true);
+        }
+
+        
+        if (null != content)
+            pwc.setContent(content, false);
+
+        pwc.setCheckinComment(checkinComment);
+        pwc.commit(isMajor);
+    }
+
+    public DocumentVersion checkOut(ContentStream content, String user) {
+        if (fIsCheckedOut) {
+            throw new CmisConstraintException("Error: Can't checkout, Document " + getId() + " is already checked out.");
+        }
+
+        // create PWC
+        DocumentVersion pwc = addVersion(content, VersioningState.CHECKEDOUT, user); // will
+        // set
+        // check
+        // -
+        // out
+        // flag
+        return pwc;
+    }
+
+    public List<DocumentVersion> getAllVersions() {
+        return fVersions;
+    }
+
+    public DocumentVersion getLatestVersion(boolean major) {
+
+        DocumentVersion latest = null;
+        if (major) {
+            for (DocumentVersion ver : fVersions) {
+                if (ver.isMajor()) {
+                    latest = ver;
+                }
+            }
+        } else {
+            latest = fVersions.get(fVersions.size() - 1);
+        }
+        return latest;
+    }
+
+    public boolean isCheckedOut() {
+        return fIsCheckedOut;
+    }
+
+    public String getCheckedOutBy() {
+        return fCheckedOutUser;
+    }
+
+    public DocumentVersion getPwc() {
+        for (DocumentVersion ver : fVersions) {
+            if (ver.isPwc()) {
+                return ver;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
+            List<String> requestedIds) {
+
+        DocumentVersion pwc = getPwc();
+
+        super.fillProperties(properties, objFactory, requestedIds);
+
+        // overwrite the version related properties
+        if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_ID, requestedIds)) {
+            properties.put(PropertyIds.VERSION_SERIES_ID, objFactory.createPropertyIdData(
+                    PropertyIds.VERSION_SERIES_ID, getId()));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
+            properties.put(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(
+                    PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, isCheckedOut()));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, requestedIds)) {
+            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, objFactory.createPropertyStringData(
+                    PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, getCheckedOutBy()));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, requestedIds)) {
+            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, objFactory.createPropertyIdData(
+                    PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, pwc == null ? null : pwc.getId()));
+        }
+
+    }
+
+}
