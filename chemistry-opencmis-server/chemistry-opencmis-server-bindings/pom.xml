@@ -59,6 +59,7 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                  <archiveClasses>true</archiveClasses>
                   <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
