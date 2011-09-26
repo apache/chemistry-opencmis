@@ -19,7 +19,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
+    <artifactId>chemistry-opencmis-server-bindings</artifactId>
     <name>OpenCMIS Server Implementation WAR packaging</name>
     <packaging>war</packaging>
 
@@ -30,7 +30,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -56,6 +55,12 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                  <attachClasses>true</attachClasses>
+                </configuration>
             </plugin>
         </plugins>
     </build>
