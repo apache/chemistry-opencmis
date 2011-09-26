@@ -85,7 +85,7 @@
 			<artifactId>chemistry-opencmis-server-support</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
+        <dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>chemistry-opencmis-server-bindings</artifactId>
 			<version>${project.version}</version>
@@ -96,6 +96,8 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>chemistry-opencmis-server-inmemory</artifactId>
 			<version>${project.version}</version>
+            <classifier>classes</classifier>
+            <type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

@@ -19,7 +19,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>chemistry-opencmis-server-inmemory-war</artifactId>
+	<artifactId>chemistry-opencmis-server-inmemory</artifactId>
 	<name>OpenCMIS InMemory Server WAR packaging</name>
 	<packaging>war</packaging>
 
