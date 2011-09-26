@@ -752,6 +752,22 @@ public class EvalQueryTest extends AbstractServiceTest {
     }
 
     @Test
+    public void testLastestVersionsWithQuery() {
+        String id = dataCreator.createVersionedDocument();
+        assertNotNull(id);
+        String statement = "SELECT * FROM " + UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID;
+        ObjectList res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("ver456", UnitTestTypeSystemCreator.VERSION_PROPERTY_ID, res));
+        assertTrue(resultContains("V 2.0", PropertyIds.VERSION_LABEL, res));
+
+        res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertFalse(resultContains("V 1.0", PropertyIds.VERSION_LABEL, res));
+        assertTrue(resultContains("V 2.0", PropertyIds.VERSION_LABEL, res));
+    }
+    
+    @Test
     public void testContainsWord() {
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('cat')";
         ObjectList res = doQuery(statement);

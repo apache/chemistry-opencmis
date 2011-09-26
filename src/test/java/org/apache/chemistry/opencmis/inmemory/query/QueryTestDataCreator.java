@@ -315,7 +315,7 @@ public class QueryTestDataCreator {
             {
                 put(VERSION_PROPERTY_ID, "ver456");
             }};
-        Properties propsV2 = createDocumentProperties("dummy", UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID, propertyMap2);
+        Properties propsV2 = createDocumentProperties(null, null, propertyMap2);
 
         Holder<String> idHolder = new Holder<String>(verIdV1);
         Holder<Boolean> contentCopied = new Holder<Boolean>(false);
@@ -377,8 +377,10 @@ public class QueryTestDataCreator {
 
     private Properties createDocumentProperties(String name, String typeId, Map<String, Object> propertyMap) {
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-        properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
-        properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
+        if (name != null)
+            properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
+        if (typeId != null)
+            properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
         for (Map.Entry<String,Object> propEntry :propertyMap.entrySet()) {
             PropertyData<?> pd =
             createPropertyData(propEntry.getKey(), propEntry.getValue());
