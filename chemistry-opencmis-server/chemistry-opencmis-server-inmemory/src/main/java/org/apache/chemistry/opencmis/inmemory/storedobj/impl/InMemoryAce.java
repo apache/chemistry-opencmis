@@ -18,9 +18,12 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 
 
 public class InMemoryAce {
@@ -97,5 +100,9 @@ public class InMemoryAce {
         return "InMemoryAce [principalId=" + principalId + ", permission=" + permission + "]";
     }
 
+    public Ace toCommonsAce() {
+        return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principalId), 
+                Collections.singletonList(permission.toCmisString())); 
+    }
     
 }

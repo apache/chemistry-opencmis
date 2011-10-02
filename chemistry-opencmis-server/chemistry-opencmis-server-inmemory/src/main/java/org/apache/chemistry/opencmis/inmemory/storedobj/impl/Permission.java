@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumBasicPermissions;
+
 
 public enum Permission {
     NONE("none"),
@@ -46,15 +48,25 @@ public enum Permission {
     
     public static Permission fromCmisString(String strPerm) {
         Permission permission;
-        if (strPerm.equals("cmis:read")) 
+        if (strPerm.equals(EnumBasicPermissions.CMIS_READ.value())) 
             permission = Permission.READ;
-        else if (strPerm.equals("cmis:write")) 
+        else if (strPerm.equals(EnumBasicPermissions.CMIS_WRITE.value())) 
             permission = Permission.WRITE;
-        else if (strPerm.equals("cmis:all")) 
+        else if (strPerm.equals(EnumBasicPermissions.CMIS_ALL.value())) 
             permission = Permission.ALL;
         else
             throw new IllegalArgumentException("InMemory only supports CMIS basic permissions read, write, all.");
         return permission;
      }
 
+    public String toCmisString() {
+        if (this.equals(READ)) 
+            return EnumBasicPermissions.CMIS_READ.value();
+        else if (this.equals(WRITE)) 
+            return EnumBasicPermissions.CMIS_WRITE.value();
+        else if (this.equals(ALL)) 
+            return EnumBasicPermissions.CMIS_ALL.value();
+        else
+            return "";
+    }
 }

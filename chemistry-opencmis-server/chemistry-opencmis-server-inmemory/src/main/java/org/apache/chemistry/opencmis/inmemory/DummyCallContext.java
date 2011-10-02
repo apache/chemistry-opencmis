@@ -30,7 +30,13 @@ public class DummyCallContext implements CallContext {
     private final Map<String, Object> fParameter = new HashMap<String, Object>();
 
     public DummyCallContext() {
-        fParameter.put(USERNAME, "TestUser");
+        fParameter.put(USERNAME, "Admin");
+        fParameter.put(PASSWORD, "secret");
+        fParameter.put(LOCALE, "en");
+    }
+
+    public DummyCallContext(String principalId) {
+        fParameter.put(USERNAME, principalId);
         fParameter.put(PASSWORD, "secret");
         fParameter.put(LOCALE, "en");
     }

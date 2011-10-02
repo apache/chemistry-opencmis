@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -90,7 +91,17 @@ public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implement
      * org.apache.opencmis.inmemory.storedobj.api.MultiParentPath#getParents()
      */
     public List<Folder> getParents(String user) {
-        return fParents;
+        if (null == fParents)
+            return null;
+        else if (null == user)
+            return Collections.unmodifiableList(fParents);
+        else {
+            List<Folder> visibleParents = new ArrayList<Folder>(fParents.size());
+            for (Folder folder : fParents)
+                if (fObjStore.hasReadAccess(user, folder))
+                    visibleParents.add(folder);
+            return visibleParents;
+        }
     }
 
     public boolean hasParent() {

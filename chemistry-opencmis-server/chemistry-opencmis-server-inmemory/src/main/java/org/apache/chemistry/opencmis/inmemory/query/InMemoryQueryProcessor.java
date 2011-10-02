@@ -79,8 +79,10 @@ public class InMemoryQueryProcessor {
     private List<StoredObject> matches = new ArrayList<StoredObject>();
     private QueryObject queryObj;
     private Tree whereTree;
-
-    public InMemoryQueryProcessor() {
+    private ObjectStoreImpl objStore;
+    
+    public InMemoryQueryProcessor(ObjectStoreImpl objStore) {
+        this.objStore = objStore;
     }
 
     /**
@@ -250,7 +252,7 @@ public class InMemoryQueryProcessor {
         if (null != node) {
             match = evalWhereNode(so, user, node);
         }
-        if (match)
+        if (match && objStore.hasReadAccess(user, so))
          {
             matches.add(so); // add to list
         }

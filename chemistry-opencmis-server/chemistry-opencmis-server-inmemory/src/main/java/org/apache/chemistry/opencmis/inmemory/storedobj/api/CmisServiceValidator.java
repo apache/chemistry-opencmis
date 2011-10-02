@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -85,7 +86,7 @@ public interface CmisServiceValidator {
     StoredObject getRenditions(CallContext context, String repositoryId, String objectId,
             ExtensionsData extension);
 
-    void getObjectByPath(CallContext context, String repositoryId, String path,
+    StoredObject getObjectByPath(CallContext context, String repositoryId, String path,
             ExtensionsData extension);
 
     StoredObject getContentStream(CallContext context, String repositoryId, String objectId,
@@ -116,7 +117,7 @@ public interface CmisServiceValidator {
             ExtensionsData extension);
 
     StoredObject checkIn(CallContext context, String repositoryId, Holder<String> objectId,
-            ExtensionsData extension);
+            Acl addAces, Acl removeAces, ExtensionsData extension);
 
     StoredObject getObjectOfLatestVersion(CallContext context, String repositoryId, String objectId,
             String versionSeriesId, ExtensionsData extension);

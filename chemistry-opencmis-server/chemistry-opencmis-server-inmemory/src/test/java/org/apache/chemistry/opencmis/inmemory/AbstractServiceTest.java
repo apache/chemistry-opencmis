@@ -49,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
@@ -77,6 +78,7 @@ public class AbstractServiceTest {
     protected VersioningService fVerSvc;
     protected MultiFilingService fMultiSvc;
     protected DiscoveryService fDiscSvc;
+    protected AclService fAclSvc;
     protected CallContext fTestCallContext;
     private String fTypeCreatorClassName;
 
@@ -162,17 +164,25 @@ public class AbstractServiceTest {
     }
 
     protected String createFolderNoCatch(String folderName, String parentFolderId, String typeId) {
+        return createFolderNoCatch(folderName, parentFolderId, typeId, null, null);
+    }
+
+    protected String createFolderNoCatch(String folderName, String parentFolderId, String typeId, Acl addACEs,
+            Acl removeACEs) {
         Properties props = createFolderProperties(folderName, typeId);
-        String id = fObjSvc.createFolder(fRepositoryId, props, parentFolderId, null, null, null, null);
+        String id = fObjSvc.createFolder(fRepositoryId, props, parentFolderId, null, addACEs, removeACEs, null);
         return id;
     }
 
-    protected String createDocumentNoCatch(String name, String folderId, String typeId, VersioningState versioningState,
-            boolean withContent) {
+    protected String createDocumentNoCatch(String name, String folderId, String typeId,
+            VersioningState versioningState, boolean withContent) {
+        return createDocumentNoCatch(name, folderId, typeId, versioningState, withContent, null, null);
+    }
+
+    protected String createDocumentNoCatch(String name, String folderId, String typeId,
+            VersioningState versioningState, boolean withContent, Acl addACEs, Acl removeACEs) {
         ContentStream contentStream = null;
         List<String> policies = null;
-        Acl addACEs = null;
-        Acl removeACEs = null;
         ExtensionsData extension = null;
 
         Properties props = createDocumentProperties(name, typeId);
@@ -395,6 +405,7 @@ public class AbstractServiceTest {
         fVerSvc = binding.getVersioningService();
         fMultiSvc = binding.getMultiFilingService();
         fDiscSvc = binding.getDiscoveryService();
+        fAclSvc = binding.getAclService();
     }
 
     protected String getStringProperty(ObjectData objData, String propertyKey) {

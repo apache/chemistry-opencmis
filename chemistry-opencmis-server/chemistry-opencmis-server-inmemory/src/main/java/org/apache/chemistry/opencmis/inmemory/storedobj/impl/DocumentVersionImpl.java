@@ -239,6 +239,16 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         }
     }
 
+    @Override
+    public int getAclId() {
+        return ((StoredObjectImpl)fContainer).getAclId();
+    }    
+
+    @Override
+    public void setAclId(int id) {
+        ((StoredObjectImpl)fContainer).setAclId(id);
+    }    
+    
     public List<Folder> getParents(String user) {
         return fContainer.getParents(user);
     }

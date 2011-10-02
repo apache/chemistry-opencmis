@@ -125,11 +125,18 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter("*");
-        
+
         Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds, true);
 
-        PropertiesImpl newPD = PropertyCreationHelper.copyProperties(existingProps.getProperties(),
-                properties.getProperties());
+        PropertiesImpl newPD = new PropertiesImpl();
+        // copy all existing properties
+        for (PropertyData<?> prop : existingProps.getProperties().values()) {
+            newPD.addProperty(prop);
+        }
+        // overwrite all new properties
+        for (PropertyData<?> prop : properties.getProperties().values()) {
+            newPD.addProperty(prop);
+        }
 
         String res = createDocument(context, repositoryId, newPD, folderId, content, versioningState, policies,
                 addAces, removeAces, null);
@@ -150,7 +157,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     public String createPolicy(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 
-        // TODO to be completed if ACLs are implemented
+        // TODO to be completed if policies are implemented
         LOG.debug("start createPolicy()");
         StoredObject so = createPolicyIntern(context, repositoryId, properties, folderId, policies, addAces, removeAces,
                 extension);
@@ -392,15 +399,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("start getObjectByPath()");
-        validator.getObjectByPath(context, repositoryId, path, extension);
+        StoredObject so = validator.getObjectByPath(context, repositoryId, path, extension);
         String user = context.getUsername();
-
-        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-        StoredObject so = objectStore.getObjectByPath(path, user);
-
-        if (so == null) {
-            throw new CmisObjectNotFoundException("Unknown path: " + path);
-        }
 
         TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
         ObjectData od = PropertyCreationHelper.getObjectData(td, so, filter, user, includeAllowableActions,
@@ -589,9 +589,38 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         boolean hasUpdatedName = false;
         boolean hasUpdatedOtherProps = false;
 
-        hasUpdatedOtherProps = PropertyCreationHelper.updateProperties(oldProperties, properties.getProperties(),
-                typeDef, isCheckedOut);
-        
+        for (String key : properties.getProperties().keySet()) {
+            if (key.equals(PropertyIds.NAME))
+             {
+                continue; // ignore here
+            }
+
+            PropertyData<?> value = properties.getProperties().get(key);
+            PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
+            if (value.getValues() == null || value.getFirstValue() == null) {
+                // delete property
+                // check if a required a property
+                if (propDef.isRequired()) {
+                    throw new CmisConstraintException(
+                            "updateProperties failed, following property can't be deleted, because it is required: "
+                                    + key);
+                }
+                oldProperties.remove(key);
+                hasUpdatedOtherProps = true;
+            } else {
+                if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT) && !isCheckedOut) {
+                    throw new CmisConstraintException(
+                            "updateProperties failed, following property can't be updated, because it is not checked-out: "
+                                    + key);
+                } else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
+                    throw new CmisConstraintException(
+                            "updateProperties failed, following property can't be updated, because it is not writable: "
+                                    + key);
+                }
+                oldProperties.put(key, value);
+                hasUpdatedOtherProps = true;
+            }
+        }
 
         // get name from properties and perform special rename to check if
         // path already exists
@@ -672,6 +701,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // Validation stuff
         TypeValidator.validateRequiredSystemProperties(properties);
     
+        // validate ACL
+        TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
+        
         Folder folder = null;
         if (null != folderId) {
             StoredObject so = objectStore.getObjectById(folderId);

@@ -63,6 +63,7 @@ public class InMemoryService extends AbstractCmisService {
     private final InMemoryVersioningServiceImpl fVerSvc;
     private final InMemoryDiscoveryServiceImpl fDisSvc;
     private final InMemoryMultiFilingServiceImpl fMultiSvc;
+    private final InMemoryAclService fAclSvc;
 
     public StoreManager getStoreManager() {
         return storeManager;
@@ -76,6 +77,7 @@ public class InMemoryService extends AbstractCmisService {
         fVerSvc = new InMemoryVersioningServiceImpl(storeManager, fObjSvc);
         fDisSvc = new InMemoryDiscoveryServiceImpl(storeManager, fRepSvc, fNavSvc);
         fMultiSvc = new InMemoryMultiFilingServiceImpl(storeManager);
+        fAclSvc = new InMemoryAclService(storeManager);
     }
 
     public CallContext getCallContext() {
@@ -383,18 +385,18 @@ public class InMemoryService extends AbstractCmisService {
 
     @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl aces, AclPropagation aclPropagation) {
-        return super.applyAcl(repositoryId, objectId, aces, aclPropagation);
+        return fAclSvc.applyAcl(getCallContext(), repositoryId, objectId, aces, aclPropagation);
     }
 
     @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
-        return super.applyAcl(repositoryId, objectId, addAces, removeAces, aclPropagation, extension);
+        return fAclSvc.applyAcl(getCallContext(), repositoryId, objectId, addAces, removeAces, aclPropagation, extension);
     }
 
     @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
-        return super.getAcl(repositoryId, objectId, onlyBasicPermissions, extension);
+        return fAclSvc.getAcl(getCallContext(), repositoryId, objectId, onlyBasicPermissions, extension);
     }
 
     // --- policy service ---

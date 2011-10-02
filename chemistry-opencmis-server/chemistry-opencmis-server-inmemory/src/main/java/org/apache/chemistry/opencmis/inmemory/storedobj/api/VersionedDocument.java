@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.Properties;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
@@ -55,8 +54,7 @@ public interface VersionedDocument extends MultiFiling, StoredObject {
 
     DocumentVersion checkOut(ContentStream content, String user);
 
-    void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment, String user,
-            TypeDefinition typeDef);
+    void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment, String user);
 
     List<DocumentVersion> getAllVersions();
 

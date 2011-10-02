@@ -25,10 +25,14 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 
 public class InMemoryAcl {
     
     private List<InMemoryAce> acl;
+    private int id;
     
     private static class AceComparator<T extends InMemoryAce> implements Comparator<T> {
 
@@ -76,6 +80,14 @@ public class InMemoryAcl {
         }
     }
     
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    public int getId() {
+        return id;
+    }
+    
     public final List<InMemoryAce> getAces() {
         return acl;
     }
@@ -96,15 +108,33 @@ public class InMemoryAcl {
         return acl.remove(ace);
     }
     
+    public void mergeAcl(InMemoryAcl acl2) {
+        if (acl2 == null)
+            return;
+        for (InMemoryAce ace: acl2.getAces()) {
+            InMemoryAce existingAce  = getAce(ace.getPrincipalId());
+            if (existingAce == null)
+                acl.add(ace);   
+            else if (existingAce.getPermission().ordinal() < ace.getPermission().ordinal())
+                existingAce.setPermission(ace.getPermission());
+        }
+        Collections.sort(this.acl, COMP);
+    }
+    
     public Permission getPermission(String principalId) {
+        InMemoryAce ace = getAce(principalId);
+        return ace== null ? Permission.NONE : ace.getPermission();
+    }
+
+    private InMemoryAce getAce(String principalId) {
         if (null == principalId)
             return null;
         
         for (InMemoryAce ace : acl) {
             if (ace.getPrincipalId().equals(principalId))
-                return ace.getPermission();
+                return ace;
         }
-        return Permission.NONE;
+        return null;
     }
 
     public boolean hasPermission(String principalId, Permission permission) {
@@ -168,4 +198,16 @@ public class InMemoryAcl {
         return false;
     }
 
+    public Acl toCommonsAcl() {
+        List<Ace> commonsAcl = new ArrayList<Ace>();
+        for (InMemoryAce memAce : acl)
+            commonsAcl.add(memAce.toCommonsAce());
+        
+        return new AccessControlListImpl(commonsAcl); 
+    }
+
+    public InMemoryAcl clone() {
+        InMemoryAcl newAcl = new InMemoryAcl(acl);
+        return newAcl; 
+    }
 }

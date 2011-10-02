@@ -90,7 +90,7 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
         setLocalName(id);
         setLocalNamespace("local");
         setQueryName(id);
-        setIsControllableAcl(false);
+        setIsControllableAcl(true);
         setIsControllablePolicy(false);
         setIsCreatable(true);
         setIsFileable(true);
