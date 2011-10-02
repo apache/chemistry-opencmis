@@ -26,14 +26,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
@@ -70,6 +73,12 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class ObjectStoreImpl implements ObjectStore {
 
+    
+    /**
+     * user id for administrator always having all rights
+     */
+    public static final String ADMIN_PRINCIPAL_ID = "Admin";
+    
     /**
      * Simple id generator that uses just an integer
      */
@@ -79,6 +88,13 @@ public class ObjectStoreImpl implements ObjectStore {
      * a concurrent HashMap as core element to hold all objects in the repository
      */
     private final Map<String, StoredObject> fStoredObjectMap = new ConcurrentHashMap<String, StoredObject>();
+
+    /**
+     * a concurrent HashMap to hold all Acls in the repository
+     */
+    private static int NEXT_UNUSED_ACL_ID = 1;
+    
+    private final List<InMemoryAcl> fAcls = new ArrayList<InMemoryAcl>();
 
     private final Lock fLock = new ReentrantLock();
 
@@ -94,7 +110,11 @@ public class ObjectStoreImpl implements ObjectStore {
         return NEXT_UNUSED_ID++;
     }
 
-    public void lock() {
+    private static synchronized Integer getNextAclId() {
+        return NEXT_UNUSED_ACL_ID++;
+    }
+    
+   public void lock() {
       fLock.lock();
     }
 
@@ -232,6 +252,8 @@ public class ObjectStoreImpl implements ObjectStore {
         if (null != folder) {
             ((FolderImpl)folder).addChildDocument(doc); // add document to folder and
         }
+        int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
+        doc.setAclId(aclId);
         return doc;
     }
 
@@ -249,6 +271,8 @@ public class ObjectStoreImpl implements ObjectStore {
         }
         version.createSystemBasePropertiesWhenCreated(propMap, user);
         version.setCustomProperties(propMap);
+        int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
+        doc.setAclId(aclId);
         doc.persist();
         return version;
     }
@@ -266,6 +290,10 @@ public class ObjectStoreImpl implements ObjectStore {
         if (null != parent) {
         	((FolderImpl)parent).addChildFolder(folder); // add document to folder and set
         }
+
+        int aclId = getAclId(((FolderImpl)parent), addACEs, removeACEs);
+        folder.setAclId(aclId);
+        
         return folder;
     }
 
@@ -282,8 +310,8 @@ public class ObjectStoreImpl implements ObjectStore {
         for (StoredObject so : fStoredObjectMap.values()) {
             if (so instanceof VersionedDocument) {
                 VersionedDocument verDoc = (VersionedDocument) so;
-                if (verDoc.isCheckedOut()) {
-                    res.add(verDoc);
+                if (verDoc.isCheckedOut() && hasReadAccess(user, verDoc)) {
+                    res.add(verDoc.getPwc());
                 }
             }
         }
@@ -291,6 +319,81 @@ public class ObjectStoreImpl implements ObjectStore {
         return res;
     }
 
+	public StoredObject createRelationship(StoredObject sourceObject,
+			StoredObject targetObject, Map<String, PropertyData<?>> propMap,
+			String user, Acl addACEs, Acl removeACEs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    public Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String principalId) {
+        if (aclPropagation==AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
+            return applyAcl(so, addAces, removeAces);
+        } else {
+            return applyAclRecursive(((Folder)so), addAces, removeAces, principalId);            
+        }
+    }
+    
+    public Acl applyAcl(StoredObject so, Acl acl, AclPropagation aclPropagation, String principalId) {
+        if (aclPropagation==AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
+            return applyAcl(so, acl);
+        } else {
+            return applyAclRecursive(((Folder)so), acl, principalId);
+        }
+    }
+
+    public List<Integer> getAllAclsForUser(String principalId, Permission permission) {
+        List<Integer> acls = new ArrayList<Integer>();
+        acls.add(0); // ACL with id 0 means no ACL set granting all users any access rights
+        for (InMemoryAcl acl: fAcls) {
+            if (acl.hasPermission(principalId, permission))
+                acls.add(acl.getId());
+        }
+        return acls;
+    }
+    
+    public Acl getAcl(int aclId) {
+        InMemoryAcl acl = getInMemoryAcl(aclId);
+        return acl==null ? null : acl.toCommonsAcl();
+    }
+    
+    public int getAclId(StoredObjectImpl so, Acl addACEs, Acl removeACEs) {
+        InMemoryAcl newAcl;
+        
+        if (so == null) {
+            newAcl = new InMemoryAcl();
+        } else {
+            newAcl = getInMemoryAcl(so.getAclId());
+            if (null == newAcl)
+                newAcl = new InMemoryAcl();
+            else
+                // copy list so that we can safely change it without effecting the original
+                newAcl = new InMemoryAcl(newAcl.getAces()); 
+        }
+
+        if (newAcl.size() == 0 && addACEs == null && removeACEs == null)
+            return 0;
+
+        // add ACEs
+        if (null != addACEs)
+            for (Ace ace: addACEs.getAces()) {
+                InMemoryAce inMemAce = new InMemoryAce(ace);
+                newAcl.addAce(inMemAce);
+            }
+        
+        // remove ACEs
+        if (null != removeACEs)
+            for (Ace ace: removeACEs.getAces()) {
+                InMemoryAce inMemAce = new InMemoryAce(ace);
+                newAcl.removeAce(inMemAce);
+            }
+
+        if (newAcl.size() > 0)
+            return addAcl(newAcl);
+        else
+            return 0;
+    }
+    
     private void deleteFolder(String folderId, String user) {
         StoredObject folder = fStoredObjectMap.get(folderId);
         if (folder == null) {
@@ -311,11 +414,162 @@ public class ObjectStoreImpl implements ObjectStore {
         fStoredObjectMap.remove(folderId);
     }
 
-	public StoredObject createRelationship(StoredObject sourceObject,
-			StoredObject targetObject, Map<String, PropertyData<?>> propMap,
-			String user, Acl addACEs, Acl removeACEs) {
-		// TODO Auto-generated method stub
-		return null;
+    public boolean hasReadAccess(String principalId, StoredObject so) {       
+        return hasAccess(principalId, so, Permission.READ);
+    }
+    /*
+    public boolean hasReadAccess(String principalId, StoredObject so) {       
+        int aclId = ((StoredObjectImpl)so).getAclId();
+        if (0 == aclId || null == principalId) 
+            return true; // no ACL set or user is admin user
+        List<Integer> aclIds = getAllAclsForUser(principalId, Permission.READ);
+        return hasAccess(principalId, so, Permission.READ);
+    }
+    */
+    public boolean hasWriteAccess(String principalId, StoredObject so) {       
+        return hasAccess(principalId, so, Permission.WRITE);
+    }
+
+    public boolean hasAllAccess(String principalId, StoredObject so) {       
+        return hasAccess(principalId, so, Permission.ALL);
+    }
+    
+
+    public void checkReadAccess(String principalId, StoredObject so) {
+        checkAccess(principalId, so, Permission.READ);
+    }
+    
+    public void checkWriteAccess(String principalId, StoredObject so) {
+        checkAccess(principalId, so, Permission.WRITE);
+    }
+    
+    public void checkAllAccess(String principalId, StoredObject so) {
+        checkAccess(principalId, so, Permission.ALL);
+    }
+ 
+    private void checkAccess(String principalId, StoredObject so, Permission permission) {
+        if (!hasAccess(principalId, so, permission))
+            throw new CmisPermissionDeniedException("Object with id " + so.getId() + " and name " + so.getName()
+                    + " does not grant " + permission.toString() + " access to principal " + principalId);
+    }
+
+    private boolean hasAccess(String principalId, StoredObject so, Permission permission) {
+        if (null != principalId && principalId.equals(ADMIN_PRINCIPAL_ID))
+            return true;
+        List<Integer> aclIds = getAllAclsForUser(principalId, permission);        
+        return aclIds.contains(((StoredObjectImpl)so).getAclId());
+    }
+
+    private InMemoryAcl getInMemoryAcl(int aclId) {
+        if (0 == aclId)
+            return null;
+        
+        for (InMemoryAcl acl : fAcls) {
+            if (aclId == acl.getId())
+                return acl;
+        }
+        return null;
+    }
+
+    private int setAcl(StoredObjectImpl so, Acl acl) {
+        int aclId;
+        if (null == acl || acl.getAces().isEmpty())
+            aclId = 0;
+        else {
+            aclId = getAclId(null, acl, null);
+        }
+        so.setAclId(aclId);
+        return aclId;
+    }
+    
+	/**
+	 * check if an Acl is already known
+	 * @param acl
+	 *     acl to be checked
+	 * @return
+	 *     0 if Acl is not known, id of Acl otherwise
+	 */
+	private int hasAcl(InMemoryAcl acl) {
+	    for (InMemoryAcl acl2: fAcls) {
+	        if (acl2.equals(acl))
+	            return acl2.getId();
+	    }
+	    return 0;
 	}
+
+    private int addAcl(InMemoryAcl acl) {
+        int aclId = 0;
+        
+        if (null == acl)
+            return 0;
+        
+        lock();
+        try {
+            aclId = hasAcl(acl);
+            if (0 == aclId) {
+                aclId = getNextAclId();
+                acl.setId(aclId);
+                fAcls.add(acl);
+            }
+        } finally {
+            unlock();
+        }
+        return aclId;
+    }
+    
+    private Acl applyAcl(StoredObject so, Acl acl) {
+        int aclId = setAcl((StoredObjectImpl) so, acl);
+        return getAcl(aclId);
+    }
+
+    private Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces) {
+        int aclId = getAclId((StoredObjectImpl) so, addAces, removeAces);
+        ((StoredObjectImpl) so).setAclId(aclId);
+        return getAcl(aclId);
+    }
+
+    private Acl applyAclRecursive(Folder folder, Acl addAces, Acl removeAces, String principalId) {
+        List<StoredObject> children = folder.getChildren(-1, -1, ADMIN_PRINCIPAL_ID);
+        
+        Acl result = applyAcl(folder, addAces, removeAces);  
+
+        if (null == children) {
+            return result;
+        }
+        
+        for (StoredObject child : children) {
+            if (hasAllAccess(principalId, child)) {
+                if (child instanceof Folder) {
+                    applyAclRecursive((Folder) child, addAces, removeAces, principalId);                
+                } else {
+                    applyAcl(child, addAces, removeAces);               
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    private Acl applyAclRecursive(Folder folder, Acl acl, String principalId) {
+        List<StoredObject> children = folder.getChildren(-1, -1, ADMIN_PRINCIPAL_ID);
+
+        Acl result = applyAcl(folder, acl);  
+
+        if (null == children) {
+            return result;
+        }
+
+        for (StoredObject child : children) {
+            if (hasAllAccess(principalId, child)) {
+                if (child instanceof Folder) {
+                    applyAclRecursive((Folder) child, acl, principalId);                
+                } else {
+                    applyAcl(child, acl);               
+                }
+            }
+        }
+        
+        return result;
+    }
 
 }

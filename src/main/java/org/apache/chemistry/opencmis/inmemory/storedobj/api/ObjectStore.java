@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
@@ -195,5 +196,35 @@ public interface ObjectStore {
      * @return list of checked out documents in the repository
      */
     List<StoredObject> getCheckedOutDocuments(String orderBy, String user, IncludeRelationships includeRelationships);
+    
+    /**
+     * Apply a ACLs by relative adding and removing a list of ACEs to/from an object
+     * 
+     * @param so
+     *      object where ACLs are applied
+     * @param addAces
+     *      list of ACEs to be added
+     * @param removeAces
+     *      list of ACEs to be removed
+     * @param aclPropagation
+     *      enum value how to propagate ACLs to child objects
+     * @return
+     *      new ACL of object
+     */
+    Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String principalId);
+    
+    /**
+     * Apply a ACLs by setting a new list of ACEs to an object
+     * 
+     * @param so
+     *      object where ACLs are applied
+     * @param aces
+     *      list of ACEs to be applied
+     * @param aclPropagation
+     *      enum value how to propagate ACLs to child objects
+     * @return
+     *      new ACL of object
+     */
+    Acl applyAcl(StoredObject so, Acl aces, AclPropagation aclPropagation, String principalId);
     
 }

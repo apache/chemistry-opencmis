@@ -100,7 +100,7 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
         setLocalName(id);
         setLocalNamespace("local");
         setQueryName(id);
-        setIsControllableAcl(false);
+        setIsControllableAcl(true);
         setIsControllablePolicy(false);
         setIsCreatable(true);
         setIsFileable(true);

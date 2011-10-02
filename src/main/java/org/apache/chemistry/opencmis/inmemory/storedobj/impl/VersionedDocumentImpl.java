@@ -26,17 +26,13 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
-import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 
 public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements VersionedDocument {
 
@@ -56,15 +52,16 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
             throw new CmisConstraintException("Cannot add a version to document, document is checked out.");
         }
 
-        Map<String, PropertyData<?>> existingProps = fVersions.size() == 0 ? fProperties : getLatestVersion(false)
-                .getProperties();
-        
         DocumentVersionImpl ver = new DocumentVersionImpl(fRepositoryId, this, content, verState, fObjStore);
-        PropertiesImpl newProps = PropertyCreationHelper.copyProperties(existingProps, null);
-        fProperties = newProps.getProperties();
-        
         ver.setSystemBasePropertiesWhenCreatedDirect(getName(), getTypeId(), user); // copy
-        // name and type id from version series.
+        // name
+        // and
+        // type
+        // id
+        // from
+        // version
+        // series
+        // .
         ver.persist();
         fVersions.add(ver);
         if (verState == VersioningState.CHECKEDOUT) {
@@ -95,8 +92,7 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         fCheckedOutUser = null;
     }
 
-    public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment,
-            String user, TypeDefinition typeDef) {
+    public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment, String user) {
         if (fIsCheckedOut) {
             if (fCheckedOutUser.equals(user)) {
                 fIsCheckedOut = false;
@@ -111,21 +107,12 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         }
 
         DocumentVersion pwc = getPwc();
-
-        if (properties != null) {
-            // we do not allow a rename on check-in
-            PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
-            if (pd != null) {
-                throw new CmisInvalidArgumentException("Error: Name can't be changed during a check-in (Document " + getId()
-                        + ").");
-            }
-
-            PropertyCreationHelper.updateProperties(pwc.getProperties(), properties.getProperties(), typeDef, true);
-        }
-
         
         if (null != content)
             pwc.setContent(content, false);
+
+        if (null != properties && null != properties.getProperties())
+            ((DocumentVersionImpl)pwc).setCustomProperties(properties.getProperties());
 
         pwc.setCheckinComment(checkinComment);
         pwc.commit(isMajor);

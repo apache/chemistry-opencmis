@@ -57,6 +57,7 @@ public class StoredObjectImpl implements StoredObject {
     protected String fRepositoryId;
     protected Map<String, PropertyData<?>> fProperties;
     protected final ObjectStoreImpl fObjStore;
+    protected int fAclId;
 
     StoredObjectImpl(ObjectStoreImpl objStore) { // visibility should be package
         GregorianCalendar now = getNow();
@@ -377,10 +378,20 @@ public class StoredObjectImpl implements StoredObject {
     }
 
 	public Acl getAcl() {
-		// TODO Auto-generated method stub
-		return null;
+		if (0 == getAclId())
+		    return null;
+		else
+		    return fObjStore.getAcl(fAclId);
 	}
 
+	public int getAclId() {
+	    return fAclId;
+	}
+	
+	public void setAclId(int aclId) {
+	    fAclId = aclId;
+	}
+	
 	public ObjectList getObjectRelationships(
 			Boolean includeSubRelationshipTypes,
 			RelationshipDirection relationshipDirection, String typeId,

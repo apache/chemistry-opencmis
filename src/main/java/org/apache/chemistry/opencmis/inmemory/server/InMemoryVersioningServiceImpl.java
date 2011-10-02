@@ -75,15 +75,14 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        StoredObject so = validator.checkIn(context, repositoryId, objectId, extension);
+        StoredObject so = validator.checkIn(context, repositoryId, objectId, addAces, removeAces, extension);
 
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
         DocumentVersion pwc = verDoc.getPwc();
 
-        TypeDefinition typeDef = getTypeDefinition(repositoryId, pwc);
-        verDoc.checkIn(major, properties, contentStream, checkinComment, user, typeDef);
+        verDoc.checkIn(major, properties, contentStream, checkinComment, user);
 
         // To be able to provide all Atom links in the response we need
         // additional information:

@@ -28,9 +28,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumBasicPermissions;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAce;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAcl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.Permission;
@@ -149,6 +151,23 @@ public class AclTest {
     }
 
     @Test
+    public void testMerge() {
+        final InMemoryAce aceNew = new InMemoryAce("Hugo", Permission.WRITE); // will be added
+        final InMemoryAce aceRCopy = new InMemoryAce(BERTA, Permission.READ); // is same
+        final InMemoryAce aceChange = new InMemoryAce(CHRISTIAN, Permission.ALL); // changes permission
+
+        InMemoryAcl acl1 = createDefaultAcl();
+        InMemoryAcl acl2 = new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(aceNew); add(aceRCopy);  add(aceChange); }});
+        acl1.mergeAcl(acl2);
+        assertEquals(5, acl1.getAces().size());
+        assertEquals(Permission.NONE, acl1.getPermission(ANDREAS));
+        assertEquals(Permission.READ, acl1.getPermission(BERTA));
+        assertEquals(Permission.ALL, acl1.getPermission(CHRISTIAN));
+        assertEquals(Permission.ALL, acl1.getPermission(DOROTHEE));
+        assertEquals(Permission.WRITE, acl1.getPermission("Hugo"));
+    }
+    
+    @Test
     public void testAclEquality() {
         final InMemoryAce aceNew = new InMemoryAce("Hugo", Permission.WRITE);
         final InMemoryAce aceRCopy = new InMemoryAce(BERTA, Permission.READ);
@@ -188,7 +207,7 @@ public class AclTest {
 
     @Test
     public void testConvertFomCmisAcl() {
-        List<Ace> aces = Arrays.asList(new Ace[] { createAce(ANDREAS, "cmis:read"), createAce(DOROTHEE, "cmis:write") });
+        List<Ace> aces = Arrays.asList(new Ace[] { createAce(ANDREAS, EnumBasicPermissions.CMIS_READ.value()), createAce(DOROTHEE, EnumBasicPermissions.CMIS_WRITE.value()) });
         AccessControlListImpl cAcl = new AccessControlListImpl(aces);
         InMemoryAcl acl = InMemoryAcl.createFromCommonsAcl(cAcl);        
         assertEquals(2, acl.size());
@@ -196,7 +215,7 @@ public class AclTest {
         assertEquals(Permission.WRITE, acl.getPermission(DOROTHEE));
         
         try {
-            List<Ace> aces2 = Arrays.asList(new Ace[] { new AccessControlEntryImpl(null,  Arrays.asList(new String[] { "cmis:read"}))});
+            List<Ace> aces2 = Arrays.asList(new Ace[] { new AccessControlEntryImpl(null,  Arrays.asList(new String[] { EnumBasicPermissions.CMIS_READ.value()}))});
             acl = InMemoryAcl.createFromCommonsAcl(new AccessControlListImpl(aces2));
             fail("create Ace will null principal should raise exception.");
         } catch (RuntimeException e) { }
@@ -205,6 +224,49 @@ public class AclTest {
             acl = InMemoryAcl.createFromCommonsAcl(new AccessControlListImpl(aces2));
             fail("create Ace will null permission should raise exception.");
         } catch (RuntimeException e) { }
+    }
+    
+    
+    @Test
+    public void testConvertToCmisAcl() {
+        Ace ace = aceN.toCommonsAce();
+        assertEquals(ANDREAS, ace.getPrincipalId());
+        assertEquals(1, ace.getPermissions().size());
+        assertEquals("", ace.getPermissions().get(0));
+
+        ace = aceR.toCommonsAce();
+        assertEquals(BERTA, ace.getPrincipalId());
+        assertEquals(1, ace.getPermissions().size());
+        assertEquals(EnumBasicPermissions.CMIS_READ.value(), ace.getPermissions().get(0));
+
+        ace = aceW.toCommonsAce();
+        assertEquals(CHRISTIAN, ace.getPrincipalId());
+        assertEquals(1, ace.getPermissions().size());
+        assertEquals(EnumBasicPermissions.CMIS_WRITE.value(), ace.getPermissions().get(0));
+
+        ace = aceA.toCommonsAce();
+        assertEquals(DOROTHEE, ace.getPrincipalId());
+        assertEquals(1, ace.getPermissions().size());
+        assertEquals(EnumBasicPermissions.CMIS_ALL.value(), ace.getPermissions().get(0));
+        
+        InMemoryAcl acl = createDefaultAcl();
+        Acl commonsAcl = acl.toCommonsAcl();
+        assertEquals(4, commonsAcl.getAces().size());
+        assertTrue(hasCommonsAce(commonsAcl, ANDREAS, ""));
+        assertFalse(hasCommonsAce(commonsAcl, ANDREAS, EnumBasicPermissions.CMIS_READ.value()));
+        assertFalse(hasCommonsAce(commonsAcl, ANDREAS, EnumBasicPermissions.CMIS_WRITE.value()));
+        assertFalse(hasCommonsAce(commonsAcl, ANDREAS, EnumBasicPermissions.CMIS_ALL.value()));
+        assertTrue(hasCommonsAce(commonsAcl, BERTA, EnumBasicPermissions.CMIS_READ.value()));
+        assertTrue(hasCommonsAce(commonsAcl, CHRISTIAN, EnumBasicPermissions.CMIS_WRITE.value()));
+        assertTrue(hasCommonsAce(commonsAcl, DOROTHEE, EnumBasicPermissions.CMIS_ALL.value()));
+    }
+    
+    @Test
+    public void testCloneAcl() {
+        InMemoryAcl acl = createDefaultAcl();
+        InMemoryAcl acl2 = acl.clone();
+        assertFalse(acl == acl2);
+        assertEquals(acl, acl2);
     }
     
     private InMemoryAcl createDefaultAcl() {
@@ -229,4 +291,12 @@ public class AclTest {
         return ace;
     }
 
+    private boolean hasCommonsAce(Acl acl, String principalId, String permission) {
+        for (Ace ace : acl.getAces()) {
+            if (ace.getPrincipalId().equals(principalId) && ace.getPermissions().get(0).equals(permission))
+                return true;
+        }
+        return false;
+        
+    }
 }

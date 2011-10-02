@@ -118,7 +118,7 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     public CmisServiceValidator getServiceValidator() {
-        return new BaseServiceValidatorImpl(this);
+        return new InMemoryServiceValidatorImpl(this);
     }
 
     public BindingsObjectFactory getObjectFactory() {
@@ -390,7 +390,7 @@ public class StoreManagerImpl implements StoreManager {
         TypeManager tm = getTypeManager(repositoryId);
         ObjectStore objectStore = getObjectStore(repositoryId);
 
-        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor();
+        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor(getStore(repositoryId));
         ObjectList objList = queryProcessor.query(tm, objectStore, user, repositoryId, statement, searchAllVersions,
                 includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount);
 

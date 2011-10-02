@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -40,7 +41,6 @@ import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
@@ -61,6 +61,7 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -297,7 +298,8 @@ public class PropertyCreationHelper {
         }
         
         if (null != includeACL && includeACL) {
-            od.setAcl(so.getAcl());
+            Acl acl = so instanceof DocumentVersion ? ((DocumentVersion) so).getParentDocument().getAcl() : so.getAcl();
+            od.setAcl(acl);
         }
         od.setIsExactAcl(true);
 
@@ -349,62 +351,6 @@ public class PropertyCreationHelper {
         od.setProperties(props);
 
         return od;
-    }
-
-    public static PropertiesImpl copyProperties(Map<String, PropertyData<?>> existingProps, Map<String, PropertyData<?>> newProps) {
-        
-        PropertiesImpl newPD = new PropertiesImpl();
-        // copy all existing properties
-        for (PropertyData<?> prop : existingProps.values()) {
-            newPD.addProperty(prop);
-        }
-        
-        // overwrite all new properties
-        if (newProps != null)
-            for (PropertyData<?> prop : newProps.values()) {
-                newPD.addProperty(prop);
-            }
-        
-        return newPD;
-    }
-    
-    public static boolean updateProperties(Map<String, PropertyData<?>> properties,
-            Map<String, PropertyData<?>> newProps, TypeDefinition typeDef, boolean isCheckedOut) {
-        boolean hasUpdated = false;
-
-        for (String key : newProps.keySet()) {
-            if (key.equals(PropertyIds.NAME))
-             {
-                continue; // ignore here
-            }
-
-            PropertyData<?> value = newProps.get(key);
-            PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
-            if (value.getValues() == null || value.getFirstValue() == null) {
-                // delete property
-                // check if a required a property
-                if (propDef.isRequired()) {
-                    throw new CmisConstraintException(
-                            "updateProperties failed, following property can't be deleted, because it is required: "
-                                    + key);
-                }
-                properties.remove(key);
-                hasUpdated = true;
-            } else {
-                if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT) && !isCheckedOut) {
-                    throw new CmisConstraintException(
-                            "updateProperties failed, following property can't be updated, because it is not checked-out: "
-                                    + key);
-                } else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
-                    throw new CmisConstraintException(
-                            "updateProperties failed, following property can't be updated, because it is not writable: "
-                                    + key);
-                }
-                properties.put(key, value);
-                hasUpdated = true;
-            }
-        }
-        return hasUpdated;
     }
 
     // internal helpers
