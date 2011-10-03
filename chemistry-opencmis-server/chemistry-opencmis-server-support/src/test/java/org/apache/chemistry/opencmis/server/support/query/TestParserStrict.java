@@ -283,6 +283,26 @@ public class TestParserStrict extends AbstractParserTest{
     public void testSTRING_LIT8() throws Exception {
         testLexerOk("STRING_LIT", "'c:\\\\temp'");
     }
+    
+    @Test
+    public void testSTRING_LIT9() throws Exception {
+        testLexerOk("STRING_LIT", "'Like%String'");
+    }
+    
+    @Test
+    public void testSTRING_LIT10() throws Exception {
+        testLexerOk("STRING_LIT", "'Like_String'");
+    }
+    
+    @Test
+    public void testSTRING_LIT11() throws Exception {
+        testLexerOk("STRING_LIT", "'Like\\%String'");
+    }
+    
+    @Test
+    public void testSTRING_LIT12() throws Exception {
+        testLexerOk("STRING_LIT", "'Like\\_String'");
+    }
 
 
 //    BOOL_LIT:
@@ -737,4 +757,12 @@ public class TestParserStrict extends AbstractParserTest{
                 "FROM TRAVEL_BROCHURE " +
                 "WHERE ( CONTAINS('CARIBBEAN CENTRAL AMERICA CRUISE TOUR') ) AND( '2010-1-1' = ANY DEPARTURE_DATES )");
     }
+    
+    @Test
+    public void queryEsc1() throws Exception {
+        testParserOk("query",
+                "SELECT * FROM cmis:document " +
+                "WHERE cmis:name LIKE 'abc\\%'");
+    }
+    
 }

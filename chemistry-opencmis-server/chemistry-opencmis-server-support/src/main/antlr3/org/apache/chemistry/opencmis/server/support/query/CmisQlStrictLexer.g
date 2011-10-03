@@ -128,12 +128,14 @@ NUM_LIT : Sign (ExactNumLit | ApproxNumLit);
 
 fragment QUOTE: '\'';
 fragment BACKSL: '\\';
+fragment UNDERSCORE: '_';
+fragment PERCENT: '%';
 
 // An escape sequence is two backslashes for backslash, backslash single quote for single quote
 // or single quote single quote for single quote
 fragment
 ESC 
-	: BACKSL (QUOTE | BACKSL)
+	: BACKSL (QUOTE | BACKSL | PERCENT | UNDERSCORE)
 	| QUOTE QUOTE
 	;
 	
