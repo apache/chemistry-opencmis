@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.tck.tests.versioning;
 
-import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.Map;
@@ -69,7 +68,10 @@ public class CheckedOutTest extends AbstractSessionTest {
             addResult(checkObject(session, pwc, propertiesToCheck, "PWC check: " + pwc.getId()));
 
             if (pwc != null) {
-                f = createResult(FAILURE, "PWC is not latest version! Id: " + pwc.getId());
+                f = createResult(WARNING, "PWC is not the latest version! Id: " + pwc.getId()
+                        + " (Note: The words of the CMIS specification define that the PWC is the latest version."
+                        + " But that is not the intention of the spec and will be changed in CMIS 1.1."
+                        + " Thus this a warning, not an error.)");
                 addResult(assertIsTrue(pwc.isLatestVersion(), null, f));
 
                 if (lastName != null && pwc.getName() != null) {

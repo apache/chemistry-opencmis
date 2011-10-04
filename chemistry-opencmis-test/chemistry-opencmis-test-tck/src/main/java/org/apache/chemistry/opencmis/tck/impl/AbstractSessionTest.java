@@ -1241,9 +1241,21 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                 // check first entry
                 if (i == 0) {
-                    f = createResult(FAILURE,
-                            "First version history entry is not the latest version! Id: " + version.getId());
-                    addResult(results, assertIsTrue(version.isLatestVersion(), null, f));
+                    if (version.isVersionSeriesCheckedOut()) {
+                        f = createResult(
+                                WARNING,
+                                "Version series is checked-out and the PWC is not the latest version! Id: "
+                                        + version.getId()
+                                        + " (Note: The words of the CMIS specification define that the PWC is the latest version."
+                                        + " But that is not the intention of the spec and will be changed in CMIS 1.1."
+                                        + " Thus this a warning, not an error.)");
+                        addResult(results, assertIsTrue(version.isLatestVersion(), null, f));
+                    } else {
+                        f = createResult(FAILURE,
+                                "Version series is not checked-out and first version history entry is not the latest version! Id: "
+                                        + version.getId());
+                        addResult(results, assertIsTrue(version.isLatestVersion(), null, f));
+                    }
                 }
 
                 // check version id
