@@ -19,7 +19,35 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_OBJECT_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.*;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CREATE_DOCUMENT;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CREATE_FOLDER;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE_TREE;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_QUERY;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_SET_CONTENT;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_BASETYPE_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_TRANSACTION;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTROL_CMISACTION;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTROL_OBJECT_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTROL_TRANSACTION;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.JSON_MIME_TYPE;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_SELECTOR;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CHILDREN;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CONTENT;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_DESCENDANTS;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_FOLDER_TREE;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_LAST_RESULT;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_OBJECT;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_PARENTS;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_QUERY;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_TYPE_CHILDREN;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_TYPE_DEFINITION;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_TYPE_DESCENDANTS;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_VERSIONS;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.prepareContext;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.ERROR_EXCEPTION;
 import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.ERROR_MESSAGE;
 import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.ERROR_STACKTRACE;
@@ -50,13 +78,12 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
+import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CallUrl;
-import org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants;
 import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
@@ -97,48 +124,33 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         rootDispatcher = new Dispatcher();
 
         try {
-            repositoryDispatcher.addResource("", METHOD_GET,
-                    RepositoryService.class, "getRepositoryInfo");
-            repositoryDispatcher.addResource(SELECTOR_LAST_RESULT, METHOD_GET,
-                    RepositoryService.class, "getLastResult");
-            repositoryDispatcher.addResource(SELECTOR_TYPE_CHILDREN, METHOD_GET,
-                    RepositoryService.class, "getTypeChildren");
-            repositoryDispatcher.addResource(SELECTOR_TYPE_DESCENDANTS, METHOD_GET,
-                    RepositoryService.class, "getTypeDescendants");
-            repositoryDispatcher.addResource(SELECTOR_TYPE_DEFINITION, METHOD_GET,
-                    RepositoryService.class, "getTypeDefinition");
-            repositoryDispatcher.addResource(SELECTOR_QUERY, METHOD_GET,
-                    DiscoveryService.class, "query");
-            repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST,
-                    DiscoveryService.class, "query");
-            repositoryDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST,
-                    ObjectService.class, "createDocument");
+            repositoryDispatcher.addResource("", METHOD_GET, RepositoryService.class, "getRepositoryInfo");
+            repositoryDispatcher
+                    .addResource(SELECTOR_LAST_RESULT, METHOD_GET, RepositoryService.class, "getLastResult");
+            repositoryDispatcher.addResource(SELECTOR_TYPE_CHILDREN, METHOD_GET, RepositoryService.class,
+                    "getTypeChildren");
+            repositoryDispatcher.addResource(SELECTOR_TYPE_DESCENDANTS, METHOD_GET, RepositoryService.class,
+                    "getTypeDescendants");
+            repositoryDispatcher.addResource(SELECTOR_TYPE_DEFINITION, METHOD_GET, RepositoryService.class,
+                    "getTypeDefinition");
+            repositoryDispatcher.addResource(SELECTOR_QUERY, METHOD_GET, DiscoveryService.class, "query");
+            repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST, DiscoveryService.class, "query");
+            repositoryDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class,
+                    "createDocument");
 
-            rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class,
-                    "getObject");
-            rootDispatcher.addResource(SELECTOR_CONTENT, METHOD_GET,
-                    ObjectService.class, "getContentStream");
-            rootDispatcher.addResource(SELECTOR_CHILDREN, METHOD_GET,
-                    NavigationService.class, "getChildren");
-            rootDispatcher.addResource(SELECTOR_DESCENDANTS, METHOD_GET,
-                    NavigationService.class, "getDescendants");
-            rootDispatcher.addResource(SELECTOR_FOLDER_TREE, METHOD_GET,
-                    NavigationService.class, "getFolderTree");
-            rootDispatcher.addResource(SELECTOR_PARENTS, METHOD_GET,
-                    NavigationService.class, "getObjectParents");
-            rootDispatcher.addResource(SELECTOR_VERSIONS, METHOD_GET,
-                    VersioningService.class, "getAllVersions");
+            rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class, "getObject");
+            rootDispatcher.addResource(SELECTOR_CONTENT, METHOD_GET, ObjectService.class, "getContentStream");
+            rootDispatcher.addResource(SELECTOR_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");
+            rootDispatcher.addResource(SELECTOR_DESCENDANTS, METHOD_GET, NavigationService.class, "getDescendants");
+            rootDispatcher.addResource(SELECTOR_FOLDER_TREE, METHOD_GET, NavigationService.class, "getFolderTree");
+            rootDispatcher.addResource(SELECTOR_PARENTS, METHOD_GET, NavigationService.class, "getObjectParents");
+            rootDispatcher.addResource(SELECTOR_VERSIONS, METHOD_GET, VersioningService.class, "getAllVersions");
 
-            rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST,
-                    ObjectService.class, "createDocument");
-            rootDispatcher.addResource(CMISACTION_CREATE_FOLDER, METHOD_POST,
-                    ObjectService.class, "createFolder");
-            rootDispatcher.addResource(CMISACTION_SET_CONTENT, METHOD_POST,
-                    ObjectService.class, "setContentStream");
-            rootDispatcher.addResource(CMISACTION_DELETE, METHOD_POST,
-                    ObjectService.class, "deleteObject");
-            rootDispatcher.addResource(CMISACTION_DELETE_TREE, METHOD_POST,
-                    ObjectService.class, "deleteTree");
+            rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class, "createDocument");
+            rootDispatcher.addResource(CMISACTION_CREATE_FOLDER, METHOD_POST, ObjectService.class, "createFolder");
+            rootDispatcher.addResource(CMISACTION_SET_CONTENT, METHOD_POST, ObjectService.class, "setContentStream");
+            rootDispatcher.addResource(CMISACTION_DELETE, METHOD_POST, ObjectService.class, "deleteObject");
+            rootDispatcher.addResource(CMISACTION_DELETE_TREE, METHOD_POST, ObjectService.class, "deleteTree");
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);
         }
@@ -147,6 +159,10 @@ public class CmisBrowserBindingServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+
+        // set default headers
+        response.addHeader("Cache-Control", "private, max-age=0");
+        response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
 
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
@@ -265,8 +281,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                 }
 
                 // add object id and object base type id to context
-                prepareContext(context, callUrl, service, repositoryId, objectId, transaction,
-                        postRequest);
+                prepareContext(context, callUrl, service, repositoryId, objectId, transaction, postRequest);
 
                 // dispatch
                 if (callUrl == CallUrl.REPOSITORY) {
@@ -327,7 +342,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
      * Prints the error as JSON.
      */
     @SuppressWarnings("unchecked")
-    private static void printError(Exception ex, HttpServletRequest request, HttpServletResponse response, CallContext context) {
+    private static void printError(Exception ex, HttpServletRequest request, HttpServletResponse response,
+            CallContext context) {
         int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         String exceptionName = "runtime";
 
@@ -343,8 +359,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         response.setStatus(statusCode);
         response.setContentType(JSON_MIME_TYPE);
         if (context != null) {
-            setCookie(request, response, context.getRepositoryId(),
-                    (String) context.get(CONTEXT_TRANSACTION),
+            setCookie(request, response, context.getRepositoryId(), (String) context.get(CONTEXT_TRANSACTION),
                     createCookieValue(statusCode, null, exceptionName, ex.getMessage()));
         }
 

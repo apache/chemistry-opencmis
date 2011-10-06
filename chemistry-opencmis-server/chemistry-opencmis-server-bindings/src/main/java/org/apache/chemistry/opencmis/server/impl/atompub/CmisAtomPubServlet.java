@@ -18,6 +18,31 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ACL;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ALLOWABLEACIONS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHANGES;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHECKEDOUT;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHILDREN;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_DESCENDANTS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ENTRY;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_FOLDERTREE;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_OBJECTBYID;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_OBJECTBYPATH;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_PARENTS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_POLICIES;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_QUERY;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_RELATIONSHIPS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPE;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPES;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPESDESC;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_UNFILED;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_VERSIONS;
+import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_DELETE;
+import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
+import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
+import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_PUT;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -45,6 +70,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
+import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
@@ -52,9 +78,6 @@ import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.*;
-import static org.apache.chemistry.opencmis.server.shared.Dispatcher.*;
 
 /**
  * CMIS AtomPub servlet.
@@ -89,72 +112,40 @@ public class CmisAtomPubServlet extends HttpServlet {
         dispatcher = new Dispatcher();
 
         try {
-            dispatcher.addResource(RESOURCE_TYPES, METHOD_GET, RepositoryService.class,
-                    "getTypeChildren");
-            dispatcher.addResource(RESOURCE_TYPESDESC, METHOD_GET, RepositoryService.class,
-                    "getTypeDescendants");
-            dispatcher.addResource(RESOURCE_TYPE, METHOD_GET, RepositoryService.class,
-                    "getTypeDefinition");
-            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_GET, NavigationService.class,
-                    "getChildren");
-            dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_GET, NavigationService.class,
-                    "getDescendants");
-            dispatcher.addResource(RESOURCE_FOLDERTREE, METHOD_GET, NavigationService.class,
-                    "getFolderTree");
-            dispatcher.addResource(RESOURCE_PARENTS, METHOD_GET, NavigationService.class,
-                    "getObjectParents");
-            dispatcher.addResource(RESOURCE_CHECKEDOUT, METHOD_GET, NavigationService.class,
-                    "getCheckedOutDocs");
-            dispatcher.addResource(RESOURCE_ENTRY, METHOD_GET, ObjectService.class,
-                    "getObject");
-            dispatcher.addResource(RESOURCE_OBJECTBYID, METHOD_GET, ObjectService.class,
-                    "getObject");
-            dispatcher.addResource(RESOURCE_OBJECTBYPATH, METHOD_GET, ObjectService.class,
-                    "getObjectByPath");
-            dispatcher.addResource(RESOURCE_ALLOWABLEACIONS, METHOD_GET, ObjectService.class,
-                    "getAllowableActions");
-            dispatcher.addResource(RESOURCE_CONTENT, METHOD_GET, ObjectService.class,
-                    "getContentStream");
-            dispatcher.addResource(RESOURCE_CONTENT, METHOD_PUT, ObjectService.class,
-                    "setContentStream");
-            dispatcher.addResource(RESOURCE_CONTENT, METHOD_DELETE, ObjectService.class,
-                    "deleteContentStream");
-            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_POST, ObjectService.class,
-                    "create");
-            dispatcher.addResource(RESOURCE_RELATIONSHIPS, METHOD_POST, ObjectService.class,
-                    "createRelationship");
-            dispatcher.addResource(RESOURCE_ENTRY, METHOD_PUT, ObjectService.class,
-                    "updateProperties");
-            dispatcher.addResource(RESOURCE_ENTRY, METHOD_DELETE, ObjectService.class,
-                    "deleteObject");
-            dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_DELETE, ObjectService.class,
-                    "deleteTree");
-            dispatcher.addResource(RESOURCE_CHECKEDOUT, METHOD_POST, VersioningService.class,
-                    "checkOut");
-            dispatcher.addResource(RESOURCE_VERSIONS, METHOD_GET, VersioningService.class,
-                    "getAllVersions");
-            dispatcher.addResource(RESOURCE_VERSIONS, METHOD_DELETE, VersioningService.class,
-                    "deleteAllVersions");
-            dispatcher.addResource(RESOURCE_QUERY, METHOD_GET, DiscoveryService.class,
-                    "query");
-            dispatcher.addResource(RESOURCE_QUERY, METHOD_POST, DiscoveryService.class,
-                    "query");
-            dispatcher.addResource(RESOURCE_CHANGES, METHOD_GET, DiscoveryService.class,
-                    "getContentChanges");
+            dispatcher.addResource(RESOURCE_TYPES, METHOD_GET, RepositoryService.class, "getTypeChildren");
+            dispatcher.addResource(RESOURCE_TYPESDESC, METHOD_GET, RepositoryService.class, "getTypeDescendants");
+            dispatcher.addResource(RESOURCE_TYPE, METHOD_GET, RepositoryService.class, "getTypeDefinition");
+            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");
+            dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_GET, NavigationService.class, "getDescendants");
+            dispatcher.addResource(RESOURCE_FOLDERTREE, METHOD_GET, NavigationService.class, "getFolderTree");
+            dispatcher.addResource(RESOURCE_PARENTS, METHOD_GET, NavigationService.class, "getObjectParents");
+            dispatcher.addResource(RESOURCE_CHECKEDOUT, METHOD_GET, NavigationService.class, "getCheckedOutDocs");
+            dispatcher.addResource(RESOURCE_ENTRY, METHOD_GET, ObjectService.class, "getObject");
+            dispatcher.addResource(RESOURCE_OBJECTBYID, METHOD_GET, ObjectService.class, "getObject");
+            dispatcher.addResource(RESOURCE_OBJECTBYPATH, METHOD_GET, ObjectService.class, "getObjectByPath");
+            dispatcher.addResource(RESOURCE_ALLOWABLEACIONS, METHOD_GET, ObjectService.class, "getAllowableActions");
+            dispatcher.addResource(RESOURCE_CONTENT, METHOD_GET, ObjectService.class, "getContentStream");
+            dispatcher.addResource(RESOURCE_CONTENT, METHOD_PUT, ObjectService.class, "setContentStream");
+            dispatcher.addResource(RESOURCE_CONTENT, METHOD_DELETE, ObjectService.class, "deleteContentStream");
+            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_POST, ObjectService.class, "create");
+            dispatcher.addResource(RESOURCE_RELATIONSHIPS, METHOD_POST, ObjectService.class, "createRelationship");
+            dispatcher.addResource(RESOURCE_ENTRY, METHOD_PUT, ObjectService.class, "updateProperties");
+            dispatcher.addResource(RESOURCE_ENTRY, METHOD_DELETE, ObjectService.class, "deleteObject");
+            dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_DELETE, ObjectService.class, "deleteTree");
+            dispatcher.addResource(RESOURCE_CHECKEDOUT, METHOD_POST, VersioningService.class, "checkOut");
+            dispatcher.addResource(RESOURCE_VERSIONS, METHOD_GET, VersioningService.class, "getAllVersions");
+            dispatcher.addResource(RESOURCE_VERSIONS, METHOD_DELETE, VersioningService.class, "deleteAllVersions");
+            dispatcher.addResource(RESOURCE_QUERY, METHOD_GET, DiscoveryService.class, "query");
+            dispatcher.addResource(RESOURCE_QUERY, METHOD_POST, DiscoveryService.class, "query");
+            dispatcher.addResource(RESOURCE_CHANGES, METHOD_GET, DiscoveryService.class, "getContentChanges");
             dispatcher.addResource(RESOURCE_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
                     "getObjectRelationships");
-            dispatcher.addResource(RESOURCE_UNFILED, METHOD_POST, MultiFilingService.class,
-                    "removeObjectFromFolder");
-            dispatcher.addResource(RESOURCE_ACL, METHOD_GET, AclService.class,
-                    "getAcl");
-            dispatcher.addResource(RESOURCE_ACL, METHOD_PUT, AclService.class,
-                    "applyAcl");
-            dispatcher.addResource(RESOURCE_POLICIES, METHOD_GET, PolicyService.class,
-                    "getAppliedPolicies");
-            dispatcher.addResource(RESOURCE_POLICIES, METHOD_POST, PolicyService.class,
-                    "applyPolicy");
-            dispatcher.addResource(RESOURCE_POLICIES, METHOD_DELETE, PolicyService.class,
-                    "removePolicy");
+            dispatcher.addResource(RESOURCE_UNFILED, METHOD_POST, MultiFilingService.class, "removeObjectFromFolder");
+            dispatcher.addResource(RESOURCE_ACL, METHOD_GET, AclService.class, "getAcl");
+            dispatcher.addResource(RESOURCE_ACL, METHOD_PUT, AclService.class, "applyAcl");
+            dispatcher.addResource(RESOURCE_POLICIES, METHOD_GET, PolicyService.class, "getAppliedPolicies");
+            dispatcher.addResource(RESOURCE_POLICIES, METHOD_POST, PolicyService.class, "applyPolicy");
+            dispatcher.addResource(RESOURCE_POLICIES, METHOD_DELETE, PolicyService.class, "removePolicy");
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);
         }
@@ -163,6 +154,10 @@ public class CmisAtomPubServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+
+        // set default headers
+        response.addHeader("Cache-Control", "private, max-age=0");
+        response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
 
         // create a context object, dispatch and handle exceptions
         CallContext context = null;

@@ -16,14 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.bindings.spi.webservices.wss;
+package org.apache.chemistry.opencmis.commons.impl.tube;
+
+import org.apache.chemistry.opencmis.commons.impl.tube.client.WssMUTube;
+import org.apache.chemistry.opencmis.commons.impl.tube.server.WssTube;
 
 import com.sun.xml.ws.api.pipe.ClientTubeAssemblerContext;
 import com.sun.xml.ws.api.pipe.ServerTubeAssemblerContext;
 import com.sun.xml.ws.api.pipe.Tube;
 import com.sun.xml.ws.api.pipe.TubelineAssembler;
 
-public class WssTubeAssembler implements TubelineAssembler {
+/**
+ * Assembler for OpenCMIS client and server tubelines.
+ */
+public class OpenCMISTubeAssembler implements TubelineAssembler {
 
     public Tube createClient(ClientTubeAssemblerContext context) {
         Tube head = context.createTransportTube();
@@ -36,6 +42,7 @@ public class WssTubeAssembler implements TubelineAssembler {
 
     public Tube createServer(ServerTubeAssemblerContext context) {
         Tube head = context.getTerminalTube();
+        head = new WssTube(head);
         head = context.createHandlerTube(head);
         head = context.createMonitoringTube(head);
         head = context.createServerMUTube(head);

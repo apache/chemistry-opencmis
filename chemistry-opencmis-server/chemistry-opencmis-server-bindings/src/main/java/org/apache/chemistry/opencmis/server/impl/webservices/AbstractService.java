@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
@@ -48,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
+import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.w3c.dom.Node;
 
@@ -72,6 +74,10 @@ public abstract class AbstractService {
         if (factory == null) {
             throw new CmisRuntimeException("Service factory not available! Configuration problem?");
         }
+
+        HttpServletResponse httpResp = (HttpServletResponse) wsContext.getMessageContext().get(
+                MessageContext.SERVLET_RESPONSE);
+        httpResp.setHeader("Server", ServerVersion.OPENCMIS_SERVER);
 
         return factory;
     }

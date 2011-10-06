@@ -280,6 +280,17 @@
                 <configuration>
                     <archiveClasses>true</archiveClasses>
                     <attachClasses>true</attachClasses>
+                    <archive>
+                        <manifestEntries>
+                            <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
+                            <X-Compile-Target-JDK>${maven.compile.target}</X-Compile-Target-JDK>
+                            <X-Apache-SVN-Revision>${buildNumber}</X-Apache-SVN-Revision>
+                            <Implementation-Title>${project.name}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
+                            <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
@@ -365,6 +376,10 @@
                             <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
                             <X-Compile-Target-JDK>${maven.compile.target}</X-Compile-Target-JDK>
                             <X-Apache-SVN-Revision>${buildNumber}</X-Apache-SVN-Revision>
+                            <Implementation-Title>${project.name}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
+                            <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
                         </manifestEntries>
                     </archive>
                 </configuration>

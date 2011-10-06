@@ -16,16 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.bindings.spi.webservices.wss;
+package org.apache.chemistry.opencmis.client.bindings.impl;
 
-import com.sun.xml.ws.api.BindingID;
-import com.sun.xml.ws.api.pipe.TubelineAssembler;
-import com.sun.xml.ws.api.pipe.TubelineAssemblerFactory;
+public class ClientVersion {
+    
+    public static final String OPENCMIS_VERSION;
+    public static final String OPENCMIS_CLIENT;
 
-public class WssTubelineAssemblerFactory extends TubelineAssemblerFactory {
-
-    @Override
-    public TubelineAssembler doCreate(BindingID bindingID) {
-        return new WssTubeAssembler();
+    static {
+        Package p = Package.getPackage("org.apache.chemistry.opencmis.client.bindings.impl");
+        if (p == null) {
+            OPENCMIS_VERSION = "?";
+            OPENCMIS_CLIENT = "Apache Chemistry OpenCMIS";
+        } else {
+            OPENCMIS_VERSION = p.getImplementationVersion();
+            OPENCMIS_CLIENT = "Apache Chemistry OpenCMIS/" + (OPENCMIS_VERSION == null ? "?" : OPENCMIS_VERSION);
+        }
     }
 }

@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.bindings.spi.webservices.wss;
+package org.apache.chemistry.opencmis.commons.impl.tube.client;
 
 import javax.xml.namespace.QName;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.impl.tube.AbstractWssTube;
 
-import com.sun.istack.NotNull;
 import com.sun.xml.ws.api.SOAPVersion;
 import com.sun.xml.ws.api.WSBinding;
 import com.sun.xml.ws.api.message.Header;
@@ -31,16 +31,12 @@ import com.sun.xml.ws.api.message.Packet;
 import com.sun.xml.ws.api.pipe.NextAction;
 import com.sun.xml.ws.api.pipe.Tube;
 import com.sun.xml.ws.api.pipe.TubeCloner;
-import com.sun.xml.ws.api.pipe.helper.AbstractFilterTubeImpl;
 
-public class WssMUTube extends AbstractFilterTubeImpl {
-
-    private static final QName WSSE = new QName(
-            "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
+public class WssMUTube extends AbstractWssTube {
 
     private final SOAPVersion soapVersion;
 
-    protected WssMUTube(WSBinding binding, Tube next) {
+    public WssMUTube(WSBinding binding, Tube next) {
         super(next);
         soapVersion = binding.getSOAPVersion();
     }
@@ -55,7 +51,6 @@ public class WssMUTube extends AbstractFilterTubeImpl {
     }
 
     @Override
-    @NotNull
     public NextAction processResponse(Packet response) {
         if (response.getMessage() == null) {
             return super.processResponse(response);

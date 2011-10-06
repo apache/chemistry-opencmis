@@ -35,6 +35,7 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.chemistry.opencmis.client.bindings.impl.ClientVersion;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -91,7 +92,7 @@ public class HttpUtils {
             conn.setRequestMethod(method);
             conn.setDoInput(true);
             conn.setDoOutput(writer != null);
-            conn.setRequestProperty("User-Agent", "Apache Chemistry OpenCMIS");
+            conn.setRequestProperty("User-Agent", ClientVersion.OPENCMIS_CLIENT);
 
             // timeouts
             int connectTimeout = session.get(SessionParameter.CONNECT_TIMEOUT, -1);

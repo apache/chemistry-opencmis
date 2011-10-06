@@ -28,6 +28,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.MTOMFeature;
 
+import org.apache.chemistry.opencmis.client.bindings.impl.ClientVersion;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -110,34 +111,29 @@ public class PortProvider extends AbstractPortProvider {
                 httpHeaders = authProvider.getHTTPHeaders(service.getWSDLDocumentLocation().toString());
             }
 
+            if (httpHeaders == null) {
+                httpHeaders = new HashMap<String, List<String>>();
+            }
+
+            // CMIS client header
+            httpHeaders.put("X-CMIS-Client", Collections.singletonList(ClientVersion.OPENCMIS_CLIENT));
+            
             // compression
             if (useCompression) {
-                if (httpHeaders == null) {
-                    httpHeaders = new HashMap<String, List<String>>();
-                }
                 httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
             }
 
             // client compression
             if (useClientCompression) {
-                if (httpHeaders == null) {
-                    httpHeaders = new HashMap<String, List<String>>();
-                }
                 httpHeaders.put("Content-Encoding", Collections.singletonList("gzip"));
             }
 
             // locale
             if (acceptLanguage != null) {
-                if (httpHeaders == null) {
-                    httpHeaders = new HashMap<String, List<String>>();
-                }
                 httpHeaders.put("Accept-Language", Collections.singletonList(acceptLanguage));
             }
 
-            if (httpHeaders != null) {
-                ((BindingProvider) portObject).getRequestContext()
-                        .put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
-            }
+            ((BindingProvider) portObject).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
 
             // timeouts
             int connectTimeout = getSession().get(SessionParameter.CONNECT_TIMEOUT, -1);
