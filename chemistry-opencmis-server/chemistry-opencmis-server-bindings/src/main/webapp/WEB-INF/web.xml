@@ -35,6 +35,35 @@
 	<listener>
 		<listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
 	</listener>
+	
+	<!-- 
+	     A servlet filter that logs all requests in files. Useful for monitoring and debugging.
+	     Use it with care! It can generate a huge amount of files and will slow down performance
+	     significantly.
+	-->
+	<!--
+	<filter>
+	   	<filter-name>LoggingFilter</filter-name>
+  		<filter-class>org.apache.chemistry.opencmis.server.support.filter.LoggingFilter</filter-class>
+   		<init-param>
+   		   <param-name>LogDir</param-name>
+   		   <param-value></param-value>
+  		 </init-param>
+   		<init-param>
+   		   <param-name>PrettyPrint</param-name>
+   		   <param-value>true</param-value>
+  		 </init-param>
+   		<init-param>
+   		   <param-name>Indent</param-name>
+   		   <param-value>4</param-value>
+  		 </init-param>
+	</filter>
+	
+	<filter-mapping>
+   		<filter-name>LoggingFilter</filter-name>
+   		<servlet-name>cmisatom</servlet-name> 
+	</filter-mapping>
+	-->
 
 	<servlet>
 		<servlet-name>cmisws</servlet-name>
