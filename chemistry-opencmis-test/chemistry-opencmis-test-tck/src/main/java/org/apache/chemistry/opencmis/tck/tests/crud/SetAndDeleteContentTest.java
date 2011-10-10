@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
+import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -68,12 +69,11 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             Folder testFolder = createTestFolder(session);
             Document doc = createDocument(session, testFolder, "contenttest.txt", CONTENT1);
             Document workDoc = doc;
+            DocumentTypeDefinition docType = (DocumentTypeDefinition) doc.getType();
 
             // test if check out is required and possible
             boolean checkedout = false;
             if (getContentStreamUpdatesCapbility(session) == CapabilityContentStreamUpdates.PWCONLY) {
-                DocumentTypeDefinition docType = (DocumentTypeDefinition) doc.getType();
-
                 if (!docType.isVersionable()) {
                     addResult(createResult(SKIPPED,
                             "Content stream operations only work if PWCs and the the test type is not versionable. Test skipped!"));
@@ -85,14 +85,19 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
                 checkedout = true;
             }
 
-            // delete content stream
-            try {
-                workDoc.deleteContentStream(true);
+            if (docType.getContentStreamAllowed() == ContentStreamAllowed.REQUIRED) {
+                addResult(createResult(SKIPPED,
+                        "A content stream is required for this docuemnt type. deleteContentStream() test skipped!"));
+            } else {
+                // delete content stream
+                try {
+                    workDoc.deleteContentStream(true);
 
-                f = createResult(FAILURE, "Document still has content after deleteContentStream() has been called!");
-                addResult(assertNull(workDoc.getContentStream(), null, f));
-            } catch (CmisNotSupportedException e) {
-                addResult(createResult(WARNING, "deleteContentStream() is not supported!"));
+                    f = createResult(FAILURE, "Document still has content after deleteContentStream() has been called!");
+                    addResult(assertNull(workDoc.getContentStream(), null, f));
+                } catch (CmisNotSupportedException e) {
+                    addResult(createResult(WARNING, "deleteContentStream() is not supported!"));
+                }
             }
 
             // set a new content stream
