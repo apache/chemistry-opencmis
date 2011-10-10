@@ -1205,7 +1205,15 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             addResult(results, assertIsTrue(lastestVersion.isLatestVersion(), null, f));
 
             // get latest major version
-            Document lastestMajorVersion = doc.getObjectOfLatestVersion(true, SELECT_ALL_NO_CACHE_OC);
+            Document lastestMajorVersion = null;
+            try {
+                lastestMajorVersion = doc.getObjectOfLatestVersion(true, SELECT_ALL_NO_CACHE_OC);
+
+                f = createResult(FAILURE, "getObjectOfLatestVersion returned an invalid object!");
+                addResult(results, assertNotNull(lastestMajorVersion, null, f));
+            } catch (CmisObjectNotFoundException e) {
+                // no latest major version
+            }
             if (lastestMajorVersion != null) {
                 addResult(
                         results,
