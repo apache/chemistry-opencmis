@@ -86,7 +86,7 @@ import java.util.Set;
 /**
  * JCR back-end for CMIS server.
  */
-public final class JcrRepository {
+public class JcrRepository {
     private static final Log log = LogFactory.getLog(JcrRepository.class);
 
     private final Repository repository;
@@ -931,9 +931,9 @@ public final class JcrRepository {
         }
     }
 
-    //------------------------------------------< private >---
+    //------------------------------------------< protected >---
 
-    private RepositoryInfo compileRepositoryInfo(String repositoryId) {
+    protected RepositoryInfo compileRepositoryInfo(String repositoryId) {
         RepositoryInfoImpl fRepositoryInfo = new RepositoryInfoImpl();
 
         fRepositoryInfo.setId(repositoryId);
@@ -969,11 +969,11 @@ public final class JcrRepository {
         return fRepositoryInfo;
     }
 
-    private String getRepositoryName() {
+    protected String getRepositoryName() {
         return repository.getDescriptor(Repository.REP_NAME_DESC);
     }
 
-    private String getRepositoryDescription() {
+    protected String getRepositoryDescription() {
         StringBuilder description = new StringBuilder();
 
         for (String key : repository.getDescriptorKeys()) {
@@ -986,6 +986,67 @@ public final class JcrRepository {
 
         return description.toString();
     }
+
+    protected JcrNode getJcrNode(Session session, String id) {
+        try {
+            if (id == null || id.length() == 0) {
+                throw new CmisInvalidArgumentException("Null or empty id");
+            }
+
+            if (id.equals(PathManager.CMIS_ROOT_ID)) {
+                return nodeFactory.create(getRootNode(session));
+            }
+
+            int k = id.indexOf('/');
+            if (k >= 0) {
+                String nodeId = id.substring(0, k);
+                String versionName = id.substring(k + 1);
+
+                Node node = session.getNodeByIdentifier(nodeId);
+
+                JcrNode jcrNode = nodeFactory.create(node);
+                if (JcrPrivateWorkingCopy.denotesPwc(versionName)) {
+                    return jcrNode.asVersion().getPwc();
+                }
+                else {
+                    return jcrNode.asVersion().getVersion(versionName);
+                }
+            }
+            else {
+                Node node = session.getNodeByIdentifier(id);
+                return nodeFactory.create(node);
+            }
+
+        }
+        catch (ItemNotFoundException e) {
+            log.debug(e.getMessage(), e);
+            throw new CmisObjectNotFoundException(e.getMessage(), e);
+        }
+        catch (RepositoryException e) {
+            log.debug(e.getMessage(), e);
+            throw new CmisRuntimeException(e.getMessage(), e);
+        }
+    }
+
+    protected Node getRootNode(Session session) {
+        try {
+            return session.getNode(pathManager.getJcrRootPath());
+        }
+        catch (PathNotFoundException e) {
+            log.debug(e.getMessage(), e);
+            throw new CmisObjectNotFoundException(e.getMessage(), e);
+        }
+        catch (ItemNotFoundException e) {
+            log.debug(e.getMessage(), e);
+            throw new CmisObjectNotFoundException(e.getMessage(), e);
+        }
+        catch (RepositoryException e) {
+            log.debug(e.getMessage(), e);
+            throw new CmisRuntimeException(e.getMessage(), e);
+        }
+    }
+
+    //------------------------------------------< private >---
 
     /**
      * Transitively gather the children of a node down to a specific depth
@@ -1056,64 +1117,5 @@ public final class JcrRepository {
         result.add(PropertyIds.BASE_TYPE_ID);
 
         return result;
-    }
-
-    private JcrNode getJcrNode(Session session, String id) {
-        try {
-            if (id == null || id.length() == 0) {
-                throw new CmisInvalidArgumentException("Null or empty id");
-            }
-
-            if (id.equals(PathManager.CMIS_ROOT_ID)) {
-                return nodeFactory.create(getRootNode(session));
-            }
-
-            int k = id.indexOf('/');
-            if (k >= 0) {
-                String nodeId = id.substring(0, k);
-                String versionName = id.substring(k + 1);
-
-                Node node = session.getNodeByIdentifier(nodeId);
-
-                JcrNode jcrNode = nodeFactory.create(node);
-                if (JcrPrivateWorkingCopy.denotesPwc(versionName)) {
-                    return jcrNode.asVersion().getPwc();
-                }
-                else {
-                    return jcrNode.asVersion().getVersion(versionName);
-                }
-            }
-            else {
-                Node node = session.getNodeByIdentifier(id);
-                return nodeFactory.create(node);
-            }
-
-        }
-        catch (ItemNotFoundException e) {
-            log.debug(e.getMessage(), e);
-            throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
-            throw new CmisRuntimeException(e.getMessage(), e);
-        }
-    }
-
-    private Node getRootNode(Session session) {
-        try {
-            return session.getNode(pathManager.getJcrRootPath());
-        }
-        catch (PathNotFoundException e) {
-            log.debug(e.getMessage(), e);
-            throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (ItemNotFoundException e) {
-            log.debug(e.getMessage(), e);
-            throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
-            throw new CmisRuntimeException(e.getMessage(), e);
-        }
     }
 }
