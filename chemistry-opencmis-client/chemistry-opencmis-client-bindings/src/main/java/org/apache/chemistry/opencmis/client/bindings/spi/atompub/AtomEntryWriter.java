@@ -18,6 +18,16 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_TITLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_UPDATED;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_BASE64;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_MEDIATYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ENTRY;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -37,9 +47,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyString;
 
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.*;
-
-
 /**
  * Writes a CMIS Atom entry to an output stream.
  */
@@ -51,9 +58,9 @@ public class AtomEntryWriter {
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    private CmisObjectType object;
-    private InputStream stream;
-    private String mediaType;
+    private final CmisObjectType object;
+    private final InputStream stream;
+    private final String mediaType;
 
     /**
      * Constructor.
@@ -76,6 +83,12 @@ public class AtomEntryWriter {
 
         this.object = object;
         this.mediaType = mediaType;
+
+        if (stream != null && !(stream instanceof BufferedInputStream) && !(stream instanceof ByteArrayInputStream)) {
+            // avoid double buffering
+            stream = new BufferedInputStream(stream, BUFFER_SIZE);
+        }
+
         this.stream = stream;
     }
 
@@ -168,7 +181,7 @@ public class AtomEntryWriter {
     private void writeContent(XMLStreamWriter writer) throws Exception {
         Base64.InputStream b64stream = new Base64.InputStream(stream, Base64.ENCODE);
 
-        byte[] buffer = new byte[BUFFER_SIZE];
+        byte[] buffer = new byte[BUFFER_SIZE * 3 / 4];
         int b;
         while ((b = b64stream.read(buffer)) > -1) {
             if (b > 0) {
