@@ -54,6 +54,10 @@
    		   <param-value>true</param-value>
   		 </init-param>
    		<init-param>
+   		   <param-name>LogHeader</param-name>
+   		   <param-value>true</param-value>
+  		 </init-param>
+   		<init-param>
    		   <param-name>Indent</param-name>
    		   <param-value>4</param-value>
   		 </init-param>
@@ -63,7 +67,7 @@
    		<filter-name>LoggingFilter</filter-name>
    		<servlet-name>cmisatom</servlet-name> 
 	</filter-mapping>
-	-->
+    -->
 
 	<servlet>
 		<servlet-name>cmisws</servlet-name>

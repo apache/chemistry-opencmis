@@ -25,6 +25,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.Filter;
@@ -35,6 +41,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -53,44 +60,37 @@ public class LoggingFilter implements Filter {
 
     private static final Log log = LogFactory.getLog(LoggingFilter.class);
     private static int REQUEST_NO = 0;
-    private static String OVERRIDE_NAME;
-    private static int OVERRIDE_INDENT = -1;
-    private static String OVERRIDE_LOG_DIR;
-    private static Boolean OVERRIDE_PRETTY_PRINT;
+    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US);
     private String logDir;
     private boolean prettyPrint = true;
+    private boolean logHeaders = true;
     private int indent = -1;
 
     public void init(FilterConfig cfg) throws ServletException {
         
         String val; 
-        if (null == OVERRIDE_LOG_DIR) {
-            logDir = cfg.getInitParameter("LogDir");
-            if (null == logDir)
-                logDir = System.getProperty("java.io.tmpdir");
-            if (null == logDir)
-                logDir = "." + File.separator;
-        } else
-            logDir = OVERRIDE_LOG_DIR;
-       
+        logDir = cfg.getInitParameter("LogDir");
+        if (null == logDir)
+            logDir = System.getProperty("java.io.tmpdir");
+        if (null == logDir)
+            logDir = "." + File.separator;
+
         if (!logDir.endsWith(File.separator))
             logDir += File.separator;
-        
-        if (OVERRIDE_INDENT < 0) {
-            val = cfg.getInitParameter("Indent");
-            if (null != val)
-                indent = Integer.parseInt(val);
-            if (indent < 0)
-                indent = 4;
-        } else
-            indent = OVERRIDE_INDENT;
-        
-        if (null == OVERRIDE_PRETTY_PRINT) {
-            val = cfg.getInitParameter("PrettyPrint");
-            if (null != val)
-                prettyPrint = Boolean.parseBoolean(val);
-        } else 
-            prettyPrint = OVERRIDE_PRETTY_PRINT;
+
+        val = cfg.getInitParameter("Indent");
+        if (null != val)
+            indent = Integer.parseInt(val);
+        if (indent < 0)
+            indent = 4;
+
+        val = cfg.getInitParameter("PrettyPrint");
+        if (null != val)
+            prettyPrint = Boolean.parseBoolean(val);
+
+        val = cfg.getInitParameter("LogHeaders");
+        if (null != val)
+            logHeaders = Boolean.parseBoolean(val);
     }
 
     public void destroy() {
@@ -108,28 +108,45 @@ public class LoggingFilter implements Filter {
             String requestFileName = getRequestFileName(reqNo);
             String cType = logReq.getContentType();
             String xmlRequest = logReq.getPayload();
+            StringBuffer sb = new StringBuffer();
+            
+            if (logHeaders)
+                logHeaders(logReq, sb);
+
             if (xmlRequest != null && xmlRequest.length() > 0) {
                 if (prettyPrint)
                     xmlRequest = prettyPrint(xmlRequest, indent);
             } else
                 xmlRequest = "";
 
+            xmlRequest = sb.toString() + xmlRequest;
             log.debug("Found request: " + requestFileName + ": " + xmlRequest);
             writeTextToFile(requestFileName, xmlRequest);
             
             chain.doFilter(logReq, logResponse);
 
+            sb = new StringBuffer();
             cType = logResponse.getContentType();
             String xmlResponse;
             String responseFileName = getResponseFileName(reqNo);
-            if(cType != null && cType.endsWith("xml")) {
+            if (logHeaders) {
+                logHeaders(logResponse, req.getProtocol(), sb);
+            }
+            if (cType != null && cType.contains("xml")) {
                 if (prettyPrint)
                     xmlResponse = prettyPrint(logResponse.getPayload(), indent);
                 else
                     xmlResponse = logResponse.getPayload();
                 
+                xmlResponse = sb.toString() + xmlResponse;
                 log.debug("Found response: " + responseFileName  + ": " + xmlResponse);
                 writeTextToFile(responseFileName, xmlResponse);
+            } else if (cType != null && cType.contains("html")) {
+                xmlResponse = sb.toString() + logResponse.getPayload();
+                log.debug("Found response: " + responseFileName  + ": " + xmlResponse);
+                writeTextToFile(responseFileName, xmlResponse);
+            } else {
+                writeTextToFile(responseFileName, "Unknown reponse content format: " + cType);
             }
         } else {            
             chain.doFilter(req, resp);
@@ -179,41 +196,53 @@ public class LoggingFilter implements Filter {
             throw new RuntimeException(e); // simple exception handling, please review it
         }
     }
+    
+    @SuppressWarnings("rawtypes")
+    private void logHeaders(LoggingRequestWrapper req, StringBuffer sb) {
+        sb.append(req.getMethod());
+        sb.append(" ");
+        sb.append(req.getRequestURI());
+        sb.append(" ");
+        sb.append(req.getProtocol());
+        sb.append("\n");
+        Enumeration headerNames = req.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement().toString();
+            headerName = headerName.substring(0, 1).toUpperCase() + headerName.substring(1);
+            sb.append(headerName + ": ");
+            sb.append(req.getHeader(headerName));
+            sb.append("\n");
+        }
+        sb.append("\n");
+    }
+
+    private void logHeaders(LoggingResponseWrapper resp, String protocol, StringBuffer sb) {
+        sb.append(protocol);
+        sb.append(" ");
+        sb.append(String.valueOf(resp.getStatus()));
+        sb.append("\n");
+        Map<String, String> headers = resp.getHeaders();
+        for ( Map.Entry<String, String> header: headers.entrySet()) {
+            sb.append(header.getKey());
+            sb.append(": ");
+            sb.append(header.getValue());
+            sb.append("\n");            
+        }
+        sb.append("\n");
+    }
 
     private String getRequestFileName(int no) {
-        if (OVERRIDE_NAME == null)
-            return logDir + String.format("%05d-request.log", no);
-        else
-            return OVERRIDE_NAME + "-request";
+        return logDir + String.format("%05d-request.log", no);
     }
     
     private String getResponseFileName(int no) {
-        if (OVERRIDE_NAME == null)
-            return logDir + String.format("%05d-response.log", no);
-        else
-            return OVERRIDE_NAME + "-request";
+        return logDir + String.format("%05d-response.log", no);
     }
     
     private static synchronized int getNextRequestNumber() {
         return REQUEST_NO++;
     }
     
-    public static void setFileName(String name) {
-        OVERRIDE_NAME = name;
-    }
-    
-    public static void setLogDir(String dir) {
-        OVERRIDE_LOG_DIR = dir;
-    }
-
-    public static void setIndent(int indent) {
-        OVERRIDE_INDENT = indent;
-    }
-
-    public static void setPrettyPrint(boolean pp) {
-        OVERRIDE_PRETTY_PRINT = pp;
-    }
-
     private class LoggingRequestWrapper extends HttpServletRequestWrapper {
         
         private LoggingInputStream is;
@@ -288,7 +317,10 @@ public class LoggingFilter implements Filter {
      private class LoggingResponseWrapper extends HttpServletResponseWrapper {
          
          private LoggingOutputStream os;
-    
+         private int statusCode;
+         private Map<String, String> headers = new HashMap<String, String>();
+         String encoding;
+         
          public LoggingResponseWrapper(HttpServletResponse response) throws IOException {
             super(response);
             this.os = new LoggingOutputStream(response.getOutputStream());
@@ -301,6 +333,136 @@ public class LoggingFilter implements Filter {
     
          public String getPayload() {
             return os.getPayload();
+         }
+         
+         @Override
+         public void addCookie(Cookie cookie) {
+             super.addCookie(cookie);
+             String value;
+             if (headers.containsKey("Cookie")) {
+                 value = headers.get("Cookie") + "; " + cookie.toString();
+             } else
+                 value = cookie.toString();
+             headers.put("Cookie", value);
+         }
+         
+         @Override
+         public void setContentType(String type) {
+             super.setContentType(type);
+             if (headers.containsKey("Content-Type")) {
+                 String cType = headers.get("Content-Type");
+                 int pos = cType.indexOf(";charset=");
+                 if (pos < 0 && encoding != null)
+                     type = cType + ";charset=" + encoding;
+                 else if (pos >= 0)
+                     encoding = null;                 
+             }
+             headers.put("Content-Type", type);             
+         }
+         
+         @Override         
+         public void setCharacterEncoding(java.lang.String charset) {
+             super.setCharacterEncoding(charset);
+             encoding = charset;
+             if (headers.containsKey("Content-Type")) {
+                 String cType = headers.get("Content-Type");
+                 int pos = cType.indexOf(";charset=");
+                 if (pos >=0)
+                     cType = cType.substring(0, pos) + ";charset=" + encoding;
+                 else
+                     cType = cType + ";charset=" + encoding;
+                 headers.put("Content-Type", cType);
+             }
+         }
+         
+         @Override
+         public void setContentLength(int len) {
+             super.setContentLength(len);
+             headers.put("Content-Length", String.valueOf(len));                          
+         }
+         
+         private String getDateString(long date) {
+             return FORMAT.format(new Date(date));             
+         }
+         
+         @Override
+         public void setDateHeader(String name, long date) {
+             super.setDateHeader(name, date);
+             headers.put(name, String.valueOf(getDateString(date)));
+         }
+         
+         @Override
+         public void addDateHeader(String name, long date) {
+             super.addDateHeader(name, date);
+             if (headers.containsKey(name)) {
+                 headers.put(name, headers.get(name) + "; " + getDateString(date));
+             } else {
+                 headers.put(name, String.valueOf(getDateString(date)));
+             }
+         }
+         
+         @Override
+         public void setHeader(String name, String value) {
+             super.setHeader(name, value);
+             headers.put(name, String.valueOf(value));
+         }
+
+         @Override
+         public void addHeader(String name, String value) {
+             super.addHeader(name, value);
+             if (headers.containsKey(name)) {
+                 headers.put(name, headers.get(name) + "; " + value);
+             } else {
+                 headers.put(name, String.valueOf(value));
+             }
+         }
+         
+         @Override
+         public void setIntHeader(String name, int value) {
+             super.setIntHeader(name, value);
+             headers.put(name, String.valueOf(value));
+         }
+         
+         @Override
+         public void addIntHeader(String name, int value) {
+             super.addIntHeader(name, value);
+             if (headers.containsKey(name)) {
+                 headers.put(name, headers.get(name) + "; " + String.valueOf(value));
+             } else {
+                 headers.put(name, String.valueOf(value));
+             }
+         }
+         
+         @Override
+         public void sendError(int sc) throws IOException {
+             statusCode = sc;
+             super.sendError(sc);
+         }
+
+         @Override
+         public void sendError(int sc, String msg) throws IOException {
+             statusCode = sc;
+             super.sendError(sc, msg);
+         }
+
+         @Override
+         public void sendRedirect(String location) throws IOException {
+             statusCode = 302;
+             super.sendRedirect(location);
+         }
+
+         @Override
+         public void setStatus(int sc) {
+             statusCode = sc;
+             super.setStatus(sc);
+         }
+
+         public int getStatus() {
+             return statusCode;
+         }
+
+         public Map<String, String> getHeaders() {
+             return headers;
          }
       }
     
