@@ -105,7 +105,8 @@ public abstract class JcrDocument extends JcrNode {
      */
     public JcrNode setContentStream(ContentStream contentStream, boolean overwriteFlag) {
         try {
-            // get content node
+            // get content node. For version series this is *not* the same as the
+            // context node. See CMIS-438.
             Node contentNode = getNode().getNode(Node.JCR_CONTENT);
             Property data = contentNode.getProperty(Property.JCR_DATA);
 
