@@ -391,12 +391,12 @@ public class InMemoryService extends AbstractCmisService {
     @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
-        return fAclSvc.applyAcl(getCallContext(), repositoryId, objectId, addAces, removeAces, aclPropagation, extension);
+        return fAclSvc.applyAcl(getCallContext(), repositoryId, objectId, addAces, removeAces, aclPropagation, extension, this);
     }
 
     @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
-        return fAclSvc.getAcl(getCallContext(), repositoryId, objectId, onlyBasicPermissions, extension);
+        return fAclSvc.getAcl(getCallContext(), repositoryId, objectId, onlyBasicPermissions, extension, this);
     }
 
     // --- policy service ---

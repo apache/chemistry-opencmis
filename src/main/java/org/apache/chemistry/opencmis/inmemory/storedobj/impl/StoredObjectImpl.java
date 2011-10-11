@@ -378,10 +378,7 @@ public class StoredObjectImpl implements StoredObject {
     }
 
 	public Acl getAcl() {
-		if (0 == getAclId())
-		    return null;
-		else
-		    return fObjStore.getAcl(fAclId);
+	    return fObjStore.getAcl(fAclId);
 	}
 
 	public int getAclId() {

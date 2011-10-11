@@ -28,10 +28,17 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrinc
 
 public class InMemoryAce {
 
-    private final String principalId;
-    
+    private final String principalId;    
     private Permission permission;
     
+    public static final String getAnyoneUser() {
+        return "anyone";
+    }
+
+    public static final String getAnonymousUser() {
+        return "anonymous";
+    }
+
     public InMemoryAce(Ace commonsAce) {
         if (null == commonsAce || null == commonsAce.getPrincipalId() || null == commonsAce.getPermissions())
             throw new IllegalArgumentException("Cannot create InMemoryAce with null value");

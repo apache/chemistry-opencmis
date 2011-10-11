@@ -136,7 +136,7 @@ public class AtomLinkInfoProvider {
         objInfo.setSupportsPolicies(false);
 
         // ACLs, currently not supported by in-memory provider
-        objInfo.setHasAcl(false);
+        objInfo.setHasAcl(true);
 
         objInfo.setSupportsDescendants(true);
         objInfo.setSupportsFolderTree(true);
