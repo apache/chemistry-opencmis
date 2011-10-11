@@ -18,10 +18,20 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
@@ -31,27 +41,44 @@ import org.apache.commons.logging.LogFactory;
 public class InMemoryAclService extends InMemoryAbstractServiceImpl {
 
     private static final Log LOG = LogFactory.getLog(InMemoryAclService.class.getName());
-    
+    final AtomLinkInfoProvider fAtomLinkProvider;
+
     public InMemoryAclService(StoreManager storeManager) {
         super(storeManager);
+        fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
     }
 
-    public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
+    public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
+            ExtensionsData extension, ObjectInfoHandler objectInfos) {
         LOG.debug("start getObject()");
-
+        Acl acl = null;
         StoredObject so = validator.getAcl(context, repositoryId, objectId, extension);
         if (so instanceof DocumentVersion)
-            return ((DocumentVersion) so).getParentDocument().getAcl();
+            acl = ((DocumentVersion) so).getParentDocument().getAcl();
         else
-            return so.getAcl();
+            acl = so.getAcl();
+
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
+        
+        return acl;
     }
 
     public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl addAces, Acl removeAces, AclPropagation aclPropagation,
-            ExtensionsData extension) {
+            ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         StoredObject so = validator.applyAcl(context, repositoryId, objectId, aclPropagation, extension);
-        return fStoreManager.getObjectStore(repositoryId).applyAcl(so, addAces, removeAces, aclPropagation, context.getUsername());
-       
+        Acl acl = fStoreManager.getObjectStore(repositoryId).applyAcl(so, addAces, removeAces, aclPropagation, context.getUsername());
+        
+        if (context.isObjectInfoRequired()) {
+            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            objectInfos.addObjectInfo(objectInfo);
+        }
+        return acl;       
     }
     
     public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl aces, AclPropagation aclPropagation) {

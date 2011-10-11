@@ -354,7 +354,7 @@ public class ObjectStoreImpl implements ObjectStore {
     
     public Acl getAcl(int aclId) {
         InMemoryAcl acl = getInMemoryAcl(aclId);
-        return acl==null ? null : acl.toCommonsAcl();
+        return acl==null ? InMemoryAcl.getDefaultAcl().toCommonsAcl() : acl.toCommonsAcl();
     }
     
     public int getAclId(StoredObjectImpl so, Acl addACEs, Acl removeACEs) {

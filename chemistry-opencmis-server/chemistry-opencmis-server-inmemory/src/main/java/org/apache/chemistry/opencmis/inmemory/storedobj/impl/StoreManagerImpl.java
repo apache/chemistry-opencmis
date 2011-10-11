@@ -29,8 +29,10 @@ import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
@@ -40,7 +42,9 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
@@ -49,7 +53,6 @@ import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
 import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
-import org.apache.chemistry.opencmis.inmemory.server.BaseServiceValidatorImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
@@ -311,8 +314,8 @@ public class StoreManagerImpl implements StoreManager {
         repoInfo.setCmisVersionSupported("1.0");
         repoInfo.setCapabilities(null);
         repoInfo.setRootFolder(rootFolderId);
-        repoInfo.setPrincipalAnonymous("anonymous");
-        repoInfo.setPrincipalAnyone("anyone");
+        repoInfo.setPrincipalAnonymous(InMemoryAce.getAnonymousUser());
+        repoInfo.setPrincipalAnyone(InMemoryAce.getAnyoneUser());
         repoInfo.setThinClientUri(null);
         repoInfo.setChangesIncomplete(Boolean.TRUE);
         repoInfo.setChangesOnType(null);
@@ -324,13 +327,12 @@ public class StoreManagerImpl implements StoreManager {
         // set capabilities
         RepositoryCapabilitiesImpl caps = new RepositoryCapabilitiesImpl();
         caps.setAllVersionsSearchable(false);
-        caps.setCapabilityAcl(CapabilityAcl.NONE);
+        caps.setCapabilityAcl(CapabilityAcl.MANAGE);
         caps.setCapabilityChanges(CapabilityChanges.PROPERTIES); // just for
         // testing
         caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.PWCONLY);
         caps.setCapabilityJoin(CapabilityJoin.NONE);
-        caps.setCapabilityQuery(CapabilityQuery.METADATAONLY); // just for
-        // testing
+        caps.setCapabilityQuery(CapabilityQuery.BOTHCOMBINED); 
         caps.setCapabilityRendition(CapabilityRenditions.NONE);
         caps.setIsPwcSearchable(false);
         caps.setIsPwcUpdatable(true);
@@ -339,14 +341,14 @@ public class StoreManagerImpl implements StoreManager {
         caps.setSupportsMultifiling(true);
         caps.setSupportsUnfiling(true);
         caps.setSupportsVersionSpecificFiling(false);
+        caps.setCapabilityAcl(CapabilityAcl.MANAGE);
+        AclCapabilitiesDataImpl aclCaps = new AclCapabilitiesDataImpl();
+        aclCaps.setAclPropagation(AclPropagation.OBJECTONLY);
+        aclCaps.setPermissionDefinitionData(null);
+        aclCaps.setPermissionMappingData(null);
+        repoInfo.setAclCapabilities(aclCaps);
         repoInfo.setCapabilities(caps);
 
-        // AclCapabilitiesDataImpl aclCaps = new AclCapabilitiesDataImpl();
-        // aclCaps.setACLPropagation(AclPropagation.REPOSITORYDETERMINED);
-        // aclCaps.setPermissionDefinitionData(null);
-        // aclCaps.setPermissionMappingData(null);
-        // repoInfo.setACLCapabilities(aclCaps);
-        repoInfo.setAclCapabilities(null);
         fRepositoryInfo = repoInfo;
         return repoInfo;
     }

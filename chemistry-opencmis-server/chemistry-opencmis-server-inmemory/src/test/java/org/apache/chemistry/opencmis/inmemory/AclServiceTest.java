@@ -231,9 +231,11 @@ public class AclServiceTest extends AbstractServiceTest {
         String id = createDocument(fRootFolderId, acl, null);
         LOG.debug("created document with id: " + id);
         
-        Acl aclReturn = fAclSvc.applyAcl(fRepositoryId, id, null, acl, AclPropagation.OBJECTONLY, null);        
-        assertNull(aclReturn);
-                
+        Acl aclReturn = fAclSvc.applyAcl(fRepositoryId, id, null, acl, AclPropagation.OBJECTONLY, null);
+        assertNotNull(aclReturn);
+        assertEquals(1, aclReturn.getAces().size());
+        assertTrue(aclHasPermission(aclReturn, "anyone", EnumBasicPermissions.CMIS_ALL.value()));        
+
         LOG.info("... testRemoveAllAcls() finished.");
     }    
 
