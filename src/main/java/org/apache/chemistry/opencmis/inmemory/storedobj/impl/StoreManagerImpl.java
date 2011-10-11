@@ -341,12 +341,12 @@ public class StoreManagerImpl implements StoreManager {
         caps.setSupportsMultifiling(true);
         caps.setSupportsUnfiling(true);
         caps.setSupportsVersionSpecificFiling(false);
-        caps.setCapabilityAcl(CapabilityAcl.MANAGE);
-        AclCapabilitiesDataImpl aclCaps = new AclCapabilitiesDataImpl();
-        aclCaps.setAclPropagation(AclPropagation.OBJECTONLY);
-        aclCaps.setPermissionDefinitionData(null);
-        aclCaps.setPermissionMappingData(null);
-        repoInfo.setAclCapabilities(aclCaps);
+        caps.setCapabilityAcl(CapabilityAcl.NONE);
+//        AclCapabilitiesDataImpl aclCaps = new AclCapabilitiesDataImpl();
+//        aclCaps.setAclPropagation(AclPropagation.OBJECTONLY);
+//        aclCaps.setPermissionDefinitionData(null);
+//        aclCaps.setPermissionMappingData(null);
+//        repoInfo.setAclCapabilities(aclCaps);
         repoInfo.setCapabilities(caps);
 
         fRepositoryInfo = repoInfo;
