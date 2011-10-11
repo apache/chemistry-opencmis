@@ -53,7 +53,7 @@ public class JcrUnversionedDocument extends JcrDocument {
 
     @Override
     protected String getTypeIdInternal() {
-        return JcrTypeManager.DOCUMENT_UNVERSIONED_TYPE_ID;
+        return DefaultJcrTypeManager.DOCUMENT_UNVERSIONED_TYPE_ID;
     }
 
     @Override

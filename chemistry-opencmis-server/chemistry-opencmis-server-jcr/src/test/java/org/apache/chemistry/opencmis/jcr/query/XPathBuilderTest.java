@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.jcr.query;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
+import org.apache.chemistry.opencmis.jcr.DefaultJcrTypeManager;
 import org.apache.chemistry.opencmis.jcr.util.ISO8601;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
@@ -221,7 +221,7 @@ public class XPathBuilderTest {
 
     private static XPathBuilder execute(String statement) {
         QueryUtil queryUtil = new QueryUtil();
-        QueryObject queryObject = new QueryObject(new JcrTypeManager());
+        QueryObject queryObject = new QueryObject(new DefaultJcrTypeManager());
         ParseTreeWalker<XPathBuilder> parseTreeWalker = new ParseTreeWalker<XPathBuilder>(new EvaluatorXPath());
         queryUtil.traverseStatementAndCatchExc(statement, queryObject, parseTreeWalker);
         return parseTreeWalker.getResult();

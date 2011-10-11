@@ -61,7 +61,7 @@ public class JcrServiceFactory extends AbstractServiceFactory {
 
     @Override
     public void init(Map<String, String> parameters) {
-        typeManager = new JcrTypeManager();
+        typeManager = createTypeManager();
         readConfiguration(parameters);
         jcrRepository = new JcrRepository(acquireJcrRepository(jcrConfig), mountPath, typeManager, new JcrNodeFactory());
     }
@@ -130,7 +130,11 @@ public class JcrServiceFactory extends AbstractServiceFactory {
         return new JcrService(jcrRepository);
     }
 
-    //------------------------------------------< private >--- 
+    protected JcrTypeManager createTypeManager() {
+        return new DefaultJcrTypeManager();
+    }
+
+    //------------------------------------------< private >---
 
     private void readConfiguration(Map<String, String> parameters) {
         Map<String, String> map = new HashMap<String, String>();

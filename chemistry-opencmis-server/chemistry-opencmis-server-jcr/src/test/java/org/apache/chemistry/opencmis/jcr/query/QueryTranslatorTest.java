@@ -22,7 +22,7 @@ package org.apache.chemistry.opencmis.jcr.query;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
+import org.apache.chemistry.opencmis.jcr.DefaultJcrTypeManager;
 import org.apache.chemistry.opencmis.jcr.util.ISO8601;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.junit.Test;
@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 public class QueryTranslatorTest {
     private String jcrTypeCondition;
 
-    final QueryTranslator queryTranslator = new QueryTranslator(new JcrTypeManager()) {
+    final QueryTranslator queryTranslator = new QueryTranslator(new DefaultJcrTypeManager()) {
         @Override
         protected String jcrPathFromId(String id) {
             assertNotNull(id);

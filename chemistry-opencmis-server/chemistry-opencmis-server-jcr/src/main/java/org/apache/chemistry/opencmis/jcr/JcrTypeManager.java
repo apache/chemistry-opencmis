@@ -26,7 +26,6 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
-import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -63,82 +62,15 @@ public class JcrTypeManager implements TypeManager {
     private static final Log log = LogFactory.getLog(JcrTypeManager.class);
 
     public static final String DOCUMENT_TYPE_ID = "cmis:document";
-    public static final String DOCUMENT_UNVERSIONED_TYPE_ID = "cmis:unversioned-document";
     public static final String FOLDER_TYPE_ID = "cmis:folder";
     public static final String RELATIONSHIP_TYPE_ID = "cmis:relationship";
     public static final String POLICY_TYPE_ID = "cmis:policy";
-    private static final String NAMESPACE = "http://opencmis.org/jcr";
+    public static final String NAMESPACE = "http://opencmis.org/jcr";
 
     private final Map<String, TypeDefinitionContainerImpl> fTypes;
 
     public JcrTypeManager() {
         fTypes = new HashMap<String, TypeDefinitionContainerImpl>();
-
-        // folder type
-        FolderTypeDefinitionImpl folderType = new FolderTypeDefinitionImpl();
-        folderType.setBaseTypeId(BaseTypeId.CMIS_FOLDER);
-        folderType.setIsControllableAcl(false);
-        folderType.setIsControllablePolicy(false);
-        folderType.setIsCreatable(true);
-        folderType.setDescription("Folder");
-        folderType.setDisplayName("Folder");
-        folderType.setIsFileable(true);
-        folderType.setIsFulltextIndexed(false);
-        folderType.setIsIncludedInSupertypeQuery(true);
-        folderType.setLocalName("Folder");
-        folderType.setLocalNamespace(NAMESPACE);
-        folderType.setIsQueryable(true);  
-        folderType.setQueryName(FOLDER_TYPE_ID);
-        folderType.setId(FOLDER_TYPE_ID);
-
-        addBasePropertyDefinitions(folderType);
-        addFolderPropertyDefinitions(folderType);
-
-        addTypeInternal(folderType);
-
-        // document type
-        DocumentTypeDefinitionImpl documentType = new DocumentTypeDefinitionImpl();
-        documentType.setBaseTypeId(BaseTypeId.CMIS_DOCUMENT);
-        documentType.setIsControllableAcl(false);
-        documentType.setIsControllablePolicy(false);
-        documentType.setIsCreatable(true);
-        documentType.setDescription("Document");
-        documentType.setDisplayName("Document");
-        documentType.setIsFileable(true);
-        documentType.setIsFulltextIndexed(false);
-        documentType.setIsIncludedInSupertypeQuery(true);
-        documentType.setLocalName("Document");
-        documentType.setLocalNamespace(NAMESPACE);
-        documentType.setIsQueryable(true);
-        documentType.setQueryName(DOCUMENT_TYPE_ID);
-        documentType.setId(DOCUMENT_TYPE_ID);
-        documentType.setIsVersionable(true);
-        documentType.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
-
-        addBasePropertyDefinitions(documentType);
-        addDocumentPropertyDefinitions(documentType);
-
-        addTypeInternal(documentType);
-
-        // non versionable document type
-        DocumentTypeDefinitionImpl unversionedDocument = new DocumentTypeDefinitionImpl();
-        unversionedDocument.initialize(documentType);
-
-        unversionedDocument.setDescription("Unversioned document");
-        unversionedDocument.setDisplayName("Unversioned document");
-        unversionedDocument.setLocalName("Unversioned document");
-        unversionedDocument.setIsQueryable(true);
-        unversionedDocument.setQueryName(DOCUMENT_UNVERSIONED_TYPE_ID);
-        unversionedDocument.setId(DOCUMENT_UNVERSIONED_TYPE_ID);
-        unversionedDocument.setParentTypeId(DOCUMENT_TYPE_ID);
-
-        unversionedDocument.setIsVersionable(false);
-        unversionedDocument.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
-
-        addBasePropertyDefinitions(unversionedDocument);
-        addDocumentPropertyDefinitions(unversionedDocument);
-
-        addTypeInternal(unversionedDocument);
     }
 
     /**
@@ -151,34 +83,39 @@ public class JcrTypeManager implements TypeManager {
             return false;
         }
 
-        if (type.getBaseTypeId() == null) {
-            return false;
-        }
-
-        // find base type
-        TypeDefinition baseType;
-        if (type.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
-            baseType = copyTypeDefinition(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition());
-        }
-        else if (type.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
-            baseType = copyTypeDefinition(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition());
-        }
-        else if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
-            baseType = copyTypeDefinition(fTypes.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
-        }
-        else if (type.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
-            baseType = copyTypeDefinition(fTypes.get(POLICY_TYPE_ID).getTypeDefinition());
-        }
-        else {
+        if (fTypes.containsKey(type.getId())) {
+            // can't overwrite a type
             return false;
         }
 
         AbstractTypeDefinition newType = (AbstractTypeDefinition) copyTypeDefinition(type);
 
-        // copy property definition
-        for (PropertyDefinition<?> propDef : baseType.getPropertyDefinitions().values()) {
-            ((AbstractPropertyDefinition<?>) propDef).setIsInherited(true);
-            newType.addPropertyDefinition(propDef);
+        if (!newType.getBaseTypeId().value().equals(newType.getId())) {
+
+            // find base type
+            TypeDefinition baseType;
+            if (newType.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
+                baseType = copyTypeDefinition(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition());
+            }
+            else if (newType.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
+                baseType = copyTypeDefinition(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition());
+            }
+            else if (newType.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
+                baseType = copyTypeDefinition(fTypes.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
+            }
+            else if (newType.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
+                baseType = copyTypeDefinition(fTypes.get(POLICY_TYPE_ID).getTypeDefinition());
+            }
+            else {
+                return false;
+            }
+
+            // copy property definition
+            for (PropertyDefinition<?> propDef : baseType.getPropertyDefinitions().values()) {
+                ((AbstractPropertyDefinition<?>) propDef).setIsInherited(true);
+                newType.addPropertyDefinition(propDef);
+            }
+
         }
 
         // add it
@@ -307,8 +244,9 @@ public class JcrTypeManager implements TypeManager {
     public TypeDefinition getTypeByQueryName(String typeQueryName) {
         for (TypeDefinitionContainerImpl type : fTypes.values()) {
             TypeDefinition typeDef = type.getTypeDefinition();
-            if (typeDef.getQueryName().equals(typeQueryName))
+            if (typeDef.getQueryName().equals(typeQueryName)) {
                 return typeDef;
+            }
         }
         
         return null;
@@ -329,16 +267,15 @@ public class JcrTypeManager implements TypeManager {
 
     public String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName) {
         for (PropertyDefinition<?> pd : typeDefinition.getPropertyDefinitions().values()) {
-            if (pd.getQueryName().equals(propQueryName))
+            if (pd.getQueryName().equals(propQueryName)) {
                 return pd.getId();
+            }
         }
 
         return null;
     }
 
-    //------------------------------------------< private >---
-
-    private static void addBasePropertyDefinitions(AbstractTypeDefinition type) {
+    public static void addBasePropertyDefinitions(AbstractTypeDefinition type) {
         type.addPropertyDefinition(createPropDef(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
                 PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, true));
 
@@ -367,7 +304,7 @@ public class JcrTypeManager implements TypeManager {
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
     }
 
-    private static void addFolderPropertyDefinitions(FolderTypeDefinitionImpl type) {
+    public static void addFolderPropertyDefinitions(FolderTypeDefinitionImpl type) {
         type.addPropertyDefinition(createPropDef(PropertyIds.PARENT_ID, "Parent Id", "Parent Id", PropertyType.ID,
                 Cardinality.SINGLE, Updatability.READONLY, false, false));
 
@@ -379,7 +316,7 @@ public class JcrTypeManager implements TypeManager {
                 Cardinality.SINGLE, Updatability.READONLY, false, false));
     }
 
-    private static void addDocumentPropertyDefinitions(DocumentTypeDefinitionImpl type) {
+    public static void addDocumentPropertyDefinitions(DocumentTypeDefinitionImpl type) {
         type.addPropertyDefinition(createPropDef(PropertyIds.IS_IMMUTABLE, "Is Immutable", "Is Immutable",
                 PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
@@ -430,7 +367,7 @@ public class JcrTypeManager implements TypeManager {
     /**
      * Creates a property definition object.
      */
-    private static PropertyDefinition<?> createPropDef(String id, String displayName, String description,
+    public static PropertyDefinition<?> createPropDef(String id, String displayName, String description,
             PropertyType datatype, Cardinality cardinality, Updatability updateability, boolean inherited,
             boolean required) {
 
@@ -480,16 +417,13 @@ public class JcrTypeManager implements TypeManager {
         return result;
     }
 
+    //------------------------------------------< private >---
+
     /**
      * Adds a type to collection.
      */
     private void addTypeInternal(AbstractTypeDefinition type) {
         if (type == null) {
-            return;
-        }
-
-        if (fTypes.containsKey(type.getId())) {
-            // can't overwrite a type
             return;
         }
 

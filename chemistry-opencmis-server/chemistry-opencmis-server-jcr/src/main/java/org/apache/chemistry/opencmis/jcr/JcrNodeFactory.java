@@ -77,7 +77,7 @@ public class JcrNodeFactory {
 
     private static final Map<String, IdentifierMap> ID_MAPS = new HashMap<String, IdentifierMap>() {{
         put(JcrTypeManager.DOCUMENT_TYPE_ID, new DocumentIdentifierMap(true));
-        put(JcrTypeManager.DOCUMENT_UNVERSIONED_TYPE_ID, new DocumentIdentifierMap(false));
+        put(DefaultJcrTypeManager.DOCUMENT_UNVERSIONED_TYPE_ID, new DocumentIdentifierMap(false));
         put(JcrTypeManager.FOLDER_TYPE_ID, new FolderIdentifierMap());
     }};
 
