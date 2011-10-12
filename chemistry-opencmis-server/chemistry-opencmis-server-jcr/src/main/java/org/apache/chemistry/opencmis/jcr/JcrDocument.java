@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,8 +52,8 @@ public abstract class JcrDocument extends JcrNode {
 
     public static final String MIME_UNKNOWN = "application/octet-stream";
 
-    protected JcrDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
-        super(node, typeManager, pathManager, nodeFactory);
+    protected JcrDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
+        super(node, typeManager, pathManager, typeHandlerManager);
     }
 
     /**

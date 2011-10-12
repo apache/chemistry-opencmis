@@ -48,7 +48,7 @@ public abstract class QueryTranslator {
      * 
      * @param typeManager
      */
-    public QueryTranslator(JcrTypeManager typeManager) {
+    protected QueryTranslator(JcrTypeManager typeManager) {
         this.typeManager = typeManager;
         evaluator = new EvaluatorXPath() {
 

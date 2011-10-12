@@ -36,7 +36,7 @@ public interface Predicate<T> {
     /**
      * Constant predicate that returns <code>true</code> for all objects.
      */
-    Predicate TRUE = new Predicate<Object>() {
+    Predicate<?> TRUE = new Predicate<Object>() {
         public boolean evaluate(Object object) {
             return true;
         }
@@ -45,7 +45,7 @@ public interface Predicate<T> {
     /**
      * Constant predicate that returns <code>false</code> for all objects.
      */
-    Predicate FALSE = new Predicate<Object>() {
+    Predicate<?> FALSE = new Predicate<Object>() {
         public boolean evaluate(Object object) {
             return false;
         }

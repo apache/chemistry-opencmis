@@ -20,6 +20,7 @@
 package org.apache.chemistry.opencmis.jcr;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,9 +40,9 @@ public class JcrPrivateWorkingCopy extends JcrVersionBase {
     public static final String PWC_NAME = "pwc";
 
     public JcrPrivateWorkingCopy(Node node, JcrTypeManager typeManager, PathManager pathManager,
-            JcrNodeFactory nodeFactory) {
+            JcrTypeHandlerManager typeHandlerManager) {
         
-        super(node, typeManager, pathManager, nodeFactory);
+        super(node, typeManager, pathManager, typeHandlerManager);
     }
 
     /**

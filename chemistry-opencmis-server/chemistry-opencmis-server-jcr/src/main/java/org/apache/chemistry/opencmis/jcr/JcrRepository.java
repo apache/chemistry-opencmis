@@ -58,6 +58,9 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.jcr.query.QueryTranslator;
+import org.apache.chemistry.opencmis.jcr.type.JcrDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.type.JcrFolderTypeHandler;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -92,22 +95,21 @@ public class JcrRepository {
     private final Repository repository;
     private final JcrTypeManager typeManager;
     private final PathManager pathManager;
-    private final JcrNodeFactory nodeFactory;
+    private final JcrTypeHandlerManager typeHandlerManager;
 
     /**
      * Create a new <code>JcrRepository</code> instance backed by a JCR repository.
      *
      * @param repository  the JCR repository
-     * @param rootPath  path in the JCR repository which is exposed as root folder in CMIS
+     * @param pathManager
      * @param typeManager  
-     * @param nodeFactory
+     * @param typeHandlerManager
      */
-    public JcrRepository(Repository repository, String rootPath, JcrTypeManager typeManager, JcrNodeFactory nodeFactory) {
+    public JcrRepository(Repository repository, PathManager pathManager, JcrTypeManager typeManager, JcrTypeHandlerManager typeHandlerManager) {
         this.repository = repository;
         this.typeManager = typeManager;
-        this.nodeFactory = nodeFactory;
-        pathManager = new PathManager(rootPath);
-        nodeFactory.initialize(typeManager, pathManager);
+        this.typeHandlerManager = typeHandlerManager;
+        this.pathManager = pathManager;
     }
 
     /**
@@ -236,7 +238,8 @@ public class JcrRepository {
 
         // get parent Node and create child
         JcrFolder parent = getJcrNode(session, folderId).asFolder();
-        JcrNode jcrNode = parent.addNode(name, typeId, properties, contentStream, versioningState);
+        JcrDocumentTypeHandler typeHandler = typeHandlerManager.getDocumentTypeHandler(typeId);
+        JcrNode jcrNode = typeHandler.createDocument(parent, name, properties, contentStream, versioningState);
         return jcrNode.getId();
     }
 
@@ -294,7 +297,8 @@ public class JcrRepository {
 
         // get parent Node
         JcrFolder parent = getJcrNode(session, folderId).asFolder();
-        JcrNode jcrNode = parent.addFolder(name, typeId, properties);
+        JcrFolderTypeHandler typeHandler = typeHandlerManager.getFolderTypeHandler(typeId);
+        JcrNode jcrNode = typeHandler.createFolder(parent, name, properties);
         return jcrNode.getId();
     }
 
@@ -663,7 +667,7 @@ public class JcrRepository {
             NodeIterator nodes = queryResult.getNodes();
             while (nodes.hasNext()) {
                 Node node = nodes.nextNode();
-                JcrNode jcrNode = nodeFactory.create(node); 
+                JcrNode jcrNode = typeHandlerManager.create(node);
                 if (!jcrNode.isVersionable()) {
                     continue;
                 }
@@ -869,17 +873,17 @@ public class JcrRepository {
 
             @Override
             protected String jcrPathFromCol(TypeDefinition fromType, String name) {
-                return nodeFactory.getIdentifierMap(fromType).jcrPathFromCol(name);
+                return typeHandlerManager.getIdentifierMap(fromType.getId()).jcrPathFromCol(name);
             }
 
             @Override
             protected String jcrTypeName(TypeDefinition fromType) {
-                return nodeFactory.getIdentifierMap(fromType).jcrTypeName();
+                return typeHandlerManager.getIdentifierMap(fromType.getId()).jcrTypeName();
             }
 
             @Override
             protected String jcrTypeCondition(TypeDefinition fromType) {
-                return nodeFactory.getIdentifierMap(fromType).jcrTypeCondition();
+                return typeHandlerManager.getIdentifierMap(fromType.getId()).jcrTypeCondition();
             }
         };
 
@@ -908,7 +912,7 @@ public class JcrRepository {
             NodeIterator nodes = queryResult.getNodes();
             while (nodes.hasNext() && result.getObjects().size() < max) {
                 Node node = nodes.nextNode();
-                JcrNode jcrNode = nodeFactory.create(node);
+                JcrNode jcrNode = typeHandlerManager.create(node);
                 count++;
 
                 // Get pwc if this node is versionable and checked out
@@ -994,7 +998,7 @@ public class JcrRepository {
             }
 
             if (id.equals(PathManager.CMIS_ROOT_ID)) {
-                return nodeFactory.create(getRootNode(session));
+                return typeHandlerManager.create(getRootNode(session));
             }
 
             int k = id.indexOf('/');
@@ -1004,7 +1008,7 @@ public class JcrRepository {
 
                 Node node = session.getNodeByIdentifier(nodeId);
 
-                JcrNode jcrNode = nodeFactory.create(node);
+                JcrNode jcrNode = typeHandlerManager.create(node);
                 if (JcrPrivateWorkingCopy.denotesPwc(versionName)) {
                     return jcrNode.asVersion().getPwc();
                 }
@@ -1014,7 +1018,7 @@ public class JcrRepository {
             }
             else {
                 Node node = session.getNodeByIdentifier(id);
-                return nodeFactory.create(node);
+                return typeHandlerManager.create(node);
             }
 
         }

@@ -20,6 +20,8 @@
 package org.apache.chemistry.opencmis.jcr;
 
 import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultUnversionedDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,8 +32,8 @@ import java.util.Set;
  */
 public class JcrUnversionedDocument extends JcrDocument {
     
-    public JcrUnversionedDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
-        super(node, typeManager, pathManager, nodeFactory);
+    public JcrUnversionedDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
+        super(node, typeManager, pathManager, typeHandlerManager);
     }
 
     //------------------------------------------< protected >--- 
@@ -53,7 +55,7 @@ public class JcrUnversionedDocument extends JcrDocument {
 
     @Override
     protected String getTypeIdInternal() {
-        return DefaultJcrTypeManager.DOCUMENT_UNVERSIONED_TYPE_ID;
+        return DefaultUnversionedDocumentTypeHandler.DOCUMENT_UNVERSIONED_TYPE_ID;
     }
 
     @Override

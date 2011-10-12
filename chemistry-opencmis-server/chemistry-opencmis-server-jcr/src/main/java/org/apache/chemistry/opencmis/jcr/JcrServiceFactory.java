@@ -24,6 +24,10 @@ import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultFolderTypeHandler;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultUnversionedDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,7 +67,9 @@ public class JcrServiceFactory extends AbstractServiceFactory {
     public void init(Map<String, String> parameters) {
         typeManager = createTypeManager();
         readConfiguration(parameters);
-        jcrRepository = new JcrRepository(acquireJcrRepository(jcrConfig), mountPath, typeManager, new JcrNodeFactory());
+        PathManager pathManger = new PathManager(mountPath);
+        JcrTypeHandlerManager typeHandlerManager = createTypeHandlerManager(pathManger, typeManager);
+        jcrRepository = new JcrRepository(acquireJcrRepository(jcrConfig), pathManger, typeManager, typeHandlerManager);
     }
 
     @Override
@@ -131,7 +137,15 @@ public class JcrServiceFactory extends AbstractServiceFactory {
     }
 
     protected JcrTypeManager createTypeManager() {
-        return new DefaultJcrTypeManager();
+        return new JcrTypeManager();
+    }
+
+    protected JcrTypeHandlerManager createTypeHandlerManager(PathManager pathManager, JcrTypeManager typeManager) {
+        JcrTypeHandlerManager typeHandlerManager = new JcrTypeHandlerManager(pathManager, typeManager);
+        typeHandlerManager.addHandler(new DefaultFolderTypeHandler());
+        typeHandlerManager.addHandler(new DefaultDocumentTypeHandler());
+        typeHandlerManager.addHandler(new DefaultUnversionedDocumentTypeHandler());
+        return typeHandlerManager;
     }
 
     //------------------------------------------< private >---

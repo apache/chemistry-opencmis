@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -48,11 +49,8 @@ import java.util.Set;
 public abstract class JcrVersionBase extends JcrDocument {
     private static final Log log = LogFactory.getLog(JcrVersionBase.class);
 
-    private final JcrNodeFactory nodeFactory;
-
-    public JcrVersionBase(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
-        super(node, typeManager, pathManager, nodeFactory);
-        this.nodeFactory = nodeFactory;
+    protected JcrVersionBase(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
+        super(node, typeManager, pathManager, typeHandlerManager);
     }
 
     /**
@@ -69,7 +67,7 @@ public abstract class JcrVersionBase extends JcrDocument {
                 }
 
                 public JcrVersion next() {
-                    return new JcrVersion(getNode(), versions.nextVersion(), typeManager, pathManager, nodeFactory);
+                    return new JcrVersion(getNode(), versions.nextVersion(), typeManager, pathManager, typeHandlerManager);
                 }
 
                 public void remove() {
@@ -189,7 +187,7 @@ public abstract class JcrVersionBase extends JcrDocument {
         try {
             Node node = getNode();
             if (node.isCheckedOut()) {
-                return new JcrPrivateWorkingCopy(getNode(), typeManager, pathManager, nodeFactory);
+                return new JcrPrivateWorkingCopy(getNode(), typeManager, pathManager, typeHandlerManager);
             }
             else {
                 throw new CmisObjectNotFoundException("Not checked out document has no private working copy");
@@ -213,7 +211,7 @@ public abstract class JcrVersionBase extends JcrDocument {
             Node node = getNode();
             VersionHistory versionHistory = getVersionHistory(node);
             Version version = versionHistory.getVersion(name);
-            return new JcrVersion(node, version, typeManager, pathManager, nodeFactory);
+            return new JcrVersion(node, version, typeManager, pathManager, typeHandlerManager);
         }
         catch (UnsupportedRepositoryOperationException e) {
             log.debug(e.getMessage(), e);
@@ -232,12 +230,12 @@ public abstract class JcrVersionBase extends JcrDocument {
     //------------------------------------------< protected >---
 
     /**
-     * @return  Id of the version representing the base of this verions series
+     * @return  Id of the version representing the base of this versions series
      * @throws RepositoryException
      */
     protected String getBaseNodeId() throws RepositoryException {
         Version baseVersion = getBaseVersion(getNode());
-        JcrNode baseNode = new JcrVersion(getNode(), baseVersion, typeManager, pathManager, nodeFactory);
+        JcrNode baseNode = new JcrVersion(getNode(), baseVersion, typeManager, pathManager, typeHandlerManager);
         return baseNode.getId();
     }
 

@@ -22,9 +22,15 @@ package org.apache.chemistry.opencmis.jcr.query;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.jcr.DefaultJcrTypeManager;
+import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
+import org.apache.chemistry.opencmis.jcr.PathManager;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultFolderTypeHandler;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultUnversionedDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.ISO8601;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.GregorianCalendar;
@@ -34,32 +40,45 @@ import static org.junit.Assert.*;
 public class QueryTranslatorTest {
     private String jcrTypeCondition;
 
-    final QueryTranslator queryTranslator = new QueryTranslator(new DefaultJcrTypeManager()) {
-        @Override
-        protected String jcrPathFromId(String id) {
-            assertNotNull(id);
-            return "/jcr:" + id;
-        }
+    private QueryTranslator queryTranslator;
 
-        @Override
-        protected String jcrPathFromCol(TypeDefinition fromType, String name) {
-            assertNotNull(fromType);
-            assertNotNull(name);
-            return name.replace("cmis:", "@jcr:");
-        }
+    @Before
+    public void setUp() throws Exception {
+        JcrTypeManager typeManager = new JcrTypeManager();
+        PathManager pathManager = new PathManager(PathManager.CMIS_ROOT_PATH);
+        JcrTypeHandlerManager typeHandlerManager = new JcrTypeHandlerManager(pathManager, typeManager);
+        typeHandlerManager.addHandler(new DefaultFolderTypeHandler());
+        typeHandlerManager.addHandler(new DefaultDocumentTypeHandler());
+        typeHandlerManager.addHandler(new DefaultUnversionedDocumentTypeHandler());
 
-        @Override
-        protected String jcrTypeName(TypeDefinition fromType) {
-            assertNotNull(fromType);
-            return fromType.getQueryName().replace("cmis:", "jcr:");
-        }
+        queryTranslator = new QueryTranslator(typeManager) {
 
-        @Override
-        protected String jcrTypeCondition(TypeDefinition fromType) {
-            assertNotNull(fromType);
-            return jcrTypeCondition;
-        }
-    };
+            @Override
+            protected String jcrPathFromId(String id) {
+                assertNotNull(id);
+                return "/jcr:" + id;
+            }
+
+            @Override
+            protected String jcrPathFromCol(TypeDefinition fromType, String name) {
+                assertNotNull(fromType);
+                assertNotNull(name);
+                return name.replace("cmis:", "@jcr:");
+            }
+
+            @Override
+            protected String jcrTypeName(TypeDefinition fromType) {
+                assertNotNull(fromType);
+                return fromType.getQueryName().replace("cmis:", "jcr:");
+            }
+
+            @Override
+            protected String jcrTypeCondition(TypeDefinition fromType) {
+                assertNotNull(fromType);
+                return jcrTypeCondition;
+            }
+        };
+    }
 
     @Test
     public void testQueryTranslator() {

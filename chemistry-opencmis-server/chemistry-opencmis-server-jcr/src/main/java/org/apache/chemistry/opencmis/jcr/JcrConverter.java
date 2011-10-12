@@ -81,7 +81,7 @@ public final class JcrConverter {
      * @return the escaped name
      */    
     public static String toJcrName(String cmisName) {
-        StringBuffer buffer = new StringBuffer(cmisName.length() * 2);
+        StringBuilder buffer = new StringBuilder(cmisName.length() * 2);
         for (int i = 0; i < cmisName.length(); i++) {
             char ch = cmisName.charAt(i);
             if (ch == '%' || ch == '/' || ch == ':' || ch == '[' || ch == ']' || ch == '*' || ch == '|'

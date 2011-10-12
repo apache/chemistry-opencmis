@@ -77,12 +77,12 @@ public class ParseTreeWalker<T> implements PredicateWalkerBase {
     //------------------------------------------< protected >---
 
     /** For extensibility. */
-    protected T walkOtherExpr(Evaluator evaluator, Tree node) {
+    protected T walkOtherExpr(Evaluator<?> evaluator, Tree node) {
         throw new CmisRuntimeException("Unknown node type: " + node.getType() + " (" + node.getText() + ")");
     }
 
     /** For extensibility. */
-    protected T walkOtherPredicate(Evaluator evaluator, Tree node) {
+    protected T walkOtherPredicate(Evaluator<?> evaluator, Tree node) {
         throw new CmisRuntimeException("Unknown node type: " + node.getType() + " (" + node.getText() + ")");
     }
 

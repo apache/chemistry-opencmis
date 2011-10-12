@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImp
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -95,7 +96,7 @@ public abstract class JcrNode {
     private final Node node;
     protected final JcrTypeManager typeManager;
     protected final PathManager pathManager;
-    private final JcrNodeFactory nodeFactory;
+    protected final JcrTypeHandlerManager typeHandlerManager;
 
     /**
      * Create a new instance wrapping a JCR <code>node</code>.
@@ -103,13 +104,13 @@ public abstract class JcrNode {
      * @param node  the JCR <code>node</code> to represent
      * @param typeManager
      * @param pathManager
-     * @param nodeFactory
+     * @param typeHandlerManager
      */
-    protected JcrNode(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrNodeFactory nodeFactory) {
+    protected JcrNode(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
         this.node = node;
         this.typeManager = typeManager;
         this.pathManager = pathManager;
-        this.nodeFactory = nodeFactory;
+        this.typeHandlerManager = typeHandlerManager;
     }
 
     /**
@@ -615,7 +616,7 @@ public abstract class JcrNode {
      * @return  a new <code>JcrNode</code>
      */
     protected final JcrNode create(Node node) {
-        return nodeFactory.create(node);
+        return typeHandlerManager.create(node);
     }
 
     /**

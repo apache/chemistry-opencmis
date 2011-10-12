@@ -21,11 +21,17 @@ package org.apache.chemistry.opencmis.jcr.query;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.jcr.DefaultJcrTypeManager;
+import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
+import org.apache.chemistry.opencmis.jcr.PathManager;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultFolderTypeHandler;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultUnversionedDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.ISO8601;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -36,6 +42,18 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class XPathBuilderTest {
+
+    private JcrTypeManager typeManager;
+
+    @Before
+    public void setUp() throws Exception {
+        typeManager = new JcrTypeManager();
+        PathManager pathManager = new PathManager(PathManager.CMIS_ROOT_PATH);
+        JcrTypeHandlerManager typeHandlerManager = new JcrTypeHandlerManager(pathManager, typeManager);
+        typeHandlerManager.addHandler(new DefaultFolderTypeHandler());
+        typeHandlerManager.addHandler(new DefaultDocumentTypeHandler());
+        typeHandlerManager.addHandler(new DefaultUnversionedDocumentTypeHandler());
+    }
 
     @Test
     public void testValidQuery() {
@@ -219,15 +237,15 @@ public class XPathBuilderTest {
         return Arrays.asList(elements);
     }
 
-    private static XPathBuilder execute(String statement) {
+    private XPathBuilder execute(String statement) {
         QueryUtil queryUtil = new QueryUtil();
-        QueryObject queryObject = new QueryObject(new DefaultJcrTypeManager());
+        QueryObject queryObject = new QueryObject(typeManager);
         ParseTreeWalker<XPathBuilder> parseTreeWalker = new ParseTreeWalker<XPathBuilder>(new EvaluatorXPath());
         queryUtil.traverseStatementAndCatchExc(statement, queryObject, parseTreeWalker);
         return parseTreeWalker.getResult();
     }
 
-    private static void check(String query, String result, List<String> folderPredicates, Boolean evaluation) {
+    private void check(String query, String result, List<String> folderPredicates, Boolean evaluation) {
         XPathBuilder queryBuilder = execute(query);
         if (result == null) {
             assertEquals(null, queryBuilder);

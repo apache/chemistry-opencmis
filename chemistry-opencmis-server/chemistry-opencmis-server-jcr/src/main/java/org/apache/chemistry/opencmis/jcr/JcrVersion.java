@@ -19,6 +19,8 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
@@ -37,9 +39,9 @@ public class JcrVersion extends JcrVersionBase {
     private final Version version;
 
     public JcrVersion(Node node, Version version, JcrTypeManager typeManager, PathManager pathManager,
-            JcrNodeFactory nodeFactory) {
+            JcrTypeHandlerManager typeHandlerManager) {
 
-        super(node, typeManager, pathManager, nodeFactory);
+        super(node, typeManager, pathManager, typeHandlerManager);
         this.version = version;
     }
 
