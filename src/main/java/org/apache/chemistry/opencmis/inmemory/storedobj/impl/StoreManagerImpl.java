@@ -21,13 +21,16 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -45,6 +48,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefini
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
@@ -68,6 +72,10 @@ import org.apache.commons.logging.LogFactory;
 public class StoreManagerImpl implements StoreManager {
 
     private static final Log LOG = LogFactory.getLog(StoreManagerImpl.class);
+
+    private static final String CMIS_READ = "cmis:read";
+    private static final String CMIS_WRITE = "cmis:write";
+    private static final String CMIS_ALL = "cmis:all";
 
     protected final BindingsObjectFactory fObjectFactory;
     protected RepositoryInfo fRepositoryInfo;
@@ -341,18 +349,87 @@ public class StoreManagerImpl implements StoreManager {
         caps.setSupportsMultifiling(true);
         caps.setSupportsUnfiling(true);
         caps.setSupportsVersionSpecificFiling(false);
-        caps.setCapabilityAcl(CapabilityAcl.NONE);
-//        AclCapabilitiesDataImpl aclCaps = new AclCapabilitiesDataImpl();
-//        aclCaps.setAclPropagation(AclPropagation.OBJECTONLY);
-//        aclCaps.setPermissionDefinitionData(null);
-//        aclCaps.setPermissionMappingData(null);
-//        repoInfo.setAclCapabilities(aclCaps);
+        caps.setCapabilityAcl(CapabilityAcl.MANAGE);
+        
+        AclCapabilitiesDataImpl aclCaps = new AclCapabilitiesDataImpl();
+        aclCaps.setAclPropagation(AclPropagation.OBJECTONLY);
+        aclCaps.setPermissionDefinitionData(null);
+        aclCaps.setPermissionMappingData(null);
+
+        // permissions
+        List<PermissionDefinition> permissions = new ArrayList<PermissionDefinition>();
+        permissions.add(createPermission(CMIS_READ, "Read"));
+        permissions.add(createPermission(CMIS_WRITE, "Write"));
+        permissions.add(createPermission(CMIS_ALL, "All"));
+        aclCaps.setPermissionDefinitionData(permissions);
+
+        // mapping
+        List<PermissionMapping> list = new ArrayList<PermissionMapping>();
+        list.add(createMapping(PermissionMapping.CAN_GET_DESCENDENTS_FOLDER, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_CHILDREN_FOLDER, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_PARENTS_FOLDER, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_FOLDER_PARENT_OBJECT, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_CREATE_DOCUMENT_FOLDER, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_CREATE_FOLDER_FOLDER, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_CREATE_RELATIONSHIP_SOURCE, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_CREATE_RELATIONSHIP_TARGET, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_PROPERTIES_OBJECT, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_VIEW_CONTENT_OBJECT, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_UPDATE_PROPERTIES_OBJECT, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_MOVE_OBJECT, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_MOVE_TARGET, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_MOVE_SOURCE, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_DELETE_OBJECT, CMIS_WRITE));;
+        list.add(createMapping(PermissionMapping.CAN_DELETE_TREE_FOLDER, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_SET_CONTENT_DOCUMENT, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_DELETE_CONTENT_DOCUMENT, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_ADD_TO_FOLDER_OBJECT, CMIS_WRITE));;
+        list.add(createMapping(PermissionMapping.CAN_ADD_TO_FOLDER_FOLDER, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_REMOVE_FROM_FOLDER_OBJECT, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_REMOVE_FROM_FOLDER_FOLDER, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_CHECKOUT_DOCUMENT, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_CANCEL_CHECKOUT_DOCUMENT, CMIS_WRITE));;
+        list.add(createMapping(PermissionMapping.CAN_CHECKIN_DOCUMENT, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_GET_ALL_VERSIONS_VERSION_SERIES, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_OBJECT_RELATIONSHIPS_OBJECT, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_ADD_POLICY_OBJECT, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_ADD_POLICY_POLICY, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_REMOVE_POLICY_OBJECT, CMIS_WRITE));
+        list.add(createMapping(PermissionMapping.CAN_REMOVE_POLICY_POLICY, CMIS_WRITE));;
+        list.add(createMapping(PermissionMapping.CAN_GET_APPLIED_POLICIES_OBJECT, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_ACL_OBJECT, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_APPLY_ACL_OBJECT, CMIS_ALL));
+        
+        Map<String, PermissionMapping> map = new LinkedHashMap<String, PermissionMapping>();
+        for (PermissionMapping pm : list) {
+            map.put(pm.getKey(), pm);
+        }
+
+        aclCaps.setPermissionMappingData(map);
+        repoInfo.setAclCapabilities(aclCaps);
+        
         repoInfo.setCapabilities(caps);
 
         fRepositoryInfo = repoInfo;
         return repoInfo;
     }
 
+    private static PermissionDefinition createPermission(String permission, String description) {
+        PermissionDefinitionDataImpl pd = new PermissionDefinitionDataImpl();
+        pd.setPermission(permission);
+        pd.setDescription(description);
+
+        return pd;
+    }
+
+    private static PermissionMapping createMapping(String key, String permission) {
+        PermissionMappingDataImpl pm = new PermissionMappingDataImpl();
+        pm.setKey(key);
+        pm.setPermissions(Collections.singletonList(permission));
+
+        return pm;
+    }
+    
     /**
      * traverse tree and replace each need node with a clone. remove properties
      * on clone if requested, cut children of clone if depth is exceeded.
