@@ -365,10 +365,10 @@ public class Main {
     }
     
     private void renameFiles(String name) {
-        String fileNameInReq = String.format("%05d-request.xml", requestCounter);
-        String fileNameInResp = String.format("%05d-response.xml", requestCounter);
+        String fileNameInReq = String.format("%05d-request.log", requestCounter);
+        String fileNameInResp = String.format("%05d-response.log", requestCounter);
         File in = new File(logDir + fileNameInReq);
-        File out = new File(name + "-request.log");
+        File out = new File(name + "-request.xml");
         if (out.exists())
             out.delete();
         boolean ok = in.renameTo(out);
@@ -378,7 +378,7 @@ public class Main {
             LOG.warn("Renaming file " + in.getAbsolutePath() + " to " + out.getAbsolutePath() + " failed.");
 
         in = new File(logDir + fileNameInResp);
-        out = new File(name + "-response.log");
+        out = new File(name + "-response.xml");
         if (out.exists())
             out.delete();
         ok = in.renameTo(out);
