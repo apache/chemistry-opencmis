@@ -18,13 +18,17 @@
  */
 package org.apache.chemistry.opencmis.tck.tests.versioning;
 
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -42,14 +46,53 @@ public class CheckedOutTest extends AbstractSessionTest {
 
     @Override
     public void run(Session session) {
-        // test all checked-out documents
-        int sessionCheckedOut = checkPWCs(session, session.getCheckedOutDocs(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME));
-        addResult(createInfoResult(sessionCheckedOut + " checked out documents overall."));
+        CmisTestResult f;
 
-        // test checked-out documents in root folder
-        int rootFolderCheckedOut = checkPWCs(session,
-                session.getRootFolder().getCheckedOutDocs(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME));
-        addResult(createInfoResult(rootFolderCheckedOut + " checked out documents in the root folder."));
+        Document pwc = null;
+        try {
+            // create folder and a checked-out document
+            Folder testFolder = createTestFolder(session);
+            Document doc = createDocument(session, testFolder, "checkedouttest.txt", "checked out");
+            DocumentTypeDefinition docType = (DocumentTypeDefinition) doc.getType();
+
+            if (!docType.isVersionable()) {
+                addResult(createResult(WARNING, "Test type is not versionable. Check out skipped!"));
+            } else {
+                ObjectId pwcId = doc.checkOut();
+                pwc = (Document) session.getObject(pwcId, SELECT_ALL_NO_CACHE_OC);
+            }
+
+            // test all checked-out documents
+            int sessionCheckedOut = checkPWCs(session, session.getCheckedOutDocs(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME));
+            addResult(createInfoResult(sessionCheckedOut + " checked out document(s) overall."));
+
+            if (pwc != null) {
+                f = createResult(FAILURE, "There should be at least one checked out document in the repository!");
+                addResult(assertIsTrue(sessionCheckedOut >= 1, null, f));
+            }
+
+            // test checked-out documents in the test folder
+            int testFolderCheckedOut = checkPWCs(session,
+                    testFolder.getCheckedOutDocs(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME));
+            addResult(createInfoResult(testFolderCheckedOut + " checked out document(s) in the test folder."));
+
+            if (pwc != null) {
+                f = createResult(FAILURE, "There should be at least one checked out document in the test folder!");
+                addResult(assertIsTrue(testFolderCheckedOut >= 1, null, f));
+            }
+
+            // remove the PWC and document
+            if (pwc != null) {
+                pwc.cancelCheckOut();
+                pwc = null;
+            }
+            deleteObject(doc);
+        } finally {
+            if (pwc != null) {
+                pwc.cancelCheckOut();
+            }
+            deleteTestFolder();
+        }
     }
 
     private int checkPWCs(Session session, ItemIterable<Document> pwcs) {
@@ -87,7 +130,7 @@ public class CheckedOutTest extends AbstractSessionTest {
         }
 
         f = createResult(WARNING,
-                "Checked-out documents should be ordered by cmis:name, but they are not! (It might be a collation mismtach.)");
+                "Checked-out documents should be ordered by cmis:name, but they are not! (It might be a collation mismatch.)");
         addResult(assertEquals(0, orderByNameIssues, null, f));
 
         return i;
