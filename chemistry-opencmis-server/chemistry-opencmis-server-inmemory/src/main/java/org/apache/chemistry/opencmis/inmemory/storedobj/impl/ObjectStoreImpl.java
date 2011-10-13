@@ -378,6 +378,8 @@ public class ObjectStoreImpl implements ObjectStore {
         if (null != addACEs)
             for (Ace ace: addACEs.getAces()) {
                 InMemoryAce inMemAce = new InMemoryAce(ace);
+                if (inMemAce.equals(InMemoryAce.getDefaultAce()))
+                    return 0; // if everyone has full access there is no need to add additional ACLs.
                 newAcl.addAce(inMemAce);
             }
         

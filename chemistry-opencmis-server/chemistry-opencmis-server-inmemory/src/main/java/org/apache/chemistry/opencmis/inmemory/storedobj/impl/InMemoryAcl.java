@@ -63,7 +63,7 @@ public class InMemoryAcl {
 
     public static InMemoryAcl getDefaultAcl() {
         List<InMemoryAce> defaultAcl = new ArrayList<InMemoryAce>();
-        defaultAcl.add(new InMemoryAce(InMemoryAce.getAnyoneUser(), Permission.ALL));        
+        defaultAcl.add(InMemoryAce.getDefaultAce());        
         return new InMemoryAcl(defaultAcl); 
     }
     

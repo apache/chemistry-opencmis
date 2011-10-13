@@ -696,7 +696,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
                 log.info("  return property id: " + pd2.getId() + ", value: " + pd2.getValues());
             }
             pd = props.get(TEST_DOCUMENT_MY_STRING_PROP_ID);
-            assertNull(pd);
+            assertNull(pd.getFirstValue());
             // delete a required property and expect exception:
             properties = new ArrayList<PropertyData<?>>();
             properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, (BigInteger) null));
@@ -899,8 +899,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertFalse(actions.contains(Action.CAN_GET_CONTENT_STREAM));
             assertFalse(actions.contains(Action.CAN_GET_RENDITIONS));
         }
-        assertFalse(actions.contains(Action.CAN_ADD_OBJECT_TO_FOLDER));
-        assertFalse(actions.contains(Action.CAN_REMOVE_OBJECT_FROM_FOLDER));
+        assertTrue(actions.contains(Action.CAN_ADD_OBJECT_TO_FOLDER));
+        assertTrue(actions.contains(Action.CAN_REMOVE_OBJECT_FROM_FOLDER));
 
         if (isVersioned) {
             assertTrue(actions.contains(Action.CAN_CANCEL_CHECK_OUT));

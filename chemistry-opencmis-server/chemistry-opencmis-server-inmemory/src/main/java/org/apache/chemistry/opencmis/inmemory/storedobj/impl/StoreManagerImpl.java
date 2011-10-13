@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
@@ -215,7 +217,7 @@ public class StoreManagerImpl implements StoreManager {
             return null;
         }
 
-        RepositoryInfo repoInfo = createDefaultRepositoryInfo(repositoryId);
+        RepositoryInfo repoInfo = createRepositoryInfo(repositoryId);
 
         return repoInfo;
     }
@@ -256,7 +258,7 @@ public class StoreManagerImpl implements StoreManager {
             }
         } else {
             // create a default repository info
-            createDefaultRepositoryInfo(repositoryId);
+            createRepositoryInfo(repositoryId);
         }
     }
 
@@ -310,7 +312,7 @@ public class StoreManagerImpl implements StoreManager {
         typeManager.initTypeSystem(typeDefs);
     }
 
-    private RepositoryInfo createDefaultRepositoryInfo(String repositoryId) {
+    private RepositoryInfo createRepositoryInfo(String repositoryId) {
         ObjectStore objStore = getObjectStore(repositoryId);
         String rootFolderId = objStore.getRootFolder().getId();
         // repository info
@@ -320,14 +322,13 @@ public class StoreManagerImpl implements StoreManager {
         repoInfo.setName("InMemory Repository");
         repoInfo.setDescription("InMemory Test Repository");
         repoInfo.setCmisVersionSupported("1.0");
-        repoInfo.setCapabilities(null);
         repoInfo.setRootFolder(rootFolderId);
         repoInfo.setPrincipalAnonymous(InMemoryAce.getAnonymousUser());
         repoInfo.setPrincipalAnyone(InMemoryAce.getAnyoneUser());
-        repoInfo.setThinClientUri(null);
+        repoInfo.setThinClientUri("");
         repoInfo.setChangesIncomplete(Boolean.TRUE);
         repoInfo.setChangesOnType(null);
-        repoInfo.setLatestChangeLogToken(null);
+        repoInfo.setLatestChangeLogToken(Long.valueOf(new Date(0).getTime()).toString());
         repoInfo.setVendorName("OpenCMIS");
         repoInfo.setProductName("OpenCMIS InMemory-Server");
         repoInfo.setProductVersion("0.1");
@@ -336,8 +337,7 @@ public class StoreManagerImpl implements StoreManager {
         RepositoryCapabilitiesImpl caps = new RepositoryCapabilitiesImpl();
         caps.setAllVersionsSearchable(false);
         caps.setCapabilityAcl(CapabilityAcl.MANAGE);
-        caps.setCapabilityChanges(CapabilityChanges.PROPERTIES); // just for
-        // testing
+        caps.setCapabilityChanges(CapabilityChanges.NONE);
         caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.PWCONLY);
         caps.setCapabilityJoin(CapabilityJoin.NONE);
         caps.setCapabilityQuery(CapabilityQuery.BOTHCOMBINED); 
@@ -353,8 +353,7 @@ public class StoreManagerImpl implements StoreManager {
         
         AclCapabilitiesDataImpl aclCaps = new AclCapabilitiesDataImpl();
         aclCaps.setAclPropagation(AclPropagation.OBJECTONLY);
-        aclCaps.setPermissionDefinitionData(null);
-        aclCaps.setPermissionMappingData(null);
+        aclCaps.setSupportedPermissions(SupportedPermissions.BASIC);
 
         // permissions
         List<PermissionDefinition> permissions = new ArrayList<PermissionDefinition>();
@@ -362,7 +361,7 @@ public class StoreManagerImpl implements StoreManager {
         permissions.add(createPermission(CMIS_WRITE, "Write"));
         permissions.add(createPermission(CMIS_ALL, "All"));
         aclCaps.setPermissionDefinitionData(permissions);
-
+        
         // mapping
         List<PermissionMapping> list = new ArrayList<PermissionMapping>();
         list.add(createMapping(PermissionMapping.CAN_GET_DESCENDENTS_FOLDER, CMIS_READ));
@@ -406,6 +405,7 @@ public class StoreManagerImpl implements StoreManager {
         }
 
         aclCaps.setPermissionMappingData(map);
+
         repoInfo.setAclCapabilities(aclCaps);
         
         repoInfo.setCapabilities(caps);

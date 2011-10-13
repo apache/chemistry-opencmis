@@ -18,16 +18,17 @@
  */
 package org.apache.chemistry.opencmis.inmemory.types;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
@@ -46,21 +47,26 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
@@ -211,6 +217,16 @@ public class PropertyCreationHelper {
                         baseTypeId));
             }
         }
+        
+        // fill not-set properties from type definition (as spec requires)
+        Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
+        for (PropertyDefinition<?> propDef : propDefs.values()) {
+            if (!properties.containsKey(propDef.getId()))
+                properties.put(propDef.getId(), getEmptyValue(propDef));
+        }
+
+
+        
         List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>>(properties.values());
 
         if (fillOptionalPropertyData) {  // add query name, local name, display name
@@ -373,6 +389,7 @@ public class PropertyCreationHelper {
         } else {
             prop.setDisplayName(displayName);
         }
+        prop.setDescription( "This is a " + prop.getDisplayName() + " property.");
         prop.setLocalName(id);
         prop.setLocalNamespace("local");
         prop.setQueryName(id);
@@ -381,6 +398,7 @@ public class PropertyCreationHelper {
         prop.setIsOpenChoice(false);
         prop.setIsQueryable(true);
         prop.setIsRequired(false);
+        prop.setIsOrderable(true);
         prop.setPropertyType(propType);
         prop.setUpdatability(Updatability.READWRITE);
     }
@@ -403,4 +421,24 @@ public class PropertyCreationHelper {
         }
     }
 
+    private static PropertyData<?> getEmptyValue(PropertyDefinition<?> propDef) {
+        if (propDef.getPropertyType().equals(PropertyType.BOOLEAN))
+            return new PropertyBooleanImpl(propDef.getId(), (Boolean) null);
+        else if (propDef.getPropertyType().equals(PropertyType.DATETIME))
+            return new PropertyDateTimeImpl(propDef.getId(), (GregorianCalendar) null);
+        else if (propDef.getPropertyType().equals(PropertyType.DECIMAL))
+            return new PropertyDecimalImpl(propDef.getId(), (BigDecimal) null);
+        else if (propDef.getPropertyType().equals(PropertyType.HTML))
+            return new PropertyHtmlImpl(propDef.getId(), (String) null);
+        else if (propDef.getPropertyType().equals(PropertyType.ID))
+            return new PropertyIdImpl(propDef.getId(), (String) null);
+        else if (propDef.getPropertyType().equals(PropertyType.INTEGER))
+            return new PropertyIntegerImpl(propDef.getId(), (BigInteger) null);
+        else if (propDef.getPropertyType().equals(PropertyType.STRING))
+            return new PropertyStringImpl(propDef.getId(), (String) null);
+        else if (propDef.getPropertyType().equals(PropertyType.URI))
+            return new PropertyUriImpl(propDef.getId(), (String) null);
+        else
+            return null;
+    }
 }
