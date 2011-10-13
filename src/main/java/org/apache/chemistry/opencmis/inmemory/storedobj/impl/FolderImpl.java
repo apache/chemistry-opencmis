@@ -186,10 +186,8 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
 
         if (FilterParser.isContainedInFilter(PropertyIds.PARENT_ID, requestedIds)) {
             String parentId = getParent() == null ? null : getParent().getId();
-            if (parentId != null) {
-                properties.put(PropertyIds.PARENT_ID, objFactory.createPropertyIdData(PropertyIds.PARENT_ID,
-                        parentId));
-            }
+            properties.put(PropertyIds.PARENT_ID, objFactory.createPropertyIdData(PropertyIds.PARENT_ID,
+                    parentId));
         }
 
         if (FilterParser.isContainedInFilter(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, requestedIds)) {

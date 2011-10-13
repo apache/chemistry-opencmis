@@ -81,7 +81,10 @@ public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implement
     }
 
     public List<Folder> getParents() {
-        return fParents;
+        if (null == fParents)
+            return Collections.emptyList();
+        else
+            return fParents;
     }
 
     /*
@@ -92,7 +95,7 @@ public abstract class AbstractMultiFilingImpl extends StoredObjectImpl implement
      */
     public List<Folder> getParents(String user) {
         if (null == fParents)
-            return null;
+            return Collections.emptyList();
         else if (null == user)
             return Collections.unmodifiableList(fParents);
         else {

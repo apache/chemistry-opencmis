@@ -30,6 +30,7 @@ public class InMemoryAce {
 
     private final String principalId;    
     private Permission permission;
+    private static InMemoryAce DEFAULT_ACE = new InMemoryAce(InMemoryAce.getAnyoneUser(), Permission.ALL);
     
     public static final String getAnyoneUser() {
         return "anyone";
@@ -38,7 +39,11 @@ public class InMemoryAce {
     public static final String getAnonymousUser() {
         return "anonymous";
     }
-
+    
+    public static final InMemoryAce getDefaultAce() {
+        return DEFAULT_ACE;
+    }
+    
     public InMemoryAce(Ace commonsAce) {
         if (null == commonsAce || null == commonsAce.getPrincipalId() || null == commonsAce.getPermissions())
             throw new IllegalArgumentException("Cannot create InMemoryAce with null value");

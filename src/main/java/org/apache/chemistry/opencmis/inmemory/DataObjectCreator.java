@@ -80,8 +80,10 @@ public class DataObjectCreator {
         AllowableActionsImpl allowableActions = new AllowableActionsImpl();
         Set<Action> set = allowableActions.getAllowableActions();
 
-        set.add(Action.CAN_DELETE_OBJECT);
-        set.add(Action.CAN_UPDATE_PROPERTIES);
+        if (!isRootFolder) {
+            set.add(Action.CAN_DELETE_OBJECT);
+            set.add(Action.CAN_UPDATE_PROPERTIES);
+        }
 
         if (isFolder || isDocument) {
             set.add(Action.CAN_GET_PROPERTIES);
@@ -94,16 +96,14 @@ public class DataObjectCreator {
         if (isFolder) {
             if (!isRootFolder) {
                 set.add(Action.CAN_GET_FOLDER_PARENT);
+                set.add(Action.CAN_DELETE_TREE);
             }
             set.add(Action.CAN_GET_FOLDER_TREE);
             set.add(Action.CAN_GET_DESCENDANTS);
 
-            set.add(Action.CAN_ADD_OBJECT_TO_FOLDER);
-            set.add(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
             set.add(Action.CAN_CREATE_DOCUMENT);
             set.add(Action.CAN_CREATE_FOLDER);
             set.add(Action.CAN_GET_CHILDREN);
-            set.add(Action.CAN_DELETE_TREE);
         }
 
         if (hasContent) {
@@ -125,6 +125,8 @@ public class DataObjectCreator {
         }
 
         if (isDocument) {
+            set.add(Action.CAN_ADD_OBJECT_TO_FOLDER);
+            set.add(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
             set.add(Action.CAN_SET_CONTENT_STREAM);
         }
 

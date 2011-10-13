@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -95,27 +97,77 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         // but the spec requires some
         // properties always to be set
 
+//        if (FilterParser.isContainedInFilter(PropertyIds.PARENT_ID, requestedIds)) {
+//            List<Folder> parents = getParents();
+//            String parentId = parents == null || parents.isEmpty() ? null : parents.get(0).getId();
+//            if (parentId != null) {
+//                properties.put(PropertyIds.PARENT_ID, objFactory.createPropertyIdData(PropertyIds.PARENT_ID,
+//                        parentId));
+//            }
+//        }
+
         if (FilterParser.isContainedInFilter(PropertyIds.IS_IMMUTABLE, requestedIds)) {
             properties.put(PropertyIds.IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE,
                     false));
         }
 
         // Set the content related properties
-        if (null != fContent) {
-            if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_FILE_NAME, requestedIds)) {
-                properties.put(PropertyIds.CONTENT_STREAM_FILE_NAME, objFactory.createPropertyStringData(
-                        PropertyIds.CONTENT_STREAM_FILE_NAME, fContent.getFileName()));
-            }
-            // omit: PropertyIds.CMIS_CONTENT_STREAM_ID
-            if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
-                properties.put(PropertyIds.CONTENT_STREAM_LENGTH, objFactory.createPropertyIntegerData(
-                        PropertyIds.CONTENT_STREAM_LENGTH, fContent.getBigLength()));
-            }
-            if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_MIME_TYPE, requestedIds)) {
-                properties.put(PropertyIds.CONTENT_STREAM_MIME_TYPE, objFactory.createPropertyStringData(
-                        PropertyIds.CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
-            }
+        if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_FILE_NAME, requestedIds)) {
+            properties.put(PropertyIds.CONTENT_STREAM_FILE_NAME, objFactory.createPropertyStringData(
+                    PropertyIds.CONTENT_STREAM_FILE_NAME, null != fContent ? fContent.getFileName() : (String)null) );
         }
+        if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
+            properties.put(PropertyIds.CONTENT_STREAM_ID, objFactory.createPropertyStringData(
+                    PropertyIds.CONTENT_STREAM_ID, (String) null));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
+            properties.put(PropertyIds.CONTENT_STREAM_LENGTH, objFactory.createPropertyIntegerData(
+                    PropertyIds.CONTENT_STREAM_LENGTH, null != fContent ? fContent.getBigLength() : BigInteger.ZERO));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_MIME_TYPE, requestedIds)) {
+            properties.put(PropertyIds.CONTENT_STREAM_MIME_TYPE, objFactory.createPropertyStringData(
+                    PropertyIds.CONTENT_STREAM_MIME_TYPE, null != fContent ? fContent.getMimeType() : (String)null) );
+        }
+        
+        // Spec requires versioning properties even for unversioned documents
+        // overwrite the version related properties
+        if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_ID, requestedIds)) {
+            properties.put(PropertyIds.VERSION_SERIES_ID, objFactory.createPropertyIdData(
+                    PropertyIds.VERSION_SERIES_ID, (String)null));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
+            properties.put(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(
+                    PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, false));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, requestedIds)) {
+            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, objFactory.createPropertyStringData(
+                    PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, (String)null));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, requestedIds)) {
+            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, objFactory.createPropertyIdData(
+                    PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, (String)null));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.IS_LATEST_VERSION, requestedIds)) {
+            properties.put(PropertyIds.IS_LATEST_VERSION, objFactory.createPropertyBooleanData(
+                    PropertyIds.IS_LATEST_VERSION, true));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.IS_MAJOR_VERSION, requestedIds)) {
+            properties.put(PropertyIds.IS_MAJOR_VERSION, objFactory.createPropertyBooleanData(
+                    PropertyIds.IS_MAJOR_VERSION, true));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.IS_LATEST_MAJOR_VERSION, requestedIds)) {
+            properties.put(PropertyIds.IS_LATEST_MAJOR_VERSION, objFactory.createPropertyBooleanData(
+                    PropertyIds.IS_LATEST_MAJOR_VERSION, true));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.CHECKIN_COMMENT, requestedIds)) {
+            properties.put(PropertyIds.CHECKIN_COMMENT, objFactory.createPropertyStringData(
+                    PropertyIds.CHECKIN_COMMENT, (String )null));
+        }
+        if (FilterParser.isContainedInFilter(PropertyIds.VERSION_LABEL, requestedIds)) {
+            properties.put(PropertyIds.VERSION_LABEL, objFactory.createPropertyStringData(PropertyIds.VERSION_LABEL,
+                    (String) null));
+        }
+        
     }
 
     public boolean hasContent() {
