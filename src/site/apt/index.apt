@@ -25,7 +25,7 @@
 
 Chemistry OpenCMIS
   
-  OpenCMIS is an open source implementation of the  {{{http://xml.coverpages.org/cmis.html}OASIS CMIS specification}}
+  OpenCMIS is an open source implementation of the  {{{http://chemistry.apache.org/project/cmis.html}OASIS CMIS specification}}
   for Java.
 
   User and developer documentation for OpenCMIS is available in the main {{{http://chemistry.apache.org/java/opencmis.html}Chemistry website}}
