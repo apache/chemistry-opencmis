@@ -273,22 +273,22 @@ public class PropertyEditorFrame extends JFrame {
                         valueComponents.add(valueField);
                         add(valueField);
                     }
-
-                    JPanel addPanel = new JPanel(new BorderLayout());
-                    addPanel.setBackground(bgColor);
-                    JButton addButton = new JButton(ICON_ADD);
-                    addButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            addNewValue();
-                            setStatus(StatusFlag.Update);
-                        }
-                    });
-                    addPanel.add(addButton, BorderLayout.LINE_END);
-                    add(addPanel);
-
-                    updatePositions();
                 }
+
+                JPanel addPanel = new JPanel(new BorderLayout());
+                addPanel.setBackground(bgColor);
+                JButton addButton = new JButton(ICON_ADD);
+                addButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        addNewValue();
+                        setStatus(StatusFlag.Update);
+                    }
+                });
+                addPanel.add(addButton, BorderLayout.LINE_END);
+                add(addPanel);
+
+                updatePositions();
             }
 
             setMaximumSize(new Dimension(Short.MAX_VALUE, getPreferredSize().height));
