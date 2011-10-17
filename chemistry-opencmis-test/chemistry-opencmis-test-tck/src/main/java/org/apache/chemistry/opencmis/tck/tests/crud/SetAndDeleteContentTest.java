@@ -26,13 +26,16 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
@@ -110,11 +113,47 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             ContentStream contentStream = new ContentStreamImpl(workDoc.getName(),
                     BigInteger.valueOf(contentBytes.length), "text/plain", new ByteArrayInputStream(contentBytes));
 
-            workDoc.setContentStream(contentStream, true, true);
+            ObjectId newObjectId = workDoc.setContentStream(contentStream, true, true);
+
+            // setContentStream may have created a new version
+            Document contentDoc = workDoc;
+            if (newObjectId != null) {
+                // -> Non AtomPub binding
+                if (!workDoc.getId().equals(newObjectId.getId())) {
+                    if (checkedout) {
+                        addResult(createResult(FAILURE, "setContentStream() created a new version from a PWC!"));
+                    } else {
+                        contentDoc = (Document) session.getObject(newObjectId, SELECT_ALL_NO_CACHE_OC);
+                        addResult(checkObject(session, contentDoc, getAllProperties(contentDoc),
+                                "Version created by setContentStream() compliance"));
+                    }
+                }
+            } else {
+                if (getBinding() != BindingType.ATOMPUB) {
+                    addResult(createResult(FAILURE, "setContentStream() did not return an object id!"));
+                }
+
+                // -> AtomPub binding or incompliant other binding
+                if (checkedout) {
+                    // we cannot check if the repository does the right thing,
+                    // but if there is a problem the versioning tests should
+                    // catch it
+                } else if (Boolean.TRUE.equals(docType.isVersionable())) {
+                    List<Document> versions = workDoc.getAllVersions();
+                    if (versions == null || versions.isEmpty()) {
+                        addResult(createResult(FAILURE,
+                                "setContentStream() created a new version but the version history is empty!"));
+                    } else if (!workDoc.getId().equals(versions.get(0).getId())) {
+                        contentDoc = (Document) session.getObject(versions.get(0), SELECT_ALL_NO_CACHE_OC);
+                        addResult(checkObject(session, contentDoc, getAllProperties(contentDoc),
+                                "Version created by setContentStream() compliance"));
+                    }
+                }
+            }
 
             // test new content
             try {
-                String content = getStringFromContentStream(workDoc.getContentStream());
+                String content = getStringFromContentStream(contentDoc.getContentStream());
                 f = createResult(FAILURE, "Document content doesn't match the content set by setContentStream()!");
                 addResult(assertEquals(CONTENT2, content, null, f));
             } catch (IOException e) {
