@@ -155,22 +155,19 @@ public class StoreManagerImpl implements StoreManager {
         }
 
         TypeDefinitionContainer tc = typeManager.getTypeById(typeId);
-        List<TypeDefinitionContainer> result = null;
 
         if (tc != null) {
-            if (depth == -1) {
-                result = tc.getChildren();
-                if (!includePropertyDefinitions) {
-                    cloneTypeList(depth - 1, false, result);
-                }
-            } else if (depth == 0 || depth < -1) {
+            if (depth == -1) { 
+                if (includePropertyDefinitions)
+                    return tc;
+                else
+                    depth = Integer.MAX_VALUE;
+            } else if (depth == 0 || depth < -1)
                 throw new CmisInvalidArgumentException("illegal depth value: " + depth);
-            } else {
-                result = tc.getChildren();
-                cloneTypeList(depth - 1, includePropertyDefinitions, result);
-            }
-        }
-        return tc;
+
+            return cloneTypeList(depth, includePropertyDefinitions, tc, null);
+        } else
+            return null;
     }
 
     public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
@@ -338,7 +335,7 @@ public class StoreManagerImpl implements StoreManager {
         caps.setAllVersionsSearchable(false);
         caps.setCapabilityAcl(CapabilityAcl.MANAGE);
         caps.setCapabilityChanges(CapabilityChanges.NONE);
-        caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.PWCONLY);
+        caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
         caps.setCapabilityJoin(CapabilityJoin.NONE);
         caps.setCapabilityQuery(CapabilityQuery.BOTHCOMBINED); 
         caps.setCapabilityRendition(CapabilityRenditions.NONE);
@@ -433,29 +430,36 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * traverse tree and replace each need node with a clone. remove properties
      * on clone if requested, cut children of clone if depth is exceeded.
-     *
      * @param depth
-     * @param types
+     *      levels of children to copy
+     * @param includePropertyDefinitions
+     *      indicates with or without property definitions
+     * @param tdc
+     *      type definition to clone
+     * @param parent
+     *      parent container where to add clone as child
+     * @return
+     *      cloned type definition
      */
-    private void cloneTypeList(int depth, boolean includePropertyDefinitions, List<TypeDefinitionContainer> types) {
+    private static TypeDefinitionContainer cloneTypeList(int depth, boolean includePropertyDefinitions,
+            TypeDefinitionContainer tdc, TypeDefinitionContainer parent) {
 
-        ListIterator<TypeDefinitionContainer> it = types.listIterator();
-        while (it.hasNext()) {
-            TypeDefinitionContainer tdc = it.next();
-            AbstractTypeDefinition td = ((AbstractTypeDefinition) tdc.getTypeDefinition()).clone();
-            if (!includePropertyDefinitions) {
-                td.setPropertyDefinitions(null);
-            }
-            TypeDefinitionContainerImpl tdcClone = new TypeDefinitionContainerImpl(td);
-            if (depth > 0) {
-                ArrayList<TypeDefinitionContainer> children = new ArrayList<TypeDefinitionContainer>(tdc.getChildren()
-                        .size());
-                children.addAll(tdc.getChildren());
-                tdcClone.setChildren(children);
-                cloneTypeList(depth - 1, includePropertyDefinitions, children);
-            }
-            it.set(tdcClone);
+        AbstractTypeDefinition tdClone = ((AbstractTypeDefinition) tdc.getTypeDefinition()).clone();
+        if (!includePropertyDefinitions) {
+            tdClone.setPropertyDefinitions(null);
         }
+
+        TypeDefinitionContainerImpl tdcClone = new TypeDefinitionContainerImpl(tdClone);
+        if (null != parent)
+            parent.getChildren().add(tdcClone);
+
+        if (depth > 0) {
+            List<TypeDefinitionContainer> children = tdc.getChildren();
+            for (TypeDefinitionContainer child : children) {
+                cloneTypeList(depth - 1, includePropertyDefinitions, child, tdcClone);
+            }
+        }
+        return tdcClone;
     }
 
     public TypeManager getTypeManager(String repositoryId) {
