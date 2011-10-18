@@ -92,7 +92,7 @@ public class ObjectStoreImpl implements ObjectStore {
     /**
      * a concurrent HashMap to hold all Acls in the repository
      */
-    private static int NEXT_UNUSED_ACL_ID = 1;
+    private int nextUnusedAclId = 0;
     
     private final List<InMemoryAcl> fAcls = new ArrayList<InMemoryAcl>();
 
@@ -110,8 +110,8 @@ public class ObjectStoreImpl implements ObjectStore {
         return NEXT_UNUSED_ID++;
     }
 
-    private static synchronized Integer getNextAclId() {
-        return NEXT_UNUSED_ACL_ID++;
+    private synchronized Integer getNextAclId() {
+        return nextUnusedAclId++;
     }
     
    public void lock() {
@@ -237,6 +237,7 @@ public class ObjectStoreImpl implements ObjectStore {
         rootFolder.setModifiedBy("Admin");
         rootFolder.setModifiedAtNow();
         rootFolder.setRepositoryId(fRepositoryId);
+        rootFolder.setAclId(addAcl(InMemoryAcl.getDefaultAcl()));
         rootFolder.persist();
         fRootFolder = rootFolder;
     }
@@ -344,7 +345,6 @@ public class ObjectStoreImpl implements ObjectStore {
 
     public List<Integer> getAllAclsForUser(String principalId, Permission permission) {
         List<Integer> acls = new ArrayList<Integer>();
-        acls.add(0); // ACL with id 0 means no ACL set granting all users any access rights
         for (InMemoryAcl acl: fAcls) {
             if (acl.hasPermission(principalId, permission))
                 acls.add(acl.getId());
@@ -359,11 +359,14 @@ public class ObjectStoreImpl implements ObjectStore {
     
     public int getAclId(StoredObjectImpl so, Acl addACEs, Acl removeACEs) {
         InMemoryAcl newAcl;
+        boolean removeDefaultAcl = false;
+        int aclId = 0;
         
         if (so == null) {
             newAcl = new InMemoryAcl();
         } else {
-            newAcl = getInMemoryAcl(so.getAclId());
+            aclId = so.getAclId();
+            newAcl = getInMemoryAcl(aclId);
             if (null == newAcl)
                 newAcl = new InMemoryAcl();
             else
@@ -373,6 +376,16 @@ public class ObjectStoreImpl implements ObjectStore {
 
         if (newAcl.size() == 0 && addACEs == null && removeACEs == null)
             return 0;
+
+        if (null != removeACEs)
+            for (Ace ace: removeACEs.getAces()) {
+            InMemoryAce inMemAce = new InMemoryAce(ace);
+            if (inMemAce.equals(InMemoryAce.getDefaultAce()))
+                removeDefaultAcl = true;
+            }
+        
+        if ( so!= null && 0 == aclId  && !removeDefaultAcl)
+            return 0; // if object grants full access to everyone and it will not be removed we do nothing
 
         // add ACEs
         if (null != addACEs)
@@ -419,19 +432,13 @@ public class ObjectStoreImpl implements ObjectStore {
     public boolean hasReadAccess(String principalId, StoredObject so) {       
         return hasAccess(principalId, so, Permission.READ);
     }
-    /*
-    public boolean hasReadAccess(String principalId, StoredObject so) {       
-        int aclId = ((StoredObjectImpl)so).getAclId();
-        if (0 == aclId || null == principalId) 
-            return true; // no ACL set or user is admin user
-        List<Integer> aclIds = getAllAclsForUser(principalId, Permission.READ);
-        return hasAccess(principalId, so, Permission.READ);
-    }
-    */
+
+    
     public boolean hasWriteAccess(String principalId, StoredObject so) {       
         return hasAccess(principalId, so, Permission.WRITE);
     }
 
+    
     public boolean hasAllAccess(String principalId, StoredObject so) {       
         return hasAccess(principalId, so, Permission.ALL);
     }
@@ -463,8 +470,6 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     private InMemoryAcl getInMemoryAcl(int aclId) {
-        if (0 == aclId)
-            return null;
         
         for (InMemoryAcl acl : fAcls) {
             if (aclId == acl.getId())
@@ -496,11 +501,11 @@ public class ObjectStoreImpl implements ObjectStore {
 	        if (acl2.equals(acl))
 	            return acl2.getId();
 	    }
-	    return 0;
+	    return -1;
 	}
 
     private int addAcl(InMemoryAcl acl) {
-        int aclId = 0;
+        int aclId = -1;
         
         if (null == acl)
             return 0;
@@ -508,7 +513,7 @@ public class ObjectStoreImpl implements ObjectStore {
         lock();
         try {
             aclId = hasAcl(acl);
-            if (0 == aclId) {
+            if (aclId < 0) {
                 aclId = getNextAclId();
                 acl.setId(aclId);
                 fAcls.add(acl);
