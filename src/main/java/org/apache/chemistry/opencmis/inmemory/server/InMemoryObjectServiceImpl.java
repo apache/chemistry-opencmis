@@ -133,10 +133,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         for (PropertyData<?> prop : existingProps.getProperties().values()) {
             newPD.addProperty(prop);
         }
-        // overwrite all new properties
-        for (PropertyData<?> prop : properties.getProperties().values()) {
-            newPD.addProperty(prop);
-        }
+        
+        if (null != properties)
+            // overwrite all new properties
+            for (PropertyData<?> prop : properties.getProperties().values()) {
+                newPD.addProperty(prop);
+            }
 
         String res = createDocument(context, repositoryId, newPD, folderId, content, versioningState, policies,
                 addAces, removeAces, null);
