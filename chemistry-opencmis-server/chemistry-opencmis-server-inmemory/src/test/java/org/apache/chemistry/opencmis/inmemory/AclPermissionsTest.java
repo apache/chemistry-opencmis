@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumBasicPermissions;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAce;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,6 +69,7 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	protected Acl adminAcl = null;
 	protected List<Ace> testUserACEs = null;
 	protected Acl testUserAcl = null;
+	protected Acl defaultAcl = null;
 	
 	protected static Map<String, String> idMap = new HashMap<String, String>();
 	
@@ -126,6 +128,10 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		adminACEs = new ArrayList<Ace>(1);
 		adminACEs.add(createAce("TestAdmin", EnumBasicPermissions.CMIS_ALL));
 		adminAcl = fFactory.createAccessControlList(adminACEs);	
+		
+		List<Ace> defaultACEs = new ArrayList<Ace>(1);
+        defaultACEs.add(createAce(InMemoryAce.getAnyoneUser(), EnumBasicPermissions.CMIS_ALL));
+        defaultAcl = fFactory.createAccessControlList(defaultACEs); 
 	}
 
 	@Test
@@ -133,23 +139,23 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	{
 		// create a document with initial ACL
 		String docId = createDocumentWithAcls("complexDocument",  fRootFolderId, UnitTestTypeSystemCreator.COMPLEX_TYPE,
-				addAcl, null);
+				addAcl, defaultAcl);
 		Acl acl1 = fAclSvc.getAcl(fRepositoryId, docId, true, null);
 		assertTrue(aclEquals(addAcl, acl1));
 		
 		// create a folder with initial ACL
 		String folderId = createFolderWithAcls("folderWithAcl", fRootFolderId, BaseTypeId.CMIS_FOLDER.value(),
-				addAcl, null);
+				addAcl, defaultAcl);
 		Acl acl2 = fAclSvc.getAcl(fRepositoryId, folderId, true, null);
 		assertTrue(aclEquals(addAcl, acl2));
 		
 		// add acl later
 		String docId2 = createVersionedDocument("complexDocument2",  fRootFolderId);
-        Acl acl = fAclSvc.applyAcl(fRepositoryId, docId2, addAcl, null, AclPropagation.OBJECTONLY, null);
+        Acl acl = fAclSvc.applyAcl(fRepositoryId, docId2, addAcl, defaultAcl, AclPropagation.OBJECTONLY, null);
 		assertTrue(aclEquals(addAcl, acl));
 		
 		String folderId2 = createFolder("folder2", fRootFolderId, "cmis:folder");
-		acl2 = fAclSvc.applyAcl(fRepositoryId, folderId2, addAcl, null, AclPropagation.OBJECTONLY, null);
+		acl2 = fAclSvc.applyAcl(fRepositoryId, folderId2, addAcl, defaultAcl, AclPropagation.OBJECTONLY, null);
 		assertTrue(aclEquals(addAcl, acl2));
 		
 		// add a subfolder
@@ -205,8 +211,8 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		// starts with call context TestUser
 		switchCallContext("TestAdmin");
 		String docId = createDocumentWithAcls("doc",  fRootFolderId, "ComplexType",
-				standardAcl, null);
-		String folderId = createFolderWithAcls("folder", fRootFolderId, "cmis:folder", standardAcl, null);
+				standardAcl, defaultAcl);
+		String folderId = createFolderWithAcls("folder", fRootFolderId, "cmis:folder", standardAcl, defaultAcl);
 //		fTestCallContext = new DummyCallContext("Writer");
 		String subFolderId = createFolderWithAcls("subFolder", folderId, "cmis:folder", standardAcl, null);
 		
@@ -316,7 +322,7 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	}
 	
 	@Test
-	public void checkAclServiceGeneralAccess()
+	public void testAclServiceGeneralAccess()
 	{
 	    List<Ace> initialACEs = new ArrayList<Ace>(4);
 	    initialACEs.addAll(standardACEs);
@@ -343,9 +349,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		
 		switchCallContext("TestAdmin");
 		String docId = createDocumentWithAcls("doc",  fRootFolderId, "ComplexType",
-		        initialAcl, null);
-		String folderId = createFolderWithAcls("folder", fRootFolderId, "cmis:folder", initialAcl, null);
-		String subFolderId = createFolderWithAcls("subFolder", folderId, "cmis:folder", initialAcl, null);
+		        initialAcl, defaultAcl);
+		String folderId = createFolderWithAcls("folder", fRootFolderId, "cmis:folder", initialAcl, defaultAcl);
+		String subFolderId = createFolderWithAcls("subFolder", folderId, "cmis:folder", initialAcl, defaultAcl);
 		
 		// getAcl of a folder
 		switchCallContext("TestUser");
@@ -415,14 +421,14 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	}
 	
 	@Test
-	public void checkObjectServiceGeneralAccess()
+	public void testObjectServiceGeneralAccess()
 	{
 			
 		// starts with call context TestUser
 		switchCallContext("TestAdmin");
 		String docId = createDocumentWithAcls("doc",  fRootFolderId, "ComplexType",
-				standardAcl, null);
-		String folderId = createFolderWithAcls("folder", fRootFolderId, "cmis:folder", standardAcl, null);
+				standardAcl, defaultAcl);
+		String folderId = createFolderWithAcls("folder", fRootFolderId, "cmis:folder", standardAcl, defaultAcl);
 //		fTestCallContext = new DummyCallContext("Writer");
 		String subFolderId = createFolderWithAcls("subFolder", folderId, "cmis:folder", standardAcl, null);
 		String noReadFolderId = createFolderWithAcls("noReadFolder", folderId, "cmis:folder", null, readAcl);
@@ -656,14 +662,14 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	}
 	
 	@Test
-	public void checkMultiFilingServiceGeneralAccess()
+	public void testMultiFilingServiceGeneralAccess()
 	{
 		// starts with call context TestUser
 		switchCallContext("TestAdmin");
 		String docId = createDocumentWithAcls("doc",  fRootFolderId, "ComplexType",
-				standardAcl, null);
+				standardAcl, defaultAcl);
 		String folderId = createFolderWithAcls("folder", fRootFolderId, "cmis:folder", 
-				addAcl, null);
+				addAcl, defaultAcl);
 		String noReadFolderId = createFolderWithAcls("noReadFolder", folderId, "cmis:folder", 
 				null, readAcl);
 		
@@ -728,12 +734,12 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	}
 	
 	@Test
-	public void checkVersioningServiceGeneralAccess()
+	public void testVersioningServiceGeneralAccess()
 	{
 		// starts with call context TestUser
 		switchCallContext("TestAdmin");
 		String docId = createDocumentWithAcls("doc",  fRootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
-		        VersioningState.MAJOR, standardAcl, null);
+		        VersioningState.MAJOR, standardAcl, defaultAcl);
 	
 		// TestUser has no permission at all
 		switchCallContext("TestUser");
@@ -819,8 +825,7 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		fAclSvc.applyAcl(fRepositoryId, docId, readWriteAcl, null, AclPropagation.OBJECTONLY, null);
 		switchCallContext("Writer");
 		fVerSvc.cancelCheckOut(fRepositoryId, docId, null);
-		
-		
+				
 		// TestUser has no permission at all
 		switchCallContext("TestAdmin");
 		fAclSvc.applyAcl(fRepositoryId, docId, testUserAcl, null, AclPropagation.OBJECTONLY, null);
@@ -926,18 +931,18 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	
 		
 	@Test
-	public void checkVisibleObjects()
+	public void testVisibleObjects()
 	{
         LOG.debug("start test checkVisibleObjects()...");
 		switchCallContext("TestAdmin");
 		String docId = createDocumentWithAcls("doc",  fRootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
-				VersioningState.MAJOR, standardAcl, null);
+				VersioningState.MAJOR, standardAcl, defaultAcl);
 		String docId2 = createDocumentWithAcls("doc2",  fRootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
-		        VersioningState.MAJOR, addAcl, null);
+		        VersioningState.MAJOR, addAcl, defaultAcl);
 		String folderId = createFolderWithAcls("folder", fRootFolderId, "cmis:folder", 
-				standardAcl, null);
+				standardAcl, defaultAcl);
 		String folderId2 = createFolderWithAcls("folder2", fRootFolderId, "cmis:folder", 
-				addAcl, null);
+				addAcl, defaultAcl);
 		LOG.debug("checkVisibleObjects(): folderId2 is: " + folderId2);
 		String subFolderId = createFolderWithAcls("subFolder", folderId2, "cmis:folder", 
 				null, testUserAcl);
@@ -1009,7 +1014,7 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		// multi filing, get object parents
 		switchCallContext("TestAdmin");
 		String secFolderId = createFolderWithAcls("secondFolder", fRootFolderId, "cmis:folder", 
-				standardAcl, null);  	
+				standardAcl, defaultAcl);  	
 		String docId3 = createDocumentWithAcls("thirdDoc", folderId2, "ComplexType",
 				addAcl, null);
 		fMultiSvc.addObjectToFolder(fRepositoryId, docId3, secFolderId, true, null);
@@ -1022,7 +1027,7 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	}
 		
 	@Test
-	public void checkQueryAccess()
+	public void testQueryAccess()
 	{
 		createCustomPropertyDocuments();
 		
@@ -1105,7 +1110,7 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	{
 		switchCallContext("TestAdmin"); 
 		// create folder
-		String folderId = createFolderWithAcls("customFolder", fRootFolderId, "cmis:folder", standardAcl, null);
+		String folderId = createFolderWithAcls("customFolder", fRootFolderId, "cmis:folder", standardAcl, defaultAcl);
 		idMap.put("customFolder", folderId);
 
 		// create documents

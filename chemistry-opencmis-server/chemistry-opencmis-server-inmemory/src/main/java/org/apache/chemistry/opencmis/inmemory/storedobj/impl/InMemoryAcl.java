@@ -33,7 +33,7 @@ public class InMemoryAcl {
     
     private List<InMemoryAce> acl;
     private int id;
-    
+    private static InMemoryAcl DEFAULT_ACL = new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(InMemoryAce.getDefaultAce()); }} );
     private static class AceComparator<T extends InMemoryAce> implements Comparator<T> {
 
         public int compare(T o1, T o2) {            
@@ -62,9 +62,7 @@ public class InMemoryAcl {
     }
 
     public static InMemoryAcl getDefaultAcl() {
-        List<InMemoryAce> defaultAcl = new ArrayList<InMemoryAce>();
-        defaultAcl.add(InMemoryAce.getDefaultAce());        
-        return new InMemoryAcl(defaultAcl); 
+        return DEFAULT_ACL;
     }
     
     public InMemoryAcl() {
@@ -143,11 +141,17 @@ public class InMemoryAcl {
     }
 
     public boolean hasPermission(String principalId, Permission permission) {
-        if (null == principalId || null == permission)
+        if (null == permission)
             return false;
         
+        if (null == principalId)
+            for (InMemoryAce ace : acl)
+                if (ace.getPrincipalId().equals(InMemoryAce.getAnonymousUser()))
+                    return ace.hasPermission(permission);
+       
         for (InMemoryAce ace : acl) {
-            if (ace.getPrincipalId().equals(principalId))
+            if (ace.getPrincipalId().equals(principalId) || ace.getPrincipalId().equals(InMemoryAce.getAnyoneUser())
+                    || ace.getPrincipalId().equals(InMemoryAce.getAnonymousUser()))
                 return ace.hasPermission(permission);
         }
         return false;

@@ -18,17 +18,9 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
@@ -50,7 +42,7 @@ public class InMemoryAclService extends InMemoryAbstractServiceImpl {
 
     public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
             ExtensionsData extension, ObjectInfoHandler objectInfos) {
-        LOG.debug("start getObject()");
+        LOG.debug("start getAcl()");
         Acl acl = null;
         StoredObject so = validator.getAcl(context, repositoryId, objectId, extension);
         if (so instanceof DocumentVersion)

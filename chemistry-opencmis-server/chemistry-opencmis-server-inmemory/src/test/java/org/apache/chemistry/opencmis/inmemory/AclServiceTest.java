@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumBasicPermissions;
 import org.apache.chemistry.opencmis.inmemory.ObjectServiceTest.ObjectTestTypeSystemCreator;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAce;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.commons.logging.Log;
@@ -47,7 +49,7 @@ import org.junit.Test;
 public class AclServiceTest extends AbstractServiceTest {
 
     private static final Log LOG = LogFactory.getLog(AclServiceTest.class);
-    ObjectCreator fCreator;
+    private ObjectCreator fCreator;
     private static final String DOCUMENT_NAME = "DocumentWithAcl";
     private static final String FOLDER_NAME = "FolderWithAcl";
     private static final String DOCUMENT_TYPE_ID = InMemoryDocumentTypeDefinition.getRootDocumentType().getId();
@@ -56,8 +58,8 @@ public class AclServiceTest extends AbstractServiceTest {
     private static final String ALICE = "alice";
     private static final String BOB = "bob";
     private static final String CHRIS = "chris";
-    private static final String DAN = "dan";
-        
+    private static final String DAN = "dan";        
+    private Acl defaultAcl = null;
     
     @Override
     @Before
@@ -65,6 +67,11 @@ public class AclServiceTest extends AbstractServiceTest {
         super.setTypeCreatorClass(ObjectTestTypeSystemCreator.class.getName());
         super.setUp();
         fCreator = new ObjectCreator(fFactory, fObjSvc, fRepositoryId);
+        
+        List<Ace> defaultACEs = new ArrayList<Ace>(1);
+        defaultACEs.add(fFactory.createAccessControlEntry(InMemoryAce.getAnyoneUser(), Collections.singletonList( EnumBasicPermissions.CMIS_ALL.value())));
+        defaultAcl = fFactory.createAccessControlList(defaultACEs); 
+
     }
 
     @Override
@@ -76,7 +83,7 @@ public class AclServiceTest extends AbstractServiceTest {
     @Test
     public void testCreateDocumentWithAcl() {
         LOG.info("starting testCreateDocumentWithAcl() ...");
-        Acl removeAces = null;
+        Acl removeAces = defaultAcl;
         Acl acl = createSimpleTestAcl();
 
         String id = createDocument(fRootFolderId, acl, removeAces);
@@ -103,7 +110,7 @@ public class AclServiceTest extends AbstractServiceTest {
     @Test
     public void testCreateFolderWithAcl() {
         LOG.info("starting testCreateFolderWithAcl() ...");
-        Acl removeAces = null;
+        Acl removeAces = defaultAcl;
         Acl acl = createSimpleTestAcl();
         
         String id = createFolder(fRootFolderId, acl, removeAces);
@@ -135,7 +142,7 @@ public class AclServiceTest extends AbstractServiceTest {
         LOG.debug("created document with id: " + id);
         
         // apply absolute ACL using AclService
-        Acl acl1 = fAclSvc.applyAcl(fRepositoryId, id, acl, null, AclPropagation.OBJECTONLY, null);        
+        Acl acl1 = fAclSvc.applyAcl(fRepositoryId, id, acl, defaultAcl, AclPropagation.OBJECTONLY, null);        
         checkSimpleTestAcl(acl, acl1);
 
         // get ACL using AclService
@@ -151,7 +158,7 @@ public class AclServiceTest extends AbstractServiceTest {
         LOG.info("starting testAddRemoveAcl() ...");
         Acl acl = createAdvancedTestAcl();        
         
-        String id = createDocument(fRootFolderId, acl, null);
+        String id = createDocument(fRootFolderId, acl, defaultAcl);
         LOG.debug("created document with id: " + id);
         
         Acl aclAdd = createAclAdd();        
@@ -171,8 +178,8 @@ public class AclServiceTest extends AbstractServiceTest {
 
         LOG.info("starting testAddRemoveDuplicatedAcl() ...");
         Acl acl = createAdvancedTestAcl();  
-        String id1 = createDocument(DOCUMENT_NAME_1, fRootFolderId, acl, null);
-        String id2 = createDocument(DOCUMENT_NAME_2, fRootFolderId, acl, null);
+        String id1 = createDocument(DOCUMENT_NAME_1, fRootFolderId, acl, defaultAcl);
+        String id2 = createDocument(DOCUMENT_NAME_2, fRootFolderId, acl, defaultAcl);
         
 //        // modify ACL of first doc
 //        List<Ace> acesRemove = Arrays.asList(new Ace[] { 
@@ -199,7 +206,7 @@ public class AclServiceTest extends AbstractServiceTest {
     public void testApplyAclRecursiveSimple () {
         LOG.info("starting testApplyAclRecursiveSimple() ...");
         Acl acl = createSimpleTestAcl();
-        String[] ids = createHierarchy(acl, null);
+        String[] ids = createHierarchy(acl, defaultAcl);
         fAclSvc.applyAcl(fRepositoryId, ids[0], acl, null, AclPropagation.PROPAGATE, null);        
         checkAclRecursiveSimple(ids, acl);                
         LOG.info("... testApplyAclRecursiveSimple() finished.");
@@ -209,7 +216,7 @@ public class AclServiceTest extends AbstractServiceTest {
     public void testApplyAclRecursiveIncremental() {
         LOG.info("starting testApplyAclRecursiveIncremental() ...");
         Acl acl = createAdvancedTestAcl();        
-        String[] ids = createHierarchy(acl, null);
+        String[] ids = createHierarchy(acl, defaultAcl);
                
         Acl aclRemove = createAclRemove();        
         Acl aclAdd = createAclAdd();        
@@ -228,7 +235,7 @@ public class AclServiceTest extends AbstractServiceTest {
         LOG.info("starting testRemoveAllAcls() ...");
 
         Acl acl = createAdvancedTestAcl();                
-        String id = createDocument(fRootFolderId, acl, null);
+        String id = createDocument(fRootFolderId, acl, defaultAcl);
         LOG.debug("created document with id: " + id);
         
         Acl aclReturn = fAclSvc.applyAcl(fRepositoryId, id, null, acl, AclPropagation.OBJECTONLY, null);
