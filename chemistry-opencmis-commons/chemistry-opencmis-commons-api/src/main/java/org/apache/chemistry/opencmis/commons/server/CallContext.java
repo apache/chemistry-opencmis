@@ -40,6 +40,8 @@ public interface CallContext {
     String LOCALE_ISO3166_COUNTRY = "country";
 
     String SERVLET_CONTEXT = "servletContext";
+    String HTTP_SERVLET_REQUEST = "httpServletRequest";
+    String HTTP_SERVLET_RESPONSE = "httpServletRequest";
 
     /**
      * Returns the binding. Usually it returns

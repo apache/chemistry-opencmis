@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
@@ -100,6 +101,14 @@ public abstract class AbstractService {
         ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
                 MessageContext.SERVLET_CONTEXT);
         context.put(CallContext.SERVLET_CONTEXT, servletContext);
+
+        HttpServletRequest request = (HttpServletRequest) wsContext.getMessageContext().get(
+                MessageContext.SERVLET_REQUEST);
+        context.put(CallContext.HTTP_SERVLET_REQUEST, request);
+
+        HttpServletResponse response = (HttpServletResponse) wsContext.getMessageContext().get(
+                MessageContext.SERVLET_RESPONSE);
+        context.put(CallContext.HTTP_SERVLET_RESPONSE, response);
 
         Map<String, List<String>> headers = (Map<String, List<String>>) wsContext.getMessageContext().get(
                 MessageContext.HTTP_REQUEST_HEADERS);

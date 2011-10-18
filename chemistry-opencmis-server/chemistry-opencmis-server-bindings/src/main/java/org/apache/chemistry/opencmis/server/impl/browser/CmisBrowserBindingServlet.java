@@ -167,7 +167,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
-            context = HttpUtils.createContext(request, getServletContext(), CallContext.BINDING_BROWSER,
+            context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_BROWSER,
                     callContextHandler);
             dispatch(context, request, response);
         } catch (Exception e) {

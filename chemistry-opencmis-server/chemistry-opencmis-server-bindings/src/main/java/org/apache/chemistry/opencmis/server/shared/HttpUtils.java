@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -41,8 +42,8 @@ public class HttpUtils {
     /**
      * Creates a {@link CallContext} object from a servlet request.
      */
-    public static CallContext createContext(HttpServletRequest request, ServletContext servletContext, String binding,
-            CallContextHandler callContextHandler) {
+    public static CallContext createContext(HttpServletRequest request, HttpServletResponse response,
+            ServletContext servletContext, String binding, CallContextHandler callContextHandler) {
         String[] pathFragments = splitPath(request);
 
         String repositoryId = null;
@@ -62,8 +63,10 @@ public class HttpUtils {
             }
         }
 
-        // servlet context
+        // servlet context and HTTP servlet request and response
         context.put(CallContext.SERVLET_CONTEXT, servletContext);
+        context.put(CallContext.HTTP_SERVLET_REQUEST, request);
+        context.put(CallContext.HTTP_SERVLET_RESPONSE, response);
 
         // decode range
         String rangeHeader = request.getHeader("Range");
