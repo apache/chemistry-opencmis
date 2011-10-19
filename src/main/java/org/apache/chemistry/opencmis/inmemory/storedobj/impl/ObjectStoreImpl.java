@@ -158,8 +158,7 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     public void deleteObject(String objectId, Boolean allVersions, String user) {
-        String path = objectId; // currently the same
-        StoredObject obj = fStoredObjectMap.get(path);
+        StoredObject obj = fStoredObjectMap.get(objectId);
 
         if (null == obj) {
             throw new RuntimeException("Cannot delete object with id  " + objectId + ". Object does not exist.");
@@ -170,13 +169,24 @@ public class ObjectStoreImpl implements ObjectStore {
         } else if (obj instanceof DocumentVersion) {
             DocumentVersion vers = (DocumentVersion) obj;
             VersionedDocument parentDoc = vers.getParentDocument();
-            fStoredObjectMap.remove(path);
-            boolean otherVersionsExist = vers.getParentDocument().deleteVersion(vers);
-            if (!otherVersionsExist) {
+            boolean otherVersionsExists;
+            if (allVersions != null && allVersions) {
+                otherVersionsExists = false;
+                List<DocumentVersion> allVers = parentDoc.getAllVersions();
+                for (DocumentVersion ver : allVers) {
+                    parentDoc.deleteVersion(ver);
+                    fStoredObjectMap.remove(ver.getId());
+                }
+            } else {
+                fStoredObjectMap.remove(objectId);
+                otherVersionsExists = parentDoc.deleteVersion(vers);
+            }
+            
+            if (!otherVersionsExists) {
                 fStoredObjectMap.remove(parentDoc.getId());
             }
         } else {
-            fStoredObjectMap.remove(path);
+            fStoredObjectMap.remove(objectId);
         }
     }
 
