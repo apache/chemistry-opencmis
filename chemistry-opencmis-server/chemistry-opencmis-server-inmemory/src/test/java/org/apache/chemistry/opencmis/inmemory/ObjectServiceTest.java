@@ -48,6 +48,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
@@ -1123,13 +1124,13 @@ public class ObjectServiceTest extends AbstractServiceTest {
             // document and folder type
             Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringDefinition(
-                    TEST_DOCUMENT_STRING_PROP_ID, "Sample Doc String Property");
+                    TEST_DOCUMENT_STRING_PROP_ID, "Sample Doc String Property", Updatability.READWRITE);
             propertyDefinitions.put(prop.getId(), prop);
             cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
 
             propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
             prop = PropertyCreationHelper.createStringDefinition(TEST_FOLDER_STRING_PROP_ID,
-                    "Sample Folder String Property");
+                    "Sample Folder String Property", Updatability.READWRITE);
             propertyDefinitions.put(prop.getId(), prop);
             cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
 
@@ -1150,13 +1151,13 @@ public class ObjectServiceTest extends AbstractServiceTest {
                             .getRootDocumentType());
             Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringDefinition(
-                    TEST_DOCUMENT_MY_STRING_PROP_ID, "My String Property");
+                    TEST_DOCUMENT_MY_STRING_PROP_ID, "My String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
             prop.setMaxLength(BigInteger.valueOf(20)); // max len to 20
             propertyDefinitions.put(prop.getId(), prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
-                    TEST_DOCUMENT_MY_INT_PROP_ID, "My Integer Property");
+                    TEST_DOCUMENT_MY_INT_PROP_ID, "My Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(true);
             prop2.setMinValue(BigInteger.valueOf(-10000));
             prop2.setMaxValue(BigInteger.valueOf(10000));
@@ -1170,12 +1171,12 @@ public class ObjectServiceTest extends AbstractServiceTest {
                     TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID, "My Custom Document Type", baseType);
             Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringDefinition(
-                    TEST_DOCUMENT_MY_SUB_STRING_PROP_ID, "Subtype String Property");
+                    TEST_DOCUMENT_MY_SUB_STRING_PROP_ID, "Subtype String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
             propertyDefinitions.put(prop.getId(), prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
-                    TEST_DOCUMENT_MY_SUB_INT_PROP_ID, "Subtype");
+                    TEST_DOCUMENT_MY_SUB_INT_PROP_ID, "Subtype", Updatability.READWRITE);
             prop2.setIsRequired(true);
             propertyDefinitions.put(prop2.getId(), prop2);
             cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
@@ -1188,21 +1189,21 @@ public class ObjectServiceTest extends AbstractServiceTest {
                     .getRootDocumentType());
             Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringMultiDefinition(
-                    TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID, "Test Multi String Property");
+                    TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID, "Test Multi String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
             List<String> defValS = new ArrayList<String>() {{ add("Apache"); add("CMIS"); }};
             prop.setDefaultValue(defValS);
             propertyDefinitions.put(prop.getId(), prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
-                    TEST_DOCUMENT_MY_INT_PROP_ID, "Test Integer Property");
+                    TEST_DOCUMENT_MY_INT_PROP_ID, "Test Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(false);
             List<BigInteger> defVal = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop2.setDefaultValue(defVal);
             propertyDefinitions.put(prop2.getId(), prop2);
 
             PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
-                    TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default");
+                    TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default", Updatability.READWRITE);
             prop3.setIsRequired(true);
             List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop3.setDefaultValue(defVal2);
@@ -1219,21 +1220,21 @@ public class ObjectServiceTest extends AbstractServiceTest {
                     getRootFolderType());
             Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringMultiDefinition(
-                    TEST_FOLDER_MY_MULTI_STRING_PROP_ID, "Test Multi String Property");
+                    TEST_FOLDER_MY_MULTI_STRING_PROP_ID, "Test Multi String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
             List<String> defValS = new ArrayList<String>() {{ add("Apache"); add("CMIS"); }};
             prop.setDefaultValue(defValS);
             propertyDefinitions.put(prop.getId(), prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
-                    TEST_FOLDER_MY_INT_PROP_ID, "Test Integer Property");
+                    TEST_FOLDER_MY_INT_PROP_ID, "Test Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(false);
             List<BigInteger> defVal = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop2.setDefaultValue(defVal);
             propertyDefinitions.put(prop2.getId(), prop2);
 
             PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
-                    TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default");
+                    TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default", Updatability.READWRITE);
             prop3.setIsRequired(true);
             List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop3.setDefaultValue(defVal2);

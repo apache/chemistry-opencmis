@@ -45,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -663,38 +664,5 @@ public class VersioningTest extends AbstractServiceTest {
 
         return verSeriesId;
     }
-
-    public static class VersionTestTypeSystemCreator implements TypeCreator {
-        public static final String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
-        public static final String PROPERTY_ID = "StringProp";
-
-        public List<TypeDefinition> createTypesList() {
-            // always add CMIS default types
-            List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
-
-            // create a complex type with properties
-            InMemoryDocumentTypeDefinition cmisComplexType = new InMemoryDocumentTypeDefinition(
-                    VERSION_TEST_DOCUMENT_TYPE_ID, "VersionedType", InMemoryDocumentTypeDefinition
-                            .getRootDocumentType());
-
-            // create a single String property definition
-
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-
-            PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(PROPERTY_ID,
-                    "Sample String Property");
-            propertyDefinitions.put(prop1.getId(), prop1);
-
-            cmisComplexType.addCustomPropertyDefinitions(propertyDefinitions);
-            cmisComplexType.setIsVersionable(true); // make it a versionable
-            // type;
-
-            // add type to types collection
-            typesList.add(cmisComplexType);
-
-            return typesList;
-        }
-
-    } // ObjectTestTypeSystemCreator
 
 }

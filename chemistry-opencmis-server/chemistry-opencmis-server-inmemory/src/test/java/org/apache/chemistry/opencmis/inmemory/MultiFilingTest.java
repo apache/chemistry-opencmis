@@ -281,7 +281,7 @@ public class MultiFilingTest extends AbstractServiceTest {
 
     private String createVersionedDocument() {
 
-        return createDocument(UNFILED_DOC_NAME, null, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
+        return createDocument(UNFILED_DOC_NAME, null, UnitTestTypeSystemCreator.VERSIONED_TYPE,
                 VersioningState.MAJOR, true);
 
     }

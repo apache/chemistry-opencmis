@@ -78,7 +78,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Jens
- *
+ * 
  */
 public class PropertyCreationHelper {
 
@@ -87,99 +87,105 @@ public class PropertyCreationHelper {
     private PropertyCreationHelper() {
     }
 
-    public static PropertyBooleanDefinitionImpl createBooleanDefinition(String id, String displayName) {
+    public static PropertyBooleanDefinitionImpl createBooleanDefinition(String id, String displayName, Updatability upd) {
         PropertyBooleanDefinitionImpl prop = new PropertyBooleanDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.BOOLEAN, displayName, Cardinality.SINGLE);
+        createStandardDefinition(prop, id, PropertyType.BOOLEAN, displayName, Cardinality.SINGLE, upd);
         return prop;
     }
 
-    public static PropertyBooleanDefinitionImpl createBooleanMultiDefinition(String id, String displayName) {
+    public static PropertyBooleanDefinitionImpl createBooleanMultiDefinition(String id, String displayName,
+            Updatability upd) {
         PropertyBooleanDefinitionImpl prop = new PropertyBooleanDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.BOOLEAN, displayName, Cardinality.MULTI);
+        createStandardDefinition(prop, id, PropertyType.BOOLEAN, displayName, Cardinality.MULTI, upd);
         return prop;
     }
 
-    public static PropertyDateTimeDefinitionImpl createDateTimeDefinition(String id, String displayName) {
+    public static PropertyDateTimeDefinitionImpl createDateTimeDefinition(String id, String displayName,
+            Updatability upd) {
         PropertyDateTimeDefinitionImpl prop = new PropertyDateTimeDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.DATETIME, displayName, Cardinality.SINGLE);
+        createStandardDefinition(prop, id, PropertyType.DATETIME, displayName, Cardinality.SINGLE, upd);
         return prop;
     }
 
-    public static PropertyDateTimeDefinitionImpl createDateTimeMultiDefinition(String id, String displayName) {
+    public static PropertyDateTimeDefinitionImpl createDateTimeMultiDefinition(String id, String displayName,
+            Updatability upd) {
         PropertyDateTimeDefinitionImpl prop = new PropertyDateTimeDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.DATETIME, displayName, Cardinality.MULTI);
+        createStandardDefinition(prop, id, PropertyType.DATETIME, displayName, Cardinality.MULTI, upd);
         return prop;
     }
 
-    public static PropertyDecimalDefinitionImpl createDecimalDefinition(String id, String displayName) {
+    public static PropertyDecimalDefinitionImpl createDecimalDefinition(String id, String displayName, Updatability upd) {
         PropertyDecimalDefinitionImpl prop = new PropertyDecimalDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.DECIMAL, displayName, Cardinality.SINGLE);
+        createStandardDefinition(prop, id, PropertyType.DECIMAL, displayName, Cardinality.SINGLE, upd);
         return prop;
     }
 
-    public static PropertyDecimalDefinitionImpl createDecimalMultiDefinition(String id, String displayName) {
+    public static PropertyDecimalDefinitionImpl createDecimalMultiDefinition(String id, String displayName,
+            Updatability upd) {
         PropertyDecimalDefinitionImpl prop = new PropertyDecimalDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.DECIMAL, displayName, Cardinality.MULTI);
+        createStandardDefinition(prop, id, PropertyType.DECIMAL, displayName, Cardinality.MULTI, upd);
         return prop;
     }
 
-    public static PropertyHtmlDefinitionImpl createHtmlDefinition(String id, String displayName) {
+    public static PropertyHtmlDefinitionImpl createHtmlDefinition(String id, String displayName, Updatability upd) {
         PropertyHtmlDefinitionImpl prop = new PropertyHtmlDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.HTML, displayName, Cardinality.SINGLE);
+        createStandardDefinition(prop, id, PropertyType.HTML, displayName, Cardinality.SINGLE, upd);
         return prop;
     }
 
-    public static PropertyHtmlDefinitionImpl createHtmlMultiDefinition(String id, String displayName) {
+    public static PropertyHtmlDefinitionImpl createHtmlMultiDefinition(String id, String displayName, Updatability upd) {
         PropertyHtmlDefinitionImpl prop = new PropertyHtmlDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.HTML, displayName, Cardinality.MULTI);
+        createStandardDefinition(prop, id, PropertyType.HTML, displayName, Cardinality.MULTI, upd);
         return prop;
     }
 
-    public static PropertyIdDefinitionImpl createIdDefinition(String id, String displayName) {
+    public static PropertyIdDefinitionImpl createIdDefinition(String id, String displayName, Updatability upd) {
         PropertyIdDefinitionImpl prop = new PropertyIdDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.ID, displayName, Cardinality.SINGLE);
+        createStandardDefinition(prop, id, PropertyType.ID, displayName, Cardinality.SINGLE, upd);
         return prop;
     }
 
-    public static PropertyIdDefinitionImpl createIdMultiDefinition(String id, String displayName) {
+    public static PropertyIdDefinitionImpl createIdMultiDefinition(String id, String displayName, Updatability upd) {
         PropertyIdDefinitionImpl prop = new PropertyIdDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.ID, displayName, Cardinality.MULTI);
+        createStandardDefinition(prop, id, PropertyType.ID, displayName, Cardinality.MULTI, upd);
         return prop;
     }
 
-    public static PropertyIntegerDefinitionImpl createIntegerDefinition(String id, String displayName) {
+    public static PropertyIntegerDefinitionImpl createIntegerDefinition(String id, String displayName, Updatability upd) {
         PropertyIntegerDefinitionImpl prop = new PropertyIntegerDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.INTEGER, displayName, Cardinality.SINGLE);
+        createStandardDefinition(prop, id, PropertyType.INTEGER, displayName, Cardinality.SINGLE, upd);
         return prop;
     }
 
-    public static PropertyIntegerDefinitionImpl createIntegerMultiDefinition(String id, String displayName) {
+    public static PropertyIntegerDefinitionImpl createIntegerMultiDefinition(String id, String displayName,
+            Updatability upd) {
         PropertyIntegerDefinitionImpl prop = new PropertyIntegerDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.INTEGER, displayName, Cardinality.MULTI);
+        createStandardDefinition(prop, id, PropertyType.INTEGER, displayName, Cardinality.MULTI, upd);
         return prop;
     }
 
-    public static PropertyStringDefinitionImpl createStringDefinition(String id, String displayName) {
+    public static PropertyStringDefinitionImpl createStringDefinition(String id, String displayName, Updatability upd) {
         PropertyStringDefinitionImpl prop = new PropertyStringDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.STRING, displayName, Cardinality.SINGLE);
+        createStandardDefinition(prop, id, PropertyType.STRING, displayName, Cardinality.SINGLE, upd);
         return prop;
     }
 
-    public static PropertyStringDefinitionImpl createStringMultiDefinition(String id, String displayName) {
+    public static PropertyStringDefinitionImpl createStringMultiDefinition(String id, String displayName,
+            Updatability upd) {
         PropertyStringDefinitionImpl prop = new PropertyStringDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.STRING, displayName, Cardinality.MULTI);
+        createStandardDefinition(prop, id, PropertyType.STRING, displayName, Cardinality.MULTI, upd);
         return prop;
     }
 
-    public static PropertyUriDefinitionImpl createUriDefinition(String id, String displayName) {
+    public static PropertyUriDefinitionImpl createUriDefinition(String id, String displayName, Updatability upd) {
         PropertyUriDefinitionImpl prop = new PropertyUriDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.URI, displayName, Cardinality.SINGLE);
+        createStandardDefinition(prop, id, PropertyType.URI, displayName, Cardinality.SINGLE, upd);
         return prop;
     }
 
-    public static PropertyUriDefinitionImpl createUriMultiDefinition(String id, String displayName) {
+    public static PropertyUriDefinitionImpl createUriMultiDefinition(String id, String displayName, Updatability upd) {
         PropertyUriDefinitionImpl prop = new PropertyUriDefinitionImpl();
-        createStandardDefinition(prop, id, PropertyType.URI, displayName, Cardinality.MULTI);
+        createStandardDefinition(prop, id, PropertyType.URI, displayName, Cardinality.MULTI, upd);
         return prop;
     }
 
@@ -199,7 +205,8 @@ public class PropertyCreationHelper {
         prop.setDefaultValue(Collections.singletonList(defVal));
     }
 
-    public static Properties getPropertiesFromObject(StoredObject so, TypeDefinition td, List<String> requestedIds, boolean fillOptionalPropertyData) {
+    public static Properties getPropertiesFromObject(StoredObject so, TypeDefinition td, List<String> requestedIds,
+            boolean fillOptionalPropertyData) {
         // build properties collection
 
         BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
@@ -213,11 +220,11 @@ public class PropertyCreationHelper {
                         + " is unknown");
             } else {
                 String baseTypeId = td.getBaseTypeId().value();
-                properties.put(PropertyIds.BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID,
-                        baseTypeId));
+                properties.put(PropertyIds.BASE_TYPE_ID,
+                        objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID, baseTypeId));
             }
         }
-        
+
         // fill not-set properties from type definition (as spec requires)
         Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
         for (PropertyDefinition<?> propDef : propDefs.values()) {
@@ -225,11 +232,10 @@ public class PropertyCreationHelper {
                 properties.put(propDef.getId(), getEmptyValue(propDef));
         }
 
-
-        
         List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>>(properties.values());
 
-        if (fillOptionalPropertyData) {  // add query name, local name, display name
+        if (fillOptionalPropertyData) { // add query name, local name, display
+                                        // name
             fillOptionalPropertyData(td, propertiesList);
         }
 
@@ -253,11 +259,10 @@ public class PropertyCreationHelper {
                         + " is unknown");
             } else {
                 String baseTypeId = td.getBaseTypeId().value();
-                properties.put(PropertyIds.BASE_TYPE_ID, objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID,
-                        baseTypeId));
+                properties.put(PropertyIds.BASE_TYPE_ID,
+                        objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID, baseTypeId));
             }
         }
-
 
         Map<String, PropertyData<?>> mappedProperties = new HashMap<String, PropertyData<?>>();
         if (requestedIds.containsKey("*")) {
@@ -266,7 +271,9 @@ public class PropertyCreationHelper {
                 String queryName = td.getPropertyDefinitions().get(prop.getKey()).getQueryName();
                 String localName = td.getPropertyDefinitions().get(prop.getKey()).getLocalName();
                 String displayName = td.getPropertyDefinitions().get(prop.getKey()).getDisplayName();
-                AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a bit dirty
+                AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a
+                                                                                        // bit
+                                                                                        // dirty
                 ad.setQueryName(queryName);
                 ad.setLocalName(localName);
                 ad.setDisplayName(displayName);
@@ -278,7 +285,9 @@ public class PropertyCreationHelper {
                 String queryNameOrAlias = requestedIds.get(prop.getKey());
                 String localName = td.getPropertyDefinitions().get(prop.getKey()).getLocalName();
                 String displayName = td.getPropertyDefinitions().get(prop.getKey()).getDisplayName();
-                AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a bit dirty
+                AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a
+                                                                                        // bit
+                                                                                        // dirty
                 ad.setQueryName(queryNameOrAlias);
                 ad.setLocalName(localName);
                 ad.setDisplayName(displayName);
@@ -289,7 +298,7 @@ public class PropertyCreationHelper {
         BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
         for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
             PropertyInteger pi = objFactory.createPropertyIntegerData(funcEntry.getKey(), BigInteger.valueOf(100));
-              // fixed dummy value
+            // fixed dummy value
             mappedProperties.put(funcEntry.getValue(), pi);
         }
 
@@ -297,7 +306,7 @@ public class PropertyCreationHelper {
         return props;
     }
 
-   public static ObjectData getObjectData(TypeDefinition typeDef, StoredObject so, String filter, String user,
+    public static ObjectData getObjectData(TypeDefinition typeDef, StoredObject so, String filter, String user,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
@@ -313,10 +322,10 @@ public class PropertyCreationHelper {
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
-        	AllowableActions allowableActions = so.getAllowableActions(user);
+            AllowableActions allowableActions = so.getAllowableActions(user);
             od.setAllowableActions(allowableActions);
         }
-        
+
         if (null != includeACL && includeACL) {
             Acl acl = so instanceof DocumentVersion ? ((DocumentVersion) so).getParentDocument().getAcl() : so.getAcl();
             od.setAcl(acl);
@@ -352,14 +361,15 @@ public class PropertyCreationHelper {
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
-        	 //     AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
-        	AllowableActions allowableActions = so.getAllowableActions(user);
+            // AllowableActions allowableActions =
+            // DataObjectCreator.fillAllowableActions(so, user);
+            AllowableActions allowableActions = so.getAllowableActions(user);
             od.setAllowableActions(allowableActions);
         }
 
         od.setAcl(so.getAcl());
         od.setIsExactAcl(true);
-        
+
         if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
             od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so, user));
         }
@@ -375,7 +385,7 @@ public class PropertyCreationHelper {
 
     // internal helpers
     private static void createStandardDefinition(AbstractPropertyDefinition<?> prop, String id, PropertyType propType,
-            String displayName, Cardinality card) {
+            String displayName, Cardinality card, Updatability upd) {
 
         if (!NameValidator.isValidId(id)) {
             if (!NameValidator.isValidId(id)) {
@@ -389,7 +399,7 @@ public class PropertyCreationHelper {
         } else {
             prop.setDisplayName(displayName);
         }
-        prop.setDescription( "This is a " + prop.getDisplayName() + " property.");
+        prop.setDescription("This is a " + prop.getDisplayName() + " property.");
         prop.setLocalName(id);
         prop.setLocalNamespace("local");
         prop.setQueryName(id);
@@ -400,7 +410,7 @@ public class PropertyCreationHelper {
         prop.setIsRequired(false);
         prop.setIsOrderable(true);
         prop.setPropertyType(propType);
-        prop.setUpdatability(Updatability.READWRITE);
+        prop.setUpdatability(upd);
     }
 
     private static void fillOptionalPropertyData(TypeDefinition td, List<PropertyData<?>> properties) {
