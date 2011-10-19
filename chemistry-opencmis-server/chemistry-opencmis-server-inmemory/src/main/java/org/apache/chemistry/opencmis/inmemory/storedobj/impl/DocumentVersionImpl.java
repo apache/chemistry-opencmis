@@ -181,6 +181,12 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         // and set some properties specific to the version
         super.fillProperties(properties, objFactory, requestedIds);
 
+
+        if (FilterParser.isContainedInFilter(PropertyIds.IS_IMMUTABLE, requestedIds)) {
+            properties.put(PropertyIds.IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE,
+                    false));
+        }
+
         // fill the version related properties
         if (FilterParser.isContainedInFilter(PropertyIds.IS_LATEST_VERSION, requestedIds)) {
             properties.put(PropertyIds.IS_LATEST_VERSION, objFactory.createPropertyBooleanData(

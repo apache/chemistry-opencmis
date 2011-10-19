@@ -514,14 +514,7 @@ public class VersioningTest extends AbstractServiceTest {
         assertNotNull(pdb);
         boolean bVal = pdb.getFirstValue();
         assertEquals(versioningState != VersioningState.CHECKEDOUT, bVal); // if
-        // checked
-        // out
-        // it
-        // isn
-        // 't
-        // the
-        // latest
-        // version
+        // checked out it isn't the latest version
 
         pdb = (PropertyBoolean) props.get(PropertyIds.IS_MAJOR_VERSION);
         assertNotNull(pdb);

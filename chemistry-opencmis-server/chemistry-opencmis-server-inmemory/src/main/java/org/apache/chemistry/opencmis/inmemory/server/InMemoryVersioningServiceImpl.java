@@ -146,25 +146,31 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             versionSeriesId = objectId;
         if (null == versionSeriesId)
             throw new CmisInvalidArgumentException("getAllVersions requires a version series id, but ist was null.");
-            so = validator.getAllVersions(context, repositoryId, objectId, versionSeriesId, extension);
-    
-            if (!(so instanceof VersionedDocument)) {
-              so = validator.getObject(context, repositoryId, objectId, extension);  
-              ObjectData objData = getObject(context, repositoryId, objectId, filter, includeAllowableActions,
-                      IncludeRelationships.NONE,extension, objectInfos);
-              res.add(objData);
-            }
-    
-            VersionedDocument verDoc = (VersionedDocument) so;
-            res = new ArrayList<ObjectData>();
-            List<DocumentVersion> versions = verDoc.getAllVersions();
-            for (DocumentVersion version : versions) {
-                ObjectData objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
-                        IncludeRelationships.NONE,extension, objectInfos);
-                res.add(objData);
-            }
+        so = validator.getAllVersions(context, repositoryId, objectId, versionSeriesId, extension);
 
-        
+        if (!(so instanceof VersionedDocument)) {
+            so = validator.getObject(context, repositoryId, objectId, extension);  
+            ObjectData objData = getObject(context, repositoryId, objectId, filter, includeAllowableActions,
+                    IncludeRelationships.NONE,extension, objectInfos);
+            res.add(objData);
+        }
+
+        VersionedDocument verDoc = (VersionedDocument) so;
+        res = new ArrayList<ObjectData>();
+        List<DocumentVersion> versions = verDoc.getAllVersions();
+        for (DocumentVersion version : versions) {
+            ObjectData objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
+                    IncludeRelationships.NONE,extension, objectInfos);
+            res.add(objData);
+        }
+
+
+        // reverse list of versions because spec expects latest version first
+        List<ObjectData> temp = new ArrayList<ObjectData>(res.size());
+        for (ObjectData ver : res)
+            temp.add(0, ver);
+        res = temp;
+
         // provide information for Atom links for version series:
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
