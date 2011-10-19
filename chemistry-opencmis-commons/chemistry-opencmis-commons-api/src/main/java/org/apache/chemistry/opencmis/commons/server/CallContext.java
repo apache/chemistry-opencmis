@@ -41,7 +41,7 @@ public interface CallContext {
 
     String SERVLET_CONTEXT = "servletContext";
     String HTTP_SERVLET_REQUEST = "httpServletRequest";
-    String HTTP_SERVLET_RESPONSE = "httpServletRequest";
+    String HTTP_SERVLET_RESPONSE = "httpServletResponse";
 
     /**
      * Returns the binding. Usually it returns

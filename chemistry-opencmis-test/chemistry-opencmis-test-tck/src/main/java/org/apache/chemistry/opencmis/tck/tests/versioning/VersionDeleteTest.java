@@ -121,7 +121,7 @@ public class VersionDeleteTest extends AbstractSessionTest {
         return newVersion;
     }
 
-    private void deleteVersion(Document versionDoc, Document perviousDoc, int version) {
+    private void deleteVersion(Document versionDoc, Document previousDoc, int version) {
         CmisTestResult f;
 
         // get version history before delete
@@ -134,8 +134,8 @@ public class VersionDeleteTest extends AbstractSessionTest {
         addResult(assertIsFalse(exists(versionDoc), null, f));
 
         // check version history after delete
-        if (perviousDoc != null) {
-            List<Document> versionsAfter = perviousDoc.getAllVersions();
+        if (previousDoc != null) {
+            List<Document> versionsAfter = previousDoc.getAllVersions();
 
             f = createResult(FAILURE, "After version " + version
                     + " has been deleted, the version history should consist of " + (versionsBefore.size() - 1)
