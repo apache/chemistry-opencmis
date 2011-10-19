@@ -126,11 +126,6 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
 
     public List<DocumentVersion> getAllVersions() {
         return fVersions;
-        // return reversed list of versions
-//        List<DocumentVersion> result = new ArrayList<DocumentVersion>(fVersions.size());
-//        for (DocumentVersion ver : fVersions)
-//            result.add(0, ver);
-//        return result;
     }
 
     public DocumentVersion getLatestVersion(boolean major) {
