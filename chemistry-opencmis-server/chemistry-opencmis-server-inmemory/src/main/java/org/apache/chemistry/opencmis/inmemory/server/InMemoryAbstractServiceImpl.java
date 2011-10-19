@@ -138,5 +138,15 @@ public class InMemoryAbstractServiceImpl {
             throw new CmisUpdateConflictException("Document " + verDoc.getId() + " is not checked out.");
         }
     }
+    
+    protected boolean isCheckedOut(StoredObject so, String user) {
+        if (so instanceof VersionedDocument || so instanceof DocumentVersion) {
+            VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
+            return verDoc.isCheckedOut() && user.equals(verDoc.getCheckedOutBy());
+        } else
+            return false;
+        
+
+    }
 
 }

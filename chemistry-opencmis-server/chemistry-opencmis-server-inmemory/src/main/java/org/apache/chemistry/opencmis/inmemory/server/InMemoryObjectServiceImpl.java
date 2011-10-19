@@ -402,6 +402,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getObjectByPath()");
         StoredObject so = validator.getObjectByPath(context, repositoryId, path, extension);
+        if (so instanceof VersionedDocument) {
+            VersionedDocument verDoc = (VersionedDocument) so;
+            so = verDoc.getLatestVersion(false);
+        }
+        
         String user = context.getUsername();
 
         TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
@@ -569,13 +574,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
         boolean isCheckedOut = false;
 
-        // if the object is a versionable object it must be checked-out
-        if (so instanceof VersionedDocument || so instanceof DocumentVersion) {
-            // VersionedDocument verDoc =
-            // testIsNotCheckedOutBySomeoneElse(so, user);
-            testHasProperCheckedOutStatus(so, user);
-            isCheckedOut = true;
-        }
+        isCheckedOut = isCheckedOut(so, user);
 
         Map<String, PropertyData<?>> oldProperties = so.getProperties();
 
@@ -593,7 +592,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         for (String key : properties.getProperties().keySet()) {
             if (key.equals(PropertyIds.NAME))
-             {
+            {
                 continue; // ignore here
             }
 
@@ -610,10 +609,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 oldProperties.remove(key);
                 hasUpdatedOtherProps = true;
             } else {
-                if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT) && !isCheckedOut) {
-                    throw new CmisConstraintException(
-                            "updateProperties failed, following property can't be updated, because it is not checked-out: "
-                                    + key);
+                if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT)) {
+                    if (!isCheckedOut)
+                        throw new CmisUpdateConflictException(
+                                "updateProperties failed, following property can't be updated, because it is not checked-out: "
+                                        + key);
                 } else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
                     throw new CmisConstraintException(
                             "updateProperties failed, following property can't be updated, because it is not writable: "
@@ -952,7 +952,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
      */
     private boolean deleteRecursive(ObjectStore folderStore, Folder parentFolder, boolean continueOnFailure,
             boolean allVersions, List<String> failedToDeleteIds, String user) {
-        List<StoredObject> children = parentFolder.getChildren(-1, -1, "System");
+        List<StoredObject> children = parentFolder.getChildren(-1, -1, "Admin");
 
         if (null == children) {
             return true;
@@ -968,13 +968,13 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 }
             } else {
                 try {
-                    folderStore.deleteObject(child.getId(), true, user);
+                    folderStore.deleteObject(child.getId(), allVersions, user);
                 } catch (Exception e) {
                     failedToDeleteIds.add(child.getId());
                 }
             }
         }
-        folderStore.deleteObject(parentFolder.getId(), true, user);
+        folderStore.deleteObject(parentFolder.getId(), allVersions, user);
         return true;
     }
 
