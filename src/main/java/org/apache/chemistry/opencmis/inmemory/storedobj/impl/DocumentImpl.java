@@ -97,15 +97,6 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         // but the spec requires some
         // properties always to be set
 
-//        if (FilterParser.isContainedInFilter(PropertyIds.PARENT_ID, requestedIds)) {
-//            List<Folder> parents = getParents();
-//            String parentId = parents == null || parents.isEmpty() ? null : parents.get(0).getId();
-//            if (parentId != null) {
-//                properties.put(PropertyIds.PARENT_ID, objFactory.createPropertyIdData(PropertyIds.PARENT_ID,
-//                        parentId));
-//            }
-//        }
-
         if (FilterParser.isContainedInFilter(PropertyIds.IS_IMMUTABLE, requestedIds)) {
             properties.put(PropertyIds.IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE,
                     false));
@@ -116,7 +107,7 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
             properties.put(PropertyIds.CONTENT_STREAM_FILE_NAME, objFactory.createPropertyStringData(
                     PropertyIds.CONTENT_STREAM_FILE_NAME, null != fContent ? fContent.getFileName() : (String)null) );
         }
-        if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
+        if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_ID, requestedIds)) {
             properties.put(PropertyIds.CONTENT_STREAM_ID, objFactory.createPropertyStringData(
                     PropertyIds.CONTENT_STREAM_ID, (String) null));
         }

@@ -231,9 +231,10 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
                 properties.put(PropertyIds.CONTENT_STREAM_FILE_NAME, objFactory.createPropertyStringData(
                         PropertyIds.CONTENT_STREAM_FILE_NAME, fContent.getFileName()));
             }
-
-            // omit: PropertyIds.CMIS_CONTENT_STREAM_ID
-
+            if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_ID, requestedIds)) {
+                properties.put(PropertyIds.CONTENT_STREAM_ID, objFactory.createPropertyStringData(
+                        PropertyIds.CONTENT_STREAM_ID, (String) null));
+            }
             if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
                 properties.put(PropertyIds.CONTENT_STREAM_LENGTH, objFactory.createPropertyIntegerData(
                         PropertyIds.CONTENT_STREAM_LENGTH, fContent.getBigLength()));
