@@ -78,12 +78,6 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
         DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
     }
 
-    // public void setProperties() {
-    // Map<String, PropertyDefinition<?>> propertyDefinitions = new
-    // HashMap<String, PropertyDefinition<?>>();
-    // this.setPropertyDefinitions(propertyDefinitions);
-    // }
-
     private void init(String id, String displayName) {
         if (!NameValidator.isValidId(id)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_ID);

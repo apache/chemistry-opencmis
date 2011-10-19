@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
@@ -73,7 +74,7 @@ public class VersionTestTypeSystemCreator implements TypeCreator {
         Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
 
         PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(PROPERTY_ID,
-                "Sample String Property");
+                "Sample String Property", Updatability.WHENCHECKEDOUT);
         propertyDefinitions.put(prop1.getId(), prop1);
 
         cmisComplexType.addCustomPropertyDefinitions(propertyDefinitions);

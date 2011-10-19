@@ -301,7 +301,7 @@ public class QueryTestDataCreator {
                 put(VERSION_PROPERTY_ID, "ver123");
             }};
 
-        String verIdV1 = createDocument("verdoc1", rootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
+        String verIdV1 = createDocument("verdoc1", rootFolderId, UnitTestTypeSystemCreator.VERSIONED_TYPE,
                 propertyMap1, VersioningState.MAJOR, null);
         ObjectData version = fObjSvc.getObject(repositoryId, verIdV1, "*", false, IncludeRelationships.NONE, null,
                 false, false, null);

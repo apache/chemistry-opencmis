@@ -738,7 +738,7 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	{
 		// starts with call context TestUser
 		switchCallContext("TestAdmin");
-		String docId = createDocumentWithAcls("doc",  fRootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
+		String docId = createDocumentWithAcls("doc",  fRootFolderId, UnitTestTypeSystemCreator.VERSIONED_TYPE,
 		        VersioningState.MAJOR, standardAcl, defaultAcl);
 	
 		// TestUser has no permission at all
@@ -935,9 +935,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	{
         LOG.debug("start test checkVisibleObjects()...");
 		switchCallContext("TestAdmin");
-		String docId = createDocumentWithAcls("doc",  fRootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
+		String docId = createDocumentWithAcls("doc",  fRootFolderId, UnitTestTypeSystemCreator.VERSIONED_TYPE,
 				VersioningState.MAJOR, standardAcl, defaultAcl);
-		String docId2 = createDocumentWithAcls("doc2",  fRootFolderId, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
+		String docId2 = createDocumentWithAcls("doc2",  fRootFolderId, UnitTestTypeSystemCreator.VERSIONED_TYPE,
 		        VersioningState.MAJOR, addAcl, defaultAcl);
 		String folderId = createFolderWithAcls("folder", fRootFolderId, "cmis:folder", 
 				standardAcl, defaultAcl);
@@ -950,10 +950,10 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		String subFolderId2 = createFolderWithAcls("subFolder2", folderId2, "cmis:folder", 
 				addAcl, null);
         LOG.debug("checkVisibleObjects(): subFolderId2 is: " + subFolderId2);
-		String subDocId = createDocumentWithAcls("subDoc",  folderId2, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
+		String subDocId = createDocumentWithAcls("subDoc",  folderId2, UnitTestTypeSystemCreator.VERSIONED_TYPE,
 		        VersioningState.MAJOR, null, testUserAcl);
         LOG.debug("checkVisibleObjects(): subDocId is: " + subDocId);
-		String subDocId2 = createDocumentWithAcls("subDoc2", folderId2, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID,
+		String subDocId2 = createDocumentWithAcls("subDoc2", folderId2, UnitTestTypeSystemCreator.VERSIONED_TYPE,
 		        VersioningState.MAJOR, addAcl, null);
         LOG.debug("checkVisibleObjects(): subDocId2 is: " + subDocId2);
 		String noAclDocId2 = createDocumentWithAcls("noAclDoc2", fRootFolderId, "ComplexType",
@@ -1224,7 +1224,7 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	        VersioningState versioningState = VersioningState.MAJOR;
 	        String id = null;
 	        Map<String, String> properties = new HashMap<String, String>();
-	        id = fCreator.createDocument(name, UnitTestTypeSystemCreator.VERSION_DOCUMENT_TYPE_ID, folderId,
+	        id = fCreator.createDocument(name, UnitTestTypeSystemCreator.VERSIONED_TYPE, folderId,
 	                versioningState, properties);
 
 	        return id;

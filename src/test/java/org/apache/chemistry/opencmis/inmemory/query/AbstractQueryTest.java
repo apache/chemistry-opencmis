@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefiniti
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
@@ -107,16 +108,16 @@ public abstract class AbstractQueryTest {
         Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
 
         PropertyBooleanDefinition prop1 = PropertyCreationHelper.createBooleanDefinition(BOOL_PROP,
-                "Sample Boolean Property");
+                "Sample Boolean Property", Updatability.READWRITE);
         ((PropertyBooleanDefinitionImpl) prop1).setIsRequired(true);
         propertyDefinitions.put(prop1.getId(), prop1);
 
         PropertyStringDefinition prop2 = PropertyCreationHelper.createStringDefinition(STRING_PROP,
-                "Sample String Property");
+                "Sample String Property", Updatability.READWRITE);
         propertyDefinitions.put(prop2.getId(), prop2);
 
         PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(INT_PROP,
-                "Sample Integer Property");
+                "Sample Integer Property", Updatability.READWRITE);
         propertyDefinitions.put(prop2.getId(), prop2);
 
         cmisType.setPropertyDefinitions(propertyDefinitions);
@@ -139,18 +140,18 @@ public abstract class AbstractQueryTest {
 
         propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
 
-        prop2 = PropertyCreationHelper.createStringDefinition(TITLE_PROP, "Title of Book");
+        prop2 = PropertyCreationHelper.createStringDefinition(TITLE_PROP, "Title of Book", Updatability.READWRITE);
         propertyDefinitions.put(prop2.getId(), prop2);
 
-        prop2 = PropertyCreationHelper.createStringDefinition(AUTHOR_PROP, "Author of Book");
+        prop2 = PropertyCreationHelper.createStringDefinition(AUTHOR_PROP, "Author of Book", Updatability.READWRITE);
         propertyDefinitions.put(prop2.getId(), prop2);
 
         prop3 = PropertyCreationHelper.createIntegerDefinition(ISBN_PROP,
-                "ISBN of Book");
+                "ISBN of Book", Updatability.READWRITE);
         propertyDefinitions.put(prop3.getId(), prop3);
 
         PropertyDateTimeDefinitionImpl prop4 = PropertyCreationHelper.createDateTimeDefinition(PUB_DATE_PROP,
-                "Publishing Date of Book");
+                "Publishing Date of Book", Updatability.READWRITE);
         propertyDefinitions.put(prop4.getId(), prop4);
 
         cmisType.setPropertyDefinitions(propertyDefinitions);
