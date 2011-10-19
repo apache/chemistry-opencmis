@@ -190,6 +190,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         ObjectData objData = null;
 
+        // In AtomPu8b you do not get the version series id, only the object id
+        if (so instanceof DocumentVersion) {
+            so = ((DocumentVersion)so).getParentDocument();
+        }
+        
         if (so instanceof VersionedDocument) {
             VersionedDocument verDoc = (VersionedDocument) so;
             DocumentVersion latestVersion = verDoc.getLatestVersion(major);
@@ -218,6 +223,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         StoredObject so = validator.getPropertiesOfLatestVersion(context, repositoryId, objectId, versionSeriesId, extension);
 
         StoredObject latestVersionObject = null;
+
+        // In AtomPu8b you do not get the version series id, only the object id
+        if (so instanceof DocumentVersion) {
+            so = ((DocumentVersion)so).getParentDocument();
+        }
 
         if (so instanceof VersionedDocument) {
             VersionedDocument verDoc = (VersionedDocument) so;
