@@ -127,7 +127,11 @@ public class DataObjectCreator {
         if (isDocument) {
             set.add(Action.CAN_ADD_OBJECT_TO_FOLDER);
             set.add(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
-            set.add(Action.CAN_SET_CONTENT_STREAM);
+            if (isVersioned) {
+                if (canCheckIn)
+                    set.add(Action.CAN_SET_CONTENT_STREAM);
+            } else
+                set.add(Action.CAN_SET_CONTENT_STREAM);
         }
 
         allowableActions.setAllowableActions(set);
