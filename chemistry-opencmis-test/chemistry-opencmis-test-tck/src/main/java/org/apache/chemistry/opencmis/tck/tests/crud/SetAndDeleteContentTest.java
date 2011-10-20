@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
@@ -76,18 +77,27 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
 
             // test if check out is required and possible
             boolean checkedout = false;
-            if (getContentStreamUpdatesCapbility(session) == CapabilityContentStreamUpdates.PWCONLY) {
+            if (!doc.getAllowableActions().getAllowableActions().contains(Action.CAN_SET_CONTENT_STREAM)) {
                 if (!docType.isVersionable()) {
                     addResult(createResult(SKIPPED,
-                            "Content stream operations only work if PWCs and the the test type is not versionable. Test skipped!"));
+                            "The test document does not accept a new content stream. Test skipped!"));
                     doc.delete(true);
                     return;
-                }
+                } else {
+                    workDoc = (Document) session.getObject(doc.checkOut(), SELECT_ALL_NO_CACHE_OC);
+                    checkedout = true;
 
-                workDoc = (Document) session.getObject(doc.checkOut(), SELECT_ALL_NO_CACHE_OC);
-                checkedout = true;
+                    if (!workDoc.getAllowableActions().getAllowableActions().contains(Action.CAN_SET_CONTENT_STREAM)) {
+                        addResult(createResult(SKIPPED,
+                                "The test PWC does not accept a new content stream. Test skipped!"));
+                        workDoc.cancelCheckOut();
+                        doc.delete(true);
+                        return;
+                    }
+                }
             }
 
+            // test if the content stream can be deleted
             if (docType.getContentStreamAllowed() == ContentStreamAllowed.REQUIRED) {
                 addResult(createResult(SKIPPED,
                         "A content stream is required for this docuemnt type. deleteContentStream() test skipped!"));
