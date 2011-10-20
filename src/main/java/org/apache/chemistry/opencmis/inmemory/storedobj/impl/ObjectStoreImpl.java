@@ -174,7 +174,6 @@ public class ObjectStoreImpl implements ObjectStore {
                 otherVersionsExists = false;
                 List<DocumentVersion> allVers = parentDoc.getAllVersions();
                 for (DocumentVersion ver : allVers) {
-                    parentDoc.deleteVersion(ver);
                     fStoredObjectMap.remove(ver.getId());
                 }
             } else {
