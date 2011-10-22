@@ -164,6 +164,24 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return ri;
     }
 
+    protected String getFolderTestTypeId() {
+        String objectTypeId = getParameters().get(TestParameters.DEFAULT_FOLDER_TYPE);
+        if (objectTypeId == null) {
+            objectTypeId = TestParameters.DEFAULT_FOLDER_TYPE_VALUE;
+        }
+
+        return objectTypeId;
+    }
+
+    protected String getDocumentTestTypeId() {
+        String objectTypeId = getParameters().get(TestParameters.DEFAULT_DOCUMENT_TYPE);
+        if (objectTypeId == null) {
+            objectTypeId = TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE;
+        }
+
+        return objectTypeId;
+    }
+
     // --- helpers ---
 
     protected String[] getAllProperties(CmisObject object) {
@@ -209,12 +227,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      * Creates a folder.
      */
     protected Folder createFolder(Session session, Folder parent, String name) {
-        String objectTypeId = getParameters().get(TestParameters.DEFAULT_FOLDER_TYPE);
-        if (objectTypeId == null) {
-            objectTypeId = TestParameters.DEFAULT_FOLDER_TYPE_VALUE;
-        }
-
-        return createFolder(session, parent, name, objectTypeId);
+        return createFolder(session, parent, name, getFolderTestTypeId());
     }
 
     /**
@@ -311,12 +324,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      * Creates a document.
      */
     protected Document createDocument(Session session, Folder parent, String name, String content) {
-        String objectTypeId = getParameters().get(TestParameters.DEFAULT_DOCUMENT_TYPE);
-        if (objectTypeId == null) {
-            objectTypeId = TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE;
-        }
-
-        return createDocument(session, parent, name, objectTypeId, content);
+        return createDocument(session, parent, name, getDocumentTestTypeId(), content);
     }
 
     /**

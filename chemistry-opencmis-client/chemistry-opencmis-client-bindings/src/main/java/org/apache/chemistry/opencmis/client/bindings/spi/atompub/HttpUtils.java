@@ -92,6 +92,8 @@ public class HttpUtils {
             conn.setRequestMethod(method);
             conn.setDoInput(true);
             conn.setDoOutput(writer != null);
+            conn.setAllowUserInteraction(false);
+            conn.setUseCaches(false);
             conn.setRequestProperty("User-Agent", ClientVersion.OPENCMIS_CLIENT);
 
             // timeouts
