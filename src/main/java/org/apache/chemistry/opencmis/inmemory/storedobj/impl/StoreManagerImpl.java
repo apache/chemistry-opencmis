@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,9 +27,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
@@ -36,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
@@ -46,6 +50,8 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.impl.Converter;
+import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -54,6 +60,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingD
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
@@ -62,13 +70,15 @@ import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
+import org.apache.chemistry.opencmis.inmemory.types.InMemoryJaxbHelper;
+import org.apache.chemistry.opencmis.inmemory.types.TypeDefinitions;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * factory to create objects that are stored in the InMemory store
- *
+ * 
  * @author Jens
  */
 public class StoreManagerImpl implements StoreManager {
@@ -157,7 +167,7 @@ public class StoreManagerImpl implements StoreManager {
         TypeDefinitionContainer tc = typeManager.getTypeById(typeId);
 
         if (tc != null) {
-            if (depth == -1) { 
+            if (depth == -1) {
                 if (includePropertyDefinitions)
                     return tc;
                 else
@@ -309,6 +319,45 @@ public class StoreManagerImpl implements StoreManager {
         typeManager.initTypeSystem(typeDefs);
     }
 
+    private void initTypeSystemNOP(String repositoryId, String fileName) {
+        TypeManagerImpl typeManager = fMapRepositoryToTypeManager.get(repositoryId);
+        if (null == typeManager) {
+            throw new RuntimeException("Unknown repository " + repositoryId);
+        }
+
+        if (null == fileName) {
+            LOG.warn("No file name for type definitions given, no types will be created.");
+            typeManager.initTypeSystem(null);
+            return;
+        }
+
+        InputStream is = this.getClass().getResourceAsStream("/" + fileName);
+
+        List<TypeDefinition> typeDefs = new  ArrayList<TypeDefinition>();
+        TypeDefinition typeDef = null;
+        if (null == is) {
+            LOG.warn("Resource file with type definitions " + fileName
+                    + " could not be found, no types will be created.");
+            return;
+        }
+
+        try {
+            Unmarshaller u = InMemoryJaxbHelper.createUnmarshaller();
+//            JAXBElement<CmisTypeDefinitionType> type = (JAXBElement<CmisTypeDefinitionType>) u.unmarshal(is);
+//            typeDef = Converter.convert(type.getValue());
+            JAXBElement<TypeDefinitions> types = (JAXBElement<TypeDefinitions>) u.unmarshal(is);
+            for (CmisTypeDefinitionType td: types.getValue().getTypeDefinitions()) {
+                typeDef = Converter.convert(td);
+                typeDefs.add(typeDef);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Could not load type definitions from file '" + fileName + "': " + e);
+        }
+
+        typeManager.initTypeSystem(typeDefs);
+    }
+
     private RepositoryInfo createRepositoryInfo(String repositoryId) {
         ObjectStore objStore = getObjectStore(repositoryId);
         String rootFolderId = objStore.getRootFolder().getId();
@@ -337,7 +386,7 @@ public class StoreManagerImpl implements StoreManager {
         caps.setCapabilityChanges(CapabilityChanges.NONE);
         caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
         caps.setCapabilityJoin(CapabilityJoin.NONE);
-        caps.setCapabilityQuery(CapabilityQuery.BOTHCOMBINED); 
+        caps.setCapabilityQuery(CapabilityQuery.BOTHCOMBINED);
         caps.setCapabilityRendition(CapabilityRenditions.NONE);
         caps.setIsPwcSearchable(false);
         caps.setIsPwcUpdatable(true);
@@ -347,7 +396,7 @@ public class StoreManagerImpl implements StoreManager {
         caps.setSupportsUnfiling(true);
         caps.setSupportsVersionSpecificFiling(false);
         caps.setCapabilityAcl(CapabilityAcl.MANAGE);
-        
+
         AclCapabilitiesDataImpl aclCaps = new AclCapabilitiesDataImpl();
         aclCaps.setAclPropagation(AclPropagation.OBJECTONLY);
         aclCaps.setSupportedPermissions(SupportedPermissions.BASIC);
@@ -358,7 +407,7 @@ public class StoreManagerImpl implements StoreManager {
         permissions.add(createPermission(CMIS_WRITE, "Write"));
         permissions.add(createPermission(CMIS_ALL, "All"));
         aclCaps.setPermissionDefinitionData(permissions);
-        
+
         // mapping
         List<PermissionMapping> list = new ArrayList<PermissionMapping>();
         list.add(createMapping(PermissionMapping.CAN_GET_DESCENDENTS_FOLDER, CMIS_READ));
@@ -375,27 +424,31 @@ public class StoreManagerImpl implements StoreManager {
         list.add(createMapping(PermissionMapping.CAN_MOVE_OBJECT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_MOVE_TARGET, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_MOVE_SOURCE, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_DELETE_OBJECT, CMIS_WRITE));;
+        list.add(createMapping(PermissionMapping.CAN_DELETE_OBJECT, CMIS_WRITE));
+        ;
         list.add(createMapping(PermissionMapping.CAN_DELETE_TREE_FOLDER, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_SET_CONTENT_DOCUMENT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_DELETE_CONTENT_DOCUMENT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_ADD_TO_FOLDER_OBJECT, CMIS_WRITE));;
+        list.add(createMapping(PermissionMapping.CAN_ADD_TO_FOLDER_OBJECT, CMIS_WRITE));
+        ;
         list.add(createMapping(PermissionMapping.CAN_ADD_TO_FOLDER_FOLDER, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_REMOVE_FROM_FOLDER_OBJECT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_REMOVE_FROM_FOLDER_FOLDER, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_CHECKOUT_DOCUMENT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_CANCEL_CHECKOUT_DOCUMENT, CMIS_WRITE));;
+        list.add(createMapping(PermissionMapping.CAN_CANCEL_CHECKOUT_DOCUMENT, CMIS_WRITE));
+        ;
         list.add(createMapping(PermissionMapping.CAN_CHECKIN_DOCUMENT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_GET_ALL_VERSIONS_VERSION_SERIES, CMIS_READ));
         list.add(createMapping(PermissionMapping.CAN_GET_OBJECT_RELATIONSHIPS_OBJECT, CMIS_READ));
         list.add(createMapping(PermissionMapping.CAN_ADD_POLICY_OBJECT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_ADD_POLICY_POLICY, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_REMOVE_POLICY_OBJECT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_REMOVE_POLICY_POLICY, CMIS_WRITE));;
+        list.add(createMapping(PermissionMapping.CAN_REMOVE_POLICY_POLICY, CMIS_WRITE));
+        ;
         list.add(createMapping(PermissionMapping.CAN_GET_APPLIED_POLICIES_OBJECT, CMIS_READ));
         list.add(createMapping(PermissionMapping.CAN_GET_ACL_OBJECT, CMIS_READ));
         list.add(createMapping(PermissionMapping.CAN_APPLY_ACL_OBJECT, CMIS_ALL));
-        
+
         Map<String, PermissionMapping> map = new LinkedHashMap<String, PermissionMapping>();
         for (PermissionMapping pm : list) {
             map.put(pm.getKey(), pm);
@@ -404,7 +457,7 @@ public class StoreManagerImpl implements StoreManager {
         aclCaps.setPermissionMappingData(map);
 
         repoInfo.setAclCapabilities(aclCaps);
-        
+
         repoInfo.setCapabilities(caps);
 
         fRepositoryInfo = repoInfo;
@@ -426,20 +479,20 @@ public class StoreManagerImpl implements StoreManager {
 
         return pm;
     }
-    
+
     /**
      * traverse tree and replace each need node with a clone. remove properties
      * on clone if requested, cut children of clone if depth is exceeded.
+     * 
      * @param depth
-     *      levels of children to copy
+     *            levels of children to copy
      * @param includePropertyDefinitions
-     *      indicates with or without property definitions
+     *            indicates with or without property definitions
      * @param tdc
-     *      type definition to clone
+     *            type definition to clone
      * @param parent
-     *      parent container where to add clone as child
-     * @return
-     *      cloned type definition
+     *            parent container where to add clone as child
+     * @return cloned type definition
      */
     private static TypeDefinitionContainer cloneTypeList(int depth, boolean includePropertyDefinitions,
             TypeDefinitionContainer tdc, TypeDefinitionContainer parent) {
@@ -477,7 +530,8 @@ public class StoreManagerImpl implements StoreManager {
         ObjectList objList = queryProcessor.query(tm, objectStore, user, repositoryId, statement, searchAllVersions,
                 includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount);
 
-   //     LOG.debug("Query result, number of matching objects: " + objList.getNumItems());
+        // LOG.debug("Query result, number of matching objects: " +
+        // objList.getNumItems());
         return objList;
     }
 
