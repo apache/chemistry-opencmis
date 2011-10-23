@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License. 
+-->
+<chem:typeDefinitions xmlns="http://docs.oasis-open.org/ns/cmis/core/200908/"
+     xmlns:cmisra="http://docs.oasis-open.org/ns/cmis/restatom/200908/"	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:chem="http://chemistry.apache.org/schemas/TypeDefnitions">
+<cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
+	<id>myTestDocumentType</id>
+	<localName>myTestDocumentType</localName>
+	<localNamespace>http://opencmis.org/demo/</localNamespace>
+	<parentId>cmis:document</parentId>
+	<displayName>My Test Document Type</displayName>
+	<queryName>TESTDOCTYPE</queryName>
+	<description>My Test Document Type</description>
+	<baseId>cmis:document</baseId>
+	<creatable>true</creatable>
+	<fileable>true</fileable>
+	<queryable>false</queryable>
+	<fulltextIndexed>false</fulltextIndexed>
+	<includedInSupertypeQuery>true</includedInSupertypeQuery>
+	<controllablePolicy>false</controllablePolicy>
+	<controllableACL>false</controllableACL>
+	<versionable>false</versionable>
+	<contentStreamAllowed>required</contentStreamAllowed>
+	<propertyStringDefinition>
+		<id>testProperty</id>
+		<localName>testProperty</localName>
+		<displayName>A test property</displayName>
+		<queryName>testProperty</queryName>
+		<description>Just a string</description>
+		<propertyType>string</propertyType>
+		<cardinality>single</cardinality>
+		<updatability>readwrite</updatability>
+		<inherited>false</inherited>
+		<required>false</required>
+		<queryable>false</queryable>
+		<orderable>false</orderable>
+	</propertyStringDefinition>
+	<propertyStringDefinition>
+		<id>testProperty2</id>
+		<localName>testProperty2</localName>
+		<displayName>Another test property</displayName>
+		<queryName>testProperty2</queryName>
+		<description>Another string</description>
+		<propertyType>string</propertyType>
+		<cardinality>single</cardinality>
+		<updatability>readwrite</updatability>
+		<inherited>false</inherited>
+		<required>true</required>
+		<queryable>false</queryable>
+		<orderable>false</orderable>
+		<defaultValue>
+			<value>default value</value>
+		</defaultValue>
+	</propertyStringDefinition>			
+</cmisra:type>
+
+<cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
+	<id>myTestDocumentType2</id>
+	<localName>myTestDocumentType2</localName>
+	<localNamespace>http://opencmis.org/demo/</localNamespace>
+	<parentId>cmis:document</parentId>
+	<displayName>My Test Document Type2</displayName>
+	<queryName>TESTDOCTYPE2</queryName>
+	<description>My Test Document Type2</description>
+	<baseId>cmis:document</baseId>
+	<creatable>true</creatable>
+	<fileable>true</fileable>
+	<queryable>false</queryable>
+	<fulltextIndexed>false</fulltextIndexed>
+	<includedInSupertypeQuery>true</includedInSupertypeQuery>
+	<controllablePolicy>false</controllablePolicy>
+	<controllableACL>false</controllableACL>
+	<versionable>false</versionable>
+	<contentStreamAllowed>required</contentStreamAllowed>
+	<propertyStringDefinition>
+		<id>testProperty</id>
+		<localName>testProperty</localName>
+		<displayName>A test property</displayName>
+		<queryName>testProperty</queryName>
+		<description>Just a string</description>
+		<propertyType>string</propertyType>
+		<cardinality>single</cardinality>
+		<updatability>readwrite</updatability>
+		<inherited>false</inherited>
+		<required>false</required>
+		<queryable>false</queryable>
+		<orderable>false</orderable>
+	</propertyStringDefinition>
+	<propertyStringDefinition>
+		<id>testProperty2</id>
+		<localName>testProperty2</localName>
+		<displayName>Another test property</displayName>
+		<queryName>testProperty2</queryName>
+		<description>Another string</description>
+		<propertyType>string</propertyType>
+		<cardinality>single</cardinality>
+		<updatability>readwrite</updatability>
+		<inherited>false</inherited>
+		<required>true</required>
+		<queryable>false</queryable>
+		<orderable>false</orderable>
+		<defaultValue>
+			<value>default value</value>
+		</defaultValue>
+	</propertyStringDefinition>			
+</cmisra:type>
+</chem:typeDefinitions>
