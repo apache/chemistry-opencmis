@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.util.repository;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,6 +28,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -34,8 +38,14 @@ import joptsimple.OptionSpec;
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.impl.Converter;
+import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionListType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
@@ -62,6 +72,7 @@ public class ObjGenApp {
     private static final String CLEANUP = "Cleanup";
     private static final String ROOTFOLDER = "RootFolder";
     private static final String THREADS = "Threads";
+//    private static final String FILE = "File";
 
     private static final String BINDING_ATOM = "AtomPub";
     private static final String BINDING_WS = "WebService";
@@ -83,7 +94,8 @@ public class ObjGenApp {
     OptionSpec<Boolean> fCleanup;
     OptionSpec<String> fRootFolder;
     OptionSpec<Integer> fThreads;
-
+    OptionSpec<String> fFileName;
+    
     public static void main(String[] args) {
 
         ObjGenApp app = new ObjGenApp();
@@ -126,6 +138,7 @@ public class ObjGenApp {
                 "folder id used as root to create objects (default repository root folder)");
         fThreads = parser.accepts(THREADS).withOptionalArg().ofType(Integer.class).defaultsTo(1).describedAs(
                 "Number of threads to start in parallel");
+//        fFileName = parser.accepts(FILE).withRequiredArg().ofType(String.class).describedAs("Input File");
 
         OptionSet options = parser.parse(args);
 
@@ -151,6 +164,8 @@ public class ObjGenApp {
             createFolders(options);
         } else if (options.valueOf(fCmd).equals("RepositoryInfo")) {
             repositoryInfo(options);
+//        } else if (options.valueOf(fCmd).equals("CreateTypes")) {
+//            createTypes(options);
         } else if (options.valueOf(fCmd).equals("GetUrl")) {
             getUrl(getConfiguredUrl());
         } else {
@@ -381,6 +396,32 @@ public class ObjGenApp {
         timeLogger.printTimes();
     }
 
+    private void createTypes(OptionSet options) {
+
+        String repoId = options.valueOf(fRepoId);
+        String fileName = options.valueOf(fFileName);
+        System.out.println();
+        System.out.println("Not yet implemented waiting for CMIS 1.1!");
+//        System.out.println("Creating types from file:");
+//        System.out.println("File Name: " + fileName);
+//        System.out.println("Repository Id: " + repoId);
+//
+//        File file = new File(options.valueOf(fFileName));
+//        TypeDefinitionList typeDefs = null;
+//
+//        try {
+//            Unmarshaller u = JaxBHelper.createUnmarshaller();
+//            JAXBElement<CmisTypeDefinitionListType> type = (JAXBElement<CmisTypeDefinitionListType>) u.unmarshal(file);
+//            typeDefs = Converter.convert(type.getValue());
+//        } catch (Exception e) {
+//            System.out.println("Could not load type: '" + fFileName + "': " + e);
+//        }
+//        MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator.prepareForCreateTypes(
+//                getBinding(), repoId, typeDefs);
+//        ObjectGenerator gen = runner.getObjectGenerator();
+//        gen.createTypes(typeDefs);
+    }
+        
     private void repositoryInfo(OptionSet options) {
         callRepoInfo(options.valueOf(fRepoId), options.valueOf(fCount));
     }

@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.util.repository;
 
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
@@ -28,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 public class MultiThreadedObjectGenerator {
 
     public static enum Action {
-        CreateDocument, CreateTree, CreateFolders
+        CreateDocument, CreateTree, CreateFolders, CreateTypes
     }
 
     private MultiThreadedObjectGenerator() {
@@ -41,6 +42,7 @@ public class MultiThreadedObjectGenerator {
         private int fFoldersPerFolders;
         private int fDepth;
         private int fCount;
+        private TypeDefinitionList fTypeDefList;
 
         public ObjectGeneratorRunner(ObjectGenerator objGen, Action action) {
             fObjGen = objGen;
@@ -54,6 +56,8 @@ public class MultiThreadedObjectGenerator {
                 doCreateTree();
             } else if (fAction == Action.CreateFolders) {
                 doCreateFolder();
+            } else if (fAction == Action.CreateTypes) {
+                doCreateTypes();
             }
         }
 
@@ -69,6 +73,10 @@ public class MultiThreadedObjectGenerator {
         public String[] doCreateFolder() {
             return fObjGen.createFolders(fRootFolderId, fCount);
         }
+        
+        public void doCreateTypes() {
+            fObjGen.createTypes(fTypeDefList);
+        }
 
         public ObjectGenerator getObjectGenerator() {
             return fObjGen;
@@ -83,8 +91,9 @@ public class MultiThreadedObjectGenerator {
         BindingsObjectFactory objectFactory = binding.getObjectFactory();
         NavigationService navSvc = binding.getNavigationService();
         ObjectService objSvc = binding.getObjectService();
-
-        ObjectGenerator gen = new ObjectGenerator(objectFactory, navSvc, objSvc, repoId);
+        RepositoryService repSvc = binding.getRepositoryService();
+        
+        ObjectGenerator gen = new ObjectGenerator(objectFactory, navSvc, objSvc, repSvc, repoId);
         gen.setUseUuidsForNames(true);
         gen.setNumberOfDocumentsToCreatePerFolder(docsPerFolder);
         // Set the type id for all created documents:
@@ -196,6 +205,16 @@ public class MultiThreadedObjectGenerator {
             runners[i] = gen;
         }
         return runners;
+    }
+
+    public static ObjectGeneratorRunner prepareForCreateTypes(CmisBinding provider, String repoId, TypeDefinitionList typeDefList) {
+
+        ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, null, null, 0, null,
+                false);
+
+        ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateTypes);
+        gen.fTypeDefList = typeDefList;
+        return gen;
     }
 
     public static void runMultiThreaded(ObjectGeneratorRunner[] runner) {

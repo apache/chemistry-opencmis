@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.util.repository;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +38,8 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -47,6 +48,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
+import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.util.content.LoreIpsum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,10 +66,12 @@ public class ObjectGenerator {
     private final BindingsObjectFactory fFactory;
     NavigationService fNavSvc;
     ObjectService fObjSvc;
+    RepositoryService fRepSvc;
     private final String fRepositoryId;
     private final TimeLogger fTimeLoggerCreateDoc;
     private final TimeLogger fTimeLoggerCreateFolder;
     private final TimeLogger fTimeLoggerDelete;
+    private final TimeLogger fTimeLoggerCreateType;
     private boolean fCleanup;
     List<String> fTopLevelDocsCreated; // list of ids created on first level
     List<String> fTopLevelFoldersCreated; // list of ids created on first level
@@ -133,11 +137,12 @@ public class ObjectGenerator {
     private boolean fUseUuids;
 
     public ObjectGenerator(BindingsObjectFactory factory, NavigationService navSvc, ObjectService objSvc,
-            String repositoryId) {
+            RepositoryService repSvc, String repositoryId) {
         super();
         fFactory = factory;
         fNavSvc = navSvc;
         fObjSvc = objSvc;
+        fRepSvc = repSvc;
         fRepositoryId = repositoryId;
         // create an empty list of properties to generate by default for folder
         // and document
@@ -148,6 +153,7 @@ public class ObjectGenerator {
         fTimeLoggerCreateDoc = new TimeLogger("createDocument()");
         fTimeLoggerCreateFolder = new TimeLogger("createFolder()");
         fTimeLoggerDelete = new TimeLogger("Delete");
+        fTimeLoggerCreateType = new TimeLogger("createType()");
         fCleanup = false;
         fTopLevelDocsCreated = new ArrayList<String>();
         fTopLevelFoldersCreated = new ArrayList<String>();
@@ -655,4 +661,12 @@ public class ObjectGenerator {
         log.info(""); // add empty line
     }
 
+    public void createTypes(TypeDefinitionList typeDefList) {
+        
+        fTimeLoggerCreateType.reset();         
+        for (TypeDefinition td : typeDefList.getList()) {
+            // TODO: enable this if available!
+//            fRepSvc.createTypeDefinition(fRepositoryId, td);
+        }
+    }
 }

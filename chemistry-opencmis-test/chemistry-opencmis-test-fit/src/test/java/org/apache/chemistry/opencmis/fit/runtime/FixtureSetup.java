@@ -87,7 +87,7 @@ public class FixtureSetup {
         Assert.assertNotNull(this.testRootFolderId);
 
         ObjectGenerator og = new ObjectGenerator(binding.getObjectFactory(), binding.getNavigationService(), binding
-                .getObjectService(), this.repositoryId);
+                .getObjectService(), binding.getRepositoryService(), this.repositoryId);
 
         og.setContentSizeInKB(10);
         og.setDocumentTypeId(documentTypeId);
