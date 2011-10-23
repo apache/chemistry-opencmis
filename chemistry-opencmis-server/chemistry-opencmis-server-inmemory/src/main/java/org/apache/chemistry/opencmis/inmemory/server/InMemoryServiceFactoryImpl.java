@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,9 +31,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -41,9 +48,13 @@ import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
+import org.apache.chemistry.opencmis.inmemory.types.InMemoryJaxbHelper;
+import org.apache.chemistry.opencmis.inmemory.types.TypeDefinitions;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -169,6 +180,43 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             }
         }
 
+        // check if a type definitions XML file is configured. if yes import type definitions
+        String typeDefsFileName = parameters.get(ConfigConstants.TYPE_XML);
+        if (null == typeDefsFileName)
+            LOG.info("No file name for type definitions given, no types will be created.");
+        else {
+            TypeManager typeManager = storeManager.getTypeManager(repositoryId);
+            if (typeManager instanceof TypeManagerCreatable) {
+                TypeManagerCreatable tmc = (TypeManagerCreatable) typeManager;
+                importTypesFromFile(tmc, typeDefsFileName);
+            } else {
+                LOG.warn("Type Definitions are configured in XML file but type manager cannot create types. Type definitions are ignored.");
+            }
+        }
+
+    }
+
+    private void importTypesFromFile(TypeManagerCreatable tmc, String typeDefsFileName) {
+       
+        InputStream is = this.getClass().getResourceAsStream("/" + typeDefsFileName);
+
+        if (null == is) {
+            LOG.warn("Resource file with type definitions " + typeDefsFileName
+                    + " could not be found, no types will be created.");
+            return;
+        }
+
+        try {
+            TypeDefinition typeDef = null;
+            Unmarshaller u = InMemoryJaxbHelper.createUnmarshaller();
+            JAXBElement<TypeDefinitions> types = (JAXBElement<TypeDefinitions>) u.unmarshal(is);
+            for (CmisTypeDefinitionType td: types.getValue().getTypeDefinitions()) {
+                typeDef = Converter.convert(td);
+                tmc.addTypeDefinition(typeDef);
+            }
+        } catch (Exception e) {
+            LOG.error("Could not load type definitions from file '" + typeDefsFileName + "': " + e);
+        }
     }
 
     private static List<String> readPropertiesToSetFromConfig(Map<String, String> parameters, String keyPrefix) {
@@ -275,7 +323,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         }
 
           // Create a hierarchy of folders and fill it with some documents
-          ObjectGenerator gen = new ObjectGenerator(objectFactory, svc, svc, repositoryId);
+          ObjectGenerator gen = new ObjectGenerator(objectFactory, svc, svc, svc, repositoryId);
 
           gen.setNumberOfDocumentsToCreatePerFolder(docsPerLevel);
 

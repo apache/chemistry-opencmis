@@ -32,6 +32,7 @@ import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyDefinitionType;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
@@ -46,7 +47,7 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
  * @author Jens
  *
  */
-public class TypeManagerImpl implements TypeManager {
+public class TypeManagerImpl implements TypeManagerCreatable {
 
     /**
      * map from repository id to a types map
