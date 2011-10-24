@@ -474,6 +474,20 @@ public class QueryParseTest extends AbstractQueryTest {
         checkTreeWhere(statement);
         Tree tree = findSearchExpression(statement);
         printSearchTree(tree, statement);
+        assertEquals("Beethoven", tree.getChild(0).getText());
+    }
+
+    @Test
+    public void whereTestContainsNoFulltextParse() throws Exception {
+        String statement = "SELECT p1 FROM MyType WHERE CONTAINS('Beethoven')";
+        walker = getWalker(statement);
+        walker.setDoFullTextParse(false);
+        walker.query(queryObj, predicateWalker);
+        Tree whereTree = walker.getWherePredicateTree();
+        Tree tree = findTextSearchNode(whereTree);
+        printSearchTree(tree, statement);
+        // unparsed, still with quotes
+        assertEquals("'Beethoven'", tree.getChild(0).getText());
     }
 
     @Test

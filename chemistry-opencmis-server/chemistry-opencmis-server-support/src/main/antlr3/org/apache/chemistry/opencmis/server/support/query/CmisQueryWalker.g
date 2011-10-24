@@ -319,11 +319,15 @@ text_search_expression
     CommonTree tse = null;
 }
 @after {
-   $tree = tse;
+   if (doFullTextParse) {
+       $tree = tse;
+   }
 } :
     STRING_LIT
     {
-        tse = doFullTextParse ? parseTextSearchPredicate($STRING_LIT.text) : $STRING_LIT;
+        if (doFullTextParse) {
+            tse = parseTextSearchPredicate($STRING_LIT.text);
+        }
     }
     ;
 
