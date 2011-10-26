@@ -981,9 +981,19 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         }
 
         // parent
-        List<ObjectParentData> parents = getObjectParents(repositoryId, object.getId(), null, Boolean.FALSE,
-                IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, null);
-        info.setHasParent(parents.size() > 0);
+        if (object.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
+            info.setHasParent(false);
+        } else if (object.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
+            info.setHasParent(!object.getId().equals(repositoryInfo.getRootFolderId()));
+        } else {
+            try {
+                List<ObjectParentData> parents = getObjectParents(repositoryId, object.getId(), null, Boolean.FALSE,
+                        IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, null);
+                info.setHasParent(parents.size() > 0);
+            } catch (CmisInvalidArgumentException e) {
+                info.setHasParent(false);
+            }
+        }
 
         // policies and relationships
         info.setSupportsRelationships(false);
