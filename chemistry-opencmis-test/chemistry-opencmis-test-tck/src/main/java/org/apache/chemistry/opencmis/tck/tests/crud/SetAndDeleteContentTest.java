@@ -104,10 +104,14 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             } else {
                 // delete content stream
                 try {
-                    workDoc.deleteContentStream(true);
+                    ObjectId newObjectId = workDoc.deleteContentStream(true);
+
+                    // deleteContentStream may have created a new version
+                    Document contentDoc = getNewVersion(session, workDoc, checkedout, newObjectId,
+                            "deleteContentStream()");
 
                     f = createResult(FAILURE, "Document still has content after deleteContentStream() has been called!");
-                    addResult(assertNull(workDoc.getContentStream(), null, f));
+                    addResult(assertNull(contentDoc.getContentStream(), null, f));
                 } catch (CmisNotSupportedException e) {
                     addResult(createResult(WARNING, "deleteContentStream() is not supported!"));
                 }
@@ -126,40 +130,7 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             ObjectId newObjectId = workDoc.setContentStream(contentStream, true, true);
 
             // setContentStream may have created a new version
-            Document contentDoc = workDoc;
-            if (newObjectId != null) {
-                // -> Non AtomPub binding
-                if (!workDoc.getId().equals(newObjectId.getId())) {
-                    if (checkedout) {
-                        addResult(createResult(FAILURE, "setContentStream() created a new version from a PWC!"));
-                    } else {
-                        contentDoc = (Document) session.getObject(newObjectId, SELECT_ALL_NO_CACHE_OC);
-                        addResult(checkObject(session, contentDoc, getAllProperties(contentDoc),
-                                "Version created by setContentStream() compliance"));
-                    }
-                }
-            } else {
-                if (getBinding() != BindingType.ATOMPUB) {
-                    addResult(createResult(FAILURE, "setContentStream() did not return an object id!"));
-                }
-
-                // -> AtomPub binding or incompliant other binding
-                if (checkedout) {
-                    // we cannot check if the repository does the right thing,
-                    // but if there is a problem the versioning tests should
-                    // catch it
-                } else if (Boolean.TRUE.equals(docType.isVersionable())) {
-                    List<Document> versions = workDoc.getAllVersions();
-                    if (versions == null || versions.isEmpty()) {
-                        addResult(createResult(FAILURE,
-                                "setContentStream() created a new version but the version history is empty!"));
-                    } else if (!workDoc.getId().equals(versions.get(0).getId())) {
-                        contentDoc = (Document) session.getObject(versions.get(0), SELECT_ALL_NO_CACHE_OC);
-                        addResult(checkObject(session, contentDoc, getAllProperties(contentDoc),
-                                "Version created by setContentStream() compliance"));
-                    }
-                }
-            }
+            Document contentDoc = getNewVersion(session, workDoc, checkedout, newObjectId, "setContentStream()");
 
             // test new content
             try {
@@ -189,5 +160,46 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
         }
 
         return session.getRepositoryInfo().getCapabilities().getContentStreamUpdatesCapability();
+    }
+
+    private Document getNewVersion(Session session, Document orgDoc, boolean checkedout, ObjectId newObjectId,
+            String operation) {
+        Document result = orgDoc;
+
+        if (newObjectId != null) {
+            // -> Non AtomPub binding
+            if (!orgDoc.getId().equals(newObjectId.getId())) {
+                if (checkedout) {
+                    addResult(createResult(FAILURE, operation + " created a new version from a PWC!"));
+                } else {
+                    result = (Document) session.getObject(newObjectId, SELECT_ALL_NO_CACHE_OC);
+                    addResult(checkObject(session, result, getAllProperties(result), "Version created by " + operation
+                            + "  compliance"));
+                }
+            }
+        } else {
+            if (getBinding() != BindingType.ATOMPUB) {
+                addResult(createResult(FAILURE, operation + " did not return an object id!"));
+            }
+
+            // -> AtomPub binding or incompliant other binding
+            if (checkedout) {
+                // we cannot check if the repository does the right thing,
+                // but if there is a problem the versioning tests should
+                // catch it
+            } else if (Boolean.TRUE.equals(((DocumentTypeDefinition) orgDoc.getType()).isVersionable())) {
+                List<Document> versions = orgDoc.getAllVersions();
+                if (versions == null || versions.isEmpty()) {
+                    addResult(createResult(FAILURE, operation
+                            + " created a new version but the version history is empty!"));
+                } else if (!orgDoc.getId().equals(versions.get(0).getId())) {
+                    result = (Document) session.getObject(versions.get(0), SELECT_ALL_NO_CACHE_OC);
+                    addResult(checkObject(session, result, getAllProperties(result), "Version created by " + operation
+                            + " compliance"));
+                }
+            }
+        }
+
+        return result;
     }
 }
