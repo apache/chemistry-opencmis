@@ -79,6 +79,7 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
@@ -569,6 +570,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             try {
                 session.getTypeDefinition(BaseTypeId.CMIS_RELATIONSHIP.value());
                 supportsRelationships = Boolean.TRUE;
+            } catch (CmisInvalidArgumentException e) {
+                supportsRelationships = Boolean.FALSE;
             } catch (CmisObjectNotFoundException e) {
                 supportsRelationships = Boolean.FALSE;
             }
@@ -582,6 +585,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             try {
                 session.getTypeDefinition(BaseTypeId.CMIS_POLICY.value());
                 supportsPolicies = Boolean.TRUE;
+            } catch (CmisInvalidArgumentException e) {
+                supportsPolicies = Boolean.FALSE;
             } catch (CmisObjectNotFoundException e) {
                 supportsPolicies = Boolean.FALSE;
             }
@@ -1812,6 +1817,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     for (String typeId : relType.getAllowedSourceTypeIds()) {
                         try {
                             session.getTypeDefinition(typeId);
+                        } catch (CmisInvalidArgumentException e) {
+                            addResult(
+                                    results,
+                                    createResult(WARNING,
+                                            "Allowed Source Type Ids contain a type id that doesn't exist: " + typeId));
                         } catch (CmisObjectNotFoundException e) {
                             addResult(
                                     results,
@@ -1828,6 +1838,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     for (String typeId : relType.getAllowedTargetTypeIds()) {
                         try {
                             session.getTypeDefinition(typeId);
+                        } catch (CmisInvalidArgumentException e) {
+                            addResult(
+                                    results,
+                                    createResult(WARNING,
+                                            "Allowed Target Type Ids contain a type id that doesn't exist: " + typeId));
                         } catch (CmisObjectNotFoundException e) {
                             addResult(
                                     results,
