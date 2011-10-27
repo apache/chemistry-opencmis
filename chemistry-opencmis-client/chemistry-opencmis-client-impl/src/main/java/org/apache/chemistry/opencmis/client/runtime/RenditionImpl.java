@@ -96,9 +96,17 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
             return null;
         }
 
-        long length = contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue();
+        String filename = contentStream.getFileName();
+        if (filename == null) {
+            filename = getTitle();
+        }
+        BigInteger bigLength = contentStream.getBigLength();
+        if (bigLength == null) {
+            bigLength = getBigLength();
+        }
+        long length = bigLength == null ? -1 : bigLength.longValue();
 
-        return session.getObjectFactory().createContentStream(contentStream.getFileName(), length,
+        return session.getObjectFactory().createContentStream(filename, length,
                 contentStream.getMimeType(), contentStream.getStream());
     }
 
