@@ -131,7 +131,32 @@ public class LinkCache implements Serializable {
     public void addLink(String repositoryId, String id, String rel, String type, String link) {
         if (KNOWN_LINKS.contains(rel)) {
             linkCache.put(link, repositoryId, id, rel, type);
+        } else if (Constants.REL_ALTERNATE.equals(rel)) {
+            // use streamId instead of type as discriminating parameter
+            String streamId = extractStreamId(link);
+            if (streamId != null) {
+                linkCache.put(link, repositoryId, id, rel, streamId);
+            }
         }
+    }
+
+    /**
+     * Tries to extract a streamId from an alternate link.
+     */
+    // this is not strictly in the spec
+    protected String extractStreamId(String link) {
+        int i = link.lastIndexOf('?');
+        if (i > 0) {
+            String[] params = link.substring(i + 1).split("&");
+            for (String param : params) {
+                String[] parts = param.split("=", 2);
+                if (parts[0].equals(Constants.PARAM_STREAM_ID)
+                        && parts.length == 2) {
+                    return parts[1];
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -307,7 +332,7 @@ public class LinkCache implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

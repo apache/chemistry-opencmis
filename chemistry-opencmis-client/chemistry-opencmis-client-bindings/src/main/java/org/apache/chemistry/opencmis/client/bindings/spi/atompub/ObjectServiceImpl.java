@@ -436,16 +436,25 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         ContentStreamImpl result = new ContentStreamImpl();
 
         // find the link
-        String link = loadLink(repositoryId, objectId, AtomPubParser.LINK_REL_CONTENT, null);
+        String link = null;
+        if (streamId != null) {
+            // use the alternate link per spec
+            link = loadLink(repositoryId, objectId, Constants.REL_ALTERNATE, streamId);
+            if (link != null) {
+                streamId = null; // we have a full URL now
+            }
+        }
+        if (link == null) {
+            link = loadLink(repositoryId, objectId, AtomPubParser.LINK_REL_CONTENT, null);
+        }
 
         if (link == null) {
             throw new CmisConstraintException("No content stream");
         }
 
-        // TODO FIXME using the content link for non-default streams is
-        // incorrect, rel=alternate links should be used (if somehow the
-        // stream id is known for them, which isn't the case in CMIS 1.0).
         UrlBuilder url = new UrlBuilder(link);
+        // using the content URL and adding a streamId param
+        // is not spec-compliant
         url.addParameter(Constants.PARAM_STREAM_ID, streamId);
 
         // get the content
