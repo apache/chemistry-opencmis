@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
@@ -92,6 +93,8 @@ public class TypesTest extends AbstractSessionTest {
 
             failure = createResult(FAILURE, "Policy type has the wrong base type: " + policyType.getBaseTypeId());
             addResult(assertEquals(BaseTypeId.CMIS_POLICY, policyType.getBaseTypeId(), null, failure));
+        } catch (CmisInvalidArgumentException e) {
+            addResult(createResult(WARNING, "Policy type not available!", e, false));
         } catch (CmisObjectNotFoundException e) {
             addResult(createResult(WARNING, "Policy type not available!", e, false));
         }
