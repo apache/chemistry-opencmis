@@ -30,6 +30,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.http.HTTPException;
 
+import org.apache.chemistry.opencmis.client.bindings.impl.ClientVersion;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -290,6 +291,32 @@ public abstract class AbstractPortProvider {
         return serviceObject;
     }
 
+    protected void setHTTPHeaders(Object portObject, Map<String, List<String>> httpHeaders) {
+        if (httpHeaders == null) {
+            httpHeaders = new HashMap<String, List<String>>();
+        }
+        
+        // CMIS client header
+        httpHeaders.put("X-CMIS-Client", Collections.singletonList(ClientVersion.OPENCMIS_CLIENT));
+
+        // compression
+        if (useCompression) {
+            httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
+        }
+
+        // client compression
+        if (useClientCompression) {
+            httpHeaders.put("Content-Encoding", Collections.singletonList("gzip"));
+        }
+
+        // locale
+        if (acceptLanguage != null) {
+            httpHeaders.put("Accept-Language", Collections.singletonList(acceptLanguage));
+        }
+        
+        ((BindingProvider) portObject).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
+    }
+    
     /**
      * Creates a port object.
      */

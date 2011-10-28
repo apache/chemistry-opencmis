@@ -26,12 +26,10 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
-import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
-import org.apache.chemistry.opencmis.client.bindings.spi.Session;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -44,36 +42,39 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningService;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.headers.Header;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.w3c.dom.Element;
 
 /**
- * Provides CMIS Web Services port objects. Handles authentication headers.
+ * Provides CMIS Web Services port objects for Apache CXF. Handles
+ * authentication headers.
+ * 
+ * <p>
+ * <strong>Experimental!</strong><br>
+ * Complies, but is untested!
+ * </p>
  */
-public class PortProvider extends AbstractPortProvider {
-
-    private static Log log = LogFactory.getLog(PortProvider.class);
-
-    /**
-     * Constructor.
-     */
-    public PortProvider(Session session) {
-        this.session = session;
-    }
+public class CXFPortProvider extends AbstractPortProvider {
+    private static final Log log = LogFactory.getLog(CXFPortProvider.class);
 
     /**
      * Creates a port object.
      */
     protected Object createPortObject(Service service) {
-        Object portObject = null;
 
         if (log.isDebugEnabled()) {
             log.debug("Creating Web Service port object of " + (service == null ? "???" : service.getServiceName())
                     + "...");
         }
 
+        Object portObject;
         try {
             if (service instanceof RepositoryService) {
                 portObject = ((RepositoryService) service).getRepositoryServicePort();
@@ -101,23 +102,43 @@ public class PortProvider extends AbstractPortProvider {
             ((SOAPBinding) binding).setMTOMEnabled(true);
 
             // add SOAP and HTTP authentication headers
-            AbstractAuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(session);
+            AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(getSession());
+            Map<String, List<String>> httpHeaders = null;
             if (authProvider != null) {
                 // SOAP header
                 Element soapHeader = authProvider.getSOAPHeaders(portObject);
                 if (soapHeader != null) {
-                    ((BindingProvider) portObject).getRequestContext().put(Header.HEADER_LIST,
-                            Collections.singletonList(convertToHeader(soapHeader)));
+                    ((BindingProvider) portObject).getRequestContext().put(
+                            Header.HEADER_LIST,
+                            Collections.singletonList(new Header(new QName(soapHeader.getNamespaceURI(), soapHeader
+                                    .getLocalName()), soapHeader)));
                 }
 
                 // HTTP header
-                Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(service.getWSDLDocumentLocation()
-                        .toString());
-                if (httpHeaders != null) {
-                    ((BindingProvider) portObject).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
-                            httpHeaders);
-                }
+                httpHeaders = authProvider.getHTTPHeaders(service.getWSDLDocumentLocation().toString());
             }
+
+            // set HTTP headers
+            setHTTPHeaders(portObject, httpHeaders);
+
+            Client client = ClientProxy.getClient(portObject);
+            HTTPConduit http = (HTTPConduit) client.getConduit();
+            HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+            httpClientPolicy.setAllowChunking(true);
+
+            // timeouts
+            int connectTimeout = getSession().get(SessionParameter.CONNECT_TIMEOUT, -1);
+            if (connectTimeout >= 0) {
+                httpClientPolicy.setConnectionTimeout(connectTimeout);
+            }
+
+            int readTimeout = getSession().get(SessionParameter.READ_TIMEOUT, -1);
+            if (readTimeout >= 0) {
+                httpClientPolicy.setReceiveTimeout(readTimeout);
+            }
+
+            http.setClient(httpClientPolicy);
+
         } catch (CmisBaseException ce) {
             throw ce;
         } catch (Exception e) {
@@ -125,10 +146,5 @@ public class PortProvider extends AbstractPortProvider {
         }
 
         return portObject;
-    }
-
-    private Header convertToHeader(Element element) {
-        QName qname = new QName(element.getNamespaceURI(), element.getLocalName());
-        return new Header(qname, element);
     }
 }

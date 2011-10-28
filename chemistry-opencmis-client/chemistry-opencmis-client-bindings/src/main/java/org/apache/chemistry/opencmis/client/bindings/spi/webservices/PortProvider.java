@@ -18,17 +18,13 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.MTOMFeature;
 
-import org.apache.chemistry.opencmis.client.bindings.impl.ClientVersion;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -54,7 +50,8 @@ import com.sun.xml.ws.developer.StreamingAttachmentFeature;
 import com.sun.xml.ws.developer.WSBindingProvider;
 
 /**
- * Provides CMIS Web Services port objects. Handles authentication headers.
+ * Provides CMIS Web Services port objects for JAX-WS RI. Handles authentication
+ * headers.
  */
 public class PortProvider extends AbstractPortProvider {
     private static final Log log = LogFactory.getLog(PortProvider.class);
@@ -82,7 +79,11 @@ public class PortProvider extends AbstractPortProvider {
                 ((BindingProvider) portObject).getRequestContext().put(
                         JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
             } else if (service instanceof VersioningService) {
-                portObject = ((VersioningService) service).getVersioningServicePort(new MTOMFeature());
+                int threshold = getSession().get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD, 4 * 1024 * 1024);
+                portObject = ((VersioningService) service).getVersioningServicePort(new MTOMFeature(),
+                        new StreamingAttachmentFeature(null, true, threshold));
+                ((BindingProvider) portObject).getRequestContext().put(
+                        JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
             } else if (service instanceof DiscoveryService) {
                 portObject = ((DiscoveryService) service).getDiscoveryServicePort(new MTOMFeature());
             } else if (service instanceof MultiFilingService) {
@@ -111,29 +112,8 @@ public class PortProvider extends AbstractPortProvider {
                 httpHeaders = authProvider.getHTTPHeaders(service.getWSDLDocumentLocation().toString());
             }
 
-            if (httpHeaders == null) {
-                httpHeaders = new HashMap<String, List<String>>();
-            }
-
-            // CMIS client header
-            httpHeaders.put("X-CMIS-Client", Collections.singletonList(ClientVersion.OPENCMIS_CLIENT));
-            
-            // compression
-            if (useCompression) {
-                httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
-            }
-
-            // client compression
-            if (useClientCompression) {
-                httpHeaders.put("Content-Encoding", Collections.singletonList("gzip"));
-            }
-
-            // locale
-            if (acceptLanguage != null) {
-                httpHeaders.put("Accept-Language", Collections.singletonList(acceptLanguage));
-            }
-
-            ((BindingProvider) portObject).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
+            // set HTTP headers
+            setHTTPHeaders(portObject, httpHeaders);
 
             // timeouts
             int connectTimeout = getSession().get(SessionParameter.CONNECT_TIMEOUT, -1);
@@ -143,10 +123,8 @@ public class PortProvider extends AbstractPortProvider {
 
             int readTimeout = getSession().get(SessionParameter.READ_TIMEOUT, -1);
             if (readTimeout >= 0) {
-                ((BindingProvider) portObject).getRequestContext()
-                        .put("com.sun.xml.ws.request.timeout", connectTimeout);
+                ((BindingProvider) portObject).getRequestContext().put("com.sun.xml.ws.request.timeout", readTimeout);
             }
-
         } catch (CmisBaseException ce) {
             throw ce;
         } catch (Exception e) {
