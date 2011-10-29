@@ -362,6 +362,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
         });
 
         attributeSet.put("expires", new Setter() {
+            @SuppressWarnings("deprecation")
             @Override
             void setValue(String value, CmisHttpCookie cookie) {
                 cookie.setVersion(0);

@@ -25,6 +25,7 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -73,6 +74,11 @@ public class VersioingStateCreateTest extends AbstractSessionTest {
             f = createResult(FAILURE, "Document should be major version.");
             addResult(assertIsTrue(docMajor.isMajorVersion(), null, f));
 
+            List<Document> versions = docMajor.getAllVersions();
+
+            f = createResult(FAILURE, "Version series should have one version but has " + versions.size() + ".");
+            addResult(assertEquals(1, versions.size(), null, f));
+
             deleteObject(docMajor);
 
             // minor version
@@ -83,6 +89,11 @@ public class VersioingStateCreateTest extends AbstractSessionTest {
 
                 f = createResult(FAILURE, "Document should be minor version.");
                 addResult(assertIsFalse(docMinor.isMajorVersion(), null, f));
+
+                versions = docMinor.getAllVersions();
+
+                f = createResult(FAILURE, "Version series should have one version but has " + versions.size() + ".");
+                addResult(assertEquals(1, versions.size(), null, f));
 
                 deleteObject(docMinor);
             } catch (CmisConstraintException ce) {
@@ -102,6 +113,11 @@ public class VersioingStateCreateTest extends AbstractSessionTest {
 
                 f = createResult(FAILURE, "Version series should be checked out.");
                 addResult(assertIsTrue(docCheckedOut.isVersionSeriesCheckedOut(), null, f));
+
+                versions = docCheckedOut.getAllVersions();
+
+                f = createResult(FAILURE, "Version series should have one version but has " + versions.size() + ".");
+                addResult(assertEquals(1, versions.size(), null, f));
 
                 docCheckedOut.cancelCheckOut();
             } catch (CmisConstraintException ce) {

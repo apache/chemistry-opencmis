@@ -46,10 +46,13 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningServicePort;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 
+import com.sun.xml.ws.developer.StreamingAttachment;
+
 /**
  * CMIS Versioning Service.
  */
 @MTOM
+@StreamingAttachment(parseEagerly = true, memoryThreshold = 4 * 1024 * 1204)
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningServicePort")
 public class VersioningService extends AbstractService implements VersioningServicePort {
     @Resource

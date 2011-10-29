@@ -176,8 +176,10 @@ public class BrowserBindingUtils {
      */
     public static void prepareContext(CallContext context, CallUrl callUrl, CmisService service, String repositoryId,
             String objectId, String transaction, HttpServletRequest request) {
+        CallContextImpl contextImpl = null;
         if (context instanceof CallContextImpl) {
-            ((CallContextImpl) context).put(CONTEXT_TRANSACTION, transaction);
+            contextImpl = (CallContextImpl) context;
+            contextImpl.put(CONTEXT_TRANSACTION, transaction);
         }
 
         if (callUrl != CallUrl.ROOT) {
@@ -194,12 +196,10 @@ public class BrowserBindingUtils {
                     "cmis:none", false, false, null);
         }
 
-        if (context instanceof CallContextImpl) {
-            ((CallContextImpl) context).put(CONTEXT_OBJECT_ID, object.getId());
-            ((CallContextImpl) context).put(CONTEXT_OBJECT_TYPE_ID,
-                    getProperty(object, PropertyIds.OBJECT_TYPE_ID, String.class));
-            ((CallContextImpl) context).put(CONTEXT_BASETYPE_ID,
-                    getProperty(object, PropertyIds.BASE_TYPE_ID, String.class));
+        if (contextImpl != null) {
+            contextImpl.put(CONTEXT_OBJECT_ID, object.getId());
+            contextImpl.put(CONTEXT_OBJECT_TYPE_ID, getProperty(object, PropertyIds.OBJECT_TYPE_ID, String.class));
+            contextImpl.put(CONTEXT_BASETYPE_ID, getProperty(object, PropertyIds.BASE_TYPE_ID, String.class));
         }
     }
 
