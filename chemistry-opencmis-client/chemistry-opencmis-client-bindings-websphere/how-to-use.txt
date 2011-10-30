@@ -1,0 +1,19 @@
+This artifact generates an OpenCMIS Client Bindings Jar that only works on 
+IBM WebSphere 7.0.0.5 and later. It takes advantage of the JAX-WS implementation 
+provided by WebSphere, reduces OpenCMIS’ dependencies and avoids potential
+conflicts with the Suns JAX-WS implementation that is usually required
+for OpenCMIS.
+
+In order to use the OpenCMIS client library in a web application on WebSphere,
+place the following jars into /WEB-INF/lib :
+
+chemistry-opencmis-client-api-<version>.jar
+chemistry-opencmis-client-impl-<version>.jar
+chemistry-opencmis-client-binding-websphere-<version>.jar
+chemistry-opencmis-commons-api-<version>.jar
+chemistry-opencmis-commons-impl-<version>.jar
+commons-codec-1.4.jar
+
+Other dependencies mentioned in other parts OpenCMIS documentation are 
+not required. Make sure that the standard OpenCMIS Client Bindings Jar
+is not present.
