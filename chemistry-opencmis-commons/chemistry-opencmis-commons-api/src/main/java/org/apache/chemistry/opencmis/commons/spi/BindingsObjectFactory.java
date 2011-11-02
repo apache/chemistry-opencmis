@@ -37,18 +37,22 @@ import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.data.PropertyUri;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * Factory for CMIS binding objects.
- * 
+ *
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ *
  */
 public interface BindingsObjectFactory {
 
     Ace createAccessControlEntry(String principal, List<String> permissions);
 
     Acl createAccessControlList(List<Ace> aces);
+
+    <T> PropertyData<T> createPropertyData(PropertyDefinition<T> pd,
+            Object value);
 
     PropertyBoolean createPropertyBooleanData(String id, List<Boolean> values);
 
