@@ -988,7 +988,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         return csd;
     }
 
-    @SuppressWarnings("unchecked")
     private Map<String, PropertyData<?>> setDefaultProperties(TypeDefinition typeDef, Map<String, PropertyData<?>> properties) {
         Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
         boolean hasCopied = false;
@@ -996,61 +995,15 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         for ( PropertyDefinition<?> propDef : propDefs.values()) {
             String propId = propDef.getId();
             List<?> defaultVal = propDef.getDefaultValue();
-            PropertyData<?> pd = null;
             if (defaultVal != null && null == properties.get(propId)) {
                 if (!hasCopied) {
                     properties = new HashMap<String, PropertyData<?>>(properties); // copy because it is an unmodified collection
                     hasCopied = true;
                 }
-                if (propDef.getPropertyType() == PropertyType.BOOLEAN) {
-                    if (propDef.getCardinality() == Cardinality.MULTI) {
-                        pd = fStoreManager.getObjectFactory().createPropertyBooleanData(propId, (List<Boolean>)defaultVal);
-                    } else {
-                        pd = fStoreManager.getObjectFactory().createPropertyBooleanData(propId, (Boolean)defaultVal.get(0));
-                    }
-                } else if (propDef.getPropertyType() == PropertyType.DATETIME) {
-                    if (propDef.getCardinality() == Cardinality.MULTI) {
-                        pd = fStoreManager.getObjectFactory().createPropertyDateTimeData(propId, (List<GregorianCalendar>)defaultVal);
-                    } else {
-                        pd = fStoreManager.getObjectFactory().createPropertyDateTimeData(propId, (GregorianCalendar)defaultVal.get(0));
-                    }
-                } else if (propDef.getPropertyType() == PropertyType.DECIMAL) {
-                    if (propDef.getCardinality() == Cardinality.MULTI) {
-                        pd = fStoreManager.getObjectFactory().createPropertyDecimalData(propId, (List<BigDecimal>)defaultVal);
-                    } else {
-                        pd = fStoreManager.getObjectFactory().createPropertyDecimalData(propId, (BigDecimal)defaultVal.get(0));
-                    }
-                } else if (propDef.getPropertyType() == PropertyType.HTML) {
-                    if (propDef.getCardinality() == Cardinality.MULTI) {
-                        pd = fStoreManager.getObjectFactory().createPropertyHtmlData(propId, (List<String>)defaultVal);
-                    } else {
-                        pd = fStoreManager.getObjectFactory().createPropertyHtmlData(propId, (String)defaultVal.get(0));
-                    }
-                } else if (propDef.getPropertyType() == PropertyType.ID) {
-                    if (propDef.getCardinality() == Cardinality.MULTI) {
-                        pd = fStoreManager.getObjectFactory().createPropertyIdData(propId, (List<String>)defaultVal);
-                    } else {
-                        pd = fStoreManager.getObjectFactory().createPropertyIdData(propId, (String)defaultVal.get(0));
-                    }
-                } else if (propDef.getPropertyType() == PropertyType.INTEGER) {
-                    if (propDef.getCardinality() == Cardinality.MULTI) {
-                        pd = fStoreManager.getObjectFactory().createPropertyIntegerData(propId, (List<BigInteger>)defaultVal);
-                    } else {
-                        pd = fStoreManager.getObjectFactory().createPropertyIntegerData(propId, (BigInteger)defaultVal.get(0));
-                    }
-                } else if (propDef.getPropertyType() == PropertyType.STRING) {
-                    if (propDef.getCardinality() == Cardinality.MULTI) {
-                        pd = fStoreManager.getObjectFactory().createPropertyStringData(propId, (List<String>)defaultVal);
-                    } else {
-                        pd = fStoreManager.getObjectFactory().createPropertyStringData(propId, (String)defaultVal.get(0));
-                    }
-                } else if (propDef.getPropertyType() == PropertyType.URI) {
-                    if (propDef.getCardinality() == Cardinality.MULTI) {
-                        pd = fStoreManager.getObjectFactory().createPropertyUriData(propId, (List<String>)defaultVal);
-                    } else {
-                        pd = fStoreManager.getObjectFactory().createPropertyUriData(propId, (String)defaultVal.get(0));
-                    }
-                }
+                Object value = propDef.getCardinality() == Cardinality.SINGLE ? defaultVal.get(0)
+                        : defaultVal;
+                PropertyData<?> pd = fStoreManager.getObjectFactory().createPropertyData(
+                        propDef, value);
                 // set property:
                 properties.put(propId, pd);
             }
