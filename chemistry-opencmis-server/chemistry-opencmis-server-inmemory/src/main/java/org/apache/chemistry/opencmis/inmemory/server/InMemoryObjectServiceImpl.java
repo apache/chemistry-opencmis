@@ -115,7 +115,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("start createDocumentFromSource()");
         StoredObject so = validator.createDocumentFromSource(context, repositoryId, sourceId, folderId, extension);
         TypeDefinition td = getTypeDefinition(repositoryId, so);  // typedefinition may be copied from source object
-        
+
         ContentStream content = getContentStream(context, repositoryId, sourceId, null, BigInteger.valueOf(-1),
                 BigInteger.valueOf(-1), null);
 
@@ -133,7 +133,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         for (PropertyData<?> prop : existingProps.getProperties().values()) {
             newPD.addProperty(prop);
         }
-        
+
         if (null != properties)
             // overwrite all new properties
             for (PropertyData<?> prop : properties.getProperties().values()) {
@@ -406,7 +406,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             VersionedDocument verDoc = (VersionedDocument) so;
             so = verDoc.getLatestVersion(false);
         }
-        
+
         String user = context.getUsername();
 
         TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
@@ -702,10 +702,10 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // Validation stuff
         TypeValidator.validateRequiredSystemProperties(properties);
-    
+
         // validate ACL
         TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
-        
+
         Folder folder = null;
         if (null != folderId) {
             StoredObject so = objectStore.getObjectById(folderId);
@@ -774,13 +774,13 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // Now we are sure to have document type definition:
         if (((DocumentTypeDefinition) typeDef).isVersionable()) {
-        	DocumentVersion version = objectStore.createVersionedDocument(name,  propMap, 
-            		user, folder, addACEs, removeACEs, contentStream, versioningState);
+            DocumentVersion version = objectStore.createVersionedDocument(name,  propMap,
+                    user, folder, addACEs, removeACEs, contentStream, versioningState);
             version.persist();
             so = version; // return the version and not the version series to caller
         } else {
-        	Document doc = objectStore.createDocument(name, propMap, user, folder, addACEs, removeACEs);
-        	doc.setContent(contentStream, false);
+            Document doc = objectStore.createDocument(name, propMap, user, folder, addACEs, removeACEs);
+            doc.setContent(contentStream, false);
             doc.persist();
             so = doc;
         }
@@ -831,7 +831,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // validate ACL
         TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
-        
+
         // create folder
         try {
             LOG.debug("get folder for id: " + folderId);
@@ -853,7 +853,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         Folder newFolder = objStore.createFolder(folderName, properties.getProperties(), user, parent,
-		addACEs,  removeACEs);
+        addACEs,  removeACEs);
         LOG.debug("stop createFolder()");
         newFolder.persist();
         return newFolder;
@@ -867,17 +867,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     private StoredObject createRelationshipIntern(CallContext context, String repositoryId,
-    		Properties properties, List<String> policies,
+            Properties properties, List<String> policies,
             Acl addACEs, Acl removeACEs, ExtensionsData extension) {
-    	
-    	 String user = context.getUsername();
-    	 
-    	  // get required properties
+
+         String user = context.getUsername();
+
+          // get required properties
         PropertyData<?> pd = properties.getProperties().get(PropertyIds.SOURCE_ID);
         String sourceId = (String) pd.getFirstValue();
         if (null == sourceId || sourceId.length() == 0)
             throw new CmisInvalidArgumentException("Cannot create a relationship without a sourceId.");
-        
+
         pd = properties.getProperties().get(PropertyIds.TARGET_ID);
         String targetId = (String) pd.getFirstValue();
         if (null == targetId || targetId.length() == 0)
@@ -890,9 +890,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisInvalidArgumentException("Cannot create a relationship, with a non-relationship type: " + typeDef.getId());
 
        StoredObject[] relationObjects = validator.createRelationship(context, repositoryId, sourceId, targetId, extension);
-     
+
        TypeValidator.validateRequiredSystemProperties(properties);
-       
+
        // set default properties
        Map<String, PropertyData<?>> propMap = properties.getProperties();
        Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
@@ -904,17 +904,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
        // validate ACL
        TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
-     
+
        // validate the allowed types of the relationship
        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
        TypeDefinition sourceTypeDef = fStoreManager.getTypeById(repositoryId, objStore.getObjectById(sourceId).getTypeId()).getTypeDefinition();
        TypeDefinition targetTypeDef = fStoreManager.getTypeById(repositoryId, objStore.getObjectById(targetId).getTypeId()).getTypeDefinition();
        TypeValidator.validateAllowedRelationshipTypes(typeDef,  sourceTypeDef, targetTypeDef);
-       
+
         StoredObject storedObject = objStore.createRelationship( relationObjects[0], relationObjects[1],
-        		propMap, user, addACEs,  removeACEs);
-    	return storedObject;	
+                propMap, user, addACEs,  removeACEs);
+        return storedObject;
     }
 
 
