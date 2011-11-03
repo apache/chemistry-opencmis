@@ -40,7 +40,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort")
 public class MultiFilingService extends AbstractService implements MultiFilingServicePort {
     @Resource
-    WebServiceContext wsContext;
+    public WebServiceContext wsContext;
 
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             Holder<CmisExtensionType> extension) throws CmisException {

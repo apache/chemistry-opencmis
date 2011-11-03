@@ -50,7 +50,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.NavigationServicePort")
 public class NavigationService extends AbstractService implements NavigationServicePort {
     @Resource
-    WebServiceContext wsContext;
+    public WebServiceContext wsContext;
 
     public CmisObjectListType getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,

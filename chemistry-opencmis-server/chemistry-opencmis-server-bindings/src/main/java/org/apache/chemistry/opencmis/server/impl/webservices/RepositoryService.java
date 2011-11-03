@@ -48,7 +48,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort")
 public class RepositoryService extends AbstractService implements RepositoryServicePort {
     @Resource
-    WebServiceContext wsContext;
+    public WebServiceContext wsContext;
 
     public List<CmisRepositoryEntryType> getRepositories(CmisExtensionType extension) throws CmisException {
         CmisService service = null;

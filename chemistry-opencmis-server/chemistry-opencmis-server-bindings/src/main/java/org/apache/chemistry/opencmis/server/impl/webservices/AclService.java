@@ -42,7 +42,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort")
 public class AclService extends AbstractService implements ACLServicePort {
     @Resource
-    WebServiceContext wsContext;
+    public WebServiceContext wsContext;
 
     public CmisACLType applyACL(String repositoryId, String objectId, CmisAccessControlListType addAces,
             CmisAccessControlListType removeAces, EnumACLPropagation aclPropagation, CmisExtensionType extension)

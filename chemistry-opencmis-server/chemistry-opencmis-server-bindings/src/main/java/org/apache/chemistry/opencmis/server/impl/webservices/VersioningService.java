@@ -56,7 +56,7 @@ import com.sun.xml.ws.developer.StreamingAttachment;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningServicePort")
 public class VersioningService extends AbstractService implements VersioningServicePort {
     @Resource
-    WebServiceContext wsContext;
+    public WebServiceContext wsContext;
 
     public void cancelCheckOut(String repositoryId, String objectId, Holder<CmisExtensionType> extension)
             throws CmisException {

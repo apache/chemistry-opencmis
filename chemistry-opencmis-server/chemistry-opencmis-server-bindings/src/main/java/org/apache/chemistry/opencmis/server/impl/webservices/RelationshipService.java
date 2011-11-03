@@ -42,7 +42,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipServicePort")
 public class RelationshipService extends AbstractService implements RelationshipServicePort {
     @Resource
-    WebServiceContext wsContext;
+    public WebServiceContext wsContext;
 
     public CmisObjectListType getObjectRelationships(String repositoryId, String objectId,
             Boolean includeSubRelationshipTypes, EnumRelationshipDirection relationshipDirection, String typeId,

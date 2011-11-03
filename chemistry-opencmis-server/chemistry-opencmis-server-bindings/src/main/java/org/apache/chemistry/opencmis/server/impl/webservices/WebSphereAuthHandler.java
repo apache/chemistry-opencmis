@@ -18,25 +18,21 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
+import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.MessageContext.Scope;
+import javax.xml.ws.handler.soap.SOAPHandler;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import com.sun.xml.ws.api.handler.MessageHandler;
-import com.sun.xml.ws.api.handler.MessageHandlerContext;
-import com.sun.xml.ws.api.message.Header;
-import com.sun.xml.ws.api.message.HeaderList;
-import com.sun.xml.ws.api.message.Message;
-
-/**
- * This class tries to extract a user name and a password from a UsernameToken.
- */
-public class AuthHandler extends AbstractUsernameTokenAuthHandler implements MessageHandler<MessageHandlerContext> {
+public class WebSphereAuthHandler extends AbstractUsernameTokenAuthHandler implements SOAPHandler<SOAPMessageContext> {
 
     public Set<QName> getHeaders() {
         return HEADERS;
@@ -45,11 +41,12 @@ public class AuthHandler extends AbstractUsernameTokenAuthHandler implements Mes
     public void close(MessageContext context) {
     }
 
-    public boolean handleFault(MessageHandlerContext context) {
+    public boolean handleFault(SOAPMessageContext context) {
         return true;
     }
 
-    public boolean handleMessage(MessageHandlerContext context) {
+    @SuppressWarnings("unchecked")
+    public boolean handleMessage(SOAPMessageContext context) {
         Boolean outboundProperty = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (outboundProperty.booleanValue()) {
             // we are only looking at inbound messages
@@ -58,17 +55,34 @@ public class AuthHandler extends AbstractUsernameTokenAuthHandler implements Mes
 
         Map<String, String> callContextMap = null;
 
-        try {
-            // read the header
-            Message msg = context.getMessage();
-            HeaderList hl = msg.getHeaders();
-            Header securityHeader = hl.get(WSSE_SECURITY, true);
+        Map<QName, List<String>> requestHeaders = (Map<QName, List<String>>) context
+                .get("jaxws.binding.soap.headers.inbound");
 
-            JAXBElement<SecurityHeaderType> sht = securityHeader.readAsJAXB(WSSE_CONTEXT.createUnmarshaller());
+        if (requestHeaders != null) {
+            List<String> secHeaders = requestHeaders.get(WSSE_SECURITY);
+            if (secHeaders != null && secHeaders.size() > 0) {
+                try {
+                    Unmarshaller unmarshaller = WSSE_CONTEXT.createUnmarshaller();
 
-            callContextMap = extractUsernamePassword(sht);
-        } catch (Exception e) {
-            // something went wrong, e.g. a part of the SOAP header wasn't set
+                    for (String h : secHeaders) {
+                        try {
+                            JAXBElement<SecurityHeaderType> sht = (JAXBElement<SecurityHeaderType>) unmarshaller
+                                    .unmarshal(new StringReader(h));
+
+                            callContextMap = extractUsernamePassword(sht);
+                            if (callContextMap != null) {
+                                break;
+                            }
+
+                        } catch (Exception e) {
+                            // unmarshalling failed, maybe another header -
+                            // ignore
+                        }
+                    }
+                } catch (Exception e) {
+                    // JAXB problem - ignore
+                }
+            }
         }
 
         // add user and password to context

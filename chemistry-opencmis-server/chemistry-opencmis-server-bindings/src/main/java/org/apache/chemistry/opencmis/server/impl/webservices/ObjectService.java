@@ -64,7 +64,7 @@ import com.sun.xml.ws.developer.StreamingAttachment;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort")
 public class ObjectService extends AbstractService implements ObjectServicePort {
     @Resource
-    WebServiceContext wsContext;
+    public WebServiceContext wsContext;
 
     public void createDocument(String repositoryId, CmisPropertiesType properties, String folderId,
             CmisContentStreamType contentStream, EnumVersioningState versioningState, List<String> policies,

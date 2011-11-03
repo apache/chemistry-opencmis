@@ -46,7 +46,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyServicePort")
 public class PolicyService extends AbstractService implements PolicyServicePort {
     @Resource
-    WebServiceContext wsContext;
+    public WebServiceContext wsContext;
 
     public void applyPolicy(String repositoryId, String policyId, String objectId, Holder<CmisExtensionType> extension)
             throws CmisException {
