@@ -83,6 +83,15 @@ public class TestCalendarHelper {
         assertEquals("2009-07-14T12:00:00.440Z", CalendarHelper.toString(cal));
         cal = CalendarHelper.fromString("2009-07-14T12:00:00.333Z");
         assertEquals("2009-07-14T12:00:00.333Z", CalendarHelper.toString(cal));
+        // no timezone
+        cal = CalendarHelper.fromString("2009-07-14T12:00:00");
+        assertEquals("2009-07-14T12:00:00.000Z", CalendarHelper.toString(cal));
+        cal = CalendarHelper.fromString("2009-07-14T12:00:00.5");
+        assertEquals("2009-07-14T12:00:00.500Z", CalendarHelper.toString(cal));
+        cal = CalendarHelper.fromString("2009-07-14T12:00:00.44");
+        assertEquals("2009-07-14T12:00:00.440Z", CalendarHelper.toString(cal));
+        cal = CalendarHelper.fromString("2009-07-14T12:00:00.333");
+        assertEquals("2009-07-14T12:00:00.333Z", CalendarHelper.toString(cal));
     }
 
 }
