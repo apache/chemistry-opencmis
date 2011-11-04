@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.client.api.ChangeEvents;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -57,8 +58,12 @@ public class ContentChangesSmokeTest extends AbstractSessionTest {
             addResult(assertNotNull(events, null, f));
 
             if (events != null && events.getChangeEvents() != null) {
-                f = createResult(FAILURE, "Change log token is null!");
-                addResult(assertNotNull(events.getLatestChangeLogToken(), null, f));
+
+                if (getBinding() != BindingType.ATOMPUB) {
+                    // the AtompPub binding does not return a change log token
+                    f = createResult(FAILURE, "Change log token is null!");
+                    addResult(assertNotNull(events.getLatestChangeLogToken(), null, f));
+                }
 
                 for (ChangeEvent event : events.getChangeEvents()) {
                     f = createResult(FAILURE, "Object Id is not set!");
@@ -70,16 +75,23 @@ public class ContentChangesSmokeTest extends AbstractSessionTest {
                     f = createResult(FAILURE, "Change Time is not set! Id: " + event.getObjectId());
                     addResult(assertNotNull(event.getChangeTime(), null, f));
 
-                    if (event.getChangeType() != ChangeType.DELETED && event.getObjectId() != null) {
-                        try {
-                            CmisObject object = session.getObject(event.getObjectId(), SELECT_ALL_NO_CACHE_OC);
-                            addResult(checkObject(session, object, getAllProperties(object), "Object check. Id: "
-                                    + event.getObjectId()));
-                        } catch (CmisObjectNotFoundException e) {
-                            addResult(createResult(
-                                    FAILURE,
-                                    "Change event does reference an object that doesn't exist. Id: "
-                                            + event.getObjectId(), e, false));
+                    if (event.getObjectId() != null) {
+                        if (event.getChangeType() == ChangeType.DELETED) {
+                            try {
+                                session.getObject(event.getObjectId(), SELECT_ALL_NO_CACHE_OC);
+                                addResult(createResult(FAILURE,
+                                        "Change event indicates that an object has been deleted but it still exists. Id: "
+                                                + event.getObjectId()));
+                            } catch (CmisObjectNotFoundException e) {
+                            }
+                        } else {
+                            try {
+                                CmisObject object = session.getObject(event.getObjectId(), SELECT_ALL_NO_CACHE_OC);
+                                addResult(checkObject(session, object, getAllProperties(object), "Object check. Id: "
+                                        + event.getObjectId()));
+                            } catch (CmisObjectNotFoundException e) {
+                                // object might have been deleted later
+                            }
                         }
                     }
                 }
