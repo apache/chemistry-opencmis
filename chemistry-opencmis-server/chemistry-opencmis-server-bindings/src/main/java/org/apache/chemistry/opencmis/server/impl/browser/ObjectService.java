@@ -41,6 +41,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -50,6 +51,7 @@ import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,6 +59,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -68,6 +72,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.server.impl.browser.json.JSONConverter;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -80,6 +85,9 @@ public final class ObjectService {
     private ObjectService() {
     }
 
+    /**
+     * Create document.
+     */
     public static void createDocument(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
@@ -114,6 +122,9 @@ public final class ObjectService {
         writeJSON(jsonObject, request, response);
     }
 
+    /**
+     * Create folder.
+     */
     public static void createFolder(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
@@ -146,6 +157,40 @@ public final class ObjectService {
         writeJSON(jsonObject, request, response);
     }
 
+    /**
+     * getProperties.
+     */
+    public static void getProperties(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        ReturnVersion returnVersion = getEnumParameter(request, PARAM_RETURN_VERSION, ReturnVersion.class);
+        String filter = getStringParameter(request, PARAM_FILTER);
+
+        // execute
+        Properties properties;
+
+        if (returnVersion == ReturnVersion.LATEST || returnVersion == ReturnVersion.LASTESTMAJOR) {
+            properties = service.getPropertiesOfLatestVersion(repositoryId, objectId, null,
+                    returnVersion == ReturnVersion.LASTESTMAJOR, filter, null);
+        } else {
+            properties = service.getProperties(repositoryId, objectId, filter, null);
+        }
+
+        if (properties == null) {
+            throw new CmisRuntimeException("Properties are null!");
+        }
+
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        JSONObject jsonObject = JSONConverter.convert(properties, objectId, typeCache);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
+     * getObject.
+     */
     public static void getObject(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
@@ -182,6 +227,37 @@ public final class ObjectService {
         writeJSON(jsonObject, request, response);
     }
 
+    /**
+     * getRenditions.
+     */
+    @SuppressWarnings("unchecked")
+    public static void getRenditions(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
+        BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
+        BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
+
+        // execute
+
+        List<RenditionData> renditions = service.getRenditions(repositoryId, objectId, renditionFilter, maxItems,
+                skipCount, null);
+
+        JSONArray jsonRenditions = new JSONArray();
+        if (renditions != null) {
+            for (RenditionData rendition : renditions) {
+                jsonRenditions.add(JSONConverter.convert(rendition));
+            }
+        }
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        writeJSON(jsonRenditions, request, response);
+    }
+
+    /**
+     * getContentStream.
+     */
     public static void getContentStream(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
@@ -225,6 +301,9 @@ public final class ObjectService {
         out.flush();
     }
 
+    /**
+     * deleteObject.
+     */
     public static void deleteObject(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
@@ -236,6 +315,9 @@ public final class ObjectService {
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
+    /**
+     * deleteTree.
+     */
     public static void deleteTree(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters

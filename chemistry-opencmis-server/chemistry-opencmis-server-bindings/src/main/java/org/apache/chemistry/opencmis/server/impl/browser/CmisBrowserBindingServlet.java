@@ -25,7 +25,6 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE_TREE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_QUERY;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_PARENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_SET_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_BASETYPE_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_TRANSACTION;
@@ -34,14 +33,19 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTROL_TRANSACTION;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.JSON_MIME_TYPE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_SELECTOR;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_SUPPRESS_RESPONSE_CODES;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CHILDREN;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_DESCENDANTS;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_FOLDER_TREE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_LAST_RESULT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_OBJECT;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_PARENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_PARENTS;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_PROPERTIES;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_QUERY;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_RELATIONSHIPS;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_RENDITIONS;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_TYPE_CHILDREN;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_TYPE_DEFINITION;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_TYPE_DESCENDANTS;
@@ -55,6 +59,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstan
 import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.ERROR_STACKTRACE;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.io.IOException;
@@ -141,6 +146,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     "createDocument");
 
             rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class, "getObject");
+            rootDispatcher.addResource(SELECTOR_PROPERTIES, METHOD_GET, ObjectService.class, "getProperties");
+            rootDispatcher.addResource(SELECTOR_RENDITIONS, METHOD_GET, ObjectService.class, "getRenditions");
             rootDispatcher.addResource(SELECTOR_CONTENT, METHOD_GET, ObjectService.class, "getContentStream");
             rootDispatcher.addResource(SELECTOR_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");
             rootDispatcher.addResource(SELECTOR_DESCENDANTS, METHOD_GET, NavigationService.class, "getDescendants");
@@ -148,6 +155,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             rootDispatcher.addResource(SELECTOR_PARENT, METHOD_GET, NavigationService.class, "getFolderParent");
             rootDispatcher.addResource(SELECTOR_PARENTS, METHOD_GET, NavigationService.class, "getObjectParents");
             rootDispatcher.addResource(SELECTOR_VERSIONS, METHOD_GET, VersioningService.class, "getAllVersions");
+            rootDispatcher.addResource(SELECTOR_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
+                    "getObjectRelationships");
 
             rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class, "createDocument");
             rootDispatcher.addResource(CMISACTION_CREATE_FOLDER, METHOD_POST, ObjectService.class, "createFolder");
@@ -359,6 +368,10 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             exceptionName = ((CmisBaseException) ex).getExceptionName();
         } else {
             LOG.error(ex.getMessage(), ex);
+        }
+
+        if (getBooleanParameter(request, PARAM_SUPPRESS_RESPONSE_CODES, false)) {
+            statusCode = HttpServletResponse.SC_OK;
         }
 
         response.setStatus(statusCode);

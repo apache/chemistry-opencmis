@@ -80,6 +80,8 @@ public class BrowserBindingUtils {
 
     public static final String SELECTOR_CONTENT = "content";
     public static final String SELECTOR_OBJECT = "object";
+    public static final String SELECTOR_PROPERTIES = "properties";
+    public static final String SELECTOR_RENDITIONS = "renditions";
     public static final String SELECTOR_CHILDREN = "children";
     public static final String SELECTOR_DESCENDANTS = "descendants";
     public static final String SELECTOR_PARENTS = "parents";
@@ -87,6 +89,7 @@ public class BrowserBindingUtils {
     public static final String SELECTOR_FOLDER_TREE = "folder";
     public static final String SELECTOR_QUERY = "query";
     public static final String SELECTOR_VERSIONS = "versions";
+    public static final String SELECTOR_RELATIONSHIPS = "relationships";
 
     public static final String CMISACTION_CREATE_DOCUMENT = "createDocument";
     public static final String CMISACTION_CREATE_FOLDER = "createFolder";
@@ -101,6 +104,7 @@ public class BrowserBindingUtils {
     public static final String PARAM_SELECTOR = "selector";
     public static final String PARAM_TRANSACTION = "transaction";
     public static final String PARAM_CLIENT_TOKEN = "clientToken";
+    public static final String PARAM_SUPPRESS_RESPONSE_CODES ="suppressResponseCodes";
 
     public static final String CONTROL_CMISACTION = "cmisaction";
     public static final String CONTROL_TRANSACTION = "transaction";

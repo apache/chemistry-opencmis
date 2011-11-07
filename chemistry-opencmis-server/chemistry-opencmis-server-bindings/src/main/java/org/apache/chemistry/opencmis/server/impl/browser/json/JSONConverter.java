@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
@@ -222,23 +223,10 @@ public class JSONConverter {
 
         // properties
         if (object.getProperties() != null) {
-            JSONObject properties = new JSONObject();
-
-            for (PropertyData<?> property : object.getProperties().getPropertyList()) {
-                TypeDefinition type = null;
-                if (typeCache != null) {
-                    type = typeCache.getTypeDefinitionForObject(object.getId());
-                }
-
-                PropertyDefinition<?> propDef = null;
-                if (type != null) {
-                    propDef = type.getPropertyDefinitions().get(property.getId());
-                }
-
-                properties.put(property.getId(), convert(property, propDef));
+            JSONObject properties = convert(object.getProperties(), object.getId(), typeCache);
+            if (properties != null) {
+                result.put(JSON_OBJECT_PROPERTIES, properties);
             }
-
-            result.put(JSON_OBJECT_PROPERTIES, properties);
         }
 
         // allowable actions
@@ -294,6 +282,34 @@ public class JSONConverter {
             }
 
             result.put(JSON_OBJECT_RENDITIONS, renditions);
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts a bag of properties.
+     */
+    @SuppressWarnings("unchecked")
+    public static JSONObject convert(Properties properties, String objectId, TypeCache typeCache) {
+        if (properties == null) {
+            return null;
+        }
+
+        JSONObject result = new JSONObject();
+
+        for (PropertyData<?> property : properties.getPropertyList()) {
+            TypeDefinition type = null;
+            if (typeCache != null) {
+                type = typeCache.getTypeDefinitionForObject(objectId);
+            }
+
+            PropertyDefinition<?> propDef = null;
+            if (type != null) {
+                propDef = type.getPropertyDefinitions().get(property.getId());
+            }
+
+            result.put(property.getId(), convert(property, propDef));
         }
 
         return result;
