@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,9 +36,11 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
@@ -211,7 +214,11 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             Unmarshaller u = InMemoryJaxbHelper.createUnmarshaller();
             JAXBElement<TypeDefinitions> types = (JAXBElement<TypeDefinitions>) u.unmarshal(is);
             for (CmisTypeDefinitionType td: types.getValue().getTypeDefinitions()) {
+                LOG.debug("Found type in file: " + td.getLocalName());
                 typeDef = Converter.convert(td);
+                if (typeDef.getPropertyDefinitions() == null) {
+                    ((AbstractTypeDefinition)typeDef).setPropertyDefinitions( new LinkedHashMap<String, PropertyDefinition<?>>());
+                }
                 tmc.addTypeDefinition(typeDef);
             }
         } catch (Exception e) {

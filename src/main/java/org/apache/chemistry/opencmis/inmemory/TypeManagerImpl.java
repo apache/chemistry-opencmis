@@ -38,7 +38,8 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefiniti
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
-import org.apache.chemistry.opencmis.server.support.TypeManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Class that manages a type system for a repository types can be added, the
@@ -49,6 +50,7 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
  */
 public class TypeManagerImpl implements TypeManagerCreatable {
 
+    private static final Log LOG = LogFactory.getLog(TypeManagerImpl.class.getName());
     /**
      * map from repository id to a types map
      */
@@ -159,6 +161,8 @@ public class TypeManagerImpl implements TypeManagerCreatable {
         Map<String, PropertyDefinition<?>> propDefs = typeContainer.getTypeDefinition().getPropertyDefinitions();
         addInheritedProperties(propDefs, parentTypeContainer.getTypeDefinition());
 
+        LOG.info("Adding type definition with name " + cmisType.getLocalName() + " and id " 
+                + cmisType.getId() + " to repository.");
         // add type to type map
         fTypesMap.put(cmisType.getId(), typeContainer);
     }

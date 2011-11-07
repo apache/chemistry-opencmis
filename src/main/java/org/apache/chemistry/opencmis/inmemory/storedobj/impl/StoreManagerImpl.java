@@ -319,45 +319,6 @@ public class StoreManagerImpl implements StoreManager {
         typeManager.initTypeSystem(typeDefs);
     }
 
-    private void initTypeSystemNOP(String repositoryId, String fileName) {
-        TypeManagerImpl typeManager = fMapRepositoryToTypeManager.get(repositoryId);
-        if (null == typeManager) {
-            throw new RuntimeException("Unknown repository " + repositoryId);
-        }
-
-        if (null == fileName) {
-            LOG.warn("No file name for type definitions given, no types will be created.");
-            typeManager.initTypeSystem(null);
-            return;
-        }
-
-        InputStream is = this.getClass().getResourceAsStream("/" + fileName);
-
-        List<TypeDefinition> typeDefs = new  ArrayList<TypeDefinition>();
-        TypeDefinition typeDef = null;
-        if (null == is) {
-            LOG.warn("Resource file with type definitions " + fileName
-                    + " could not be found, no types will be created.");
-            return;
-        }
-
-        try {
-            Unmarshaller u = InMemoryJaxbHelper.createUnmarshaller();
-//            JAXBElement<CmisTypeDefinitionType> type = (JAXBElement<CmisTypeDefinitionType>) u.unmarshal(is);
-//            typeDef = Converter.convert(type.getValue());
-            JAXBElement<TypeDefinitions> types = (JAXBElement<TypeDefinitions>) u.unmarshal(is);
-            for (CmisTypeDefinitionType td: types.getValue().getTypeDefinitions()) {
-                typeDef = Converter.convert(td);
-                typeDefs.add(typeDef);
-            }
-
-        } catch (Exception e) {
-            LOG.error("Could not load type definitions from file '" + fileName + "': " + e);
-        }
-
-        typeManager.initTypeSystem(typeDefs);
-    }
-
     private RepositoryInfo createRepositoryInfo(String repositoryId) {
         ObjectStore objStore = getObjectStore(repositoryId);
         String rootFolderId = objStore.getRootFolder().getId();
