@@ -18,7 +18,16 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
-import static org.apache.chemistry.opencmis.commons.impl.Constants.*;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWABLE_ACTIONS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_DEPTH;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_MAX_ITEMS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ORDER_BY;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_PATH_SEGMENT;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RELATIONSHIPS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RELATIVE_PATH_SEGMENT;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RENDITION_FILTER;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SKIP_COUNT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
@@ -31,12 +40,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.impl.browser.json.JSONConverter;
@@ -150,6 +159,29 @@ public final class NavigationService {
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonDescendants, request, response);
+    }
+
+    /**
+     * getFolderParent.
+     */
+    public static void getFolderParent(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String filter = getStringParameter(request, PARAM_FILTER);
+
+        // execute
+        ObjectData parent = service.getFolderParent(repositoryId, objectId, filter, null);
+
+        if (parent == null) {
+            throw new CmisRuntimeException("Parent is null!");
+        }
+
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        JSONObject jsonObject = JSONConverter.convert(parent, typeCache);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        BrowserBindingUtils.writeJSON(jsonObject, request, response);
     }
 
     /**

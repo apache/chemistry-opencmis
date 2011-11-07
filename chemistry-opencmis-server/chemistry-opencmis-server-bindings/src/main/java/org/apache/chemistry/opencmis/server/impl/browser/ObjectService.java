@@ -18,8 +18,29 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
-import static org.apache.chemistry.opencmis.commons.impl.Constants.*;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.*;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.MEDIATYPE_OCTETSTREAM;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ACL;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWABLE_ACTIONS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_POLICY_IDS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RELATIONSHIPS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RENDITION_FILTER;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RETURN_VERSION;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_STREAM_ID;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_VERSIONIG_STATE;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_TRANSACTION;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createPolicies;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createProperties;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -34,10 +55,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -60,18 +84,15 @@ public final class ObjectService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String folderId = (String) context.get(CONTEXT_OBJECT_ID);
-        VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE,
-                VersioningState.class);
+        VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE, VersioningState.class);
         String transaction = getStringParameter(request, PARAM_TRANSACTION);
 
         ControlParser cp = new ControlParser(request);
 
         TypeCache typeCache = new TypeCache(repositoryId, service);
 
-        String newObjectId = service.createDocument(repositoryId,
-                createProperties(cp, null, typeCache), folderId,
-                createContentStream(request), versioningState,
-                createPolicies(cp), createAddAcl(cp),
+        String newObjectId = service.createDocument(repositoryId, createProperties(cp, null, typeCache), folderId,
+                createContentStream(request), versioningState, createPolicies(cp), createAddAcl(cp),
                 createRemoveAcl(cp), null);
 
         ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
@@ -103,10 +124,8 @@ public final class ObjectService {
 
         TypeCache typeCache = new TypeCache(repositoryId, service);
 
-        String newObjectId = service.createFolder(repositoryId,
-                createProperties(cp, null, typeCache), folderId,
-                createPolicies(cp), createAddAcl(cp),
-                createRemoveAcl(cp), null);
+        String newObjectId = service.createFolder(repositoryId, createProperties(cp, null, typeCache), folderId,
+                createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
         ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
         if (objectInfo == null) {
@@ -210,9 +229,9 @@ public final class ObjectService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        // TODO: more parameters
+        Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
 
-        service.deleteObject(repositoryId, objectId, null, null);
+        service.deleteObject(repositoryId, objectId, allVersions, null);
 
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
@@ -221,24 +240,87 @@ public final class ObjectService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        // TODO: more parameters
+        Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
+        UnfileObject unfileObjects = getEnumParameter(request, Constants.PARAM_UNFILE_OBJECTS, UnfileObject.class);
+        Boolean continueOnFailure = getBooleanParameter(request, Constants.PARAM_CONTINUE_ON_FAILURE);
 
-        service.deleteTree(repositoryId, objectId, null, null, null, null);
+        // execute
+        FailedToDeleteData ftd = service.deleteTree(repositoryId, objectId, allVersions, unfileObjects,
+                continueOnFailure, null);
+
+        if ((ftd != null) && (ftd.getIds() != null) && (ftd.getIds().size() > 0)) {
+            // TODO
+        }
 
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
-    // TODO: doesn't work
+    /**
+     * Delete content stream.
+     */
+    public static void deleteContentStream(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
+
+        // execute
+        Holder<String> objectIdHolder = new Holder<String>(objectId);
+        Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
+        service.deleteContentStream(repositoryId, objectIdHolder, changeTokenHolder, null);
+
+        // set headers
+        String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
+
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        ObjectData object = service.getObject(repositoryId, newObjectId, null, false, IncludeRelationships.NONE,
+                "cmis:none", false, false, null);
+
+        if (object == null) {
+            throw new CmisRuntimeException("Object is null!");
+        }
+
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
+     * Set content stream.
+     */
     public static void setContentStream(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
+        Boolean overwriteFlag = getBooleanParameter(request, Constants.PARAM_OVERWRITE_FLAG);
 
         // execute
-        service.setContentStream(repositoryId, new Holder<String>(objectId),
-                true, null, createContentStream(request), null);
+        Holder<String> objectIdHolder = new Holder<String>(objectId);
+        Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
+        service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
+                createContentStream(request), null);
 
-        getObject(context, service, repositoryId, request, response);
+        String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
+
+        // set headers
+        String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setHeader("Location", location);
+
+        ObjectData object = service.getObject(repositoryId, newObjectId, null, false, IncludeRelationships.NONE,
+                "cmis:none", false, false, null);
+
+        if (object == null) {
+            throw new CmisRuntimeException("Object is null!");
+        }
+
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+
+        writeJSON(jsonObject, request, response);
     }
-
 }

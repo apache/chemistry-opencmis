@@ -83,6 +83,7 @@ public class BrowserBindingUtils {
     public static final String SELECTOR_CHILDREN = "children";
     public static final String SELECTOR_DESCENDANTS = "descendants";
     public static final String SELECTOR_PARENTS = "parents";
+    public static final String SELECTOR_PARENT = "parent";
     public static final String SELECTOR_FOLDER_TREE = "folder";
     public static final String SELECTOR_QUERY = "query";
     public static final String SELECTOR_VERSIONS = "versions";
@@ -91,6 +92,7 @@ public class BrowserBindingUtils {
     public static final String CMISACTION_CREATE_FOLDER = "createFolder";
     public static final String CMISACTION_CREATE_RELATIONSHIP = "createRelationship";
     public static final String CMISACTION_CREATE_POLICY = "createPolicy";
+    public static final String CMISACTION_DELETE_CONTENT = "deleteContent";
     public static final String CMISACTION_SET_CONTENT = "setContent";
     public static final String CMISACTION_DELETE = "delete";
     public static final String CMISACTION_DELETE_TREE = "deleteTree";
