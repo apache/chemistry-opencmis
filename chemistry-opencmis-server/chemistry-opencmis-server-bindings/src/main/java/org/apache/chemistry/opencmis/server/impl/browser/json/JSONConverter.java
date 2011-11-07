@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser.json;
 
+import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.*;
+
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
@@ -63,8 +65,6 @@ import org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils;
 import org.apache.chemistry.opencmis.server.impl.browser.TypeCache;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.*;
 
 /**
  * OpenCMIS objects to JSON converter.
@@ -337,7 +337,7 @@ public class JSONConverter {
 
             if ((property.getValues() == null) || (property.getValues().size() == 0)) {
                 result.put(JSON_PROPERTY_VALUE, null);
-            } else if (property.getValues().size() == 1) {
+            } else if (property.getValues().size() > 0) {
                 JSONArray values = new JSONArray();
 
                 for (Object value : property.getValues()) {
