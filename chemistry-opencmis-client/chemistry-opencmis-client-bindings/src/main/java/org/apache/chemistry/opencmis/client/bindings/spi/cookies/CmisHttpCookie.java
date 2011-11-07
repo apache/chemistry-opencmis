@@ -236,10 +236,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
                 }
 
                 Setter setter = cookie.attributeSet.get(attrName.toLowerCase());
-                if (null == setter) {
-                    throw new IllegalArgumentException();
-                }
-                if (!setter.isSet()) {
+                if (setter != null && !setter.isSet()) {
                     String attrValue = matcher.group(2);
                     setter.validate(attrValue, cookie);
                     setter.setValue(matcher.group(2), cookie);
