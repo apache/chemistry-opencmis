@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -84,7 +85,6 @@ public final class RepositoryService {
     /**
      * getLastResult.
      */
-    @SuppressWarnings("unchecked")
     public static void getLastResult(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -101,18 +101,19 @@ public final class RepositoryService {
             }
         }
 
-        JSONObject result = null;
         try {
             if (cookieValue == null) {
-                cookieValue = BrowserBindingUtils.createCookieValue(0, null, "invalidArgument", "Unknown transaction!");
+                cookieValue = BrowserBindingUtils.createCookieValue(0, null,
+                        CmisInvalidArgumentException.EXCEPTION_NAME, "Unknown transaction!");
+            } else {
+                JSONValue.parse(cookieValue);
             }
-
-            result = (JSONObject) JSONValue.parse(cookieValue);
         } catch (Exception pe) {
-            result.put("code", 0);
-            result.put("objectId", null);
-            result.put("message", "Cookie pasring error!");
+            cookieValue = BrowserBindingUtils.createCookieValue(0, null, CmisRuntimeException.EXCEPTION_NAME,
+                    "Cookie pasring error!");
         }
+
+        BrowserBindingUtils.deleteCookie(request, response, repositoryId, transaction);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON((JSONObject) JSONValue.parse(cookieValue), request, response);

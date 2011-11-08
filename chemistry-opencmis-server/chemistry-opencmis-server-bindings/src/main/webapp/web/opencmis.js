@@ -23,3 +23,28 @@ function createGUID() {
 		return v.toString(16);
 	});
 }
+
+function createCMISForm(rootFolderUrl, id, cmisaction, callback) {
+    var frameName = "cmis" + createGUID();
+    
+    var targetFrame = document.createElement("iframe");
+    targetFrame.frameBorder = targetFrame.width = targetFrame.height = 0;
+    targetFrame.name = frameName;
+    document.body.appendChild(targetFrame);
+    targetFrame.addEventListener("load", function() { callback(); document.body.removeChild(targetFrame); }, false);
+
+    var cmisForm = targetFrame.contentDocument.createElement("form");
+    cmisForm.action = rootFolderUrl + "?objectId=" + encodeURIComponent(id);
+    cmisForm.target = frameName;
+    cmisForm.method = "POST";
+    
+    targetFrame.appendChild(cmisForm);
+    
+    var cmisActionInput = targetFrame.contentDocument.createElement("input");
+    cmisActionInput.name = "cmisaction";
+    cmisActionInput.value = cmisaction;
+    
+    cmisForm.appendChild(cmisActionInput);
+
+    return cmisForm;
+}

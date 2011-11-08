@@ -51,7 +51,8 @@ public class HttpUtils {
             repositoryId = pathFragments[0];
         }
 
-        CallContextImpl context = new CallContextImpl(binding, repositoryId, true);
+        CallContextImpl context = new CallContextImpl(binding, repositoryId,
+                CallContext.BINDING_ATOMPUB.equals(binding));
 
         // call call context handler
         if (callContextHandler != null) {

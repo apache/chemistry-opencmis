@@ -104,7 +104,7 @@ public class BrowserBindingUtils {
     public static final String PARAM_SELECTOR = "selector";
     public static final String PARAM_TRANSACTION = "transaction";
     public static final String PARAM_CLIENT_TOKEN = "clientToken";
-    public static final String PARAM_SUPPRESS_RESPONSE_CODES ="suppressResponseCodes";
+    public static final String PARAM_SUPPRESS_RESPONSE_CODES = "suppressResponseCodes";
 
     public static final String CONTROL_CMISACTION = "cmisaction";
     public static final String CONTROL_TRANSACTION = "transaction";
@@ -195,11 +195,12 @@ public class BrowserBindingUtils {
         ObjectData object = null;
 
         if (objectId != null) {
-            object = service.getObject(repositoryId, objectId, null, false, IncludeRelationships.NONE, "cmis:none",
-                    false, false, null);
+            object = service.getObject(repositoryId, objectId, "cmis:objectId,cmis:objectTypeId,cmis:baseTypeId",
+                    false, IncludeRelationships.NONE, "cmis:none", false, false, null);
         } else {
-            object = service.getObjectByPath(repositoryId, getPath(request), null, false, IncludeRelationships.NONE,
-                    "cmis:none", false, false, null);
+            object = service.getObjectByPath(repositoryId, getPath(request),
+                    "cmis:objectId,cmis:objectTypeId,cmis:baseTypeId", false, IncludeRelationships.NONE, "cmis:none",
+                    false, false, null);
         }
 
         if (contextImpl != null) {
@@ -503,5 +504,11 @@ public class BrowserBindingUtils {
         if (clientToken != null) {
             response.getWriter().print(");");
         }
+    }
+
+    public static void writeEmpty(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentLength(0);
+        response.setContentType("text/plain");
+        response.getWriter().flush();
     }
 }

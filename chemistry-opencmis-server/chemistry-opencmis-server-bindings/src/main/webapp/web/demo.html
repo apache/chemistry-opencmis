@@ -35,9 +35,11 @@ td {
 	padding: 5px;
 }
 </style>
+<script type="text/javascript" src="opencmis.js"></script>
 <script type="text/javascript">
 var repositoryUrl;
 var rootFolderUrl;
+var rootFolder = "/";
 
 function printRepositoryInfos(infos) {
 	for(repId in infos) {
@@ -58,8 +60,6 @@ function printRepositoryInfos(infos) {
         repositoryUrl = ri.repositoryUrl;
         rootFolderUrl = ri.rootFolderUrl; 
 	}
-
-    var rootFolder = "/";
 
     document.getElementById('queryForm').action = repositoryUrl;
 	
@@ -113,7 +113,7 @@ function printChildren(children) {
     s = s + '<h3>Properties</h3>';
 
     s = s + '<table><tr><th>Name</th><th>Type</th><th>MIME Type</th><th>Size</th>' +
-    '<th>Created By</th><th>Created At</th><th>Id</th></tr>';
+    '<th>Created By</th><th>Created At</th><th>Id</th><th></th></tr>';
 
     for(var index in children.objects) {
         var object = children.objects[index].object;
@@ -126,7 +126,12 @@ function printChildren(children) {
         var creationDate = new Date(object.properties["cmis:creationDate"].value);
         var id = object.properties["cmis:objectId"].value;
         var link = "";
+        var deleteLink = "deleteObject('" + id + "')";
 
+        if(object.properties["cmis:baseTypeId"].value == "cmis:folder") {
+        	deleteLink = "deleteFolder('" + id + "')";
+        }
+        
         if(object.properties["cmis:baseTypeId"].value == "cmis:document") {
             if(object.properties["cmis:contentStreamLength"]) {
                 size = object.properties["cmis:contentStreamLength"].value;
@@ -150,8 +155,9 @@ function printChildren(children) {
         else {
             s = s + name;
         }
+        
         s = s + '</td><td>' + type + '</td><td>' + mimetype + '</td><td style="rext-align:right">' + size +
-         '</td><td>' + createdBy + '</td><td>' + creationDate + '</td><td>' + id + '</td></tr>';
+         '</td><td>' + createdBy + '</td><td>' + creationDate + '</td><td>' + id + '</td><td><button onClick="' + deleteLink + '">delete</button></td></tr>';
     }
     
     s = s + '</table>';
@@ -178,6 +184,24 @@ function printTypes(types) {
     
     document.getElementById('typeInfo').innerHTML = s;
 }
+
+function reloadChildren() {
+    var reloadScript = document.createElement("script");        
+    reloadScript.setAttribute("src", rootFolderUrl + rootFolder + "?selector=children&clientToken=printChildren");
+    reloadScript.setAttribute("type","text/javascript");                
+    document.body.appendChild(reloadScript);
+}
+
+function deleteObject(id) {
+    var deleteForm = createCMISForm(rootFolderUrl, id, "delete", reloadChildren);    
+    deleteForm.submit();
+}
+
+function deleteFolder(id) {
+    var deleteForm = createCMISForm(rootFolderUrl, id, "deleteTree", reloadChildren);    
+    deleteForm.submit();
+}
+
 </script>
 </head>
 <body>

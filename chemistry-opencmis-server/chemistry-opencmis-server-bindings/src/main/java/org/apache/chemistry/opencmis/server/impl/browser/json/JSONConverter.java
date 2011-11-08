@@ -450,24 +450,26 @@ public class JSONConverter {
      */
     @SuppressWarnings("unchecked")
     public static JSONObject convert(ObjectList list) {
+        if (list == null) {
+            return null;
+        }
+
         JSONObject result = new JSONObject();
 
-        if (list != null) {
-            JSONArray objects = new JSONArray();
-            if (list.getObjects() != null) {
-                for (ObjectData object : list.getObjects()) {
-                    objects.add(convert(object, null));
-                }
+        JSONArray objects = new JSONArray();
+        if (list.getObjects() != null) {
+            for (ObjectData object : list.getObjects()) {
+                objects.add(convert(object, null));
             }
+        }
 
-            result.put(JSON_OBJECTLIST_OBJECTS, objects);
+        result.put(JSON_OBJECTLIST_OBJECTS, objects);
 
-            if (list.hasMoreItems() != null) {
-                result.put(JSON_OBJECTLIST_HAS_MORE_ITEMS, list.hasMoreItems());
-            }
-            if (list.getNumItems() != null) {
-                result.put(JSON_OBJECTLIST_NUM_ITEMS, list.getNumItems());
-            }
+        if (list.hasMoreItems() != null) {
+            result.put(JSON_OBJECTLIST_HAS_MORE_ITEMS, list.hasMoreItems());
+        }
+        if (list.getNumItems() != null) {
+            result.put(JSON_OBJECTLIST_NUM_ITEMS, list.getNumItems());
         }
 
         return result;

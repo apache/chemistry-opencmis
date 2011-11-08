@@ -32,6 +32,7 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RES
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_TYPE_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_TRANSACTION;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
@@ -40,6 +41,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createProperties;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeEmpty;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
@@ -69,7 +71,6 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.server.impl.browser.json.JSONConverter;
 import org.json.simple.JSONArray;
@@ -103,14 +104,9 @@ public final class ObjectService {
                 createContentStream(request), versioningState, createPolicies(cp), createAddAcl(cp),
                 createRemoveAcl(cp), null);
 
-        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
-        if (objectInfo == null) {
-            throw new CmisRuntimeException("Object Info is missing!");
-        }
-
-        ObjectData object = objectInfo.getObject();
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
         if (object == null) {
-            throw new CmisRuntimeException("Object is null!");
+            throw new CmisRuntimeException("New document is null!");
         }
 
         JSONObject jsonObject = JSONConverter.convert(object, typeCache);
@@ -131,21 +127,16 @@ public final class ObjectService {
         String folderId = (String) context.get(CONTEXT_OBJECT_ID);
         String transaction = getStringParameter(request, PARAM_TRANSACTION);
 
+        // execute
         ControlParser cp = new ControlParser(request);
-
         TypeCache typeCache = new TypeCache(repositoryId, service);
 
         String newObjectId = service.createFolder(repositoryId, createProperties(cp, null, typeCache), folderId,
                 createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
-        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
-        if (objectInfo == null) {
-            throw new CmisRuntimeException("Object Info is missing!");
-        }
-
-        ObjectData object = objectInfo.getObject();
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
         if (object == null) {
-            throw new CmisRuntimeException("Object is null!");
+            throw new CmisRuntimeException("New folder is null!");
         }
 
         JSONObject jsonObject = JSONConverter.convert(object, typeCache);
@@ -153,6 +144,46 @@ public final class ObjectService {
         response.setStatus(HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
+     * updateProperties.
+     */
+    public static void updateProperties(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String typeId = (String) context.get(CONTEXT_OBJECT_TYPE_ID);
+        String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
+        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+
+        // execute
+        ControlParser cp = new ControlParser(request);
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        Holder<String> objectIdHolder = new Holder<String>(objectId);
+        Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
+
+        service.updateProperties(repositoryId, objectIdHolder, changeTokenHolder,
+                createProperties(cp, typeId, typeCache), null);
+
+        String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
+
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
+        if (object == null) {
+            throw new CmisRuntimeException("Object is null!");
+        }
+
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+
+        int status = HttpServletResponse.SC_OK;
+        if (!objectId.equals(newObjectId)) {
+            status = HttpServletResponse.SC_CREATED;
+        }
+
+        response.setStatus(status);
+        setCookie(request, response, repositoryId, transaction, createCookieValue(status, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);
     }
@@ -240,7 +271,6 @@ public final class ObjectService {
         BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
         // execute
-
         List<RenditionData> renditions = service.getRenditions(repositoryId, objectId, renditionFilter, maxItems,
                 skipCount, null);
 
@@ -312,7 +342,8 @@ public final class ObjectService {
 
         service.deleteObject(repositoryId, objectId, allVersions, null);
 
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        response.setStatus(HttpServletResponse.SC_OK);
+        writeEmpty(request, response);
     }
 
     /**
@@ -334,7 +365,8 @@ public final class ObjectService {
             // TODO
         }
 
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        response.setStatus(HttpServletResponse.SC_OK);
+        writeEmpty(request, response);
     }
 
     /**
@@ -356,9 +388,7 @@ public final class ObjectService {
 
         response.setStatus(HttpServletResponse.SC_OK);
 
-        ObjectData object = service.getObject(repositoryId, newObjectId, null, false, IncludeRelationships.NONE,
-                "cmis:none", false, false, null);
-
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
         if (object == null) {
             throw new CmisRuntimeException("Object is null!");
         }
@@ -393,9 +423,7 @@ public final class ObjectService {
         response.setStatus(HttpServletResponse.SC_CREATED);
         response.setHeader("Location", location);
 
-        ObjectData object = service.getObject(repositoryId, newObjectId, null, false, IncludeRelationships.NONE,
-                "cmis:none", false, false, null);
-
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
         if (object == null) {
             throw new CmisRuntimeException("Object is null!");
         }
@@ -404,5 +432,10 @@ public final class ObjectService {
         JSONObject jsonObject = JSONConverter.convert(object, typeCache);
 
         writeJSON(jsonObject, request, response);
+    }
+
+    protected static ObjectData getSimpleObject(CmisService service, String repositoryId, String objectId) {
+        return service.getObject(repositoryId, objectId, null, false, IncludeRelationships.NONE, "cmis:none", false,
+                false, null);
     }
 }
