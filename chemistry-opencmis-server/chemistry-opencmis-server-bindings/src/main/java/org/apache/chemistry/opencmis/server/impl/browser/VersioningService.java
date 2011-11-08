@@ -19,8 +19,20 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWABLE_ACTIONS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_CHECKIN_COMMENT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_MAJOR;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_TRANSACTION;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createPolicies;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createProperties;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.getSimpleObject;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeEmpty;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -34,8 +46,10 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.server.impl.browser.json.JSONConverter;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  * Versioning Service operations.
@@ -43,6 +57,87 @@ import org.json.simple.JSONArray;
 public class VersioningService {
 
     private VersioningService() {
+    }
+
+    /**
+     * checkOut.
+     */
+    public static void checkOut(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+
+        // execute
+        Holder<String> checkOutId = new Holder<String>(objectId);
+        service.checkOut(repositoryId, checkOutId, null, null);
+
+        ObjectData object = getSimpleObject(service, repositoryId, checkOutId.getValue());
+        if (object == null) {
+            throw new CmisRuntimeException("PWC is null!");
+        }
+
+        // return object
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        setCookie(request, response, repositoryId, transaction,
+                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
+     * checkOut.
+     */
+    public static void cancelCheckOut(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+
+        // execute
+        service.cancelCheckOut(repositoryId, objectId, null);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        writeEmpty(request, response);
+    }
+
+    /**
+     * checkIn.
+     */
+    public static void checkIn(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        Boolean major = getBooleanParameter(request, PARAM_MAJOR);
+        String checkinComment = getStringParameter(request, PARAM_CHECKIN_COMMENT);
+        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+
+        // execute
+        ControlParser cp = new ControlParser(request);
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        Holder<String> objectIdHolder = new Holder<String>(objectId);
+
+        service.checkIn(repositoryId, objectIdHolder, major, createProperties(cp, null, typeCache),
+                createContentStream(request), checkinComment, createPolicies(cp), createAddAcl(cp),
+                createRemoveAcl(cp), null);
+
+        String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
+
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
+        if (object == null) {
+            throw new CmisRuntimeException("New version is null!");
+        }
+
+        // return object
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        setCookie(request, response, repositoryId, transaction,
+                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+
+        writeJSON(jsonObject, request, response);
     }
 
     @SuppressWarnings("unchecked")

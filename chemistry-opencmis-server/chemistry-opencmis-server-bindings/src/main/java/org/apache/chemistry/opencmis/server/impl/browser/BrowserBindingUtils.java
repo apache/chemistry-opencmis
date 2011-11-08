@@ -100,6 +100,9 @@ public class BrowserBindingUtils {
     public static final String CMISACTION_DELETE = "delete";
     public static final String CMISACTION_DELETE_TREE = "deleteTree";
     public static final String CMISACTION_QUERY = "query";
+    public static final String CMISACTION_CHECK_OUT = "checkOut";
+    public static final String CMISACTION_CANCEL_CHECK_OUT = "cancelCheckOut";
+    public static final String CMISACTION_CHECK_IN = "checkIn";
 
     public static final String PARAM_SELECTOR = "selector";
     public static final String PARAM_TRANSACTION = "transaction";
@@ -428,6 +431,11 @@ public class BrowserBindingUtils {
         }
 
         return result;
+    }
+
+    protected static ObjectData getSimpleObject(CmisService service, String repositoryId, String objectId) {
+        return service.getObject(repositoryId, objectId, null, false, IncludeRelationships.NONE, "cmis:none", false,
+                false, null);
     }
 
     /**

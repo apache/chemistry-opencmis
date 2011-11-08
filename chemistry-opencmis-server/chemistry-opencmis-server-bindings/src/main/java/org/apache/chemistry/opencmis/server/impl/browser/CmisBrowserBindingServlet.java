@@ -19,6 +19,9 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_OBJECT_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CANCEL_CHECK_OUT;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CHECK_IN;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CHECK_OUT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CREATE_DOCUMENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CREATE_FOLDER;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE;
@@ -165,6 +168,11 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     "deleteContentStream");
             rootDispatcher.addResource(CMISACTION_DELETE, METHOD_POST, ObjectService.class, "deleteObject");
             rootDispatcher.addResource(CMISACTION_DELETE_TREE, METHOD_POST, ObjectService.class, "deleteTree");
+            rootDispatcher.addResource(CMISACTION_CHECK_OUT, METHOD_POST, VersioningService.class, "checkOut");
+            rootDispatcher.addResource(CMISACTION_CANCEL_CHECK_OUT, METHOD_POST, VersioningService.class,
+                    "cancelCheckOut");
+            rootDispatcher.addResource(CMISACTION_CHECK_IN, METHOD_POST, VersioningService.class, "checkIn");
+
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);
         }
