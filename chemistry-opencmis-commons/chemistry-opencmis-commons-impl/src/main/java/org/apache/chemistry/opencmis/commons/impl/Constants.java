@@ -129,6 +129,7 @@ public final class Constants {
     public static final String PARAM_ROPERTY_DEFINITIONS = "includePropertyDefinitions";
     public static final String PARAM_SKIP_COUNT = "skipCount";
     public static final String PARAM_SOURCE_FOLDER_ID = "sourceFolderId";
+    public static final String PARAM_TARGET_FOLDER_ID = "targetFolderId";
     public static final String PARAM_STREAM_ID = "streamId";
     public static final String PARAM_SUB_RELATIONSHIP_TYPES = "includeSubRelationshipTypes";
     public static final String PARAM_TYPE_ID = "typeId";

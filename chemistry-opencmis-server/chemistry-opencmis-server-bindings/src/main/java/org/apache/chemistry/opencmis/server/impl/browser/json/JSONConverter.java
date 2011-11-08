@@ -449,7 +449,7 @@ public class JSONConverter {
      * Converts a query object list.
      */
     @SuppressWarnings("unchecked")
-    public static JSONObject convert(ObjectList list) {
+    public static JSONObject convert(ObjectList list, TypeCache typeCache) {
         if (list == null) {
             return null;
         }
@@ -459,7 +459,7 @@ public class JSONConverter {
         JSONArray objects = new JSONArray();
         if (list.getObjects() != null) {
             for (ObjectData object : list.getObjects()) {
-                objects.add(convert(object, null));
+                objects.add(convert(object, typeCache));
             }
         }
 

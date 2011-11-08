@@ -90,6 +90,7 @@ public class BrowserBindingUtils {
     public static final String SELECTOR_QUERY = "query";
     public static final String SELECTOR_VERSIONS = "versions";
     public static final String SELECTOR_RELATIONSHIPS = "relationships";
+    public static final String SELECTOR_CHECKEDOUT = "checkedout";
 
     public static final String CMISACTION_CREATE_DOCUMENT = "createDocument";
     public static final String CMISACTION_CREATE_FOLDER = "createFolder";
@@ -99,6 +100,7 @@ public class BrowserBindingUtils {
     public static final String CMISACTION_SET_CONTENT = "setContent";
     public static final String CMISACTION_DELETE = "delete";
     public static final String CMISACTION_DELETE_TREE = "deleteTree";
+    public static final String CMISACTION_MOVE = "move";
     public static final String CMISACTION_QUERY = "query";
     public static final String CMISACTION_CHECK_OUT = "checkOut";
     public static final String CMISACTION_CANCEL_CHECK_OUT = "cancelCheckOut";

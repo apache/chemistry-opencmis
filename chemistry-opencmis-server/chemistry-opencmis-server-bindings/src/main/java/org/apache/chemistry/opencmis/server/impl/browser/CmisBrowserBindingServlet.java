@@ -27,6 +27,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE_TREE;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_MOVE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_QUERY;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_SET_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_BASETYPE_ID;
@@ -37,6 +38,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.JSON_MIME_TYPE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_SELECTOR;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_SUPPRESS_RESPONSE_CODES;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CHECKEDOUT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CHILDREN;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_DESCENDANTS;
@@ -147,6 +149,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST, DiscoveryService.class, "query");
             repositoryDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class,
                     "createDocument");
+            repositoryDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, RelationshipService.class,
+                    "getCheckedOutDocs");
 
             rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class, "getObject");
             rootDispatcher.addResource(SELECTOR_PROPERTIES, METHOD_GET, ObjectService.class, "getProperties");
@@ -160,6 +164,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             rootDispatcher.addResource(SELECTOR_VERSIONS, METHOD_GET, VersioningService.class, "getAllVersions");
             rootDispatcher.addResource(SELECTOR_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
                     "getObjectRelationships");
+            rootDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, RelationshipService.class, "getCheckedOutDocs");
 
             rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class, "createDocument");
             rootDispatcher.addResource(CMISACTION_CREATE_FOLDER, METHOD_POST, ObjectService.class, "createFolder");
@@ -168,6 +173,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     "deleteContentStream");
             rootDispatcher.addResource(CMISACTION_DELETE, METHOD_POST, ObjectService.class, "deleteObject");
             rootDispatcher.addResource(CMISACTION_DELETE_TREE, METHOD_POST, ObjectService.class, "deleteTree");
+            rootDispatcher.addResource(CMISACTION_MOVE, METHOD_POST, ObjectService.class, "moveObject");
             rootDispatcher.addResource(CMISACTION_CHECK_OUT, METHOD_POST, VersioningService.class, "checkOut");
             rootDispatcher.addResource(CMISACTION_CANCEL_CHECK_OUT, METHOD_POST, VersioningService.class,
                     "cancelCheckOut");

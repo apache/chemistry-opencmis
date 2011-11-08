@@ -22,6 +22,9 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWAB
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_CHECKIN_COMMENT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_MAJOR;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_TRANSACTION;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
@@ -81,6 +84,12 @@ public class VersioningService {
         TypeCache typeCache = new TypeCache(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(object, typeCache);
 
+        // set headers
+        String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setHeader("Location", location);
+
         response.setStatus(HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
@@ -133,7 +142,11 @@ public class VersioningService {
         // return object
         JSONObject jsonObject = JSONConverter.convert(object, typeCache);
 
+        String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
+
         response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setHeader("Location", location);
+
         setCookie(request, response, repositoryId, transaction,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 

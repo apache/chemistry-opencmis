@@ -26,7 +26,9 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_POLICY_
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RELATIONSHIPS;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RENDITION_FILTER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RETURN_VERSION;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SOURCE_FOLDER_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_STREAM_ID;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TARGET_FOLDER_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_VERSIONIG_STATE;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
@@ -420,6 +422,40 @@ public final class ObjectService {
         Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
         service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
                 createContentStream(request), null);
+
+        String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
+
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
+        if (object == null) {
+            throw new CmisRuntimeException("Object is null!");
+        }
+
+        // set headers
+        String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setHeader("Location", location);
+
+        // return object
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
+     * moveObject.
+     */
+    public static void moveObject(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String targetFolderId = getStringParameter(request, PARAM_TARGET_FOLDER_ID);
+        String sourceFolderId = getStringParameter(request, PARAM_SOURCE_FOLDER_ID);
+
+        // execute
+        Holder<String> objectIdHolder = new Holder<String>(objectId);
+        service.moveObject(repositoryId, objectIdHolder, targetFolderId, sourceFolderId, null);
 
         String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 

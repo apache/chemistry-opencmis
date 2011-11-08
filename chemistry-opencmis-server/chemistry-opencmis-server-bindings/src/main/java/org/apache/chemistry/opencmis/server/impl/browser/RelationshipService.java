@@ -71,7 +71,8 @@ public class RelationshipService {
             throw new CmisRuntimeException("Relationships are null!");
         }
 
-        JSONObject jsonChildren = JSONConverter.convert(relationships);
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonChildren, request, response);
