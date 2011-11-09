@@ -24,6 +24,8 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CHECK_OUT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CREATE_DOCUMENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CREATE_FOLDER;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CREATE_POLICY;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CREATE_RELATIONSHIP;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_DELETE_TREE;
@@ -149,7 +151,11 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST, DiscoveryService.class, "query");
             repositoryDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class,
                     "createDocument");
-            repositoryDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, RelationshipService.class,
+            repositoryDispatcher
+                    .addResource(CMISACTION_CREATE_POLICY, METHOD_POST, ObjectService.class, "createPolicy");
+            repositoryDispatcher.addResource(CMISACTION_CREATE_RELATIONSHIP, METHOD_POST, ObjectService.class,
+                    "createRelationship");
+            repositoryDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, DiscoveryService.class,
                     "getCheckedOutDocs");
 
             rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class, "getObject");
@@ -164,10 +170,11 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             rootDispatcher.addResource(SELECTOR_VERSIONS, METHOD_GET, VersioningService.class, "getAllVersions");
             rootDispatcher.addResource(SELECTOR_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
                     "getObjectRelationships");
-            rootDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, RelationshipService.class, "getCheckedOutDocs");
+            rootDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, DiscoveryService.class, "getCheckedOutDocs");
 
             rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class, "createDocument");
             rootDispatcher.addResource(CMISACTION_CREATE_FOLDER, METHOD_POST, ObjectService.class, "createFolder");
+            rootDispatcher.addResource(CMISACTION_CREATE_POLICY, METHOD_POST, ObjectService.class, "createPolicy");
             rootDispatcher.addResource(CMISACTION_SET_CONTENT, METHOD_POST, ObjectService.class, "setContentStream");
             rootDispatcher.addResource(CMISACTION_DELETE_CONTENT, METHOD_POST, ObjectService.class,
                     "deleteContentStream");

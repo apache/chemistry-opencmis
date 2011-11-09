@@ -154,6 +154,67 @@ public final class ObjectService {
     }
 
     /**
+     * Create policy.
+     */
+    public static void createPolicy(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
+        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+
+        // execute
+        ControlParser cp = new ControlParser(request);
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+
+        String newObjectId = service.createPolicy(repositoryId, createProperties(cp, null, typeCache), folderId,
+                createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
+        if (object == null) {
+            throw new CmisRuntimeException("New policy is null!");
+        }
+
+        // return object
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        setCookie(request, response, repositoryId, transaction,
+                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
+     * Create relationship.
+     */
+    public static void createRelationship(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+
+        // execute
+        ControlParser cp = new ControlParser(request);
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+
+        String newObjectId = service.createRelationship(repositoryId, createProperties(cp, null, typeCache),
+                createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
+        if (object == null) {
+            throw new CmisRuntimeException("New relationship is null!");
+        }
+
+        // return object
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        setCookie(request, response, repositoryId, transaction,
+                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
      * updateProperties.
      */
     public static void updateProperties(CallContext context, CmisService service, String repositoryId,
