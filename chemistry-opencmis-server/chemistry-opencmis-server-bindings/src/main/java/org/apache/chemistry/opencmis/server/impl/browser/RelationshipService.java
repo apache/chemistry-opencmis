@@ -53,7 +53,6 @@ public class RelationshipService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-
         Boolean includeSubRelationshipTypes = getBooleanParameter(request, PARAM_SUB_RELATIONSHIP_TYPES);
         RelationshipDirection relationshipDirection = getEnumParameter(request, PARAM_RELATIONSHIP_DIRECTION,
                 RelationshipDirection.class);

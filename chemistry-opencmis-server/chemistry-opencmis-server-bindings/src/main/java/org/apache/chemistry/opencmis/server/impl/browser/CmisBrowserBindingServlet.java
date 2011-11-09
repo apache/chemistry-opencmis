@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.impl.browser;
 
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_ADD_OBJECT_TO_FOLDER;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_APPLY_POLICY;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CANCEL_CHECK_OUT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CHECK_IN;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CHECK_OUT;
@@ -34,6 +35,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_MOVE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_QUERY;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_REMOVE_OBJECT_FROM_FOLDER;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_REMOVE_POLICY;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_SET_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_BASETYPE_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_TRANSACTION;
@@ -52,6 +54,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_OBJECT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_PARENT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_PARENTS;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_POLICIES;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_PROPERTIES;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_QUERY;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_RELATIONSHIPS;
@@ -176,6 +179,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             rootDispatcher.addResource(SELECTOR_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
                     "getObjectRelationships");
             rootDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, DiscoveryService.class, "getCheckedOutDocs");
+            rootDispatcher.addResource(SELECTOR_POLICIES, METHOD_GET, PolicyService.class, "getAppliedPolicies");
 
             rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class, "createDocument");
             rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT_FROM_SOURCE, METHOD_POST, ObjectService.class,
@@ -196,6 +200,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             rootDispatcher.addResource(CMISACTION_CANCEL_CHECK_OUT, METHOD_POST, VersioningService.class,
                     "cancelCheckOut");
             rootDispatcher.addResource(CMISACTION_CHECK_IN, METHOD_POST, VersioningService.class, "checkIn");
+            rootDispatcher.addResource(CMISACTION_APPLY_POLICY, METHOD_POST, PolicyService.class, "applyPolicy");
+            rootDispatcher.addResource(CMISACTION_REMOVE_POLICY, METHOD_POST, PolicyService.class, "removePolicy");
 
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);

@@ -91,6 +91,8 @@ public class BrowserBindingUtils {
     public static final String SELECTOR_VERSIONS = "versions";
     public static final String SELECTOR_RELATIONSHIPS = "relationships";
     public static final String SELECTOR_CHECKEDOUT = "checkedout";
+    public static final String SELECTOR_POLICIES = "policies";
+    public static final String SELECTOR_ACL = "acl";
 
     public static final String CMISACTION_CREATE_DOCUMENT = "createDocument";
     public static final String CMISACTION_CREATE_DOCUMENT_FROM_SOURCE = "createDocumentFromSource";
@@ -108,6 +110,9 @@ public class BrowserBindingUtils {
     public static final String CMISACTION_CHECK_OUT = "checkOut";
     public static final String CMISACTION_CANCEL_CHECK_OUT = "cancelCheckOut";
     public static final String CMISACTION_CHECK_IN = "checkIn";
+    public static final String CMISACTION_APPLY_POLICY = "applyPolicy";
+    public static final String CMISACTION_REMOVE_POLICY = "removePolicy";
+    public static final String CMISACTION_APPLY_ACL = "applyACL";
 
     public static final String PARAM_SELECTOR = "selector";
     public static final String PARAM_TRANSACTION = "transaction";
