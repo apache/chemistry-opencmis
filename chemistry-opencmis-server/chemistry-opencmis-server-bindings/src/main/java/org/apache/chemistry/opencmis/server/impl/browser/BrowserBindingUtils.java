@@ -93,6 +93,7 @@ public class BrowserBindingUtils {
     public static final String SELECTOR_CHECKEDOUT = "checkedout";
 
     public static final String CMISACTION_CREATE_DOCUMENT = "createDocument";
+    public static final String CMISACTION_CREATE_DOCUMENT_FROM_SOURCE = "createDocumentFromSource";
     public static final String CMISACTION_CREATE_FOLDER = "createFolder";
     public static final String CMISACTION_CREATE_RELATIONSHIP = "createRelationship";
     public static final String CMISACTION_CREATE_POLICY = "createPolicy";
@@ -101,6 +102,8 @@ public class BrowserBindingUtils {
     public static final String CMISACTION_DELETE = "delete";
     public static final String CMISACTION_DELETE_TREE = "deleteTree";
     public static final String CMISACTION_MOVE = "move";
+    public static final String CMISACTION_ADD_OBJECT_TO_FOLDER = "addObjectToFolder";
+    public static final String CMISACTION_REMOVE_OBJECT_FROM_FOLDER = "removeObjectFromFolder";
     public static final String CMISACTION_QUERY = "query";
     public static final String CMISACTION_CHECK_OUT = "checkOut";
     public static final String CMISACTION_CANCEL_CHECK_OUT = "cancelCheckOut";

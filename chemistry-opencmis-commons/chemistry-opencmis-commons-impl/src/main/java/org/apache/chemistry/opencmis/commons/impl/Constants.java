@@ -139,6 +139,7 @@ public final class Constants {
     public static final String PARAM_Q = "q";
     public static final String PARAM_SEARCH_ALL_VERSIONS = "searchAllVersions";
     public static final String PARAM_ACL_PROPAGATION = "ACLPropagation";
+    public static final String PARAM_SOURCE_ID = "sourceId";
 
     // rendition filter
     public static final String RENDITION_NONE = "cmis:none";

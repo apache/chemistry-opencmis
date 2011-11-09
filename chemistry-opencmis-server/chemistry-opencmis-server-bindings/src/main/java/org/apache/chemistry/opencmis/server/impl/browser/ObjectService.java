@@ -27,6 +27,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RELATIO
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RENDITION_FILTER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RETURN_VERSION;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SOURCE_FOLDER_ID;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SOURCE_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_STREAM_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TARGET_FOLDER_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_VERSIONIG_STATE;
@@ -105,6 +106,40 @@ public final class ObjectService {
 
         String newObjectId = service.createDocument(repositoryId, createProperties(cp, null, typeCache), folderId,
                 createContentStream(request), versioningState, createPolicies(cp), createAddAcl(cp),
+                createRemoveAcl(cp), null);
+
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
+        if (object == null) {
+            throw new CmisRuntimeException("New document is null!");
+        }
+
+        // return object
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        setCookie(request, response, repositoryId, transaction,
+                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
+     * Create document from source.
+     */
+    public static void createDocumentFromSource(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
+        String sourceId = getStringParameter(request, PARAM_SOURCE_ID);
+        VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE, VersioningState.class);
+        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+
+        // execute
+        ControlParser cp = new ControlParser(request);
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+
+        String newObjectId = service.createDocumentFromSource(repositoryId, sourceId,
+                createProperties(cp, null, typeCache), folderId, versioningState, createPolicies(cp), createAddAcl(cp),
                 createRemoveAcl(cp), null);
 
         ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
