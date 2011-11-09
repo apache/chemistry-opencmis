@@ -534,6 +534,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start setContentStream()");
         Content content;
+        if ( null == overwriteFlag ) {
+            overwriteFlag = Boolean.TRUE;
+        }
 
         StoredObject so = validator.setContentStream(context, repositoryId, objectId, overwriteFlag, extension);
 
