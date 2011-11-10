@@ -465,7 +465,8 @@ public class InMemoryQueryProcessor {
                 throw new IllegalStateException("LIKE is not allowed for multi-value properties ");
             }
 
-            String propVal = (String) so.getProperties().get(colRef.getPropertyId()).getFirstValue();
+            String propVal = (String) PropertyUtil.getProperty(so, colRef.getPropertyId());
+            
             String pattern = translatePattern((String) rVal); // SQL to Java
                                                               // regex
                                                               // syntax
