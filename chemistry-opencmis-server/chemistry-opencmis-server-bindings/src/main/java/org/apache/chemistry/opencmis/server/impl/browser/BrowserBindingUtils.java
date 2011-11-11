@@ -93,6 +93,7 @@ public class BrowserBindingUtils {
     public static final String SELECTOR_CHECKEDOUT = "checkedout";
     public static final String SELECTOR_POLICIES = "policies";
     public static final String SELECTOR_ACL = "acl";
+    public static final String SELECTOR_CONTENT_CHANGES = "contentChanges";
 
     public static final String CMISACTION_CREATE_DOCUMENT = "createDocument";
     public static final String CMISACTION_CREATE_DOCUMENT_FROM_SOURCE = "createDocumentFromSource";

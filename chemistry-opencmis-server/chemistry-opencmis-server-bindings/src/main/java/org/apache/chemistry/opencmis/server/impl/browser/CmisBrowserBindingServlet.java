@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.impl.browser;
 
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_ADD_OBJECT_TO_FOLDER;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_APPLY_ACL;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_APPLY_POLICY;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CANCEL_CHECK_OUT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CMISACTION_CHECK_IN;
@@ -45,9 +46,11 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.JSON_MIME_TYPE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_SELECTOR;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_SUPPRESS_RESPONSE_CODES;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_ACL;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CHECKEDOUT;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CHILDREN;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CONTENT;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_CONTENT_CHANGES;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_DESCENDANTS;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_FOLDER_TREE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.SELECTOR_LAST_RESULT;
@@ -154,6 +157,11 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             repositoryDispatcher.addResource(SELECTOR_TYPE_DEFINITION, METHOD_GET, RepositoryService.class,
                     "getTypeDefinition");
             repositoryDispatcher.addResource(SELECTOR_QUERY, METHOD_GET, DiscoveryService.class, "query");
+            repositoryDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, NavigationService.class,
+                    "getCheckedOutDocs");
+            repositoryDispatcher.addResource(SELECTOR_CONTENT_CHANGES, METHOD_GET, DiscoveryService.class,
+                    "getContentChanges");
+
             repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST, DiscoveryService.class, "query");
             repositoryDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class,
                     "createDocument");
@@ -163,8 +171,6 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     .addResource(CMISACTION_CREATE_POLICY, METHOD_POST, ObjectService.class, "createPolicy");
             repositoryDispatcher.addResource(CMISACTION_CREATE_RELATIONSHIP, METHOD_POST, ObjectService.class,
                     "createRelationship");
-            repositoryDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, DiscoveryService.class,
-                    "getCheckedOutDocs");
 
             rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class, "getObject");
             rootDispatcher.addResource(SELECTOR_PROPERTIES, METHOD_GET, ObjectService.class, "getProperties");
@@ -178,8 +184,9 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             rootDispatcher.addResource(SELECTOR_VERSIONS, METHOD_GET, VersioningService.class, "getAllVersions");
             rootDispatcher.addResource(SELECTOR_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
                     "getObjectRelationships");
-            rootDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, DiscoveryService.class, "getCheckedOutDocs");
+            rootDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, NavigationService.class, "getCheckedOutDocs");
             rootDispatcher.addResource(SELECTOR_POLICIES, METHOD_GET, PolicyService.class, "getAppliedPolicies");
+            rootDispatcher.addResource(SELECTOR_ACL, METHOD_GET, AclService.class, "getACL");
 
             rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class, "createDocument");
             rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT_FROM_SOURCE, METHOD_POST, ObjectService.class,
@@ -202,6 +209,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             rootDispatcher.addResource(CMISACTION_CHECK_IN, METHOD_POST, VersioningService.class, "checkIn");
             rootDispatcher.addResource(CMISACTION_APPLY_POLICY, METHOD_POST, PolicyService.class, "applyPolicy");
             rootDispatcher.addResource(CMISACTION_REMOVE_POLICY, METHOD_POST, PolicyService.class, "removePolicy");
+            rootDispatcher.addResource(CMISACTION_APPLY_ACL, METHOD_POST, AclService.class, "applyACL");
 
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);

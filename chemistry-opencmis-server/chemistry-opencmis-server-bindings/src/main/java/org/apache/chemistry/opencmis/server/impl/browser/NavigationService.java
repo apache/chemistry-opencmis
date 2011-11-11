@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -215,5 +216,36 @@ public final class NavigationService {
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonParents, request, response);
+    }
+
+    /**
+     * getCheckedOutDocs.
+     */
+    public static void getCheckedOutDocs(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
+        String filter = getStringParameter(request, PARAM_FILTER);
+        String orderBy = getStringParameter(request, PARAM_ORDER_BY);
+        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
+        IncludeRelationships includeRelationships = getEnumParameter(request, PARAM_RELATIONSHIPS,
+                IncludeRelationships.class);
+        String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
+        BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
+        BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
+
+        // execute
+        ObjectList checkedout = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
+                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, null);
+
+        if (checkedout == null) {
+            throw new CmisRuntimeException("Checked out list is null!");
+        }
+
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        JSONObject jsonCheckedOut = JSONConverter.convert(checkedout, typeCache);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        BrowserBindingUtils.writeJSON(jsonCheckedOut, request, response);
     }
 }

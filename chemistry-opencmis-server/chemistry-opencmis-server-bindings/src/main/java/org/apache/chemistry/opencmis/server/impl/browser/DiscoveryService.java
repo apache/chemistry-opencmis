@@ -18,14 +18,11 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWABLE_ACTIONS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ACL;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_CHANGE_LOG_TOKEN;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_MAX_ITEMS;
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ORDER_BY;
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RELATIONSHIPS;
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RENDITION_FILTER;
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SKIP_COUNT;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_POLICY_IDS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_PROPERTIES;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
@@ -42,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.server.impl.browser.json.JSONConverter;
 import org.json.simple.JSONObject;
 
@@ -54,36 +52,8 @@ public class DiscoveryService {
     }
 
     /**
-     * getCheckedOutDocs.
+     * query.
      */
-    public static void getCheckedOutDocs(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
-        String filter = getStringParameter(request, PARAM_FILTER);
-        String orderBy = getStringParameter(request, PARAM_ORDER_BY);
-        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, PARAM_RELATIONSHIPS,
-                IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
-        BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
-        BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
-
-        // execute
-        ObjectList checkedout = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
-                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, null);
-
-        if (checkedout == null) {
-            throw new CmisRuntimeException("Checked out list is null!");
-        }
-
-        TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonCheckedOut = JSONConverter.convert(checkedout, typeCache);
-
-        response.setStatus(HttpServletResponse.SC_OK);
-        BrowserBindingUtils.writeJSON(jsonCheckedOut, request, response);
-    }
-
     public static void query(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         // get parameters
@@ -92,7 +62,7 @@ public class DiscoveryService {
         Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
         IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
                 IncludeRelationships.class);
-        String renditionFilter = null;
+        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
         BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
         BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
@@ -109,5 +79,33 @@ public class DiscoveryService {
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonResults, request, response);
+    }
+
+    /**
+     * getContentChanges.
+     */
+    @SuppressWarnings("unchecked")
+    public static void getContentChanges(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String changeLogToken = getStringParameter(request, PARAM_CHANGE_LOG_TOKEN);
+        Boolean includeProperties = getBooleanParameter(request, PARAM_PROPERTIES);
+        String filter = getStringParameter(request, PARAM_FILTER);
+        Boolean includePolicyIds = getBooleanParameter(request, PARAM_POLICY_IDS);
+        Boolean includeAcl = getBooleanParameter(request, PARAM_ACL);
+        BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
+
+        Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
+        ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties, filter,
+                includePolicyIds, includeAcl, maxItems, null);
+
+        JSONObject jsonChanges = new JSONObject();
+        jsonChanges.put("changeLogToken", changeLogTokenHolder.getValue());
+
+        TypeCache typeCache = new TypeCache(repositoryId, service);
+        jsonChanges.put("objects", JSONConverter.convert(changes, typeCache));
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        BrowserBindingUtils.writeJSON(jsonChanges, request, response);
     }
 }
