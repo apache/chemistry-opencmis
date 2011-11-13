@@ -303,7 +303,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
             TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, spo.getTypeId()).getTypeDefinition();
             ObjectData objectData = PropertyCreationHelper.getObjectData(typeDef, spo, filter, user, includeAllowableActions, 
-                    includeRelationships, renditionFilter, false, true, null);
+                    includeRelationships, renditionFilter, false, false, null);
 
             oifd.setObject(objectData);
             folderList.add(oifd);
