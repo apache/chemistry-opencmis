@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,16 +29,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
@@ -50,8 +45,6 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.impl.Converter;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -60,8 +53,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingD
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
@@ -70,8 +61,6 @@ import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryJaxbHelper;
-import org.apache.chemistry.opencmis.inmemory.types.TypeDefinitions;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -92,6 +81,20 @@ public class StoreManagerImpl implements StoreManager {
     protected final BindingsObjectFactory fObjectFactory;
     protected RepositoryInfo fRepositoryInfo;
     protected CmisServiceValidator validator;
+    
+    private static final String OPENCMIS_VERSION;
+    private static final String OPENCMIS_SERVER;
+
+    static {
+        Package p = Package.getPackage("org.apache.chemistry.opencmis.inmemory");
+        if (p == null) {
+            OPENCMIS_VERSION = "?";
+            OPENCMIS_SERVER = "Apache-Chemistry-OpenCMIS-InMemory";
+        } else {
+            OPENCMIS_VERSION = p.getImplementationVersion();
+            OPENCMIS_SERVER = "Apache-Chemistry-OpenCMIS-InMemory/" + (OPENCMIS_VERSION == null ? "?" : OPENCMIS_VERSION);
+        }
+    }
 
     /**
      * map from repository id to a type manager
@@ -326,8 +329,8 @@ public class StoreManagerImpl implements StoreManager {
         RepositoryInfoImpl repoInfo;
         repoInfo = new RepositoryInfoImpl();
         repoInfo.setId(repositoryId == null ? "inMem" : repositoryId);
-        repoInfo.setName("InMemory Repository");
-        repoInfo.setDescription("InMemory Test Repository");
+        repoInfo.setName("Apache Chemistry OpenCMIS InMemory Repository");
+        repoInfo.setDescription("Apache Chemistry OpenCMIS InMemory Repository (Version: " + OPENCMIS_VERSION + ")");
         repoInfo.setCmisVersionSupported("1.0");
         repoInfo.setRootFolder(rootFolderId);
         repoInfo.setPrincipalAnonymous(InMemoryAce.getAnonymousUser());
@@ -336,9 +339,9 @@ public class StoreManagerImpl implements StoreManager {
         repoInfo.setChangesIncomplete(Boolean.TRUE);
         repoInfo.setChangesOnType(null);
         repoInfo.setLatestChangeLogToken(Long.valueOf(new Date(0).getTime()).toString());
-        repoInfo.setVendorName("OpenCMIS");
+        repoInfo.setVendorName("Apache Chemistry");
         repoInfo.setProductName("OpenCMIS InMemory-Server");
-        repoInfo.setProductVersion("0.1");
+        repoInfo.setProductVersion(OPENCMIS_VERSION);
 
         // set capabilities
         RepositoryCapabilitiesImpl caps = new RepositoryCapabilitiesImpl();
