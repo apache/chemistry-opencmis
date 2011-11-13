@@ -228,7 +228,7 @@ public class PropertyCreationHelper {
         // fill not-set properties from type definition (as spec requires)
         Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
         for (PropertyDefinition<?> propDef : propDefs.values()) {
-            if (!properties.containsKey(propDef.getId()))
+            if (!properties.containsKey(propDef.getId()) && FilterParser.isContainedInFilter(propDef.getId(), requestedIds))
                 properties.put(propDef.getId(), getEmptyValue(propDef));
         }
 
