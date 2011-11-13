@@ -114,6 +114,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-client-bindings</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
