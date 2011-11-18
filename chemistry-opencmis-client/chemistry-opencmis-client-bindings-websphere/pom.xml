@@ -20,7 +20,7 @@
     </parent>
 
     <artifactId>chemistry-opencmis-client-bindings-websphere</artifactId>
-    <name>OpenCMIS Client Bindings Implementation (WebSpehere)</name>
+    <name>OpenCMIS Client Bindings Implementation (WebSphere)</name>
     <packaging>jar</packaging>
     
     <properties>
