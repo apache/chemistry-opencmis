@@ -46,7 +46,7 @@ public class IdRenderer extends DefaultTableCellRenderer {
         String text = "";
         if (value instanceof ObjectId) {
             if (((ObjectId) value).getId() != null) {
-                text = ((ObjectId) value).getId();
+                text = "<html><u>" + ((ObjectId) value).getId() + "</u></html>";
             }
         }
 

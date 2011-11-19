@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.workbench.model;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -34,6 +35,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
@@ -50,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
+import org.apache.chemistry.opencmis.workbench.RandomInputStream;
 
 public class ClientModel {
 
@@ -220,7 +223,7 @@ public class ClientModel {
         ContentStream content = null;
         if ((filename != null) && (filename.length() > 0)) {
             File file = new File(filename);
-            InputStream stream = new FileInputStream(file);
+            InputStream stream = new BufferedInputStream(new FileInputStream(file));
 
             content = clientSession.getSession().getObjectFactory()
                     .createContentStream(file.getName(), file.length(), MimeTypes.getMIMEType(file), stream);
@@ -229,23 +232,39 @@ public class ClientModel {
         return content;
     }
 
-    public synchronized void createDocument(String name, String type, String filename, VersioningState versioningState)
-            throws Exception {
+    public synchronized ObjectId createDocument(String name, String type, String filename,
+            VersioningState versioningState) throws Exception {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
 
         ContentStream content = createContentStream(filename);
-        clientSession.getSession()
-                .createDocument(properties, currentFolder, content, versioningState, null, null, null);
+        return clientSession.getSession().createDocument(properties, currentFolder, content, versioningState, null,
+                null, null);
     }
 
-    public synchronized void createFolder(String name, String type) throws Exception {
+    public ContentStream createContentStream(String name, long length, long seed) throws Exception {
+        return clientSession.getSession().getObjectFactory()
+                .createContentStream(name, length, "application/octet-stream", new RandomInputStream(length, seed));
+    }
+
+    public synchronized ObjectId createDocument(String name, String type, long length, long seed,
+            VersioningState versioningState) throws Exception {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
 
-        clientSession.getSession().createFolder(properties, currentFolder, null, null, null);
+        ContentStream content = createContentStream(name, length, seed);
+        return clientSession.getSession().createDocument(properties, currentFolder, content, versioningState, null,
+                null, null);
+    }
+
+    public synchronized ObjectId createFolder(String name, String type) throws Exception {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, type);
+
+        return clientSession.getSession().createFolder(properties, currentFolder, null, null, null);
     }
 
     public synchronized List<ObjectType> getCreateableTypes(String rootTypeId) {

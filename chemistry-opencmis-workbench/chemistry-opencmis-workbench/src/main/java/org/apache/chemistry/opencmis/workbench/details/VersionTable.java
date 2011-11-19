@@ -71,7 +71,7 @@ public class VersionTable extends AbstractDetailsTable {
                         try {
                             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                             List<Document> newVersions = doc.getAllVersions(getClientModel().getClientSession()
-                                    .geVersionOperationContext());
+                                    .getVersionOperationContext());
 
                             lock.writeLock().lock();
                             try {

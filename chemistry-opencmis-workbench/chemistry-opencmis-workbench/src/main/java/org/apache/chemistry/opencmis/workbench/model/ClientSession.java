@@ -199,7 +199,7 @@ public class ClientSession {
         return folderOperationContext;
     }
 
-    public OperationContext geVersionOperationContext() {
+    public OperationContext getVersionOperationContext() {
         return versionOperationContext;
     }
 
