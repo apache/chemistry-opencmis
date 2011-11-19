@@ -18,8 +18,14 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -292,9 +298,9 @@ public class AtomEntryParser {
         } else if (type.startsWith("text/")) {
             bytes = readText(parser).getBytes("UTF-8");
         } else {
-            LightByteArrayOutputStream lbs = readBase64(parser);
-            atomContentStream.setStream(lbs.getInputStream());
-            atomContentStream.setLength(BigInteger.valueOf(lbs.getSize()));
+            ThresholdOutputStream ths = readBase64(parser);
+            atomContentStream.setStream(ths.getInputStream());
+            atomContentStream.setLength(BigInteger.valueOf(ths.getSize()));
         }
 
         if (bytes != null) {
@@ -321,9 +327,9 @@ public class AtomEntryParser {
                     if (TAG_MEDIATYPE.equals(name.getLocalPart())) {
                         cmisContentStream.setMimeType(readText(parser));
                     } else if (TAG_BASE64.equals(name.getLocalPart())) {
-                        LightByteArrayOutputStream lbs = readBase64(parser);
-                        cmisContentStream.setStream(lbs.getInputStream());
-                        cmisContentStream.setLength(BigInteger.valueOf(lbs.getSize()));
+                        ThresholdOutputStream ths = readBase64(parser);
+                        cmisContentStream.setStream(ths.getInputStream());
+                        cmisContentStream.setLength(BigInteger.valueOf(ths.getSize()));
                     } else {
                         skip(parser);
                     }
@@ -376,8 +382,8 @@ public class AtomEntryParser {
     /**
      * Parses a tag that contains base64 encoded content.
      */
-    private static LightByteArrayOutputStream readBase64(XMLStreamReader parser) throws Exception {
-        LightByteArrayOutputStream bufferStream = new LightByteArrayOutputStream();
+    private static ThresholdOutputStream readBase64(XMLStreamReader parser) throws Exception {
+        ThresholdOutputStream bufferStream = new ThresholdOutputStream();
         Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
 
         next(parser);
@@ -399,6 +405,8 @@ public class AtomEntryParser {
                 break;
             }
         }
+
+        b64stream.close();
 
         next(parser);
 
@@ -564,114 +572,228 @@ public class AtomEntryParser {
         return false;
     }
 
-    private static class LightByteArrayOutputStream extends OutputStream {
+    private static class ThresholdOutputStream extends OutputStream {
+
         private static final int MAX_GROW = 10 * 1024 * 1024;
+        // TODO: make threshold configurable
+        private static final int THRESHOLD = 4 * 1024 * 1024;
 
         private byte[] buf = null;
-        private int size = 0;
+        private int bufSize = 0;
+        private long size;
+        private File tmpFile;
+        private OutputStream tmpStream;
 
-        public LightByteArrayOutputStream() {
+        public ThresholdOutputStream() {
             this(64 * 1024);
         }
 
-        public LightByteArrayOutputStream(int initSize) {
+        public ThresholdOutputStream(int initSize) {
             if (initSize < 0) {
                 throw new IllegalArgumentException("Negative initial size: " + initSize);
             }
             buf = new byte[initSize];
         }
 
-        private void expand(int i) {
-            if (size + i <= buf.length) {
+        private void expand(int nextBufferSize) throws IOException {
+            if (bufSize + nextBufferSize <= buf.length) {
                 return;
             }
 
-            int newSize = ((size + i) * 2 < MAX_GROW ? (size + i) * 2 : buf.length + i + MAX_GROW);
+            if (bufSize + nextBufferSize > THRESHOLD) {
+                if (tmpStream == null) {
+                    tmpFile = File.createTempFile("opencmis", null);
+                    tmpStream = new FileOutputStream(tmpFile);
+                }
+                tmpStream.write(buf, 0, bufSize);
+
+                if (buf.length != THRESHOLD) {
+                    buf = new byte[THRESHOLD];
+                }
+                bufSize = 0;
+
+                return;
+            }
+
+            int newSize = ((bufSize + nextBufferSize) * 2 < MAX_GROW ? (bufSize + nextBufferSize) * 2 : buf.length
+                    + nextBufferSize + MAX_GROW);
             byte[] newbuf = new byte[newSize];
-            System.arraycopy(buf, 0, newbuf, 0, size);
+            System.arraycopy(buf, 0, newbuf, 0, bufSize);
             buf = newbuf;
         }
 
-        public int getSize() {
+        public long getSize() {
             return size;
         }
 
         @Override
-        public void write(byte[] buffer) {
+        public void write(byte[] buffer) throws IOException {
             write(buffer, 0, buffer.length);
         }
 
         @Override
-        public synchronized void write(byte[] buffer, int offset, int len) {
+        public void write(byte[] buffer, int offset, int len) throws IOException {
             if (len == 0) {
                 return;
             }
 
             expand(len);
-            System.arraycopy(buffer, offset, buf, size, len);
+            System.arraycopy(buffer, offset, buf, bufSize, len);
+            bufSize += len;
             size += len;
         }
 
         @Override
-        public void write(int oneByte) {
-            if (size == buf.length) {
+        public void write(int oneByte) throws IOException {
+            if (bufSize == buf.length) {
                 expand(1);
             }
 
-            buf[size++] = (byte) oneByte;
+            buf[bufSize++] = (byte) oneByte;
+            size++;
         }
 
-        public InputStream getInputStream() {
-            return new InputStream() {
+        @Override
+        public void flush() throws IOException {
+            if (tmpStream != null) {
+                if (bufSize > 0) {
+                    tmpStream.write(buf, 0, bufSize);
+                    bufSize = 0;
+                }
+                tmpStream.flush();
+            }
+        }
 
-                private int pos = 0;
+        @Override
+        public void close() throws IOException {
+            flush();
 
-                @Override
-                public int available() {
-                    return size - pos;
+            if (tmpStream != null) {
+                tmpStream.close();
+            }
+        }
+
+        public InputStream getInputStream() throws Exception {
+            if (tmpStream != null) {
+                close();
+                buf = null;
+
+                return new InternalTempFileInputStream();
+            } else {
+                return new InternalBufferInputStream();
+            }
+        }
+
+        private class InternalBufferInputStream extends InputStream {
+
+            private int pos = 0;
+
+            @Override
+            public boolean markSupported() {
+                return false;
+            }
+
+            @Override
+            public int available() {
+                return bufSize - pos;
+            }
+
+            @Override
+            public int read() {
+                return (pos < bufSize) && (buf != null) ? (buf[pos++] & 0xff) : -1;
+            }
+
+            @Override
+            public int read(byte[] b) throws IOException {
+                return read(b, 0, b.length);
+            }
+
+            @Override
+            public int read(byte[] b, int off, int len) {
+                if ((pos >= bufSize) || (buf == null)) {
+                    return -1;
                 }
 
-                @Override
-                public int read() {
-                    return (pos < size) && (buf != null) ? (buf[pos++] & 0xff) : -1;
+                if ((pos + len) > bufSize) {
+                    len = (bufSize - pos);
                 }
 
-                @Override
-                public int read(byte[] b, int off, int len) {
-                    if ((pos >= size) || (buf == null)) {
-                        return -1;
-                    }
+                System.arraycopy(buf, pos, b, off, len);
+                pos += len;
 
-                    if ((pos + len) > size) {
-                        len = (size - pos);
-                    }
+                return len;
+            }
 
-                    System.arraycopy(buf, pos, b, off, len);
-                    pos += len;
-
-                    return len;
+            @Override
+            public long skip(long n) {
+                if ((pos + n) > bufSize) {
+                    n = bufSize - pos;
                 }
 
-                @Override
-                public long skip(long n) {
-                    if ((pos + n) > size) {
-                        n = size - pos;
-                    }
-
-                    if (n < 0) {
-                        return 0;
-                    }
-
-                    pos += n;
-
-                    return n;
+                if (n < 0) {
+                    return 0;
                 }
 
-                @Override
-                public void close() throws IOException {
-                    buf = null;
+                pos += n;
+
+                return n;
+            }
+
+            @Override
+            public void close() throws IOException {
+                buf = null;
+            }
+        }
+
+        private class InternalTempFileInputStream extends FilterInputStream {
+
+            private boolean isDeleted = false;
+
+            public InternalTempFileInputStream() throws FileNotFoundException {
+                super(new BufferedInputStream(new FileInputStream(tmpFile), THRESHOLD));
+            }
+
+            @Override
+            public boolean markSupported() {
+                return false;
+            }
+
+            @Override
+            public int read() throws IOException {
+                int b = super.read();
+
+                if (b == -1 && !isDeleted) {
+                    super.close();
+                    isDeleted = tmpFile.delete();
                 }
-            };
+
+                return b;
+            }
+
+            @Override
+            public int read(byte[] b) throws IOException {
+                return read(b, 0, b.length);
+            }
+
+            @Override
+            public int read(byte[] b, int off, int len) throws IOException {
+                int n = super.read(b, off, len);
+
+                if (n == -1 && !isDeleted) {
+                    super.close();
+                    isDeleted = tmpFile.delete();
+                }
+
+                return n;
+            }
+
+            @Override
+            public void close() throws IOException {
+                if (!isDeleted) {
+                    super.close();
+                    isDeleted = tmpFile.delete();
+                }
+            }
         }
     }
 }

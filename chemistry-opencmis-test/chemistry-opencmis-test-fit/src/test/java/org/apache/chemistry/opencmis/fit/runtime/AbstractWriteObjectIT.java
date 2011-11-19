@@ -71,8 +71,8 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, buf1.length,
-                mimetype, in1);
+        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, buf1.length, mimetype,
+                in1);
         assertNotNull(contentStream);
 
         ObjectId id = session.createDocument(properties, parentId, contentStream, VersioningState.NONE);
@@ -89,8 +89,54 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
     }
 
     @Test
-    @Ignore
-    public void createHugeDocument() {
+    public void createBigDocument() {
+        ObjectId parentId = session.createObjectId(fixture.getTestRootId());
+        String folderName = UUID.randomUUID().toString();
+        String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, folderName);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+
+        String filename = UUID.randomUUID().toString();
+        String mimetype = "application/octet-stream";
+
+        final int size = 10 * 1024 * 1024; // 10 MiB
+
+        InputStream in = new InputStream() {
+
+            private int counter = -1;
+
+            @Override
+            public int read() throws IOException {
+                counter++;
+                if (counter >= size) {
+                    return -1;
+                }
+
+                return '0' + (counter / 10);
+            }
+        };
+
+        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, size, mimetype, in);
+        assertNotNull(contentStream);
+
+        long start = System.currentTimeMillis();
+        ObjectId id = session.createDocument(properties, parentId, contentStream, VersioningState.NONE);
+        long end = System.currentTimeMillis();
+
+        assertNotNull(id);
+        
+        Document doc = (Document) session.getObject(id);
+        assertNotNull(doc);
+        
+        doc.delete(true);
+
+        log.info("createDocument with " + size + " bytes:" + (end - start) + "ms");
+    }
+
+    @Test
+    public void setBigContent() {
         ObjectId parentId = session.createObjectId(fixture.getTestRootId());
         String folderName = UUID.randomUUID().toString();
         String typeId = FixtureData.DOCUMENT_TYPE_ID.value();
@@ -109,7 +155,7 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         Document doc = (Document) session.getObject(id);
         assertNotNull(doc);
 
-        final int size = 1 * 1024 * 1024 * 1024; // 1GB
+        final int size = 10 * 1024 * 1024; // 10 MiB
 
         InputStream in = new InputStream() {
 
@@ -133,7 +179,9 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
         doc.setContentStream(contentStream, true);
         long end = System.currentTimeMillis();
 
-        log.info("setContentStream of " + size + " bytes:" + (end - start) + "ms");
+        doc.delete(true);
+
+        log.info("setContentStream with " + size + " bytes:" + (end - start) + "ms");
     }
 
     @Test
@@ -283,8 +331,8 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, buf1.length,
-                mimetype, in1);
+        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, buf1.length, mimetype,
+                in1);
         assertNotNull(contentStream);
 
         ObjectId id = session.createDocument(properties, parentId, null, VersioningState.NONE);
@@ -320,8 +368,8 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, buf1.length,
-                mimetype, in1);
+        ContentStream contentStream = session.getObjectFactory().createContentStream(filename, buf1.length, mimetype,
+                in1);
         assertNotNull(contentStream);
 
         ObjectId id = session.createDocument(properties, parentId, null, VersioningState.NONE);
@@ -356,8 +404,8 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream1 = session.getObjectFactory().createContentStream(filename1, buf1.length,
-                mimetype, in1);
+        ContentStream contentStream1 = session.getObjectFactory().createContentStream(filename1, buf1.length, mimetype,
+                in1);
         assertNotNull(contentStream1);
 
         ObjectId id = session.createDocument(properties, parentId, contentStream1, VersioningState.NONE);
@@ -369,8 +417,8 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf2 = content2.getBytes("UTF-8");
         ByteArrayInputStream in2 = new ByteArrayInputStream(buf2);
-        ContentStream contentStream2 = session.getObjectFactory().createContentStream(filename2, buf2.length,
-                mimetype, in2);
+        ContentStream contentStream2 = session.getObjectFactory().createContentStream(filename2, buf2.length, mimetype,
+                in2);
         assertNotNull(contentStream2);
 
         Document doc = (Document) session.getObject(id);
@@ -402,8 +450,8 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf1 = content1.getBytes("UTF-8");
         ByteArrayInputStream in1 = new ByteArrayInputStream(buf1);
-        ContentStream contentStream1 = session.getObjectFactory().createContentStream(filename1, buf1.length,
-                mimetype, in1);
+        ContentStream contentStream1 = session.getObjectFactory().createContentStream(filename1, buf1.length, mimetype,
+                in1);
         assertNotNull(contentStream1);
 
         ObjectId id = session.createDocument(properties, parentId, contentStream1, VersioningState.NONE);
@@ -415,8 +463,8 @@ public abstract class AbstractWriteObjectIT extends AbstractSessionTest {
 
         byte[] buf2 = content2.getBytes("UTF-8");
         ByteArrayInputStream in2 = new ByteArrayInputStream(buf2);
-        ContentStream contentStream2 = session.getObjectFactory().createContentStream(filename2, buf2.length,
-                mimetype, in2);
+        ContentStream contentStream2 = session.getObjectFactory().createContentStream(filename2, buf2.length, mimetype,
+                in2);
         assertNotNull(contentStream2);
 
         Document doc = (Document) session.getObject(id);
