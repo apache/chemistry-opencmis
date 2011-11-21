@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -182,6 +183,8 @@ public class CreateDocumentDialog extends CreateDialog {
                 String filename = filenameField.getText();
 
                 try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
                     if (filename.length() > 0) {
                         // create a document from a file
                         ObjectId objectId = getClientModel().createDocument(name, type, filename,
@@ -217,6 +220,8 @@ public class CreateDocumentDialog extends CreateDialog {
                 } catch (Exception e) {
                     ClientHelper.showError(null, e);
                 } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
                     try {
                         getClientModel().reloadFolder();
                     } catch (Exception e) {

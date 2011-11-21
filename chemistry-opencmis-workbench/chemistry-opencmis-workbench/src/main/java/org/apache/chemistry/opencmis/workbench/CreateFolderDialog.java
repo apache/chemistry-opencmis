@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,13 +60,22 @@ public class CreateFolderDialog extends CreateDialog {
                 String type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType().getId();
 
                 try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
                     getClientModel().createFolder(name, type);
-                    getClientModel().reloadFolder();
 
                     thisDialog.setVisible(false);
                     thisDialog.dispose();
                 } catch (Exception e) {
                     ClientHelper.showError(null, e);
+                } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+                    try {
+                        getClientModel().reloadFolder();
+                    } catch (Exception e) {
+                        ClientHelper.showError(null, e);
+                    }
                 }
             }
         });
