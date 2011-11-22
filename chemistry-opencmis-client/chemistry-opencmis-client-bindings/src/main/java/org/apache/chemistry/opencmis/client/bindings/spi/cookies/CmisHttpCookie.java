@@ -94,7 +94,8 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
         }
         String newDomain = domain.toLowerCase();
         String newHost = host.toLowerCase();
-        return isValidDomain(newDomain) && effDomainMatches(newDomain, newHost) && isValidHost(newDomain, newHost);
+        return newDomain.equals(newHost)
+                || (isValidDomain(newDomain) && effDomainMatches(newDomain, newHost) && isValidHost(newDomain, newHost));
     }
 
     private static boolean effDomainMatches(String domain, String host) {
