@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomBase;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
@@ -38,6 +39,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEnt
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.RepositoryWorkspace;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.ServiceDoc;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;

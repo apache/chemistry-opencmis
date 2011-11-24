@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
 /**
@@ -42,13 +43,24 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
     }
 
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        return getRepositoriesInternal(null);
     }
 
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
+
+        // find the repository
+        for (RepositoryInfo info : repositoryInfos) {
+            if (info.getId() == null) {
+                continue;
+            }
+
+            if (info.getId().equals(repositoryId)) {
+                return info;
+            }
+        }
+
+        throw new CmisObjectNotFoundException("Repository not found!");
     }
 
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,

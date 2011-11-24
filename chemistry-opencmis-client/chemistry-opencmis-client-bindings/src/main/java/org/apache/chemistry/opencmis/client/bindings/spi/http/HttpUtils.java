@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
+package org.apache.chemistry.opencmis.client.bindings.spi.http;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -214,6 +214,7 @@ public class HttpUtils {
         private InputStream stream;
         private String errorContent;
         private BigInteger length;
+        private String charset;
 
         public Response(int responseCode, String responseMessage, Map<String, List<String>> headers,
                 InputStream responseStream, InputStream errorStream) {
@@ -228,9 +229,23 @@ public class HttpUtils {
                 }
             }
 
+            // determine charset
+            charset = "UTF-8";
+            String contentType = getContentTypeHeader();
+            if (contentType != null) {
+                String[] parts = contentType.split(";");
+                for (int i = 1; i < parts.length; i++) {
+                    String part = parts[i].trim().toLowerCase();
+                    if (part.startsWith("charset")) {
+                        int x = part.indexOf('=');
+                        charset = part.substring(x + 1).trim();
+                        break;
+                    }
+                }
+            }
+
             // if there is an error page, get it
             if (errorStream != null) {
-                String contentType = getContentTypeHeader();
                 if (contentType != null) {
                     String contentTypeLower = contentType.toLowerCase().split(";")[0];
                     if (contentTypeLower.startsWith("text/") || contentTypeLower.endsWith("+xml")) {
@@ -249,7 +264,7 @@ public class HttpUtils {
                                 }
                             }
 
-                            InputStreamReader reader = new InputStreamReader(errorStream);
+                            InputStreamReader reader = new InputStreamReader(errorStream, charset);
                             char[] buffer = new char[4096];
                             int b;
                             while ((b = reader.read(buffer)) > -1) {
@@ -373,6 +388,10 @@ public class HttpUtils {
 
         public String getContentEncoding() {
             return getHeader("Content-Encoding");
+        }
+
+        public String getCharset() {
+            return charset;
         }
 
         public BigInteger getContentLength() {

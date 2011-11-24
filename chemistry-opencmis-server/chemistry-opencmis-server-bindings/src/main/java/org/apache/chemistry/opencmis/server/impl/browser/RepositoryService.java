@@ -36,9 +36,9 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.chemistry.opencmis.server.impl.browser.json.JSONConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -62,7 +62,10 @@ public final class RepositoryService {
 
         JSONObject result = new JSONObject();
         for (RepositoryInfo ri : infoDataList) {
-            result.put(ri.getId(), JSONConverter.convert(ri, request));
+            String repositoryUrl = BrowserBindingUtils.compileRepositoryUrl(request, ri.getId()).toString();
+            String rootUrl = BrowserBindingUtils.compileRootUrl(request, ri.getId()).toString();
+
+            result.put(ri.getId(), JSONConverter.convert(ri, repositoryUrl, rootUrl));
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -76,7 +79,10 @@ public final class RepositoryService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // execute
         RepositoryInfo ri = service.getRepositoryInfo(repositoryId, null);
-        JSONObject jsonRi = JSONConverter.convert(ri, request);
+        String repositoryUrl = BrowserBindingUtils.compileRepositoryUrl(request, ri.getId()).toString();
+        String rootUrl = BrowserBindingUtils.compileRootUrl(request, ri.getId()).toString();
+
+        JSONObject jsonRi = JSONConverter.convert(ri, repositoryUrl, rootUrl);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonRi, request, response);

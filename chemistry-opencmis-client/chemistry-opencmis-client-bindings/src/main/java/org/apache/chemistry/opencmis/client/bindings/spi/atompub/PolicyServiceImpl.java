@@ -29,6 +29,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;

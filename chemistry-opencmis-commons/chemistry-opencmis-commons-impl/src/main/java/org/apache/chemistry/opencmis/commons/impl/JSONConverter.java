@@ -16,15 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.server.impl.browser.json;
+package org.apache.chemistry.opencmis.commons.impl;
 
-import static org.apache.chemistry.opencmis.server.impl.browser.json.JSONConstants.*;
+import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.*;
 
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -62,8 +60,7 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
-import org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils;
-import org.apache.chemistry.opencmis.server.impl.browser.TypeCache;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -82,7 +79,7 @@ public class JSONConverter {
      * Converts a repository info object.
      */
     @SuppressWarnings("unchecked")
-    public static JSONObject convert(RepositoryInfo repositoryInfo, HttpServletRequest request) {
+    public static JSONObject convert(RepositoryInfo repositoryInfo, String repositoryUrl, String rootUrl) {
         if (repositoryInfo == null) {
             return null;
         }
@@ -116,10 +113,8 @@ public class JSONConverter {
         result.put(REPINFO_PRINCIPAL_ID_ANONYMOUS, repositoryInfo.getPrincipalIdAnonymous());
         result.put(REPINFO_PRINCIPAL_ID_ANYONE, repositoryInfo.getPrincipalIdAnyone());
 
-        result.put(REPINFO_REPOSITORY_URL, BrowserBindingUtils.compileRepositoryUrl(request, repositoryInfo.getId())
-                .toString());
-        result.put(REPINFO_ROOT_FOLDER_URL, BrowserBindingUtils.compileRootUrl(request, repositoryInfo.getId())
-                .toString());
+        result.put(REPINFO_REPOSITORY_URL, repositoryUrl);
+        result.put(REPINFO_ROOT_FOLDER_URL, rootUrl);
 
         return result;
     }
@@ -206,6 +201,25 @@ public class JSONConverter {
 
             result.put(JSON_ACLCAP_PERMISSION_MAPPING, permissionMapping);
         }
+
+        return result;
+    }
+
+    public static RepositoryInfo convertRepositoryInfo(JSONObject json) {
+        if (json == null) {
+            return null;
+        }
+
+        RepositoryInfoImpl result = new RepositoryInfoImpl();
+
+        result.setId(getString(json, REPINFO_ID));
+        result.setName(getString(json, REPINFO_NAME));
+        result.setDescription(getString(json, REPINFO_DESCRIPTION));
+        result.setProductName(getString(json, REPINFO_PRODUCT));
+        result.setProductVersion(getString(json, REPINFO_PRODUCT_VERSION));
+        result.setRootFolder(getString(json, REPINFO_ROOT_FOLDER_ID));
+
+        // TODO
 
         return result;
     }
@@ -749,5 +763,10 @@ public class JSONConverter {
         }
 
         return null;
+    }
+
+    public static String getString(JSONObject json, String key) {
+        Object obj = json.get(key);
+        return obj == null ? null : obj.toString();
     }
 }

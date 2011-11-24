@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;

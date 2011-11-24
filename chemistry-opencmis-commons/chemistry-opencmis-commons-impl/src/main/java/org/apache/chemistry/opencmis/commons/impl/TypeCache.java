@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.server.impl.browser;
+package org.apache.chemistry.opencmis.commons.impl;
 
 import java.util.HashMap;
 import java.util.Map;

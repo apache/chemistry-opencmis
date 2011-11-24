@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.server.impl.browser.json;
+package org.apache.chemistry.opencmis.commons.impl;
 
 /**
  * JSON object constants.

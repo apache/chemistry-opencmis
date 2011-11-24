@@ -93,6 +93,49 @@ public final class Constants {
     public static final String REP_REL_ROOTDESC = "http://docs.oasis-open.org/ns/cmis/link/200908/rootdescendants";
     public static final String REP_REL_CHANGES = "http://docs.oasis-open.org/ns/cmis/link/200908/changes";
 
+    // browser binding selectors
+    public static final String SELECTOR_LAST_RESULT = "lastResult";
+    public static final String SELECTOR_TYPE_CHILDREN = "typeChildren";
+    public static final String SELECTOR_TYPE_DESCENDANTS = "typeDescendants";
+    public static final String SELECTOR_TYPE_DEFINITION = "typeDefinition";
+    public static final String SELECTOR_CONTENT = "content";
+    public static final String SELECTOR_OBJECT = "object";
+    public static final String SELECTOR_PROPERTIES = "properties";
+    public static final String SELECTOR_RENDITIONS = "renditions";
+    public static final String SELECTOR_CHILDREN = "children";
+    public static final String SELECTOR_DESCENDANTS = "descendants";
+    public static final String SELECTOR_PARENTS = "parents";
+    public static final String SELECTOR_PARENT = "parent";
+    public static final String SELECTOR_FOLDER_TREE = "folder";
+    public static final String SELECTOR_QUERY = "query";
+    public static final String SELECTOR_VERSIONS = "versions";
+    public static final String SELECTOR_RELATIONSHIPS = "relationships";
+    public static final String SELECTOR_CHECKEDOUT = "checkedout";
+    public static final String SELECTOR_POLICIES = "policies";
+    public static final String SELECTOR_ACL = "acl";
+    public static final String SELECTOR_CONTENT_CHANGES = "contentChanges";
+
+    // browser binding actions
+    public static final String CMISACTION_CREATE_DOCUMENT = "createDocument";
+    public static final String CMISACTION_CREATE_DOCUMENT_FROM_SOURCE = "createDocumentFromSource";
+    public static final String CMISACTION_CREATE_FOLDER = "createFolder";
+    public static final String CMISACTION_CREATE_RELATIONSHIP = "createRelationship";
+    public static final String CMISACTION_CREATE_POLICY = "createPolicy";
+    public static final String CMISACTION_DELETE_CONTENT = "deleteContent";
+    public static final String CMISACTION_SET_CONTENT = "setContent";
+    public static final String CMISACTION_DELETE = "delete";
+    public static final String CMISACTION_DELETE_TREE = "deleteTree";
+    public static final String CMISACTION_MOVE = "move";
+    public static final String CMISACTION_ADD_OBJECT_TO_FOLDER = "addObjectToFolder";
+    public static final String CMISACTION_REMOVE_OBJECT_FROM_FOLDER = "removeObjectFromFolder";
+    public static final String CMISACTION_QUERY = "query";
+    public static final String CMISACTION_CHECK_OUT = "checkOut";
+    public static final String CMISACTION_CANCEL_CHECK_OUT = "cancelCheckOut";
+    public static final String CMISACTION_CHECK_IN = "checkIn";
+    public static final String CMISACTION_APPLY_POLICY = "applyPolicy";
+    public static final String CMISACTION_REMOVE_POLICY = "removePolicy";
+    public static final String CMISACTION_APPLY_ACL = "applyACL";
+
     // parameter
     public static final String PARAM_ACL = "includeACL";
     public static final String PARAM_ALLOWABLE_ACTIONS = "includeAllowableActions";

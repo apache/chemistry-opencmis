@@ -51,7 +51,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.LinkAccess;
+import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.checks.ObjectComplianceTestGroup;
