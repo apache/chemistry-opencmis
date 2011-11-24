@@ -19,8 +19,7 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Internal session parameters.
  */
 public final class SpiSessionParameter {
 

@@ -16,32 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.enums;
+package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
 /**
- * Binding Type Enum.
+ * Internal session parameters.
  */
-public enum BindingType {
+public final class SpiSessionParameter {
 
-    WEBSERVICES("webservices"), ATOMPUB("atompub"), BROWSER("browser"), LOCAL("local"), CUSTOM("custom");
+    public static final String REPOSITORY_URL_CACHE = "org.apache.chemistry.opencmis.binding.browser.repositoryurls";
 
-    private final String value;
-
-    BindingType(String v) {
-        value = v;
+    private SpiSessionParameter() {
     }
-
-    public String value() {
-        return value;
-    }
-
-    public static BindingType fromValue(String v) {
-        for (BindingType c : BindingType.values()) {
-            if (c.value.equals(v)) {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException(v);
-    }
-
 }

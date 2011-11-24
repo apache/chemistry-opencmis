@@ -80,9 +80,9 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 
 /**
- * Base class for all AtomPub clients.
+ * Base class for all AtomPub client services.
  */
-public class AbstractAtomPubService implements LinkAccess {
+public abstract class AbstractAtomPubService implements LinkAccess {
 
     protected enum IdentifierType {
         ID, PATH

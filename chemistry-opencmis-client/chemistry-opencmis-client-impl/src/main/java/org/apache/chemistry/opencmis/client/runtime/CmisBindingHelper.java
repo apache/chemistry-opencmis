@@ -55,6 +55,8 @@ public class CmisBindingHelper {
             return createAtomPubBinding(parameters, authenticationProvider);
         case WEBSERVICES:
             return createWebServiceBinding(parameters, authenticationProvider);
+        case BROWSER:
+            return createCmisBrowserBinding(parameters, authenticationProvider);
         case LOCAL:
             return createLocalBinding(parameters);
         case CUSTOM:
@@ -93,6 +95,17 @@ public class CmisBindingHelper {
             AuthenticationProvider authenticationProvider) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
         CmisBinding binding = factory.createCmisAtomPubBinding(parameters, authenticationProvider);
+
+        return binding;
+    }
+
+    /**
+     * Creates an Browser binding.
+     */
+    private static CmisBinding createCmisBrowserBinding(Map<String, String> parameters,
+            AuthenticationProvider authenticationProvider) {
+        CmisBindingFactory factory = CmisBindingFactory.newInstance();
+        CmisBinding binding = factory.createCmisBrowserBinding(parameters, authenticationProvider);
 
         return binding;
     }

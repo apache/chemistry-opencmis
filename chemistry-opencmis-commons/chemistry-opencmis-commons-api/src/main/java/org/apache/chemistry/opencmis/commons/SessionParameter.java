@@ -54,7 +54,10 @@ public final class SessionParameter {
     public static final String WEBSERVICES_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.memoryThreshold";
 
     public static final String WEBSERVICES_PORT_PROVIDER_CLASS = "org.apache.chemistry.opencmis.binding.webservices.portprovider.classname";
-    
+
+    /** URL of the Browser Binding entry point. */
+    public static final String BROWSER_URL = "org.apache.chemistry.opencmis.binding.browser.url";
+
     /** Factory class name for the local binding. */
     public static final String LOCAL_FACTORY = "org.apache.chemistry.opencmis.binding.local.classname";
 

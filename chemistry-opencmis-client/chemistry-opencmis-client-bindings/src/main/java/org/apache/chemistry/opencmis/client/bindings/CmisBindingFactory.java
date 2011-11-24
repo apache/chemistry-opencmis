@@ -35,6 +35,8 @@ public class CmisBindingFactory {
     public static final String BINDING_SPI_ATOMPUB = "org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubSpi";
     /** Default CMIS Web Services binding SPI implementation */
     public static final String BINDING_SPI_WEBSERVICES = "org.apache.chemistry.opencmis.client.bindings.spi.webservices.CmisWebServicesSpi";
+    /** Default CMIS Browser binding SPI implementation */
+    public static final String BINDING_SPI_BROWSER = "org.apache.chemistry.opencmis.client.bindings.spi.browser.CmisBrowserBindingSpi";
     /** Default CMIS local binding SPI implementation */
     public static final String BINDING_SPI_LOCAL = "org.apache.chemistry.opencmis.client.bindings.spi.local.CmisLocalSpi";
 
@@ -168,6 +170,38 @@ public class CmisBindingFactory {
         check(sessionParameters, SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE);
         check(sessionParameters, SessionParameter.WEBSERVICES_REPOSITORY_SERVICE);
         check(sessionParameters, SessionParameter.WEBSERVICES_VERSIONING_SERVICE);
+
+        return new CmisBindingImpl(sessionParameters, authenticationProvider);
+    }
+
+    /**
+     * Creates a default CMIS Browser binding instance.
+     */
+    public CmisBinding createCmisBrowserBinding(Map<String, String> sessionParameters) {
+        return createCmisBrowserBinding(sessionParameters, null);
+    }
+
+    /**
+     * Creates a default CMIS Browser binding instance with a custom
+     * authentication provider.
+     */
+    public CmisBinding createCmisBrowserBinding(Map<String, String> sessionParameters,
+            AuthenticationProvider authenticationProvider) {
+        checkSessionParameters(sessionParameters, false);
+
+        sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_BROWSER);
+        if (authenticationProvider == null) {
+            if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
+                sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
+            }
+        }
+        if (!sessionParameters.containsKey(SessionParameter.AUTH_HTTP_BASIC)) {
+            sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
+        }
+        sessionParameters.put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, "false");
+        addDefaultParameters(sessionParameters);
+
+        check(sessionParameters, SessionParameter.BROWSER_URL);
 
         return new CmisBindingImpl(sessionParameters, authenticationProvider);
     }
