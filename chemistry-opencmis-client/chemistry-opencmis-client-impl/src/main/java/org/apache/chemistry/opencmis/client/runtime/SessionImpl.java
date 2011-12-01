@@ -577,6 +577,72 @@ public class SessionImpl implements Session {
         });
     }
 
+    public ItemIterable<CmisObject> queryObjects(String typeId, String where, final boolean searchAllVersions,
+            OperationContext context) {
+        if (typeId == null || typeId.trim().length() == 0) {
+            throw new IllegalArgumentException("Type id must be set!");
+        }
+
+        if (context == null) {
+            throw new IllegalArgumentException("Operation context must be set!");
+        }
+
+        final DiscoveryService discoveryService = getBinding().getDiscoveryService();
+        final ObjectFactory objectFactory = this.getObjectFactory();
+        final OperationContext ctxt = new OperationContextImpl(context);
+        final StringBuilder statement = new StringBuilder("SELECT ");
+
+        String select = ctxt.getFilterString();
+        if (select == null) {
+            statement.append("*");
+        } else {
+            statement.append(select);
+        }
+
+        final ObjectType type = getTypeDefinition(typeId);
+        statement.append(" FROM ");
+        statement.append(type.getQueryName());
+
+        if (where != null && where.trim().length() > 0) {
+            statement.append(" WHERE ");
+            statement.append(where);
+        }
+
+        String orderBy = ctxt.getOrderBy();
+        if (orderBy != null && orderBy.trim().length() > 0) {
+            statement.append(" ORDER BY ");
+            statement.append(orderBy);
+        }
+
+        return new CollectionIterable<CmisObject>(new AbstractPageFetcher<CmisObject>(ctxt.getMaxItemsPerPage()) {
+
+            @Override
+            protected AbstractPageFetcher.Page<CmisObject> fetchPage(long skipCount) {
+
+                // fetch the data
+                ObjectList resultList = discoveryService.query(getRepositoryId(), statement.toString(),
+                        searchAllVersions, ctxt.isIncludeAllowableActions(), ctxt.getIncludeRelationships(),
+                        ctxt.getRenditionFilterString(), BigInteger.valueOf(this.maxNumItems),
+                        BigInteger.valueOf(skipCount), null);
+
+                // convert query results
+                List<CmisObject> page = new ArrayList<CmisObject>();
+                if (resultList.getObjects() != null) {
+                    for (ObjectData objectData : resultList.getObjects()) {
+                        if (objectData == null) {
+                            continue;
+                        }
+
+                        page.add(objectFactory.convertObject(objectData, ctxt));
+                    }
+                }
+
+                return new AbstractPageFetcher.Page<CmisObject>(page, resultList.getNumItems(),
+                        resultList.hasMoreItems());
+            }
+        });
+    }
+
     public QueryStatement createQueryStatement(final String statement) {
         return new QueryStatementImpl(this, statement);
     }

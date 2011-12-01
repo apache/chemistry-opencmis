@@ -299,6 +299,21 @@ public interface Session extends Serializable {
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context);
 
     /**
+     * 
+     * @param type
+     *            the id of the object type
+     * @param where
+     *            the WHERE part of the query
+     * @param searchAllVersions
+     *            specifies if the latest and non-latest versions of document
+     *            objects should be included
+     * @param context
+     *            the OperationContext
+     */
+    ItemIterable<CmisObject> queryObjects(String typeId, String where, boolean searchAllVersions,
+            OperationContext context);
+
+    /**
      * Creates a query statement.
      * 
      * @param statement
