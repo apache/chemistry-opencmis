@@ -23,6 +23,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.workbench.actions.AddObjectToFolderPanel;
 import org.apache.chemistry.opencmis.workbench.actions.ApplyPolicyPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CancelCheckOutPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CheckInPanel;
@@ -32,6 +33,7 @@ import org.apache.chemistry.opencmis.workbench.actions.DeletePanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeleteTreePanel;
 import org.apache.chemistry.opencmis.workbench.actions.MovePanel;
 import org.apache.chemistry.opencmis.workbench.actions.PropertyUpdatePanel;
+import org.apache.chemistry.opencmis.workbench.actions.RemoveObjectFromFolderPanel;
 import org.apache.chemistry.opencmis.workbench.actions.RemovePolicyPanel;
 import org.apache.chemistry.opencmis.workbench.actions.SetContentStreamPanel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -53,6 +55,8 @@ public class ActionsPanel extends JPanel implements ObjectListener {
     private CheckInPanel checkInPanel;
     private SetContentStreamPanel setContentStreamPanel;
     private DeleteContentStreamPanel deleteContentStreamPanel;
+    private AddObjectToFolderPanel addObjectToFolderPanel;
+    private RemoveObjectFromFolderPanel removeObjectFromFolderPanel;
     private ApplyPolicyPanel applyPolicyPanel;
     private RemovePolicyPanel removePolicyPanel;
 
@@ -95,6 +99,12 @@ public class ActionsPanel extends JPanel implements ObjectListener {
         deleteContentStreamPanel.setObject(object);
         deleteContentStreamPanel.setVisible(deleteContentStreamPanel.isAllowed());
 
+        addObjectToFolderPanel.setObject(object);
+        addObjectToFolderPanel.setVisible(addObjectToFolderPanel.isAllowed());
+
+        removeObjectFromFolderPanel.setObject(object);
+        removeObjectFromFolderPanel.setVisible(removeObjectFromFolderPanel.isAllowed());
+
         applyPolicyPanel.setObject(object);
         applyPolicyPanel.setVisible(applyPolicyPanel.isAllowed());
 
@@ -132,6 +142,12 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
         deleteContentStreamPanel = new DeleteContentStreamPanel(model);
         add(deleteContentStreamPanel);
+
+        addObjectToFolderPanel = new AddObjectToFolderPanel(model);
+        add(addObjectToFolderPanel);
+
+        removeObjectFromFolderPanel = new RemoveObjectFromFolderPanel(model);
+        add(removeObjectFromFolderPanel);
 
         applyPolicyPanel = new ApplyPolicyPanel(model);
         add(applyPolicyPanel);
