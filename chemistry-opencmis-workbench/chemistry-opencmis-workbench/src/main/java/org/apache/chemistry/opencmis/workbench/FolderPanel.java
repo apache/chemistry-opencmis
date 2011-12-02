@@ -33,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.FolderListener;
@@ -106,8 +107,8 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    model.loadFolder(parentId, false);
-                    model.loadObject(model.getCurrentFolder().getId());
+                    ObjectId objectId = model.loadFolder(parentId, false);
+                    model.loadObject(objectId.getId());
                 } catch (Exception ex) {
                     ClientHelper.showError(null, ex);
                     return;
@@ -158,8 +159,8 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
             if (id.length() == 0) {
                 id = "/";
             }
-            model.loadFolder(id, id.startsWith("/"));
-            model.loadObject(model.getCurrentFolder().getId());
+            ObjectId objectId = model.loadFolder(id, id.startsWith("/"));
+            model.loadObject(objectId.getId());
         } catch (Exception ex) {
             ClientHelper.showError(null, ex);
             return;

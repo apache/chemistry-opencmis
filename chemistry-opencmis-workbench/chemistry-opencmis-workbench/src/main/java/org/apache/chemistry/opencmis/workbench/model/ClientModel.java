@@ -133,27 +133,32 @@ public class ClientModel {
         }
     }
 
-    public synchronized void loadFolder(String folderId, boolean byPath) throws Exception {
+    public synchronized ObjectId loadFolder(String folderId, boolean byPath) throws Exception {
         try {
             Session session = clientSession.getSession();
+            CmisObject selectedObject = null;
             CmisObject folderObject = null;
 
             if (byPath) {
-                folderObject = session.getObjectByPath(folderId);
+                selectedObject = session.getObjectByPath(folderId);
             } else {
-                folderObject = session.getObject(session.createObjectId(folderId));
+                selectedObject = session.getObject(folderId);
             }
 
-            if (!(folderObject instanceof Folder)) {
-                if (folderObject instanceof FileableCmisObject) {
-                    List<Folder> parents = ((FileableCmisObject) folderObject).getParents();
+            if (selectedObject instanceof Folder) {
+                folderObject = selectedObject;
+            } else {
+                if (selectedObject instanceof FileableCmisObject) {
+                    List<Folder> parents = ((FileableCmisObject) selectedObject).getParents();
                     if (parents != null && parents.size() > 0) {
                         folderObject = parents.get(0);
                     } else {
-                        throw new Exception("The object is not a folder and not in a folder!");
+                        setCurrentFolder(null, new ArrayList<CmisObject>(0));
+                        return selectedObject;
                     }
                 } else {
-                    throw new Exception("The object is a relationship and not in a folder!");
+                    setCurrentFolder(null, new ArrayList<CmisObject>(0));
+                    return selectedObject;
                 }
             }
 
@@ -165,6 +170,8 @@ public class ClientModel {
             }
 
             setCurrentFolder((Folder) folderObject, children);
+
+            return selectedObject;
         } catch (Exception ex) {
             setCurrentFolder(null, new ArrayList<CmisObject>(0));
             throw ex;
