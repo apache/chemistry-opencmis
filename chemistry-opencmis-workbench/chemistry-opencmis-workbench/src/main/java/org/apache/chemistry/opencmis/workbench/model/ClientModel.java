@@ -233,14 +233,14 @@ public class ClientModel {
     }
 
     public synchronized ObjectId createDocument(String name, String type, String filename,
-            VersioningState versioningState) throws Exception {
+            VersioningState versioningState, boolean unfiled) throws Exception {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
 
         ContentStream content = createContentStream(filename);
-        return clientSession.getSession().createDocument(properties, currentFolder, content, versioningState, null,
-                null, null);
+        return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
+                versioningState, null, null, null);
     }
 
     public ContentStream createContentStream(String name, long length, long seed) throws Exception {
@@ -249,14 +249,14 @@ public class ClientModel {
     }
 
     public synchronized ObjectId createDocument(String name, String type, long length, long seed,
-            VersioningState versioningState) throws Exception {
+            VersioningState versioningState, boolean unfiled) throws Exception {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
 
         ContentStream content = createContentStream(name, length, seed);
-        return clientSession.getSession().createDocument(properties, currentFolder, content, versioningState, null,
-                null, null);
+        return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
+                versioningState, null, null, null);
     }
 
     public synchronized ObjectId createFolder(String name, String type) throws Exception {

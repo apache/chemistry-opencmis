@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.workbench;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +34,7 @@ import java.text.NumberFormat;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -40,6 +42,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -58,12 +61,18 @@ public class CreateDocumentDialog extends CreateDialog {
 
     private static final long serialVersionUID = 1L;
 
+    private JRadioButton unfiledButton;
+    private JRadioButton currentPathButton;
     private JTextField nameField;
     private JComboBox typeBox;
     private JTextField filenameField;
     private JFormattedTextField generateContentSizeField;
     private JComboBox generateContentUnitField;
-    private JComboBox versioningStateBox;
+    private JRadioButton versioningStateNoneButton;
+    private JRadioButton versioningStateMajorButton;
+    private JRadioButton versioningStateMinorButton;
+    private JRadioButton versioningStateCheckedoutButton;
+
     private JCheckBox verifyAfterUploadButton;
 
     public CreateDocumentDialog(Frame owner, ClientModel model) {
@@ -78,8 +87,25 @@ public class CreateDocumentDialog extends CreateDialog {
     private void createGUI(File file) {
         final CreateDocumentDialog thisDialog = this;
 
+        unfiledButton = new JRadioButton("create unfiled");
+        unfiledButton.setSelected(false);
+
+        currentPathButton = new JRadioButton("create in the current folder: "
+                + getClientModel().getCurrentFolder().getPath());
+        currentPathButton.setSelected(true);
+
+        ButtonGroup filedGroup = new ButtonGroup();
+        filedGroup.add(unfiledButton);
+        filedGroup.add(currentPathButton);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(unfiledButton);
+        buttonPanel.add(currentPathButton);
+
+        createRow("", buttonPanel, 0);
+
         nameField = new JTextField(60);
-        createRow("Name:", nameField, 0);
+        createRow("Name:", nameField, 1);
 
         typeBox = new JComboBox(getTypes(BaseTypeId.CMIS_DOCUMENT.value()));
         typeBox.setSelectedIndex(0);
@@ -88,14 +114,14 @@ public class CreateDocumentDialog extends CreateDialog {
                 DocumentTypeDefinition type = (DocumentTypeDefinition) ((ObjectTypeItem) typeBox.getSelectedItem())
                         .getObjectType();
                 if (type.isVersionable()) {
-                    versioningStateBox.setSelectedItem(VersioningState.MAJOR);
+                    versioningStateMajorButton.setSelected(true);
                 } else {
-                    versioningStateBox.setSelectedItem(VersioningState.NONE);
+                    versioningStateNoneButton.setSelected(true);
                 }
             }
         });
 
-        createRow("Type:", typeBox, 1);
+        createRow("Type:", typeBox, 2);
 
         JPanel filePanel = new JPanel(new BorderLayout());
 
@@ -142,7 +168,7 @@ public class CreateDocumentDialog extends CreateDialog {
         });
         filePanel.add(browseButton, BorderLayout.LINE_END);
 
-        createRow("File:", filePanel, 2);
+        createRow("File:", filePanel, 3);
 
         JPanel generateContentPanel = new JPanel();
         generateContentPanel.setLayout(new BoxLayout(generateContentPanel, BoxLayout.X_AXIS));
@@ -161,19 +187,34 @@ public class CreateDocumentDialog extends CreateDialog {
 
         generateContentPanel.add(Box.createHorizontalGlue());
 
-        createRow("Generate content:", generateContentPanel, 3);
+        createRow("Generate content:", generateContentPanel, 4);
 
-        versioningStateBox = new JComboBox(new Object[] { VersioningState.NONE, VersioningState.MAJOR,
-                VersioningState.MINOR, VersioningState.CHECKEDOUT });
+        versioningStateNoneButton = new JRadioButton("none");
+        versioningStateMajorButton = new JRadioButton("major");
+        versioningStateMinorButton = new JRadioButton("minor");
+        versioningStateCheckedoutButton = new JRadioButton("checked out");
+
+        ButtonGroup versioningStateGroup = new ButtonGroup();
+        versioningStateGroup.add(versioningStateNoneButton);
+        versioningStateGroup.add(versioningStateMajorButton);
+        versioningStateGroup.add(versioningStateMinorButton);
+        versioningStateGroup.add(versioningStateCheckedoutButton);
+
+        JPanel versioningStatePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        versioningStatePanel.add(versioningStateNoneButton);
+        versioningStatePanel.add(versioningStateMajorButton);
+        versioningStatePanel.add(versioningStateMinorButton);
+        versioningStatePanel.add(versioningStateCheckedoutButton);
+
         if (((DocumentTypeDefinition) ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType()).isVersionable()) {
-            versioningStateBox.setSelectedItem(VersioningState.MAJOR);
+            versioningStateMajorButton.setSelected(true);
         } else {
-            versioningStateBox.setSelectedItem(VersioningState.NONE);
+            versioningStateNoneButton.setSelected(true);
         }
-        createRow("Versioning State:", versioningStateBox, 4);
+        createRow("Versioning State:", versioningStatePanel, 5);
 
         verifyAfterUploadButton = new JCheckBox("Verify content after upload");
-        createRow("", verifyAfterUploadButton, 5);
+        createRow("", verifyAfterUploadButton, 6);
 
         JButton createButton = new JButton("Create Document");
         createButton.addActionListener(new ActionListener() {
@@ -185,10 +226,19 @@ public class CreateDocumentDialog extends CreateDialog {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
+                    VersioningState versioningState = VersioningState.NONE;
+                    if (versioningStateMajorButton.isSelected()) {
+                        versioningState = VersioningState.MAJOR;
+                    } else if (versioningStateMinorButton.isSelected()) {
+                        versioningState = VersioningState.MINOR;
+                    } else if (versioningStateCheckedoutButton.isSelected()) {
+                        versioningState = VersioningState.CHECKEDOUT;
+                    }
+
                     if (filename.length() > 0) {
                         // create a document from a file
-                        ObjectId objectId = getClientModel().createDocument(name, type, filename,
-                                (VersioningState) versioningStateBox.getSelectedItem());
+                        ObjectId objectId = getClientModel().createDocument(name, type, filename, versioningState,
+                                unfiledButton.isSelected());
 
                         if (verifyAfterUploadButton.isSelected()) {
                             ContentStream contentStream = getClientModel().createContentStream(filename);
@@ -206,8 +256,8 @@ public class CreateDocumentDialog extends CreateDialog {
                             }
                         }
 
-                        ObjectId objectId = getClientModel().createDocument(name, type, length, seed,
-                                (VersioningState) versioningStateBox.getSelectedItem());
+                        ObjectId objectId = getClientModel().createDocument(name, type, length, seed, versioningState,
+                                unfiledButton.isSelected());
 
                         if (verifyAfterUploadButton.isSelected()) {
                             ContentStream contentStream = getClientModel().createContentStream("", length, seed);
@@ -230,7 +280,7 @@ public class CreateDocumentDialog extends CreateDialog {
                 }
             }
         });
-        createRow("", createButton, 6);
+        createRow("", createButton, 7);
 
         if (file != null) {
             setFile(file);
