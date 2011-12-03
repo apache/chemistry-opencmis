@@ -32,25 +32,27 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
 
-public class CreateFolderDialog extends CreateDialog {
+public class CreateRelationshipDialog extends CreateDialog {
 
     private static final long serialVersionUID = 1L;
 
     private JTextField nameField;
     private JComboBox typeBox;
+    private JTextField sourceIdField;
+    private JTextField targetIdField;
 
-    public CreateFolderDialog(Frame owner, ClientModel model) {
-        super(owner, "Create Folder", model);
+    public CreateRelationshipDialog(Frame owner, ClientModel model) {
+        super(owner, "Create Relationship", model);
         createGUI();
     }
 
     private void createGUI() {
-        final CreateFolderDialog thisDialog = this;
+        final CreateRelationshipDialog thisDialog = this;
 
         nameField = new JTextField(60);
         createRow("Name:", nameField, 0);
 
-        Object[] types = getTypes(BaseTypeId.CMIS_FOLDER.value());
+        Object[] types = getTypes(BaseTypeId.CMIS_RELATIONSHIP.value());
         if (types.length == 0) {
             JOptionPane.showMessageDialog(this, "No creatable type!", "Creatable Types", JOptionPane.ERROR_MESSAGE);
             thisDialog.dispose();
@@ -61,16 +63,27 @@ public class CreateFolderDialog extends CreateDialog {
         typeBox.setSelectedIndex(0);
         createRow("Type:", typeBox, 1);
 
-        JButton createButton = new JButton("Create Folder");
+        sourceIdField = new JTextField(60);
+        if (getClientModel().getCurrentObject() != null) {
+            sourceIdField.setText(getClientModel().getCurrentObject().getId());
+        }
+        createRow("Source Id:", sourceIdField, 2);
+
+        targetIdField = new JTextField(60);
+        createRow("Target Id:", targetIdField, 3);
+
+        JButton createButton = new JButton("Create Relationship");
         createButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();
                 String type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType().getId();
+                String sourceId = sourceIdField.getText();
+                String targetId = targetIdField.getText();
 
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                    getClientModel().createFolder(name, type);
+                    getClientModel().createRelationship(name, type, sourceId, targetId);
 
                     thisDialog.setVisible(false);
                     thisDialog.dispose();
@@ -87,7 +100,7 @@ public class CreateFolderDialog extends CreateDialog {
                 }
             }
         });
-        createRow("", createButton, 3);
+        createRow("", createButton, 4);
 
         getRootPane().setDefaultButton(createButton);
 

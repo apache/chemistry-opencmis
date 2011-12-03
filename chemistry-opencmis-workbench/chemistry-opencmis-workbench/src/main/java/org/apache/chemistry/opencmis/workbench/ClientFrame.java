@@ -59,8 +59,9 @@ public class ClientFrame extends JFrame implements WindowListener {
     private static final int BUTTON_TCK = 6;
     private static final int BUTTON_CREATE_DOCUMENT = 7;
     private static final int BUTTON_CREATE_FOLDER = 8;
-    private static final int BUTTON_LOG = 9;
-    private static final int BUTTON_INFO = 10;
+    private static final int BUTTON_CREATE_RELATIONSHIP = 9;
+    private static final int BUTTON_LOG = 10;
+    private static final int BUTTON_INFO = 11;
 
     private static final String PREFS_X = "x";
     private static final String PREFS_Y = "y";
@@ -115,7 +116,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar = new JToolBar("CMIS Toolbar", JToolBar.HORIZONTAL);
 
-        toolbarButton = new JButton[11];
+        toolbarButton = new JButton[12];
 
         toolbarButton[BUTTON_CONNECT] = new JButton("Connection", ClientHelper.getIcon("connect.png"));
         toolbarButton[BUTTON_CONNECT].addActionListener(new ActionListener() {
@@ -224,6 +225,17 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_CREATE_FOLDER]);
 
+        toolbarButton[BUTTON_CREATE_RELATIONSHIP] = new JButton("Create Relationship",
+                ClientHelper.getIcon("newrelationship.png"));
+        toolbarButton[BUTTON_CREATE_RELATIONSHIP].setEnabled(false);
+        toolbarButton[BUTTON_CREATE_RELATIONSHIP].addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new CreateRelationshipDialog(thisFrame, model);
+            }
+        });
+
+        toolBar.add(toolbarButton[BUTTON_CREATE_RELATIONSHIP]);
+
         toolBar.addSeparator();
 
         toolbarButton[BUTTON_LOG] = new JButton("Log", ClientHelper.getIcon("log.png"));
@@ -293,6 +305,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 toolbarButton[BUTTON_TCK].setEnabled(true);
                 toolbarButton[BUTTON_CREATE_DOCUMENT].setEnabled(true);
                 toolbarButton[BUTTON_CREATE_FOLDER].setEnabled(true);
+                toolbarButton[BUTTON_CREATE_RELATIONSHIP].setEnabled(model.supportsRelationships());
 
                 setTitle(WINDOW_TITLE + " - " + clientSession.getSession().getRepositoryInfo().getName());
             } catch (Exception ex) {
@@ -304,6 +317,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 toolbarButton[BUTTON_TCK].setEnabled(false);
                 toolbarButton[BUTTON_CREATE_DOCUMENT].setEnabled(false);
                 toolbarButton[BUTTON_CREATE_FOLDER].setEnabled(false);
+                toolbarButton[BUTTON_CREATE_RELATIONSHIP].setEnabled(false);
 
                 ClientHelper.showError(null, ex);
 

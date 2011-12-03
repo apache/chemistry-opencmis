@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -128,6 +129,15 @@ public class ClientModel {
             }
 
             return (cap.getChangesCapability() != null) && (cap.getChangesCapability() != CapabilityChanges.NONE);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public synchronized boolean supportsRelationships() {
+        try {
+            ObjectType relType = clientSession.getSession().getTypeDefinition(BaseTypeId.CMIS_RELATIONSHIP.value());
+            return relType != null;
         } catch (Exception e) {
             return false;
         }
@@ -272,6 +282,17 @@ public class ClientModel {
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
 
         return clientSession.getSession().createFolder(properties, currentFolder, null, null, null);
+    }
+
+    public synchronized ObjectId createRelationship(String name, String type, String sourceId, String targetId)
+            throws Exception {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, type);
+        properties.put(PropertyIds.SOURCE_ID, sourceId);
+        properties.put(PropertyIds.TARGET_ID, targetId);
+
+        return clientSession.getSession().createRelationship(properties, null, null, null);
     }
 
     public synchronized List<ObjectType> getCreateableTypes(String rootTypeId) {
