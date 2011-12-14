@@ -28,6 +28,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
@@ -70,7 +71,11 @@ public class CreateFolderDialog extends CreateDialog {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                    getClientModel().createFolder(name, type);
+                    ObjectId objectId = getClientModel().createFolder(name, type);
+
+                    if (objectId != null) {
+                        getClientModel().loadObject(objectId.getId());
+                    }
 
                     thisDialog.setVisible(false);
                     thisDialog.dispose();

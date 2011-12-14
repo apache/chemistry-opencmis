@@ -242,9 +242,10 @@ public class CreateDocumentDialog extends CreateDialog {
                         versioningState = VersioningState.CHECKEDOUT;
                     }
 
+                    ObjectId objectId = null;
                     if (filename.length() > 0) {
                         // create a document from a file
-                        ObjectId objectId = getClientModel().createDocument(name, type, filename, versioningState,
+                        objectId = getClientModel().createDocument(name, type, filename, versioningState,
                                 unfiledButton.isSelected());
 
                         if (verifyAfterUploadButton.isSelected()) {
@@ -263,13 +264,17 @@ public class CreateDocumentDialog extends CreateDialog {
                             }
                         }
 
-                        ObjectId objectId = getClientModel().createDocument(name, type, length, seed, versioningState,
+                        objectId = getClientModel().createDocument(name, type, length, seed, versioningState,
                                 unfiledButton.isSelected());
 
                         if (verifyAfterUploadButton.isSelected()) {
                             ContentStream contentStream = getClientModel().createContentStream("", length, seed);
                             verifyContentStreams(contentStream, objectId);
                         }
+                    }
+
+                    if (objectId != null) {
+                        getClientModel().loadObject(objectId.getId());
                     }
 
                     thisDialog.setVisible(false);
