@@ -27,7 +27,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,18 +38,38 @@ import java.util.Set;
 class CmisCookieStoreImpl implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Map<URI, ArrayList<CmisHttpCookie>> storeMap = new HashMap<URI, ArrayList<CmisHttpCookie>>();
+    private final Map<URI, ArrayList<CmisHttpCookie>> storeMap;
+
+    public CmisCookieStoreImpl() {
+        this(1000);
+    }
+
+    public CmisCookieStoreImpl(final int maxUrls) {
+        storeMap = new LinkedHashMap<URI, ArrayList<CmisHttpCookie>>(maxUrls + 1, 0.70f, true) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean removeEldestEntry(Map.Entry<URI, ArrayList<CmisHttpCookie>> eldest) {
+                return size() > maxUrls;
+            }
+        };
+    }
 
     public void add(URI uri, CmisHttpCookie cookie) {
         if (uri == null || cookie == null) {
             throw new NullPointerException();
         }
 
-        ArrayList<CmisHttpCookie> cookies;
+        ArrayList<CmisHttpCookie> cookies = null;
         if (storeMap.containsKey(uri)) {
             cookies = storeMap.get(uri);
             cookies.remove(cookie);
             cookies.add(cookie);
+
+            // eliminate expired cookies
+            if (cookies.size() > 1) {
+                cleanCookieList(cookies);
+            }
         } else {
             cookies = new ArrayList<CmisHttpCookie>();
             cookies.add(cookie);
@@ -68,11 +88,7 @@ class CmisCookieStoreImpl implements Serializable {
             cookies = new ArrayList<CmisHttpCookie>();
         } else {
             // eliminate expired cookies
-            for (CmisHttpCookie cookie : cookies) {
-                if (cookie.hasExpired()) {
-                    cookies.remove(cookie);
-                }
-            }
+            cleanCookieList(cookies);
         }
 
         // get cookies whose domain matches the given URI
@@ -94,6 +110,14 @@ class CmisCookieStoreImpl implements Serializable {
         }
 
         return cookies;
+    }
+
+    private void cleanCookieList(List<CmisHttpCookie> cookies) {
+        for (CmisHttpCookie cookie : cookies) {
+            if (cookie.hasExpired()) {
+                cookies.remove(cookie);
+            }
+        }
     }
 
     public List<CmisHttpCookie> getCookies() {
