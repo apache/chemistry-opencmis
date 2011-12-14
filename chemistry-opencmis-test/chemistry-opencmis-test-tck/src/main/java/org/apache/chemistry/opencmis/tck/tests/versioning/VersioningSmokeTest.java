@@ -121,8 +121,12 @@ public class VersioningSmokeTest extends AbstractSessionTest {
         f = createResult(FAILURE, "Version series has a PWC but cmis:isVersionSeriesCheckedOut is not TRUE!");
         addResult(assertIsTrue(pwc.isVersionSeriesCheckedOut(), null, f));
 
-        f = createResult(WARNING, "PWC id and cmis:versionSeriesCheckedOutId don't match!");
-        addResult(assertEquals(pwc.getId(), pwc.getVersionSeriesCheckedOutId(), null, f));
+        if (pwc.getVersionSeriesCheckedOutId() == null) {
+            addResult(createResult(WARNING, "cmis:versionSeriesCheckedOutId is not set!"));
+        } else {
+            f = createResult(FAILURE, "PWC id and cmis:versionSeriesCheckedOutId don't match!");
+            addResult(assertEquals(pwc.getId(), pwc.getVersionSeriesCheckedOutId(), null, f));
+        }
 
         f = createResult(WARNING, "PWC does not have a value for cmis:versionSeriesCheckedOutBy!");
         addResult(assertStringNotEmpty(pwc.getVersionSeriesCheckedOutBy(), null, f));
