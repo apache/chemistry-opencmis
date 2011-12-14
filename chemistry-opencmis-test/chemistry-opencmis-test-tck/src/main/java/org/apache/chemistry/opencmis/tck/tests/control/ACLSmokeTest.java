@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
+import org.apache.chemistry.opencmis.tck.impl.TestParameters;
 
 /**
  * Query smoke test.
@@ -91,8 +92,10 @@ public class ACLSmokeTest extends AbstractSessionTest {
 
                 // apply permission "cmis:read"
                 if (getAclCapability(session) == CapabilityAcl.MANAGE) {
-                    // see CMIS spec section "2.2.1.5 ACLs"
-                    String principal = "cmis:user";
+                    String principal = getParameters().get(TestParameters.DEFAULT_ACL_PRINCIPAL);
+                    if (principal == null) {
+                        principal = TestParameters.DEFAULT_ACL_PRINCIPAL_VALUE;
+                    }
 
                     List<Ace> aces = new ArrayList<Ace>();
                     aces.add(session.getObjectFactory().createAce(principal, Collections.singletonList("cmis:read")));

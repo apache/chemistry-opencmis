@@ -30,4 +30,7 @@ public class TestParameters {
 
     public static final String DEFAULT_TEST_FOLDER_PARENT = "org.apache.chemistry.opencmis.tck.default.testFolderParent";
     public static final String DEFAULT_TEST_FOLDER_PARENT_VALUE = "/";
+
+    public static final String DEFAULT_ACL_PRINCIPAL = "org.apache.chemistry.opencmis.tck.default.principal";
+    public static final String DEFAULT_ACL_PRINCIPAL_VALUE = "cmis:user";
 }

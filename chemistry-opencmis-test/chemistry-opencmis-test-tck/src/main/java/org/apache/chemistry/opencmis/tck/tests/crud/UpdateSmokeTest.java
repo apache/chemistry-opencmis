@@ -93,7 +93,9 @@ public class UpdateSmokeTest extends AbstractSessionTest {
             // delete
             deleteObject(doc2);
             if (!doc1.getId().equals(doc2.getId())) {
-                deleteObject(doc1);
+                if (exists(doc1)) {
+                    deleteObject(doc1);
+                }
             }
         } finally {
             // clean up

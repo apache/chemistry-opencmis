@@ -619,11 +619,16 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                 // known properties that are strings and must be set
                 if (PropertyIds.OBJECT_ID.equals(propId) || PropertyIds.BASE_TYPE_ID.equals(propId)
-                        || PropertyIds.OBJECT_TYPE_ID.equals(propId) || PropertyIds.CREATED_BY.equals(propId)
-                        || PropertyIds.LAST_MODIFIED_BY.equals(propId) || PropertyIds.PATH.equals(propId)
+                        || PropertyIds.OBJECT_TYPE_ID.equals(propId) || PropertyIds.PATH.equals(propId)
                         || PropertyIds.SOURCE_ID.equals(propId) || PropertyIds.TARGET_ID.equals(propId)
                         || PropertyIds.POLICY_TEXT.equals(propId)) {
                     propertyCheck = PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY;
+                }
+
+                if (!(object instanceof Relationship)) {
+                    if (PropertyIds.CREATED_BY.equals(propId) || PropertyIds.LAST_MODIFIED_BY.equals(propId)) {
+                        propertyCheck = PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY;
+                    }
                 }
 
                 // known properties that are strings and should be set
@@ -632,9 +637,14 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
 
                 // known properties that are not strings and must be set
-                if (PropertyIds.CREATION_DATE.equals(propId) || PropertyIds.LAST_MODIFICATION_DATE.equals(propId)
-                        || PropertyIds.IS_IMMUTABLE.equals(propId)) {
+                if (PropertyIds.IS_IMMUTABLE.equals(propId)) {
                     propertyCheck = PropertyCheckEnum.MUST_BE_SET;
+                }
+
+                if (!(object instanceof Relationship)) {
+                    if (PropertyIds.CREATION_DATE.equals(propId) || PropertyIds.LAST_MODIFICATION_DATE.equals(propId)) {
+                        propertyCheck = PropertyCheckEnum.MUST_BE_SET;
+                    }
                 }
 
                 // special case: parent

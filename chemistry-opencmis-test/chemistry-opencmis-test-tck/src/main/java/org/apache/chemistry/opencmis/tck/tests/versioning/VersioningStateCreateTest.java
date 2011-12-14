@@ -41,7 +41,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
-public class VersioingStateCreateTest extends AbstractSessionTest {
+public class VersioningStateCreateTest extends AbstractSessionTest {
 
     @Override
     public void init(Map<String, String> parameters) {
@@ -68,7 +68,7 @@ public class VersioingStateCreateTest extends AbstractSessionTest {
 
             // major version
             Document docMajor = testFolder.createDocument(getProperties("major.txt"), getContentStream(),
-                    VersioningState.MAJOR);
+                    VersioningState.MAJOR, null, null, null, SELECT_ALL_NO_CACHE_OC);
             addResult(checkObject(session, docMajor, getAllProperties(docMajor), "Major version compliance"));
 
             f = createResult(FAILURE, "Document should be major version.");
@@ -84,7 +84,7 @@ public class VersioingStateCreateTest extends AbstractSessionTest {
             // minor version
             try {
                 Document docMinor = testFolder.createDocument(getProperties("minor.txt"), getContentStream(),
-                        VersioningState.MINOR);
+                        VersioningState.MINOR, null, null, null, SELECT_ALL_NO_CACHE_OC);
                 addResult(checkObject(session, docMinor, getAllProperties(docMinor), "Minor version compliance"));
 
                 f = createResult(FAILURE, "Document should be minor version.");
@@ -107,7 +107,7 @@ public class VersioingStateCreateTest extends AbstractSessionTest {
             // checked out version
             try {
                 Document docCheckedOut = testFolder.createDocument(getProperties("checkout.txt"), getContentStream(),
-                        VersioningState.CHECKEDOUT);
+                        VersioningState.CHECKEDOUT, null, null, null, SELECT_ALL_NO_CACHE_OC);
                 addResult(checkObject(session, docCheckedOut, getAllProperties(docCheckedOut),
                         "Checked out version compliance"));
 
