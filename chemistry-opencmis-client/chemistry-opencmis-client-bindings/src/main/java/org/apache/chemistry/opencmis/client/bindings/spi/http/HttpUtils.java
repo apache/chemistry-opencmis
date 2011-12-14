@@ -191,6 +191,11 @@ public class HttpUtils {
                 inputStream = conn.getInputStream();
             }
 
+            // log after connect
+            if (log.isTraceEnabled()) {
+                log.trace(method + " " + url + " > Headers: " + conn.getHeaderFields());
+            }
+
             // forward response HTTP headers
             if (authProvider != null) {
                 authProvider.putResponseHeaders(url.toString(), respCode, conn.getHeaderFields());
