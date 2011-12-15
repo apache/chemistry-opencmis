@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Provides an in-memory cookie store.
@@ -92,7 +91,7 @@ class CmisCookieStoreImpl implements Serializable {
         }
 
         // get cookies whose domain matches the given URI
-        Set<URI> uris = storeMap.keySet();
+        List<URI> uris = new ArrayList<URI>(storeMap.keySet());
         for (URI u : uris) {
             // exclude the given URI
             if (!u.equals(uri)) {
@@ -101,6 +100,9 @@ class CmisCookieStoreImpl implements Serializable {
                     if (CmisHttpCookie.domainMatches(cookie.getDomain(), uri.getHost())) {
                         if (cookie.hasExpired()) {
                             listCookie.remove(cookie);
+                            if (listCookie.isEmpty()) {
+                                storeMap.remove(u);
+                            }
                         } else if (!(cookie.hasExpired() || cookies.contains(cookie))) {
                             cookies.add(cookie);
                         }
