@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
@@ -84,10 +85,24 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         checkCreateProperties(properties);
 
         // find the link
-        String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+        String link = null;
 
-        if (link == null) {
-            throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+        if (folderId == null) {
+            // Creation of unfiled objects via AtomPub is not defined in the
+            // CMIS 1.0 specification. This implementation follow the CMIS 1.1
+            // draft and POSTs the document to the Unfiled collection.
+
+            link = loadCollection(repositoryId, Constants.COLLECTION_UNFILED);
+
+            if (link == null) {
+                throw new CmisObjectNotFoundException("Unknown repository or unfiling not supported!");
+            }
+        } else {
+            link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+
+            if (link == null) {
+                throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+            }
         }
 
         UrlBuilder url = new UrlBuilder(link);
@@ -171,10 +186,24 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         checkCreateProperties(properties);
 
         // find the link
-        String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+        String link = null;
 
-        if (link == null) {
-            throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+        if (folderId == null) {
+            // Creation of unfiled objects via AtomPub is not defined in the
+            // CMIS 1.0 specification. This implementation follow the CMIS 1.1
+            // draft and POSTs the policy to the Unfiled collection.
+
+            link = loadCollection(repositoryId, Constants.COLLECTION_UNFILED);
+
+            if (link == null) {
+                throw new CmisObjectNotFoundException("Unknown repository or unfiling not supported!");
+            }
+        } else {
+            link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+
+            if (link == null) {
+                throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+            }
         }
 
         UrlBuilder url = new UrlBuilder(link);

@@ -22,12 +22,14 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RES
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -51,8 +53,17 @@ public class MultiFilingService {
         // get parameters
         String removeFrom = getStringParameter(request, Constants.PARAM_REMOVE_FROM);
 
-        AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
+        AtomEntryParser parser = new AtomEntryParser();
+        parser.setIgnoreAtomContentSrc(true); // needed for some clients
+        parser.parse(request.getInputStream());
+
         String objectId = parser.getId();
+
+        if (objectId == null && removeFrom == null) {
+            // create unfiled object
+            createUnfiledObject(context, service, repositoryId, request, response, parser);
+            return;
+        }
 
         // execute
         service.removeObjectFromFolder(repositoryId, objectId, removeFrom, null);
@@ -77,6 +88,46 @@ public class MultiFilingService {
         response.setStatus(HttpServletResponse.SC_CREATED);
         response.setContentType(Constants.MEDIATYPE_ENTRY);
         response.setHeader("Location", compileUrl(baseUrl, RESOURCE_ENTRY, object.getId()));
+
+        // write XML
+        AtomEntry entry = new AtomEntry();
+        entry.startDocument(response.getOutputStream());
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
+        entry.endDocument();
+    }
+
+    /**
+     * Create unfiled object.
+     * 
+     * (Creation of unfiled objects via AtomPub is not defined in the CMIS 1.0
+     * specification. This implementation follow the CMIS 1.1 draft.)
+     */
+    private static void createUnfiledObject(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response, AtomEntryParser parser) throws Exception {
+        // get additional parameters
+        VersioningState versioningState = getEnumParameter(request, Constants.PARAM_VERSIONIG_STATE,
+                VersioningState.class);
+
+        // create
+        String newObjectId = service.create(repositoryId, parser.getProperties(), null, parser.getContentStream(),
+                versioningState, parser.getPolicyIds(), null);
+
+        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
+        if (objectInfo == null) {
+            throw new CmisRuntimeException("Object Info is missing!");
+        }
+
+        ObjectData object = objectInfo.getObject();
+        if (object == null) {
+            throw new CmisRuntimeException("Object is null!");
+        }
+
+        // set headers
+        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setContentType(Constants.MEDIATYPE_ENTRY);
+        response.setHeader("Location", compileUrl(baseUrl, RESOURCE_ENTRY, newObjectId));
 
         // write XML
         AtomEntry entry = new AtomEntry();
