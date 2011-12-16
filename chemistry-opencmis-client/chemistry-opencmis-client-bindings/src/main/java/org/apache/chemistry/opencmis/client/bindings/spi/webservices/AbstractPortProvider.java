@@ -77,7 +77,7 @@ public abstract class AbstractPortProvider {
     public static final String POLICY_SERVICE = "PolicyService";
     public static final String ACL_SERVICE = "ACLService";
 
-    protected static final int CHUNK_SIZE = 64 * 1024;
+    protected static final int CHUNK_SIZE = (64 * 1024) - 1;
 
     private BindingSession session;
     protected boolean useCompression;
@@ -295,7 +295,7 @@ public abstract class AbstractPortProvider {
         if (httpHeaders == null) {
             httpHeaders = new HashMap<String, List<String>>();
         }
-        
+
         // CMIS client header
         httpHeaders.put("X-CMIS-Client", Collections.singletonList(ClientVersion.OPENCMIS_CLIENT));
 
@@ -313,10 +313,10 @@ public abstract class AbstractPortProvider {
         if (acceptLanguage != null) {
             httpHeaders.put("Accept-Language", Collections.singletonList(acceptLanguage));
         }
-        
+
         ((BindingProvider) portObject).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
     }
-    
+
     /**
      * Creates a port object.
      */
