@@ -18,8 +18,10 @@
  */
 package org.apache.chemistry.opencmis.server.support.filter;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -115,12 +117,17 @@ public class LoggingFilter implements Filter {
             if (logHeaders)
                 logHeaders(logReq, sb);
 
-            if (xmlRequest != null && xmlRequest.length() > 0) {
-                if (prettyPrint)
-                    xmlRequest = prettyPrint(xmlRequest, indent);
-            } else
+            if (xmlRequest == null || xmlRequest.length() == 0)
                 xmlRequest = "";
 
+            if (prettyPrint && cType != null) {
+                if (cType.startsWith("multipart")) {
+                    xmlRequest = processMultipart(cType, xmlRequest);
+                } else if (cType.contains("xml")) { 
+                    xmlRequest = prettyPrint(xmlRequest, indent);
+                }
+            }
+            
             xmlRequest = sb.toString() + xmlRequest;
             log.debug("Found request: " + requestFileName + ": " + xmlRequest);
             writeTextToFile(requestFileName, xmlRequest);
@@ -128,27 +135,27 @@ public class LoggingFilter implements Filter {
 
             sb = new StringBuffer();
             cType = logResponse.getContentType();
-            String xmlResponse;
+            String xmlResponse = logResponse.getPayload();
             String responseFileName = getResponseFileName(reqNo);
+            
             if (logHeaders) {
                 logHeaders(logResponse, req.getProtocol(), sb);
             }
-            if (cType != null && cType.contains("xml")) {
-                if (prettyPrint)
-                    xmlResponse = prettyPrint(logResponse.getPayload(), indent);
-                else
-                    xmlResponse = logResponse.getPayload();
-                
-                xmlResponse = sb.toString() + xmlResponse;
-                log.debug("Found response: " + responseFileName  + ": " + xmlResponse);
-                writeTextToFile(responseFileName, xmlResponse);
-            } else if (cType != null && cType.contains("html")) {
-                xmlResponse = sb.toString() + logResponse.getPayload();
-                log.debug("Found response: " + responseFileName  + ": " + xmlResponse);
-                writeTextToFile(responseFileName, xmlResponse);
-            } else {
-                writeTextToFile(responseFileName, "Unknown reponse content format: " + cType);
+            
+            if (xmlResponse == null || xmlResponse.length() == 0) 
+                xmlResponse = "";
+
+            if (prettyPrint && cType != null) {
+                if (cType.startsWith("multipart")) {
+                    xmlResponse = processMultipart(cType, xmlResponse);
+                } else if (cType.contains("xml")) { 
+                    xmlResponse = prettyPrint(xmlResponse, indent);
+                }
             }
+                
+            xmlResponse = sb.toString() + xmlResponse;
+            log.debug("Found response: " + responseFileName  + ": " + xmlResponse);
+            writeTextToFile(responseFileName, xmlResponse);
         } else {            
             chain.doFilter(req, resp);
         }
@@ -198,6 +205,57 @@ public class LoggingFilter implements Filter {
         }
     }
     
+    private String processMultipart(String cType, String messageBody) throws IOException {
+        int beginIndex = cType.indexOf("boundary=\"") + 10;
+        int endIndex = cType.indexOf("\"", beginIndex);
+        String boundary = "--" + cType.substring(beginIndex, endIndex);
+        log.debug("Boundary = " + boundary);
+        BufferedReader in = new BufferedReader(new StringReader(messageBody));
+        StringBuffer out = new StringBuffer();
+        String line;
+        ByteArrayOutputStream xmlBodyBuffer = new ByteArrayOutputStream();
+        boolean boundaryFound;
+        
+        boolean inXmlBody = false;
+        boolean inXmlPart = false;
+        while ((line = in.readLine()) != null) {
+            if (inXmlPart) {
+                if (line.startsWith("<?xml")) {
+                    inXmlBody = true;
+                    xmlBodyBuffer.write(line.getBytes(), 0, line.length());                   
+                    while (inXmlBody)  {
+                        line = in.readLine();
+                        boundaryFound = line.startsWith(boundary);
+                        if (boundaryFound) {
+                            log.debug("Leaving XML body: " + line);
+                            inXmlBody = false;
+                            inXmlPart = false;
+                            out.append(prettyPrint(xmlBodyBuffer.toString(), indent));
+                            out.append(line).append("\n");
+                        } else
+                            xmlBodyBuffer.write(line.getBytes(), 0, line.length());
+                    }               
+                } else { 
+                    log.debug("in XML part is: " + line);
+                    out.append(line).append("\n");
+                }
+
+            } else {
+                log.debug("not in XML part: " + line);
+                out.append(line).append("\n");
+                boundaryFound = line.startsWith(boundary);
+                if (boundaryFound) {
+                    log.debug("Boundardy found!");
+                    inXmlPart = true;
+                }
+            }
+        }
+        in.close();        
+        log.debug("End parsing multipart.");
+        
+        return out.toString();
+    }
+
     @SuppressWarnings("rawtypes")
     private void logHeaders(LoggingRequestWrapper req, StringBuffer sb) {
         sb.append(req.getMethod());
