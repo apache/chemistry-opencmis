@@ -22,6 +22,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -29,9 +31,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
-import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;
@@ -73,6 +76,7 @@ public class Main {
     private static final String TOPLEVEL_TYPE = "DocumentTopLevel";
     private static final String VERSIONED_TYPE = "VersionableType";
     private static String LOGDIR = System.getProperty("java.io.tmpdir");// + File.separator;
+    private String targetDir = System.getProperty("java.io.tmpdir");// + File.separator;
 
     private BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
     private BindingType bindingType;
@@ -86,11 +90,24 @@ public class Main {
     private DiscoveryService discSvc;
     private AclService aclSvc;
 
+    private static final String[] URLS = {"http://localhost:8080/inmemory/atom", 
+            "http://localhost:8080/inmemory/services", 
+            "http://localhost:8080/inmemory/browser"};
+    private static final BindingType[] BINDINGS = {BindingType.ATOMPUB, BindingType.WEBSERVICES, BindingType.BROWSER};
+
     public Main() {
-        bindingType = BindingType.ATOMPUB;
-        init("http://localhost:8080/inmemory/atom", bindingType);
     }
 
+    public void runAllBindings() {
+//      for (int i = 0; i < BINDINGS.length; i++) {
+        for (int i = 0; i < 2; i++) {
+            bindingType = BINDINGS[i];
+            init(URLS[i], BINDINGS[i]);
+            run();
+        }
+        
+    }
+    
     public void run() {
         // Repository Service:
         repositoryId = "A1";
@@ -108,33 +125,68 @@ public class Main {
         // Object Service:
         getObject(docId);
         getAcl(docId);
-        String id = createDocument("SampleDocument", TOPLEVEL_TYPE, rootFolderId, VersioningState.NONE);
-        updateProperties(id, PropertyIds.NAME, "RenamedDocument");
-        deleteObject(id);
+        String id1 = createDocument("SampleDocument", TOPLEVEL_TYPE, rootFolderId, VersioningState.NONE);
+        updateProperties(id1, PropertyIds.NAME, "RenamedDocument");
+        deleteObject(id1);
 
         // Discovery Service:
         doQuery();
 
         // Versioning Service
-        id = prepareVersionSeries("VersionedDocument", VERSIONED_TYPE, rootFolderId);
-        checkOut(id);
-        checkIn(id, true, "final version in series");
-        getAllVersions(id);        
+        if (bindingType != BindingType.WEBSERVICES) {
+            // currently there is a JAXB bug:
+            
+            String id2 = prepareVersionSeries("VersionedDocument", VERSIONED_TYPE, rootFolderId);
+            checkOut(id2);
+            checkIn(id2, true, "final version in series");
+            getAllVersions(id2);
+
+            // delete all generated objects
+            String[] ids = {id2};
+            cleanup(ids);
+        }
+
+        // collect all captured files and store them in a ZIP file
+        String dirs[] = {BindingType.ATOMPUB.value(), BindingType.WEBSERVICES.value(), BindingType.BROWSER.value() };        
+        createZipFile("CMIS-Spec-Examples.zip", dirs);
     }
 
     private void init(String url, BindingType bindingType) {
         LOG.debug("Initializing connection to InMemory server: ");
+        LOG.debug("   Binding: " + bindingType.value());
+        LOG.debug("   URL: " + url);
+
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(SessionParameter.USER, "admin");
         parameters.put(SessionParameter.PASSWORD, "admin");
 
         parameters.put(SessionParameter.BINDING_TYPE, bindingType.value());
-        parameters.put(SessionParameter.ATOMPUB_URL, url);
 
         // get factory and create binding
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisAtomPubBinding(parameters);
-
+        CmisBinding binding = null;
+        
+        if (bindingType == BindingType.ATOMPUB)  {
+            parameters.put(SessionParameter.ATOMPUB_URL, url);
+            binding = factory.createCmisAtomPubBinding(parameters);
+        } else if (bindingType == BindingType.WEBSERVICES) {
+            parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url + "/ACLService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE,  url + "/DiscoveryService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE,  url + "/MultiFilingService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE,  url + "/NavigationService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE,  url + "/ObjectService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE,  url + "/PolicyService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE,  url + "/RelatinshipService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE,  url + "/RepositoryService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE,  url + "/VersioningService?wsdl");
+            binding = factory.createCmisWebServicesBinding(parameters);            
+        } else if (bindingType == BindingType.BROWSER) {
+            parameters.put(SessionParameter.BROWSER_URL, url); 
+            binding = factory.createCmisBrowserBinding(parameters);            
+        } else {
+            LOG.error("Unknown binding type: " + bindingType.value());
+            return;
+        }
         objFactory = binding.getObjectFactory();
         repSvc = binding.getRepositoryService();
         objSvc = binding.getObjectService();
@@ -143,6 +195,13 @@ public class Main {
         multiSvc = binding.getMultiFilingService();
         discSvc = binding.getDiscoveryService();
         aclSvc = binding.getAclService();
+        
+        // create a folder where target files will be stored:
+        targetDir = bindingType.value();
+        File in = new File(targetDir);
+        boolean ok = in.mkdir();
+        
+        LOG.debug("creating target directory for files: " + ok);
         LOG.debug("Initializing done. ");
     }
 
@@ -277,6 +336,15 @@ public class Main {
         LOG.debug("deleteObject() done.");
     }
 
+    private void cleanup (String[] ids) {
+        LOG.debug("cleaning up...");
+        for (String id : ids) {
+            LOG.debug("deleteing object " + id);
+            objSvc.deleteObject(repositoryId, id, true, null);            
+        }
+        LOG.debug("... cleaning up done");
+    }
+    
     /**
      * enumerate the children of the root folder and return the id of the first
      * document
@@ -313,7 +381,7 @@ public class Main {
 
     private String prepareVersionSeries(String name, String typeId, String folderId) {
         String id = createDocumentIntern(name, typeId, folderId, VersioningState.MAJOR);
-        Holder<Boolean> contentCopied = new Holder<Boolean>(true);
+        Holder<Boolean> contentCopied = new Holder<Boolean>();
         Holder<String> idHolder = new Holder<String>(id);
 
         verSvc.checkOut(repositoryId, idHolder, null, contentCopied);
@@ -357,17 +425,19 @@ public class Main {
     
     private void getAcl(String objectId) {
         LOG.debug("getting Acl() " + objectId);
-        // apply an ACL to the test doc
+
+        // get old ACL first:
+        Acl oldAcl = aclSvc.getAcl(repositoryId, objectId, true, null);
+
+        // create a new ACL for the test doc
         List<Ace> aces = new ArrayList<Ace>();
         aces.add(objFactory.createAccessControlEntry("Alice", Collections.singletonList("cmis:read")));
         aces.add(objFactory.createAccessControlEntry("Bob", Collections.singletonList("cmis:write")));
         aces.add(objFactory.createAccessControlEntry("admin", Collections.singletonList("cmis:all")));
         Acl acl = objFactory.createAccessControlList(aces);
 
-        if (bindingType == BindingType.ATOMPUB)
-            ;// TODO: aclSvc.applyAcl(repositoryId, objectId, acl, AclPropagation.OBJECTONLY, null);
-        else
-            aclSvc.applyAcl(repositoryId, objectId, acl, null, AclPropagation.OBJECTONLY, null);
+        // add the new ACL and remove the old one
+        aclSvc.applyAcl(repositoryId, objectId, acl, oldAcl, AclPropagation.OBJECTONLY, null);
             
         aclSvc.getAcl(repositoryId, objectId, true, null);
         renameFiles("getAcl");
@@ -401,7 +471,7 @@ public class Main {
             return;
         }
         File in = new File(fileNameInReq);
-        File out = new File(name + "-request.log");
+        File out = new File(targetDir + File.separator + name + "-request.log");
         if (out.exists())
             out.delete();
         boolean ok = in.renameTo(out);
@@ -411,7 +481,7 @@ public class Main {
             LOG.warn("Renaming file " + in.getAbsolutePath() + " to " + out.getAbsolutePath() + " failed.");
 
         in = new File(fileNameInResp);
-        out = new File(name + "-response.log");
+        out = new File(targetDir + File.separator + name + "-response.log");
         if (out.exists())
             out.delete();
         ok = in.renameTo(out);
@@ -421,25 +491,97 @@ public class Main {
             LOG.warn("Renaming file " + in.getAbsolutePath() + " to " + out.getAbsolutePath() + " failed.");
     }
     
+    private void createZipFile(String zipFileName, String[] dirs) {
+        
+        File out = new File(zipFileName);
+        if (out.exists())
+            out.delete();
+        
+        FileOutputStream fout = null;
+        ZipOutputStream zout =null;
+        try {
+            fout = new FileOutputStream(zipFileName);
+            zout = new ZipOutputStream(fout);
+            for (String dir: dirs) {
+                File dirToZip = new File(dir);
+                addDirectory(zout, dir, dirToZip);
+            }
+        } catch (Exception e) {
+            LOG.error("Creating ZIP file failed: " + e);
+        } finally {
+            try {
+                if (zout != null)
+                    zout.close();
+                if (fout != null)
+                    fout.close();
+            } catch (IOException e) {
+                LOG.error(e);
+            }
+        }
+    }
+    
+    private static void addDirectory(ZipOutputStream zout, String prefix, File sourceDir) throws IOException {
+        
+        File[] files = sourceDir.listFiles();
+        LOG.debug("Create Zip, adding directory " + sourceDir.getName());
+               
+        if (null != files) {
+            for(int i=0; i < files.length; i++)
+            {
+                if(files[i].isDirectory())
+                {
+                    addDirectory(zout, prefix + File.separator + files[i].getName(), files[i]);
+                } else {
+                    LOG.debug("Create Zip, adding file " + files[i].getName());
+                    byte[] buffer = new byte[65536];
+                    FileInputStream fin = new FileInputStream(files[i]);
+                    String zipEntryName = prefix + File.separator + files[i].getName();
+                    LOG.debug("   adding entry " + zipEntryName);
+                    zout.putNextEntry(new ZipEntry(zipEntryName));
+
+                    int length;
+                    while((length = fin.read(buffer)) > 0)
+                    {
+                        zout.write(buffer, 0, length);
+                    }
+
+                    zout.closeEntry();
+                    fin.close();
+                }
+            }      
+        }
+    }
+    
     public static void clean() {
         LOG.debug("Cleaning generated and captured request and response logs...");
         
         cleanFilesWithFilter(LOGDIR, "*-request.log");
         cleanFilesWithFilter(LOGDIR, "*-response.log");
-        cleanFilesWithFilter(".", "*-request.log");
-        cleanFilesWithFilter(".", "*-response.log");
+        for (int i = 0; i < BINDINGS.length; i++) {
+            String dir = BINDINGS[i].value();
+            
+            cleanFilesWithFilter(dir, "*-request.log");
+            cleanFilesWithFilter(dir, "*-response.log");
 
-        LOG.debug("...cleaning done.");        
+            File dirToDelete = new File (dir);
+            boolean ok = dirToDelete.delete();
+            if (ok)
+                LOG.debug("Deleting dir " + dirToDelete.getAbsolutePath() + " succeeded.");
+            else
+                LOG.warn("Deleting dir " + dirToDelete.getAbsolutePath() + " failed.");
+        }
+        LOG.debug("... done.");        
     }
     
     private static void cleanFilesWithFilter(String directoryPath, String wildcardFilter) {
         File dir = new File(directoryPath);
         FileFilter fileFilter = new WildcardFileFilter(wildcardFilter);
         File[] files = dir.listFiles(fileFilter);
-        for (int i = 0; i < files.length; i++) {
-           boolean ok = files[i].delete();
-           LOG.debug("Deleting file: " + files[i] + ", success: " + ok);
-        }        
+        if (files != null)
+            for (int i = 0; i < files.length; i++) {
+                boolean ok = files[i].delete();
+                LOG.debug("Deleting file: " + files[i] + ", success: " + ok);
+            }        
     }
     
     private static String findLastFile(String directoryPath, String wildcardFilter) {
@@ -453,13 +595,15 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        LOG.debug("Starting generating spec examples...");
-        if (args.length > 0 && args[0].equals("-clean"))
+        if (args.length > 0 && args[0].equals("-clean")) {
+            LOG.debug("Cleaning up generated files...");
             Main.clean();
-        else {
+            LOG.debug("... cleaning up done.");
+        } else {
+            LOG.debug("Starting generating spec examples...");
             Main main = new Main();
-            main.run();
+            main.runAllBindings();
+            LOG.debug("... finished generating spec examples.");
         }
-        LOG.debug("... finsihed generating spec examples.");
     }
 }
