@@ -70,9 +70,9 @@ public class LoggingFilter implements Filter {
         
         String val; 
         logDir = cfg.getInitParameter("LogDir");
-        if (null == logDir)
+        if (null == logDir || logDir.length() == 0)
             logDir = System.getProperty("java.io.tmpdir");
-        if (null == logDir)
+        if (null == logDir|| logDir.length() == 0)
             logDir = "." + File.separator;
 
         if (!logDir.endsWith(File.separator))
@@ -104,6 +104,8 @@ public class LoggingFilter implements Filter {
             LoggingRequestWrapper logReq = new LoggingRequestWrapper((HttpServletRequest)req);
             LoggingResponseWrapper logResponse = new LoggingResponseWrapper((HttpServletResponse)resp);
             
+            chain.doFilter(logReq, logResponse);
+
             int reqNo = getNextRequestNumber();
             String requestFileName = getRequestFileName(reqNo);
             String cType = logReq.getContentType();
@@ -123,7 +125,6 @@ public class LoggingFilter implements Filter {
             log.debug("Found request: " + requestFileName + ": " + xmlRequest);
             writeTextToFile(requestFileName, xmlRequest);
             
-            chain.doFilter(logReq, logResponse);
 
             sb = new StringBuffer();
             cType = logResponse.getContentType();
@@ -202,6 +203,11 @@ public class LoggingFilter implements Filter {
         sb.append(req.getMethod());
         sb.append(" ");
         sb.append(req.getRequestURI());
+        String queryString = req.getQueryString();
+        if (null != queryString && queryString.length() > 0) {
+            sb.append("?");
+            sb.append(queryString);
+        }
         sb.append(" ");
         sb.append(req.getProtocol());
         sb.append("\n");
@@ -286,25 +292,25 @@ public class LoggingFilter implements Filter {
         public int read(byte[] b) throws IOException {
            int ch = is.read(b);
            if (ch != -1) {
-              baous.write(b);
+              baous.write(b, 0, ch);
            }
            return ch;
         }
    
         @Override
         public int read(byte[] b, int o, int l) throws IOException {
-           int ch = is.read(b,o,l);
+           int ch = is.read(b, o, l);
            if (ch != -1) {
-              baous.write(b);
+              baous.write(b, o, ch);
            }
            return ch;
         }
         
         @Override
         public int readLine(byte[] b, int o, int l) throws IOException {
-           int ch = is.readLine(b,o,l);
+           int ch = is.readLine(b, o, l);
            if (ch != -1) {
-               baous.write(b, o, l);
+               baous.write(b, o, ch);
            }
            return ch;
         }
