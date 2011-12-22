@@ -109,9 +109,11 @@ public class Main {
     }
     
     public void run() {
+        LOG.debug("Generating spec examples for Binding: " + bindingType.value());
         // Repository Service:
         repositoryId = "A1";
         getRepositoryInfo();
+
         getRepositories();
         String docId = getTestDocId();
         String folderId = getTestFolderId();
@@ -133,18 +135,14 @@ public class Main {
         doQuery();
 
         // Versioning Service
-        if (bindingType != BindingType.WEBSERVICES) {
-            // currently there is a JAXB bug:
-            
-            String id2 = prepareVersionSeries("VersionedDocument", VERSIONED_TYPE, rootFolderId);
-            checkOut(id2);
-            checkIn(id2, true, "final version in series");
-            getAllVersions(id2);
+        String id2 = prepareVersionSeries("VersionedDocument", VERSIONED_TYPE, rootFolderId);
+        checkOut(id2);
+        checkIn(id2, true, "final version in series");
+        getAllVersions(id2);
 
-            // delete all generated objects
-            String[] ids = {id2};
-            cleanup(ids);
-        }
+        // delete all generated objects
+        String[] ids = {id2};
+        cleanup(ids);
 
         // collect all captured files and store them in a ZIP file
         String dirs[] = {BindingType.ATOMPUB.value(), BindingType.WEBSERVICES.value(), BindingType.BROWSER.value() };        
