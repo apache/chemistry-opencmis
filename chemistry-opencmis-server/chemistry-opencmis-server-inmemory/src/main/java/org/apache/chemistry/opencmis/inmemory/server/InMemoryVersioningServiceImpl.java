@@ -127,7 +127,9 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         DocumentVersion pwc = verDoc.checkOut(content, user);
         objectId.setValue(pwc.getId()); // return the id of the created pwc
-
+        if (null != contentCopied) // Note: always null in AtomPub binding
+            contentCopied.setValue(true);
+        
         // To be able to provide all Atom links in the response we need
         // additional information:
         if (context.isObjectInfoRequired()) {
@@ -140,6 +142,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
     public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String objectId, String versionSeriesId,
             String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
         
+        // Note that in AtomPub object id is null and versionSeriesId is set and in SOAP bindinf versionSeriesId is set
+        // and objectId is null
         StoredObject so;
         List<ObjectData> res = new ArrayList<ObjectData>();
         if (null == versionSeriesId)
@@ -148,18 +152,23 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisInvalidArgumentException("getAllVersions requires a version series id, but ist was null.");
         so = validator.getAllVersions(context, repositoryId, objectId, versionSeriesId, extension);
 
+        if (null == objectId)
+            objectId = versionSeriesId;
+
         if (!(so instanceof VersionedDocument)) {
-            so = validator.getObject(context, repositoryId, objectId, extension);  
-            ObjectData objData = getObject(context, repositoryId, objectId, filter, includeAllowableActions,
-                    IncludeRelationships.NONE,extension, objectInfos);
-            res.add(objData);
+            if (!(so instanceof DocumentVersion))
+                throw new CmisInvalidArgumentException("getAllVersions requires a id of a versioned document.");
+            so = ((DocumentVersion)so).getParentDocument();
         }
+        ObjectData objData = getObject(context, repositoryId, objectId, filter, includeAllowableActions,
+                IncludeRelationships.NONE,extension, objectInfos);
+        res.add(objData);
 
         VersionedDocument verDoc = (VersionedDocument) so;
         res = new ArrayList<ObjectData>();
         List<DocumentVersion> versions = verDoc.getAllVersions();
         for (DocumentVersion version : versions) {
-            ObjectData objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
+            objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
                     IncludeRelationships.NONE,extension, objectInfos);
             res.add(objData);
         }
