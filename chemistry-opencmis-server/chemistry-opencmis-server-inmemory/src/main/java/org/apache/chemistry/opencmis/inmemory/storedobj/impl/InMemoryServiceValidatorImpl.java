@@ -211,7 +211,8 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
             ExtensionsData extension) {
 
         StoredObject folder = super.createDocument(context, repositoryId, folderId, extension);
-        checkWriteAccess(repositoryId, context.getUsername(), folder);
+        if (null != folder) // not if unfiled
+            checkWriteAccess(repositoryId, context.getUsername(), folder);
         return folder;
     }
 

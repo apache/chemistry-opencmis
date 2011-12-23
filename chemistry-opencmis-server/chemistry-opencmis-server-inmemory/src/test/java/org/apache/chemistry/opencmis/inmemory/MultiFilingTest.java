@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.commons.logging.Log;
@@ -83,6 +84,12 @@ public class MultiFilingTest extends AbstractServiceTest {
 
         assertNotNull(res);
         assertEquals(res.size(), 0);
+        
+        // test with a different user than Admin:
+        switchCallContext("Alice");
+        docId = createDocument(UNFILED_DOC_NAME + "_2", null, DOCUMENT_TYPE_ID, true);
+        docId2 = getDocument(docId);
+        assertEquals(docId, docId2);
 
         LOG.debug("End testCreatUnfiledDocument()");
     }
@@ -285,4 +292,9 @@ public class MultiFilingTest extends AbstractServiceTest {
                 VersioningState.MAJOR, true);
 
     }
+
+    private void switchCallContext(String user) {
+        ((DummyCallContext) fTestCallContext).put(CallContext.USERNAME, user);
+    }
+
 }
