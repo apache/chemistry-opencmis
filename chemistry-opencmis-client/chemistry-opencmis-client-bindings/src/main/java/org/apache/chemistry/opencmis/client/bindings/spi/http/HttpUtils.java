@@ -114,7 +114,7 @@ public class HttpUtils {
             // set other headers
             if (headers != null) {
                 for (Map.Entry<String, String> header : headers.entrySet()) {
-                    conn.setRequestProperty(header.getKey(), header.getValue());
+                    conn.addRequestProperty(header.getKey(), header.getValue());
                 }
             }
 
@@ -126,7 +126,7 @@ public class HttpUtils {
                     for (Map.Entry<String, List<String>> header : httpHeaders.entrySet()) {
                         if (header.getValue() != null) {
                             for (String value : header.getValue()) {
-                                conn.setRequestProperty(header.getKey(), value);
+                                conn.addRequestProperty(header.getKey(), value);
                             }
                         }
                     }
