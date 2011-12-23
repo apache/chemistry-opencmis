@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsIm
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Version;
@@ -125,8 +126,10 @@ public class DataObjectCreator {
         }
 
         if (isDocument) {
-            set.add(Action.CAN_ADD_OBJECT_TO_FOLDER);
-            set.add(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
+            if (so instanceof Filing && ((Filing)so).hasParent()) {
+                set.add(Action.CAN_ADD_OBJECT_TO_FOLDER);
+                set.add(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
+            }
             if (isVersioned) {
                 if (canCheckIn)
                     set.add(Action.CAN_SET_CONTENT_STREAM);
