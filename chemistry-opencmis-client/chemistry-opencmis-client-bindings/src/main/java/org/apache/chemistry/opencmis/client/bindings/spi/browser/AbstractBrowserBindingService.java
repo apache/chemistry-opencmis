@@ -21,14 +21,16 @@ package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -50,14 +52,27 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConstants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.json.simple.JSONArray;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 
 /**
  * Base class for all Browser Binding client services.
  */
 public abstract class AbstractBrowserBindingService implements LinkAccess {
+
+    protected static final ContainerFactory SIMPLE_CONTAINER_FACTORY = new ContainerFactory() {
+        @SuppressWarnings("rawtypes")
+        public Map createObjectContainer() {
+            return new LinkedHashMap();
+        }
+
+        @SuppressWarnings("rawtypes")
+        public List creatArrayContainer() {
+            return new ArrayList();
+        }
+    };
 
     private BindingSession session;
 
@@ -78,13 +93,28 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
     /**
      * Returns the service URL of this session.
      */
-    protected String getServiceURL() {
+    protected String getServiceUrl() {
         Object url = session.get(SessionParameter.BROWSER_URL);
         if (url instanceof String) {
             return (String) url;
         }
 
         return null;
+    }
+
+    protected UrlBuilder getRepositoryUrl(String repositoryId, String selector) {
+        UrlBuilder result = getRepositoryUrlCache().getRepositoryUrl(repositoryId, selector);
+
+        if (result == null) {
+            getRepositoriesInternal(repositoryId);
+            result = getRepositoryUrlCache().getRepositoryUrl(repositoryId, selector);
+        }
+
+        if (result == null) {
+            throw new CmisObjectNotFoundException("Unknown repository!");
+        }
+
+        return result;
     }
 
     // ---- exceptions ----
@@ -164,16 +194,44 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
     /**
      * Parses an input stream.
      */
-    protected Object parse(InputStream stream, String charset) {
+    @SuppressWarnings("unchecked")
+    protected Map<String, Object> parse(InputStream stream, String charset) {
+        Object obj = parse(stream, charset, SIMPLE_CONTAINER_FACTORY);
+
+        if (obj instanceof Map) {
+            return (Map<String, Object>) obj;
+        }
+
+        throw new CmisConnectionException("Unexpected object!");
+    }
+
+    /**
+     * Parses an input stream.
+     */
+    protected Object parse(InputStream stream, String charset, ContainerFactory containerFactory) {
+
+        InputStreamReader reader = null;
+
         Object obj = null;
         try {
+            reader = new InputStreamReader(stream, charset);
             JSONParser parser = new JSONParser();
-            obj = parser.parse(new InputStreamReader(stream, charset));
+            obj = parser.parse(reader, containerFactory);
         } catch (Exception e) {
             throw new CmisConnectionException("Parsing exception!", e);
         } finally {
             try {
-                stream.close();
+                char[] buffer = new char[4096];
+                while (reader.read(buffer) > -1) {
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (reader == null) {
+                    stream.close();
+                } else {
+                    reader.close();
+                }
             } catch (Exception e) {
             }
         }
@@ -219,7 +277,7 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
      * Returns the repository URL cache or creates a new cache if it doesn't
      * exist.
      */
-    protected RepositoryUrlCache geRepositoryUrlCache() {
+    protected RepositoryUrlCache getRepositoryUrlCache() {
         RepositoryUrlCache repositoryUrlCache = (RepositoryUrlCache) getSession().get(
                 SpiSessionParameter.REPOSITORY_URL_CACHE);
         if (repositoryUrlCache == null) {
@@ -234,32 +292,68 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
      * Retrieves the the repository info objects.
      */
     protected List<RepositoryInfo> getRepositoriesInternal(String repositoryId) {
-        // retrieve service doc
-        UrlBuilder url = new UrlBuilder(getServiceURL());
-        url.addParameter(Constants.PARAM_REPOSITORY_ID, repositoryId);
+
+        UrlBuilder url = null;
+
+        if (repositoryId == null) {
+            // no repository id provided -> get all
+            url = new UrlBuilder(getServiceUrl());
+        } else {
+            // use URL of the specified repository
+            url = getRepositoryUrlCache().getRepositoryUrl(repositoryId, Constants.SELECTOR_REPOSITORY_INFO);
+            if (url == null) {
+                // repository infos haven't been fetched yet -> get them all
+                url = new UrlBuilder(getServiceUrl());
+            }
+        }
 
         // read and parse
         HttpUtils.Response resp = read(url);
+        Map<String, Object> json = parse(resp.getStream(), resp.getCharset());
 
-        Object json = parse(resp.getStream(), resp.getCharset());
+        List<RepositoryInfo> repInfos = new ArrayList<RepositoryInfo>();
 
-        if (json instanceof JSONObject) {
-            return Collections.singletonList(JSONConverter.convertRepositoryInfo((JSONObject) json));
-        }
+        for (Object jri : json.values()) {
+            if (jri instanceof Map) {
+                @SuppressWarnings("unchecked")
+                RepositoryInfo ri = JSONConverter.convertRepositoryInfo((Map<String, Object>) jri);
+                String id = ri.getId();
 
-        if (json instanceof JSONArray) {
-            List<RepositoryInfo> repInfos = new ArrayList<RepositoryInfo>();
+                if (ri instanceof RepositoryInfoBrowserBindingImpl) {
+                    String repositoryUrl = ((RepositoryInfoBrowserBindingImpl) ri).getRepositoryUrl();
+                    String rootUrl = ((RepositoryInfoBrowserBindingImpl) ri).getRootUrl();
 
-            for (Object ri : ((JSONArray) json)) {
-                if (ri instanceof JSONObject) {
-                    repInfos.add(JSONConverter.convertRepositoryInfo((JSONObject) json));
+                    if (id == null || repositoryUrl == null || rootUrl == null) {
+                        throw new CmisConnectionException("Found invalid Repository Info! (id: " + id + ")");
+                    }
+
+                    getRepositoryUrlCache().addRepository(id, repositoryUrl, rootUrl);
                 }
-            }
 
-            return repInfos;
+                if (repositoryId == null || repositoryId.equals(id)) {
+                    repInfos.add(ri);
+                }
+            } else {
+                throw new CmisConnectionException("Found invalid Repository Info!");
+            }
         }
 
-        throw new CmisConnectionException("Repository Infos could not be read!");
+        return repInfos;
+    }
+
+    /**
+     * Retrieves a type definition.
+     */
+    protected TypeDefinition getTypeDefinitionInternal(String repositoryId, String typeId) {
+        // build URL
+        UrlBuilder url = getRepositoryUrl(repositoryId, Constants.SELECTOR_TYPE_DEFINITION);
+        url.addParameter(Constants.PARAM_TYPE_ID, typeId);
+
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        Map<String, Object> json = parse(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertTypeDefinition(json);
     }
 
     // ---- LinkAccess interface ----
@@ -270,7 +364,7 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
     }
 
     public String loadContentLink(String repositoryId, String documentId) {
-        UrlBuilder result = geRepositoryUrlCache().getObjectUrl(repositoryId, documentId, Constants.SELECTOR_CONTENT);
+        UrlBuilder result = getRepositoryUrlCache().getObjectUrl(repositoryId, documentId, Constants.SELECTOR_CONTENT);
         return result == null ? null : result.toString();
     }
 }

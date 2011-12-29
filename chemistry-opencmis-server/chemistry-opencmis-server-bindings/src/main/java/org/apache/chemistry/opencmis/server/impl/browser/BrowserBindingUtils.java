@@ -45,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
@@ -72,11 +73,6 @@ public class BrowserBindingUtils {
     public static final String JSON_MIME_TYPE = "application/json";
 
     public static final String ROOT_PATH_FRAGMENT = "root";
-
-    public static final String PARAM_SELECTOR = "selector";
-    public static final String PARAM_TRANSACTION = "transaction";
-    public static final String PARAM_CLIENT_TOKEN = "clientToken";
-    public static final String PARAM_SUPPRESS_RESPONSE_CODES = "suppressResponseCodes";
 
     public static final String CONTROL_CMISACTION = "cmisaction";
     public static final String CONTROL_TRANSACTION = "transaction";
@@ -468,7 +464,7 @@ public class BrowserBindingUtils {
         response.setContentType(JSON_MIME_TYPE);
         response.setCharacterEncoding("UTF-8");
 
-        String clientToken = getStringParameter(request, PARAM_CLIENT_TOKEN);
+        String clientToken = getStringParameter(request, Constants.PARAM_CLIENT_TOKEN);
         if (clientToken != null) {
             if (!clientToken.matches("[A-Za-z0-9._\\[\\]]*")) {
                 throw new CmisInvalidArgumentException("Invalid clientToken name!");

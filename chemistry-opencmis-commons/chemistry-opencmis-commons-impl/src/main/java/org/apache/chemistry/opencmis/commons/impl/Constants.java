@@ -95,6 +95,7 @@ public final class Constants {
 
     // browser binding selectors
     public static final String SELECTOR_LAST_RESULT = "lastResult";
+    public static final String SELECTOR_REPOSITORY_INFO = "repositoryInfo";
     public static final String SELECTOR_TYPE_CHILDREN = "typeChildren";
     public static final String SELECTOR_TYPE_DESCENDANTS = "typeDescendants";
     public static final String SELECTOR_TYPE_DEFINITION = "typeDefinition";
@@ -183,6 +184,11 @@ public final class Constants {
     public static final String PARAM_SEARCH_ALL_VERSIONS = "searchAllVersions";
     public static final String PARAM_ACL_PROPAGATION = "ACLPropagation";
     public static final String PARAM_SOURCE_ID = "sourceId";
+
+    public static final String PARAM_SELECTOR = "cmisselector";
+    public static final String PARAM_TRANSACTION = "transaction";
+    public static final String PARAM_CLIENT_TOKEN = "clientToken";
+    public static final String PARAM_SUPPRESS_RESPONSE_CODES = "suppressResponseCodes";
 
     // rendition filter
     public static final String RENDITION_NONE = "cmis:none";

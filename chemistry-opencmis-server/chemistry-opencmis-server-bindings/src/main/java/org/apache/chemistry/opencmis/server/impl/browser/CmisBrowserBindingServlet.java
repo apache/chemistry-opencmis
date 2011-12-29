@@ -54,6 +54,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_PROP
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_QUERY;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_RELATIONSHIPS;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_RENDITIONS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_REPOSITORY_INFO;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_TYPE_CHILDREN;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_TYPE_DEFINITION;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_TYPE_DESCENDANTS;
@@ -67,8 +68,6 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTROL_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTROL_TRANSACTION;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.JSON_MIME_TYPE;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_SELECTOR;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_SUPPRESS_RESPONSE_CODES;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.prepareContext;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
@@ -101,6 +100,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
@@ -147,7 +147,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         rootDispatcher = new Dispatcher();
 
         try {
-            repositoryDispatcher.addResource("", METHOD_GET, RepositoryService.class, "getRepositoryInfo");
+            repositoryDispatcher.addResource(SELECTOR_REPOSITORY_INFO, METHOD_GET, RepositoryService.class,
+                    "getRepositoryInfo");
             repositoryDispatcher
                     .addResource(SELECTOR_LAST_RESULT, METHOD_GET, RepositoryService.class, "getLastResult");
             repositoryDispatcher.addResource(SELECTOR_TYPE_CHILDREN, METHOD_GET, RepositoryService.class,
@@ -291,7 +292,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             boolean methodFound = false;
 
             if (METHOD_GET.equals(method)) {
-                String selector = getStringParameter(request, PARAM_SELECTOR);
+                String selector = getStringParameter(request, Constants.PARAM_SELECTOR);
                 String objectId = getStringParameter(request, PARAM_OBJECT_ID);
 
                 // add object id and object base type id to context
@@ -416,7 +417,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             LOG.error(ex.getMessage(), ex);
         }
 
-        if (getBooleanParameter(request, PARAM_SUPPRESS_RESPONSE_CODES, false)) {
+        if (getBooleanParameter(request, Constants.PARAM_SUPPRESS_RESPONSE_CODES, false)) {
             statusCode = HttpServletResponse.SC_OK;
         }
 

@@ -106,7 +106,8 @@ public class ClientSession {
             boolean cookies) {
         Map<String, String> parameters = new LinkedHashMap<String, String>();
 
-        if (binding == BindingType.WEBSERVICES) {
+        switch (binding) {
+        case WEBSERVICES:
             parameters.put(SessionParameter.BINDING_TYPE, BindingType.WEBSERVICES.value());
             parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url);
             parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url);
@@ -117,9 +118,17 @@ public class ClientSession {
             parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url);
             parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url);
             parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url);
-        } else {
+            break;
+        case ATOMPUB:
             parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
             parameters.put(SessionParameter.ATOMPUB_URL, url);
+            break;
+        case BROWSER:
+            parameters.put(SessionParameter.BINDING_TYPE, BindingType.BROWSER.value());
+            parameters.put(SessionParameter.BROWSER_URL, url);
+            break;
+        default:
+            parameters.put(SessionParameter.BINDING_TYPE, BindingType.CUSTOM.value());
         }
 
         switch (authentication) {

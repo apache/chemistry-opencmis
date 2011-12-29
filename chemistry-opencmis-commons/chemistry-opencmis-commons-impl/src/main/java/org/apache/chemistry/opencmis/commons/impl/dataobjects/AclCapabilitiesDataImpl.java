@@ -28,54 +28,33 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * AclCapabilities Implementation.
  */
 public class AclCapabilitiesDataImpl extends AbstractExtensionData implements AclCapabilities {
 
     private static final long serialVersionUID = 1L;
 
-    private SupportedPermissions fSupportedPermissions;
-    private AclPropagation fACLPropagation;
+    private SupportedPermissions supportedPermissions;
+    private AclPropagation aclPropagation;
     private Map<String, PermissionMapping> permissionMapping;
-    private List<PermissionDefinition> fPermissionDefinitionList;
+    private List<PermissionDefinition> permissionDefinitionList;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ACLCapabilitiesData#getACLPropagation
-     * ()
-     */
     public SupportedPermissions getSupportedPermissions() {
-        return fSupportedPermissions;
+        return supportedPermissions;
     }
 
     public void setSupportedPermissions(SupportedPermissions supportedPermissions) {
-        fSupportedPermissions = supportedPermissions;
+        this.supportedPermissions = supportedPermissions;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.ACLCapabilitiesData#getACLPropagation
-     * ()
-     */
     public AclPropagation getAclPropagation() {
-        return fACLPropagation;
+        return aclPropagation;
     }
 
     public void setAclPropagation(AclPropagation aclPropagation) {
-        fACLPropagation = aclPropagation;
+        this.aclPropagation = aclPropagation;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.ACLCapabilitiesData#
-     * getPermissionMappingData()
-     */
     public Map<String, PermissionMapping> getPermissionMapping() {
         return permissionMapping;
     }
@@ -84,28 +63,17 @@ public class AclCapabilitiesDataImpl extends AbstractExtensionData implements Ac
         this.permissionMapping = permissionMapping;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.ACLCapabilitiesData#
-     * getPermissionDefinitionData()
-     */
     public List<PermissionDefinition> getPermissions() {
-        return fPermissionDefinitionList;
+        return permissionDefinitionList;
     }
 
     public void setPermissionDefinitionData(List<PermissionDefinition> permissionDefinitionList) {
-        fPermissionDefinitionList = permissionDefinitionList;
+        this.permissionDefinitionList = permissionDefinitionList;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "ACL Capabilities [ACL propagation=" + fACLPropagation + ", permission definition list="
-                + fPermissionDefinitionList + ", permission mappings=" + permissionMapping + "]" + super.toString();
+        return "ACL Capabilities [ACL propagation=" + aclPropagation + ", permission definition list="
+                + permissionDefinitionList + ", permission mappings=" + permissionMapping + "]" + super.toString();
     }
 }

@@ -27,27 +27,26 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * RepositoryCapabilities Implementation.
  */
 public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements RepositoryCapabilities {
 
     private static final long serialVersionUID = 1L;
 
-    private Boolean fAllVersionsSearchable;
-    private CapabilityAcl fCapabilityAcl;
-    private CapabilityChanges fCapabilityChanges;
-    private CapabilityContentStreamUpdates fCapabilityContentStreamUpdates;
-    private CapabilityJoin fCapabilityJoin;
-    private CapabilityQuery fCapabilityQuery;
-    private CapabilityRenditions fCapabilityRendition;
-    private Boolean fIsPwcSearchable;
-    private Boolean fIsPwcUpdatable;
-    private Boolean fSupportsGetDescendants;
-    private Boolean fSupportsGetFolderTree;
-    private Boolean fSupportsMultifiling;
-    private Boolean fSupportsUnfiling;
-    private Boolean fSupportsVersionSpecificFiling;
+    private Boolean allVersionsSearchable;
+    private CapabilityAcl capabilityAcl;
+    private CapabilityChanges capabilityChanges;
+    private CapabilityContentStreamUpdates capabilityContentStreamUpdates;
+    private CapabilityJoin capabilityJoin;
+    private CapabilityQuery capabilityQuery;
+    private CapabilityRenditions capabilityRendition;
+    private Boolean isPwcSearchable;
+    private Boolean isPwcUpdatable;
+    private Boolean supportsGetDescendants;
+    private Boolean supportsGetFolderTree;
+    private Boolean supportsMultifiling;
+    private Boolean supportsUnfiling;
+    private Boolean supportsVersionSpecificFiling;
 
     /**
      * Constructor.
@@ -55,218 +54,127 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
     public RepositoryCapabilitiesImpl() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * allVersionsSearchable()
-     */
     public Boolean isAllVersionsSearchableSupported() {
-        return fAllVersionsSearchable;
+        return allVersionsSearchable;
     }
 
     public void setAllVersionsSearchable(Boolean allVersionsSearchable) {
-        fAllVersionsSearchable = allVersionsSearchable;
+        this.allVersionsSearchable = allVersionsSearchable;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * getCapabilityACL()
-     */
     public CapabilityAcl getAclCapability() {
-        return fCapabilityAcl;
+        return capabilityAcl;
     }
 
     public void setCapabilityAcl(CapabilityAcl capabilityAcl) {
-        fCapabilityAcl = capabilityAcl;
+        this.capabilityAcl = capabilityAcl;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * getCapabilityChanges()
-     */
     public CapabilityChanges getChangesCapability() {
-        return fCapabilityChanges;
+        return capabilityChanges;
     }
 
     public void setCapabilityChanges(CapabilityChanges capabilityChanges) {
-        fCapabilityChanges = capabilityChanges;
+        this.capabilityChanges = capabilityChanges;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * getCapabilityContentStreamUpdatability ()
-     */
     public CapabilityContentStreamUpdates getContentStreamUpdatesCapability() {
-        return fCapabilityContentStreamUpdates;
+        return capabilityContentStreamUpdates;
     }
 
     public void setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates capabilityContentStreamUpdates) {
-        fCapabilityContentStreamUpdates = capabilityContentStreamUpdates;
+        this.capabilityContentStreamUpdates = capabilityContentStreamUpdates;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * getCapabilityJoin()
-     */
     public CapabilityJoin getJoinCapability() {
-        return fCapabilityJoin;
+        return capabilityJoin;
     }
 
     public void setCapabilityJoin(CapabilityJoin capabilityJoin) {
-        fCapabilityJoin = capabilityJoin;
+        this.capabilityJoin = capabilityJoin;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * getCapabilityQuery()
-     */
     public CapabilityQuery getQueryCapability() {
-        return fCapabilityQuery;
+        return capabilityQuery;
     }
 
     public void setCapabilityQuery(CapabilityQuery capabilityQuery) {
-        fCapabilityQuery = capabilityQuery;
+        this.capabilityQuery = capabilityQuery;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * getCapabilityRenditions()
-     */
     public CapabilityRenditions getRenditionsCapability() {
-        return fCapabilityRendition;
+        return capabilityRendition;
     }
 
     public void setCapabilityRendition(CapabilityRenditions capabilityRendition) {
-        fCapabilityRendition = capabilityRendition;
+        this.capabilityRendition = capabilityRendition;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * isPwcSearchable()
-     */
     public Boolean isPwcSearchableSupported() {
-        return fIsPwcSearchable;
+        return isPwcSearchable;
     }
 
     public void setIsPwcSearchable(Boolean isPwcSearchable) {
-        fIsPwcSearchable = isPwcSearchable;
+        this.isPwcSearchable = isPwcSearchable;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.RepositoryCapabilitiesData#isPwcUpdatable
-     * ()
-     */
     public Boolean isPwcUpdatableSupported() {
-        return fIsPwcUpdatable;
+        return isPwcUpdatable;
     }
 
     public void setIsPwcUpdatable(Boolean isPwcUpdatable) {
-        fIsPwcUpdatable = isPwcUpdatable;
+        this.isPwcUpdatable = isPwcUpdatable;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * supportsGetDescendants()
-     */
     public Boolean isGetDescendantsSupported() {
-        return fSupportsGetDescendants;
+        return supportsGetDescendants;
     }
 
     public void setSupportsGetDescendants(Boolean supportsGetDescendants) {
-        fSupportsGetDescendants = supportsGetDescendants;
+        this.supportsGetDescendants = supportsGetDescendants;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * supportsGetFolderTree()
-     */
     public Boolean isGetFolderTreeSupported() {
-        return fSupportsGetFolderTree;
+        return supportsGetFolderTree;
     }
 
     public void setSupportsGetFolderTree(Boolean supportsGetFolderTree) {
-        fSupportsGetFolderTree = supportsGetFolderTree;
+        this.supportsGetFolderTree = supportsGetFolderTree;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * supportsMultifiling()
-     */
     public Boolean isMultifilingSupported() {
-        return fSupportsMultifiling;
+        return supportsMultifiling;
     }
 
     public void setSupportsMultifiling(Boolean supportsMultifiling) {
-        fSupportsMultifiling = supportsMultifiling;
+        this.supportsMultifiling = supportsMultifiling;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * supportsUnfiling()
-     */
     public Boolean isUnfilingSupported() {
-        return fSupportsUnfiling;
+        return supportsUnfiling;
     }
 
     public void setSupportsUnfiling(Boolean supportsUnfiling) {
-        fSupportsUnfiling = supportsUnfiling;
+        this.supportsUnfiling = supportsUnfiling;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RepositoryCapabilitiesData#
-     * supportsVersionSpecificFiling()
-     */
     public Boolean isVersionSpecificFilingSupported() {
-        return fSupportsVersionSpecificFiling;
+        return supportsVersionSpecificFiling;
     }
 
     public void setSupportsVersionSpecificFiling(Boolean supportsVersionSpecificFiling) {
-        fSupportsVersionSpecificFiling = supportsVersionSpecificFiling;
+        this.supportsVersionSpecificFiling = supportsVersionSpecificFiling;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Repository Capabilities [all versions searchable=" + fAllVersionsSearchable + ", capability ACL="
-                + fCapabilityAcl + ", capability changes=" + fCapabilityChanges
-                + ", capability content stream updates=" + fCapabilityContentStreamUpdates + ", capability join="
-                + fCapabilityJoin + ", capability query=" + fCapabilityQuery + ", capability rendition="
-                + fCapabilityRendition + ", is PWC searchable=" + fIsPwcSearchable + ", is PWC updatable="
-                + fIsPwcUpdatable + ", supports GetDescendants=" + fSupportsGetDescendants
-                + ", supports GetFolderTree=" + fSupportsGetFolderTree + ", supports multifiling="
-                + fSupportsMultifiling + ", supports unfiling=" + fSupportsUnfiling
-                + ", supports version specific filing=" + fSupportsVersionSpecificFiling + "]" + super.toString();
+        return "Repository Capabilities [all versions searchable=" + allVersionsSearchable + ", capability ACL="
+                + capabilityAcl + ", capability changes=" + capabilityChanges + ", capability content stream updates="
+                + capabilityContentStreamUpdates + ", capability join=" + capabilityJoin + ", capability query="
+                + capabilityQuery + ", capability rendition=" + capabilityRendition + ", is PWC searchable="
+                + isPwcSearchable + ", is PWC updatable=" + isPwcUpdatable + ", supports GetDescendants="
+                + supportsGetDescendants + ", supports GetFolderTree=" + supportsGetFolderTree
+                + ", supports multifiling=" + supportsMultifiling + ", supports unfiling=" + supportsUnfiling
+                + ", supports version specific filing=" + supportsVersionSpecificFiling + "]" + super.toString();
     }
 }

@@ -82,6 +82,7 @@ public class LoginDialog extends JDialog {
     private JTextField urlField;
     private JRadioButton bindingAtomButton;
     private JRadioButton bindingWebServicesButton;
+    private JRadioButton bindingBrowserButton;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JRadioButton authenticationNoneButton;
@@ -306,15 +307,22 @@ public class LoginDialog extends JDialog {
     private void createBindingButtons(Container pane) {
         JPanel bindingContainer = new JPanel();
         bindingContainer.setLayout(new BoxLayout(bindingContainer, BoxLayout.LINE_AXIS));
-        boolean atom = (System.getProperty(SYSPROP_BINDING, "atom").toLowerCase().charAt(0) == 'a');
+        char bc = System.getProperty(SYSPROP_BINDING, "atom").toLowerCase().charAt(0);
+        boolean atom = (bc == 'a');
+        boolean ws = (bc == 'w');
+        boolean browser = (bc == 'b');
         bindingAtomButton = new JRadioButton("AtomPub", atom);
-        bindingWebServicesButton = new JRadioButton("Web Services", !atom);
+        bindingWebServicesButton = new JRadioButton("Web Services", ws);
+        bindingBrowserButton = new JRadioButton("Browser (experimental)", browser);
         ButtonGroup bindingGroup = new ButtonGroup();
         bindingGroup.add(bindingAtomButton);
         bindingGroup.add(bindingWebServicesButton);
+        bindingGroup.add(bindingBrowserButton);
         bindingContainer.add(bindingAtomButton);
         bindingContainer.add(Box.createRigidArea(new Dimension(10, 0)));
         bindingContainer.add(bindingWebServicesButton);
+        bindingContainer.add(Box.createRigidArea(new Dimension(10, 0)));
+        bindingContainer.add(bindingBrowserButton);
         JLabel bindingLabel = new JLabel("Binding:", JLabel.TRAILING);
 
         pane.add(bindingLabel);
@@ -460,7 +468,14 @@ public class LoginDialog extends JDialog {
 
     private Map<String, String> createBasicSessionParameters() {
         String url = urlField.getText();
-        BindingType binding = bindingAtomButton.isSelected() ? BindingType.ATOMPUB : BindingType.WEBSERVICES;
+
+        BindingType binding = BindingType.ATOMPUB;
+        if (bindingWebServicesButton.isSelected()) {
+            binding = BindingType.WEBSERVICES;
+        } else if (bindingBrowserButton.isSelected()) {
+            binding = BindingType.BROWSER;
+        }
+
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
 

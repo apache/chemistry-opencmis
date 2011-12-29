@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 
 /**
@@ -30,7 +31,6 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
  */
 public class RepositoryUrlCache implements Serializable {
 
-    public static final String CMIS_SELECTOR = "cmisselector";
     public static final String OBJECT_ID = "objectId";
 
     private static final long serialVersionUID = 1L;
@@ -49,6 +49,10 @@ public class RepositoryUrlCache implements Serializable {
      * Adds the URLs of a repository to the cache.
      */
     public void addRepository(String repositoryId, String repositoryUrl, String rootUrl) {
+        if (repositoryId == null || repositoryUrl == null || rootUrl == null) {
+            throw new IllegalArgumentException("Repository Id or Repository URL or Root URL is not set!");
+        }
+
         lock.writeLock().lock();
         try {
             repositoryUrls.put(repositoryId, repositoryUrl);
@@ -96,7 +100,7 @@ public class RepositoryUrlCache implements Serializable {
     }
 
     /**
-     * Return the repository URL.
+     * Returns the repository URL.
      */
     public UrlBuilder getRepositoryUrl(String repositoryId) {
         String base = getRepositoryBaseUrl(repositoryId);
@@ -108,7 +112,7 @@ public class RepositoryUrlCache implements Serializable {
     }
 
     /**
-     * Return the repository URL with the given selector.
+     * Returns the repository URL with the given selector.
      */
     public UrlBuilder getRepositoryUrl(String repositoryId, String selector) {
         UrlBuilder result = getRepositoryUrl(repositoryId);
@@ -116,13 +120,13 @@ public class RepositoryUrlCache implements Serializable {
             return null;
         }
 
-        result.addParameter(CMIS_SELECTOR, selector);
+        result.addParameter(Constants.PARAM_SELECTOR, selector);
 
         return result;
     }
 
     /**
-     * Return an object URL with the given selector.
+     * Returns an object URL with the given selector.
      */
     public UrlBuilder getObjectUrl(String repositoryId, String objectId) {
         String root = getRootUrl(repositoryId);
@@ -137,7 +141,7 @@ public class RepositoryUrlCache implements Serializable {
     }
 
     /**
-     * Return an object URL with the given selector.
+     * Returns an object URL with the given selector.
      */
     public UrlBuilder getObjectUrl(String repositoryId, String objectId, String selector) {
         UrlBuilder result = getObjectUrl(repositoryId, objectId);
@@ -145,7 +149,7 @@ public class RepositoryUrlCache implements Serializable {
             return null;
         }
 
-        result.addParameter(CMIS_SELECTOR, selector);
+        result.addParameter(Constants.PARAM_SELECTOR, selector);
 
         return result;
     }

@@ -63,6 +63,10 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         throw new CmisObjectNotFoundException("Repository not found!");
     }
 
+    public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
+        return getTypeDefinitionInternal(repositoryId, typeId);
+    }
+
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         // TODO Auto-generated method stub
@@ -71,11 +75,6 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
 
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * JSON object constants.
  */
@@ -27,24 +30,46 @@ public class JSONConstants {
     public static final String ERROR_MESSAGE = "message";
     public static final String ERROR_STACKTRACE = "stacktrace";
 
-    public static final String REPINFO_ID = "repositoryId";
-    public static final String REPINFO_NAME = "repositoryName";
-    public static final String REPINFO_DESCRIPTION = "repositoryDescription";
-    public static final String REPINFO_VENDOR = "vendorName";
-    public static final String REPINFO_PRODUCT = "productName";
-    public static final String REPINFO_PRODUCT_VERSION = "productVersion";
-    public static final String REPINFO_ROOT_FOLDER_ID = "rootFolderId";
-    public static final String REPINFO_REPOSITORY_URL = "repositoryUrl";
-    public static final String REPINFO_ROOT_FOLDER_URL = "rootFolderUrl";
-    public static final String REPINFO_CAPABILITIES = "capabilities";
-    public static final String REPINFO_ACL_CAPABILITIES = "aclCapabilities";
-    public static final String REPINFO_CHANGE_LOCK_TOKEN = "latestChangeLogToken";
-    public static final String REPINFO_CMIS_VERSION_SUPPORTED = "cmisVersionSupported";
-    public static final String REPINFO_THIN_CLIENT_URI = "thinClientURI";
-    public static final String REPINFO_CHANGES_INCOMPLETE = "changesIncomplete";
-    public static final String REPINFO_CHANGES_ON_TYPE = "changesOnType";
-    public static final String REPINFO_PRINCIPAL_ID_ANONYMOUS = "principalIdAnonymous";
-    public static final String REPINFO_PRINCIPAL_ID_ANYONE = "principalIdAnyone";
+    public static final String JSON_REPINFO_ID = "repositoryId";
+    public static final String JSON_REPINFO_NAME = "repositoryName";
+    public static final String JSON_REPINFO_DESCRIPTION = "repositoryDescription";
+    public static final String JSON_REPINFO_VENDOR = "vendorName";
+    public static final String JSON_REPINFO_PRODUCT = "productName";
+    public static final String JSON_REPINFO_PRODUCT_VERSION = "productVersion";
+    public static final String JSON_REPINFO_ROOT_FOLDER_ID = "rootFolderId";
+    public static final String JSON_REPINFO_REPOSITORY_URL = "repositoryUrl";
+    public static final String JSON_REPINFO_ROOT_FOLDER_URL = "rootFolderUrl";
+    public static final String JSON_REPINFO_CAPABILITIES = "capabilities";
+    public static final String JSON_REPINFO_ACL_CAPABILITIES = "aclCapabilities";
+    public static final String JSON_REPINFO_CHANGE_LOCK_TOKEN = "latestChangeLogToken";
+    public static final String JSON_REPINFO_CMIS_VERSION_SUPPORTED = "cmisVersionSupported";
+    public static final String JSON_REPINFO_THIN_CLIENT_URI = "thinClientURI";
+    public static final String JSON_REPINFO_CHANGES_INCOMPLETE = "changesIncomplete";
+    public static final String JSON_REPINFO_CHANGES_ON_TYPE = "changesOnType";
+    public static final String JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS = "principalIdAnonymous";
+    public static final String JSON_REPINFO_PRINCIPAL_ID_ANYONE = "principalIdAnyone";
+
+    public static final Set<String> REPINFO_KEYS = new HashSet<String>();
+    static {
+        REPINFO_KEYS.add(JSON_REPINFO_ID);
+        REPINFO_KEYS.add(JSON_REPINFO_NAME);
+        REPINFO_KEYS.add(JSON_REPINFO_DESCRIPTION);
+        REPINFO_KEYS.add(JSON_REPINFO_VENDOR);
+        REPINFO_KEYS.add(JSON_REPINFO_PRODUCT);
+        REPINFO_KEYS.add(JSON_REPINFO_PRODUCT_VERSION);
+        REPINFO_KEYS.add(JSON_REPINFO_ROOT_FOLDER_ID);
+        REPINFO_KEYS.add(JSON_REPINFO_REPOSITORY_URL);
+        REPINFO_KEYS.add(JSON_REPINFO_ROOT_FOLDER_URL);
+        REPINFO_KEYS.add(JSON_REPINFO_CAPABILITIES);
+        REPINFO_KEYS.add(JSON_REPINFO_ACL_CAPABILITIES);
+        REPINFO_KEYS.add(JSON_REPINFO_CHANGE_LOCK_TOKEN);
+        REPINFO_KEYS.add(JSON_REPINFO_CMIS_VERSION_SUPPORTED);
+        REPINFO_KEYS.add(JSON_REPINFO_THIN_CLIENT_URI);
+        REPINFO_KEYS.add(JSON_REPINFO_CHANGES_INCOMPLETE);
+        REPINFO_KEYS.add(JSON_REPINFO_CHANGES_ON_TYPE);
+        REPINFO_KEYS.add(JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS);
+        REPINFO_KEYS.add(JSON_REPINFO_PRINCIPAL_ID_ANYONE);
+    }
 
     public static final String JSON_CAP_CONTENT_STREAM_UPDATES = "capabilityContentStreamUpdatability";
     public static final String JSON_CAP_CHANGES = "capabilityChanges";
@@ -61,16 +86,54 @@ public class JSONConstants {
     public static final String JSON_CAP_JOIN = "capabilityJoin";
     public static final String JSON_CAP_ACL = "capabilityACL";
 
+    public static final Set<String> CAP_KEYS = new HashSet<String>();
+    static {
+        CAP_KEYS.add(JSON_CAP_CONTENT_STREAM_UPDATES);
+        CAP_KEYS.add(JSON_CAP_CHANGES);
+        CAP_KEYS.add(JSON_CAP_RENDITIONS);
+        CAP_KEYS.add(JSON_CAP_GET_DESCENDANTS);
+        CAP_KEYS.add(JSON_CAP_GET_FOLDER_TREE);
+        CAP_KEYS.add(JSON_CAP_MULTIFILING);
+        CAP_KEYS.add(JSON_CAP_UNFILING);
+        CAP_KEYS.add(JSON_CAP_VERSION_SPECIFIC_FILING);
+        CAP_KEYS.add(JSON_CAP_PWC_SEARCHABLE);
+        CAP_KEYS.add(JSON_CAP_PWC_UPDATABLE);
+        CAP_KEYS.add(JSON_CAP_ALL_VERSIONS_SEARCHABLE);
+        CAP_KEYS.add(JSON_CAP_QUERY);
+        CAP_KEYS.add(JSON_CAP_JOIN);
+        CAP_KEYS.add(JSON_CAP_ACL);
+    }
+
     public static final String JSON_ACLCAP_SUPPORTED_PERMISSIONS = "supportedPermissions";
     public static final String JSON_ACLCAP_ACL_PROPAGATION = "propagation";
     public static final String JSON_ACLCAP_PERMISSIONS = "permissions";
     public static final String JSON_ACLCAP_PERMISSION_MAPPING = "permissionMapping";
 
+    public static final Set<String> ACLCAP_KEYS = new HashSet<String>();
+    static {
+        ACLCAP_KEYS.add(JSON_ACLCAP_SUPPORTED_PERMISSIONS);
+        ACLCAP_KEYS.add(JSON_ACLCAP_ACL_PROPAGATION);
+        ACLCAP_KEYS.add(JSON_ACLCAP_PERMISSIONS);
+        ACLCAP_KEYS.add(JSON_ACLCAP_PERMISSION_MAPPING);
+    }
+
     public static final String JSON_ACLCAP_PERMISSION_PERMISSION = "permission";
     public static final String JSON_ACLCAP_PERMISSION_DESCRIPTION = "description";
 
+    public static final Set<String> ACLCAP_PERMISSION_KEYS = new HashSet<String>();
+    static {
+        ACLCAP_PERMISSION_KEYS.add(JSON_ACLCAP_PERMISSION_PERMISSION);
+        ACLCAP_PERMISSION_KEYS.add(JSON_ACLCAP_PERMISSION_DESCRIPTION);
+    }
+
     public static final String JSON_ACLCAP_MAPPING_KEY = "key";
     public static final String JSON_ACLCAP_MAPPING_PERMISSION = "permission";
+
+    public static final Set<String> ACLCAP_MAPPING_KEYS = new HashSet<String>();
+    static {
+        ACLCAP_MAPPING_KEYS.add(JSON_ACLCAP_MAPPING_KEY);
+        ACLCAP_MAPPING_KEYS.add(JSON_ACLCAP_MAPPING_PERMISSION);
+    }
 
     public static final String JSON_OBJECT_PROPERTIES = "properties";
     public static final String JSON_OBJECT_ALLOWABLE_ACTIONS = "allowableActions";
@@ -147,6 +210,30 @@ public class JSONConstants {
 
     public static final String JSON_TYPE_ALLOWED_SOURCE_TYPES = "allowedSourceTypes"; // relationship
     public static final String JSON_TYPE_ALLOWED_TARGET_TYPES = "allowedTargetTypes"; // relationship
+
+    public static final Set<String> TYPE_KEYS = new HashSet<String>();
+    static {
+        TYPE_KEYS.add(JSON_TYPE_ID);
+        TYPE_KEYS.add(JSON_TYPE_LOCALNAME);
+        TYPE_KEYS.add(JSON_TYPE_LOCALNAMESPACE);
+        TYPE_KEYS.add(JSON_TYPE_DISPLAYNAME);
+        TYPE_KEYS.add(JSON_TYPE_QUERYNAME);
+        TYPE_KEYS.add(JSON_TYPE_DESCRIPTION);
+        TYPE_KEYS.add(JSON_TYPE_BASE_ID);
+        TYPE_KEYS.add(JSON_TYPE_PARENT_ID);
+        TYPE_KEYS.add(JSON_TYPE_CREATABLE);
+        TYPE_KEYS.add(JSON_TYPE_FILEABLE);
+        TYPE_KEYS.add(JSON_TYPE_QUERYABLE);
+        TYPE_KEYS.add(JSON_TYPE_FULLTEXT_INDEXED);
+        TYPE_KEYS.add(JSON_TYPE_INCLUDE_IN_SUPERTYPE_QUERY);
+        TYPE_KEYS.add(JSON_TYPE_CONTROLABLE_POLICY);
+        TYPE_KEYS.add(JSON_TYPE_CONTROLABLE_ACL);
+        TYPE_KEYS.add(JSON_TYPE_PROPERTY_DEFINITIONS);
+        TYPE_KEYS.add(JSON_TYPE_VERSIONABLE);
+        TYPE_KEYS.add(JSON_TYPE_CONTENTSTREAM_ALLOWED);
+        TYPE_KEYS.add(JSON_TYPE_ALLOWED_SOURCE_TYPES);
+        TYPE_KEYS.add(JSON_TYPE_ALLOWED_TARGET_TYPES);
+    }
 
     public static final String JSON_PROPERTYTYPE_ID = "id";
     public static final String JSON_PROPERTYTYPE_LOCALNAME = "localName";

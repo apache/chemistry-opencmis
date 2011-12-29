@@ -20,8 +20,12 @@ package org.apache.chemistry.opencmis.commons.impl;
 
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.*;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
@@ -29,6 +33,8 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
@@ -56,11 +62,33 @@ import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinit
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
+import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -86,35 +114,35 @@ public class JSONConverter {
 
         JSONObject result = new JSONObject();
 
-        result.put(REPINFO_ID, repositoryInfo.getId());
-        result.put(REPINFO_NAME, repositoryInfo.getName());
-        result.put(REPINFO_DESCRIPTION, repositoryInfo.getDescription());
-        result.put(REPINFO_VENDOR, repositoryInfo.getVendorName());
-        result.put(REPINFO_PRODUCT, repositoryInfo.getProductName());
-        result.put(REPINFO_PRODUCT_VERSION, repositoryInfo.getProductVersion());
-        result.put(REPINFO_ROOT_FOLDER_ID, repositoryInfo.getRootFolderId());
-        result.put(REPINFO_CAPABILITIES, convert(repositoryInfo.getCapabilities()));
-        result.put(REPINFO_ACL_CAPABILITIES, convert(repositoryInfo.getAclCapabilities()));
-        result.put(REPINFO_CHANGE_LOCK_TOKEN, repositoryInfo.getLatestChangeLogToken());
-        result.put(REPINFO_CMIS_VERSION_SUPPORTED, repositoryInfo.getCmisVersionSupported());
-        result.put(REPINFO_THIN_CLIENT_URI, repositoryInfo.getThinClientUri());
-        result.put(REPINFO_CHANGES_INCOMPLETE, repositoryInfo.getChangesIncomplete());
+        result.put(JSON_REPINFO_ID, repositoryInfo.getId());
+        result.put(JSON_REPINFO_NAME, repositoryInfo.getName());
+        result.put(JSON_REPINFO_DESCRIPTION, repositoryInfo.getDescription());
+        result.put(JSON_REPINFO_VENDOR, repositoryInfo.getVendorName());
+        result.put(JSON_REPINFO_PRODUCT, repositoryInfo.getProductName());
+        result.put(JSON_REPINFO_PRODUCT_VERSION, repositoryInfo.getProductVersion());
+        result.put(JSON_REPINFO_ROOT_FOLDER_ID, repositoryInfo.getRootFolderId());
+        result.put(JSON_REPINFO_CAPABILITIES, convert(repositoryInfo.getCapabilities()));
+        result.put(JSON_REPINFO_ACL_CAPABILITIES, convert(repositoryInfo.getAclCapabilities()));
+        result.put(JSON_REPINFO_CHANGE_LOCK_TOKEN, repositoryInfo.getLatestChangeLogToken());
+        result.put(JSON_REPINFO_CMIS_VERSION_SUPPORTED, repositoryInfo.getCmisVersionSupported());
+        result.put(JSON_REPINFO_THIN_CLIENT_URI, repositoryInfo.getThinClientUri());
+        result.put(JSON_REPINFO_CHANGES_INCOMPLETE, repositoryInfo.getChangesIncomplete());
 
         if (repositoryInfo.getChangesOnType() != null) {
             JSONArray changesOnType = new JSONArray();
 
             for (BaseTypeId type : repositoryInfo.getChangesOnType()) {
-                changesOnType.add(getJSONStringValue(type));
+                changesOnType.add(getJSONStringValue(type.value()));
             }
 
-            result.put(REPINFO_CHANGES_ON_TYPE, changesOnType);
+            result.put(JSON_REPINFO_CHANGES_ON_TYPE, changesOnType);
         }
 
-        result.put(REPINFO_PRINCIPAL_ID_ANONYMOUS, repositoryInfo.getPrincipalIdAnonymous());
-        result.put(REPINFO_PRINCIPAL_ID_ANYONE, repositoryInfo.getPrincipalIdAnyone());
+        result.put(JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS, repositoryInfo.getPrincipalIdAnonymous());
+        result.put(JSON_REPINFO_PRINCIPAL_ID_ANYONE, repositoryInfo.getPrincipalIdAnyone());
 
-        result.put(REPINFO_REPOSITORY_URL, repositoryUrl);
-        result.put(REPINFO_ROOT_FOLDER_URL, rootUrl);
+        result.put(JSON_REPINFO_REPOSITORY_URL, repositoryUrl);
+        result.put(JSON_REPINFO_ROOT_FOLDER_URL, rootUrl);
 
         return result;
     }
@@ -205,20 +233,261 @@ public class JSONConverter {
         return result;
     }
 
-    public static RepositoryInfo convertRepositoryInfo(JSONObject json) {
+    @SuppressWarnings("unchecked")
+    public static RepositoryInfo convertRepositoryInfo(Map<String, Object> json) {
         if (json == null) {
             return null;
         }
 
-        RepositoryInfoImpl result = new RepositoryInfoImpl();
+        RepositoryInfoBrowserBindingImpl result = new RepositoryInfoBrowserBindingImpl();
 
-        result.setId(getString(json, REPINFO_ID));
-        result.setName(getString(json, REPINFO_NAME));
-        result.setDescription(getString(json, REPINFO_DESCRIPTION));
-        result.setProductName(getString(json, REPINFO_PRODUCT));
-        result.setProductVersion(getString(json, REPINFO_PRODUCT_VERSION));
-        result.setRootFolder(getString(json, REPINFO_ROOT_FOLDER_ID));
+        result.setId(getString(json, JSON_REPINFO_ID));
+        result.setName(getString(json, JSON_REPINFO_NAME));
+        result.setDescription(getString(json, JSON_REPINFO_DESCRIPTION));
+        result.setVendorName(getString(json, JSON_REPINFO_VENDOR));
+        result.setProductName(getString(json, JSON_REPINFO_PRODUCT));
+        result.setProductVersion(getString(json, JSON_REPINFO_PRODUCT_VERSION));
+        result.setRootFolder(getString(json, JSON_REPINFO_ROOT_FOLDER_ID));
+        result.setRepositoryUrl(getString(json, JSON_REPINFO_REPOSITORY_URL));
+        result.setRootUrl(getString(json, JSON_REPINFO_ROOT_FOLDER_URL));
 
+        Object capabilities = json.get(JSON_REPINFO_CAPABILITIES);
+        if (capabilities instanceof Map) {
+            result.setCapabilities(convertRepositoryCapabilities((Map<String, Object>) capabilities));
+        }
+
+        Object aclCapabilities = json.get(JSON_REPINFO_ACL_CAPABILITIES);
+        if (aclCapabilities instanceof Map) {
+            result.setAclCapabilities(convertAclCapabilities((Map<String, Object>) aclCapabilities));
+        }
+
+        result.setLatestChangeLogToken(getString(json, JSON_REPINFO_CHANGE_LOCK_TOKEN));
+        result.setCmisVersionSupported(getString(json, JSON_REPINFO_CMIS_VERSION_SUPPORTED));
+        result.setThinClientUri(getString(json, JSON_REPINFO_THIN_CLIENT_URI));
+        result.setChangesIncomplete(getBoolean(json, JSON_REPINFO_CHANGES_INCOMPLETE));
+
+        Object changesOnType = json.get(JSON_REPINFO_CHANGES_ON_TYPE);
+        if (changesOnType instanceof List) {
+            List<BaseTypeId> types = new ArrayList<BaseTypeId>();
+            for (Object type : ((List<Object>) changesOnType)) {
+                if (type != null) {
+                    types.add(BaseTypeId.fromValue(type.toString()));
+                }
+            }
+
+            result.setChangesOnType(types);
+        }
+
+        result.setPrincipalAnonymous(getString(json, JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS));
+        result.setPrincipalAnyone(getString(json, JSON_REPINFO_PRINCIPAL_ID_ANYONE));
+
+        // handle extensions
+        convertExtension(json, result, REPINFO_KEYS);
+
+        return result;
+    }
+
+    public static RepositoryCapabilities convertRepositoryCapabilities(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        RepositoryCapabilitiesImpl result = new RepositoryCapabilitiesImpl();
+
+        result.setCapabilityContentStreamUpdates(getEnum(json, JSON_CAP_CONTENT_STREAM_UPDATES,
+                CapabilityContentStreamUpdates.class));
+        result.setCapabilityChanges(getEnum(json, JSON_CAP_CHANGES, CapabilityChanges.class));
+        result.setCapabilityRendition(getEnum(json, JSON_CAP_RENDITIONS, CapabilityRenditions.class));
+        result.setSupportsGetDescendants(getBoolean(json, JSON_CAP_GET_DESCENDANTS));
+        result.setSupportsGetFolderTree(getBoolean(json, JSON_CAP_GET_FOLDER_TREE));
+        result.setSupportsMultifiling(getBoolean(json, JSON_CAP_MULTIFILING));
+        result.setSupportsUnfiling(getBoolean(json, JSON_CAP_UNFILING));
+        result.setSupportsVersionSpecificFiling(getBoolean(json, JSON_CAP_VERSION_SPECIFIC_FILING));
+        result.setIsPwcSearchable(getBoolean(json, JSON_CAP_PWC_SEARCHABLE));
+        result.setIsPwcUpdatable(getBoolean(json, JSON_CAP_PWC_UPDATABLE));
+        result.setAllVersionsSearchable(getBoolean(json, JSON_CAP_ALL_VERSIONS_SEARCHABLE));
+        result.setCapabilityQuery(getEnum(json, JSON_CAP_QUERY, CapabilityQuery.class));
+        result.setCapabilityJoin(getEnum(json, JSON_CAP_JOIN, CapabilityJoin.class));
+        result.setCapabilityAcl(getEnum(json, JSON_CAP_ACL, CapabilityAcl.class));
+
+        // handle extensions
+        convertExtension(json, result, CAP_KEYS);
+
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static AclCapabilities convertAclCapabilities(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        AclCapabilitiesDataImpl result = new AclCapabilitiesDataImpl();
+
+        result.setSupportedPermissions(getEnum(json, JSON_ACLCAP_SUPPORTED_PERMISSIONS, SupportedPermissions.class));
+        result.setAclPropagation(getEnum(json, JSON_ACLCAP_ACL_PROPAGATION, AclPropagation.class));
+
+        Object permissions = json.get(JSON_ACLCAP_PERMISSIONS);
+        if (permissions instanceof List) {
+            List<PermissionDefinition> permissionDefinitionList = new ArrayList<PermissionDefinition>();
+
+            for (Object permission : (List<Object>) permissions) {
+                if (permission instanceof Map) {
+                    PermissionDefinitionDataImpl permDef = new PermissionDefinitionDataImpl();
+
+                    permDef.setPermission(getString((Map<String, Object>) permission, JSON_ACLCAP_PERMISSION_PERMISSION));
+                    permDef.setDescription(getString((Map<String, Object>) permission,
+                            JSON_ACLCAP_PERMISSION_DESCRIPTION));
+
+                    convertExtension((Map<String, Object>) permission, permDef, ACLCAP_PERMISSION_KEYS);
+
+                    permissionDefinitionList.add(permDef);
+                }
+            }
+
+            result.setPermissionDefinitionData(permissionDefinitionList);
+        }
+
+        Object permissionMapping = json.get(JSON_ACLCAP_PERMISSION_MAPPING);
+        if (permissionMapping instanceof List) {
+            Map<String, PermissionMapping> permMap = new HashMap<String, PermissionMapping>();
+
+            for (Object permission : (List<Object>) permissionMapping) {
+                if (permission instanceof Map) {
+                    PermissionMappingDataImpl mapping = new PermissionMappingDataImpl();
+
+                    String key = getString((Map<String, Object>) permission, JSON_ACLCAP_MAPPING_KEY);
+                    mapping.setKey(key);
+
+                    Object perms = ((Map<String, Object>) permission).get(JSON_ACLCAP_MAPPING_PERMISSION);
+                    if (perms instanceof List) {
+                        List<String> permList = new ArrayList<String>();
+
+                        for (Object perm : (List<Object>) perms) {
+                            if (perm != null) {
+                                permList.add(perm.toString());
+                            }
+                        }
+
+                        mapping.setPermissions(permList);
+                    }
+
+                    convertExtension((Map<String, Object>) permission, mapping, ACLCAP_MAPPING_KEYS);
+
+                    permMap.put(key, mapping);
+                }
+            }
+
+            result.setPermissionMappingData(permMap);
+        }
+
+        // handle extensions
+        convertExtension(json, result, ACLCAP_KEYS);
+
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static TypeDefinition convertTypeDefinition(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        AbstractTypeDefinition result = null;
+
+        String id = getString(json, JSON_TYPE_ID);
+
+        // find base type
+        BaseTypeId baseType = getEnum(json, JSON_TYPE_BASE_ID, BaseTypeId.class);
+        if (baseType == null) {
+            throw new CmisConnectionException("Invalid base type! Type defintion: " + id);
+        }
+
+        switch (baseType) {
+        case CMIS_FOLDER:
+            result = new FolderTypeDefinitionImpl();
+            break;
+        case CMIS_DOCUMENT:
+            result = new DocumentTypeDefinitionImpl();
+
+            ((DocumentTypeDefinitionImpl) result).setContentStreamAllowed(getEnum(json,
+                    JSON_TYPE_CONTENTSTREAM_ALLOWED, ContentStreamAllowed.class));
+            ((DocumentTypeDefinitionImpl) result).setIsVersionable(getBoolean(json, JSON_TYPE_VERSIONABLE));
+
+            break;
+        case CMIS_RELATIONSHIP:
+            result = new RelationshipTypeDefinitionImpl();
+
+            Object allowedSourceTypes = json.get(JSON_TYPE_ALLOWED_SOURCE_TYPES);
+            if (allowedSourceTypes instanceof List) {
+                List<String> types = new ArrayList<String>();
+                for (Object type : ((List<Object>) allowedSourceTypes)) {
+                    if (type != null) {
+                        types.add(type.toString());
+                    }
+                }
+
+                ((RelationshipTypeDefinitionImpl) result).setAllowedSourceTypes(types);
+            }
+
+            Object allowedTargetTypes = json.get(JSON_TYPE_ALLOWED_TARGET_TYPES);
+            if (allowedTargetTypes instanceof List) {
+                List<String> types = new ArrayList<String>();
+                for (Object type : ((List<Object>) allowedTargetTypes)) {
+                    if (type != null) {
+                        types.add(type.toString());
+                    }
+                }
+
+                ((RelationshipTypeDefinitionImpl) result).setAllowedTargetTypes(types);
+            }
+
+            break;
+        case CMIS_POLICY:
+            result = new PolicyTypeDefinitionImpl();
+            break;
+        default:
+            throw new CmisRuntimeException("Type '" + id + "' does not match a base type!");
+        }
+
+        result.setBaseTypeId(baseType);
+        result.setDescription(getString(json, JSON_TYPE_DESCRIPTION));
+        result.setDisplayName(getString(json, JSON_TYPE_DISPLAYNAME));
+        result.setId(id);
+        result.setIsControllableAcl(getBoolean(json, JSON_TYPE_CONTROLABLE_ACL));
+        result.setIsControllablePolicy(getBoolean(json, JSON_TYPE_CONTROLABLE_POLICY));
+        result.setIsCreatable(getBoolean(json, JSON_TYPE_CREATABLE));
+        result.setIsFileable(getBoolean(json, JSON_TYPE_FILEABLE));
+        result.setIsFulltextIndexed(getBoolean(json, JSON_TYPE_FULLTEXT_INDEXED));
+        result.setIsIncludedInSupertypeQuery(getBoolean(json, JSON_TYPE_INCLUDE_IN_SUPERTYPE_QUERY));
+        result.setIsQueryable(getBoolean(json, JSON_TYPE_QUERYABLE));
+        result.setLocalName(getString(json, JSON_TYPE_LOCALNAME));
+        result.setLocalNamespace(getString(json, JSON_TYPE_LOCALNAMESPACE));
+        result.setParentTypeId(getString(json, JSON_TYPE_PARENT_ID));
+        result.setQueryName(getString(json, JSON_TYPE_QUERYNAME));
+
+        Object propertyDefinitions = json.get(JSON_TYPE_PROPERTY_DEFINITIONS);
+        if (propertyDefinitions instanceof Map) {
+            for (Object propDef : ((Map<String, Object>) propertyDefinitions).values()) {
+                if (propDef instanceof Map) {
+                    result.addPropertyDefinition(convertPropertyDefinition((Map<String, Object>) propDef));
+                }
+            }
+        }
+
+        // handle extensions
+        convertExtension(json, result, TYPE_KEYS);
+
+        return result;
+    }
+
+    public static PropertyDefinition<?> convertPropertyDefinition(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        AbstractPropertyDefinition<?> result = null;
+        
         // TODO
 
         return result;
@@ -715,6 +984,91 @@ public class JSONConverter {
 
     // -----------------------------------------------------------------
 
+    @SuppressWarnings("unchecked")
+    public static void convertExtension(Map<String, Object> source, ExtensionsData target, Set<String> cmisKeys) {
+        if (source == null) {
+            return;
+        }
+
+        List<CmisExtensionElement> extensions = null;
+
+        for (Map.Entry<String, Object> element : source.entrySet()) {
+            if (cmisKeys.contains(element.getKey())) {
+                continue;
+            }
+
+            if (extensions == null) {
+                extensions = new ArrayList<CmisExtensionElement>();
+            }
+
+            if (element.getValue() instanceof Map) {
+                extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null,
+                        convertExtension((Map<String, Object>) element.getValue())));
+            } else if (element.getValue() instanceof List) {
+                extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null,
+                        convertExtension((List<Object>) element.getValue())));
+            } else {
+                String value = (element.getValue() == null ? null : element.getValue().toString());
+                extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null, value));
+            }
+        }
+
+        target.setExtensions(extensions);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<CmisExtensionElement> convertExtension(Map<String, Object> map) {
+        if (map == null) {
+            return null;
+        }
+
+        List<CmisExtensionElement> extensions = new ArrayList<CmisExtensionElement>();
+
+        for (Map.Entry<String, Object> element : map.entrySet()) {
+            if (element.getValue() instanceof Map) {
+                extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null,
+                        convertExtension((Map<String, Object>) element.getValue())));
+            } else if (element.getValue() instanceof List) {
+                extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null,
+                        convertExtension((List<Object>) element.getValue())));
+            } else {
+                String value = (element.getValue() == null ? null : element.getValue().toString());
+                extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null, value));
+            }
+        }
+
+        return extensions;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<CmisExtensionElement> convertExtension(List<Object> list) {
+        if (list == null) {
+            return null;
+        }
+
+        List<CmisExtensionElement> extensions = new ArrayList<CmisExtensionElement>();
+
+        int i = 0;
+        for (Object element : list) {
+            if (element instanceof Map) {
+                extensions.add(new CmisExtensionElementImpl(null, "" + i, null,
+                        convertExtension((Map<String, Object>) element)));
+            } else if (element instanceof List) {
+                extensions.add(new CmisExtensionElementImpl(null, "" + i, null,
+                        convertExtension((List<Object>) element)));
+            } else {
+                String value = (element == null ? null : element.toString());
+                extensions.add(new CmisExtensionElementImpl(null, "" + i, null, value));
+            }
+
+            i++;
+        }
+
+        return extensions;
+    }
+
+    // -----------------------------------------------------------------
+
     public static String getJSONStringValue(Object obj) {
         if (obj == null) {
             return null;
@@ -765,8 +1119,37 @@ public class JSONConverter {
         return null;
     }
 
-    public static String getString(JSONObject json, String key) {
+    public static String getString(@SuppressWarnings("rawtypes") Map json, String key) {
         Object obj = json.get(key);
         return obj == null ? null : obj.toString();
+    }
+
+    public static Boolean getBoolean(@SuppressWarnings("rawtypes") Map json, String key) {
+        Object obj = json.get(key);
+
+        if (obj instanceof Boolean) {
+            return (Boolean) obj;
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Enum<T>> T getEnum(@SuppressWarnings("rawtypes") Map json, String key, Class<T> clazz) {
+        String value = getString(json, key);
+        if (value == null) {
+            return null;
+        }
+
+        try {
+            Method m = clazz.getMethod("fromValue", String.class);
+            return (T) m.invoke(null, value);
+        } catch (Exception e) {
+            if (e instanceof IllegalArgumentException) {
+                return null;
+            } else {
+                throw new CmisRuntimeException("Could not parse enum value!", e);
+            }
+        }
     }
 }

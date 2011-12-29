@@ -235,7 +235,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         case 3:
             throw new CmisNotSupportedException("No link with matching media type!");
         case 4:
-            throw new CmisRuntimeException("Nothing wrong! Either this is a bug or threading issue.");
+            throw new CmisRuntimeException("Nothing wrong! Either this is a bug or a threading issue.");
         default:
             throw new CmisRuntimeException("Unknown error!");
         }

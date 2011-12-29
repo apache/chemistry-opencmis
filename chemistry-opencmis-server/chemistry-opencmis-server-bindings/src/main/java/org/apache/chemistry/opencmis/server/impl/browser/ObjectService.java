@@ -30,13 +30,13 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SOURCE_
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SOURCE_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_STREAM_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TARGET_FOLDER_ID;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TRANSACTION;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_VERSIONIG_STATE;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_TYPE_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_TRANSACTION;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;

@@ -22,11 +22,11 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWAB
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_CHECKIN_COMMENT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_MAJOR;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TRANSACTION;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.PARAM_TRANSACTION;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;

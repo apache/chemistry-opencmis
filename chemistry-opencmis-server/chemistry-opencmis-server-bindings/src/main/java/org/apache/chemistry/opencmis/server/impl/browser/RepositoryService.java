@@ -18,6 +18,12 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_DEPTH;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_MAX_ITEMS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_PROPERTY_DEFINITIONS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SKIP_COUNT;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TRANSACTION;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TYPE_ID;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -35,7 +41,6 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -75,17 +80,20 @@ public final class RepositoryService {
     /**
      * getRepositoryInfo.
      */
+    @SuppressWarnings("unchecked")
     public static void getRepositoryInfo(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // execute
         RepositoryInfo ri = service.getRepositoryInfo(repositoryId, null);
+
         String repositoryUrl = BrowserBindingUtils.compileRepositoryUrl(request, ri.getId()).toString();
         String rootUrl = BrowserBindingUtils.compileRootUrl(request, ri.getId()).toString();
 
-        JSONObject jsonRi = JSONConverter.convert(ri, repositoryUrl, rootUrl);
+        JSONObject result = new JSONObject();
+        result.put(ri.getId(), JSONConverter.convert(ri, repositoryUrl, rootUrl));
 
         response.setStatus(HttpServletResponse.SC_OK);
-        BrowserBindingUtils.writeJSON(jsonRi, request, response);
+        BrowserBindingUtils.writeJSON(result, request, response);
     }
 
     /**
@@ -94,7 +102,7 @@ public final class RepositoryService {
     public static void getLastResult(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        String transaction = getStringParameter(request, BrowserBindingUtils.PARAM_TRANSACTION);
+        String transaction = getStringParameter(request, PARAM_TRANSACTION);
         String cookieName = BrowserBindingUtils.getCookieName(transaction);
         String cookieValue = null;
 
@@ -131,10 +139,10 @@ public final class RepositoryService {
     public static void getTypeChildren(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
-        boolean includePropertyDefinitions = getBooleanParameter(request, Constants.PARAM_PROPERTY_DEFINITIONS, false);
-        BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
-        BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
+        String typeId = getStringParameter(request, PARAM_TYPE_ID);
+        boolean includePropertyDefinitions = getBooleanParameter(request, PARAM_PROPERTY_DEFINITIONS, false);
+        BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
+        BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
 
         // execute
         TypeDefinitionList typeList = service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
@@ -149,9 +157,9 @@ public final class RepositoryService {
     public static void getTypeDescendants(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
-        BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
-        boolean includePropertyDefinitions = getBooleanParameter(request, Constants.PARAM_PROPERTY_DEFINITIONS, false);
+        String typeId = getStringParameter(request, PARAM_TYPE_ID);
+        BigInteger depth = getBigIntegerParameter(request, PARAM_DEPTH);
+        boolean includePropertyDefinitions = getBooleanParameter(request, PARAM_PROPERTY_DEFINITIONS, false);
 
         // execute
         List<TypeDefinitionContainer> typeTree = service.getTypeDescendants(repositoryId, typeId, depth,
@@ -173,7 +181,7 @@ public final class RepositoryService {
     public static void getTypeDefinition(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
+        String typeId = getStringParameter(request, PARAM_TYPE_ID);
 
         // execute
         TypeDefinition type = service.getTypeDefinition(repositoryId, typeId, null);
