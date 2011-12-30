@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.commons.definitions.Choice;
 /**
  * Choice implementation.
  */
-public class ChoiceImpl<T> extends AbstractExtensionData implements Choice<T> {
+public class ChoiceImpl<T> implements Choice<T> {
 
     private static final long serialVersionUID = 1L;
 

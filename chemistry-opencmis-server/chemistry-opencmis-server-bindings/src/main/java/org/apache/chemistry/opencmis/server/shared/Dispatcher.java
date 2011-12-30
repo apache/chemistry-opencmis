@@ -48,7 +48,16 @@ public class Dispatcher implements Serializable {
 
     private static final Log LOG = LogFactory.getLog(Dispatcher.class.getName());
 
+    private final boolean caseSensitive;
     private final Map<String, Method> methodMap = new HashMap<String, Method>();
+
+    public Dispatcher() {
+        this(true);
+    }
+
+    public Dispatcher(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
 
     /**
      * Connects a resource and HTTP method with a class and a class method.
@@ -64,7 +73,7 @@ public class Dispatcher implements Serializable {
 
     /**
      * Find the appropriate method an call it.
-     *
+     * 
      * @return <code>true</code> if the method was found, <code>false</code>
      *         otherwise.
      */
@@ -97,7 +106,8 @@ public class Dispatcher implements Serializable {
     /**
      * Generates a map key from a resource and an HTTP method.
      */
-    private static String getKey(String resource, String httpMethod) {
-        return resource + "/" + httpMethod;
+    private String getKey(String resource, String httpMethod) {
+        String s = resource + "/" + httpMethod;
+        return (caseSensitive ? s : s.toUpperCase());
     }
 }

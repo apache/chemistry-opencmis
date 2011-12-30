@@ -192,14 +192,28 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
     // ---- helpers ----
 
     /**
-     * Parses an input stream.
+     * Parses an object from an input stream.
      */
     @SuppressWarnings("unchecked")
-    protected Map<String, Object> parse(InputStream stream, String charset) {
+    protected Map<String, Object> parseObject(InputStream stream, String charset) {
         Object obj = parse(stream, charset, SIMPLE_CONTAINER_FACTORY);
 
         if (obj instanceof Map) {
             return (Map<String, Object>) obj;
+        }
+
+        throw new CmisConnectionException("Unexpected object!");
+    }
+
+    /**
+     * Parses an array from an input stream.
+     */
+    @SuppressWarnings("unchecked")
+    protected List<Object> parseArray(InputStream stream, String charset) {
+        Object obj = parse(stream, charset, SIMPLE_CONTAINER_FACTORY);
+
+        if (obj instanceof List) {
+            return (List<Object>) obj;
         }
 
         throw new CmisConnectionException("Unexpected object!");
@@ -309,7 +323,7 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
 
         // read and parse
         HttpUtils.Response resp = read(url);
-        Map<String, Object> json = parse(resp.getStream(), resp.getCharset());
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         List<RepositoryInfo> repInfos = new ArrayList<RepositoryInfo>();
 
@@ -351,7 +365,7 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
 
         // read and parse
         HttpUtils.Response resp = read(url);
-        Map<String, Object> json = parse(resp.getStream(), resp.getCharset());
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         return JSONConverter.convertTypeDefinition(json);
     }

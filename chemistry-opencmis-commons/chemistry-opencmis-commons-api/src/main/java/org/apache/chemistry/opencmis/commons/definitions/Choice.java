@@ -18,13 +18,14 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface Choice<T> {
+public interface Choice<T> extends Serializable {
 
-    String getDisplayName();
+	String getDisplayName();
 
-    List<T> getValue();
+	List<T> getValue();
 
-    List<Choice<T>> getChoice();
+	List<Choice<T>> getChoice();
 }

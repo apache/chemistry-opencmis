@@ -235,39 +235,79 @@ public class JSONConstants {
         TYPE_KEYS.add(JSON_TYPE_ALLOWED_TARGET_TYPES);
     }
 
-    public static final String JSON_PROPERTYTYPE_ID = "id";
-    public static final String JSON_PROPERTYTYPE_LOCALNAME = "localName";
-    public static final String JSON_PROPERTYTYPE_LOCALNAMESPACE = "localNamespace";
-    public static final String JSON_PROPERTYTYPE_DISPLAYNAME = "displayName";
-    public static final String JSON_PROPERTYTYPE_QUERYNAME = "queryName";
-    public static final String JSON_PROPERTYTYPE_DESCRIPTION = "description";
-    public static final String JSON_PROPERTYTYPE_PROPERTY_TYPE = "propertyType";
-    public static final String JSON_PROPERTYTYPE_CARDINALITY = "cardinality";
-    public static final String JSON_PROPERTYTYPE_UPDATABILITY = "updatability";
-    public static final String JSON_PROPERTYTYPE_INHERITED = "inherited";
-    public static final String JSON_PROPERTYTYPE_REQUIRED = "required";
-    public static final String JSON_PROPERTYTYPE_QUERYABLE = "queryable";
-    public static final String JSON_PROPERTYTYPE_OPENCHOICE = "openChoice";
+    public static final String JSON_PROPERTY_TYPE_ID = "id";
+    public static final String JSON_PROPERTY_TYPE_LOCALNAME = "localName";
+    public static final String JSON_PROPERTY_TYPE_LOCALNAMESPACE = "localNamespace";
+    public static final String JSON_PROPERTY_TYPE_DISPLAYNAME = "displayName";
+    public static final String JSON_PROPERTY_TYPE_QUERYNAME = "queryName";
+    public static final String JSON_PROPERTY_TYPE_DESCRIPTION = "description";
+    public static final String JSON_PROPERTY_TYPE_PROPERTY_TYPE = "propertyType";
+    public static final String JSON_PROPERTY_TYPE_CARDINALITY = "cardinality";
+    public static final String JSON_PROPERTY_TYPE_UPDATABILITY = "updatability";
+    public static final String JSON_PROPERTY_TYPE_INHERITED = "inherited";
+    public static final String JSON_PROPERTY_TYPE_REQUIRED = "required";
+    public static final String JSON_PROPERTY_TYPE_QUERYABLE = "queryable";
+    public static final String JSON_PROPERTY_TYPE_ORDERABLE = "orderable";
+    public static final String JSON_PROPERTY_TYPE_OPENCHOICE = "openChoice";
 
-    public static final String JSON_PROPERTYTYPE_DEAULT_VALUE = "defaultValue";
+    public static final String JSON_PROPERTY_TYPE_DEAULT_VALUE = "defaultValue";
 
-    public static final String JSON_PROPERTYTYPE_MAX_LENGTH = "maxLength";
-    public static final String JSON_PROPERTYTYPE_MIN_VALUE = "minValue";
-    public static final String JSON_PROPERTYTYPE_MAX_VALUE = "maxValue";
-    public static final String JSON_PROPERTYTYPE_MAX_PRECISION = "precision";
-    public static final String JSON_PROPERTYTYPE_MAX_RESOLUTION = "resolution";
+    public static final String JSON_PROPERTY_TYPE_MAX_LENGTH = "maxLength";
+    public static final String JSON_PROPERTY_TYPE_MIN_VALUE = "minValue";
+    public static final String JSON_PROPERTY_TYPE_MAX_VALUE = "maxValue";
+    public static final String JSON_PROPERTY_TYPE_PRECISION = "precision";
+    public static final String JSON_PROPERTY_TYPE_RESOLUTION = "resolution";
 
-    public static final String JSON_PROPERTYTYPE_CHOICE_DISPLAYNAME = "displayName";
-    public static final String JSON_PROPERTYTYPE_CHOICE_VALUE = "value";
-    public static final String JSON_PROPERTYTYPE_CHOICE_CHOICE = "choice";
+    public static final String JSON_PROPERTY_TYPE_CHOICE = "choice";
+    public static final String JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME = "displayName";
+    public static final String JSON_PROPERTY_TYPE_CHOICE_VALUE = "value";
+    public static final String JSON_PROPERTY_TYPE_CHOICE_CHOICE = "choice";
+
+    public static final Set<String> PROPERTY_TYPE_KEYS = new HashSet<String>();
+    static {
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_ID);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_LOCALNAME);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_LOCALNAMESPACE);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_DISPLAYNAME);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_QUERYNAME);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_DESCRIPTION);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_PROPERTY_TYPE);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_CARDINALITY);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_UPDATABILITY);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_INHERITED);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_REQUIRED);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_QUERYABLE);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_ORDERABLE);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_OPENCHOICE);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_DEAULT_VALUE);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_MAX_LENGTH);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_MIN_VALUE);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_MAX_VALUE);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_PRECISION);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_RESOLUTION);
+        PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_CHOICE);
+    }
 
     public static final String JSON_TYPESLIST_TYPES = "types";
     public static final String JSON_TYPESLIST_HAS_MORE_ITEMS = "hasMoreItems";
     public static final String JSON_TYPESLIST_NUM_ITEMS = "numItems";
 
+    public static final Set<String> TYPESLIST_KEYS = new HashSet<String>();
+    static {
+        TYPESLIST_KEYS.add(JSON_TYPESLIST_TYPES);
+        TYPESLIST_KEYS.add(JSON_TYPESLIST_HAS_MORE_ITEMS);
+        TYPESLIST_KEYS.add(JSON_TYPESLIST_NUM_ITEMS);
+    }
+
     public static final String JSON_TYPESCONTAINER_TYPE = "type";
     public static final String JSON_TYPESCONTAINER_CHILDREN = "children";
 
+    public static final Set<String> TYPESCONTAINER_KEYS = new HashSet<String>();
+    static {
+        TYPESCONTAINER_KEYS.add(JSON_TYPESCONTAINER_TYPE);
+        TYPESCONTAINER_KEYS.add(JSON_TYPESCONTAINER_CHILDREN);
+    }
+    
     // Constant utility class.
     private JSONConstants() {
     }

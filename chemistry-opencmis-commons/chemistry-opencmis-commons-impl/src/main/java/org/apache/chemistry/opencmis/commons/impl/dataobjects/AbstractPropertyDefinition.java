@@ -28,273 +28,163 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 
 /**
  * Abstract property definition data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionData implements PropertyDefinition<T> {
 
     private static final long serialVersionUID = 1L;
 
-    private String fId;
-    private String fLocalName;
-    private String fLocalNamespace;
-    private String fQueryName;
-    private String fDisplayName;
-    private String fDescription;
-    private PropertyType fPropertyType;
-    private Cardinality fCardinality;
-    private List<Choice<T>> fChoiceList;
-    private List<T> fDefaultValue;
-    private Updatability fUpdatability;
-    private Boolean fIsInherited;
-    private Boolean fIsQueryable;
-    private Boolean fIsOrderable;
-    private Boolean fIsRequired;
-    private Boolean fIsOpenChoice;
+    private String id;
+    private String localName;
+    private String localNamespace;
+    private String queryName;
+    private String displayName;
+    private String description;
+    private PropertyType propertyType;
+    private Cardinality cardinality;
+    private List<Choice<T>> choiceList;
+    private List<T> defaultValue;
+    private Updatability updatability;
+    private Boolean isInherited;
+    private Boolean isQueryable;
+    private Boolean isOrderable;
+    private Boolean isRequired;
+    private Boolean isOpenChoice;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.PropertyDefinitionData#getId()
-     */
     public String getId() {
-        return fId;
+        return id;
     }
 
     public void setId(String id) {
-        fId = id;
+        this.id = id;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getLocalName()
-     */
     public String getLocalName() {
-        return fLocalName;
+        return localName;
     }
 
     public void setLocalName(String localName) {
-        fLocalName = localName;
+        this.localName = localName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getLocalNamespace
-     * ()
-     */
     public String getLocalNamespace() {
-        return fLocalNamespace;
+        return localNamespace;
     }
 
     public void setLocalNamespace(String localNamespace) {
-        fLocalNamespace = localNamespace;
+        this.localNamespace = localNamespace;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getQueryName()
-     */
     public String getQueryName() {
-        return fQueryName;
+        return queryName;
     }
 
     public void setQueryName(String queryName) {
-        fQueryName = queryName;
+        this.queryName = queryName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getDisplayName
-     * ()
-     */
     public String getDisplayName() {
-        return fDisplayName;
+        return displayName;
     }
 
     public void setDisplayName(String displayName) {
-        fDisplayName = displayName;
+        this.displayName = displayName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getDescription
-     * ()
-     */
     public String getDescription() {
-        return fDescription;
+        return description;
     }
 
     public void setDescription(String description) {
-        fDescription = description;
+        this.description = description;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getPropertyType
-     * ()
-     */
     public PropertyType getPropertyType() {
-        return fPropertyType;
+        return propertyType;
     }
 
     public void setPropertyType(PropertyType propertyType) {
-        fPropertyType = propertyType;
+        this.propertyType = propertyType;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getCardinality
-     * ()
-     */
     public Cardinality getCardinality() {
-        return fCardinality;
+        return cardinality;
     }
 
     public void setCardinality(Cardinality cardinality) {
-        fCardinality = cardinality;
+        this.cardinality = cardinality;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getChoices()
-     */
     public List<Choice<T>> getChoices() {
-        return fChoiceList;
+        return choiceList;
     }
 
     public void setChoices(List<Choice<T>> choiceList) {
-        fChoiceList = choiceList;
+        this.choiceList = choiceList;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getDefaultValue
-     * ()
-     */
     public List<T> getDefaultValue() {
-        return fDefaultValue;
+        return defaultValue;
     }
 
     public void setDefaultValue(List<T> defaultValue) {
-        fDefaultValue = defaultValue;
+        this.defaultValue = defaultValue;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#getUpdatability
-     * ()
-     */
     public Updatability getUpdatability() {
-        return fUpdatability;
+        return updatability;
     }
 
     public void setUpdatability(Updatability updatability) {
-        fUpdatability = updatability;
+        this.updatability = updatability;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#isInherited()
-     */
     public Boolean isInherited() {
-        return fIsInherited;
+        return isInherited;
     }
 
     public void setIsInherited(Boolean isInherited) {
-        fIsInherited = isInherited;
+        this.isInherited = isInherited;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#isQueryable()
-     */
     public Boolean isQueryable() {
-        return fIsQueryable;
+        return isQueryable;
     }
 
     public void setIsQueryable(Boolean isQueryable) {
-        fIsQueryable = isQueryable;
+        this.isQueryable = isQueryable;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#isOrderable()
-     */
     public Boolean isOrderable() {
-        return fIsOrderable;
+        return isOrderable;
     }
 
     public void setIsOrderable(Boolean isOrderable) {
-        fIsOrderable = isOrderable;
+        this.isOrderable = isOrderable;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#isRequired()
-     */
     public Boolean isRequired() {
-        return fIsRequired;
+        return isRequired;
     }
 
     public void setIsRequired(Boolean isRequired) {
-        fIsRequired = isRequired;
+        this.isRequired = isRequired;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDefinitionData#isOpenChoice()
-     */
     public Boolean isOpenChoice() {
-        return fIsOpenChoice;
+        return isOpenChoice;
     }
 
     public void setIsOpenChoice(Boolean isOpenChoice) {
-        fIsOpenChoice = isOpenChoice;
+        this.isOpenChoice = isOpenChoice;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Property Definition [id=" + fId + ", display name=" + fDisplayName + ", description=" + fDescription
-                + ", local name=" + fLocalName + ", local namespace=" + fLocalNamespace + ", query name=" + fQueryName
-                + ", property type=" + fPropertyType + ", cardinality=" + fCardinality + ", choice list=" + fChoiceList
-                + ", default value=" + fDefaultValue + ", is inherited=" + fIsInherited + ", is open choice="
-                + fIsOpenChoice + ", is queryable=" + fIsQueryable + ", is required=" + fIsRequired + ", updatability="
-                + fUpdatability + "]" + super.toString();
+        return "Property Definition [id=" + id + ", display name=" + displayName + ", description=" + description
+                + ", local name=" + localName + ", local namespace=" + localNamespace + ", query name=" + queryName
+                + ", property type=" + propertyType + ", cardinality=" + cardinality + ", choice list=" + choiceList
+                + ", default value=" + defaultValue + ", is inherited=" + isInherited + ", is open choice="
+                + isOpenChoice + ", is queryable=" + isQueryable + ", is required=" + isRequired + ", updatability="
+                + updatability + "]" + super.toString();
     }
 }

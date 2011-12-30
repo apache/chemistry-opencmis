@@ -143,8 +143,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         }
 
         // initialize the dispatchers
-        repositoryDispatcher = new Dispatcher();
-        rootDispatcher = new Dispatcher();
+        repositoryDispatcher = new Dispatcher(false);
+        rootDispatcher = new Dispatcher(false);
 
         try {
             repositoryDispatcher.addResource(SELECTOR_REPOSITORY_INFO, METHOD_GET, RepositoryService.class,

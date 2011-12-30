@@ -21,12 +21,16 @@ package org.apache.chemistry.opencmis.commons.impl;
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.*;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -55,9 +59,18 @@ import org.apache.chemistry.opencmis.commons.data.PropertyUri;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyHtmlDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyIdDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
@@ -73,22 +86,36 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
+import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -122,11 +149,11 @@ public class JSONConverter {
         result.put(JSON_REPINFO_PRODUCT_VERSION, repositoryInfo.getProductVersion());
         result.put(JSON_REPINFO_ROOT_FOLDER_ID, repositoryInfo.getRootFolderId());
         result.put(JSON_REPINFO_CAPABILITIES, convert(repositoryInfo.getCapabilities()));
-        result.put(JSON_REPINFO_ACL_CAPABILITIES, convert(repositoryInfo.getAclCapabilities()));
+        setIfNotNull(JSON_REPINFO_ACL_CAPABILITIES, convert(repositoryInfo.getAclCapabilities()), result);
         result.put(JSON_REPINFO_CHANGE_LOCK_TOKEN, repositoryInfo.getLatestChangeLogToken());
         result.put(JSON_REPINFO_CMIS_VERSION_SUPPORTED, repositoryInfo.getCmisVersionSupported());
-        result.put(JSON_REPINFO_THIN_CLIENT_URI, repositoryInfo.getThinClientUri());
-        result.put(JSON_REPINFO_CHANGES_INCOMPLETE, repositoryInfo.getChangesIncomplete());
+        setIfNotNull(JSON_REPINFO_THIN_CLIENT_URI, repositoryInfo.getThinClientUri(), result);
+        setIfNotNull(JSON_REPINFO_CHANGES_INCOMPLETE, repositoryInfo.getChangesIncomplete(), result);
 
         if (repositoryInfo.getChangesOnType() != null) {
             JSONArray changesOnType = new JSONArray();
@@ -138,11 +165,13 @@ public class JSONConverter {
             result.put(JSON_REPINFO_CHANGES_ON_TYPE, changesOnType);
         }
 
-        result.put(JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS, repositoryInfo.getPrincipalIdAnonymous());
-        result.put(JSON_REPINFO_PRINCIPAL_ID_ANYONE, repositoryInfo.getPrincipalIdAnyone());
+        setIfNotNull(JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS, repositoryInfo.getPrincipalIdAnonymous(), result);
+        setIfNotNull(JSON_REPINFO_PRINCIPAL_ID_ANYONE, repositoryInfo.getPrincipalIdAnyone(), result);
 
         result.put(JSON_REPINFO_REPOSITORY_URL, repositoryUrl);
         result.put(JSON_REPINFO_ROOT_FOLDER_URL, rootUrl);
+
+        convertExtension(repositoryInfo, result);
 
         return result;
     }
@@ -173,6 +202,8 @@ public class JSONConverter {
         result.put(JSON_CAP_QUERY, getJSONStringValue(capabilities.getQueryCapability().value()));
         result.put(JSON_CAP_JOIN, getJSONStringValue(capabilities.getJoinCapability().value()));
         result.put(JSON_CAP_ACL, getJSONStringValue(capabilities.getAclCapability().value()));
+
+        convertExtension(capabilities, result);
 
         return result;
     }
@@ -208,7 +239,6 @@ public class JSONConverter {
         }
 
         // permission mapping
-
         if (capabilities.getPermissionMapping() != null) {
             JSONArray permissionMapping = new JSONArray();
 
@@ -229,6 +259,8 @@ public class JSONConverter {
 
             result.put(JSON_ACLCAP_PERMISSION_MAPPING, permissionMapping);
         }
+
+        convertExtension(capabilities, result);
 
         return result;
     }
@@ -400,7 +432,7 @@ public class JSONConverter {
         // find base type
         BaseTypeId baseType = getEnum(json, JSON_TYPE_BASE_ID, BaseTypeId.class);
         if (baseType == null) {
-            throw new CmisConnectionException("Invalid base type! Type defintion: " + id);
+            throw new CmisConnectionException("Invalid base type: " + id);
         }
 
         switch (baseType) {
@@ -481,14 +513,301 @@ public class JSONConverter {
         return result;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static PropertyDefinition<?> convertPropertyDefinition(Map<String, Object> json) {
         if (json == null) {
             return null;
         }
 
         AbstractPropertyDefinition<?> result = null;
-        
-        // TODO
+
+        String id = getString(json, JSON_PROPERTY_ID);
+
+        // find property type
+        PropertyType propertyType = getEnum(json, JSON_PROPERTY_TYPE_PROPERTY_TYPE, PropertyType.class);
+        if (propertyType == null) {
+            throw new CmisRuntimeException("Invalid property type '" + id + "'! Data type not set!");
+        }
+
+        // find
+        Cardinality cardinality = getEnum(json, JSON_PROPERTY_TYPE_CARDINALITY, Cardinality.class);
+        if (cardinality == null) {
+            throw new CmisRuntimeException("Invalid property type '" + id + "'! Cardinality not set!");
+        }
+
+        switch (propertyType) {
+        case STRING:
+            result = new PropertyStringDefinitionImpl();
+            ((PropertyStringDefinitionImpl) result).setMaxLength(getInteger(json, JSON_PROPERTY_TYPE_MAX_LENGTH));
+            ((PropertyStringDefinitionImpl) result)
+                    .setChoices(convertChoicesString(json.get(JSON_PROPERTY_TYPE_CHOICE)));
+            break;
+        case ID:
+            result = new PropertyIdDefinitionImpl();
+            ((PropertyIdDefinitionImpl) result).setChoices(convertChoicesString(json.get(JSON_PROPERTY_TYPE_CHOICE)));
+            break;
+        case BOOLEAN:
+            result = new PropertyBooleanDefinitionImpl();
+            ((PropertyBooleanDefinitionImpl) result).setChoices(convertChoicesBoolean(json
+                    .get(JSON_PROPERTY_TYPE_CHOICE)));
+            break;
+        case INTEGER:
+            result = new PropertyIntegerDefinitionImpl();
+            ((PropertyIntegerDefinitionImpl) result).setMinValue(getInteger(json, JSON_PROPERTY_TYPE_MIN_VALUE));
+            ((PropertyIntegerDefinitionImpl) result).setMaxValue(getInteger(json, JSON_PROPERTY_TYPE_MAX_VALUE));
+            ((PropertyIntegerDefinitionImpl) result).setChoices(convertChoicesInteger(json
+                    .get(JSON_PROPERTY_TYPE_CHOICE)));
+            break;
+        case DATETIME:
+            result = new PropertyDateTimeDefinitionImpl();
+            ((PropertyDateTimeDefinitionImpl) result).setDateTimeResolution(getEnum(json,
+                    JSON_PROPERTY_TYPE_RESOLUTION, DateTimeResolution.class));
+            ((PropertyDateTimeDefinitionImpl) result).setChoices(convertChoicesDateTime(json
+                    .get(JSON_PROPERTY_TYPE_CHOICE)));
+            break;
+        case DECIMAL:
+            result = new PropertyDecimalDefinitionImpl();
+            ((PropertyDecimalDefinitionImpl) result).setMinValue(getDecimal(json, JSON_PROPERTY_TYPE_MIN_VALUE));
+            ((PropertyDecimalDefinitionImpl) result).setMaxValue(getDecimal(json, JSON_PROPERTY_TYPE_MAX_VALUE));
+            ((PropertyDecimalDefinitionImpl) result).setPrecision(getEnum(json, JSON_PROPERTY_TYPE_PRECISION,
+                    DecimalPrecision.class));
+            ((PropertyDecimalDefinitionImpl) result).setChoices(convertChoicesDecimal(json
+                    .get(JSON_PROPERTY_TYPE_CHOICE)));
+            break;
+        case HTML:
+            result = new PropertyHtmlDefinitionImpl();
+            ((PropertyHtmlDefinitionImpl) result).setChoices(convertChoicesString(json.get(JSON_PROPERTY_TYPE_CHOICE)));
+            break;
+        case URI:
+            result = new PropertyUriDefinitionImpl();
+            ((PropertyUriDefinitionImpl) result).setChoices(convertChoicesString(json.get(JSON_PROPERTY_TYPE_CHOICE)));
+            break;
+        default:
+            throw new CmisRuntimeException("Property type '" + id + "' does not match a data type!");
+        }
+
+        // default value
+        Object defaultValue = json.get(JSON_PROPERTY_TYPE_DEAULT_VALUE);
+        if (defaultValue != null) {
+            if (defaultValue instanceof List) {
+                List values = new ArrayList();
+                for (Object value : (List) defaultValue) {
+                    values.add(getCMISValue(value, propertyType));
+                }
+                result.setDefaultValue(values);
+            } else {
+                result.setDefaultValue((List) Collections.singletonList(getCMISValue(defaultValue, propertyType)));
+            }
+        }
+
+        // generic
+        result.setId(id);
+        result.setPropertyType(propertyType);
+        result.setCardinality(cardinality);
+        result.setLocalName(getString(json, JSON_PROPERTY_TYPE_LOCALNAME));
+        result.setLocalNamespace(getString(json, JSON_PROPERTY_TYPE_LOCALNAMESPACE));
+        result.setQueryName(getString(json, JSON_PROPERTY_TYPE_QUERYNAME));
+        result.setDescription(getString(json, JSON_PROPERTY_TYPE_DESCRIPTION));
+        result.setDisplayName(getString(json, JSON_PROPERTY_TYPE_DISPLAYNAME));
+        result.setIsInherited(getBoolean(json, JSON_PROPERTY_TYPE_INHERITED));
+        result.setIsOpenChoice(getBoolean(json, JSON_PROPERTY_TYPE_OPENCHOICE));
+        result.setIsOrderable(getBoolean(json, JSON_PROPERTY_TYPE_ORDERABLE));
+        result.setIsQueryable(getBoolean(json, JSON_PROPERTY_TYPE_QUERYABLE));
+        result.setIsRequired(getBoolean(json, JSON_PROPERTY_TYPE_REQUIRED));
+        result.setUpdatability(getEnum(json, JSON_PROPERTY_TYPE_UPDATABILITY, Updatability.class));
+
+        // handle extensions
+        convertExtension(json, result, PROPERTY_TYPE_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts choices.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static List<Choice<String>> convertChoicesString(Object choices) {
+        if (!(choices instanceof List)) {
+            return null;
+        }
+
+        List<Choice<String>> result = new ArrayList<Choice<String>>();
+
+        for (Object obj : (List) choices) {
+            if (obj instanceof Map) {
+                Map<String, Object> choiceObj = (Map<String, Object>) obj;
+
+                ChoiceImpl<String> choice = new ChoiceImpl<String>();
+                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+
+                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                List<String> values = new ArrayList<String>();
+                if (choiceValue instanceof List) {
+                    for (Object value : (List) choiceValue) {
+                        values.add((String) getCMISValue(value, PropertyType.STRING));
+                    }
+                } else {
+                    values.add((String) getCMISValue(choiceValue, PropertyType.STRING));
+                }
+                choice.setValue(values);
+
+                choice.setChoice(convertChoicesString(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+
+                result.add(choice);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts choices.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static List<Choice<Boolean>> convertChoicesBoolean(Object choices) {
+        if (!(choices instanceof List)) {
+            return null;
+        }
+
+        List<Choice<Boolean>> result = new ArrayList<Choice<Boolean>>();
+
+        for (Object obj : (List) choices) {
+            if (obj instanceof Map) {
+                Map<String, Object> choiceObj = (Map<String, Object>) obj;
+
+                ChoiceImpl<Boolean> choice = new ChoiceImpl<Boolean>();
+                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+
+                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                List<Boolean> values = new ArrayList<Boolean>();
+                if (choiceValue instanceof List) {
+                    for (Object value : (List) choiceValue) {
+                        values.add((Boolean) getCMISValue(value, PropertyType.BOOLEAN));
+                    }
+                } else {
+                    values.add((Boolean) getCMISValue(choiceValue, PropertyType.BOOLEAN));
+                }
+                choice.setValue(values);
+
+                choice.setChoice(convertChoicesBoolean(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+
+                result.add(choice);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts choices.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static List<Choice<BigInteger>> convertChoicesInteger(Object choices) {
+        if (!(choices instanceof List)) {
+            return null;
+        }
+
+        List<Choice<BigInteger>> result = new ArrayList<Choice<BigInteger>>();
+
+        for (Object obj : (List) choices) {
+            if (obj instanceof Map) {
+                Map<String, Object> choiceObj = (Map<String, Object>) obj;
+
+                ChoiceImpl<BigInteger> choice = new ChoiceImpl<BigInteger>();
+                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+
+                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                List<BigInteger> values = new ArrayList<BigInteger>();
+                if (choiceValue instanceof List) {
+                    for (Object value : (List) choiceValue) {
+                        values.add((BigInteger) getCMISValue(value, PropertyType.INTEGER));
+                    }
+                } else {
+                    values.add((BigInteger) getCMISValue(choiceValue, PropertyType.INTEGER));
+                }
+                choice.setValue(values);
+
+                choice.setChoice(convertChoicesInteger(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+
+                result.add(choice);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts choices.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static List<Choice<BigDecimal>> convertChoicesDecimal(Object choices) {
+        if (!(choices instanceof List)) {
+            return null;
+        }
+
+        List<Choice<BigDecimal>> result = new ArrayList<Choice<BigDecimal>>();
+
+        for (Object obj : (List) choices) {
+            if (obj instanceof Map) {
+                Map<String, Object> choiceObj = (Map<String, Object>) obj;
+
+                ChoiceImpl<BigDecimal> choice = new ChoiceImpl<BigDecimal>();
+                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+
+                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                List<BigDecimal> values = new ArrayList<BigDecimal>();
+                if (choiceValue instanceof List) {
+                    for (Object value : (List) choiceValue) {
+                        values.add((BigDecimal) getCMISValue(value, PropertyType.DECIMAL));
+                    }
+                } else {
+                    values.add((BigDecimal) getCMISValue(choiceValue, PropertyType.DECIMAL));
+                }
+                choice.setValue(values);
+
+                choice.setChoice(convertChoicesDecimal(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+
+                result.add(choice);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts choices.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static List<Choice<GregorianCalendar>> convertChoicesDateTime(Object choices) {
+        if (!(choices instanceof List)) {
+            return null;
+        }
+
+        List<Choice<GregorianCalendar>> result = new ArrayList<Choice<GregorianCalendar>>();
+
+        for (Object obj : (List) choices) {
+            if (obj instanceof Map) {
+                Map<String, Object> choiceObj = (Map<String, Object>) obj;
+
+                ChoiceImpl<GregorianCalendar> choice = new ChoiceImpl<GregorianCalendar>();
+                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+
+                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                List<GregorianCalendar> values = new ArrayList<GregorianCalendar>();
+                if (choiceValue instanceof List) {
+                    for (Object value : (List) choiceValue) {
+                        values.add((GregorianCalendar) getCMISValue(value, PropertyType.DATETIME));
+                    }
+                } else {
+                    values.add((GregorianCalendar) getCMISValue(choiceValue, PropertyType.DATETIME));
+                }
+                choice.setValue(values);
+
+                choice.setChoice(convertChoicesDateTime(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+
+                result.add(choice);
+            }
+        }
 
         return result;
     }
@@ -567,6 +886,8 @@ public class JSONConverter {
             result.put(JSON_OBJECT_RENDITIONS, renditions);
         }
 
+        convertExtension(object, result);
+
         return result;
     }
 
@@ -595,6 +916,8 @@ public class JSONConverter {
             result.put(property.getId(), convert(property, propDef));
         }
 
+        convertExtension(properties, result);
+
         return result;
     }
 
@@ -610,9 +933,9 @@ public class JSONConverter {
         JSONObject result = new JSONObject();
 
         result.put(JSON_PROPERTY_ID, property.getId());
-        result.put(JSON_PROPERTY_LOCALNAME, property.getLocalName());
-        result.put(JSON_PROPERTY_DISPLAYNAME, property.getDisplayName());
-        result.put(JSON_PROPERTY_QUERYNAME, property.getQueryName());
+        setIfNotNull(JSON_PROPERTY_LOCALNAME, property.getLocalName(), result);
+        setIfNotNull(JSON_PROPERTY_DISPLAYNAME, property.getDisplayName(), result);
+        setIfNotNull(JSON_PROPERTY_QUERYNAME, property.getQueryName(), result);
 
         if (propDef != null) {
             result.put(JSON_PROPERTY_DATATYPE, propDef.getPropertyType().value());
@@ -647,6 +970,8 @@ public class JSONConverter {
             }
         }
 
+        convertExtension(property, result);
+
         return result;
     }
 
@@ -665,6 +990,8 @@ public class JSONConverter {
         for (Action action : Action.values()) {
             result.put(action.value(), actionSet.contains(action));
         }
+
+        convertExtension(allowableActions, result);
 
         return result;
     }
@@ -700,7 +1027,9 @@ public class JSONConverter {
 
         JSONObject result = new JSONObject();
         result.put(JSON_ACL_ACES, aceObjects);
-        result.put(JSON_ACL_IS_EXACT, acl.isExact());
+        setIfNotNull(JSON_ACL_IS_EXACT, acl.isExact(), result);
+
+        convertExtension(acl, result);
 
         return result;
     }
@@ -720,10 +1049,12 @@ public class JSONConverter {
         result.put(JSON_RENDITION_MIMETYPE, rendition.getMimeType());
         result.put(JSON_RENDITION_LENGTH, rendition.getBigLength());
         result.put(JSON_RENDITION_KIND, rendition.getKind());
-        result.put(JSON_RENDITION_TITLE, rendition.getTitle());
-        result.put(JSON_RENDITION_HEIGHT, rendition.getBigHeight());
-        result.put(JSON_RENDITION_WIDTH, rendition.getBigWidth());
-        result.put(JSON_RENDITION_DOCUMENT_ID, rendition.getRenditionDocumentId());
+        setIfNotNull(JSON_RENDITION_TITLE, rendition.getTitle(), result);
+        setIfNotNull(JSON_RENDITION_HEIGHT, rendition.getBigHeight(), result);
+        setIfNotNull(JSON_RENDITION_WIDTH, rendition.getBigWidth(), result);
+        setIfNotNull(JSON_RENDITION_DOCUMENT_ID, rendition.getRenditionDocumentId(), result);
+
+        convertExtension(rendition, result);
 
         return result;
     }
@@ -748,12 +1079,10 @@ public class JSONConverter {
 
         result.put(JSON_OBJECTLIST_OBJECTS, objects);
 
-        if (list.hasMoreItems() != null) {
-            result.put(JSON_OBJECTLIST_HAS_MORE_ITEMS, list.hasMoreItems());
-        }
-        if (list.getNumItems() != null) {
-            result.put(JSON_OBJECTLIST_NUM_ITEMS, list.getNumItems());
-        }
+        setIfNotNull(JSON_OBJECTLIST_HAS_MORE_ITEMS, list.hasMoreItems(), result);
+        setIfNotNull(JSON_OBJECTLIST_NUM_ITEMS, list.getNumItems(), result);
+
+        convertExtension(list, result);
 
         return result;
     }
@@ -769,9 +1098,9 @@ public class JSONConverter {
 
         JSONObject result = new JSONObject();
         result.put(JSON_OBJECTINFOLDER_OBJECT, convert(objectInFolder.getObject(), typeCache));
-        if (objectInFolder.getPathSegment() != null) {
-            result.put(JSON_OBJECTINFOLDER_PATH_SEGMENT, objectInFolder.getPathSegment());
-        }
+        setIfNotNull(JSON_OBJECTINFOLDER_PATH_SEGMENT, objectInFolder.getPathSegment(), result);
+
+        convertExtension(objectInFolder, result);
 
         return result;
     }
@@ -797,12 +1126,10 @@ public class JSONConverter {
             result.put(JSON_OBJECTINFOLDERLIST_OBJECTS, objects);
         }
 
-        if (objectInFolderList.hasMoreItems() != null) {
-            result.put(JSON_OBJECTINFOLDERLIST_HAS_MORE_ITEMS, objectInFolderList.hasMoreItems());
-        }
-        if (objectInFolderList.getNumItems() != null) {
-            result.put(JSON_OBJECTINFOLDERLIST_NUM_ITEMS, objectInFolderList.getNumItems());
-        }
+        setIfNotNull(JSON_OBJECTINFOLDERLIST_HAS_MORE_ITEMS, objectInFolderList.hasMoreItems(), result);
+        setIfNotNull(JSON_OBJECTINFOLDERLIST_NUM_ITEMS, objectInFolderList.getNumItems(), result);
+
+        convertExtension(objectInFolderList, result);
 
         return result;
     }
@@ -828,6 +1155,8 @@ public class JSONConverter {
             result.put(JSON_OBJECTINFOLDERCONTAINER_CHILDREN, children);
         }
 
+        convertExtension(container, result);
+
         return result;
     }
 
@@ -846,6 +1175,8 @@ public class JSONConverter {
             result.put(JSON_OBJECTPARENTS_RELATIVE_PATH_SEGMENT, parent.getRelativePathSegment());
         }
 
+        convertExtension(parent, result);
+
         return result;
     }
 
@@ -862,11 +1193,11 @@ public class JSONConverter {
         result.put(JSON_TYPE_ID, type.getId());
         result.put(JSON_TYPE_LOCALNAME, type.getLocalName());
         result.put(JSON_TYPE_LOCALNAMESPACE, type.getLocalNamespace());
-        result.put(JSON_TYPE_DISPLAYNAME, type.getDisplayName());
-        result.put(JSON_TYPE_QUERYNAME, type.getQueryName());
-        result.put(JSON_TYPE_DESCRIPTION, type.getDescription());
+        setIfNotNull(JSON_TYPE_DISPLAYNAME, type.getDisplayName(), result);
+        setIfNotNull(JSON_TYPE_QUERYNAME, type.getQueryName(), result);
+        setIfNotNull(JSON_TYPE_DESCRIPTION, type.getDescription(), result);
         result.put(JSON_TYPE_BASE_ID, type.getBaseTypeId().value());
-        result.put(JSON_TYPE_PARENT_ID, type.getParentTypeId());
+        setIfNotNull(JSON_TYPE_PARENT_ID, type.getParentTypeId(), result);
         result.put(JSON_TYPE_CREATABLE, type.isCreatable());
         result.put(JSON_TYPE_FILEABLE, type.isFileable());
         result.put(JSON_TYPE_QUERYABLE, type.isQueryable());
@@ -898,6 +1229,8 @@ public class JSONConverter {
             result.put(JSON_TYPE_PROPERTY_DEFINITIONS, propertyDefs);
         }
 
+        convertExtension(type, result);
+
         return result;
     }
 
@@ -905,28 +1238,119 @@ public class JSONConverter {
      * Converts a property type definition.
      */
     @SuppressWarnings("unchecked")
-    public static JSONObject convert(PropertyDefinition<?> propertyDef) {
-        if (propertyDef == null) {
+    public static JSONObject convert(PropertyDefinition<?> propertyDefinition) {
+        if (propertyDefinition == null) {
             return null;
         }
 
         JSONObject result = new JSONObject();
-        result.put(JSON_PROPERTYTYPE_ID, propertyDef.getId());
-        result.put(JSON_PROPERTYTYPE_LOCALNAME, propertyDef.getLocalName());
-        result.put(JSON_PROPERTYTYPE_LOCALNAMESPACE, propertyDef.getLocalName());
-        result.put(JSON_PROPERTYTYPE_DISPLAYNAME, propertyDef.getDisplayName());
-        result.put(JSON_PROPERTYTYPE_QUERYNAME, propertyDef.getQueryName());
-        result.put(JSON_PROPERTYTYPE_DESCRIPTION, propertyDef.getDescription());
-        result.put(JSON_PROPERTYTYPE_PROPERTY_TYPE, propertyDef.getPropertyType().value());
-        result.put(JSON_PROPERTYTYPE_CARDINALITY, propertyDef.getCardinality().value());
-        result.put(JSON_PROPERTYTYPE_UPDATABILITY, propertyDef.getUpdatability().value());
-        result.put(JSON_PROPERTYTYPE_INHERITED, propertyDef.isInherited());
-        result.put(JSON_PROPERTYTYPE_REQUIRED, propertyDef.isRequired());
-        result.put(JSON_PROPERTYTYPE_QUERYABLE, propertyDef.isQueryable());
-        result.put(JSON_PROPERTYTYPE_OPENCHOICE, propertyDef.isOpenChoice());
 
-        // TODO: add type specific details
-        // TODO: add choice
+        // type specific
+        if (propertyDefinition instanceof PropertyStringDefinition) {
+            setIfNotNull(JSON_PROPERTY_TYPE_MAX_LENGTH, ((PropertyStringDefinition) propertyDefinition).getMaxLength(),
+                    result);
+        } else if (propertyDefinition instanceof PropertyIdDefinition) {
+        } else if (propertyDefinition instanceof PropertyIntegerDefinition) {
+            setIfNotNull(JSON_PROPERTY_TYPE_MIN_VALUE, ((PropertyIntegerDefinition) propertyDefinition).getMinValue(),
+                    result);
+            setIfNotNull(JSON_PROPERTY_TYPE_MAX_VALUE, ((PropertyIntegerDefinition) propertyDefinition).getMaxValue(),
+                    result);
+        } else if (propertyDefinition instanceof PropertyDecimalDefinition) {
+            setIfNotNull(JSON_PROPERTY_TYPE_MIN_VALUE, ((PropertyDecimalDefinition) propertyDefinition).getMinValue(),
+                    result);
+            setIfNotNull(JSON_PROPERTY_TYPE_MAX_VALUE, ((PropertyDecimalDefinition) propertyDefinition).getMaxValue(),
+                    result);
+            DecimalPrecision precision = ((PropertyDecimalDefinition) propertyDefinition).getPrecision();
+            if (precision != null) {
+                result.put(JSON_PROPERTY_TYPE_PRECISION, precision.value());
+            }
+        } else if (propertyDefinition instanceof PropertyBooleanDefinition) {
+        } else if (propertyDefinition instanceof PropertyDateTimeDefinition) {
+            DateTimeResolution resolution = ((PropertyDateTimeDefinition) propertyDefinition).getDateTimeResolution();
+            if (resolution != null) {
+                result.put(JSON_PROPERTY_TYPE_RESOLUTION, resolution.value());
+            }
+        } else if (propertyDefinition instanceof PropertyHtmlDefinition) {
+        } else if (propertyDefinition instanceof PropertyUriDefinition) {
+        }
+
+        // default value
+        if (propertyDefinition.getDefaultValue() != null) {
+            if (propertyDefinition.getCardinality() == Cardinality.SINGLE) {
+                if (!propertyDefinition.getDefaultValue().isEmpty()) {
+                    result.put(JSON_PROPERTY_TYPE_DEAULT_VALUE, getJSONValue(propertyDefinition.getDefaultValue()
+                            .get(0)));
+                }
+            } else {
+                JSONArray values = new JSONArray();
+                for (Object value : propertyDefinition.getDefaultValue()) {
+                    values.add(getJSONValue(value));
+                }
+                result.put(JSON_PROPERTY_TYPE_DEAULT_VALUE, values);
+            }
+        }
+
+        // choices
+        if (propertyDefinition.getChoices() != null && !propertyDefinition.getChoices().isEmpty()) {
+            result.put(JSON_PROPERTY_TYPE_CHOICE,
+                    convertChoices(propertyDefinition.getChoices(), propertyDefinition.getCardinality()));
+        }
+
+        // generic
+        result.put(JSON_PROPERTY_TYPE_ID, propertyDefinition.getId());
+        result.put(JSON_PROPERTY_TYPE_LOCALNAME, propertyDefinition.getLocalName());
+        setIfNotNull(JSON_PROPERTY_TYPE_LOCALNAMESPACE, propertyDefinition.getLocalNamespace(), result);
+        setIfNotNull(JSON_PROPERTY_TYPE_DISPLAYNAME, propertyDefinition.getDisplayName(), result);
+        setIfNotNull(JSON_PROPERTY_TYPE_QUERYNAME, propertyDefinition.getQueryName(), result);
+        setIfNotNull(JSON_PROPERTY_TYPE_DESCRIPTION, propertyDefinition.getDescription(), result);
+        result.put(JSON_PROPERTY_TYPE_PROPERTY_TYPE, propertyDefinition.getPropertyType().value());
+        result.put(JSON_PROPERTY_TYPE_CARDINALITY, propertyDefinition.getCardinality().value());
+        result.put(JSON_PROPERTY_TYPE_UPDATABILITY, propertyDefinition.getUpdatability().value());
+        setIfNotNull(JSON_PROPERTY_TYPE_INHERITED, propertyDefinition.isInherited(), result);
+        result.put(JSON_PROPERTY_TYPE_REQUIRED, propertyDefinition.isRequired());
+        result.put(JSON_PROPERTY_TYPE_QUERYABLE, propertyDefinition.isQueryable());
+        result.put(JSON_PROPERTY_TYPE_ORDERABLE, propertyDefinition.isOrderable());
+        setIfNotNull(JSON_PROPERTY_TYPE_OPENCHOICE, propertyDefinition.isOpenChoice(), result);
+
+        convertExtension(propertyDefinition, result);
+
+        return result;
+    }
+
+    /**
+     * Converts choices.
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> JSONArray convertChoices(List<Choice<T>> choices, Cardinality cardinality) {
+        if (choices == null) {
+            return null;
+        }
+
+        JSONArray result = new JSONArray();
+
+        for (Choice<?> choice : choices) {
+            JSONObject jsonChoice = new JSONObject();
+
+            jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME, choice.getDisplayName());
+
+            if (cardinality == Cardinality.SINGLE) {
+                if (!choice.getValue().isEmpty()) {
+                    jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_VALUE, getJSONValue(choice.getValue().get(0)));
+                }
+            } else {
+                JSONArray values = new JSONArray();
+                for (Object value : choice.getValue()) {
+                    values.add(getJSONValue(value));
+                }
+                jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_VALUE, values);
+            }
+
+            if (choice.getChoice() != null && !choice.getChoice().isEmpty()) {
+                jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_CHOICE, convertChoices(choice.getChoice(), cardinality));
+            }
+
+            result.add(jsonChoice);
+        }
 
         return result;
     }
@@ -952,8 +1376,42 @@ public class JSONConverter {
             result.put(JSON_TYPESLIST_TYPES, objects);
         }
 
-        result.put(JSON_TYPESLIST_HAS_MORE_ITEMS, list.hasMoreItems());
-        result.put(JSON_TYPESLIST_NUM_ITEMS, list.getNumItems());
+        setIfNotNull(JSON_TYPESLIST_HAS_MORE_ITEMS, list.hasMoreItems(), result);
+        setIfNotNull(JSON_TYPESLIST_NUM_ITEMS, list.getNumItems(), result);
+
+        convertExtension(list, result);
+
+        return result;
+    }
+
+    /**
+     * Converts a type definition list.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static TypeDefinitionList convertTypeChildren(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        TypeDefinitionListImpl result = new TypeDefinitionListImpl();
+
+        Object typesList = json.get(JSON_TYPESLIST_TYPES);
+        if (typesList instanceof List) {
+            List<TypeDefinition> list = new ArrayList<TypeDefinition>();
+
+            for (Object type : (List) typesList) {
+                if (type instanceof Map) {
+                    list.add(convertTypeDefinition((Map<String, Object>) type));
+                }
+            }
+
+            result.setList(list);
+        }
+
+        result.setHasMoreItems(getBoolean(json, JSON_TYPESLIST_HAS_MORE_ITEMS));
+        result.setNumItems(getInteger(json, JSON_TYPESLIST_NUM_ITEMS));
+
+        convertExtension(json, result, TYPESLIST_KEYS);
 
         return result;
     }
@@ -979,10 +1437,81 @@ public class JSONConverter {
             result.put(JSON_TYPESCONTAINER_CHILDREN, children);
         }
 
+        convertExtension(container, result);
+
+        return result;
+    }
+
+    /**
+     * Converts a type definition list.
+     */
+    @SuppressWarnings({ "unchecked" })
+    public static List<TypeDefinitionContainer> convertTypeDescendants(List<Object> json) {
+        if (json == null || json.isEmpty()) {
+            return null;
+        }
+
+        List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
+
+        for (Object obj : json) {
+            if (obj instanceof Map) {
+                Map<String, Object> jsonContainer = (Map<String, Object>) obj;
+                TypeDefinitionContainerImpl container = new TypeDefinitionContainerImpl();
+
+                Object type = jsonContainer.get(JSON_TYPESCONTAINER_TYPE);
+                if (type instanceof Map) {
+                    container.setTypeDefinition(convertTypeDefinition((Map<String, Object>) jsonContainer));
+                }
+
+                Object children = jsonContainer.get(JSON_TYPESCONTAINER_CHILDREN);
+                if (children instanceof List) {
+                    container.setChildren(convertTypeDescendants((List<Object>) children));
+                }
+
+                convertExtension(jsonContainer, container, TYPESCONTAINER_KEYS);
+
+                result.add(container);
+            }
+        }
+
         return result;
     }
 
     // -----------------------------------------------------------------
+
+    @SuppressWarnings("unchecked")
+    public static void convertExtension(ExtensionsData source, JSONObject target) {
+        if (source == null || source.getExtensions() == null) {
+            return;
+        }
+
+        for (CmisExtensionElement ext : source.getExtensions()) {
+            if (ext.getChildren() != null && !ext.getChildren().isEmpty()) {
+                target.put(ext.getName(), convertExtensionList(ext.getChildren()));
+            } else {
+                target.put(ext.getName(), ext.getValue());
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static JSONObject convertExtensionList(List<CmisExtensionElement> extensionList) {
+        if (extensionList == null) {
+            return null;
+        }
+
+        JSONObject result = new JSONObject();
+
+        for (CmisExtensionElement ext : extensionList) {
+            if (ext.getChildren() != null && !ext.getChildren().isEmpty()) {
+                result.put(ext.getName(), convertExtensionList(ext.getChildren()));
+            } else {
+                result.put(ext.getName(), ext.getValue());
+            }
+        }
+
+        return result;
+    }
 
     @SuppressWarnings("unchecked")
     public static void convertExtension(Map<String, Object> source, ExtensionsData target, Set<String> cmisKeys) {
@@ -1085,6 +1614,49 @@ public class JSONConverter {
         return value;
     }
 
+    public static Object getCMISValue(Object value, PropertyType propertyType) {
+        if (value == null) {
+            return null;
+        }
+
+        switch (propertyType) {
+        case STRING:
+        case ID:
+        case HTML:
+        case URI:
+            if (value instanceof String) {
+                return value;
+            }
+            throw new CmisRuntimeException("Invalid String value!");
+        case BOOLEAN:
+            if (value instanceof Boolean) {
+                return value;
+            }
+            throw new CmisRuntimeException("Invalid Boolean value!");
+        case INTEGER:
+            if (value instanceof Number) {
+                return BigInteger.valueOf(((Number) value).longValue());
+            }
+            throw new CmisRuntimeException("Invalid Integer value!");
+        case DECIMAL:
+            if (value instanceof Double) {
+                return BigDecimal.valueOf((Double) value);
+            } else if (value instanceof Number) {
+                return BigDecimal.valueOf(((Number) value).longValue());
+            }
+            throw new CmisRuntimeException("Invalid Decimal value!");
+        case DATETIME:
+            if (value instanceof Number) {
+                GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+                cal.setTimeInMillis(((Number) value).longValue());
+                return cal;
+            }
+            throw new CmisRuntimeException("Invalid DateTime value!");
+        }
+
+        throw new CmisRuntimeException("Unkown property type!");
+    }
+
     @SuppressWarnings("unchecked")
     public static JSONArray getJSONArrayFromList(List<?> list) {
         if (list == null) {
@@ -1119,6 +1691,13 @@ public class JSONConverter {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    public static void setIfNotNull(String name, Object obj, JSONObject json) {
+        if (obj != null) {
+            json.put(name, obj);
+        }
+    }
+
     public static String getString(@SuppressWarnings("rawtypes") Map json, String key) {
         Object obj = json.get(key);
         return obj == null ? null : obj.toString();
@@ -1129,6 +1708,28 @@ public class JSONConverter {
 
         if (obj instanceof Boolean) {
             return (Boolean) obj;
+        }
+
+        return null;
+    }
+
+    public static BigInteger getInteger(@SuppressWarnings("rawtypes") Map json, String key) {
+        Object obj = json.get(key);
+
+        if (obj instanceof Number) {
+            return BigInteger.valueOf(((Number) obj).longValue());
+        }
+
+        return null;
+    }
+
+    public static BigDecimal getDecimal(@SuppressWarnings("rawtypes") Map json, String key) {
+        Object obj = json.get(key);
+
+        if (obj instanceof Double) {
+            return BigDecimal.valueOf((Double) obj);
+        } else if (obj instanceof Number) {
+            return BigDecimal.valueOf(((Number) obj).longValue());
         }
 
         return null;
