@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -124,7 +125,7 @@ public class LoggingFilter implements Filter {
                 if (cType.startsWith("multipart")) {
                     xmlRequest = processMultipart(cType, xmlRequest);
                 } else if (cType.contains("xml")) { 
-                    xmlRequest = prettyPrint(xmlRequest, indent);
+                    xmlRequest = prettyPrintXml(xmlRequest, indent);
                 }
             }
             
@@ -149,7 +150,9 @@ public class LoggingFilter implements Filter {
                 if (cType.startsWith("multipart")) {
                     xmlResponse = processMultipart(cType, xmlResponse);
                 } else if (cType.contains("xml")) { 
-                    xmlResponse = prettyPrint(xmlResponse, indent);
+                    xmlResponse = prettyPrintXml(xmlResponse, indent);
+                } else if (cType.contains("json")) { 
+                    xmlResponse = prettyPrintJson(xmlResponse, indent);
                 }
             }
                 
@@ -189,7 +192,7 @@ public class LoggingFilter implements Filter {
         }
     }
     
-    private static String prettyPrint(String input, int indent) {
+    private static String prettyPrintXml(String input, int indent) {
         try {
             Source xmlInput = new StreamSource(new StringReader(input));
             StringWriter stringWriter = new StringWriter();
@@ -205,6 +208,11 @@ public class LoggingFilter implements Filter {
         }
     }
     
+    private static String prettyPrintJson(String input, int indent) {
+        JsonPrettyPrinter pp = new JsonPrettyPrinter(indent);
+        return pp.prettyPrint(input);
+    }
+    
     private String processMultipart(String cType, String messageBody) throws IOException {
         int beginIndex = cType.indexOf("boundary=\"") + 10;
         int endIndex = cType.indexOf("\"", beginIndex);
@@ -216,21 +224,26 @@ public class LoggingFilter implements Filter {
         ByteArrayOutputStream xmlBodyBuffer = new ByteArrayOutputStream();
         boolean boundaryFound;
         
-        boolean inXmlBody = false;
-        boolean inXmlPart = false;
+        boolean inXmlOrJsonBody = false;
+        boolean inXmlOrJsonPart = false;
+        boolean isXml;
         while ((line = in.readLine()) != null) {
-            if (inXmlPart) {
-                if (line.startsWith("<?xml")) {
-                    inXmlBody = true;
+            if (inXmlOrJsonPart) {
+                if (line.startsWith("<?xml") || line.startsWith("{")) {
+                    inXmlOrJsonBody = true;
+                    isXml = line.startsWith("<?xml");
                     xmlBodyBuffer.write(line.getBytes(), 0, line.length());                   
-                    while (inXmlBody)  {
+                    while (inXmlOrJsonBody)  {
                         line = in.readLine();
                         boundaryFound = line.startsWith(boundary);
                         if (boundaryFound) {
                             log.debug("Leaving XML body: " + line);
-                            inXmlBody = false;
-                            inXmlPart = false;
-                            out.append(prettyPrint(xmlBodyBuffer.toString(), indent));
+                            inXmlOrJsonBody = false;
+                            inXmlOrJsonPart = false;
+                            if (isXml)
+                                out.append(prettyPrintXml(xmlBodyBuffer.toString(), indent));
+                            else
+                                out.append(prettyPrintJson(xmlBodyBuffer.toString(), indent));
                             out.append(line).append("\n");
                         } else
                             xmlBodyBuffer.write(line.getBytes(), 0, line.length());
@@ -246,7 +259,7 @@ public class LoggingFilter implements Filter {
                 boundaryFound = line.startsWith(boundary);
                 if (boundaryFound) {
                     log.debug("Boundardy found!");
-                    inXmlPart = true;
+                    inXmlOrJsonPart = true;
                 }
             }
         }
@@ -381,6 +394,7 @@ public class LoggingFilter implements Filter {
      private class LoggingResponseWrapper extends HttpServletResponseWrapper {
          
          private LoggingOutputStream os;
+         private PrintWriter writer;
          private int statusCode;
          private Map<String, String> headers = new HashMap<String, String>();
          String encoding;
@@ -390,6 +404,19 @@ public class LoggingFilter implements Filter {
             this.os = new LoggingOutputStream(response.getOutputStream());
          }
     
+         @Override
+         public PrintWriter getWriter() {
+            try {
+                if (null == writer)
+                    writer = new PrintWriter(this.getOutputStream());
+                return writer;
+            } catch (IOException e) {
+                log.error("Failed to get PrintWriter in LoggingFilter: "+ e);
+                e.printStackTrace();
+                return null;             
+            }
+         }
+         
          @Override
          public ServletOutputStream getOutputStream() throws IOException {
             return os;
