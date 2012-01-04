@@ -477,6 +477,8 @@ public class BrowserBindingUtils {
         if (clientToken != null) {
             response.getWriter().print(");");
         }
+        
+        response.getWriter().flush();
     }
 
     public static void writeEmpty(HttpServletRequest request, HttpServletResponse response) throws IOException {
