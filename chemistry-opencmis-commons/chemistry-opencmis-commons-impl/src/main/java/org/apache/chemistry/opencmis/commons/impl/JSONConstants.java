@@ -21,6 +21,8 @@ package org.apache.chemistry.opencmis.commons.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.chemistry.opencmis.commons.enums.Action;
+
 /**
  * JSON object constants.
  */
@@ -144,6 +146,24 @@ public class JSONConstants {
     public static final String JSON_OBJECT_POLICY_IDS = "policyIds";
     public static final String JSON_OBJECT_RENDITIONS = "renditions";
 
+    public static final Set<String> OBJECT_KEYS = new HashSet<String>();
+    static {
+        OBJECT_KEYS.add(JSON_OBJECT_PROPERTIES);
+        OBJECT_KEYS.add(JSON_OBJECT_ALLOWABLE_ACTIONS);
+        OBJECT_KEYS.add(JSON_OBJECT_RELATIONSHIPS);
+        OBJECT_KEYS.add(JSON_OBJECT_CHANGE_EVENT_INFO);
+        OBJECT_KEYS.add(JSON_OBJECT_ACL);
+        OBJECT_KEYS.add(JSON_OBJECT_POLICY_IDS);
+        OBJECT_KEYS.add(JSON_OBJECT_RENDITIONS);
+    }
+
+    public static final Set<String> ALLOWABLE_ACTIONS_KEYS = new HashSet<String>();
+    static {
+        for (Action action : Action.values()) {
+            ALLOWABLE_ACTIONS_KEYS.add(action.value());
+        }
+    }
+
     public static final String JSON_OBJECTINFOLDER_OBJECT = "object";
     public static final String JSON_OBJECTINFOLDER_PATH_SEGMENT = "pathSegment";
     public static final String JSON_OBJECTPARENTS_OBJECT = "object";
@@ -160,13 +180,38 @@ public class JSONConstants {
     public static final String JSON_CHANGE_EVENT_TYPE = "changeType";
     public static final String JSON_CHANGE_EVENT_TIME = "changeTime";
 
+    public static final Set<String> CHANGE_EVENT_KEYS = new HashSet<String>();
+    static {
+        CHANGE_EVENT_KEYS.add(JSON_CHANGE_EVENT_TYPE);
+        CHANGE_EVENT_KEYS.add(JSON_CHANGE_EVENT_TIME);
+    }
+
     public static final String JSON_ACL_ACES = "aces";
     public static final String JSON_ACL_IS_EXACT = "isExact";
+
+    public static final Set<String> ACL_KEYS = new HashSet<String>();
+    static {
+        ACL_KEYS.add(JSON_ACL_ACES);
+        ACL_KEYS.add(JSON_ACL_IS_EXACT);
+    }
 
     public static final String JSON_ACE_PRINCIPAL = "princial";
     public static final String JSON_ACE_PRINCIPAL_ID = "princialId";
     public static final String JSON_ACE_PERMISSIONS = "permissions";
     public static final String JSON_ACE_IS_DIRECT = "isDirect";
+
+    public static final Set<String> ACE_KEYS = new HashSet<String>();
+    static {
+        ACE_KEYS.add(JSON_ACE_PRINCIPAL);
+        ACE_KEYS.add(JSON_ACE_PRINCIPAL_ID);
+        ACE_KEYS.add(JSON_ACE_PERMISSIONS);
+        ACE_KEYS.add(JSON_ACE_IS_DIRECT);
+    }
+
+    public static final Set<String> PRINCIPAL_KEYS = new HashSet<String>();
+    static {
+        PRINCIPAL_KEYS.add(JSON_ACE_PRINCIPAL_ID);
+    }
 
     public static final String JSON_RENDITION_STREAM_ID = "streamId";
     public static final String JSON_RENDITION_MIMETYPE = "mimeType";
@@ -307,7 +352,7 @@ public class JSONConstants {
         TYPESCONTAINER_KEYS.add(JSON_TYPESCONTAINER_TYPE);
         TYPESCONTAINER_KEYS.add(JSON_TYPESCONTAINER_CHILDREN);
     }
-    
+
     // Constant utility class.
     private JSONConstants() {
     }

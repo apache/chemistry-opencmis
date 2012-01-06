@@ -117,6 +117,21 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
         return result;
     }
 
+    protected UrlBuilder getObjectUrl(String repositoryId, String objectId, String selector) {
+        UrlBuilder result = getRepositoryUrlCache().getObjectUrl(repositoryId, objectId, selector);
+
+        if (result == null) {
+            getRepositoriesInternal(repositoryId);
+            result = getRepositoryUrlCache().getObjectUrl(repositoryId, objectId, selector);
+        }
+
+        if (result == null) {
+            throw new CmisObjectNotFoundException("Unknown repository!");
+        }
+
+        return result;
+    }
+
     // ---- exceptions ----
 
     /**

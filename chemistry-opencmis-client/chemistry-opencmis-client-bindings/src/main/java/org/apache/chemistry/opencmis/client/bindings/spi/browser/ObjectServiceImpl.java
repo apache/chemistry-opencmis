@@ -20,8 +20,10 @@ package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -33,6 +35,9 @@ import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
@@ -47,7 +52,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
     public ObjectServiceImpl(BindingSession session) {
         setSession(session);
     }
-    
+
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
@@ -88,8 +93,20 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_OBJECT);
+        url.addParameter(Constants.PARAM_FILTER, filter);
+        url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+        url.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
+        url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
+        url.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
+        url.addParameter(Constants.PARAM_ACL, includeAcl);
+
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertObject(json);
     }
 
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {

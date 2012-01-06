@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -85,32 +87,49 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
@@ -282,26 +301,17 @@ public class JSONConverter {
         result.setRootFolder(getString(json, JSON_REPINFO_ROOT_FOLDER_ID));
         result.setRepositoryUrl(getString(json, JSON_REPINFO_REPOSITORY_URL));
         result.setRootUrl(getString(json, JSON_REPINFO_ROOT_FOLDER_URL));
-
-        Object capabilities = json.get(JSON_REPINFO_CAPABILITIES);
-        if (capabilities instanceof Map) {
-            result.setCapabilities(convertRepositoryCapabilities((Map<String, Object>) capabilities));
-        }
-
-        Object aclCapabilities = json.get(JSON_REPINFO_ACL_CAPABILITIES);
-        if (aclCapabilities instanceof Map) {
-            result.setAclCapabilities(convertAclCapabilities((Map<String, Object>) aclCapabilities));
-        }
-
+        result.setCapabilities(convertRepositoryCapabilities(getMap(json.get(JSON_REPINFO_CAPABILITIES))));
+        result.setAclCapabilities(convertAclCapabilities(getMap(json.get(JSON_REPINFO_ACL_CAPABILITIES))));
         result.setLatestChangeLogToken(getString(json, JSON_REPINFO_CHANGE_LOCK_TOKEN));
         result.setCmisVersionSupported(getString(json, JSON_REPINFO_CMIS_VERSION_SUPPORTED));
         result.setThinClientUri(getString(json, JSON_REPINFO_THIN_CLIENT_URI));
         result.setChangesIncomplete(getBoolean(json, JSON_REPINFO_CHANGES_INCOMPLETE));
 
-        Object changesOnType = json.get(JSON_REPINFO_CHANGES_ON_TYPE);
-        if (changesOnType instanceof List) {
+        List<Object> changesOnType = getList(json.get(JSON_REPINFO_CHANGES_ON_TYPE));
+        if (changesOnType != null) {
             List<BaseTypeId> types = new ArrayList<BaseTypeId>();
-            for (Object type : ((List<Object>) changesOnType)) {
+            for (Object type : changesOnType) {
                 if (type != null) {
                     types.add(BaseTypeId.fromValue(type.toString()));
                 }
@@ -359,19 +369,19 @@ public class JSONConverter {
         result.setSupportedPermissions(getEnum(json, JSON_ACLCAP_SUPPORTED_PERMISSIONS, SupportedPermissions.class));
         result.setAclPropagation(getEnum(json, JSON_ACLCAP_ACL_PROPAGATION, AclPropagation.class));
 
-        Object permissions = json.get(JSON_ACLCAP_PERMISSIONS);
-        if (permissions instanceof List) {
+        List<Object> permissions = getList(json.get(JSON_ACLCAP_PERMISSIONS));
+        if (permissions != null) {
             List<PermissionDefinition> permissionDefinitionList = new ArrayList<PermissionDefinition>();
 
             for (Object permission : (List<Object>) permissions) {
-                if (permission instanceof Map) {
+                Map<String, Object> permissionMap = getMap(permission);
+                if (permissionMap != null) {
                     PermissionDefinitionDataImpl permDef = new PermissionDefinitionDataImpl();
 
-                    permDef.setPermission(getString((Map<String, Object>) permission, JSON_ACLCAP_PERMISSION_PERMISSION));
-                    permDef.setDescription(getString((Map<String, Object>) permission,
-                            JSON_ACLCAP_PERMISSION_DESCRIPTION));
+                    permDef.setPermission(getString(permissionMap, JSON_ACLCAP_PERMISSION_PERMISSION));
+                    permDef.setDescription(getString(permissionMap, JSON_ACLCAP_PERMISSION_DESCRIPTION));
 
-                    convertExtension((Map<String, Object>) permission, permDef, ACLCAP_PERMISSION_KEYS);
+                    convertExtension(permissionMap, permDef, ACLCAP_PERMISSION_KEYS);
 
                     permissionDefinitionList.add(permDef);
                 }
@@ -380,18 +390,19 @@ public class JSONConverter {
             result.setPermissionDefinitionData(permissionDefinitionList);
         }
 
-        Object permissionMapping = json.get(JSON_ACLCAP_PERMISSION_MAPPING);
-        if (permissionMapping instanceof List) {
+        List<Object> permissionMapping = getList(json.get(JSON_ACLCAP_PERMISSION_MAPPING));
+        if (permissionMapping != null) {
             Map<String, PermissionMapping> permMap = new HashMap<String, PermissionMapping>();
 
             for (Object permission : (List<Object>) permissionMapping) {
-                if (permission instanceof Map) {
+                Map<String, Object> permissionMap = getMap(permission);
+                if (permissionMap != null) {
                     PermissionMappingDataImpl mapping = new PermissionMappingDataImpl();
 
-                    String key = getString((Map<String, Object>) permission, JSON_ACLCAP_MAPPING_KEY);
+                    String key = getString(permissionMap, JSON_ACLCAP_MAPPING_KEY);
                     mapping.setKey(key);
 
-                    Object perms = ((Map<String, Object>) permission).get(JSON_ACLCAP_MAPPING_PERMISSION);
+                    Object perms = permissionMap.get(JSON_ACLCAP_MAPPING_PERMISSION);
                     if (perms instanceof List) {
                         List<String> permList = new ArrayList<String>();
 
@@ -404,7 +415,7 @@ public class JSONConverter {
                         mapping.setPermissions(permList);
                     }
 
-                    convertExtension((Map<String, Object>) permission, mapping, ACLCAP_MAPPING_KEYS);
+                    convertExtension(permissionMap, mapping, ACLCAP_MAPPING_KEYS);
 
                     permMap.put(key, mapping);
                 }
@@ -432,7 +443,7 @@ public class JSONConverter {
         // find base type
         BaseTypeId baseType = getEnum(json, JSON_TYPE_BASE_ID, BaseTypeId.class);
         if (baseType == null) {
-            throw new CmisConnectionException("Invalid base type: " + id);
+            throw new CmisRuntimeException("Invalid base type: " + id);
         }
 
         switch (baseType) {
@@ -498,12 +509,10 @@ public class JSONConverter {
         result.setParentTypeId(getString(json, JSON_TYPE_PARENT_ID));
         result.setQueryName(getString(json, JSON_TYPE_QUERYNAME));
 
-        Object propertyDefinitions = json.get(JSON_TYPE_PROPERTY_DEFINITIONS);
-        if (propertyDefinitions instanceof Map) {
-            for (Object propDef : ((Map<String, Object>) propertyDefinitions).values()) {
-                if (propDef instanceof Map) {
-                    result.addPropertyDefinition(convertPropertyDefinition((Map<String, Object>) propDef));
-                }
+        Map<String, Object> propertyDefinitions = getMap(json.get(JSON_TYPE_PROPERTY_DEFINITIONS));
+        if (propertyDefinitions != null) {
+            for (Object propDef : propertyDefinitions.values()) {
+                result.addPropertyDefinition(convertPropertyDefinition(getMap(propDef)));
             }
         }
 
@@ -625,7 +634,7 @@ public class JSONConverter {
     /**
      * Converts choices.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     private static List<Choice<String>> convertChoicesString(Object choices) {
         if (!(choices instanceof List)) {
             return null;
@@ -634,13 +643,12 @@ public class JSONConverter {
         List<Choice<String>> result = new ArrayList<Choice<String>>();
 
         for (Object obj : (List) choices) {
-            if (obj instanceof Map) {
-                Map<String, Object> choiceObj = (Map<String, Object>) obj;
-
+            Map<String, Object> choiceMap = getMap(obj);
+            if (choiceMap != null) {
                 ChoiceImpl<String> choice = new ChoiceImpl<String>();
-                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+                choice.setDisplayName(getString(choiceMap, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
 
-                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                Object choiceValue = choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
                 List<String> values = new ArrayList<String>();
                 if (choiceValue instanceof List) {
                     for (Object value : (List) choiceValue) {
@@ -651,7 +659,7 @@ public class JSONConverter {
                 }
                 choice.setValue(values);
 
-                choice.setChoice(convertChoicesString(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+                choice.setChoice(convertChoicesString(choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
 
                 result.add(choice);
             }
@@ -663,7 +671,7 @@ public class JSONConverter {
     /**
      * Converts choices.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     private static List<Choice<Boolean>> convertChoicesBoolean(Object choices) {
         if (!(choices instanceof List)) {
             return null;
@@ -672,13 +680,12 @@ public class JSONConverter {
         List<Choice<Boolean>> result = new ArrayList<Choice<Boolean>>();
 
         for (Object obj : (List) choices) {
-            if (obj instanceof Map) {
-                Map<String, Object> choiceObj = (Map<String, Object>) obj;
-
+            Map<String, Object> choiceMap = getMap(obj);
+            if (choiceMap != null) {
                 ChoiceImpl<Boolean> choice = new ChoiceImpl<Boolean>();
-                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+                choice.setDisplayName(getString(choiceMap, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
 
-                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                Object choiceValue = choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
                 List<Boolean> values = new ArrayList<Boolean>();
                 if (choiceValue instanceof List) {
                     for (Object value : (List) choiceValue) {
@@ -689,7 +696,7 @@ public class JSONConverter {
                 }
                 choice.setValue(values);
 
-                choice.setChoice(convertChoicesBoolean(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+                choice.setChoice(convertChoicesBoolean(choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
 
                 result.add(choice);
             }
@@ -701,7 +708,7 @@ public class JSONConverter {
     /**
      * Converts choices.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     private static List<Choice<BigInteger>> convertChoicesInteger(Object choices) {
         if (!(choices instanceof List)) {
             return null;
@@ -710,13 +717,12 @@ public class JSONConverter {
         List<Choice<BigInteger>> result = new ArrayList<Choice<BigInteger>>();
 
         for (Object obj : (List) choices) {
-            if (obj instanceof Map) {
-                Map<String, Object> choiceObj = (Map<String, Object>) obj;
-
+            Map<String, Object> choiceMap = getMap(obj);
+            if (choiceMap != null) {
                 ChoiceImpl<BigInteger> choice = new ChoiceImpl<BigInteger>();
-                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+                choice.setDisplayName(getString(choiceMap, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
 
-                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                Object choiceValue = choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
                 List<BigInteger> values = new ArrayList<BigInteger>();
                 if (choiceValue instanceof List) {
                     for (Object value : (List) choiceValue) {
@@ -727,7 +733,7 @@ public class JSONConverter {
                 }
                 choice.setValue(values);
 
-                choice.setChoice(convertChoicesInteger(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+                choice.setChoice(convertChoicesInteger(choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
 
                 result.add(choice);
             }
@@ -739,7 +745,7 @@ public class JSONConverter {
     /**
      * Converts choices.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     private static List<Choice<BigDecimal>> convertChoicesDecimal(Object choices) {
         if (!(choices instanceof List)) {
             return null;
@@ -748,13 +754,12 @@ public class JSONConverter {
         List<Choice<BigDecimal>> result = new ArrayList<Choice<BigDecimal>>();
 
         for (Object obj : (List) choices) {
-            if (obj instanceof Map) {
-                Map<String, Object> choiceObj = (Map<String, Object>) obj;
-
+            Map<String, Object> choiceMap = getMap(obj);
+            if (choiceMap != null) {
                 ChoiceImpl<BigDecimal> choice = new ChoiceImpl<BigDecimal>();
-                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+                choice.setDisplayName(getString(choiceMap, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
 
-                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                Object choiceValue = choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
                 List<BigDecimal> values = new ArrayList<BigDecimal>();
                 if (choiceValue instanceof List) {
                     for (Object value : (List) choiceValue) {
@@ -765,7 +770,7 @@ public class JSONConverter {
                 }
                 choice.setValue(values);
 
-                choice.setChoice(convertChoicesDecimal(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+                choice.setChoice(convertChoicesDecimal(choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
 
                 result.add(choice);
             }
@@ -777,7 +782,7 @@ public class JSONConverter {
     /**
      * Converts choices.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     private static List<Choice<GregorianCalendar>> convertChoicesDateTime(Object choices) {
         if (!(choices instanceof List)) {
             return null;
@@ -786,13 +791,12 @@ public class JSONConverter {
         List<Choice<GregorianCalendar>> result = new ArrayList<Choice<GregorianCalendar>>();
 
         for (Object obj : (List) choices) {
-            if (obj instanceof Map) {
-                Map<String, Object> choiceObj = (Map<String, Object>) obj;
-
+            Map<String, Object> choiceMap = getMap(obj);
+            if (choiceMap != null) {
                 ChoiceImpl<GregorianCalendar> choice = new ChoiceImpl<GregorianCalendar>();
-                choice.setDisplayName(getString(choiceObj, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
+                choice.setDisplayName(getString(choiceMap, JSON_PROPERTY_TYPE_CHOICE_DISPLAYNAME));
 
-                Object choiceValue = choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
+                Object choiceValue = choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_VALUE);
                 List<GregorianCalendar> values = new ArrayList<GregorianCalendar>();
                 if (choiceValue instanceof List) {
                     for (Object value : (List) choiceValue) {
@@ -803,7 +807,7 @@ public class JSONConverter {
                 }
                 choice.setValue(values);
 
-                choice.setChoice(convertChoicesDateTime(choiceObj.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
+                choice.setChoice(convertChoicesDateTime(choiceMap.get(JSON_PROPERTY_TYPE_CHOICE_CHOICE)));
 
                 result.add(choice);
             }
@@ -1458,10 +1462,7 @@ public class JSONConverter {
                 Map<String, Object> jsonContainer = (Map<String, Object>) obj;
                 TypeDefinitionContainerImpl container = new TypeDefinitionContainerImpl();
 
-                Object type = jsonContainer.get(JSON_TYPESCONTAINER_TYPE);
-                if (type instanceof Map) {
-                    container.setTypeDefinition(convertTypeDefinition((Map<String, Object>) jsonContainer));
-                }
+                container.setTypeDefinition(convertTypeDefinition(getMap(jsonContainer.get(JSON_TYPESCONTAINER_TYPE))));
 
                 Object children = jsonContainer.get(JSON_TYPESCONTAINER_CHILDREN);
                 if (children instanceof List) {
@@ -1471,6 +1472,337 @@ public class JSONConverter {
                 convertExtension(jsonContainer, container, TYPESCONTAINER_KEYS);
 
                 result.add(container);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts an object.
+     */
+    public static ObjectData convertObject(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        ObjectDataImpl result = new ObjectDataImpl();
+
+        result.setAcl(convertAcl(getMap(json.get(JSON_OBJECT_ACL)), getBoolean(json, JSON_OBJECT_EXACT_ACL)));
+        result.setAllowableActions(convertAllowableActions(getMap(json)));
+        Map<String, Object> jsonChangeEventInfo = getMap(json.get(JSON_OBJECT_CHANGE_EVENT_INFO));
+        if (jsonChangeEventInfo != null) {
+            ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
+
+            changeEventInfo.setChangeTime(getDateTime(jsonChangeEventInfo, JSON_CHANGE_EVENT_TIME));
+            changeEventInfo.setChangeType(getEnum(jsonChangeEventInfo, JSON_CHANGE_EVENT_TYPE, ChangeType.class));
+
+            convertExtension(json, result, CHANGE_EVENT_KEYS);
+
+            result.setChangeEventInfo(changeEventInfo);
+        }
+        result.setIsExactAcl(getBoolean(json, JSON_OBJECT_EXACT_ACL));
+        result.setPolicyIds(convertPolicyIds(getList(JSON_OBJECT_POLICY_IDS)));
+        result.setProperties(convertProperties(getMap(json.get(JSON_OBJECT_PROPERTIES))));
+
+        // TODO
+
+        convertExtension(json, result, OBJECT_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts an ACL.
+     */
+    public static Acl convertAcl(Map<String, Object> json, Boolean isExact) {
+        if (json == null) {
+            return null;
+        }
+
+        AccessControlListImpl result = new AccessControlListImpl();
+
+        List<Ace> aces = new ArrayList<Ace>();
+
+        List<Object> jsonAces = getList(json.get(JSON_ACL_ACES));
+        if (jsonAces != null) {
+            for (Object obj : jsonAces) {
+                Map<String, Object> entry = getMap(obj);
+                if (entry != null) {
+                    AccessControlEntryImpl ace = new AccessControlEntryImpl();
+
+                    Boolean isDirect = getBoolean(entry, JSON_ACE_IS_DIRECT);
+                    ace.setDirect(isDirect != null ? isDirect.booleanValue() : true);
+
+                    List<Object> jsonPermissions = getList(entry.get(JSON_ACE_PERMISSIONS));
+                    if (jsonPermissions != null) {
+                        List<String> permissions = new ArrayList<String>();
+                        for (Object perm : jsonPermissions) {
+                            if (perm != null) {
+                                permissions.add(perm.toString());
+                            }
+                        }
+                        ace.setPermissions(permissions);
+                    }
+
+                    Map<String, Object> jsonPrincipal = getMap(JSON_ACE_PRINCIPAL);
+                    if (jsonPrincipal != null) {
+                        AccessControlPrincipalDataImpl principal = new AccessControlPrincipalDataImpl();
+
+                        principal.setPrincipalId(getString(jsonPrincipal, JSON_ACE_PRINCIPAL_ID));
+
+                        convertExtension(jsonPrincipal, principal, PRINCIPAL_KEYS);
+
+                        ace.setPrincipal(principal);
+                    }
+
+                    convertExtension(entry, ace, ACE_KEYS);
+
+                    aces.add(ace);
+                }
+            }
+        }
+
+        result.setAces(aces);
+
+        result.setExact(isExact);
+
+        convertExtension(json, result, ACL_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts allowable actions.
+     */
+    public static AllowableActions convertAllowableActions(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        AllowableActionsImpl result = new AllowableActionsImpl();
+        Set<Action> allowableActions = new HashSet<Action>();
+
+        for (Action action : Action.values()) {
+            Boolean value = getBoolean(json, action.value());
+            if (value != null && value.booleanValue()) {
+                allowableActions.add(action);
+            }
+        }
+
+        result.setAllowableActions(allowableActions);
+
+        convertExtension(json, result, ALLOWABLE_ACTIONS_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts a list of policy ids.
+     */
+    public static PolicyIdList convertPolicyIds(List<Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        PolicyIdListImpl result = new PolicyIdListImpl();
+        List<String> policyIds = new ArrayList<String>();
+
+        for (Object obj : json) {
+            if (obj instanceof String) {
+                policyIds.add((String) obj);
+            }
+        }
+
+        result.setPolicyIds(policyIds);
+
+        return result;
+    }
+
+    /**
+     * Converts properties.
+     */
+    public static Properties convertProperties(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        PropertiesImpl result = new PropertiesImpl();
+
+        for (Object jsonProperty : json.values()) {
+            Map<String, Object> jsonPropertyMap = getMap(jsonProperty);
+            if (jsonPropertyMap != null) {
+                AbstractPropertyData<?> property = null;
+
+                String id = getString(jsonPropertyMap, JSON_PROPERTY_ID);
+                if (id == null) {
+                    throw new CmisRuntimeException("Invalid property!");
+                }
+
+                PropertyType propertyType = null;
+                try {
+                    propertyType = PropertyType.fromValue(getString(jsonPropertyMap, JSON_PROPERTY_DATATYPE));
+                } catch (Exception e) {
+                    throw new CmisRuntimeException("Invalid property: " + id);
+                }
+
+                Object value = jsonPropertyMap.get(JSON_PROPERTY_VALUE);
+                List<Object> values = null;
+                if (value instanceof List) {
+                    values = (List<Object>) values;
+                } else if (value != null) {
+                    values = Collections.singletonList(value);
+                }
+
+                switch (propertyType) {
+                case STRING:
+                    property = new PropertyStringImpl();
+                    {
+                        List<String> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<String>();
+                            for (Object obj : values) {
+                                if (obj instanceof String) {
+                                    propertyValues.add(obj.toString());
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyStringImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case ID:
+                    property = new PropertyIdImpl();
+                    {
+                        List<String> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<String>();
+                            for (Object obj : values) {
+                                if (obj instanceof String) {
+                                    propertyValues.add(obj.toString());
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyIdImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case BOOLEAN:
+                    property = new PropertyBooleanImpl();
+                    {
+                        List<Boolean> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<Boolean>();
+                            for (Object obj : values) {
+                                if (obj instanceof Boolean) {
+                                    propertyValues.add((Boolean) obj);
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyBooleanImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case INTEGER:
+                    property = new PropertyIntegerImpl();
+                    {
+                        List<BigInteger> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<BigInteger>();
+                            for (Object obj : values) {
+                                if (obj instanceof Number) {
+                                    propertyValues.add(BigInteger.valueOf(((Number) obj).longValue()));
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyIntegerImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case DECIMAL:
+                    property = new PropertyDecimalImpl();
+                    {
+                        List<BigDecimal> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<BigDecimal>();
+                            for (Object obj : values) {
+                                if (obj instanceof Double) {
+                                    propertyValues.add(BigDecimal.valueOf((Double) obj));
+                                } else if (obj instanceof Number) {
+                                    propertyValues.add(BigDecimal.valueOf(((Number) obj).longValue()));
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyDecimalImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case DATETIME:
+                    property = new PropertyDateTimeImpl();
+                    {
+                        List<GregorianCalendar> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<GregorianCalendar>();
+                            for (Object obj : values) {
+                                if (obj instanceof Number) {
+                                    GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+                                    cal.setTimeInMillis(((Number) obj).longValue());
+                                    propertyValues.add(cal);
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyDateTimeImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case HTML:
+                    property = new PropertyHtmlImpl();
+                    {
+                        List<String> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<String>();
+                            for (Object obj : values) {
+                                if (obj instanceof String) {
+                                    propertyValues.add(obj.toString());
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyHtmlImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case URI:
+                    property = new PropertyUriImpl();
+                    {
+                        List<String> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<String>();
+                            for (Object obj : values) {
+                                if (obj instanceof String) {
+                                    propertyValues.add(obj.toString());
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyUriImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                }
+
+                property.setId(id);
+                property.setDisplayName(getString(jsonPropertyMap, JSON_PROPERTY_DISPLAYNAME));
+                property.setQueryName(getString(jsonPropertyMap, JSON_PROPERTY_QUERYNAME));
+                property.setLocalName(getString(jsonPropertyMap, JSON_PROPERTY_LOCALNAME));
+
+                result.addProperty(property);
             }
         }
 
@@ -1698,6 +2030,24 @@ public class JSONConverter {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> getMap(Object o) {
+        if (o instanceof Map) {
+            return (Map<String, Object>) o;
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Object> getList(Object o) {
+        if (o instanceof List) {
+            return (List<Object>) o;
+        }
+
+        return null;
+    }
+
     public static String getString(@SuppressWarnings("rawtypes") Map json, String key) {
         Object obj = json.get(key);
         return obj == null ? null : obj.toString();
@@ -1730,6 +2080,18 @@ public class JSONConverter {
             return BigDecimal.valueOf((Double) obj);
         } else if (obj instanceof Number) {
             return BigDecimal.valueOf(((Number) obj).longValue());
+        }
+
+        return null;
+    }
+
+    public static GregorianCalendar getDateTime(@SuppressWarnings("rawtypes") Map json, String key) {
+        Object obj = json.get(key);
+
+        if (obj instanceof Number) {
+            GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+            cal.setTimeInMillis(((Number) obj).longValue());
+            return cal;
         }
 
         return null;
