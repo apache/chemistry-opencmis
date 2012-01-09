@@ -39,6 +39,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_RE
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_SET_CONTENT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_OBJECT_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_ACL;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_ALLOWABLEACTIONS;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_CHECKEDOUT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_CHILDREN;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_CONTENT;
@@ -175,6 +176,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
 
             rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class, "getObject");
             rootDispatcher.addResource(SELECTOR_PROPERTIES, METHOD_GET, ObjectService.class, "getProperties");
+            rootDispatcher.addResource(SELECTOR_ALLOWABLEACTIONS, METHOD_GET, ObjectService.class,
+                    "getAllowableActions");
             rootDispatcher.addResource(SELECTOR_RENDITIONS, METHOD_GET, ObjectService.class, "getRenditions");
             rootDispatcher.addResource(SELECTOR_CONTENT, METHOD_GET, ObjectService.class, "getContentStream");
             rootDispatcher.addResource(SELECTOR_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");

@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
@@ -86,8 +87,14 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
     }
 
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_ALLOWABLEACTIONS);
+
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertAllowableActions(json);
     }
 
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
@@ -95,6 +102,25 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             Boolean includeAcl, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_OBJECT);
+        url.addParameter(Constants.PARAM_FILTER, filter);
+        url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+        url.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
+        url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
+        url.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
+        url.addParameter(Constants.PARAM_ACL, includeAcl);
+
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertObject(json);
+    }
+
+    public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
+            Boolean includeAcl, ExtensionsData extension) {
+        // build URL
+        UrlBuilder url = getPathUrl(repositoryId, path, Constants.SELECTOR_OBJECT);
         url.addParameter(Constants.PARAM_FILTER, filter);
         url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
         url.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
@@ -120,17 +146,28 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         return null;
     }
 
-    public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
-            IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
-            Boolean includeAcl, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        ContentStreamImpl result = new ContentStreamImpl();
+
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_CONTENT);
+        url.addParameter(Constants.PARAM_STREAM_ID, streamId);
+
+        // get the content
+        HttpUtils.Response resp = HttpUtils.invokeGET(url, getSession(), offset, length);
+
+        // check response code
+        if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 206)) {
+            throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
+        }
+
+        result.setFileName(null);
+        result.setLength(resp.getContentLength());
+        result.setMimeType(resp.getContentTypeHeader());
+        result.setStream(resp.getStream());
+
+        return result;
     }
 
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,

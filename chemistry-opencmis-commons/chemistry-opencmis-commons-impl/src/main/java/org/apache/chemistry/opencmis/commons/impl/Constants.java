@@ -102,6 +102,7 @@ public final class Constants {
     public static final String SELECTOR_CONTENT = "content";
     public static final String SELECTOR_OBJECT = "object";
     public static final String SELECTOR_PROPERTIES = "properties";
+    public static final String SELECTOR_ALLOWABLEACTIONS = "allowableActions";
     public static final String SELECTOR_RENDITIONS = "renditions";
     public static final String SELECTOR_CHILDREN = "children";
     public static final String SELECTOR_DESCENDANTS = "descendants";

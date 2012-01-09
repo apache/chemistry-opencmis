@@ -153,4 +153,33 @@ public class RepositoryUrlCache implements Serializable {
 
         return result;
     }
+
+    /**
+     * Returns an object URL with the given selector.
+     */
+    public UrlBuilder getPathUrl(String repositoryId, String path) {
+        String root = getRootUrl(repositoryId);
+        if (root == null) {
+            return null;
+        }
+
+        UrlBuilder result = new UrlBuilder(root);
+        result.addPath(path);
+
+        return result;
+    }
+
+    /**
+     * Returns an object URL with the given selector.
+     */
+    public UrlBuilder getPathUrl(String repositoryId, String path, String selector) {
+        UrlBuilder result = getObjectUrl(repositoryId, path);
+        if (result == null) {
+            return null;
+        }
+
+        result.addParameter(Constants.PARAM_SELECTOR, selector);
+
+        return result;
+    }
 }

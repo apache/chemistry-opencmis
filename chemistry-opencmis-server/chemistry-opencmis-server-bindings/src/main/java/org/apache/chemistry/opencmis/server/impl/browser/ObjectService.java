@@ -62,6 +62,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -361,6 +362,22 @@ public final class ObjectService {
 
         response.setStatus(HttpServletResponse.SC_OK);
         writeJSON(jsonObject, request, response);
+    }
+
+    /**
+     * getAllowableActions.
+     */
+    public static void getAllowableActions(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+
+        AllowableActions allowableActions = service.getAllowableActions(repositoryId, objectId, null);
+
+        JSONObject jsonAllowableActions = JSONConverter.convert(allowableActions);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        writeJSON(jsonAllowableActions, request, response);
     }
 
     /**

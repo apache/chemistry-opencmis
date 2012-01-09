@@ -153,6 +153,7 @@ public class JSONConstants {
         OBJECT_KEYS.add(JSON_OBJECT_RELATIONSHIPS);
         OBJECT_KEYS.add(JSON_OBJECT_CHANGE_EVENT_INFO);
         OBJECT_KEYS.add(JSON_OBJECT_ACL);
+        OBJECT_KEYS.add(JSON_OBJECT_EXACT_ACL);
         OBJECT_KEYS.add(JSON_OBJECT_POLICY_IDS);
         OBJECT_KEYS.add(JSON_OBJECT_RENDITIONS);
     }
@@ -166,8 +167,21 @@ public class JSONConstants {
 
     public static final String JSON_OBJECTINFOLDER_OBJECT = "object";
     public static final String JSON_OBJECTINFOLDER_PATH_SEGMENT = "pathSegment";
+
+    public static final Set<String> OBJECTINFOLDER_KEYS = new HashSet<String>();
+    static {
+        OBJECTINFOLDER_KEYS.add(JSON_OBJECTINFOLDER_OBJECT);
+        OBJECTINFOLDER_KEYS.add(JSON_OBJECTINFOLDER_PATH_SEGMENT);
+    }
+
     public static final String JSON_OBJECTPARENTS_OBJECT = "object";
     public static final String JSON_OBJECTPARENTS_RELATIVE_PATH_SEGMENT = "relativePathSegment";
+
+    public static final Set<String> OBJECTPARENTS_KEYS = new HashSet<String>();
+    static {
+        OBJECTPARENTS_KEYS.add(JSON_OBJECTPARENTS_OBJECT);
+        OBJECTPARENTS_KEYS.add(JSON_OBJECTPARENTS_RELATIVE_PATH_SEGMENT);
+    }
 
     public static final String JSON_PROPERTY_ID = "id";
     public static final String JSON_PROPERTY_LOCALNAME = "localName";
@@ -176,6 +190,17 @@ public class JSONConstants {
     public static final String JSON_PROPERTY_VALUE = "value";
     public static final String JSON_PROPERTY_DATATYPE = "type";
     public static final String JSON_PROPERTY_CARDINALITY = "cardinality";
+
+    public static final Set<String> PROPERTY_KEYS = new HashSet<String>();
+    static {
+        PROPERTY_KEYS.add(JSON_PROPERTY_ID);
+        PROPERTY_KEYS.add(JSON_PROPERTY_LOCALNAME);
+        PROPERTY_KEYS.add(JSON_PROPERTY_DISPLAYNAME);
+        PROPERTY_KEYS.add(JSON_PROPERTY_QUERYNAME);
+        PROPERTY_KEYS.add(JSON_PROPERTY_QUERYNAME);
+        PROPERTY_KEYS.add(JSON_PROPERTY_DATATYPE);
+        PROPERTY_KEYS.add(JSON_PROPERTY_CARDINALITY);
+    }
 
     public static final String JSON_CHANGE_EVENT_TYPE = "changeType";
     public static final String JSON_CHANGE_EVENT_TIME = "changeTime";
@@ -222,16 +247,48 @@ public class JSONConstants {
     public static final String JSON_RENDITION_WIDTH = "width";
     public static final String JSON_RENDITION_DOCUMENT_ID = "renditionDocumentId";
 
+    public static final Set<String> RENDITION_KEYS = new HashSet<String>();
+    static {
+        RENDITION_KEYS.add(JSON_RENDITION_STREAM_ID);
+        RENDITION_KEYS.add(JSON_RENDITION_MIMETYPE);
+        RENDITION_KEYS.add(JSON_RENDITION_LENGTH);
+        RENDITION_KEYS.add(JSON_RENDITION_KIND);
+        RENDITION_KEYS.add(JSON_RENDITION_TITLE);
+        RENDITION_KEYS.add(JSON_RENDITION_HEIGHT);
+        RENDITION_KEYS.add(JSON_RENDITION_WIDTH);
+        RENDITION_KEYS.add(JSON_RENDITION_DOCUMENT_ID);
+    }
+
     public static final String JSON_OBJECTLIST_OBJECTS = "objects";
     public static final String JSON_OBJECTLIST_HAS_MORE_ITEMS = "hasMoreItems";
     public static final String JSON_OBJECTLIST_NUM_ITEMS = "numItems";
+
+    public static final Set<String> OBJECTLIST_KEYS = new HashSet<String>();
+    static {
+        OBJECTLIST_KEYS.add(JSON_OBJECTLIST_OBJECTS);
+        OBJECTLIST_KEYS.add(JSON_OBJECTLIST_HAS_MORE_ITEMS);
+        OBJECTLIST_KEYS.add(JSON_OBJECTLIST_NUM_ITEMS);
+    }
 
     public static final String JSON_OBJECTINFOLDERLIST_OBJECTS = "objects";
     public static final String JSON_OBJECTINFOLDERLIST_HAS_MORE_ITEMS = "hasMoreItems";
     public static final String JSON_OBJECTINFOLDERLIST_NUM_ITEMS = "numItems";
 
+    public static final Set<String> OBJECTINFOLDERLIST_KEYS = new HashSet<String>();
+    static {
+        OBJECTINFOLDERLIST_KEYS.add(JSON_OBJECTINFOLDERLIST_OBJECTS);
+        OBJECTINFOLDERLIST_KEYS.add(JSON_OBJECTINFOLDERLIST_HAS_MORE_ITEMS);
+        OBJECTINFOLDERLIST_KEYS.add(JSON_OBJECTINFOLDERLIST_NUM_ITEMS);
+    }
+
     public static final String JSON_OBJECTINFOLDERCONTAINER_OBJECT = "object";
     public static final String JSON_OBJECTINFOLDERCONTAINER_CHILDREN = "children";
+
+    public static final Set<String> OBJECTINFOLDERCONTAINER_KEYS = new HashSet<String>();
+    static {
+        OBJECTINFOLDERCONTAINER_KEYS.add(JSON_OBJECTINFOLDERCONTAINER_OBJECT);
+        OBJECTINFOLDERCONTAINER_KEYS.add(JSON_OBJECTINFOLDERCONTAINER_CHILDREN);
+    }
 
     public static final String JSON_TYPE_ID = "id";
     public static final String JSON_TYPE_LOCALNAME = "localName";

@@ -109,6 +109,11 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionEleme
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderContainerImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectParentDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
@@ -131,6 +136,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
@@ -284,7 +290,6 @@ public class JSONConverter {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public static RepositoryInfo convertRepositoryInfo(Map<String, Object> json) {
         if (json == null) {
             return null;
@@ -1400,18 +1405,17 @@ public class JSONConverter {
         TypeDefinitionListImpl result = new TypeDefinitionListImpl();
 
         Object typesList = json.get(JSON_TYPESLIST_TYPES);
-        if (typesList instanceof List) {
-            List<TypeDefinition> list = new ArrayList<TypeDefinition>();
+        List<TypeDefinition> types = new ArrayList<TypeDefinition>();
 
+        if (typesList instanceof List) {
             for (Object type : (List) typesList) {
                 if (type instanceof Map) {
-                    list.add(convertTypeDefinition((Map<String, Object>) type));
+                    types.add(convertTypeDefinition((Map<String, Object>) type));
                 }
             }
-
-            result.setList(list);
         }
 
+        result.setList(types);
         result.setHasMoreItems(getBoolean(json, JSON_TYPESLIST_HAS_MORE_ITEMS));
         result.setNumItems(getInteger(json, JSON_TYPESLIST_NUM_ITEMS));
 
@@ -1451,8 +1455,12 @@ public class JSONConverter {
      */
     @SuppressWarnings({ "unchecked" })
     public static List<TypeDefinitionContainer> convertTypeDescendants(List<Object> json) {
-        if (json == null || json.isEmpty()) {
+        if (json == null) {
             return null;
+        }
+
+        if (json.isEmpty()) {
+            return Collections.emptyList();
         }
 
         List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
@@ -1467,6 +1475,8 @@ public class JSONConverter {
                 Object children = jsonContainer.get(JSON_TYPESCONTAINER_CHILDREN);
                 if (children instanceof List) {
                     container.setChildren(convertTypeDescendants((List<Object>) children));
+                } else {
+                    container.setChildren((List<TypeDefinitionContainer>) Collections.EMPTY_LIST);
                 }
 
                 convertExtension(jsonContainer, container, TYPESCONTAINER_KEYS);
@@ -1489,7 +1499,7 @@ public class JSONConverter {
         ObjectDataImpl result = new ObjectDataImpl();
 
         result.setAcl(convertAcl(getMap(json.get(JSON_OBJECT_ACL)), getBoolean(json, JSON_OBJECT_EXACT_ACL)));
-        result.setAllowableActions(convertAllowableActions(getMap(json)));
+        result.setAllowableActions(convertAllowableActions(getMap(json.get(JSON_OBJECT_ALLOWABLE_ACTIONS))));
         Map<String, Object> jsonChangeEventInfo = getMap(json.get(JSON_OBJECT_CHANGE_EVENT_INFO));
         if (jsonChangeEventInfo != null) {
             ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
@@ -1502,8 +1512,30 @@ public class JSONConverter {
             result.setChangeEventInfo(changeEventInfo);
         }
         result.setIsExactAcl(getBoolean(json, JSON_OBJECT_EXACT_ACL));
-        result.setPolicyIds(convertPolicyIds(getList(JSON_OBJECT_POLICY_IDS)));
+        result.setPolicyIds(convertPolicyIds(getList(json.get(JSON_OBJECT_POLICY_IDS))));
         result.setProperties(convertProperties(getMap(json.get(JSON_OBJECT_PROPERTIES))));
+        List<Object> jsonRelationships = getList(json.get(JSON_OBJECT_RELATIONSHIPS));
+        if (jsonRelationships != null) {
+            List<ObjectData> relationships = new ArrayList<ObjectData>();
+            for (Object obj : jsonRelationships) {
+                ObjectData relationship = convertObject(getMap(obj));
+                if (relationship != null) {
+                    relationships.add(relationship);
+                }
+            }
+            result.setRelationships(relationships);
+        }
+        List<Object> jsonRenditions = getList(json.get(JSON_OBJECT_RENDITIONS));
+        if (jsonRenditions != null) {
+            List<RenditionData> renditions = new ArrayList<RenditionData>();
+            for (Object obj : jsonRenditions) {
+                RenditionData rendition = convertRendition(getMap(obj));
+                if (rendition != null) {
+                    renditions.add(rendition);
+                }
+            }
+            result.setRenditions(renditions);
+        }
 
         // TODO
 
@@ -1545,7 +1577,7 @@ public class JSONConverter {
                         ace.setPermissions(permissions);
                     }
 
-                    Map<String, Object> jsonPrincipal = getMap(JSON_ACE_PRINCIPAL);
+                    Map<String, Object> jsonPrincipal = getMap(entry.get(JSON_ACE_PRINCIPAL));
                     if (jsonPrincipal != null) {
                         AccessControlPrincipalDataImpl principal = new AccessControlPrincipalDataImpl();
 
@@ -1802,9 +1834,194 @@ public class JSONConverter {
                 property.setQueryName(getString(jsonPropertyMap, JSON_PROPERTY_QUERYNAME));
                 property.setLocalName(getString(jsonPropertyMap, JSON_PROPERTY_LOCALNAME));
 
+                convertExtension(jsonPropertyMap, property, PROPERTY_KEYS);
+
                 result.addProperty(property);
             }
         }
+
+        // TODO: properties extensions
+
+        return result;
+    }
+
+    /**
+     * Converts a rendition.
+     */
+    public static RenditionData convertRendition(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        RenditionDataImpl result = new RenditionDataImpl();
+
+        result.setBigHeight(getInteger(json, JSON_RENDITION_HEIGHT));
+        result.setKind(getString(json, JSON_RENDITION_KIND));
+        result.setBigLength(getInteger(json, JSON_RENDITION_LENGTH));
+        result.setMimeType(getString(json, JSON_RENDITION_MIMETYPE));
+        result.setRenditionDocumentId(getString(json, JSON_RENDITION_DOCUMENT_ID));
+        result.setStreamId(getString(json, JSON_RENDITION_STREAM_ID));
+        result.setTitle(getString(json, JSON_RENDITION_TITLE));
+        result.setBigWidth(getInteger(json, JSON_RENDITION_WIDTH));
+
+        convertExtension(json, result, RENDITION_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts a object list.
+     */
+    public static ObjectInFolderList convertObjectInFolderList(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        ObjectInFolderListImpl result = new ObjectInFolderListImpl();
+
+        List<Object> jsonChildren = getList(json.get(JSON_OBJECTINFOLDERLIST_OBJECTS));
+        List<ObjectInFolderData> objects = new ArrayList<ObjectInFolderData>();
+
+        if (jsonChildren != null) {
+            for (Object obj : jsonChildren) {
+                Map<String, Object> jsonObject = getMap(obj);
+                if (jsonObject != null) {
+                    objects.add(convertObjectInFolder(jsonObject));
+                }
+            }
+        }
+
+        result.setObjects(objects);
+        result.setHasMoreItems(getBoolean(json, JSON_OBJECTINFOLDERLIST_HAS_MORE_ITEMS));
+        result.setNumItems(getInteger(json, JSON_OBJECTINFOLDERLIST_NUM_ITEMS));
+
+        convertExtension(json, result, OBJECTINFOLDERLIST_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts an object in a folder.
+     */
+    public static ObjectInFolderData convertObjectInFolder(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        ObjectInFolderDataImpl result = new ObjectInFolderDataImpl();
+
+        result.setObject(convertObject(getMap(json.get(JSON_OBJECTINFOLDER_OBJECT))));
+        result.setPathSegment(getString(json, JSON_OBJECTINFOLDER_PATH_SEGMENT));
+
+        convertExtension(json, result, OBJECTINFOLDER_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts a descendants tree.
+     */
+    public static List<ObjectInFolderContainer> convertDescendants(List<Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        List<ObjectInFolderContainer> result = new ArrayList<ObjectInFolderContainer>();
+
+        for (Object obj : json) {
+            Map<String, Object> desc = getMap(obj);
+            if (desc != null) {
+                result.add(convertDescendant(desc));
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts a descendant.
+     */
+    public static ObjectInFolderContainer convertDescendant(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        ObjectInFolderContainerImpl result = new ObjectInFolderContainerImpl();
+
+        result.setObject(convertObjectInFolder(getMap(json.get(JSON_OBJECTINFOLDERCONTAINER_OBJECT))));
+
+        List<ObjectInFolderContainer> containerList = new ArrayList<ObjectInFolderContainer>();
+        List<Object> jsonContainerList = getList(json.get(JSON_OBJECTINFOLDERCONTAINER_CHILDREN));
+        if (jsonContainerList != null) {
+            for (Object obj : jsonContainerList) {
+                Map<String, Object> containerChild = getMap(obj);
+                if (containerChild != null) {
+                    containerList.add(convertDescendant(containerChild));
+                }
+            }
+        }
+
+        result.setChildren(containerList);
+
+        convertExtension(json, result, OBJECTINFOLDERCONTAINER_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts an object parents list.
+     */
+    public static List<ObjectParentData> convertObjectParents(List<Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        List<ObjectParentData> result = new ArrayList<ObjectParentData>();
+
+        for (Object obj : json) {
+            Map<String, Object> jsonParent = getMap(obj);
+            if (jsonParent != null) {
+                ObjectParentDataImpl parent = new ObjectParentDataImpl();
+
+                parent.setObject(convertObject(getMap(jsonParent.get(JSON_OBJECTPARENTS_OBJECT))));
+                parent.setRelativePathSegment(getString(jsonParent, JSON_OBJECTPARENTS_RELATIVE_PATH_SEGMENT));
+
+                convertExtension(jsonParent, parent, OBJECTPARENTS_KEYS);
+
+                result.add(parent);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts a object list.
+     */
+    public static ObjectList convertObjectList(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        ObjectListImpl result = new ObjectListImpl();
+
+        List<Object> jsonChildren = getList(json.get(JSON_OBJECTLIST_OBJECTS));
+        List<ObjectData> objects = new ArrayList<ObjectData>();
+
+        if (jsonChildren != null) {
+            for (Object obj : jsonChildren) {
+                Map<String, Object> jsonObject = getMap(obj);
+                if (jsonObject != null) {
+                    objects.add(convertObject(jsonObject));
+                }
+            }
+        }
+
+        result.setObjects(objects);
+        result.setHasMoreItems(getBoolean(json, JSON_OBJECTLIST_HAS_MORE_ITEMS));
+        result.setNumItems(getInteger(json, JSON_OBJECTLIST_NUM_ITEMS));
+
+        convertExtension(json, result, OBJECTLIST_KEYS);
 
         return result;
     }
@@ -2032,20 +2249,30 @@ public class JSONConverter {
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> getMap(Object o) {
+        if (o == null) {
+            return null;
+        }
+
         if (o instanceof Map) {
             return (Map<String, Object>) o;
         }
 
-        return null;
+        throw new CmisRuntimeException("Expected a JSON object but found a "
+                + (o instanceof List ? "JSON array" : o.getClass().getSimpleName()) + ": " + o.toString());
     }
 
     @SuppressWarnings("unchecked")
     public static List<Object> getList(Object o) {
+        if (o == null) {
+            return null;
+        }
+
         if (o instanceof List) {
             return (List<Object>) o;
         }
 
-        return null;
+        throw new CmisRuntimeException("Expected a JSON array but found a "
+                + (o instanceof List ? "JSON object" : o.getClass().getSimpleName()) + ": " + o.toString());
     }
 
     public static String getString(@SuppressWarnings("rawtypes") Map json, String key) {
