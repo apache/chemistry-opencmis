@@ -70,9 +70,9 @@ import org.apache.commons.logging.LogFactory;
 public class Main {
 
     private static final Log LOG = LogFactory.getLog(Main.class.getName());
-    private static final BigInteger MAX_ITEMS = BigInteger.valueOf(-1);
+    private static final BigInteger TYPE_DEPTH_ALL = BigInteger.valueOf(-1);
+    private static final BigInteger MAX_ITEMS = null;
     private static final BigInteger SKIP_COUNT = BigInteger.valueOf(0);
-    // private static final String COMPLEX_TYPE = "ComplexType";
     private static final String TOPLEVEL_TYPE = "DocumentTopLevel";
     private static final String VERSIONED_TYPE = "VersionableType";
     private static String LOGDIR = System.getProperty("java.io.tmpdir");// + File.separator;
@@ -99,8 +99,7 @@ public class Main {
     }
 
     public void runAllBindings() {
-//      for (int i = 0; i < BINDINGS.length; i++) {
-        for (int i = 0; i < 2; i++) {
+      for (int i = 0; i < BINDINGS.length; i++) {
             bindingType = BINDINGS[i];
             init(URLS[i], BINDINGS[i]);
             run();
@@ -115,6 +114,7 @@ public class Main {
         getRepositoryInfo();
 
         getRepositories();
+
         String docId = getTestDocId();
         String folderId = getTestFolderId();
 
@@ -129,6 +129,7 @@ public class Main {
         getAcl(docId);
         String id1 = createDocument("SampleDocument", TOPLEVEL_TYPE, rootFolderId, VersioningState.NONE);
         updateProperties(id1, PropertyIds.NAME, "RenamedDocument");
+        getAllowableActions(id1);
         deleteObject(id1);
 
         // Discovery Service:
@@ -443,9 +444,8 @@ public class Main {
     }
 
     private void getTypeDescendants(String typeId) {
-        final BigInteger DEPTH = BigInteger.valueOf(-1);
         LOG.debug("getTypeDescendants " + typeId);
-        repSvc.getTypeDescendants(repositoryId, typeId, DEPTH, true /* includePropertyDefinitions */, null);
+        repSvc.getTypeDescendants(repositoryId, typeId, TYPE_DEPTH_ALL, true /* includePropertyDefinitions */, null);
         renameFiles("getTypeDescendants");
         LOG.debug("getTypeDescendants() done.");
     }
