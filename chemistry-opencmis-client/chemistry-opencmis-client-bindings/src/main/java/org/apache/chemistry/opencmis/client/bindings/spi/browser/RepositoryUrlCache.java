@@ -173,7 +173,7 @@ public class RepositoryUrlCache implements Serializable {
      * Returns an object URL with the given selector.
      */
     public UrlBuilder getPathUrl(String repositoryId, String path, String selector) {
-        UrlBuilder result = getObjectUrl(repositoryId, path);
+        UrlBuilder result = getPathUrl(repositoryId, path);
         if (result == null) {
             return null;
         }
