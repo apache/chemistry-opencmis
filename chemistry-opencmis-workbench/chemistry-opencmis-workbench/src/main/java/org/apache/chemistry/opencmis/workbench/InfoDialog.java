@@ -25,6 +25,8 @@ import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Properties;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -68,6 +70,15 @@ public class InfoDialog extends JDialog {
         StringBuilder readme = new StringBuilder();
 
         readme.append(loadText("/META-INF/README", "CMIS Workbench"));
+        readme.append("\n---------------------------------------------------------\n");
+
+        readme.append("\nCurrent System Properties:\n\n");
+
+        Properties sysProps = System.getProperties();
+        for (Object key : new TreeSet<Object>(sysProps.keySet())) {
+            readme.append(key).append(" = ").append(sysProps.get(key)).append("\n");
+        }
+
         readme.append("\n---------------------------------------------------------\n");
         readme.append(loadText("/META-INF/build-timestamp.txt", ""));
 

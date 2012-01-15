@@ -54,6 +54,22 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
         if (isMultipart) {
             parameters = new HashMap<String, String[]>();
 
+            String query = request.getQueryString();
+            if (query != null) {
+                String[] nameValuePairs = query.split("&");
+                for (String nameValuePair : nameValuePairs) {
+                    if (nameValuePair.length() > Constants.PARAM_OBJECT_ID.length()
+                            && nameValuePair.toLowerCase().startsWith(Constants.PARAM_OBJECT_ID.toLowerCase())) {
+                        int x = nameValuePair.indexOf('=');
+                        if (x > -1 && x < nameValuePair.length() - 1) {
+                            String objectId = nameValuePair.substring(x + 1);
+                            parameters.put(Constants.PARAM_OBJECT_ID, new String[] { objectId });
+                            break;
+                        }
+                    }
+                }
+            }
+
             DiskFileItemFactory itemFactory = new DiskFileItemFactory();
             itemFactory.setSizeThreshold(memoryThreshold);
 
@@ -82,12 +98,12 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
                 }
             }
 
-            String filenameControl = HttpUtils.getStringParameter(this, BrowserBindingUtils.CONTROL_FILENAME);
+            String filenameControl = HttpUtils.getStringParameter(this, Constants.CONTROL_FILENAME);
             if ((filenameControl) != null && (filenameControl.trim().length() > 0)) {
                 filename = filenameControl;
             }
 
-            String contentTypeControl = HttpUtils.getStringParameter(this, BrowserBindingUtils.CONTROL_CONTENT_TYPE);
+            String contentTypeControl = HttpUtils.getStringParameter(this, Constants.CONTROL_CONTENT_TYPE);
             if ((contentTypeControl != null) && (contentTypeControl.trim().length() > 0)) {
                 contentType = contentTypeControl;
             }

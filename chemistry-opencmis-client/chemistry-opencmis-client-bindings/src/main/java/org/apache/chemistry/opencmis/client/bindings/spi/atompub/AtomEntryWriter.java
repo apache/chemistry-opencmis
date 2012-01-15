@@ -188,5 +188,7 @@ public class AtomEntryWriter {
                 writer.writeCharacters(new String(buffer, 0, b, "US-ASCII"));
             }
         }
+        
+        b64stream.close();
     }
 }

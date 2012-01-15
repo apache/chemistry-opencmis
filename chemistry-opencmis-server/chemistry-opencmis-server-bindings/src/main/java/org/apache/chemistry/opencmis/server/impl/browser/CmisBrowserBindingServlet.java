@@ -65,9 +65,6 @@ import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_MES
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_STACKTRACE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_BASETYPE_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_TRANSACTION;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTROL_CMISACTION;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTROL_OBJECT_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTROL_TRANSACTION;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.JSON_MIME_TYPE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.prepareContext;
@@ -336,9 +333,9 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             } else if (METHOD_POST.equals(method)) {
                 POSTHttpServletRequestWrapper postRequest = new POSTHttpServletRequestWrapper(request);
 
-                String cmisaction = getStringParameter(postRequest, CONTROL_CMISACTION);
-                String objectId = getStringParameter(postRequest, CONTROL_OBJECT_ID);
-                String transaction = getStringParameter(postRequest, CONTROL_TRANSACTION);
+                String cmisaction = getStringParameter(postRequest, Constants.CONTROL_CMISACTION);
+                String objectId = getStringParameter(postRequest, Constants.CONTROL_OBJECT_ID);
+                String transaction = getStringParameter(postRequest, Constants.CONTROL_TRANSACTION);
 
                 if (cmisaction == null || cmisaction.length() == 0) {
                     throw new CmisNotSupportedException("Unknown action");

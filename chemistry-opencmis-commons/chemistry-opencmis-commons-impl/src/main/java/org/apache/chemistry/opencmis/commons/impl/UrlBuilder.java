@@ -123,7 +123,7 @@ public class UrlBuilder {
             queryPart.append('&');
         }
         queryPart.append(name);
-        queryPart.append("=");
+        queryPart.append('=');
         try {
             queryPart.append(URLEncoder.encode(valueStr, "UTF-8"));
         } catch (UnsupportedEncodingException e) {

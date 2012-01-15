@@ -1516,30 +1516,35 @@ public class JSONConverter {
         result.setProperties(convertProperties(getMap(json.get(JSON_OBJECT_PROPERTIES))));
         List<Object> jsonRelationships = getList(json.get(JSON_OBJECT_RELATIONSHIPS));
         if (jsonRelationships != null) {
-            List<ObjectData> relationships = new ArrayList<ObjectData>();
-            for (Object obj : jsonRelationships) {
-                ObjectData relationship = convertObject(getMap(obj));
-                if (relationship != null) {
-                    relationships.add(relationship);
-                }
-            }
-            result.setRelationships(relationships);
+            result.setRelationships(convertObjects(jsonRelationships));
         }
         List<Object> jsonRenditions = getList(json.get(JSON_OBJECT_RENDITIONS));
         if (jsonRenditions != null) {
-            List<RenditionData> renditions = new ArrayList<RenditionData>();
-            for (Object obj : jsonRenditions) {
-                RenditionData rendition = convertRendition(getMap(obj));
-                if (rendition != null) {
-                    renditions.add(rendition);
-                }
-            }
-            result.setRenditions(renditions);
+            result.setRenditions(convertRenditions(jsonRenditions));
         }
 
         // TODO
 
         convertExtension(json, result, OBJECT_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts an object.
+     */
+    public static List<ObjectData> convertObjects(List<Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        List<ObjectData> result = new ArrayList<ObjectData>();
+        for (Object obj : json) {
+            ObjectData relationship = convertObject(getMap(obj));
+            if (relationship != null) {
+                result.add(relationship);
+            }
+        }
 
         return result;
     }
@@ -1865,6 +1870,26 @@ public class JSONConverter {
         result.setBigWidth(getInteger(json, JSON_RENDITION_WIDTH));
 
         convertExtension(json, result, RENDITION_KEYS);
+
+        return result;
+    }
+
+    /**
+     * Converts a list of renditions.
+     */
+    public static List<RenditionData> convertRenditions(List<Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        List<RenditionData> result = new ArrayList<RenditionData>();
+
+        for (Object obj : json) {
+            RenditionData rendition = convertRendition(getMap(obj));
+            if (rendition != null) {
+                result.add(rendition);
+            }
+        }
 
         return result;
     }

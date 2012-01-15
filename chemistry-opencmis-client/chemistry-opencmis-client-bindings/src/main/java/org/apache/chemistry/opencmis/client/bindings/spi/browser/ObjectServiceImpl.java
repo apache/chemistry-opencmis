@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -57,33 +58,131 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = (folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId));
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_DOCUMENT, contentStream);
+        formData.addPropertiesParameters(properties);
+        formData.addParameter(Constants.PARAM_VERSIONIG_STATE, versioningState);
+        formData.addPoliciesParameters(policies);
+        formData.addAddAcesParameters(addAces);
+        formData.addRemoveAcesParameters(removeAces);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        return (newObj == null ? null : newObj.getId());
     }
 
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = (folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId));
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_DOCUMENT_FROM_SOURCE);
+        formData.addParameter(Constants.PARAM_SOURCE_ID, sourceId);
+        formData.addPropertiesParameters(properties);
+        formData.addParameter(Constants.PARAM_VERSIONIG_STATE, versioningState);
+        formData.addPoliciesParameters(policies);
+        formData.addAddAcesParameters(addAces);
+        formData.addRemoveAcesParameters(removeAces);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        return (newObj == null ? null : newObj.getId());
     }
 
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, folderId);
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_FOLDER);
+        formData.addPropertiesParameters(properties);
+        formData.addPoliciesParameters(policies);
+        formData.addAddAcesParameters(addAces);
+        formData.addRemoveAcesParameters(removeAces);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        return (newObj == null ? null : newObj.getId());
     }
 
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = getRepositoryUrl(repositoryId);
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_RELATIONSHIP);
+        formData.addPropertiesParameters(properties);
+        formData.addPoliciesParameters(policies);
+        formData.addAddAcesParameters(addAces);
+        formData.addRemoveAcesParameters(removeAces);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        return (newObj == null ? null : newObj.getId());
     }
 
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = (folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId));
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_POLICY);
+        formData.addPropertiesParameters(properties);
+        formData.addPoliciesParameters(policies);
+        formData.addAddAcesParameters(addAces);
+        formData.addRemoveAcesParameters(removeAces);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        return (newObj == null ? null : newObj.getId());
     }
 
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
@@ -136,14 +235,30 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
     }
 
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_PROPERTIES);
+        url.addParameter(Constants.PARAM_FILTER, filter);
+
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertProperties(json);
     }
 
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_RENDITIONS);
+        url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
+        url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+        url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        List<Object> json = parseArray(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertRenditions(json);
     }
 
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
@@ -183,8 +298,19 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
     }
 
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId);
 
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_DELETE);
+        formData.addParameter(Constants.PARAM_ALL_VERSIONS, allVersions);
+
+        // send
+        post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
     }
 
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,

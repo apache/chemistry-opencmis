@@ -138,6 +138,20 @@ public final class Constants {
     public static final String CMISACTION_REMOVE_POLICY = "removePolicy";
     public static final String CMISACTION_APPLY_ACL = "applyACL";
 
+    // browser binding control
+    public static final String CONTROL_CMISACTION = "cmisaction";
+    public static final String CONTROL_TRANSACTION = "transaction";
+    public static final String CONTROL_OBJECT_ID = "objectId";
+    public static final String CONTROL_PROP_ID = "propertyId";
+    public static final String CONTROL_PROP_VALUE = "propertyValue";
+    public static final String CONTROL_POLICY = "policy";
+    public static final String CONTROL_ADD_ACE_PRINCIPAL = "addACEPrincipal";
+    public static final String CONTROL_ADD_ACE_PERMISSION = "addACEPermission";
+    public static final String CONTROL_REMOVE_ACE_PRINCIPAL = "removeACEPrincipal";
+    public static final String CONTROL_REMOVE_ACE_PERMISSION = "removeACEPermission";
+    public static final String CONTROL_CONTENT_TYPE = "contenttype";
+    public static final String CONTROL_FILENAME = "filename";
+
     // parameter
     public static final String PARAM_ACL = "includeACL";
     public static final String PARAM_ALLOWABLE_ACTIONS = "includeAllowableActions";

@@ -18,10 +18,16 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.util.Map;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 
 /**
@@ -37,8 +43,15 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
     }
     
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_ACL);
+        url.addParameter(Constants.PARAM_ONLY_BASIC_PERMISSIONS, onlyBasicPermissions);
+
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertAcl(json, null);
     }
 
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,

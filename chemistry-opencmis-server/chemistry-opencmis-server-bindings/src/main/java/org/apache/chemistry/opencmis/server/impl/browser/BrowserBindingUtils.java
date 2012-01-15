@@ -74,19 +74,6 @@ public class BrowserBindingUtils {
 
     public static final String ROOT_PATH_FRAGMENT = "root";
 
-    public static final String CONTROL_CMISACTION = "cmisaction";
-    public static final String CONTROL_TRANSACTION = "transaction";
-    public static final String CONTROL_OBJECT_ID = "objectid";
-    public static final String CONTROL_PROP_ID = "propertyid";
-    public static final String CONTROL_PROP_VALUE = "propertyvalue";
-    public static final String CONTROL_POLICY = "policy";
-    public static final String CONTROL_ADD_ACE_PRINCIPAL = "addACEPrincipal";
-    public static final String CONTROL_ADD_ACE_PERMISSION = "addACEPermission";
-    public static final String CONTROL_REMOVE_ACE_PRINCIPAL = "removeACEPrincipal";
-    public static final String CONTROL_REMOVE_ACE_PERMISSION = "removeACEPermission";
-    public static final String CONTROL_CONTENT_TYPE = "contenttype";
-    public static final String CONTROL_FILENAME = "filename";
-
     public static final String CONTEXT_OBJECT_ID = "org.apache.chemistry.opencmis.browserbinding.objectId";
     public static final String CONTEXT_OBJECT_TYPE_ID = "org.apache.chemistry.opencmis.browserbinding.objectTypeId";
     public static final String CONTEXT_BASETYPE_ID = "org.apache.chemistry.opencmis.browserbinding.basetypeId";
@@ -211,13 +198,14 @@ public class BrowserBindingUtils {
     }
 
     public static Properties createProperties(ControlParser controlParser, String typeId, TypeCache typeCache) {
-        List<String> propertyIds = controlParser.getValues(CONTROL_PROP_ID);
+        List<String> propertyIds = controlParser.getValues(Constants.CONTROL_PROP_ID);
         if (propertyIds == null) {
             return null;
         }
 
-        Map<Integer, String> singleValuePropertyMap = controlParser.getOneDimMap(CONTROL_PROP_VALUE);
-        Map<Integer, Map<Integer, String>> multiValuePropertyMap = controlParser.getTwoDimMap(CONTROL_PROP_VALUE);
+        Map<Integer, String> singleValuePropertyMap = controlParser.getOneDimMap(Constants.CONTROL_PROP_VALUE);
+        Map<Integer, Map<Integer, String>> multiValuePropertyMap = controlParser
+                .getTwoDimMap(Constants.CONTROL_PROP_VALUE);
 
         if (typeId == null) {
             // it's a create call -> find type id in properties
@@ -255,7 +243,7 @@ public class BrowserBindingUtils {
             if (singleValuePropertyMap.containsKey(i)) {
                 propertyData = createPropertyData(propDef, singleValuePropertyMap.get(i));
             } else if (multiValuePropertyMap.containsKey(i)) {
-                propertyData = createPropertyData(propDef, controlParser.getValues(CONTROL_PROP_VALUE, i));
+                propertyData = createPropertyData(propDef, controlParser.getValues(Constants.CONTROL_PROP_VALUE, i));
             } else {
                 propertyData = createPropertyData(propDef, null);
             }
@@ -347,11 +335,11 @@ public class BrowserBindingUtils {
     }
 
     public static List<String> createPolicies(ControlParser controlParser) {
-        return controlParser.getValues(CONTROL_POLICY);
+        return controlParser.getValues(Constants.CONTROL_POLICY);
     }
 
     public static Acl createAddAcl(ControlParser controlParser) {
-        List<String> principals = controlParser.getValues(CONTROL_ADD_ACE_PRINCIPAL);
+        List<String> principals = controlParser.getValues(Constants.CONTROL_ADD_ACE_PRINCIPAL);
         if (principals == null) {
             return null;
         }
@@ -361,7 +349,7 @@ public class BrowserBindingUtils {
         int i = 0;
         for (String principalId : principals) {
             aces.add(new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principalId), controlParser
-                    .getValues(CONTROL_ADD_ACE_PERMISSION, i)));
+                    .getValues(Constants.CONTROL_ADD_ACE_PERMISSION, i)));
             i++;
         }
 
@@ -369,7 +357,7 @@ public class BrowserBindingUtils {
     }
 
     public static Acl createRemoveAcl(ControlParser controlParser) {
-        List<String> principals = controlParser.getValues(CONTROL_REMOVE_ACE_PRINCIPAL);
+        List<String> principals = controlParser.getValues(Constants.CONTROL_REMOVE_ACE_PRINCIPAL);
         if (principals == null) {
             return null;
         }
@@ -379,7 +367,7 @@ public class BrowserBindingUtils {
         int i = 0;
         for (String principalId : principals) {
             aces.add(new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principalId), controlParser
-                    .getValues(CONTROL_REMOVE_ACE_PERMISSION, i)));
+                    .getValues(Constants.CONTROL_REMOVE_ACE_PERMISSION, i)));
             i++;
         }
 
@@ -477,7 +465,7 @@ public class BrowserBindingUtils {
         if (clientToken != null) {
             response.getWriter().print(");");
         }
-        
+
         response.getWriter().flush();
     }
 

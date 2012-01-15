@@ -36,6 +36,8 @@ public class MimeHelper {
 
     public static final String DISPOSITION_ATTACHMENT = "attachment";
 
+    public static final String DISPOSITION_FORM_DATA_CONTENT = "form-data; name=\"content\"";
+    
     public static final String DISPOSITION_FILENAME = "filename";
 
     // RFC 2045
@@ -108,7 +110,7 @@ public class MimeHelper {
      * @param value the string to encode
      * @return the encoded string
      */
-    protected static String encodeRFC2231(String key, String value) {
+     protected static String encodeRFC2231(String key, String value) {
         StringBuilder buf = new StringBuilder();
         boolean encoded = encodeRFC2231value(value, buf);
         if (encoded) {
