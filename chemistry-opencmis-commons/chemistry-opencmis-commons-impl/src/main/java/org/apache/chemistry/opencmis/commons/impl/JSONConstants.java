@@ -220,8 +220,8 @@ public class JSONConstants {
         ACL_KEYS.add(JSON_ACL_IS_EXACT);
     }
 
-    public static final String JSON_ACE_PRINCIPAL = "princial";
-    public static final String JSON_ACE_PRINCIPAL_ID = "princialId";
+    public static final String JSON_ACE_PRINCIPAL = "principal";
+    public static final String JSON_ACE_PRINCIPAL_ID = "principalId";
     public static final String JSON_ACE_PERMISSIONS = "permissions";
     public static final String JSON_ACE_IS_DIRECT = "isDirect";
 
