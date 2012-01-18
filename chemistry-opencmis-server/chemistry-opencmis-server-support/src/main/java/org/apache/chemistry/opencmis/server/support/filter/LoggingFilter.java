@@ -216,6 +216,8 @@ public class LoggingFilter implements Filter {
     private String processMultipart(String cType, String messageBody) throws IOException {
         int beginIndex = cType.indexOf("boundary=\"") + 10;
         int endIndex = cType.indexOf("\"", beginIndex);
+        if (endIndex < 0)
+            endIndex = cType.length();
         String boundary = "--" + cType.substring(beginIndex, endIndex);
         log.debug("Boundary = " + boundary);
         BufferedReader in = new BufferedReader(new StringReader(messageBody));
