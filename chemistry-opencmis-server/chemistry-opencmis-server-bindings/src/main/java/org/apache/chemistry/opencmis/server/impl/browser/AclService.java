@@ -54,7 +54,7 @@ public class AclService {
         Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, null);
 
         // return ACL
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setStatus(HttpServletResponse.SC_OK);
 
         JSONObject jsonObject = JSONConverter.convert(acl);
         if (jsonObject == null) {
