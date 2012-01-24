@@ -328,16 +328,16 @@ public class LoggingFilter implements Filter {
    
         public LoggingRequestWrapper(HttpServletRequest request) throws IOException {
            super(request);
-           this.is = new LoggingInputStream(request.getInputStream());
         }
    
         @Override
         public ServletInputStream getInputStream() throws IOException {
-           return is;
+            this.is = new LoggingInputStream(super.getInputStream());
+            return is;
         }
    
         public String getPayload() {
-           return is.getPayload();
+           return null == is ? "" : is.getPayload();
         }
      }
    
