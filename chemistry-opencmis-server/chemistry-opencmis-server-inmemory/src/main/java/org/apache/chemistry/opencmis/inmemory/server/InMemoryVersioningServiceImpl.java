@@ -80,8 +80,6 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
-        DocumentVersion pwc = verDoc.getPwc();
-
         verDoc.checkIn(major, properties, contentStream, checkinComment, user);
 
         // To be able to provide all Atom links in the response we need
