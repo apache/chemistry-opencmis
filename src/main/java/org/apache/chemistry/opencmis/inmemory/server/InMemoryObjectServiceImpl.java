@@ -114,7 +114,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start createDocumentFromSource()");
         StoredObject so = validator.createDocumentFromSource(context, repositoryId, sourceId, folderId, extension);
-        TypeDefinition td = getTypeDefinition(repositoryId, so);  // typedefinition may be copied from source object
+        TypeDefinition td = getTypeDefinition(repositoryId, so);  // type definition may be copied from source object
 
         ContentStream content = getContentStream(context, repositoryId, sourceId, null, BigInteger.valueOf(-1),
                 BigInteger.valueOf(-1), null);
@@ -693,9 +693,13 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addACEs,
             Acl removeACEs, ExtensionsData extension) {
 
+        validator.createDocument(context, repositoryId, folderId, extension);
+
+        // Validation stuff
+        TypeValidator.validateRequiredSystemProperties(properties);
+
         String user = context.getUsername();
         TypeDefinition typeDef = getTypeDefinition(repositoryId, properties);
-        validator.createDocument(context, repositoryId, folderId, extension);
 
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         Map<String, PropertyData<?>> propMap = properties.getProperties();
@@ -703,8 +707,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         PropertyData<?> pd = propMap.get(PropertyIds.NAME);
         String name = (String) pd.getFirstValue();
 
-        // Validation stuff
-        TypeValidator.validateRequiredSystemProperties(properties);
 
         // validate ACL
         TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
@@ -794,10 +796,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private Folder createFolderIntern(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addACEs, Acl removeACEs, ExtensionsData extension) {
 
-        // Attach the CallContext to a thread local context that can be accessed
-        // from everywhere
-        String user = context.getUsername();
         validator.createFolder(context, repositoryId, folderId, extension);
+        TypeValidator.validateRequiredSystemProperties(properties);
+        String user = context.getUsername();
 
         ObjectStore fs = fStoreManager.getObjectStore(repositoryId);
         StoredObject so = null;
@@ -815,7 +816,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
         }
 
-        TypeValidator.validateRequiredSystemProperties(properties);
 
         TypeDefinition typeDef = getTypeDefinition(repositoryId, properties);
 
@@ -873,9 +873,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Properties properties, List<String> policies,
             Acl addACEs, Acl removeACEs, ExtensionsData extension) {
 
-         String user = context.getUsername();
+        TypeValidator.validateRequiredSystemProperties(properties);
 
-          // get required properties
+        String user = context.getUsername();
+        
+        // get required properties
         PropertyData<?> pd = properties.getProperties().get(PropertyIds.SOURCE_ID);
         String sourceId = (String) pd.getFirstValue();
         if (null == sourceId || sourceId.length() == 0)
@@ -894,7 +896,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
        StoredObject[] relationObjects = validator.createRelationship(context, repositoryId, sourceId, targetId, extension);
 
-       TypeValidator.validateRequiredSystemProperties(properties);
 
        // set default properties
        Map<String, PropertyData<?>> propMap = properties.getProperties();
