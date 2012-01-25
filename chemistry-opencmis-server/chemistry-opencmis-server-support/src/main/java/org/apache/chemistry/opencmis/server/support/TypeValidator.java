@@ -43,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 
 /**
  * @author Jens
@@ -51,11 +52,11 @@ public class TypeValidator {
 
     public static void validateRequiredSystemProperties(Properties properties) {
         if (properties == null || properties.getProperties() == null) {
-            throw new RuntimeException("Cannot create object, no properties are given");
+            throw new CmisInvalidArgumentException("Cannot create object, no properties are given");
         }
 
         if (!properties.getProperties().containsKey(PropertyIds.OBJECT_TYPE_ID)) {
-            throw new RuntimeException("Cannot create object, type id is missing");
+            throw new CmisInvalidArgumentException("Cannot create object, type id is missing");
         }
 
     }
@@ -325,7 +326,7 @@ public class TypeValidator {
     	{
     		throw new CmisConstraintException("acl set for type: " + typeDef.getDisplayName() + " that is not controllableACL");
     	}
-    	}
+    }
 
     private static List<String> getMandatoryPropDefs(Map<String, PropertyDefinition<?>> propDefs) {
         List<String> res = new ArrayList<String>();

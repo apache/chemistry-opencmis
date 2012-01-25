@@ -103,13 +103,14 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 odList.add(od);
             }
         } else {
+            LOG.debug("getting checked-out documents for folder: " + folderId);
             ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
                     includeAllowableActions, includeRelationships, renditionFilter, false, -1, -1, false, context
                             .isObjectInfoRequired() ? objectInfos : null, user);
             for (ObjectInFolderData child : children.getObjects()) {
                 ObjectData obj = child.getObject();
                 StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(obj.getId());
-                LOG.info("Checked out: children:" + obj.getId());
+                LOG.debug("Checked out: children:" + obj.getId());
                 if (so instanceof DocumentVersion && ((DocumentVersion) so).getParentDocument().isCheckedOut()) {
                     odList.add(obj);
                     if (context.isObjectInfoRequired()) {
