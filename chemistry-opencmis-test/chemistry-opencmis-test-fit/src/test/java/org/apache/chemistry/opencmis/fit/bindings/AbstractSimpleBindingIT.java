@@ -40,9 +40,6 @@ import org.junit.Test;
  * Really simple binding layer test. It just contains a few smoke tests to make
  * sure that the provider layer is working properly in the integration test
  * environment.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractSimpleBindingIT extends AbstractBindingIT {
 

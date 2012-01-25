@@ -69,7 +69,7 @@ function createDocumentCallback() {
         document.getElementById('info').innerHTML = 'Transaction: ' + lastTransaction
 
         var script1 = document.createElement("script");
-        script1.setAttribute("src", repositoryUrl + "?selector=lastResult&clientToken=showNewDocumentId&transaction="+lastTransaction);
+        script1.setAttribute("src", repositoryUrl + "?cmisselector=lastResult&clientToken=showNewDocumentId&transaction="+lastTransaction);
         script1.setAttribute("type","text/javascript");                
         document.body.appendChild(script1);
     }
@@ -110,7 +110,7 @@ function showNewDocumentId(result) {
 </tr>
 <tr>
     <td>File name:</td>
-    <td><input name="filename" type="text" size="30" maxlength="30" value=""> (if left blank the orignal file name is used)</td>
+    <td><input name="filename" type="text" size="30" maxlength="30" value=""> (if left blank the original file name is used)</td>
 </tr>
 <tr>
     <td>Content type:</td>

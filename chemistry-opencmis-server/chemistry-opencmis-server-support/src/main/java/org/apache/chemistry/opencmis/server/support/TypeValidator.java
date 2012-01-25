@@ -249,29 +249,32 @@ public class TypeValidator {
 
         List<String> propDefsRequired = getMandatoryPropDefs(typeDef.getPropertyDefinitions());
 
-        for (PropertyData<?> prop : properties.getProperties().values()) {
-            String propertyId = prop.getId();
-            BaseTypeId baseTypeId = typeDef.getBaseTypeId();
+        if(properties != null) {
+			for (PropertyData<?> prop : properties.getProperties().values()) {
+				String propertyId = prop.getId();
+				BaseTypeId baseTypeId = typeDef.getBaseTypeId();
 
-            // check that all mandatory attributes are present
-            if (checkMandatory && propDefsRequired.contains(propertyId)) {
-                propDefsRequired.remove(propertyId);
-            }
+				// check that all mandatory attributes are present
+				if (checkMandatory && propDefsRequired.contains(propertyId)) {
+					propDefsRequired.remove(propertyId);
+				}
 
-            if (isSystemProperty(baseTypeId, propertyId))
-             {
-                continue; // ignore system properties for validation
-            }
+				if (isSystemProperty(baseTypeId, propertyId)) {
+					continue; // ignore system properties for validation
+				}
 
-            // Check if all properties are known in the type
-            if (!typeContainsProperty(typeDef, propertyId)) {
-                throw new CmisConstraintException("Unknown property " + propertyId + " in type " + typeDef.getId());
-            }
+				// Check if all properties are known in the type
+				if (!typeContainsProperty(typeDef, propertyId)) {
+					throw new CmisConstraintException("Unknown property "
+							+ propertyId + " in type " + typeDef.getId());
+				}
 
-            // check all type specific constraints:
-            PropertyDefinition<T> propDef = getPropertyDefinition(typeDef, propertyId);
-            PropertyValidator<T> validator = createPropertyValidator(propDef);
-            validator.validate(propDef, (PropertyData<T>) prop);
+				// check all type specific constraints:
+				PropertyDefinition<T> propDef = getPropertyDefinition(typeDef,
+						propertyId);
+				PropertyValidator<T> validator = createPropertyValidator(propDef);
+				validator.validate(propDef, (PropertyData<T>) prop);
+			}
         }
 
         if (checkMandatory && !propDefsRequired.isEmpty()) {

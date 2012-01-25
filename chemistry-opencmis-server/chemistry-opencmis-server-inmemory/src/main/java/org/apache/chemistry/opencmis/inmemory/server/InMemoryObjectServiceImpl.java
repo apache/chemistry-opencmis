@@ -593,55 +593,57 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         boolean hasUpdatedName = false;
         boolean hasUpdatedOtherProps = false;
 
-        for (String key : properties.getProperties().keySet()) {
-            if (key.equals(PropertyIds.NAME))
-            {
-                continue; // ignore here
-            }
+        if(properties != null) {
+        	for (String key : properties.getProperties().keySet()) {
+        		if (key.equals(PropertyIds.NAME))
+        		{
+        			continue; // ignore here
+        		}
 
-            PropertyData<?> value = properties.getProperties().get(key);
-            PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
-            if (value.getValues() == null || value.getFirstValue() == null) {
-                // delete property
-                // check if a required a property
-                if (propDef.isRequired()) {
-                    throw new CmisConstraintException(
-                            "updateProperties failed, following property can't be deleted, because it is required: "
-                                    + key);
-                }
-                oldProperties.remove(key);
-                hasUpdatedOtherProps = true;
-            } else {
-                if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT)) {
-                    if (!isCheckedOut)
-                        throw new CmisUpdateConflictException(
-                                "updateProperties failed, following property can't be updated, because it is not checked-out: "
-                                        + key);
-                } else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
-                    throw new CmisConstraintException(
-                            "updateProperties failed, following property can't be updated, because it is not writable: "
-                                    + key);
-                }
-                oldProperties.put(key, value);
-                hasUpdatedOtherProps = true;
-            }
-        }
+        		PropertyData<?> value = properties.getProperties().get(key);
+        		PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
+        		if (value.getValues() == null || value.getFirstValue() == null) {
+        			// delete property
+        			// check if a required a property
+        			if (propDef.isRequired()) {
+        				throw new CmisConstraintException(
+        						"updateProperties failed, following property can't be deleted, because it is required: "
+        								+ key);
+        			}
+        			oldProperties.remove(key);
+        			hasUpdatedOtherProps = true;
+        		} else {
+        			if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT)) {
+        				if (!isCheckedOut)
+        					throw new CmisUpdateConflictException(
+        							"updateProperties failed, following property can't be updated, because it is not checked-out: "
+        									+ key);
+        			} else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
+        				throw new CmisConstraintException(
+        						"updateProperties failed, following property can't be updated, because it is not writable: "
+        								+ key);
+        			}
+        			oldProperties.put(key, value);
+        			hasUpdatedOtherProps = true;
+        		}
+        	}
 
-        // get name from properties and perform special rename to check if
-        // path already exists
-        PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
-        if (pd != null && so instanceof Filing) {
-            String newName = (String) pd.getFirstValue();
-            List<Folder> parents = ((Filing) so).getParents(user);
-            if (so instanceof Folder && parents.isEmpty()) {
-                throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
-            }
-            if (newName == null || newName.equals("")) {
-                throw new CmisConstraintException("updateProperties failed, name must not be empty.");
-            }
+        	// get name from properties and perform special rename to check if
+        	// path already exists
+        	PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
+        	if (pd != null && so instanceof Filing) {
+        		String newName = (String) pd.getFirstValue();
+        		List<Folder> parents = ((Filing) so).getParents(user);
+        		if (so instanceof Folder && parents.isEmpty()) {
+        			throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
+        		}
+        		if (newName == null || newName.equals("")) {
+        			throw new CmisConstraintException("updateProperties failed, name must not be empty.");
+        		}
 
-            so.rename((String) pd.getFirstValue()); // note: this does persist
-            hasUpdatedName = true;
+        		so.rename((String) pd.getFirstValue()); // note: this does persist
+        		hasUpdatedName = true;
+        	}
         }
 
         if (hasUpdatedOtherProps) {

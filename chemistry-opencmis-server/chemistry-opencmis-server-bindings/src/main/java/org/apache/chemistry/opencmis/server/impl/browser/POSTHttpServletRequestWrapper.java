@@ -19,6 +19,8 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -49,27 +51,16 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
     public POSTHttpServletRequestWrapper(HttpServletRequest request, int memoryThreshold) throws Exception {
         super(request);
 
+        parameters = new HashMap<String, String[]>();
+
+        // parse query string
+        parseFormData(request.getQueryString());
+
+        // check multipart
         isMultipart = ServletFileUpload.isMultipartContent(request);
 
         if (isMultipart) {
-            parameters = new HashMap<String, String[]>();
-
-            String query = request.getQueryString();
-            if (query != null) {
-                String[] nameValuePairs = query.split("&");
-                for (String nameValuePair : nameValuePairs) {
-                    if (nameValuePair.length() > Constants.PARAM_OBJECT_ID.length()
-                            && nameValuePair.toLowerCase().startsWith(Constants.PARAM_OBJECT_ID.toLowerCase())) {
-                        int x = nameValuePair.indexOf('=');
-                        if (x > -1 && x < nameValuePair.length() - 1) {
-                            String objectId = nameValuePair.substring(x + 1);
-                            parameters.put(Constants.PARAM_OBJECT_ID, new String[] { objectId });
-                            break;
-                        }
-                    }
-                }
-            }
-
+            // multipart processing
             DiskFileItemFactory itemFactory = new DiskFileItemFactory();
             itemFactory.setSizeThreshold(memoryThreshold);
 
@@ -79,16 +70,7 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
             for (FileItem item : fileItems) {
                 if (item.isFormField()) {
-                    String[] values = parameters.get(item.getFieldName());
-
-                    if (values == null) {
-                        parameters.put(item.getFieldName(), new String[] { item.getString() });
-                    } else {
-                        String[] newValues = new String[values.length + 1];
-                        System.arraycopy(values, 0, newValues, 0, values.length);
-                        newValues[newValues.length - 1] = item.getString();
-                        parameters.put(item.getFieldName(), newValues);
-                    }
+                    addParameter(item.getFieldName(), item.getString());
                 } else {
                     filename = item.getName();
                     contentType = (item.getContentType() == null ? Constants.MEDIATYPE_OCTETSTREAM : item
@@ -107,15 +89,53 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
             if ((contentTypeControl != null) && (contentTypeControl.trim().length() > 0)) {
                 contentType = contentTypeControl;
             }
+        } else {
+            // form data processing
+            StringBuilder sb = new StringBuilder();
+
+            InputStreamReader sr = new InputStreamReader(request.getInputStream(), "UTF-8");
+            char[] buffer = new char[4096];
+            int c = 0;
+            while ((c = sr.read(buffer)) > -1) {
+                sb.append(buffer, 0, c);
+            }
+
+            parseFormData(sb.toString());
+        }
+    }
+
+    private void parseFormData(String data) throws Exception {
+        if (data == null || data.length() < 3) {
+            return;
+        }
+
+        String[] nameValuePairs = data.split("&");
+        for (String nameValuePair : nameValuePairs) {
+            int x = nameValuePair.indexOf('=');
+            if (x > 0) {
+                String name = URLDecoder.decode(nameValuePair.substring(0, x), "UTF-8");
+                String value = (x == nameValuePair.length() - 1 ? "" : URLDecoder.decode(
+                        nameValuePair.substring(x + 1), "UTF-8"));
+                addParameter(name, value);
+            }
+        }
+    }
+
+    private void addParameter(String name, String value) {
+        String[] values = parameters.get(name);
+
+        if (values == null) {
+            parameters.put(name, new String[] { value });
+        } else {
+            String[] newValues = new String[values.length + 1];
+            System.arraycopy(values, 0, newValues, 0, values.length);
+            newValues[newValues.length - 1] = value;
+            parameters.put(name, newValues);
         }
     }
 
     @Override
     public String getParameter(String name) {
-        if (!isMultipart) {
-            return super.getParameter(name);
-        }
-
         String[] values = parameters.get(name);
         if ((values == null) || (values.length == 0)) {
             return null;
@@ -124,32 +144,18 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
         return values[0];
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<String, String[]> getParameterMap() {
-        if (!isMultipart) {
-            return super.getParameterMap();
-        }
-
         return parameters;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Enumeration<String> getParameterNames() {
-        if (!isMultipart) {
-            return super.getParameterNames();
-        }
-
         return Collections.enumeration(parameters.keySet());
     }
 
     @Override
     public String[] getParameterValues(String name) {
-        if (!isMultipart) {
-            return super.getParameterValues(name);
-        }
-
         return parameters.get(name);
     }
 

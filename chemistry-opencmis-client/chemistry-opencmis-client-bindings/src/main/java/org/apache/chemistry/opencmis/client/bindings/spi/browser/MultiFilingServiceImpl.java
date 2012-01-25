@@ -18,8 +18,13 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.OutputStream;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
 
 /**
@@ -33,16 +38,38 @@ public class MultiFilingServiceImpl extends AbstractBrowserBindingService implem
     public MultiFilingServiceImpl(BindingSession session) {
         setSession(session);
     }
-    
+
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId);
 
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_ADD_OBJECT_TO_FOLDER);
+        formData.addParameter(Constants.PARAM_FOLDER_ID, folderId);
+        formData.addParameter(Constants.PARAM_ALL_VERSIONS, allVersions);
+
+        // send and parse
+        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
     }
 
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId);
 
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_REMOVE_OBJECT_FROM_FOLDER);
+        formData.addParameter(Constants.PARAM_FOLDER_ID, folderId);
+
+        // send and parse
+        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
     }
-
 }

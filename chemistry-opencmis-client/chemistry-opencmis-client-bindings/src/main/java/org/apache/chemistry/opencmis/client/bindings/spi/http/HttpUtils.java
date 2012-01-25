@@ -253,7 +253,8 @@ public class HttpUtils {
             if (errorStream != null) {
                 if (contentType != null) {
                     String contentTypeLower = contentType.toLowerCase().split(";")[0];
-                    if (contentTypeLower.startsWith("text/") || contentTypeLower.endsWith("+xml")) {
+                    if (contentTypeLower.startsWith("text/") || contentTypeLower.endsWith("+xml")
+                            || contentTypeLower.startsWith("application/json")) {
                         StringBuilder sb = new StringBuilder();
 
                         try {

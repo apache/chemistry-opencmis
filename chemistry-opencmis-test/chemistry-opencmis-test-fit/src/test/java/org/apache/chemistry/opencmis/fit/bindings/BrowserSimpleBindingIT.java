@@ -22,13 +22,13 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.fit.SessionFactory;
 
 /**
- * AtomPub Provider layer test.
+ * Browser Binding layer test.
  */
-public class AtomPubSimpleBindingIT extends AbstractSimpleBindingIT {
+public class BrowserSimpleBindingIT extends AbstractSimpleBindingIT {
 
     @Override
     protected CmisBinding createBinding() {
-        return SessionFactory.createAtomPubBinding();
+        return SessionFactory.createBrowserBinding();
     }
 
     @Override

@@ -62,11 +62,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -116,7 +118,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
@@ -140,9 +142,15 @@ public final class ObjectService {
         ControlParser cp = new ControlParser(request);
         TypeCache typeCache = new TypeCache(repositoryId, service);
 
+        ObjectData sourceDoc = getSimpleObject(service, repositoryId, sourceId);
+        PropertyData<?> sourceTypeId = sourceDoc.getProperties().getProperties().get(PropertyIds.OBJECT_TYPE_ID);
+        if (sourceTypeId == null || sourceTypeId.getFirstValue() == null) {
+            throw new CmisRuntimeException("Source object has no type!?!");
+        }
+
         String newObjectId = service.createDocumentFromSource(repositoryId, sourceId,
-                createProperties(cp, null, typeCache), folderId, versioningState, createPolicies(cp), createAddAcl(cp),
-                createRemoveAcl(cp), null);
+                createProperties(cp, sourceTypeId.getFirstValue().toString(), typeCache), folderId, versioningState,
+                createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
         ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
         if (object == null) {
@@ -150,7 +158,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
@@ -181,7 +189,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
@@ -212,7 +220,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
@@ -242,7 +250,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
@@ -279,7 +287,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         int status = HttpServletResponse.SC_OK;
         if (!objectId.equals(newObjectId)) {
@@ -318,7 +326,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(properties, objectId, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(properties, objectId, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_OK);
         writeJSON(jsonObject, request, response);
@@ -358,7 +366,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_OK);
         writeJSON(jsonObject, request, response);
@@ -483,11 +491,14 @@ public final class ObjectService {
         FailedToDeleteData ftd = service.deleteTree(repositoryId, objectId, allVersions, unfileObjects,
                 continueOnFailure, null);
 
+        response.setStatus(HttpServletResponse.SC_OK);
+
         if ((ftd != null) && (ftd.getIds() != null) && (ftd.getIds().size() > 0)) {
-            // TODO
+            JSONObject jsonObject = JSONConverter.convert(ftd);
+            writeJSON(jsonObject, request, response);
+            return;
         }
 
-        response.setStatus(HttpServletResponse.SC_OK);
         writeEmpty(request, response);
     }
 
@@ -516,7 +527,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);
     }
@@ -552,7 +563,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);
     }
@@ -586,7 +597,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);
     }

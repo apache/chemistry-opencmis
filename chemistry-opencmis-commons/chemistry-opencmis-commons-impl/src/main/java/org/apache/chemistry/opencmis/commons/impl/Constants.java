@@ -123,6 +123,7 @@ public final class Constants {
     public static final String CMISACTION_CREATE_FOLDER = "createFolder";
     public static final String CMISACTION_CREATE_RELATIONSHIP = "createRelationship";
     public static final String CMISACTION_CREATE_POLICY = "createPolicy";
+    public static final String CMISACTION_UPDATE_PROPERTIES = "update";
     public static final String CMISACTION_DELETE_CONTENT = "deleteContent";
     public static final String CMISACTION_SET_CONTENT = "setContent";
     public static final String CMISACTION_DELETE = "delete";

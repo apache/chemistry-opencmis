@@ -68,7 +68,7 @@ function createFolderCallback() {
         document.getElementById('info').innerHTML = 'Transaction: ' + lastTransaction
 
         var script1 = document.createElement("script");
-        script1.setAttribute("src", repositoryUrl + "?selector=lastResult&clientToken=showNewFolderId&transaction="+lastTransaction);
+        script1.setAttribute("src", repositoryUrl + "?cmisselector=lastResult&clientToken=showNewFolderId&transaction="+lastTransaction);
         script1.setAttribute("type","text/javascript");                
         document.body.appendChild(script1);
     }

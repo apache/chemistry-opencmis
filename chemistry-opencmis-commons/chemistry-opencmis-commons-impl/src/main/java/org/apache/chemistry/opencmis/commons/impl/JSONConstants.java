@@ -262,12 +262,14 @@ public class JSONConstants {
     public static final String JSON_OBJECTLIST_OBJECTS = "objects";
     public static final String JSON_OBJECTLIST_HAS_MORE_ITEMS = "hasMoreItems";
     public static final String JSON_OBJECTLIST_NUM_ITEMS = "numItems";
+    public static final String JSON_OBJECTLIST_CHANGE_LOG_TOKEN = "changeLogToken";
 
     public static final Set<String> OBJECTLIST_KEYS = new HashSet<String>();
     static {
         OBJECTLIST_KEYS.add(JSON_OBJECTLIST_OBJECTS);
         OBJECTLIST_KEYS.add(JSON_OBJECTLIST_HAS_MORE_ITEMS);
         OBJECTLIST_KEYS.add(JSON_OBJECTLIST_NUM_ITEMS);
+        OBJECTLIST_KEYS.add(JSON_OBJECTLIST_CHANGE_LOG_TOKEN);
     }
 
     public static final String JSON_OBJECTINFOLDERLIST_OBJECTS = "objects";
@@ -408,6 +410,13 @@ public class JSONConstants {
     static {
         TYPESCONTAINER_KEYS.add(JSON_TYPESCONTAINER_TYPE);
         TYPESCONTAINER_KEYS.add(JSON_TYPESCONTAINER_CHILDREN);
+    }
+
+    public static final String JSON_FAILEDTODELETE_ID = "ids";
+
+    public static final Set<String> FAILEDTODELETE_KEYS = new HashSet<String>();
+    static {
+        FAILEDTODELETE_KEYS.add(JSON_FAILEDTODELETE_ID);
     }
 
     // Constant utility class.

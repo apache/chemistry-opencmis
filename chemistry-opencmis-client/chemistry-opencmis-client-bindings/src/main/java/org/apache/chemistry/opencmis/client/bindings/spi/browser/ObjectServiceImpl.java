@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -36,10 +37,12 @@ import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
@@ -287,14 +290,63 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId.getValue());
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_UPDATE_PROPERTIES);
+        formData.addPropertiesParameters(properties);
+        formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        objectId.setValue(newObj == null ? null : newObj.getId());
+
+        if (changeToken != null && newObj.getProperties() != null) {
+            Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
+            changeToken.setValue(ct == null ? null : ct.toString());
+        }
     }
 
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId.getValue());
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_MOVE);
+        formData.addParameter(Constants.PARAM_TARGET_FOLDER_ID, targetFolderId);
+        formData.addParameter(Constants.PARAM_SOURCE_FOLDER_ID, sourceFolderId);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        objectId.setValue(newObj == null ? null : newObj.getId());
     }
 
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
@@ -306,7 +358,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addParameter(Constants.PARAM_ALL_VERSIONS, allVersions);
 
         // send
-        post(url, formData.getContentType(), new HttpUtils.Output() {
+        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -315,20 +367,92 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, folderId);
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_DELETE_TREE);
+        formData.addParameter(Constants.PARAM_ALL_VERSIONS, allVersions);
+        formData.addParameter(Constants.PARAM_UNFILE_OBJECTS, unfileObjects);
+        formData.addParameter(Constants.PARAM_CONTINUE_ON_FAILURE, continueOnFailure);
+
+        // send
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        if (!BigInteger.ZERO.equals(resp.getContentLength())) {
+            Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+            return JSONConverter.convertFailedToDelete(json);
+        }
+
+        return new FailedToDeleteDataImpl();
     }
 
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId.getValue());
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_SET_CONTENT, contentStream);
+        formData.addParameter(Constants.PARAM_OVERWRITE_FLAG, overwriteFlag);
+        formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        objectId.setValue(newObj == null ? null : newObj.getId());
+
+        if (changeToken != null && newObj.getProperties() != null) {
+            Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
+            changeToken.setValue(ct == null ? null : ct.toString());
+        }
     }
 
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId.getValue());
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_DELETE_CONTENT);
+        formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        objectId.setValue(newObj == null ? null : newObj.getId());
+
+        if (changeToken != null && newObj.getProperties() != null) {
+            Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
+            changeToken.setValue(ct == null ? null : ct.toString());
+        }
     }
-
 }

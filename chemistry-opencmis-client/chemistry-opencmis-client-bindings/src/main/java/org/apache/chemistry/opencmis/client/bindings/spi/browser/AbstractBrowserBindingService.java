@@ -183,7 +183,6 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
      * Converts an error message or a HTTP status code into an Exception.
      */
     protected CmisBaseException convertStatusCode(int code, String message, String errorContent, Throwable t) {
-
         Object obj = null;
         try {
             JSONParser parser = new JSONParser();
@@ -343,6 +342,28 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
         }
 
         return resp;
+    }
+
+    /**
+     * Performs a POST on an URL, checks the response code and returns the
+     * result.
+     */
+    protected void postAndConsume(UrlBuilder url, String contentType, HttpUtils.Output writer) {
+        HttpUtils.Response resp = post(url, contentType, writer);
+
+        InputStream stream = resp.getStream();
+        try {
+            byte[] buffer = new byte[4096];
+            while (stream.read(buffer) > -1) {
+            }
+        } catch (Exception e) {
+            // ignore
+        } finally {
+            try {
+                stream.close();
+            } catch (Exception e) {
+            }
+        }
     }
 
     // ---- URL ----

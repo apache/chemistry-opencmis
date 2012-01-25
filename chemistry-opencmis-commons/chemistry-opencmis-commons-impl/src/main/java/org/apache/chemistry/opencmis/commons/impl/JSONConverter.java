@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
@@ -107,6 +108,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDat
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderContainerImpl;
@@ -180,15 +182,13 @@ public class JSONConverter {
         setIfNotNull(JSON_REPINFO_THIN_CLIENT_URI, repositoryInfo.getThinClientUri(), result);
         setIfNotNull(JSON_REPINFO_CHANGES_INCOMPLETE, repositoryInfo.getChangesIncomplete(), result);
 
+        JSONArray changesOnType = new JSONArray();
         if (repositoryInfo.getChangesOnType() != null) {
-            JSONArray changesOnType = new JSONArray();
-
             for (BaseTypeId type : repositoryInfo.getChangesOnType()) {
                 changesOnType.add(getJSONStringValue(type.value()));
             }
-
-            result.put(JSON_REPINFO_CHANGES_ON_TYPE, changesOnType);
         }
+        result.put(JSON_REPINFO_CHANGES_ON_TYPE, changesOnType);
 
         setIfNotNull(JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS, repositoryInfo.getPrincipalIdAnonymous(), result);
         setIfNotNull(JSON_REPINFO_PRINCIPAL_ID_ANYONE, repositoryInfo.getPrincipalIdAnyone(), result);
@@ -314,16 +314,15 @@ public class JSONConverter {
         result.setChangesIncomplete(getBoolean(json, JSON_REPINFO_CHANGES_INCOMPLETE));
 
         List<Object> changesOnType = getList(json.get(JSON_REPINFO_CHANGES_ON_TYPE));
+        List<BaseTypeId> types = new ArrayList<BaseTypeId>();
         if (changesOnType != null) {
-            List<BaseTypeId> types = new ArrayList<BaseTypeId>();
             for (Object type : changesOnType) {
                 if (type != null) {
                     types.add(BaseTypeId.fromValue(type.toString()));
                 }
             }
-
-            result.setChangesOnType(types);
         }
+        result.setChangesOnType(types);
 
         result.setPrincipalAnonymous(getString(json, JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS));
         result.setPrincipalAnyone(getString(json, JSON_REPINFO_PRINCIPAL_ID_ANYONE));
@@ -825,7 +824,7 @@ public class JSONConverter {
      * Converts an object.
      */
     @SuppressWarnings("unchecked")
-    public static JSONObject convert(ObjectData object, TypeCache typeCache) {
+    public static JSONObject convert(ObjectData object, TypeCache typeCache, boolean isQueryResult) {
         if (object == null) {
             return null;
         }
@@ -834,7 +833,7 @@ public class JSONConverter {
 
         // properties
         if (object.getProperties() != null) {
-            JSONObject properties = convert(object.getProperties(), object.getId(), typeCache);
+            JSONObject properties = convert(object.getProperties(), object.getId(), typeCache, isQueryResult);
             if (properties != null) {
                 result.put(JSON_OBJECT_PROPERTIES, properties);
             }
@@ -850,14 +849,14 @@ public class JSONConverter {
             JSONArray relationships = new JSONArray();
 
             for (ObjectData relationship : object.getRelationships()) {
-                relationships.add(convert(relationship, typeCache));
+                relationships.add(convert(relationship, typeCache, false));
             }
 
             result.put(JSON_OBJECT_RELATIONSHIPS, relationships);
         }
 
         // change event info
-        if (object.getChangeEventInfo() != null) {
+        if (object.getChangeEventInfo() != null && !isQueryResult) {
             JSONObject changeEventInfo = new JSONObject();
 
             ChangeEventInfo cei = object.getChangeEventInfo();
@@ -868,7 +867,7 @@ public class JSONConverter {
         }
 
         // ACL
-        if ((object.getAcl() != null) && (object.getAcl().getAces() != null)) {
+        if ((object.getAcl() != null) && (object.getAcl().getAces() != null) && !isQueryResult) {
             result.put(JSON_OBJECT_ACL, convert(object.getAcl()));
             result.put(JSON_OBJECT_EXACT_ACL, object.isExactAcl());
         }
@@ -904,7 +903,7 @@ public class JSONConverter {
      * Converts a bag of properties.
      */
     @SuppressWarnings("unchecked")
-    public static JSONObject convert(Properties properties, String objectId, TypeCache typeCache) {
+    public static JSONObject convert(Properties properties, String objectId, TypeCache typeCache, boolean isQueryResult) {
         if (properties == null) {
             return null;
         }
@@ -922,7 +921,7 @@ public class JSONConverter {
                 propDef = type.getPropertyDefinitions().get(property.getId());
             }
 
-            result.put(property.getId(), convert(property, propDef));
+            result.put((isQueryResult ? property.getQueryName() : property.getId()), convert(property, propDef));
         }
 
         convertExtension(properties, result);
@@ -1072,7 +1071,7 @@ public class JSONConverter {
      * Converts a query object list.
      */
     @SuppressWarnings("unchecked")
-    public static JSONObject convert(ObjectList list, TypeCache typeCache) {
+    public static JSONObject convert(ObjectList list, TypeCache typeCache, boolean isQueryResult) {
         if (list == null) {
             return null;
         }
@@ -1082,7 +1081,7 @@ public class JSONConverter {
         JSONArray objects = new JSONArray();
         if (list.getObjects() != null) {
             for (ObjectData object : list.getObjects()) {
-                objects.add(convert(object, typeCache));
+                objects.add(convert(object, typeCache, isQueryResult));
             }
         }
 
@@ -1106,7 +1105,7 @@ public class JSONConverter {
         }
 
         JSONObject result = new JSONObject();
-        result.put(JSON_OBJECTINFOLDER_OBJECT, convert(objectInFolder.getObject(), typeCache));
+        result.put(JSON_OBJECTINFOLDER_OBJECT, convert(objectInFolder.getObject(), typeCache, false));
         setIfNotNull(JSON_OBJECTINFOLDER_PATH_SEGMENT, objectInFolder.getPathSegment(), result);
 
         convertExtension(objectInFolder, result);
@@ -1179,7 +1178,7 @@ public class JSONConverter {
         }
 
         JSONObject result = new JSONObject();
-        result.put(JSON_OBJECTPARENTS_OBJECT, convert(parent.getObject(), typeCache));
+        result.put(JSON_OBJECTPARENTS_OBJECT, convert(parent.getObject(), typeCache, false));
         if (parent.getRelativePathSegment() != null) {
             result.put(JSON_OBJECTPARENTS_RELATIVE_PATH_SEGMENT, parent.getRelativePathSegment());
         }
@@ -2047,6 +2046,61 @@ public class JSONConverter {
         result.setNumItems(getInteger(json, JSON_OBJECTLIST_NUM_ITEMS));
 
         convertExtension(json, result, OBJECTLIST_KEYS);
+
+        return result;
+    }
+
+    // -----------------------------------------------------------------
+
+    /**
+     * Converts FailedToDelete ids.
+     */
+    @SuppressWarnings("unchecked")
+    public static JSONObject convert(FailedToDeleteData ftd) {
+        if (ftd == null) {
+            return null;
+        }
+
+        JSONObject result = new JSONObject();
+
+        JSONArray ids = new JSONArray();
+        if (ftd.getIds() != null) {
+            for (String id : ftd.getIds()) {
+                ids.add(id);
+            }
+        }
+
+        result.put(JSON_FAILEDTODELETE_ID, ids);
+
+        convertExtension(ftd, result);
+
+        return result;
+    }
+
+    /**
+     * Converts FailedToDelete ids.
+     */
+    public static FailedToDeleteData convertFailedToDelete(Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        FailedToDeleteDataImpl result = new FailedToDeleteDataImpl();
+
+        List<String> ids = new ArrayList<String>();
+        List<Object> jsonIds = getList(json.get(JSON_FAILEDTODELETE_ID));
+
+        if (jsonIds != null) {
+            for (Object obj : jsonIds) {
+                if (obj != null) {
+                    ids.add(obj.toString());
+                }
+            }
+        }
+
+        result.setIds(ids);
+
+        convertExtension(json, result, FAILEDTODELETE_KEYS);
 
         return result;
     }

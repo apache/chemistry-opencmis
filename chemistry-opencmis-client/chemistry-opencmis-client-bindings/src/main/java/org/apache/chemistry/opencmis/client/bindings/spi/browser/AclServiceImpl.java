@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
@@ -41,7 +42,7 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
     public AclServiceImpl(BindingSession session) {
         setSession(session);
     }
-    
+
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_ACL);
@@ -56,8 +57,23 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
 
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId);
 
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_APPLY_ACL);
+        formData.addAddAcesParameters(addAces);
+        formData.addRemoveAcesParameters(removeAces);
+        formData.addParameter(Constants.PARAM_ACL_PROPAGATION, aclPropagation);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertAcl(json, null);
+    }
 }

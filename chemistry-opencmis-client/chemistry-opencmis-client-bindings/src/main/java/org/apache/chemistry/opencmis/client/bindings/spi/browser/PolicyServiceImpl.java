@@ -18,11 +18,17 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.OutputStream;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.PolicyService;
 
 /**
@@ -38,19 +44,47 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
     }
 
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId);
 
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_APPLY_POLICY);
+        formData.addPoliciesParameters(Collections.singletonList(policyId));
+
+        // send
+        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
     }
 
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId);
 
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_REMOVE_POLICY);
+        formData.addPoliciesParameters(Collections.singletonList(policyId));
+
+        // send
+        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
     }
 
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_POLICIES);
+        url.addParameter(Constants.PARAM_FILTER, filter);
 
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        List<Object> json = parseArray(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertObjects(json);
+    }
 }

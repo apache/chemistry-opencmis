@@ -75,7 +75,7 @@ public class MultiFilingService {
 
         // return object
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);
     }
@@ -108,7 +108,7 @@ public class MultiFilingService {
 
         // return object
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);
     }

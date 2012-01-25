@@ -180,7 +180,7 @@ public final class NavigationService {
         }
 
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(parent, typeCache);
+        JSONObject jsonObject = JSONConverter.convert(parent, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonObject, request, response);
@@ -244,7 +244,7 @@ public final class NavigationService {
         }
 
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonCheckedOut = JSONConverter.convert(checkedout, typeCache);
+        JSONObject jsonCheckedOut = JSONConverter.convert(checkedout, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonCheckedOut, request, response);

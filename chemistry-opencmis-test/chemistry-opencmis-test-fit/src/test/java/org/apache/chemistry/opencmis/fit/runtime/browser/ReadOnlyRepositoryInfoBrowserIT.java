@@ -16,24 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.fit.bindings;
+package org.apache.chemistry.opencmis.fit.runtime.browser;
 
-import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
-import org.apache.chemistry.opencmis.fit.SessionFactory;
+import org.apache.chemistry.opencmis.fit.runtime.AbstractReadOnlyRepositoryInfoIT;
+import org.apache.chemistry.opencmis.fit.runtime.Fixture;
 
 /**
- * AtomPub Provider layer test.
+ * Testing folder and files.
  */
-public class AtomPubSimpleBindingIT extends AbstractSimpleBindingIT {
+public class ReadOnlyRepositoryInfoBrowserIT extends AbstractReadOnlyRepositoryInfoIT {
 
-    @Override
-    protected CmisBinding createBinding() {
-        return SessionFactory.createAtomPubBinding();
-    }
-
-    @Override
-    protected String getRepositoryId() {
-        return SessionFactory.getRepositoryId();
-    }
+  @Override
+  public void initFixture(Fixture fixture) {
+    fixture.enableBrowser();
+  }
 
 }

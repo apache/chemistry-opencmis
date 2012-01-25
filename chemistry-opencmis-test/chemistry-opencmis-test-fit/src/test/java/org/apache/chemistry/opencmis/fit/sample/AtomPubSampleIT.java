@@ -23,9 +23,6 @@ import org.apache.chemistry.opencmis.fit.SessionFactory;
 
 /**
  * AtomPub sample test.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AtomPubSampleIT extends AbstractSampleIT {
 

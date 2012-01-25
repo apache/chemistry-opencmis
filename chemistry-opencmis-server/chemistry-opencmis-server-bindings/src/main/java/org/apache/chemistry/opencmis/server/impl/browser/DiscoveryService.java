@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.JSONConstants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -76,7 +77,7 @@ public class DiscoveryService {
         }
 
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonResults = JSONConverter.convert(results, typeCache);
+        JSONObject jsonResults = JSONConverter.convert(results, typeCache, true);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonResults, request, response);
@@ -100,11 +101,9 @@ public class DiscoveryService {
         ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties, filter,
                 includePolicyIds, includeAcl, maxItems, null);
 
-        JSONObject jsonChanges = new JSONObject();
-        jsonChanges.put("changeLogToken", changeLogTokenHolder.getValue());
-
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        jsonChanges.put("objects", JSONConverter.convert(changes, typeCache));
+        JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, false);
+        jsonChanges.put(JSONConstants.JSON_OBJECTLIST_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonChanges, request, response);

@@ -16,24 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.fit.bindings;
+package org.apache.chemistry.opencmis.fit.sample;
 
-import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.fit.SessionFactory;
 
 /**
- * AtomPub Provider layer test.
+ * AtomPub sample test.
  */
-public class AtomPubSimpleBindingIT extends AbstractSimpleBindingIT {
+public class BrowserSampleIT extends AbstractSampleIT {
 
     @Override
-    protected CmisBinding createBinding() {
-        return SessionFactory.createAtomPubBinding();
-    }
-
-    @Override
-    protected String getRepositoryId() {
-        return SessionFactory.getRepositoryId();
+    protected Session createSession() {
+        return SessionFactory.createBrowserSession();
     }
 
 }

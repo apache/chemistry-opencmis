@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
@@ -50,20 +52,76 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
 
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
-        // TODO Auto-generated method stub
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId.getValue());
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CHECK_OUT);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        objectId.setValue(newObj == null ? null : newObj.getId());
     }
 
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId);
 
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CANCEL_CHECK_OUT);
+
+        // send
+        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
     }
 
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
-        // TODO Auto-generated method stub
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
 
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId.getValue());
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CHECK_IN, contentStream);
+        formData.addParameter(Constants.PARAM_MAJOR, major);
+        formData.addPropertiesParameters(properties);
+        formData.addParameter(Constants.PARAM_CHECKIN_COMMENT, checkinComment);
+        formData.addPoliciesParameters(policies);
+        formData.addAddAcesParameters(addAces);
+        formData.addRemoveAcesParameters(removeAces);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+        ObjectData newObj = JSONConverter.convertObject(json);
+
+        objectId.setValue(newObj == null ? null : newObj.getId());
     }
 
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
@@ -115,5 +173,4 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
 
         return JSONConverter.convertObjects(json);
     }
-
 }

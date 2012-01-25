@@ -44,8 +44,7 @@ public class FormDataWriter {
     private static final String CRLF = "\r\n";
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    private final String boundary = "opencmis" + Long.toHexString(System.currentTimeMillis())
-            + Long.toHexString(this.hashCode());
+    private final String boundary;
     private final Map<String, String> parameters = new LinkedHashMap<String, String>();
     private ContentStream contentStream;
 
@@ -56,6 +55,8 @@ public class FormDataWriter {
     public FormDataWriter(String action, ContentStream contentStream) {
         addParameter(Constants.CONTROL_CMISACTION, action);
         this.contentStream = contentStream;
+        boundary = "aPacHeCheMIStryoPEncmiS" + Long.toHexString(action.hashCode()) + action
+                + Long.toHexString(System.currentTimeMillis()) + Long.toHexString(this.hashCode());
     }
 
     public void addParameter(String name, Object value) {
@@ -191,7 +192,8 @@ public class FormDataWriter {
             }
 
             String mediaType = contentStream.getMimeType();
-            if (mediaType == null || mediaType.length() == 0) {
+            if (mediaType == null || mediaType.indexOf('/') < 1 || mediaType.indexOf('\n') > -1
+                    || mediaType.indexOf('\r') > -1) {
                 mediaType = Constants.MEDIATYPE_OCTETSTREAM;
             }
 

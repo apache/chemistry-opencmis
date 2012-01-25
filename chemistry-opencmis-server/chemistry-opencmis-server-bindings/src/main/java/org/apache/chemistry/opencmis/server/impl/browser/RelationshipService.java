@@ -72,7 +72,7 @@ public class RelationshipService {
         }
 
         TypeCache typeCache = new TypeCache(repositoryId, service);
-        JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache);
+        JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonChildren, request, response);

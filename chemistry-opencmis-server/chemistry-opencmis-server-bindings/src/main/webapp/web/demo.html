@@ -64,17 +64,17 @@ function printRepositoryInfos(infos) {
     document.getElementById('queryForm').action = repositoryUrl;
 	
     var script1 = document.createElement("script");        
-    script1.setAttribute("src", rootFolderUrl + rootFolder + "?selector=object&clientToken=printObject");
+    script1.setAttribute("src", rootFolderUrl + rootFolder + "?cmisselector=object&clientToken=printObject");
     script1.setAttribute("type","text/javascript");                
     document.body.appendChild(script1);
 
     var script2 = document.createElement("script");        
-    script2.setAttribute("src", rootFolderUrl + rootFolder + "?selector=children&clientToken=printChildren");
+    script2.setAttribute("src", rootFolderUrl + rootFolder + "?cmisselector=children&clientToken=printChildren");
     script2.setAttribute("type","text/javascript");                
     document.body.appendChild(script2);
 
     var script3 = document.createElement("script");        
-    script3.setAttribute("src", repositoryUrl + "?selector=typeChildren&clientToken=printTypes");
+    script3.setAttribute("src", repositoryUrl + "?cmisselector=typeChildren&clientToken=printTypes");
     script3.setAttribute("type","text/javascript");                
     document.body.appendChild(script3);
 }
@@ -141,7 +141,7 @@ function printChildren(children) {
 
             if(object.properties["cmis:contentStreamMimeType"]) {           	 
                 mimetype = object.properties["cmis:contentStreamMimeType"].value;
-                link = encodeURI(rootFolderUrl + '?objectId=' + id + '&selector=content');
+                link = encodeURI(rootFolderUrl + '?objectId=' + id + '&cmisselector=content');
             } else {
             	mimetype = "";
             	link = "";
@@ -187,7 +187,7 @@ function printTypes(types) {
 
 function reloadChildren() {
     var reloadScript = document.createElement("script");        
-    reloadScript.setAttribute("src", rootFolderUrl + rootFolder + "?selector=children&clientToken=printChildren");
+    reloadScript.setAttribute("src", rootFolderUrl + rootFolder + "?cmisselector=children&clientToken=printChildren");
     reloadScript.setAttribute("type","text/javascript");                
     document.body.appendChild(reloadScript);
 }

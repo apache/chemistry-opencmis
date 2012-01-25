@@ -23,9 +23,6 @@ import org.apache.chemistry.opencmis.fit.SessionFactory;
 
 /**
  * Web Services sample test.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class WebServicesSampleIT extends AbstractSampleIT {
 
