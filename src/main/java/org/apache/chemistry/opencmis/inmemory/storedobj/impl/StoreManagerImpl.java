@@ -91,8 +91,9 @@ public class StoreManagerImpl implements StoreManager {
             OPENCMIS_VERSION = "?";
             OPENCMIS_SERVER = "Apache-Chemistry-OpenCMIS-InMemory";
         } else {
-            OPENCMIS_VERSION = p.getImplementationVersion();
-            OPENCMIS_SERVER = "Apache-Chemistry-OpenCMIS-InMemory/" + (OPENCMIS_VERSION == null ? "?" : OPENCMIS_VERSION);
+            String ver = p.getImplementationVersion();
+            OPENCMIS_VERSION = (null == ver ? "?" : ver);
+            OPENCMIS_SERVER = "Apache-Chemistry-OpenCMIS-InMemory/" + OPENCMIS_VERSION;
         }
     }
 
