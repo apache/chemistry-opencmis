@@ -1441,7 +1441,7 @@ public final class Converter {
         CmisPropertiesType result = new CmisPropertiesType();
 
         if (properties.getProperties() != null) {
-            for (PropertyData<?> property : properties.getProperties().values()) {
+            for (PropertyData<?> property : properties.getPropertyList()) {
                 result.getProperty().add(convert(property));
             }
         }
