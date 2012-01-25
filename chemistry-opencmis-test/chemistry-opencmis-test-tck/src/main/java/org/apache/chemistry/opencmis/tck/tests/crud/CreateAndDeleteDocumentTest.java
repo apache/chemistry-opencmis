@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.tck.tests.crud;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,12 +93,48 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
                 }
             }
 
+            // check paging
+            int pageSize = 5;
+            CmisObject lastObject = null;
+
+            int count = 0;
+            ItemIterable<CmisObject> page1 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME).getPage(
+                    pageSize);
+            for (CmisObject child : page1) {
+                count++;
+                lastObject = child;
+            }
+
+            f = createResult(FAILURE, "Returned number of children doesn't match the page size!");
+            addResult(assertEquals(pageSize, count, null, f));
+
+            count = 0;
+            ItemIterable<CmisObject> page2 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
+                    .getPage(pageSize).skipTo(pageSize - 1);
+            for (CmisObject child : page2) {
+                count++;
+
+                if (count == 1) {
+                    f = createResult(FAILURE,
+                            "Last object of the first page doesn't match the first object of the second page.");
+                    addResult(assertEquals(lastObject.getId(), child.getId(), null, f));
+                }
+            }
+
+            f = createResult(FAILURE, "Returned number of children doesn't match the page size!");
+            addResult(assertEquals(pageSize, count, null, f));
+
             // check content
             for (Document document : documents.values()) {
                 ContentStream contentStream = document.getContentStream();
-                if (contentStream == null) {
+                if (contentStream == null || contentStream.getStream() == null) {
                     addResult(createResult(FAILURE, "Document has no content! Id: " + document.getId()));
                     continue;
+                } else {
+                    try {
+                        contentStream.getStream().close();
+                    } catch (IOException e) {
+                    }
                 }
 
                 // TODO: content checks

@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -84,6 +85,15 @@ public class UpdateSmokeTest extends AbstractSessionTest {
 
             f = createResult(FAILURE, "Document name doesn't match updated value!");
             addResult(assertEquals(NAME2, doc2.getName(), null, f));
+
+            // update nothing
+            try {
+                properties = new HashMap<String, Object>();
+                doc2.updateProperties(properties, false);
+            } catch (Exception e) {
+                addResult(createResult(WARNING,
+                        "updateProperties without property changes returned an error: " + e.getMessage(), e, false));
+            }
 
             // cancel a possible check out
             if (checkedout) {
