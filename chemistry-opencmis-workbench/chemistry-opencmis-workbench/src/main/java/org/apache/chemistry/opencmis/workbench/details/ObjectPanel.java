@@ -335,6 +335,10 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     }
 
     public String getDocumentURL(final CmisObject document, final Session session) {
+        if (!(document instanceof Document)) {
+            return null;
+        }
+
         if (session.getBinding().getObjectService() instanceof LinkAccess) {
             return ((LinkAccess) session.getBinding().getObjectService()).loadContentLink(session.getRepositoryInfo()
                     .getId(), document.getId());
