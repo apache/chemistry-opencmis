@@ -69,6 +69,10 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
         verDoc.cancelCheckOut(user);
+        
+        // if this is the last version delete the document itself
+        if (verDoc.getAllVersions().size() == 0)
+            fStoreManager.getObjectStore(repositoryId).deleteObject(verDoc.getId(), true, user);
     }
 
     public void checkIn(CallContext context, String repositoryId, Holder<String> objectId, Boolean major,
@@ -80,6 +84,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
+        // check if the contentStream is a usable object or ignore it otherwise
+        // Note Bworser binding sets an empty object
+        if (contentStream != null && contentStream.getStream() == null)
+            contentStream = null;
+        
         verDoc.checkIn(major, properties, contentStream, checkinComment, user);
 
         // To be able to provide all Atom links in the response we need
