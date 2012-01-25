@@ -141,7 +141,8 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         // build URL
-        UrlBuilder url = getObjectUrl(repositoryId, folderId, Constants.SELECTOR_CHECKEDOUT);
+        UrlBuilder url = (folderId != null ? getObjectUrl(repositoryId, folderId, Constants.SELECTOR_CHECKEDOUT)
+                : getRepositoryUrl(repositoryId, Constants.SELECTOR_CHECKEDOUT));
         url.addParameter(Constants.PARAM_FILTER, filter);
         url.addParameter(Constants.PARAM_ORDER_BY, orderBy);
         url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);

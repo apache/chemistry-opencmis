@@ -379,8 +379,10 @@ public class BrowserBindingUtils {
 
         if (request instanceof POSTHttpServletRequestWrapper) {
             POSTHttpServletRequestWrapper post = (POSTHttpServletRequestWrapper) request;
-            result = new ContentStreamImpl(post.getFilename(), BigInteger.valueOf(post.getSize()),
-                    post.getContentType(), post.getStream());
+            if (post.getStream() != null) {
+                result = new ContentStreamImpl(post.getFilename(), BigInteger.valueOf(post.getSize()),
+                        post.getContentType(), post.getStream());
+            }
         }
 
         return result;
