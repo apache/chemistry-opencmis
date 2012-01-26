@@ -235,11 +235,31 @@ public class QueryObject {
      * return a map of all columns that have been requested in the SELECT part
      * of the statement.
      *
+     * @return a map with a String as a key and value. key is the alias if 
+     * an alias was given or the query name otherwise. value is the query 
+     * name of the property.
+     */
+    public Map<String, String> getRequestedPropertiesByAlias() {
+        return getRequestedProperties(true);
+    }
+    
+    /**
+     * return a map of all columns that have been requested in the SELECT part
+     * of the statement.
+     *
      * @return a map with a String as a key and value. key is the query name of
      *         the property, value is the alias if an alias was given or the
      *         query name otherwise.
+     *         
+     * @deprecated  Use getRequestedPropertiesByAlias instead.
      */
+    @Deprecated
     public Map<String, String> getRequestedProperties() {
+        return getRequestedProperties(false);
+    }
+    
+    private Map<String, String> getRequestedProperties(boolean byAlias) {
+
         Map<String, String> res = new HashMap<String, String>();
         for (CmisSelector sel : selectReferences) {
             if (sel instanceof ColumnReference) {
@@ -251,7 +271,10 @@ public class QueryObject {
                 }
                 String propDescr = colRef.getAliasName() == null ? colRef.getPropertyQueryName() : colRef
                         .getAliasName();
-                res.put(key, propDescr);
+                if (byAlias)
+                    res.put(propDescr, key);
+                else
+                    res.put(key, propDescr);
             }
         }
         return res;
@@ -264,14 +287,37 @@ public class QueryObject {
      * @return a map with a String as a key and value. key is the function name
      *         of the property, value is the alias if an alias was given or the
      *         function name otherwise.
+     *         
+     * @deprecated  Use getRequestedPropertiesByAlias instead.
      */
+    @Deprecated
     public Map<String, String> getRequestedFuncs() {
+        return getRequestedFuncs(false);
+    }
+    
+    /**
+     * return a map of all functions that have been requested in the SELECT part
+     * of the statement.
+     *
+     * @return a map with a String as a key and value. key is the alias if an 
+     * alias was given or the function name otherwise, value is the a name
+     * of the property. 
+     */
+    public Map<String, String> getRequestedFuncsByAlias() {
+        return getRequestedFuncs(true);
+    }
+
+    private Map<String, String> getRequestedFuncs(boolean byAlias) {
+
         Map<String, String> res = new HashMap<String, String>();
         for (CmisSelector sel : selectReferences) {
             if (sel instanceof FunctionReference) {
                 FunctionReference funcRef = (FunctionReference) sel;
                 String propDescr = funcRef.getAliasName() == null ? funcRef.getName() : funcRef.getAliasName();
-                res.put(funcRef.getName(), propDescr);
+                if (byAlias)
+                    res.put(propDescr, funcRef.getName());
+                else
+                    res.put(funcRef.getName(), propDescr);
             }
         }
         return res;

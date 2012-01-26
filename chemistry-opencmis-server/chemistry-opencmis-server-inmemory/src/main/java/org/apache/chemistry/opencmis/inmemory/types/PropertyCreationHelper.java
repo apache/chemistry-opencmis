@@ -247,7 +247,7 @@ public class PropertyCreationHelper {
             Map<String, String> requestedIds, Map<String, String> requestedFuncs) {
         // build properties collection
 
-        List<String> idList = new ArrayList<String>(requestedIds.keySet());
+        List<String> idList = new ArrayList<String>(requestedIds.values());
         BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
         Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
         so.fillProperties(properties, objectFactory, idList);
@@ -265,41 +265,40 @@ public class PropertyCreationHelper {
         }
 
         Map<String, PropertyData<?>> mappedProperties = new HashMap<String, PropertyData<?>>();
-        if (requestedIds.containsKey("*")) {
+        if (requestedIds.containsValue("*")) {
             for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
                 // map property id to property query name
                 String queryName = td.getPropertyDefinitions().get(prop.getKey()).getQueryName();
                 String localName = td.getPropertyDefinitions().get(prop.getKey()).getLocalName();
                 String displayName = td.getPropertyDefinitions().get(prop.getKey()).getDisplayName();
-                AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a
-                                                                                        // bit
-                                                                                        // dirty
+                AbstractPropertyData<?> ad = clonePropertyData(prop.getValue()); 
+                
                 ad.setQueryName(queryName);
                 ad.setLocalName(localName);
                 ad.setDisplayName(displayName);
-                mappedProperties.put(queryName, prop.getValue());
+                mappedProperties.put(queryName, ad);
             }
         } else {
             // replace all ids with query names or alias:
-            for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
-                String queryNameOrAlias = requestedIds.get(prop.getKey());
-                String localName = td.getPropertyDefinitions().get(prop.getKey()).getLocalName();
-                String displayName = td.getPropertyDefinitions().get(prop.getKey()).getDisplayName();
-                AbstractPropertyData<?> ad = (AbstractPropertyData<?>) prop.getValue(); // a
-                                                                                        // bit
-                                                                                        // dirty
+            for (Entry<String, String> propAlias : requestedIds.entrySet()) {
+                String queryNameOrAlias = propAlias.getKey();
+                PropertyData<?> prop = properties.get(propAlias.getValue());
+                String localName = td.getPropertyDefinitions().get(prop.getId()).getLocalName();
+                String displayName = td.getPropertyDefinitions().get(prop.getId()).getDisplayName();
+                AbstractPropertyData<?> ad = clonePropertyData(prop); 
+                
                 ad.setQueryName(queryNameOrAlias);
                 ad.setLocalName(localName);
                 ad.setDisplayName(displayName);
-                mappedProperties.put(queryNameOrAlias, prop.getValue());
+                mappedProperties.put(queryNameOrAlias, ad);
             }
         }
         // add functions:
         BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
         for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
-            PropertyInteger pi = objFactory.createPropertyIntegerData(funcEntry.getKey(), BigInteger.valueOf(100));
+            PropertyInteger pi = objFactory.createPropertyIntegerData(funcEntry.getValue(), BigInteger.valueOf(100));
             // fixed dummy value
-            mappedProperties.put(funcEntry.getValue(), pi);
+            mappedProperties.put(funcEntry.getKey(), pi);
         }
 
         Properties props = new PropertiesImpl(mappedProperties.values());
@@ -450,5 +449,53 @@ public class PropertyCreationHelper {
             return new PropertyUriImpl(propDef.getId(), (String) null);
         else
             return null;
+    }
+    
+    private static AbstractPropertyData<?> clonePropertyData(PropertyData<?> prop) {
+        AbstractPropertyData<?> ad = null;
+        
+        if (prop instanceof PropertyBooleanImpl) {
+            PropertyBooleanImpl clone = new PropertyBooleanImpl();
+            clone.setValues(((PropertyBooleanImpl)prop).getValues());
+            ad = clone;
+        } else if (prop instanceof PropertyDateTimeImpl) {
+            PropertyDateTimeImpl clone = new PropertyDateTimeImpl();
+            clone.setValues(((PropertyDateTimeImpl)prop).getValues());
+            ad = clone;
+        } else if (prop instanceof PropertyDecimalImpl) {
+            PropertyDecimalImpl clone = new PropertyDecimalImpl();
+            clone.setValues(((PropertyDecimalImpl)prop).getValues());
+            ad = clone;
+        } else if (prop instanceof PropertyHtmlImpl) {
+            PropertyHtmlImpl clone = new PropertyHtmlImpl();
+            clone.setValues(((PropertyHtmlImpl)prop).getValues());
+            ad = clone;
+        } else if (prop instanceof PropertyIdImpl) {
+            PropertyIdImpl clone = new PropertyIdImpl();
+            clone.setValues(((PropertyIdImpl)prop).getValues());
+            ad = clone;
+        } else if (prop instanceof PropertyIntegerImpl) {
+            PropertyIntegerImpl clone = new PropertyIntegerImpl();
+            clone.setValues(((PropertyIntegerImpl)prop).getValues());
+            ad = clone;
+        } else if (prop instanceof PropertyStringImpl) {
+            PropertyStringImpl clone = new PropertyStringImpl();
+            clone.setValues(((PropertyStringImpl)prop).getValues());
+            ad = clone;
+        } else if (prop instanceof PropertyUriImpl) {
+            PropertyUriImpl clone = new PropertyUriImpl();
+            clone.setValues(((PropertyUriImpl)prop).getValues());
+            ad = clone;
+        } else {
+            throw new RuntimeException("Unknown property type: " + prop.getClass());
+        }
+        
+        ad.setDisplayName(prop.getDisplayName());
+        ad.setId(prop.getId());
+        ad.setLocalName(prop.getLocalName());
+        ad.setQueryName(prop.getQueryName());
+        ad.setExtensions(prop.getExtensions());
+
+        return ad;        
     }
 }
