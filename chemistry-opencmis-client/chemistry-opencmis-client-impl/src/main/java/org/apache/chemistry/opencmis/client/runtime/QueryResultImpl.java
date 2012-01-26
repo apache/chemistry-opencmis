@@ -101,7 +101,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
      * @see org.apache.opencmis.client.api.QueryResult#getProperties()
      */
     public List<PropertyData<?>> getProperties() {
-        return new ArrayList<PropertyData<?>>(propertiesById.values());
+        return new ArrayList<PropertyData<?>>(propertiesByQueryName.values());
     }
 
     /*
