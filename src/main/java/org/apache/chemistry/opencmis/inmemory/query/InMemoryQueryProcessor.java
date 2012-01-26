@@ -142,8 +142,8 @@ public class InMemoryQueryProcessor {
             matches = matches.subList(start, stop);
         }
         List<ObjectData> objDataList = new ArrayList<ObjectData>();
-        Map<String, String> props = queryObj.getRequestedProperties();
-        Map<String, String> funcs = queryObj.getRequestedFuncs();
+        Map<String, String> props = queryObj.getRequestedPropertiesByAlias();
+        Map<String, String> funcs = queryObj.getRequestedFuncsByAlias();
         for (StoredObject so : matches) {
             TypeDefinition td = tm.getTypeById(so.getTypeId()).getTypeDefinition();
             ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(td, so, user, props, funcs,
