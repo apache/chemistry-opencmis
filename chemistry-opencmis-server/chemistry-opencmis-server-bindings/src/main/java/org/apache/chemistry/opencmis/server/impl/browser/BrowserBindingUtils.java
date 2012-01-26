@@ -454,17 +454,17 @@ public class BrowserBindingUtils {
         response.setContentType(JSON_MIME_TYPE);
         response.setCharacterEncoding("UTF-8");
 
-        String clientToken = getStringParameter(request, Constants.PARAM_CLIENT_TOKEN);
-        if (clientToken != null) {
-            if (!clientToken.matches("[A-Za-z0-9._\\[\\]]*")) {
-                throw new CmisInvalidArgumentException("Invalid clientToken name!");
+        String callback = getStringParameter(request, Constants.PARAM_CALLBACK);
+        if (callback != null) {
+            if (!callback.matches("[A-Za-z0-9._\\[\\]]*")) {
+                throw new CmisInvalidArgumentException("Invalid callback name!");
             }
-            response.getWriter().print(clientToken + "(");
+            response.getWriter().print(callback + "(");
         }
 
         json.writeJSONString(response.getWriter());
 
-        if (clientToken != null) {
+        if (callback != null) {
             response.getWriter().print(");");
         }
 

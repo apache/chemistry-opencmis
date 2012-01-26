@@ -203,7 +203,7 @@ public final class Constants {
 
     public static final String PARAM_SELECTOR = "cmisselector";
     public static final String PARAM_TRANSACTION = "transaction";
-    public static final String PARAM_CLIENT_TOKEN = "clientToken";
+    public static final String PARAM_CALLBACK = "callback";
     public static final String PARAM_SUPPRESS_RESPONSE_CODES = "suppressResponseCodes";
 
     // rendition filter

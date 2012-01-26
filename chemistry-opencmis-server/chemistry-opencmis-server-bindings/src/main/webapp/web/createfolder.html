@@ -68,7 +68,7 @@ function createFolderCallback() {
         document.getElementById('info').innerHTML = 'Transaction: ' + lastTransaction
 
         var script1 = document.createElement("script");
-        script1.setAttribute("src", repositoryUrl + "?cmisselector=lastResult&clientToken=showNewFolderId&transaction="+lastTransaction);
+        script1.setAttribute("src", repositoryUrl + "?cmisselector=lastResult&callback=showNewFolderId&transaction="+lastTransaction);
         script1.setAttribute("type","text/javascript");                
         document.body.appendChild(script1);
     }
@@ -117,6 +117,6 @@ function showNewFolderId(result) {
 <div id="info"></div>
 <iframe name="result" style="border:2px;width:800px;height:400px;" onload="createFolderCallback()"></iframe>
 
-<script type="text/javascript" src="../browser?clientToken=loadRepositoryInfos"></script>
+<script type="text/javascript" src="../browser?callback=loadRepositoryInfos"></script>
 </body>
 </html>
