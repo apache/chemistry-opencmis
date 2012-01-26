@@ -110,7 +110,7 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
 
             count = 0;
             ItemIterable<CmisObject> page2 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
-                    .getPage(pageSize).skipTo(pageSize - 1);
+                    .skipTo(pageSize - 1).getPage(pageSize);
             for (CmisObject child : page2) {
                 count++;
 

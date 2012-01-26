@@ -62,7 +62,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public List<CmisTest> getTests() {
         return tests;
     }
@@ -112,15 +112,15 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
                     if (test instanceof AbstractCmisTest) {
                         ((AbstractCmisTest) test).setTime(end - start);
                     }
-
+                } catch (Exception e) {
+                    if (!(e instanceof FatalTestException)) {
+                        throw e;
+                    }
+                } finally {
                     postTest(test);
 
                     if (progressMonitor != null) {
                         progressMonitor.endTest(test);
-                    }
-                } catch (Exception e) {
-                    if (!(e instanceof FatalTestException)) {
-                        throw e;
                     }
                 }
             }
