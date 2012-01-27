@@ -59,7 +59,7 @@
 					<encoding>UTF-8</encoding>
 					<forkMode>once</forkMode>
 					<forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-					<argLine>-Xmx128m</argLine>
+					<argLine>-Xmx256m</argLine>
 				</configuration>
 				<executions>
 					<execution>
@@ -121,22 +121,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>chemistry-opencmis-commons-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>chemistry-opencmis-client-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>chemistry-opencmis-client-impl</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>chemistry-opencmis-client-bindings</artifactId>
+			<artifactId>chemistry-opencmis-test-tck</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

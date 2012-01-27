@@ -16,16 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.fit.runtime.webservices;
+package org.apache.chemistry.opencmis.fit.tck;
 
-import org.apache.chemistry.opencmis.fit.runtime.AbstractReadOnlyContentStreamIT;
-import org.apache.chemistry.opencmis.fit.runtime.Fixture;
+import java.util.Map;
 
-public class ReadOnlyContentStreamWebServicesIT extends AbstractReadOnlyContentStreamIT {
+import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
+
+public class AtomPubTckIT extends AbstractTckIT {
+
+    public static final String ATOMPUB_PATH = "/opencmis/atom";
 
     @Override
-    public void initFixture(Fixture fixture) {
-        fixture.enableWebServices();
+    public Map<String, String> getSessionParameters() {
+        Map<String, String> parameters = getBaseSessionParameters();
+
+        String url = "http://" + HOST + ":" + PORT + ATOMPUB_PATH;
+
+        parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+        parameters.put(SessionParameter.ATOMPUB_URL, url);
+
+        return parameters;
+    }
+
+    @Override
+    public BindingType getBindingType() {
+        return BindingType.ATOMPUB;
     }
 
 }

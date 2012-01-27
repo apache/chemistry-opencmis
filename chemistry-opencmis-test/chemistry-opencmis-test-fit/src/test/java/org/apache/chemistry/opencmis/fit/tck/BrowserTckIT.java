@@ -16,19 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.fit.sample;
+package org.apache.chemistry.opencmis.fit.tck;
 
-import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.fit.SessionFactory;
+import java.util.Map;
 
-/**
- * AtomPub sample test.
- */
-public class BrowserSampleIT extends AbstractSampleIT {
+import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
+
+public class BrowserTckIT extends AbstractTckIT {
+
+    public static final String BROWSER_PATH = "/opencmis/browser";
 
     @Override
-    protected Session createSession() {
-        return SessionFactory.createBrowserSession();
+    public Map<String, String> getSessionParameters() {
+        Map<String, String> parameters = getBaseSessionParameters();
+
+        String url = "http://" + HOST + ":" + PORT + BROWSER_PATH;
+
+        parameters.put(SessionParameter.BINDING_TYPE, BindingType.BROWSER.value());
+        parameters.put(SessionParameter.BROWSER_URL, url);
+
+        return parameters;
+    }
+
+    @Override
+    public BindingType getBindingType() {
+        return BindingType.BROWSER;
     }
 
 }
