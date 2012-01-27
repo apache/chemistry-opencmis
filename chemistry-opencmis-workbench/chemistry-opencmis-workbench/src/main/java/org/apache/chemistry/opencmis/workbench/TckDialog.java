@@ -56,6 +56,7 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -75,8 +76,6 @@ import org.apache.chemistry.opencmis.tck.impl.TestParameters;
 import org.apache.chemistry.opencmis.tck.runner.AbstractRunner;
 import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
-
-import sun.swing.DefaultLookup;
 
 /**
  * TCK dialog and runner.
@@ -390,12 +389,12 @@ public class TckDialog {
         private final Color backgroundNonSelectionColor;
 
         public TestTreeNodeRender() {
-            textSelectionColor = DefaultLookup.getColor(this, ui, "Tree.selectionForeground");
-            textNonSelectionColor = DefaultLookup.getColor(this, ui, "Tree.textForeground");
-            backgroundSelectionColor = DefaultLookup.getColor(this, ui, "Tree.selectionBackground");
-            backgroundNonSelectionColor = DefaultLookup.getColor(this, ui, "Tree.textBackground");
+            textSelectionColor = UIManager.getDefaults().getColor("Tree.selectionForeground");
+            textNonSelectionColor = UIManager.getDefaults().getColor("Tree.textForeground");
+            backgroundSelectionColor = UIManager.getDefaults().getColor("Tree.selectionBackground");
+            backgroundNonSelectionColor = UIManager.getDefaults().getColor("Tree.textBackground");
 
-            Insets margins = DefaultLookup.getInsets(this, ui, "Tree.rendererMargins");
+            Insets margins = UIManager.getDefaults().getInsets("Tree.rendererMargins");
             if (margins != null) {
                 setBorder(new EmptyBorder(margins.top, margins.left, margins.bottom, margins.right));
             }
