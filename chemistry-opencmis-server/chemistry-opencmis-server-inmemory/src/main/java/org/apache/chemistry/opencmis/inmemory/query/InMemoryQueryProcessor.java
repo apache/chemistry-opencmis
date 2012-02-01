@@ -341,14 +341,14 @@ public class InMemoryQueryProcessor {
         public Boolean walkIn(Tree opNode, Tree colNode, Tree listNode) {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
             List<Object> literals = onLiteralList(listNode);
+            Object prop = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
+
             if (pd.getCardinality() != Cardinality.SINGLE) {
                 throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
-            } else if (lVal == null) {
+            } else if (prop == null) {
                 return false;
             } else {
-                Object prop = lVal.getFirstValue();
                 return literals.contains(prop);
             }
         }
@@ -360,14 +360,13 @@ public class InMemoryQueryProcessor {
             // then it evaluates to true for null values (not set properties).
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
+            Object prop = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.SINGLE) {
                 throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
-            } else if (lVal == null) {
+            } else if (prop == null) {
                 return false;
             } else {
-                Object prop = lVal.getFirstValue();
                 return !literals.contains(prop);
             }
         }
@@ -437,13 +436,17 @@ public class InMemoryQueryProcessor {
 
         @Override
         public Boolean walkIsNull(Tree opNode, Tree colNode) {
-            Object propVal = getPropertyValue(colNode, so);
+            ColumnReference colRef = getColumnReference(colNode);
+            PropertyDefinition<?> pd = colRef.getPropertyDefinition();
+            Object propVal = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
             return propVal == null;
         }
 
         @Override
         public Boolean walkIsNotNull(Tree opNode, Tree colNode) {
-            Object propVal = getPropertyValue(colNode, so);
+            ColumnReference colRef = getColumnReference(colNode);
+            PropertyDefinition<?> pd = colRef.getPropertyDefinition();
+            Object propVal = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
             return propVal != null;
         }
 
@@ -465,7 +468,7 @@ public class InMemoryQueryProcessor {
                 throw new IllegalStateException("LIKE is not allowed for multi-value properties ");
             }
 
-            String propVal = (String) PropertyUtil.getProperty(so, colRef.getPropertyId());
+            String propVal = (String) PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
             
             String pattern = translatePattern((String) rVal); // SQL to Java
                                                               // regex
@@ -528,10 +531,10 @@ public class InMemoryQueryProcessor {
             // System.identityHashCode(leftChild) + " is " + leftChild);
             ColumnReference colRef = getColumnReference(leftChild);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            Object val = PropertyUtil.getProperty(so, colRef.getPropertyId());
+            Object val = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
             if (val==null) {
                 return null;
-            }if (val instanceof List<?>) {
+            } else if (val instanceof List<?>) {
                 throw new IllegalStateException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
             } else {
                 return InMemoryQueryProcessor.this.compareTo(pd, val, rVal);
@@ -709,19 +712,10 @@ public class InMemoryQueryProcessor {
         return typeQueryName;
     }
 
-    private Object getPropertyValue(Tree columnNode, StoredObject so) {
+    private Object xgetPropertyValue(Tree columnNode, StoredObject so) {
         ColumnReference colRef = getColumnReference(columnNode);
         PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-        PropertyData<?> lVal = so.getProperties().get(colRef.getPropertyId());
-        if (null == lVal) {
-            return null;
-        } else {
-            if (pd.getCardinality() == Cardinality.SINGLE) {
-                return lVal.getFirstValue();
-            } else {
-                return lVal.getValues();
-            }
-        }
+        return PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
     }
 
     // translate SQL wildcards %, _ to Java regex syntax

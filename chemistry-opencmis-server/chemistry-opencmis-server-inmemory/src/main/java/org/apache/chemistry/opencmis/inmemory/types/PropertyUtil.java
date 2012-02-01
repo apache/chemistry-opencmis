@@ -21,6 +21,8 @@ package org.apache.chemistry.opencmis.inmemory.types;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -30,7 +32,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 public class PropertyUtil {
     
-    public static Object getProperty(StoredObject so, String propertyId) {
+    public static Object getProperty(StoredObject so, String propertyId, PropertyDefinition<?> pd) {
         ContentStream content = null;
         DocumentVersion ver = null;
         VersionedDocument verDoc = null;
@@ -146,10 +148,12 @@ public class PropertyUtil {
 
        // try custom property:
        PropertyData<?> lVal = so.getProperties().get(propertyId);
-       if (lVal != null) {
-           return lVal.getValues().size() > 1 ? lVal.getValues() : lVal.getFirstValue();
-       }  else {
+       if (null == lVal)
            return null;
+       else if (pd.getCardinality() == Cardinality.SINGLE) {
+           return lVal.getFirstValue();
+       } else {
+           return lVal.getValues();
        }
     }
 
