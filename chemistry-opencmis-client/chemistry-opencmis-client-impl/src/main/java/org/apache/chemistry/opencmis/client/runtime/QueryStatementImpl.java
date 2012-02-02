@@ -303,7 +303,8 @@ public class QueryStatementImpl implements QueryStatement {
                 } else {
                     inStr = !inStr;
                 }
-            } else if (c == '?') {
+                sb.append(c);
+            } else if (c == '?' && !inStr) {
                 parameterIndex++;
                 String s = parametersMap.get(parameterIndex);
                 if (s == null) {
