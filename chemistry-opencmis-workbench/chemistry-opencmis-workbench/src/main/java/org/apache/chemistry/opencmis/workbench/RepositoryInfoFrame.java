@@ -19,12 +19,19 @@
 package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.Dimension;
+import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
@@ -163,6 +170,34 @@ public class RepositoryInfoFrame extends JFrame {
                     addComponent("Permission mapping:", new JScrollPane(permMapTable));
                 }
             }
+
+            if (repInfo.getExtensions() != null && !repInfo.getExtensions().isEmpty()) {
+                JTree extensionsTree = new JTree();
+                extensionsTree.setRootVisible(false);
+                extensionsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+       
+                DefaultMutableTreeNode extRootNode = new DefaultMutableTreeNode("Extensions");
+                addExtension(extRootNode, repInfo.getExtensions());
+
+                extensionsTree.setModel(new DefaultTreeModel(extRootNode));
+
+                addComponent("Extensions:", new JScrollPane(extensionsTree));
+            }
+        }
+
+        private void addExtension(DefaultMutableTreeNode parent, List<CmisExtensionElement> extensions) {
+            if ((extensions == null) || (extensions.isEmpty())) {
+                return;
+            }
+
+            for (CmisExtensionElement ext : extensions) {
+                DefaultMutableTreeNode node = new DefaultMutableTreeNode(new ExtensionNode(ext));
+                parent.add(node);
+
+                if (ext.getChildren().size() > 0) {
+                    addExtension(node, ext.getChildren());
+                }
+            }
         }
 
         private boolean is(Boolean b) {
@@ -179,6 +214,22 @@ public class RepositoryInfoFrame extends JFrame {
             }
 
             return o.toString();
+        }
+
+        static class ExtensionNode {
+            private final CmisExtensionElement extension;
+
+            public ExtensionNode(CmisExtensionElement extension) {
+                this.extension = extension;
+            }
+
+            @Override
+            public String toString() {
+                return (extension.getNamespace() == null ? "" : "{" + extension.getNamespace() + "}")
+                        + extension.getName()
+                        + (!extension.getAttributes().isEmpty() ? " " + extension.getAttributes() : "")
+                        + (extension.getChildren().isEmpty() ? ": " + extension.getValue() : "");
+            }
         }
     }
 }
