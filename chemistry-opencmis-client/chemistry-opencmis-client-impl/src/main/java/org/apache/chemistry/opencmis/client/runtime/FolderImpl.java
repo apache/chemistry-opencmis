@@ -172,7 +172,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
             getSession().removeObjectFromCache(this);
         }
 
-        return failed.getIds();
+        return (failed != null ? failed.getIds() : null);
     }
 
     public String getParentId() {

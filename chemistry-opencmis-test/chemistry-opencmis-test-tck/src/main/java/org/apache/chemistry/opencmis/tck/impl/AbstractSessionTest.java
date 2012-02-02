@@ -516,7 +516,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     "Test folder could not be created! Exception: " + e.getMessage(), e, true));
         }
 
-        testFolder = createFolder(session, parent, name);
+        if (parent != null) {
+            testFolder = createFolder(session, parent, name);
+        }
 
         return testFolder;
     }

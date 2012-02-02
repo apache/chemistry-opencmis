@@ -1522,8 +1522,6 @@ public class JSONConverter {
             result.setRenditions(convertRenditions(jsonRenditions));
         }
 
-        // TODO
-
         convertExtension(json, result, OBJECT_KEYS);
 
         return result;

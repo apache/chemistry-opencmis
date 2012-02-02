@@ -56,7 +56,7 @@ public class FileUtils {
 
     /**
      * Gets an object by path or object id.
-     *
+     * 
      * @param pathOrIdOfObject
      *            the path or object id
      * @param session
@@ -84,7 +84,7 @@ public class FileUtils {
 
     /**
      * Gets a folder by path or object id.
-     *
+     * 
      * @param pathOrIdOfObject
      *            the path or folder id
      * @param session
@@ -104,7 +104,7 @@ public class FileUtils {
 
     /**
      * Creates a document from a file.
-     *
+     * 
      * @param parentIdOrPath
      *            the id or path of the parent folder
      * @param file
@@ -140,7 +140,7 @@ public class FileUtils {
 
     /**
      * Creates a text document from a string.
-     *
+     * 
      * @param parentIdOrPath
      *            the id or path of the parent folder
      * @param name
@@ -168,8 +168,8 @@ public class FileUtils {
         properties.put(PropertyIds.NAME, name);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(content == null ? new byte[0] : content.getBytes());
-        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(content.getBytes().length),
-                "text/plain", bais);
+        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(content == null ? 0 : content
+                .getBytes().length), "text/plain", bais);
 
         return parentFolder.createDocument(properties, contentStream, versioningState);
     }
@@ -177,7 +177,7 @@ public class FileUtils {
     /**
      * Creates a child folder with the name specified of the type specified. If
      * type is null then will default to cmis:folder.
-     *
+     * 
      * @param parentFolder
      *            the parent folder
      * @param name
@@ -201,7 +201,7 @@ public class FileUtils {
 
     /**
      * Creates a folder using a String identifier.
-     *
+     * 
      * @param parentIdOrPath
      *            the id or path of the parent folder
      * @param name
@@ -229,7 +229,7 @@ public class FileUtils {
 
     /**
      * Downloads the contentStream for the given doc to the specified path.
-     *
+     * 
      * @param doc
      *            the document
      * @param destinationPath
@@ -246,7 +246,7 @@ public class FileUtils {
 
     /**
      * Downloads a document by its id or path.
-     *
+     * 
      * @param docIdOrPath
      *            the id or path of the document
      * @param destinationPath
@@ -276,7 +276,7 @@ public class FileUtils {
 
     /**
      * Deletes an object by path or id (string identifier).
-     *
+     * 
      * @param pathOrIdOfObject
      *            the id or path of the object
      * @param session
@@ -295,7 +295,7 @@ public class FileUtils {
 
     /**
      * Prints out all of the properties for this object to System.out.
-     *
+     * 
      * @param object
      *            the object
      */
@@ -306,7 +306,7 @@ public class FileUtils {
     /**
      * Prints out all of the properties for this object to the given
      * PrintStream.
-     *
+     * 
      * @param object
      *            the object
      */
