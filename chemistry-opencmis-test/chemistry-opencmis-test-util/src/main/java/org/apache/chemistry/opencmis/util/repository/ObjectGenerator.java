@@ -49,7 +49,8 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
-import org.apache.chemistry.opencmis.util.content.LoreIpsum;
+import org.apache.chemistry.opencmis.util.content.fractal.FractalGenerator;
+import org.apache.chemistry.opencmis.util.content.loremipsum.LoremIpsum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -75,6 +76,12 @@ public class ObjectGenerator {
     private boolean fCleanup;
     List<String> fTopLevelDocsCreated; // list of ids created on first level
     List<String> fTopLevelFoldersCreated; // list of ids created on first level
+
+    /**
+     * supported kinds of content
+     *
+     */
+    public enum CONTENT_KIND {StaticText, LoremIpsumText, LoremIpsumHtml, ImageFractalJpeg};
 
     /**
      * Indicates if / how many documents are created in each folder
@@ -121,9 +128,10 @@ public class ObjectGenerator {
     private int fContentSizeInK = 0;
     
     /**
-     * true: use Lore Ipsum generator, false: use static text
+     * Kind of content to create
      */
-    private boolean useLoreIpsum = true;
+    private CONTENT_KIND fContentKind;
+    
 
     private static final String NAMEPROPVALPREFIXDOC = "My_Document-";
     private static final String NAMEPROPVALPREFIXFOLDER = "My_Folder-";
@@ -135,9 +143,14 @@ public class ObjectGenerator {
      * use UUIDs to generate folder and document names
      */
     private boolean fUseUuids;
+    
+    /**
+     * generator for images
+     */
+    private FractalGenerator fractalGenerator;
 
     public ObjectGenerator(BindingsObjectFactory factory, NavigationService navSvc, ObjectService objSvc,
-            RepositoryService repSvc, String repositoryId) {
+            RepositoryService repSvc, String repositoryId, CONTENT_KIND contentKind) {
         super();
         fFactory = factory;
         fNavSvc = navSvc;
@@ -157,6 +170,8 @@ public class ObjectGenerator {
         fCleanup = false;
         fTopLevelDocsCreated = new ArrayList<String>();
         fTopLevelFoldersCreated = new ArrayList<String>();
+        fContentKind = contentKind;
+        fractalGenerator = new FractalGenerator();
     }
 
     public void setNumberOfDocumentsToCreatePerFolder(int noDocumentsToCreate) {
@@ -183,12 +198,12 @@ public class ObjectGenerator {
         fContentSizeInK = sizeInK;
     }
     
-    public boolean getLoreIpsumGenerator() {
-        return useLoreIpsum;
+    public CONTENT_KIND getContentKind() {
+        return fContentKind;
     }
     
-    public void setLoreIpsumGenerator(boolean use) {
-        useLoreIpsum = use;
+    public void setLoreIpsumGenerator(CONTENT_KIND contentKind) {
+        fContentKind = contentKind;
     }
 
     public void setCleanUpAfterCreate(boolean doCleanup) {
@@ -436,9 +451,24 @@ public class ObjectGenerator {
         // log.info("create document in folder " + folderId);
         Properties props = createDocumentProperties(no, level);
         String id = null;
+        
         if (fContentSizeInK > 0) {
-            contentStream = useLoreIpsum ? createContent() : createContentStaticText();
+            switch (fContentKind) {
+            case StaticText:
+                contentStream = createContentStaticText();
+                break;
+            case LoremIpsumText:
+                contentStream = createContentLoremIpsumText();
+                break;
+            case LoremIpsumHtml:
+                contentStream = createContentLoremIpsumHtml();
+                break;
+            case ImageFractalJpeg:
+                contentStream = createContentFractalimageJpeg();
+                break;
+            }
         }
+
         try {
             fTimeLoggerCreateDoc.start();
             id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies,
@@ -481,13 +511,25 @@ public class ObjectGenerator {
         }
     }
 
-    private ContentStream createContent() {
+    private ContentStream createContentLoremIpsumHtml() {
+        ContentStreamImpl content = new ContentStreamImpl();
+        content.setFileName("data.html");
+        content.setMimeType("text/html");
+        int len = fContentSizeInK * 1024; // size of document in K
+        
+        LoremIpsum ipsum = new LoremIpsum();
+        String text = ipsum.generateParagraphsFullHtml(len, true);
+        content.setStream(new ByteArrayInputStream(text.getBytes()));
+        return content;
+    }
+
+    private ContentStream createContentLoremIpsumText() {
         ContentStreamImpl content = new ContentStreamImpl();
         content.setFileName("data.txt");
         content.setMimeType("text/plain");
         int len = fContentSizeInK * 1024; // size of document in K
         
-        LoreIpsum ipsum = new LoreIpsum();
+        LoremIpsum ipsum = new LoremIpsum();
         String text = ipsum.generateParagraphsPlainText(len, 80, true);
         content.setStream(new ByteArrayInputStream(text.getBytes()));
         return content;
@@ -513,6 +555,24 @@ public class ObjectGenerator {
             throw new RuntimeException("Failed to fill content stream with data", e);
         }
         content.setStream(new ByteArrayInputStream(ba.toByteArray()));
+        return content;
+    }
+
+    private ContentStream createContentFractalimageJpeg() {
+        ContentStreamImpl content = null;
+
+        try {
+            ByteArrayOutputStream bos = fractalGenerator.generateFractal();
+            content = new ContentStreamImpl();
+            content.setFileName("image.jpg");
+            content.setMimeType("image/jpeg");
+            content.setStream(new ByteArrayInputStream(bos.toByteArray()));
+            bos.close();            
+        } catch (IOException e) {
+            System.err.println("Error when generating fractal image: " + e);
+            e.printStackTrace();
+        }
+
         return content;
     }
 

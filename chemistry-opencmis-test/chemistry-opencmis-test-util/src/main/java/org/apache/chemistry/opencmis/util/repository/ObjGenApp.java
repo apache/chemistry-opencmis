@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.util.repository;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,9 +27,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -38,16 +34,11 @@ import joptsimple.OptionSpec;
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
-import org.apache.chemistry.opencmis.commons.impl.Converter;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionListType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
+import org.apache.chemistry.opencmis.util.repository.ObjectGenerator.CONTENT_KIND;
 
 public class ObjGenApp {
 
@@ -72,6 +63,7 @@ public class ObjGenApp {
     private static final String CLEANUP = "Cleanup";
     private static final String ROOTFOLDER = "RootFolder";
     private static final String THREADS = "Threads";
+    private static final String CONTENT_KIND = "ContentKind";
 //    private static final String FILE = "File";
 
     private static final String BINDING_ATOM = "AtomPub";
@@ -80,6 +72,7 @@ public class ObjGenApp {
     private CmisBinding binding;
     private boolean fUsingAtom;
     private String fUrlStr;
+    private CONTENT_KIND fContentKind;
 
     OptionSpec<String> fCmd;
     OptionSpec<Integer> fDepth;
@@ -95,6 +88,7 @@ public class ObjGenApp {
     OptionSpec<String> fRootFolder;
     OptionSpec<Integer> fThreads;
     OptionSpec<String> fFileName;
+    OptionSpec<String> fContentKindStr;
     
     public static void main(String[] args) {
 
@@ -139,7 +133,9 @@ public class ObjGenApp {
         fThreads = parser.accepts(THREADS).withOptionalArg().ofType(Integer.class).defaultsTo(1).describedAs(
                 "Number of threads to start in parallel");
 //        fFileName = parser.accepts(FILE).withRequiredArg().ofType(String.class).describedAs("Input File");
-
+        fContentKindStr = parser.accepts(CONTENT_KIND).withOptionalArg().ofType(String.class).defaultsTo("lorem/text")
+                .describedAs("kind of content: static/text, lorem/text, lorem/html, fractal/jpeg");
+        
         OptionSet options = parser.parse(args);
 
         if (options.valueOf(fCmd) == null || options.has("?")) {
@@ -154,6 +150,26 @@ public class ObjGenApp {
             System.out.println("Unknown option <Binding>: " + options.valueOf(fBinding) + " allowed values: "
                     + BINDING_WS + " or " + BINDING_ATOM);
             return;
+        }
+
+        String kind = options.valueOf(fContentKindStr);
+        if (null == kind) {
+            if (options.valueOf(fContentSize) > 0)
+                fContentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+            else
+                fContentKind = null;
+        } if (kind.equals("static/text"))
+            fContentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+        else if (kind.equals("lorem/text"))
+            fContentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
+        else if (kind.equals("lorem/html"))
+            fContentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumHtml;
+        else if (kind.equals("fractal/jpeg"))
+            fContentKind = ObjectGenerator.CONTENT_KIND.ImageFractalJpeg;
+        else {
+            System.out.println("Unknown content kind: " + options.valueOf(fContentKindStr));
+            System.out.println("  must be one of static/text, lorem/text, lorem/html, fractal/jpeg");
+            usage(parser);
         }
 
         if (options.valueOf(fCmd).equals("FillRepository")) {
@@ -204,7 +220,7 @@ public class ObjGenApp {
                     + PROP_ATOMPUB_URL
                     + "=http://localhost:8080/opencmis/atom -cp ... "
                     + "org.apache.chemistry.opencmis.util.repository.ObjGenApp --Binding=AtomPub --Command=CreateDocument "
-                    + "--RepositoryId=A1 --ContentSizeInKB=25");
+                    + "--RepositoryId=A1 --ContentSizeInKB=25 --ContentKind=lorem/text");
             return;
         } catch (IOException e) {
             e.printStackTrace();
@@ -216,7 +232,7 @@ public class ObjGenApp {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator.prepareForCreateTree(
                 getBinding(), repoId, docsPerFolder, foldersPerFolders, depth, documentType, folderType,
-                contentSizeInKB, rootFolderId, doCleanup);
+                contentSizeInKB, rootFolderId, fContentKind, doCleanup);
         ObjectGenerator gen = runner.getObjectGenerator();
         runner.doCreateTree();
 
@@ -240,7 +256,7 @@ public class ObjGenApp {
         // Step 2: fill each root folder with an object tree
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
                 .prepareForCreateTreeMT(getBinding(), repoId, docsPerFolder, foldersPerFolders, depth, documentType,
-                        folderType, contentSizeInKB, folderIds, doCleanup);
+                        folderType, contentSizeInKB, folderIds, fContentKind, doCleanup);
 
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
         System.out.println("Filling repository succeeded.");
@@ -260,6 +276,7 @@ public class ObjGenApp {
         System.out.println("Delete all objects after creation: " + options.valueOf(fCleanup));
         System.out.println("Number of actions to perform: " + options.valueOf(fCount));
         System.out.println("Number of threads to start: " + options.valueOf(fThreads));
+        System.out.println("Kind of created content: " + options.valueOf(fContentKindStr));
     }
 
     private void createSingleDocument(OptionSet options) {
@@ -321,7 +338,7 @@ public class ObjGenApp {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
                 .prepareForCreateDocument(getBinding(), repoId, documentType, contentSizeInKB, rootFolderId, docCount,
-                        doCleanup);
+                        fContentKind, doCleanup);
         ObjectGenerator gen = runner.getObjectGenerator();
         String[] ids = runner.doCreateDocument();
         System.out.println();
@@ -345,7 +362,7 @@ public class ObjGenApp {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
                 .prepareForCreateDocumentMT(noThreads, getBinding(), repoId, documentType, contentSizeInKB,
-                        rootFolderId, docCount, doCleanup);
+                        rootFolderId, docCount, fContentKind, doCleanup);
 
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
         System.out.println("Document creation succeeded. All threads terminated.");

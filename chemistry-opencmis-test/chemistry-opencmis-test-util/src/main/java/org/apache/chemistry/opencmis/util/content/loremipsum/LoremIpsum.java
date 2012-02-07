@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.util.content;
+package org.apache.chemistry.opencmis.util.content.loremipsum;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -35,7 +35,7 @@ import java.util.Set;
  * Note: original code licensed under the BSD license
  * 
  */
-public class LoreIpsum {
+public class LoremIpsum {
 
     private static class WordLengthPair {
         public int len1;
@@ -205,13 +205,13 @@ public class LoreIpsum {
      * 
      * @constructor
      */
-    public LoreIpsum() {
+    public LoremIpsum() {
         generateChains(this.sample);
         generateStatistics(this.sample);
         initializeDictionary(this.dictionary);
     };
 
-    public LoreIpsum(String sample, String dictionary) {
+    public LoremIpsum(String sample, String dictionary) {
         this.sample = sample;
         this.dictionary = dictionary;
         generateChains(this.sample);
@@ -219,7 +219,7 @@ public class LoreIpsum {
         initializeDictionary(this.dictionary);
     };
 
-    public LoreIpsum(String sample, String[] dictionary) {
+    public LoremIpsum(String sample, String[] dictionary) {
         this.sample = sample;
         this.dictionary = null;
         generateChains(this.sample);
@@ -227,7 +227,7 @@ public class LoreIpsum {
         initializeDictionary(dictionary);
     };
 
-    public LoreIpsum(String sample) {
+    public LoremIpsum(String sample) {
         this.sample = sample;
         String[] dictWords = filterNotEmptyOrWhiteSpace(sample.split("[^\\p{L}]"/* "\\W" */)).toArray(new String[0]);
         Set<String> dict = new HashSet<String>(Arrays.asList(dictWords));
