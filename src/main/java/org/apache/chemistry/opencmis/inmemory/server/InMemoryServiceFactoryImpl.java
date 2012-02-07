@@ -285,6 +285,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 //      List<String> allAvailableRepositories = storeManager.getAllRepositoryIds();
       String repositoryId = parameters.get(ConfigConstants.REPOSITORY_ID);
       String doFillRepositoryStr = parameters.get(ConfigConstants.USE_REPOSITORY_FILER);
+      String contentKindStr = parameters.get(ConfigConstants.CONTENT_KIND);
       boolean doFillRepository = doFillRepositoryStr == null ? false : Boolean.parseBoolean(doFillRepositoryStr);
 
       if (doFillRepository /* && !allAvailableRepositories.contains(repositoryId) */ ) {
@@ -328,9 +329,25 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
           if (null != contentSizeKBStr) {
             contentSizeKB = Integer.parseInt(contentSizeKBStr);
         }
-
+          
+        ObjectGenerator.CONTENT_KIND contentKind;
+        if (null == contentKindStr)
+            contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
+        else {
+            if (contentKindStr.equals("static/text"))
+                contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+            else if (contentKindStr.equals("lorem/text"))
+                contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
+            else if (contentKindStr.equals("lorem/html"))
+                contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumHtml;
+            else if (contentKindStr.equals("fractal/jpeg"))
+                contentKind = ObjectGenerator.CONTENT_KIND.ImageFractalJpeg;
+            else
+                contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+        }
           // Create a hierarchy of folders and fill it with some documents
-          ObjectGenerator gen = new ObjectGenerator(objectFactory, svc, svc, svc, repositoryId);
+            ObjectGenerator gen = new ObjectGenerator(objectFactory, svc, svc, svc, repositoryId,
+                   contentKind);
 
           gen.setNumberOfDocumentsToCreatePerFolder(docsPerLevel);
 
