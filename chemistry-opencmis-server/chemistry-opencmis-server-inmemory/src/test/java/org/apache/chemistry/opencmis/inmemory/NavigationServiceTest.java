@@ -229,7 +229,8 @@ public class NavigationServiceTest extends AbstractServiceTest {
 
     private int createFolderHierachy(int levels, int childrenPerLevel) {
 
-        ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId);
+        ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId,
+                ObjectGenerator.CONTENT_KIND.LoremIpsumText);
         gen.createFolderHierachy(levels, childrenPerLevel, fRootFolderId);
         int objCount = gen.getObjectsInTotal();
         return objCount;
