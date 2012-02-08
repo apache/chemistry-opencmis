@@ -588,4 +588,14 @@ public class ObjectStoreImpl implements ObjectStore {
         return result;
     }
 
+    public boolean isTypeInUse(String typeId) {
+        // iterate over all the objects and check for each if the type matches
+        for (String objectId : getIds()) {
+            StoredObject so = getObjectById(objectId);
+            if (so.getTypeId().equals(typeId))
+                return true;
+        }
+        return false;
+    }
+
 }

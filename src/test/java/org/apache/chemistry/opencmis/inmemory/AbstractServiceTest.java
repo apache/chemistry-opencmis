@@ -58,7 +58,6 @@ import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
-import org.apache.chemistry.opencmis.inmemory.RepositoryServiceTest.UnitTestRepositoryInfo;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceFactoryImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.commons.logging.Log;
@@ -100,6 +99,10 @@ public class AbstractServiceTest {
         fTypeCreatorClassName = typeCreatorClassName;
     }
 
+    protected String getTypeCreatorClass() {
+        return fTypeCreatorClassName;
+    }
+
     protected void setUp() {
         // super.setUp();
         LOG.debug("Initializing InMemory Test with type creator class: " + fTypeCreatorClassName);
@@ -108,9 +111,6 @@ public class AbstractServiceTest {
         // attach repository info to the session:
         parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, fTypeCreatorClassName);
         parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
-
-        // attach repository info to the session:
-        parameters.put(ConfigConstants.REPOSITORY_INFO_CREATOR_CLASS, UnitTestRepositoryInfo.class.getName());
 
         // give subclasses a chance to provide additional parameters for special
         // tests
@@ -415,4 +415,9 @@ public class AbstractServiceTest {
         assertTrue(pd.getFirstValue() instanceof String);
         return (String) pd.getFirstValue();
     }
+    
+    protected void deleteDocument(String docId) {
+        fObjSvc.deleteObject(fRepositoryId, docId, true, null);
+    }
+
 }

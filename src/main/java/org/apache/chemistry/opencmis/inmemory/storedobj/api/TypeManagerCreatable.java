@@ -23,14 +23,30 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 public interface TypeManagerCreatable extends TypeManager {
     
+
     /**
      * Add a type to the type system. Add all properties from inherited types,
      * add type to children of parent types.
-     *
-     * @param repositoryId
-     *            repository to which the type is added
+     * 
      * @param cmisType
      *            new type to add
-     */  
-    void addTypeDefinition(TypeDefinition cmisType);
+     */
+    public abstract void addTypeDefinition(TypeDefinition typeDefinition);
+    
+    /**
+     * Modify an existing type definition
+     * 
+     * @param typeDefinition
+     *          type to be modified
+     */    
+    public void updateTypeDefinition(TypeDefinition typeDefinition);
+
+   /**
+     * Delete a type from the type system. Delete will succeed only if type is not in use.
+     * Otherwise an exception is thrown
+     * 
+     * @param cmisType
+     *            type to delete
+     */
+    public abstract void deleteTypeDefinition(String typeId);
 }

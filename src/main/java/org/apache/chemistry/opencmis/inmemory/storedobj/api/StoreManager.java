@@ -27,7 +27,6 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
  * interface to a repository implementation. This interface is the entry point
@@ -162,7 +161,7 @@ public interface StoreManager {
      * @return
      *      type manager for this repository or null if repository is unknown
      */
-    TypeManager getTypeManager(String repositoryId);
+    TypeManagerCreatable getTypeManager(String repositoryId);
     
     /**
      * Execute a query against the repository (same parameter as the discovery service
