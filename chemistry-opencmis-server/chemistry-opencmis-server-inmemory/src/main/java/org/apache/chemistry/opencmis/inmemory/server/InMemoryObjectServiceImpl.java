@@ -18,11 +18,9 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +44,6 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
-import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -239,6 +236,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
         }
 
+        if ( so.getChangeToken() != null && ( changeToken == null || !so.getChangeToken().equals( changeToken.getValue() ) ) )
+            throw new CmisUpdateConflictException( "deleteContentStream failed, ChangeToken does not match." );
+             
         if (!(so instanceof Content)) {
             throw new CmisObjectNotFoundException("Id" + objectId
                     + " does not refer to a document, but only documents can have content");
@@ -540,6 +540,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         StoredObject so = validator.setContentStream(context, repositoryId, objectId, overwriteFlag, extension);
 
+        if ( so.getChangeToken() != null && ( changeToken == null || !so.getChangeToken().equals( changeToken.getValue() ) ) )
+            throw new CmisUpdateConflictException( "setContentStream failed, ChangeToken does not match." );
+             
         if (!(so instanceof Document || so instanceof VersionedDocument || so instanceof DocumentVersion)) {
             throw new CmisObjectNotFoundException("Id" + objectId
                     + " does not refer to a document, but only documents can have content");
@@ -586,7 +589,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         if (changeToken != null && changeToken.getValue() != null
                 && Long.valueOf(so.getChangeToken()) > Long.valueOf(changeToken.getValue())) {
-            throw new CmisUpdateConflictException(" updateProperties failed: outdated changeToken");
+            throw new CmisUpdateConflictException("updateProperties failed: changeToken does not match");
         }
 
         // update properties
