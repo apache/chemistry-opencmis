@@ -297,24 +297,35 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         // delete content again
         Holder<String> idHolder = new Holder<String>(id);
-        fObjSvc.deleteContentStream(fRepositoryId, idHolder, null, null);
+        Properties props = fObjSvc.getProperties(fRepositoryId, id, PropertyIds.CHANGE_TOKEN, null);
+        String changeToken = (String) props.getProperties().get(PropertyIds.CHANGE_TOKEN).getFirstValue();
+        Holder<String> tokenHolder = new Holder<String>(changeToken);
+        fObjSvc.deleteContentStream(fRepositoryId, idHolder, tokenHolder, null);
+        
         try {
+            props = fObjSvc.getProperties(fRepositoryId, id, PropertyIds.CHANGE_TOKEN, null);
+            changeToken = (String) props.getProperties().get(PropertyIds.CHANGE_TOKEN).getFirstValue();
+            tokenHolder = new Holder<String>(changeToken);
             sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */, BigInteger
                     .valueOf(-1) /* length */, null);
             fail("getContentStream with non existing content should raise a CmisConstraintException");
         } catch (Exception e) {
             assertTrue(e instanceof CmisConstraintException);
         }
+        
         // create content again in a second call
         ContentStream contentStream = createContent();
-        fObjSvc.setContentStream(fRepositoryId, idHolder, true, null, contentStream, null);
+        fObjSvc.setContentStream(fRepositoryId, idHolder, true, tokenHolder, contentStream, null);
         sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */, BigInteger
                 .valueOf(-1) /* length */, null);
         verifyContentResult(sd);
 
         // update content and do not set overwrite flag, expect failure
         try {
-            fObjSvc.setContentStream(fRepositoryId, idHolder, false, null, contentStream, null);
+            props = fObjSvc.getProperties(fRepositoryId, id, PropertyIds.CHANGE_TOKEN, null);
+            changeToken = (String) props.getProperties().get(PropertyIds.CHANGE_TOKEN).getFirstValue();
+            tokenHolder = new Holder<String>(changeToken);
+            fObjSvc.setContentStream(fRepositoryId, idHolder, false, tokenHolder, contentStream, null);
             fail("setContentStream with existing content and no overWriteFlag should fail");
         } catch (Exception e) {
             assertTrue(e instanceof CmisContentAlreadyExistsException);
