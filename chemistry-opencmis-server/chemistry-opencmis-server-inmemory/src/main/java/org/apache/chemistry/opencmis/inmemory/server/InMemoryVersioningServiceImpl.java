@@ -156,7 +156,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         if (null == versionSeriesId)
             versionSeriesId = objectId;
         if (null == versionSeriesId)
-            throw new CmisInvalidArgumentException("getAllVersions requires a version series id, but ist was null.");
+            throw new CmisInvalidArgumentException("getAllVersions requires a version series id, but it was null.");
         so = validator.getAllVersions(context, repositoryId, objectId, versionSeriesId, extension);
 
         if (null == objectId)
@@ -164,22 +164,21 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         if (!(so instanceof VersionedDocument)) {
             if (!(so instanceof DocumentVersion))
-                throw new CmisInvalidArgumentException("getAllVersions requires a id of a versioned document.");
+                throw new CmisInvalidArgumentException("getAllVersions requires an id of a versioned document.");
             so = ((DocumentVersion)so).getParentDocument();
         }
-        ObjectData objData = getObject(context, repositoryId, objectId, filter, includeAllowableActions,
-                IncludeRelationships.NONE,extension, objectInfos);
-        res.add(objData);
+//        ObjectData objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions,
+//                IncludeRelationships.NONE,extension, objectInfos);
+//        res.add(objData);
 
         VersionedDocument verDoc = (VersionedDocument) so;
         res = new ArrayList<ObjectData>();
         List<DocumentVersion> versions = verDoc.getAllVersions();
         for (DocumentVersion version : versions) {
-            objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
+            ObjectData objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
                     IncludeRelationships.NONE,extension, objectInfos);
             res.add(objData);
         }
-
 
         // reverse list of versions because spec expects latest version first
         List<ObjectData> temp = new ArrayList<ObjectData>(res.size());
