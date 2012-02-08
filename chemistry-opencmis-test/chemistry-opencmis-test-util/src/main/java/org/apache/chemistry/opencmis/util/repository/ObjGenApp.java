@@ -19,6 +19,8 @@
 package org.apache.chemistry.opencmis.util.repository;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,6 +35,7 @@ import joptsimple.OptionSpec;
 
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -64,6 +67,7 @@ public class ObjGenApp {
     private static final String ROOTFOLDER = "RootFolder";
     private static final String THREADS = "Threads";
     private static final String CONTENT_KIND = "ContentKind";
+    private static final String FILE_NAME_PATTERN = "FileName";
 //    private static final String FILE = "File";
 
     private static final String BINDING_ATOM = "AtomPub";
@@ -89,6 +93,7 @@ public class ObjGenApp {
     OptionSpec<Integer> fThreads;
     OptionSpec<String> fFileName;
     OptionSpec<String> fContentKindStr;
+    OptionSpec<String> fFileNamePattern;
     
     public static void main(String[] args) {
 
@@ -135,6 +140,8 @@ public class ObjGenApp {
 //        fFileName = parser.accepts(FILE).withRequiredArg().ofType(String.class).describedAs("Input File");
         fContentKindStr = parser.accepts(CONTENT_KIND).withOptionalArg().ofType(String.class).defaultsTo("lorem/text")
                 .describedAs("kind of content: static/text, lorem/text, lorem/html, fractal/jpeg");
+        fFileNamePattern = parser.accepts(FILE_NAME_PATTERN).withOptionalArg().ofType(String.class).defaultsTo("ContentData-%03d.bin")
+                .describedAs("file name pattern to be used with CreateFiles action");
         
         OptionSet options = parser.parse(args);
 
@@ -172,7 +179,10 @@ public class ObjGenApp {
             usage(parser);
         }
 
-        if (options.valueOf(fCmd).equals("FillRepository")) {
+        if (null == options.valueOf(fCmd)) {
+            System.out.println("No command given.");
+            usage(parser);
+        } else if (options.valueOf(fCmd).equals("FillRepository")) {
             fillRepository(options);
         } else if (options.valueOf(fCmd).equals("CreateDocument")) {
             createSingleDocument(options);
@@ -182,6 +192,8 @@ public class ObjGenApp {
             repositoryInfo(options);
 //        } else if (options.valueOf(fCmd).equals("CreateTypes")) {
 //            createTypes(options);
+        } else if (options.valueOf(fCmd).equals("CreateFiles")) {
+            createFiles(options);
         } else if (options.valueOf(fCmd).equals("GetUrl")) {
             getUrl(getConfiguredUrl());
         } else {
@@ -212,7 +224,7 @@ public class ObjGenApp {
             System.out.println("Usage:");
             parser.printHelpOn(System.out);
             System.out.println();
-            System.out.println("Command is one of [CreateDocument, CreateFolder, FillRepository, RepositoryInfo]");
+            System.out.println("Command is one of [CreateDocument, CreateFolder, FillRepository, RepositoryInfo, CreateFiles]");
             System.out.println("JVM system properties: " + PROP_ATOMPUB_URL + ", " + PROP_WS_URL);
             System.out.println();
             System.out.println("Example: ");
@@ -441,6 +453,72 @@ public class ObjGenApp {
         
     private void repositoryInfo(OptionSet options) {
         callRepoInfo(options.valueOf(fRepoId), options.valueOf(fCount));
+    }
+
+    private void createFiles(OptionSet options) {
+        ContentStream contentStream = null;
+        String fileNamePattern = options.valueOf(fFileNamePattern);
+        int count = options.valueOf(fCount);
+        int contentSize = options.valueOf(fContentSize);
+        
+        System.out.println("Creating local files with content: ");
+        System.out.println("Kind: " + options.valueOf(fDocsPerFolder));
+        System.out.println("Number of files: " + count);
+        System.out.println("File name pattern: " + fileNamePattern);
+        System.out.println("Kind of content: " + options.valueOf(fContentKindStr));
+        System.out.println("Size of content (text only): " + contentSize);
+        
+        ObjectGenerator objGen = new ObjectGenerator(null, null, null, null, null, fContentKind);
+        objGen.setContentSizeInKB(contentSize);
+        
+        InputStream is = null;
+        FileOutputStream os = null;
+        
+        try {
+            for (int i=0; i<count; i++) {
+                String fileName = String.format(fileNamePattern, i);
+                System.out.println("Generating file: " + fileName);
+                if (contentSize > 0) {
+                    switch (fContentKind) {
+                    case StaticText:
+                        contentStream = objGen.createContentStaticText();
+                        break;
+                    case LoremIpsumText:
+                        contentStream =  objGen.createContentLoremIpsumText();
+                        break;
+                    case LoremIpsumHtml:
+                        contentStream =  objGen.createContentLoremIpsumHtml();
+                        break;
+                    case ImageFractalJpeg:
+                        contentStream =  objGen.createContentFractalimageJpeg();
+                        break;
+                    }
+                }
+
+                // write to a file:
+                is = contentStream.getStream();
+                os = new FileOutputStream (fileName);
+                byte[] b = new byte[64 * 1024];  
+                int read;  
+                while ((read = is.read(b)) != -1)   
+                    os.write(b, 0, read);  
+                is.close();
+                is = null;
+                os.close();
+                os = null;
+            }
+        } catch (Exception e) {
+            System.err.println("Error generating file: " + e);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != is)
+                        is.close();
+                if (null != os)
+                    os.close();
+            } catch (IOException e) {
+            }            
+        }
     }
 
     private CmisBinding getBinding() {

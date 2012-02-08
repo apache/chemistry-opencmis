@@ -101,7 +101,7 @@ public class FractalGenerator {
        
         Random ran = new Random();
         color = colorSchemes[ran.nextInt(colorSchemes.length)];
-        parts = ran.nextInt(30)+3;
+        parts = ran.nextInt(13)+3;
         LOG.debug("Parts: " + parts);
         maxIterations = DEFAULT_MAX_ITERATIONS;
         LOG.debug("Original rect " + ": (" + rect.getRMin() + "r," + rect.getRMax() +
@@ -128,6 +128,7 @@ public class FractalGenerator {
         double i1New =  rect.getIMax() - (rect.getHeight() * newRowTile / parts);
         double i2New =  rect.getIMax() - (rect.getHeight() * (newRowTile+1) / parts);
         rect.set(r1New, r2New, i1New, i2New);
+        randomizeRect(rect);
         LOG.debug("Done generating fractals.");
         
         return bos;
@@ -168,9 +169,9 @@ public class FractalGenerator {
 
         calculator = new FractalCalculator(rect, maxIterations, imageWidth, imageHeight, getCurrentColorMap(),
                 juliaPoint);
-        BufferedImage image = calculator.calcFractal();
-
-        findNewRect(image);
+        int[][] iterations = calculator.calcFractal();
+        BufferedImage image = calculator.mapItersToColors(iterations);
+        findNewRect(image, iterations);
 
         // fast method to write to a file with default options
         // ImageIO.write((BufferedImage)(image), "jpg", new File("fractal-" + counter++ + ".jpg"));
@@ -436,18 +437,18 @@ public class FractalGenerator {
     }
 
 
-    private void findNewRect(BufferedImage image) {
+    private void findNewRect(BufferedImage image, int[][] iterations) {
 
         int newWidth = image.getWidth() / parts;
         int newHeight = image.getHeight() / parts;
         int i=0, j=0;
         int noTiles = (image.getWidth() / newWidth) * (image.getHeight() / newHeight); // equals parts but be aware of rounding errors!;
-        double[][] stdDev = new double [noTiles] [3];
+        double[] stdDev = new double [noTiles];
 
         for (int y = 0; y+newHeight <= image.getHeight(); y+=newHeight) {
             for (int x = 0; x+newWidth <= image.getWidth(); x+=newWidth) {
                 Rectangle subRect = new Rectangle(x, y, newWidth, newHeight);
-                calcStdDev(image, subRect, stdDev[i*parts+j]);
+                stdDev[i*parts+j] = calcStdDev(iterations, subRect);
                 ++j;
             }
             ++i;
@@ -458,50 +459,32 @@ public class FractalGenerator {
         double max = 0;
         int index = 0;
         for (i=0; i<noTiles; i++) {
-            double avg = (stdDev[i][0] + stdDev[i][1] +stdDev[i][2]) / 3;
-            if (avg > max) {
+            if (stdDev[i] > max) {
                 index = i;
-                max = avg;
+                max = stdDev[i];
             }
         }
         newRowTile = index / parts;
         newColTile = index % parts;
     }
 
-    private void calcStdDev(BufferedImage image, Rectangle rect, double[] stdDev) {
+    private double calcStdDev(int[][] iterations, Rectangle rect) {
 
-        int sumR = 0, sumG = 0, sumB = 0;
-        long sumSR = 0, sumSG = 0, sumSB = 0;
+        int sum=0;
+        long sumSquare=0;
 
         for (int x = rect.x; x < rect.x+rect.width; x+=1) {
             for (int y = rect.y; y < rect.y+rect.height; y+=1) {
-                int pixel = image.getRGB(x, y);
-                byte r, g, b, alpha;
-
-                alpha = (byte) (pixel >>> 24);
-                r = (byte) (pixel >>> 16);
-                g = (byte) (pixel >>> 8);
-                b = (byte) pixel;
-                int red = r & 0xFF;
-                int green = g & 0xFF;
-                int blue = b & 0xFF;
-                sumR +=red;
-                sumG += green;
-                sumB += blue;
-                sumSR +=red*red;
-                sumSG += green*green;
-                sumSB += blue*blue;
+                int iters = iterations[x][y];
+                sum +=iters;
+                sumSquare +=iters*iters;
             }
         }
         int count = rect.width * rect.height;
         double mean = 0.0;
 
-        mean = sumR / count;
-        stdDev[0] = Math.sqrt(sumSR/count - (mean * mean));
-        mean = sumG / count;
-        stdDev[1] = Math.sqrt(Math.sqrt(sumSG/count - (mean * mean)));
-        mean = sumB / count;
-        stdDev[2] = Math.sqrt(Math.sqrt(sumSB/count - (mean * mean)));
+        mean = sum / count;
+        return Math.sqrt(sumSquare/count - (mean * mean));
     }
 
 }

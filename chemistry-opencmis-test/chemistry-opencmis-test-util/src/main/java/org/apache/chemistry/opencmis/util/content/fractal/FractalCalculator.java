@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 
 final class FractalCalculator {
     private int[] colorMap;
+    protected int[][] noIterations;
     private double delta;
     private double iRangeMax;
     private double iRangeMin;
@@ -61,34 +62,44 @@ final class FractalCalculator {
         }
     }
 
-    public BufferedImage calcFractal() {
-
-        // Assign a color to every pixel ( x , y ) in the Image, corresponding
-        // to
-        // one point, z, in the imaginary plane ( zr, zi ).
-        BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_3BYTE_BGR);
+    public int[][] calcFractal() {
+        noIterations = new int[ imageWidth ][ imageHeight ];
 
         // For each pixel...
         for (int x = 0; x < imageWidth; x++) {
             for (int y = 0; y < imageHeight; y++) {
-                int color = getColor(x, y);
+                double zR = rRangeMin + x * delta;
+                double zI = iRangeMin + (imageHeight - y) * delta;
+
+                // Is the point inside the set?
+                if (useJulia)
+                    noIterations[x][y] = testPointJuliaSet(zR, zI, maxIterations);
+                else
+                    noIterations[x][y] = testPointMandelbrot(zR, zI, maxIterations);            
+            }
+        }
+        return noIterations;
+    }
+
+    public BufferedImage mapItersToColors(int[][] iterations) {
+
+        // Assign a color to every pixel ( x , y ) in the Image, corresponding
+        // to
+        // one point, z, in the imaginary plane ( zr, zi ).
+        BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_3BYTE_BGR );
+
+        // For each pixel...
+        for (int x = 0; x < imageWidth; x++) {
+            for (int y = 0; y < imageHeight; y++) {
+                int color = getColor(iterations[x][y]);
                 image.setRGB(x, y, color);
             }
         }
         return image;
     }
 
-    private int getColor(int x, int y) {
+    protected int getColor(int numIterations) {
         int c = Color.black.getRGB();
-        double zR = rRangeMin + x * delta;
-        double zI = iRangeMin + (imageHeight - y) * delta;
-
-        // Is the point inside the set?
-        int numIterations;
-        if (useJulia)
-            numIterations = testPointJuliaSet(zR, zI, maxIterations);
-        else
-            numIterations = testPointMandelbrot(zR, zI, maxIterations);
 
         if (numIterations != 0) {
             // The point is outside the set. It gets a color based on the number

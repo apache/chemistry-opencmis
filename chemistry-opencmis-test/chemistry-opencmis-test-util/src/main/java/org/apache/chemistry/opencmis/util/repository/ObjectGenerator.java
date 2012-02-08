@@ -147,7 +147,7 @@ public class ObjectGenerator {
     /**
      * generator for images
      */
-    private FractalGenerator fractalGenerator;
+    private FractalGenerator fractalGenerator = null;
 
     public ObjectGenerator(BindingsObjectFactory factory, NavigationService navSvc, ObjectService objSvc,
             RepositoryService repSvc, String repositoryId, CONTENT_KIND contentKind) {
@@ -171,7 +171,6 @@ public class ObjectGenerator {
         fTopLevelDocsCreated = new ArrayList<String>();
         fTopLevelFoldersCreated = new ArrayList<String>();
         fContentKind = contentKind;
-        fractalGenerator = new FractalGenerator();
     }
 
     public void setNumberOfDocumentsToCreatePerFolder(int noDocumentsToCreate) {
@@ -511,7 +510,7 @@ public class ObjectGenerator {
         }
     }
 
-    private ContentStream createContentLoremIpsumHtml() {
+    public ContentStream createContentLoremIpsumHtml() {
         ContentStreamImpl content = new ContentStreamImpl();
         content.setFileName("data.html");
         content.setMimeType("text/html");
@@ -523,7 +522,7 @@ public class ObjectGenerator {
         return content;
     }
 
-    private ContentStream createContentLoremIpsumText() {
+    public ContentStream createContentLoremIpsumText() {
         ContentStreamImpl content = new ContentStreamImpl();
         content.setFileName("data.txt");
         content.setMimeType("text/plain");
@@ -535,7 +534,7 @@ public class ObjectGenerator {
         return content;
     }
 
-    private ContentStream createContentStaticText() {
+    public ContentStream createContentStaticText() {
         ContentStreamImpl content = new ContentStreamImpl();
         content.setFileName("data.txt");
         content.setMimeType("text/plain");
@@ -558,7 +557,10 @@ public class ObjectGenerator {
         return content;
     }
 
-    private ContentStream createContentFractalimageJpeg() {
+    public ContentStream createContentFractalimageJpeg() {
+        if (null == fractalGenerator)
+            fractalGenerator = new FractalGenerator();
+
         ContentStreamImpl content = null;
 
         try {
