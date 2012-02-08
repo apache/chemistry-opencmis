@@ -28,6 +28,8 @@ import java.util.Map.Entry;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
@@ -142,14 +144,14 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      */
     public void addTypeDefinition(TypeDefinition cmisType) {
         if (fTypesMap.containsKey(cmisType.getId())) {
-            throw new RuntimeException("You cannot add type with id " + cmisType.getId()
+            throw new CmisConstraintException("You cannot add type with id " + cmisType.getId()
                     + " because it already exists.");
         }
 
         TypeDefinitionContainerImpl typeContainer = new TypeDefinitionContainerImpl(cmisType);
 
         if (!fTypesMap.containsKey(cmisType.getParentTypeId())) {
-            throw new RuntimeException("Cannot add type, because parent with id " + cmisType.getParentTypeId()
+            throw new CmisConstraintException("Cannot add type, because parent with id " + cmisType.getParentTypeId()
                     + " does not exist.");
         }
 
@@ -166,6 +168,19 @@ public class TypeManagerImpl implements TypeManagerCreatable {
         // add type to type map
         fTypesMap.put(cmisType.getId(), typeContainer);
     }
+    
+    public void updateTypeDefinition(TypeDefinition typeDefinition) {
+        throw new CmisNotSupportedException("updating a type definition is not supported.");
+    }
+
+    /**
+     * Remove a type from a type system
+     * @param typeId
+     */
+    public void deleteTypeDefinition(String typeId) {
+        fTypesMap.remove(typeId);       
+    }
+
 
     /**
      * Remove all types from the type system. After this call only the default

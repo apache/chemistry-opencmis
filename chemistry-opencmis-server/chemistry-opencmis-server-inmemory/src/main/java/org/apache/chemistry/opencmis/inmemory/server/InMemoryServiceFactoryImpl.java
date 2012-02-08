@@ -153,6 +153,10 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         threadLocalService = null;
     }
 
+    public StoreManager getStoreManger() {
+        return storeManager;
+    }
+    
     private void initStorageManager(Map<String, String> parameters) {
         // initialize in-memory management
         String repositoryClassName = (String) parameters.get(ConfigConstants.REPOSITORY_CLASS);

@@ -98,6 +98,13 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
         setIsIncludedInSupertypeQuery(true);
         setIsQueryable(false);
 
+        // TODO: add with CMIS 1.1 extensions
+//        TypeMutabilityCapabilitiesImpl caps = new TypeMutabilityCapabilitiesImpl();
+//        caps.setSupportsCreate(createAndDeletable);
+//        caps.setSupportsUpdate(false);
+//        caps.setSupportsDelete(createAndDeletable);
+//        super.setTypeMutability(caps);
+
         // set base properties
         Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();
         setPropertyDefinitions(props); // set initial empty set of properties

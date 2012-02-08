@@ -61,6 +61,7 @@ import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -480,8 +481,8 @@ public class StoreManagerImpl implements StoreManager {
         return tdcClone;
     }
 
-    public TypeManager getTypeManager(String repositoryId) {
-        TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
+    public TypeManagerCreatable getTypeManager(String repositoryId) {
+        TypeManagerCreatable typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         return typeManager;
     }
 

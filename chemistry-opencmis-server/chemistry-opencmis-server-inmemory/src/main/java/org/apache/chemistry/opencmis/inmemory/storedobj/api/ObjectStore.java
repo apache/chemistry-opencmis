@@ -227,4 +227,14 @@ public interface ObjectStore {
      */
     Acl applyAcl(StoredObject so, Acl aces, AclPropagation aclPropagation, String principalId);
     
+    /**
+     * Check if this store contains any object with the given type id
+     * 
+     * @param typeId
+     *      id of type definition to check
+     * @return
+     *      true if at least one object in the store has the given type, false
+     *      if no objects exist having this type
+     */
+    boolean isTypeInUse(String typeId);
 }

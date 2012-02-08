@@ -33,7 +33,10 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 
 public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
@@ -141,6 +144,70 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         return result;
     }
 
+    public void createTypeDefinition(String repositoryId, Holder<TypeDefinition> type, ExtensionsData extension) {
+
+        TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
+        if (null == typeManager)
+            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        
+        String typeId = type.getValue().getId();
+
+        if (null == typeId)
+            throw new CmisInvalidArgumentException("Cannot add type, type id is required.");
+        
+        if (typeManager.getTypeById(typeId) != null)
+            throw new CmisInvalidArgumentException("Cannot add type "
+                    + typeId + ", type already exists");
+        
+        String parentTypeId = type.getValue().getParentTypeId();
+
+        if (null == parentTypeId)
+            throw new CmisInvalidArgumentException("Cannot add type, parent type id is required.");
+        
+        if (typeManager.getTypeById(parentTypeId) == null)
+            throw new CmisInvalidArgumentException("Cannot add type "
+                    + parentTypeId + " is unknown.");
+
+        typeManager.addTypeDefinition(type.getValue());
+    }
+
+    public void updateTypeDefinition(String repositoryId, Holder<TypeDefinition> type, ExtensionsData extension) {
+        String typeId = type.getValue().getId();
+        TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
+        if (null == typeManager)
+            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        
+        TypeDefinitionContainer typeDefC = typeManager.getTypeById(typeId);
+        if (null == typeDefC)
+            throw new CmisInvalidArgumentException("Cannot update type unknown type id: " + typeId);
+
+        typeManager.updateTypeDefinition(type.getValue());
+    }
+
+    public void deleteTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
+        
+        TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
+        if (null == typeManager)
+            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        
+        TypeDefinitionContainer typeDefC = typeManager.getTypeById(typeId);
+        if (null == typeDefC)
+            throw new CmisInvalidArgumentException("Cannot delete type unknown type id: " + typeId);
+
+        TypeDefinition typeDef =  typeDefC.getTypeDefinition();
+        // TODO: re-enable when CMIS 1.1 is supported.
+//        if (!typeDef.getTypeMutability().supportsDelete()) {
+//            throw new CmisInvalidArgumentException("type definition " + typeId + " cannot be deleted, deletion is not supported for type id " + typeId);            
+//        }
+
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+        if (objectStore.isTypeInUse(typeId)) {
+            throw new CmisInvalidArgumentException("type definition " + typeId + " cannot be deleted, type is in use.");            
+        }
+        
+        typeManager.deleteTypeDefinition(typeId);        
+    }
+    
     private RepositoryInfo getRepositoryInfoFromStoreManager(String repositoryId) {
         RepositoryInfo repoInfo = fStoreManager.getRepositoryInfo(repositoryId);
         if (null == repoInfo || !repoInfo.getId().equals(repositoryId)) {

@@ -27,41 +27,19 @@ import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -77,46 +55,8 @@ public class RepositoryServiceTest extends AbstractServiceTest {
 
     private static final Log log = LogFactory.getLog(RepositoryServiceTest.class);
     private static final String REPOSITORY_ID = "UnitTestRepository";
+    private static final String TYPE_ID_MUTABILITY = "BookTypeAddedLater";
 
-    public static class UnitTestRepositoryInfo implements RepositoryInfoCreator {
-
-        public RepositoryInfo createRepositoryInfo() {
-            RepositoryCapabilitiesImpl caps = new RepositoryCapabilitiesImpl();
-            caps.setAllVersionsSearchable(false);
-            caps.setCapabilityAcl(CapabilityAcl.NONE);
-            caps.setCapabilityChanges(CapabilityChanges.NONE);
-            caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
-            caps.setCapabilityJoin(CapabilityJoin.NONE);
-            caps.setCapabilityQuery(CapabilityQuery.NONE);
-            caps.setCapabilityRendition(CapabilityRenditions.NONE);
-            caps.setIsPwcSearchable(false);
-            caps.setIsPwcUpdatable(true);
-            caps.setSupportsGetDescendants(true);
-            caps.setSupportsGetFolderTree(true);
-            caps.setSupportsMultifiling(false);
-            caps.setSupportsUnfiling(true);
-            caps.setSupportsVersionSpecificFiling(false);
-
-            RepositoryInfoImpl repositoryInfo = new RepositoryInfoImpl();
-            repositoryInfo.setId(REPOSITORY_ID);
-            repositoryInfo.setName("InMemory Repository");
-            repositoryInfo.setDescription("InMemory Test Repository");
-            repositoryInfo.setCmisVersionSupported("0.7");
-            repositoryInfo.setCapabilities(caps);
-            repositoryInfo.setRootFolder("/");
-            repositoryInfo.setAclCapabilities(null);
-            repositoryInfo.setPrincipalAnonymous("anonymous");
-            repositoryInfo.setPrincipalAnyone("anyone");
-            repositoryInfo.setThinClientUri(null);
-            repositoryInfo.setChangesIncomplete(Boolean.TRUE);
-            repositoryInfo.setChangesOnType(null);
-            repositoryInfo.setLatestChangeLogToken(null);
-            repositoryInfo.setVendorName("OpenCMIS");
-            repositoryInfo.setProductName("OpenCMIS Client");
-            repositoryInfo.setProductVersion("0.1");
-            return repositoryInfo;
-        }
-    }
 
     @Override
     @Before
@@ -493,21 +433,13 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         log.info("... testInheritedProperties() finished.");
     }
 
+
     private String getRepositoryId() {
         List<RepositoryInfo> repositories = fRepSvc.getRepositoryInfos(null);
         RepositoryInfo repository = repositories.get(0);
         assertNotNull(repository);
         return repository.getId();
     }
-
-    // private boolean containsTypeById(String typeId,
-    // List<TypeDefinitionContainer> types) {
-    // for (TypeDefinitionContainer type : types) {
-    // if (type.getTypeDefinition().getId().equals(typeId))
-    // return true;
-    // }
-    // return false;
-    // }
 
     private boolean containsTypeByIdRecursive(String typeId, List<TypeDefinitionContainer> types) {
         for (TypeDefinitionContainer type : types) {
@@ -531,7 +463,7 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         return false;
     }
 
-    private static void containsAllBasePropertyDefinitions(TypeDefinition typeDef) {
+    static void containsAllBasePropertyDefinitions(TypeDefinition typeDef) {
         Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
         String baseTypeId = typeDef.getBaseTypeId().value();
 
@@ -601,4 +533,5 @@ public class RepositoryServiceTest extends AbstractServiceTest {
 
         return flattened;
     }
+    
 }
