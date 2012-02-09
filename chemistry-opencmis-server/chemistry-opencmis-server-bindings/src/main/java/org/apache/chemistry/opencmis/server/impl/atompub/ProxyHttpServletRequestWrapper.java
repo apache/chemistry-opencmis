@@ -37,7 +37,7 @@ public class ProxyHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
         scheme = request.getHeader(FORWARDED_PROTO_HEADER);
 
-        if (!HTTP_SCHEME.equals(scheme) && !HTTPS_SCHEME.equals(scheme)) {
+        if (!HTTP_SCHEME.equalsIgnoreCase(scheme) && !HTTPS_SCHEME.equalsIgnoreCase(scheme)) {
             scheme = request.getScheme();
         }
 
@@ -49,14 +49,24 @@ public class ProxyHttpServletRequestWrapper extends HttpServletRequestWrapper {
             int index = host.indexOf(':');
             if (index < 0) {
                 serverName = host;
+                serverPort = getDefaultPort(scheme);
             } else {
                 serverName = host.substring(0, index);
                 try {
                     serverPort = Integer.parseInt(host.substring(index + 1));
                 } catch (NumberFormatException e) {
+                    serverPort = getDefaultPort(scheme);
                 }
             }
         }
+    }
+
+    private int getDefaultPort(String scheme) {
+        if (HTTPS_SCHEME.equalsIgnoreCase(scheme)) {
+            return 443;
+        }
+
+        return 80;
     }
 
     @Override
