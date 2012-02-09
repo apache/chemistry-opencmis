@@ -16,17 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.server.impl.atompub;
+package org.apache.chemistry.opencmis.server.filter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 public class ProxyHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
-    private static final String FORWARDED_HOST_HEADER = "X-Forwarded-Host";
-    private static final String FORWARDED_PROTO_HEADER = "X-Forwarded-Proto";
-    private static final String HTTPS_SCHEME = "https";
-    private static final String HTTP_SCHEME = "http";
+    public static final String FORWARDED_HOST_HEADER = "X-Forwarded-Host";
+    public static final String FORWARDED_PROTO_HEADER = "X-Forwarded-Proto";
+    public static final String HTTPS_SCHEME = "https";
+    public static final String HTTP_SCHEME = "http";
 
     private String scheme;
     private String serverName;

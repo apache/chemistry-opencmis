@@ -45,7 +45,6 @@ import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_PUT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -94,7 +93,6 @@ public class CmisAtomPubServlet extends HttpServlet {
 
     private Dispatcher dispatcher;
     private CallContextHandler callContextHandler;
-    private Pattern trustedProxies;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -108,17 +106,6 @@ public class CmisAtomPubServlet extends HttpServlet {
                 callContextHandler = (CallContextHandler) Class.forName(callContextHandlerClass).newInstance();
             } catch (Exception e) {
                 throw new ServletException("Could not load call context handler: " + e, e);
-            }
-        }
-
-        // initialize trusted proxy pattern 
-        trustedProxies = null;
-        String trustedProxiesString = config.getInitParameter(PARAM_TRUSTED_PROXIES);
-        if (trustedProxiesString != null) {
-            try {
-                trustedProxies = Pattern.compile(trustedProxiesString);
-            } catch (Exception e) {
-                throw new ServletException("Could not compile trustedProxies parameter: " + e, e);
             }
         }
 
@@ -168,12 +155,6 @@ public class CmisAtomPubServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-
-        // check for trusted proxy
-        if (trustedProxies != null && trustedProxies.matcher(request.getRemoteAddr()).matches()) {
-            request = new ProxyHttpServletRequestWrapper(request);
-        }
-
         // set default headers
         response.addHeader("Cache-Control", "private, max-age=0");
         response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
