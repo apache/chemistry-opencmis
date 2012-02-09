@@ -388,25 +388,30 @@ public class AtomEntryParser {
 
         next(parser);
 
-        while (true) {
-            int event = parser.getEventType();
-            if (event == XMLStreamReader.END_ELEMENT) {
-                break;
-            } else if (event == XMLStreamReader.CHARACTERS) {
-                String s = parser.getText();
-                if (s != null) {
-                    b64stream.write(s.getBytes("US-ASCII"));
+        try {
+            while (true) {
+                int event = parser.getEventType();
+                if (event == XMLStreamReader.END_ELEMENT) {
+                    break;
+                } else if (event == XMLStreamReader.CHARACTERS) {
+                    String s = parser.getText();
+                    if (s != null) {
+                        b64stream.write(s.getBytes("US-ASCII"));
+                    }
+                } else if (event == XMLStreamReader.START_ELEMENT) {
+                    throw new RuntimeException("Unexpected tag: " + parser.getName());
                 }
-            } else if (event == XMLStreamReader.START_ELEMENT) {
-                throw new RuntimeException("Unexpected tag: " + parser.getName());
+
+                if (!next(parser)) {
+                    break;
+                }
             }
 
-            if (!next(parser)) {
-                break;
-            }
+            b64stream.close();
+        } catch (Exception e) {
+            bufferStream.destroy(); // remove temp file
+            throw e;
         }
-
-        b64stream.close();
 
         next(parser);
 
@@ -671,6 +676,20 @@ public class AtomEntryParser {
             if (tmpStream != null) {
                 tmpStream.close();
             }
+        }
+
+        public void destroy() {
+            try {
+                close();
+            } catch (Exception e) {
+                // ignore
+            }
+
+            if (tmpFile != null) {
+                tmpFile.delete();
+            }
+
+            buf = null;
         }
 
         public InputStream getInputStream() throws Exception {
