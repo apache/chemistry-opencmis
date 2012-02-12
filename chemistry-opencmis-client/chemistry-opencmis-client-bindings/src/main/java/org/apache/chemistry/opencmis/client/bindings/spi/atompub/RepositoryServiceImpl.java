@@ -97,7 +97,6 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         }
 
         UrlBuilder url = new UrlBuilder(link);
-        url.addParameter(Constants.PARAM_TYPE_ID, typeId);
         url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
@@ -164,7 +163,6 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         }
 
         UrlBuilder url = new UrlBuilder(link);
-        url.addParameter(Constants.PARAM_TYPE_ID, typeId);
         url.addParameter(Constants.PARAM_DEPTH, depth);
         url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
 
