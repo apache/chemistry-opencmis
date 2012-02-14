@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.inmemory.TypeValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
@@ -146,28 +147,17 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
     public void createTypeDefinition(String repositoryId, Holder<TypeDefinition> type, ExtensionsData extension) {
 
+        if (null == repositoryId)
+            throw new CmisInvalidArgumentException("Repository id may not be null");
+
         TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
         if (null == typeManager)
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         
-        String typeId = type.getValue().getId();
-
-        if (null == typeId)
-            throw new CmisInvalidArgumentException("Cannot add type, type id is required.");
+        TypeDefinition td = type.getValue();
+        TypeValidator.checkType(typeManager, td);
+        TypeValidator.checkProperties(typeManager, td.getPropertyDefinitions().values());
         
-        if (typeManager.getTypeById(typeId) != null)
-            throw new CmisInvalidArgumentException("Cannot add type "
-                    + typeId + ", type already exists");
-        
-        String parentTypeId = type.getValue().getParentTypeId();
-
-        if (null == parentTypeId)
-            throw new CmisInvalidArgumentException("Cannot add type, parent type id is required.");
-        
-        if (typeManager.getTypeById(parentTypeId) == null)
-            throw new CmisInvalidArgumentException("Cannot add type "
-                    + parentTypeId + " is unknown.");
-
         typeManager.addTypeDefinition(type.getValue());
     }
 

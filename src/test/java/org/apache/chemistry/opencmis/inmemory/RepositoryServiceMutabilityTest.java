@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.inmemory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
@@ -65,6 +67,8 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
     private static final Log log = LogFactory.getLog(RepositoryServiceTest.class);
     private static final String REPOSITORY_ID = "UnitTestRepository";
     private static final String TYPE_ID_MUTABILITY = "BookTypeAddedLater";
+    private static final String PROPERTY_ID_TITLE = "Title";
+    private static final String PROPERTY_ID_NUMBER = "Number";
 
     private InMemoryRepositoryServiceImpl repSvc;
     private InMemoryObjectServiceImpl objSvc;
@@ -94,6 +98,9 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         super.tearDown();
     }
 
+    // This test is just added because this test class uses a different setup to connect to the
+    // server as long as the server bindings do not support the type mutability extension of 
+    // CMIS 1.1. If this test fails then the setUp() fails! 
     @Test
     public void testRepositoryInfo() {
         log.info("starting testRepositoryInfo() ...");
@@ -118,7 +125,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
     public void testTypeMutabilityCreation() throws Exception {
         log.info("");
         log.info("starting testTypeMutabilityCreation() ...");
-        TypeDefinition typeDefRef = getTypeForAddingAtRuntime();
+        TypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         String repositoryId = getRepositoryId();
         // add type.
         repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDefRef), null);
@@ -131,12 +138,128 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         RepositoryServiceTest.containsAllBasePropertyDefinitions(type);
         log.info("... testTypeMutabilityCreation() finished.");
     }
+    
+    @Test
+    public void testTypeMutabilityCreateDuplicate() throws Exception {
+        log.info("");
+        log.info("starting testTypeMutabilityCreateDuplicate() ...");
+        TypeDefinition typeDefRef = createTypeForAddingAtRuntime();
+        String repositoryId = getRepositoryId();
+        // add type.
+        repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDefRef), null);
+        // add type again should fail
+        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+        // type should still exist then
+        TypeDefinition type = repSvc.getTypeDefinition(fTestCallContext, repositoryId, typeDefRef.getId(), null);
+        assertEquals(typeDefRef.getId(), type.getId());
+        log.info("... testTypeMutabilityCreateDuplicate() finished.");
+    }
+    
+    
+    @Test
+    public void testTypeMutabilityTypeNameConstraints() throws Exception {
+        log.info("starting testTypeMutabilityTypeNameConstraints() ...");
+        
+        String repositoryId = getRepositoryId();
+        
+        // test illegal type id
+        InMemoryDocumentTypeDefinition typeDefRef = createTypeForAddingAtRuntime();
+        typeDefRef.setId(typeDefRef.getId() + "!!!");
+        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
 
+        // test illegal parent type id
+        typeDefRef = createTypeForAddingAtRuntime();
+        typeDefRef.setParentTypeId("NonExistingParentType");
+        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+
+        // test null type id
+        typeDefRef = createTypeForAddingAtRuntime();
+        typeDefRef.setId(null);
+        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+        
+        // test null query name
+        typeDefRef = createTypeForAddingAtRuntime();
+        typeDefRef.setQueryName(null);
+        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+
+        // test illegal query name
+        typeDefRef = createTypeForAddingAtRuntime();
+        typeDefRef.setQueryName(typeDefRef.getQueryName() + "!!!");
+        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+
+        // test null local name
+        typeDefRef = createTypeForAddingAtRuntime();
+        typeDefRef.setLocalName(null);
+        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+
+        // test illegal local name
+        typeDefRef = createTypeForAddingAtRuntime();
+        typeDefRef.setLocalName(typeDefRef.getLocalName() + "!!!");
+        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+
+        log.info("... testTypeMutabilityTypeNameConstraints() finished.");              
+    }
+    
+    @Test
+    public void testTypeMutabilityPropertyNameConstraints() throws Exception {
+        log.info("starting testTypeMutabilityPropertyNameConstraints() ...");
+        
+        String repositoryId = getRepositoryId();
+        
+        // test null property id
+        InMemoryDocumentTypeDefinition typeDef = createTypeForAddingAtRuntime();
+        PropertyStringDefinitionImpl pd = getPropertyDefinitionImpl(typeDef);
+        pd.setId(null);
+        checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
+        
+        // test illegal property id
+        typeDef = createTypeForAddingAtRuntime();
+        pd = getPropertyDefinitionImpl(typeDef);
+        pd.setQueryName(pd.getQueryName() + "!!!");
+        checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
+
+        // test null property query name
+        typeDef = createTypeForAddingAtRuntime();
+        pd = getPropertyDefinitionImpl(typeDef);
+        pd.setQueryName(null);
+        checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
+
+        // test illegal property query name
+        typeDef = createTypeForAddingAtRuntime();
+        pd = getPropertyDefinitionImpl(typeDef);
+        pd.setQueryName(pd.getQueryName() + "!!!");
+        checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
+
+        // test null property local name
+        typeDef = createTypeForAddingAtRuntime();
+        pd = getPropertyDefinitionImpl(typeDef);
+        pd.setLocalName(null);
+        checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
+
+        // test illegal property local name
+        typeDef = createTypeForAddingAtRuntime();
+        pd = getPropertyDefinitionImpl(typeDef);
+        pd.setLocalName(typeDef.getLocalName() + "!!!");
+        checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
+
+        log.info("... testTypeMutabilityPropertyNameConstraints() finished.");              
+    }
+    
+    private void checkAddingType(String repositoryId, TypeDefinition typeDef, Class<? extends Exception> clazz) {
+        try { 
+            repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDef), null);
+            fail("Illegal type should throw a " + clazz.getName());
+        } catch (RuntimeException e) {
+            assertTrue("Illegal type name threw wrong exception type (should be a " + clazz.getName() + ")",
+                    clazz.isInstance(e));
+        }        
+    }
+    
     @Test
     public void testTypeMutabilityUpdate() throws Exception {
         log.info("");
         log.info("starting testTypeMutabilityUpdate() ...");
-        TypeDefinition typeDefRef = getTypeForAddingAtRuntime();
+        TypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         String repositoryId = getRepositoryId();
         repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDefRef), null);
         // update type.
@@ -148,11 +271,12 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         }
         log.info("... testTypeMutabilityUpdate() finished.");
     }
+   
     @Test
     public void testTypeMutabilityDeletion() throws Exception {
         log.info("");
         log.info("starting testTypeMutabilityDeletion() ...");
-        TypeDefinition typeDefRef = getTypeForAddingAtRuntime();
+        TypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         String repositoryId = getRepositoryId();
         repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDefRef), null);
         
@@ -209,18 +333,24 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         return repository.getRootFolderId();
     }
 
-    private TypeDefinition getTypeForAddingAtRuntime() {
+    private PropertyStringDefinitionImpl getPropertyDefinitionImpl(TypeDefinition typeDef) {
+        @SuppressWarnings("unchecked")
+        PropertyStringDefinitionImpl pd = (PropertyStringDefinitionImpl) typeDef.getPropertyDefinitions().get(PROPERTY_ID_TITLE);
+        return pd;
+    }
+    
+    private InMemoryDocumentTypeDefinition createTypeForAddingAtRuntime() {
         
         InMemoryDocumentTypeDefinition cmisLaterType = new InMemoryDocumentTypeDefinition(TYPE_ID_MUTABILITY,
                 "Type with two properties", InMemoryDocumentTypeDefinition.getRootDocumentType());
 
         Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
 
-        PropertyIntegerDefinitionImpl prop1 = PropertyCreationHelper.createIntegerDefinition("Number",
+        PropertyIntegerDefinitionImpl prop1 = PropertyCreationHelper.createIntegerDefinition(PROPERTY_ID_NUMBER,
                 "Sample Int Property", Updatability.READWRITE);
         propertyDefinitions.put(prop1.getId(), prop1);
 
-        PropertyStringDefinitionImpl prop2 = PropertyCreationHelper.createStringDefinition("Title",
+        PropertyStringDefinitionImpl prop2 = PropertyCreationHelper.createStringDefinition(PROPERTY_ID_TITLE,
                 "Sample String Property", Updatability.READWRITE);
         propertyDefinitions.put(prop2.getId(), prop2);
         

@@ -31,7 +31,7 @@ public interface TypeManagerCreatable extends TypeManager {
      * @param cmisType
      *            new type to add
      */
-    public abstract void addTypeDefinition(TypeDefinition typeDefinition);
+    void addTypeDefinition(TypeDefinition typeDefinition);
     
     /**
      * Modify an existing type definition
@@ -39,7 +39,7 @@ public interface TypeManagerCreatable extends TypeManager {
      * @param typeDefinition
      *          type to be modified
      */    
-    public void updateTypeDefinition(TypeDefinition typeDefinition);
+    void updateTypeDefinition(TypeDefinition typeDefinition);
 
    /**
      * Delete a type from the type system. Delete will succeed only if type is not in use.
@@ -48,5 +48,5 @@ public interface TypeManagerCreatable extends TypeManager {
      * @param cmisType
      *            type to delete
      */
-    public abstract void deleteTypeDefinition(String typeId);
+    void deleteTypeDefinition(String typeId);
 }
