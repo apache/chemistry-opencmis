@@ -143,17 +143,8 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      *            new type to add
      */
     public void addTypeDefinition(TypeDefinition cmisType) {
-        if (fTypesMap.containsKey(cmisType.getId())) {
-            throw new CmisConstraintException("You cannot add type with id " + cmisType.getId()
-                    + " because it already exists.");
-        }
-
+        
         TypeDefinitionContainerImpl typeContainer = new TypeDefinitionContainerImpl(cmisType);
-
-        if (!fTypesMap.containsKey(cmisType.getParentTypeId())) {
-            throw new CmisConstraintException("Cannot add type, because parent with id " + cmisType.getParentTypeId()
-                    + " does not exist.");
-        }
 
         // add new type to children of parent types
         TypeDefinitionContainer parentTypeContainer = fTypesMap.get(cmisType.getParentTypeId());
