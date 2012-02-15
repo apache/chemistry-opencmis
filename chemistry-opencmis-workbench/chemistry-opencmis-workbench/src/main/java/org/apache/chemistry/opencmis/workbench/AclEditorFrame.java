@@ -1,0 +1,383 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.chemistry.opencmis.workbench;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.UIManager;
+
+import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
+import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+
+public class AclEditorFrame extends JFrame {
+
+    private static final long serialVersionUID = 1L;
+
+    private static final String WINDOW_TITLE = "ACL Editor";
+    private static final ImageIcon ICON_ADD = ClientHelper.getIcon("add.png");
+
+    private final ClientModel model;
+    private final CmisObject object;
+
+    private final AceList addAceList;
+    private final AceList removeAceList;
+    private AclPropagation aclPropagation;
+
+    public AclEditorFrame(final ClientModel model, final CmisObject object) {
+        super();
+
+        this.model = model;
+        this.object = object;
+
+        Object[] principals;
+        try {
+            // get users
+            List<String> princiaplList = new ArrayList<String>();
+            princiaplList.add("");
+            princiaplList.add("cmis:user");
+
+            String anonymous = model.getRepositoryInfo().getPrincipalIdAnonymous();
+            if (anonymous != null && anonymous.length() > 0) {
+                princiaplList.add(anonymous);
+            }
+
+            String anyone = model.getRepositoryInfo().getPrincipalIdAnyone();
+            if (anyone != null && anyone.length() > 0) {
+                princiaplList.add(anyone);
+            }
+
+            principals = princiaplList.toArray();
+        } catch (Exception ex) {
+            principals = new Object[] { "cmis:user" };
+        }
+
+        Object[] permissions;
+        try {
+            // get permissions
+            List<String> permissionsList = new ArrayList<String>();
+            permissionsList.add("");
+
+            for (PermissionDefinition pd : model.getRepositoryInfo().getAclCapabilities().getPermissions()) {
+                permissionsList.add(pd.getId());
+            }
+
+            permissions = permissionsList.toArray();
+        } catch (Exception ex) {
+            permissions = new Object[] { "", "cmis:read", "cmis:write", "cmis:all" };
+        }
+
+        addAceList = new AceList(principals, permissions);
+        removeAceList = new AceList(principals, permissions);
+        aclPropagation = AclPropagation.REPOSITORYDETERMINED;
+
+        createGUI();
+    }
+
+    private void createGUI() {
+        setTitle(WINDOW_TITLE);
+        setPreferredSize(new Dimension(800, 600));
+        setMinimumSize(new Dimension(300, 120));
+
+        setLayout(new BorderLayout());
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+
+        final Font labelFont = UIManager.getFont("Label.font");
+        final Font boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);
+
+        final JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        final JLabel nameLabel = new JLabel(object.getName());
+        nameLabel.setFont(boldFont);
+        topPanel.add(nameLabel);
+        topPanel.add(new JLabel(object.getId()));
+        add(topPanel, BorderLayout.PAGE_START);
+
+        final JPanel addAcePanel = createAceListPanel("Add ACEs", addAceList);
+        final JPanel removeAcePanel = createAceListPanel("Remove ACEs", removeAceList);
+
+        final JSplitPane centerPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(addAcePanel),
+                new JScrollPane(removeAcePanel));
+
+        add(centerPanel, BorderLayout.CENTER);
+
+        JButton updateButton = new JButton("Update");
+        updateButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        updateButton.setDefaultCapable(true);
+        updateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (doApply()) {
+                    dispose();
+                }
+            }
+        });
+
+        add(updateButton, BorderLayout.PAGE_END);
+
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+
+        centerPanel.setDividerLocation(0.5f);
+    }
+
+    private JPanel createAceListPanel(final String title, final AceList list) {
+        final Font labelFont = UIManager.getFont("Label.font");
+        final Font boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);
+
+        final JPanel result = new JPanel();
+        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
+
+        final JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.LINE_AXIS));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        final JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(boldFont);
+        topPanel.add(titleLabel, BorderLayout.LINE_START);
+
+        topPanel.add(Box.createHorizontalGlue());
+
+        final JButton addButton = new JButton(ICON_ADD);
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                list.addNewAce();
+            }
+        });
+
+        topPanel.add(addButton, BorderLayout.LINE_END);
+
+        result.add(topPanel);
+
+        result.add(list);
+
+        return result;
+    }
+
+    /**
+     * Applies the ACEs.
+     */
+    private boolean doApply() {
+        try {
+            List<Ace> adds = addAceList.getAces();
+            List<Ace> removes = removeAceList.getAces();
+
+            if (adds != null || removes != null) {
+                object.applyAcl(adds, removes, aclPropagation);
+                model.reloadObject();
+            }
+
+            return true;
+        } catch (Exception ex) {
+            ClientHelper.showError(this, ex);
+            return false;
+        }
+    }
+
+    private static class AceList extends JPanel {
+
+        private static final long serialVersionUID = 1L;
+
+        private final List<AceInputPanel> panels;
+        private final Object[] principals;
+        private final Object[] permissions;
+
+        public AceList(final Object[] principals, final Object[] permissions) {
+            super();
+
+            panels = new ArrayList<AceInputPanel>();
+            this.principals = principals;
+            this.permissions = permissions;
+
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        }
+
+        public synchronized void addNewAce() {
+            AceInputPanel acePanel = new AceInputPanel(this, principals, permissions, panels.size());
+            panels.add(acePanel);
+
+            add(acePanel);
+        }
+
+        public synchronized void removeAce(int position) {
+            panels.remove(position);
+            for (int i = position; i < panels.size(); i++) {
+                panels.get(i).updatePosition(i);
+            }
+
+            removeAll();
+            for (AceInputPanel p : panels) {
+                add(p);
+            }
+
+            revalidate();
+        }
+
+        public synchronized List<Ace> getAces() {
+            List<Ace> result = new ArrayList<Ace>();
+
+            for (AceInputPanel p : panels) {
+                result.add(p.getAce());
+            }
+
+            return result.isEmpty() ? null : result;
+        }
+    }
+
+    /**
+     * ACE input panel.
+     */
+    public static class AceInputPanel extends JPanel {
+
+        private static final long serialVersionUID = 1L;
+
+        private static final Color BACKGROUND1 = UIManager.getColor("Table:\"Table.cellRenderer\".background");
+        private static final Color BACKGROUND2 = UIManager.getColor("Table.alternateRowColor");
+        private static final Color LINE = new Color(0xB8, 0xB8, 0xB8);
+
+        private static final ImageIcon ICON_REMOVE = ClientHelper.getIcon("remove.png");
+
+        private final AceList list;
+
+        private int position;
+        private JComboBox principalBox;
+        private List<JComboBox> permissionBoxes;
+
+        public AceInputPanel(final AceList list, final Object[] principals, final Object[] permissions, int position) {
+            super();
+
+            this.list = list;
+
+            updatePosition(position);
+
+            setLayout(new GridBagLayout());
+            setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE),
+                    BorderFactory.createEmptyBorder(10, 5, 10, 5)));
+
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridheight = 1;
+            c.gridwidth = 1;
+
+            // col 1
+            c.gridx = 0;
+            c.weightx = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.LINE_START;
+
+            c.gridy = 0;
+            add(new JLabel("Principal:"), c);
+
+            c.gridy = 1;
+            add(new JLabel("Permissions:"), c);
+
+            // col 2
+            c.gridx = 1;
+            c.weightx = 1;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.anchor = GridBagConstraints.LINE_START;
+
+            principalBox = new JComboBox(principals);
+            principalBox.setEditable(true);
+            principalBox.setPrototypeDisplayValue("1234567890123456789012345");
+
+            c.gridy = 0;
+            add(principalBox, c);
+
+            permissionBoxes = new ArrayList<JComboBox>();
+
+            JComboBox firstPermissionBox = new JComboBox(permissions);
+            firstPermissionBox.setEditable(true);
+            firstPermissionBox.setPrototypeDisplayValue("1234567890123456789012345");
+
+            permissionBoxes.add(firstPermissionBox);
+
+            c.gridy = 1;
+            add(permissionBoxes.get(0), c);
+
+            // col 3
+            c.gridx = 2;
+            c.weightx = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.LINE_END;
+
+            c.gridy = 0;
+            JButton removeButton = new JButton(ICON_REMOVE);
+            removeButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    list.removeAce(getPosition());
+                }
+            });
+
+            add(removeButton, c);
+        }
+
+        public void updatePosition(int position) {
+            this.position = position;
+            setBackground(position % 2 == 0 ? BACKGROUND1 : BACKGROUND2);
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        @Override
+        public Dimension getMaximumSize() {
+            return new Dimension(Short.MAX_VALUE, getPreferredSize().height);
+        }
+
+        public Ace getAce() {
+            List<String> permissions = new ArrayList<String>();
+
+            for (JComboBox box : permissionBoxes) {
+                permissions.add(box.getSelectedItem().toString());
+            }
+
+            return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principalBox.getSelectedItem()
+                    .toString()), permissions);
+        }
+    }
+}

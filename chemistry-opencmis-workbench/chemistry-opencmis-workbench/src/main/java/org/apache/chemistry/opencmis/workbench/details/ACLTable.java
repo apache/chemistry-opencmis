@@ -18,9 +18,13 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.workbench.AclEditorFrame;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class ACLTable extends AbstractDetailsTable {
@@ -33,6 +37,16 @@ public class ACLTable extends AbstractDetailsTable {
     public ACLTable(ClientModel model) {
         super();
         init(model, COLUMN_NAMES, COLUMN_WIDTHS);
+    }
+
+    @Override
+    public void doubleClickAction(MouseEvent e, int rowIndex) {
+        AllowableActions aa = getObject().getAllowableActions();
+
+        if ((aa == null) || (aa.getAllowableActions() == null)
+                || aa.getAllowableActions().contains(Action.CAN_APPLY_ACL)) {
+            new AclEditorFrame(getClientModel(), getObject());
+        }
     }
 
     public int getDetailRowCount() {

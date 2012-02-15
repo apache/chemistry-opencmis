@@ -23,6 +23,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.workbench.actions.AclUpdatePanel;
 import org.apache.chemistry.opencmis.workbench.actions.AddObjectToFolderPanel;
 import org.apache.chemistry.opencmis.workbench.actions.ApplyPolicyPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CancelCheckOutPanel;
@@ -57,6 +58,7 @@ public class ActionsPanel extends JPanel implements ObjectListener {
     private DeleteContentStreamPanel deleteContentStreamPanel;
     private AddObjectToFolderPanel addObjectToFolderPanel;
     private RemoveObjectFromFolderPanel removeObjectFromFolderPanel;
+    private AclUpdatePanel aclUpdatePanel;
     private ApplyPolicyPanel applyPolicyPanel;
     private RemovePolicyPanel removePolicyPanel;
 
@@ -105,6 +107,9 @@ public class ActionsPanel extends JPanel implements ObjectListener {
         removeObjectFromFolderPanel.setObject(object);
         removeObjectFromFolderPanel.setVisible(removeObjectFromFolderPanel.isAllowed());
 
+        aclUpdatePanel.setObject(object);
+        aclUpdatePanel.setVisible(aclUpdatePanel.isAllowed());
+
         applyPolicyPanel.setObject(object);
         applyPolicyPanel.setVisible(applyPolicyPanel.isAllowed());
 
@@ -151,6 +156,9 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
         applyPolicyPanel = new ApplyPolicyPanel(model);
         add(applyPolicyPanel);
+
+        aclUpdatePanel = new AclUpdatePanel(model);
+        add(aclUpdatePanel);
 
         removePolicyPanel = new RemovePolicyPanel(model);
         add(removePolicyPanel);

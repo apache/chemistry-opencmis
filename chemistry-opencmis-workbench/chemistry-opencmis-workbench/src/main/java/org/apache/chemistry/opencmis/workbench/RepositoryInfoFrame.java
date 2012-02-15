@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.workbench;
 import java.awt.Dimension;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -175,7 +174,7 @@ public class RepositoryInfoFrame extends JFrame {
                 JTree extensionsTree = new JTree();
                 extensionsTree.setRootVisible(false);
                 extensionsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-       
+
                 DefaultMutableTreeNode extRootNode = new DefaultMutableTreeNode("Extensions");
                 addExtension(extRootNode, repInfo.getExtensions());
 
