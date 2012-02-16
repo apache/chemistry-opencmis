@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -156,6 +157,8 @@ public class PropertyEditorFrame extends JFrame {
      */
     private boolean doUpdate() {
         try {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
             Map<String, Object> properties = new HashMap<String, Object>();
             for (PropertyInputPanel propertyPanel : propertyPanels) {
                 if (propertyPanel.includeInUpdate()) {
@@ -182,6 +185,8 @@ public class PropertyEditorFrame extends JFrame {
         } catch (Exception ex) {
             ClientHelper.showError(this, ex);
             return false;
+        } finally {
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 

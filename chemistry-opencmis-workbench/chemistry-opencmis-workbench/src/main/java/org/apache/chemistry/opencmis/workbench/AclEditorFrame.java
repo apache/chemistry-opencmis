@@ -20,29 +20,42 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.text.JTextComponent;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
@@ -62,7 +75,10 @@ public class AclEditorFrame extends JFrame {
 
     private final AceList addAceList;
     private final AceList removeAceList;
-    private AclPropagation aclPropagation;
+
+    private JRadioButton propagationRepositoryButton;
+    private JRadioButton propagationObjectOnlyButton;
+    private JRadioButton propagationPropagteButton;
 
     public AclEditorFrame(final ClientModel model, final CmisObject object) {
         super();
@@ -74,8 +90,14 @@ public class AclEditorFrame extends JFrame {
         try {
             // get users
             List<String> princiaplList = new ArrayList<String>();
+
             princiaplList.add("");
             princiaplList.add("cmis:user");
+
+            String user = model.getClientSession().getSessionParameters().get(SessionParameter.USER);
+            if (user != null && user.length() > 0) {
+                princiaplList.add(user);
+            }
 
             String anonymous = model.getRepositoryInfo().getPrincipalIdAnonymous();
             if (anonymous != null && anonymous.length() > 0) {
@@ -87,9 +109,24 @@ public class AclEditorFrame extends JFrame {
                 princiaplList.add(anyone);
             }
 
+            if (object.getAcl() != null && object.getAcl().getAces() != null) {
+                List<String> aclPrinciaplList = new ArrayList<String>();
+
+                for (Ace ace : object.getAcl().getAces()) {
+                    String pid = ace.getPrincipalId();
+                    if (!princiaplList.contains(pid) && !aclPrinciaplList.contains(pid)) {
+                        aclPrinciaplList.add(pid);
+                    }
+                }
+
+                Collections.sort(aclPrinciaplList);
+
+                princiaplList.addAll(aclPrinciaplList);
+            }
+
             principals = princiaplList.toArray();
         } catch (Exception ex) {
-            principals = new Object[] { "cmis:user" };
+            principals = new Object[] { "", "cmis:user" };
         }
 
         Object[] permissions;
@@ -109,7 +146,6 @@ public class AclEditorFrame extends JFrame {
 
         addAceList = new AceList(principals, permissions);
         removeAceList = new AceList(principals, permissions);
-        aclPropagation = AclPropagation.REPOSITORYDETERMINED;
 
         createGUI();
     }
@@ -136,14 +172,46 @@ public class AclEditorFrame extends JFrame {
         topPanel.add(new JLabel(object.getId()));
         add(topPanel, BorderLayout.PAGE_START);
 
+        // ACE panels
         final JPanel addAcePanel = createAceListPanel("Add ACEs", addAceList);
         final JPanel removeAcePanel = createAceListPanel("Remove ACEs", removeAceList);
 
-        final JSplitPane centerPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(addAcePanel),
+        JPanel centerPanel = new JPanel(new BorderLayout());
+
+        final JSplitPane aceSplitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(addAcePanel),
                 new JScrollPane(removeAcePanel));
+
+        centerPanel.add(aceSplitPanel, BorderLayout.CENTER);
+
+        // propagation buttons
+        propagationRepositoryButton = new JRadioButton("repository determined", true);
+        propagationObjectOnlyButton = new JRadioButton("object only", false);
+        propagationPropagteButton = new JRadioButton("propagate", false);
+
+        try {
+            if (model.getRepositoryInfo().getAclCapabilities().getAclPropagation() == AclPropagation.OBJECTONLY) {
+                propagationPropagteButton.setEnabled(false);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        ButtonGroup propagtionGroup = new ButtonGroup();
+        propagtionGroup.add(propagationRepositoryButton);
+        propagtionGroup.add(propagationObjectOnlyButton);
+        propagtionGroup.add(propagationPropagteButton);
+
+        JPanel propagtionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        propagtionPanel.add(new JLabel("ACL Propagation:"));
+        propagtionPanel.add(propagationRepositoryButton);
+        propagtionPanel.add(propagationObjectOnlyButton);
+        propagtionPanel.add(propagationPropagteButton);
+
+        centerPanel.add(propagtionPanel, BorderLayout.PAGE_END);
 
         add(centerPanel, BorderLayout.CENTER);
 
+        // update button
         JButton updateButton = new JButton("Update");
         updateButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         updateButton.setDefaultCapable(true);
@@ -162,7 +230,7 @@ public class AclEditorFrame extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
-        centerPanel.setDividerLocation(0.5f);
+        aceSplitPanel.setDividerLocation(0.5f);
     }
 
     private JPanel createAceListPanel(final String title, final AceList list) {
@@ -203,10 +271,21 @@ public class AclEditorFrame extends JFrame {
      */
     private boolean doApply() {
         try {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
             List<Ace> adds = addAceList.getAces();
             List<Ace> removes = removeAceList.getAces();
 
             if (adds != null || removes != null) {
+                AclPropagation aclPropagation = AclPropagation.REPOSITORYDETERMINED;
+                if (propagationObjectOnlyButton.isSelected()) {
+                    aclPropagation = AclPropagation.OBJECTONLY;
+                }
+
+                if (propagationPropagteButton.isSelected()) {
+                    aclPropagation = AclPropagation.PROPAGATE;
+                }
+
                 object.applyAcl(adds, removes, aclPropagation);
                 model.reloadObject();
             }
@@ -215,9 +294,14 @@ public class AclEditorFrame extends JFrame {
         } catch (Exception ex) {
             ClientHelper.showError(this, ex);
             return false;
+        } finally {
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
+    /**
+     * ACE list panel.
+     */
     private static class AceList extends JPanel {
 
         private static final long serialVersionUID = 1L;
@@ -281,16 +365,17 @@ public class AclEditorFrame extends JFrame {
 
         private static final ImageIcon ICON_REMOVE = ClientHelper.getIcon("remove.png");
 
-        private final AceList list;
+        private final Object[] permissions;
 
         private int position;
-        private JComboBox principalBox;
-        private List<JComboBox> permissionBoxes;
+        private final JComboBox principalBox;
+        private final JPanel permissionsPanel;
+        private final List<JComboBox> permissionBoxes;
 
         public AceInputPanel(final AceList list, final Object[] principals, final Object[] permissions, int position) {
             super();
 
-            this.list = list;
+            this.permissions = permissions;
 
             updatePosition(position);
 
@@ -305,13 +390,16 @@ public class AclEditorFrame extends JFrame {
             // col 1
             c.gridx = 0;
             c.weightx = 1;
-            c.fill = GridBagConstraints.NONE;
+            c.fill = GridBagConstraints.HORIZONTAL;
             c.anchor = GridBagConstraints.LINE_START;
 
             c.gridy = 0;
             add(new JLabel("Principal:"), c);
 
             c.gridy = 1;
+            add(new JSeparator(SwingConstants.HORIZONTAL), c);
+
+            c.gridy = 2;
             add(new JLabel("Permissions:"), c);
 
             // col 2
@@ -327,16 +415,19 @@ public class AclEditorFrame extends JFrame {
             c.gridy = 0;
             add(principalBox, c);
 
+            c.gridy = 1;
+            add(new JSeparator(SwingConstants.HORIZONTAL), c);
+
+            permissionsPanel = new JPanel();
+            permissionsPanel.setLayout(new BoxLayout(permissionsPanel, BoxLayout.Y_AXIS));
+            permissionsPanel.setOpaque(false);
+
             permissionBoxes = new ArrayList<JComboBox>();
 
-            JComboBox firstPermissionBox = new JComboBox(permissions);
-            firstPermissionBox.setEditable(true);
-            firstPermissionBox.setPrototypeDisplayValue("1234567890123456789012345");
+            updatePermissionsPanel(false);
 
-            permissionBoxes.add(firstPermissionBox);
-
-            c.gridy = 1;
-            add(permissionBoxes.get(0), c);
+            c.gridy = 2;
+            add(permissionsPanel, c);
 
             // col 3
             c.gridx = 2;
@@ -353,6 +444,68 @@ public class AclEditorFrame extends JFrame {
             });
 
             add(removeButton, c);
+        }
+
+        private JComboBox createPermissionBox() {
+            JComboBox result = new JComboBox(permissions);
+            result.setEditable(true);
+            result.setPrototypeDisplayValue("1234567890123456789012345");
+
+            JTextComponent editor = (JTextComponent) result.getEditor().getEditorComponent();
+            editor.addFocusListener(new FocusAdapter() {
+                @Override
+                public void focusLost(FocusEvent event) {
+                    updatePermissionsPanel(true);
+                }
+            });
+
+            editor.addKeyListener(new KeyAdapter() {
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB) {
+                        updatePermissionsPanel(true);
+                    }
+                }
+            });
+
+            return result;
+        }
+
+        private void updatePermissionsPanel(boolean focus) {
+            boolean changed = false;
+
+            if (!permissionBoxes.isEmpty()) {
+                int i = 0;
+                while (i < permissionBoxes.size() - 1) {
+                    if (permissionBoxes.get(i).getSelectedItem().toString().trim().length() == 0) {
+                        permissionBoxes.remove(i);
+                        changed = true;
+                    } else {
+                        i++;
+                    }
+                }
+
+                if (permissionBoxes.get(permissionBoxes.size() - 1).getSelectedItem().toString().trim().length() > 0) {
+                    permissionBoxes.add(createPermissionBox());
+                    changed = true;
+                }
+            } else {
+                permissionBoxes.add(createPermissionBox());
+                changed = true;
+            }
+
+            if (changed) {
+                permissionsPanel.removeAll();
+
+                for (JComboBox box : permissionBoxes) {
+                    permissionsPanel.add(box);
+                }
+
+                revalidate();
+
+                if (focus) {
+                    permissionBoxes.get(permissionBoxes.size() - 1).requestFocusInWindow();
+                }
+            }
         }
 
         public void updatePosition(int position) {
@@ -373,7 +526,10 @@ public class AclEditorFrame extends JFrame {
             List<String> permissions = new ArrayList<String>();
 
             for (JComboBox box : permissionBoxes) {
-                permissions.add(box.getSelectedItem().toString());
+                String permission = box.getSelectedItem().toString().trim();
+                if (permission.length() > 0) {
+                    permissions.add(permission);
+                }
             }
 
             return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principalBox.getSelectedItem()
