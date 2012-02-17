@@ -240,9 +240,9 @@ public class BrowserBindingUtils {
 
             PropertyData<?> propertyData = null;
 
-            if (singleValuePropertyMap.containsKey(i)) {
+            if (singleValuePropertyMap != null && singleValuePropertyMap.containsKey(i)) {
                 propertyData = createPropertyData(propDef, singleValuePropertyMap.get(i));
-            } else if (multiValuePropertyMap.containsKey(i)) {
+            } else if (multiValuePropertyMap != null && multiValuePropertyMap.containsKey(i)) {
                 propertyData = createPropertyData(propDef, controlParser.getValues(Constants.CONTROL_PROP_VALUE, i));
             } else {
                 propertyData = createPropertyData(propDef, null);
