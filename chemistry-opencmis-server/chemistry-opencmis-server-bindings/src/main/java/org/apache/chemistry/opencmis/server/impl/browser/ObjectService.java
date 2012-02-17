@@ -76,6 +76,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -446,6 +447,10 @@ public final class ObjectService {
             response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
         }
         response.setContentType(contentType);
+        if (content.getFileName() != null) {
+            response.setHeader(MimeHelper.CONTENT_DISPOSITION,
+                    MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_INLINE, content.getFileName()));
+        }
 
         // send content
         InputStream in = new BufferedInputStream(content.getStream(), BUFFER_SIZE);

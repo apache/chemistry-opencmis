@@ -35,6 +35,8 @@ public class MimeHelper {
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
 
     public static final String DISPOSITION_ATTACHMENT = "attachment";
+    
+    public static final String DISPOSITION_INLINE = "inline";
 
     public static final String DISPOSITION_FORM_DATA_CONTENT = "form-data; name=\"content\"";
     
