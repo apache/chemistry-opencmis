@@ -392,7 +392,7 @@ public class LoginDialog extends JDialog {
     private void createCookieButtons(Container pane) {
         JPanel cookiesContainer = new JPanel();
         cookiesContainer.setLayout(new BoxLayout(cookiesContainer, BoxLayout.LINE_AXIS));
-        boolean cookies = (System.getProperty(SYSPROP_COOKIES, "off").equalsIgnoreCase("on"));
+        boolean cookies = (System.getProperty(SYSPROP_COOKIES, "on").equalsIgnoreCase("on"));
         cookiesOnButton = new JRadioButton("On", cookies);
         cookiesOffButton = new JRadioButton("Off", !cookies);
         ButtonGroup cookiesGroup = new ButtonGroup();
