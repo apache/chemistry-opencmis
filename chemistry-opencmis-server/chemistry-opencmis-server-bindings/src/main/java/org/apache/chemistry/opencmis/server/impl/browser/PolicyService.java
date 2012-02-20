@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
+import org.apache.chemistry.opencmis.commons.impl.server.TypeCacheImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.json.simple.JSONArray;
@@ -59,7 +60,7 @@ public class PolicyService {
 
         JSONArray jsonPolicies = new JSONArray();
         if (policies != null) {
-            TypeCache typeCache = new TypeCache(repositoryId, service);
+            TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
             for (ObjectData policy : policies) {
                 jsonPolicies.add(JSONConverter.convert(policy, typeCache, false));
             }
@@ -89,7 +90,7 @@ public class PolicyService {
         // return object
         response.setStatus(HttpServletResponse.SC_OK);
 
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);
@@ -115,7 +116,7 @@ public class PolicyService {
         // return object
         response.setStatus(HttpServletResponse.SC_OK);
 
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);

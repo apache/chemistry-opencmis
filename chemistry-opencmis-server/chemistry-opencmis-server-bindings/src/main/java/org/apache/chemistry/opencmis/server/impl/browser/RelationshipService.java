@@ -41,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
+import org.apache.chemistry.opencmis.commons.impl.server.TypeCacheImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.json.simple.JSONObject;
@@ -71,7 +72,7 @@ public class RelationshipService {
             throw new CmisRuntimeException("Relationships are null!");
         }
 
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_OK);

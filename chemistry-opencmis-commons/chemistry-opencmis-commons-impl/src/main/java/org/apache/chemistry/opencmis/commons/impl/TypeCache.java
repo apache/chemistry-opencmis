@@ -18,46 +18,20 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 
 /**
  * Temporary type cache used for one call.
  */
-public class TypeCache {
+public interface TypeCache {
 
-    private final String repositoryId;
-    private final CmisService service;
-    private final Map<String, TypeDefinition> typeDefinitions;
+	/**
+	 * Gets the type definition by type id.
+	 */
+	public TypeDefinition getTypeDefinition(String typeId);
 
-    public TypeCache(String repositoryId, CmisService service) {
-        this.repositoryId = repositoryId;
-        this.service = service;
-        typeDefinitions = new HashMap<String, TypeDefinition>();
-    }
-
-    public TypeDefinition getTypeDefinition(String typeId) {
-        TypeDefinition type = typeDefinitions.get(typeId);
-        if (type == null) {
-            type = service.getTypeDefinition(repositoryId, typeId, null);
-            if (type != null) {
-                typeDefinitions.put(type.getId(), type);
-            }
-        }
-
-        return type;
-    }
-
-    public TypeDefinition getTypeDefinitionForObject(String objectId) {
-        ObjectInfo info = service.getObjectInfo(repositoryId, objectId);
-        if (info == null) {
-            return null;
-        }
-
-        return getTypeDefinition(info.getTypeId());
-    }
+	/**
+	 * Gets the type definition of an object.
+	 */
+	public TypeDefinition getTypeDefinitionForObject(String objectId);
 }

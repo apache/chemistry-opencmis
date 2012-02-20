@@ -79,6 +79,7 @@ import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
+import org.apache.chemistry.opencmis.commons.impl.server.TypeCacheImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -107,7 +108,7 @@ public final class ObjectService {
 
         // execute
         ControlParser cp = new ControlParser(request);
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
 
         String newObjectId = service.createDocument(repositoryId, createProperties(cp, null, typeCache), folderId,
                 createContentStream(request), versioningState, createPolicies(cp), createAddAcl(cp),
@@ -141,7 +142,7 @@ public final class ObjectService {
 
         // execute
         ControlParser cp = new ControlParser(request);
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
 
         ObjectData sourceDoc = getSimpleObject(service, repositoryId, sourceId);
         PropertyData<?> sourceTypeId = sourceDoc.getProperties().getProperties().get(PropertyIds.OBJECT_TYPE_ID);
@@ -179,7 +180,7 @@ public final class ObjectService {
 
         // execute
         ControlParser cp = new ControlParser(request);
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
 
         String newObjectId = service.createFolder(repositoryId, createProperties(cp, null, typeCache), folderId,
                 createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
@@ -210,7 +211,7 @@ public final class ObjectService {
 
         // execute
         ControlParser cp = new ControlParser(request);
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
 
         String newObjectId = service.createPolicy(repositoryId, createProperties(cp, null, typeCache), folderId,
                 createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
@@ -240,7 +241,7 @@ public final class ObjectService {
 
         // execute
         ControlParser cp = new ControlParser(request);
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
 
         String newObjectId = service.createRelationship(repositoryId, createProperties(cp, null, typeCache),
                 createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
@@ -273,7 +274,7 @@ public final class ObjectService {
 
         // execute
         ControlParser cp = new ControlParser(request);
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         Holder<String> objectIdHolder = new Holder<String>(objectId);
         Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
 
@@ -326,7 +327,7 @@ public final class ObjectService {
         }
 
         // return object
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(properties, objectId, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -366,7 +367,7 @@ public final class ObjectService {
         }
 
         // return object
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -531,7 +532,7 @@ public final class ObjectService {
         response.setStatus(HttpServletResponse.SC_OK);
 
         // return object
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);
@@ -567,7 +568,7 @@ public final class ObjectService {
         response.setHeader("Location", location);
 
         // return object
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);
@@ -601,7 +602,7 @@ public final class ObjectService {
         response.setHeader("Location", location);
 
         // return object
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         writeJSON(jsonObject, request, response);

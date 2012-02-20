@@ -49,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
+import org.apache.chemistry.opencmis.commons.impl.server.TypeCacheImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -82,7 +83,7 @@ public class VersioningService {
         }
 
         // return object
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         // set headers
@@ -126,7 +127,7 @@ public class VersioningService {
 
         // execute
         ControlParser cp = new ControlParser(request);
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         Holder<String> objectIdHolder = new Holder<String>(objectId);
 
         service.checkIn(repositoryId, objectIdHolder, major, createProperties(cp, null, typeCache),
@@ -170,7 +171,7 @@ public class VersioningService {
             throw new CmisRuntimeException("Versions are null!");
         }
 
-        TypeCache typeCache = new TypeCache(repositoryId, service);
+        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONArray jsonVersions = new JSONArray();
         for (ObjectData version : versions) {
             jsonVersions.add(JSONConverter.convert(version, typeCache, false));
