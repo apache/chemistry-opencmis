@@ -537,7 +537,7 @@ public class ClientHelper {
             addConsoleMenu(cmisMenu, "OpenCMIS Documentation",
                     new URI("http://chemistry.apache.org/java/opencmis.html"));
             addConsoleMenu(cmisMenu, "OpenCMIS Client API JavaDoc", new URI(
-                    "http://chemistry.apache.org/java/0.5.0/maven/apidocs/"));
+                    "http://chemistry.apache.org/java/0.7.0/maven/apidocs/"));
 
             console.getInputArea().setText(ClientHelper.readFileAndRemoveHeader(file));
 
