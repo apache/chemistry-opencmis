@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
@@ -52,7 +53,9 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ExtensionDataImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
@@ -90,9 +93,9 @@ public class Main {
     private DiscoveryService discSvc;
     private AclService aclSvc;
 
-    private static final String[] URLS = {"http://localhost:8080/inmemory/atom", 
-            "http://localhost:8080/inmemory/services", 
-            "http://localhost:8080/inmemory/browser"};
+    private static final String[] URLS = {"http://de05189:8080/inmemory/atom", 
+            "http://de05189:8080/inmemory/services", 
+            "http://de05189:8080/inmemory/browser"};
     private static final BindingType[] BINDINGS = {BindingType.ATOMPUB, BindingType.WEBSERVICES, BindingType.BROWSER};
 
     public Main() {
@@ -110,11 +113,13 @@ public class Main {
     public void run() {
         LOG.debug("Generating spec examples for Binding: " + bindingType.value());
         // Repository Service:
+        getRepositories();
+
         repositoryId = "A1";
         getRepositoryInfo();
 
-        getRepositories();
-
+        getTypeDefinition("cmis:folder");
+        
         String docId = getTestDocId();
         String folderId = getTestFolderId();
 
@@ -130,6 +135,7 @@ public class Main {
         String id1 = createDocument("SampleDocument", TOPLEVEL_TYPE, rootFolderId, VersioningState.NONE);
         updateProperties(id1, PropertyIds.NAME, "RenamedDocument");
         getAllowableActions(id1);
+        
         deleteObject(id1);
 
         // Discovery Service:
@@ -143,6 +149,7 @@ public class Main {
 
         // delete all generated objects
         String[] ids = {id2};
+        
         cleanup(ids);
 
         // collect all captured files and store them in a ZIP file
@@ -214,9 +221,18 @@ public class Main {
 
     private void getRepositoryInfo() {
         LOG.debug("getting repository info for repository " + repositoryId);
+        // Because the browser binding silently retrieves all repositories on the first request we call it twice
+        // and use a dummy extension data element to prevent caching
         RepositoryInfo repoInfo = repSvc.getRepositoryInfo(repositoryId, null);
-        LOG.debug("root folder id is: " + repoInfo.getId());
+        if (bindingType.equals(BindingType.BROWSER)) {
+            ExtensionDataImpl dummyExt = new ExtensionDataImpl();
+            List<CmisExtensionElement> extList = new ArrayList<CmisExtensionElement>() {{ add(new CmisExtensionElementImpl("foo", "foo", null, "bar")); }};
+            dummyExt.setExtensions(extList);
+            repoInfo = repSvc.getRepositoryInfo(repositoryId, dummyExt);
+        }
+        LOG.debug("repository id is: " + repoInfo.getId());
         rootFolderId = repoInfo.getRootFolderId();
+        LOG.debug("root folder id is: " + repoInfo.getRootFolderId());
         renameFiles("getRepositoryInfo");
         LOG.debug("getRepositoryInfo() done.");
     }
@@ -441,6 +457,13 @@ public class Main {
         aclSvc.getAcl(repositoryId, objectId, true, null);
         renameFiles("getAcl");
         LOG.debug("getting Acl() done.");
+    }
+
+    private void getTypeDefinition(String typeId) {
+        LOG.debug("getTypeDefinition " + typeId);
+        repSvc.getTypeDefinition(repositoryId, typeId, null);
+        renameFiles("getTypeDefinition");
+        LOG.debug("getTypeDefinition() done.");
     }
 
     private void getTypeDescendants(String typeId) {
