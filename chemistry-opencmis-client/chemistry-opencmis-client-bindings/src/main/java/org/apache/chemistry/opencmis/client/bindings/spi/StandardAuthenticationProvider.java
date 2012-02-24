@@ -143,28 +143,28 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             wsseSecurityElement.appendChild(wsuTimestampElement);
 
             Element tsCreatedElement = document.createElementNS(WSU_NAMESPACE, "Created");
-            tsCreatedElement.setTextContent(sdf.format(created));
+            tsCreatedElement.appendChild(document.createTextNode(sdf.format(created)));
             wsuTimestampElement.appendChild(tsCreatedElement);
 
             Element tsExpiresElement = document.createElementNS(WSU_NAMESPACE, "Expires");
-            tsExpiresElement.setTextContent(sdf.format(expires));
+            tsExpiresElement.appendChild(document.createTextNode(sdf.format(expires)));
             wsuTimestampElement.appendChild(tsExpiresElement);
 
             Element usernameTokenElement = document.createElementNS(WSSE_NAMESPACE, "UsernameToken");
             wsseSecurityElement.appendChild(usernameTokenElement);
 
             Element usernameElement = document.createElementNS(WSSE_NAMESPACE, "Username");
-            usernameElement.setTextContent(user);
+            usernameElement.appendChild(document.createTextNode(user));
             usernameTokenElement.appendChild(usernameElement);
 
             Element passwordElement = document.createElementNS(WSSE_NAMESPACE, "Password");
-            passwordElement.setTextContent(password);
+            passwordElement.appendChild(document.createTextNode(password));
             passwordElement.setAttribute("Type",
                     "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText");
             usernameTokenElement.appendChild(passwordElement);
 
             Element createdElement = document.createElementNS(WSU_NAMESPACE, "Created");
-            createdElement.setTextContent(sdf.format(created));
+            createdElement.appendChild(document.createTextNode(sdf.format(created)));
             usernameTokenElement.appendChild(createdElement);
 
             return wsseSecurityElement;

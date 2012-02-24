@@ -180,6 +180,7 @@
         <module>chemistry-opencmis-client/chemistry-opencmis-client-impl</module>
         <module>chemistry-opencmis-client/chemistry-opencmis-client-bindings</module>
         <module>chemistry-opencmis-client/chemistry-opencmis-client-bindings-websphere</module>
+        <module>chemistry-opencmis-android/chemistry-opencmis-android-client</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-support</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-bindings</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-inmemory</module>
