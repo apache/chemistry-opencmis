@@ -31,8 +31,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dispatcher for the AtomPub and Browser binding servlet.
@@ -46,7 +46,7 @@ public class Dispatcher implements Serializable {
     public static final String METHOD_PUT = "PUT";
     public static final String METHOD_DELETE = "DELETE";
 
-    private static final Log LOG = LogFactory.getLog(Dispatcher.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(Dispatcher.class.getName());
 
     private final boolean caseSensitive;
     private final Map<String, Method> methodMap = new HashMap<String, Method>();

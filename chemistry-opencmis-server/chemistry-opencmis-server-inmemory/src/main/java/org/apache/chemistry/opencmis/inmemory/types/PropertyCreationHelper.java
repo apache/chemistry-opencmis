@@ -73,8 +73,8 @@ import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jens
@@ -82,7 +82,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PropertyCreationHelper {
 
-    private static final Log log = LogFactory.getLog(PropertyCreationHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(PropertyCreationHelper.class);
 
     private PropertyCreationHelper() {
     }

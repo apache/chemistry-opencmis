@@ -37,8 +37,8 @@ import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.FilterIterator;
 import org.apache.chemistry.opencmis.jcr.util.Predicate;
 import org.apache.chemistry.opencmis.jcr.util.Util;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -57,7 +57,7 @@ import java.util.Set;
  * Instances of this class represent a cmis:folder backed by an underlying JCR <code>Node</code>. 
  */
 public class JcrFolder extends JcrNode {
-    private static final Log log = LogFactory.getLog(JcrFolder.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrFolder.class);
 
     public JcrFolder(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
         super(node, typeManager, pathManager, typeHandlerManager);

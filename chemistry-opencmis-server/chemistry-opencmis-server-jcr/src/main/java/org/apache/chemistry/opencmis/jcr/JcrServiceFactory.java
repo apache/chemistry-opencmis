@@ -29,8 +29,8 @@ import org.apache.chemistry.opencmis.jcr.impl.DefaultFolderTypeHandler;
 import org.apache.chemistry.opencmis.jcr.impl.DefaultUnversionedDocumentTypeHandler;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.spi.ServiceRegistry;
 import javax.jcr.Repository;
@@ -48,7 +48,7 @@ import java.util.Map;
  * A {@link CmisServiceFactory} implementation which returns {@link JcrService} instances.  
  */
 public class JcrServiceFactory extends AbstractServiceFactory {
-    private static final Log log = LogFactory.getLog(JcrServiceFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrServiceFactory.class);
 
     public static final String MOUNT_PATH_CONFIG = "mount-path";
     public static final String PREFIX_JCR_CONFIG = "jcr.";

@@ -62,8 +62,8 @@ import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
 import org.apache.chemistry.opencmis.server.support.query.StringUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A processor for a CMIS query for the In-Memory server. During tree traversal
@@ -74,7 +74,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class InMemoryQueryProcessor {
 
-    private static final Log LOG = LogFactory.getLog(InMemoryQueryProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryQueryProcessor.class);
 
     private List<StoredObject> matches = new ArrayList<StoredObject>();
     private QueryObject queryObj;

@@ -31,8 +31,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
@@ -48,7 +48,7 @@ import java.util.Set;
  * Instances of this class represent a cmis:document backed by an underlying JCR <code>Node</code>.
  */
 public abstract class JcrDocument extends JcrNode {
-    private static final Log log = LogFactory.getLog(JcrDocument.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrDocument.class);
 
     public static final String MIME_UNKNOWN = "application/octet-stream";
 

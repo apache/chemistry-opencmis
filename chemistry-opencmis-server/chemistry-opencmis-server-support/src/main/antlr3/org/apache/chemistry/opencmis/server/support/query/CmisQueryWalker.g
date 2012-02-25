@@ -61,12 +61,12 @@ options {
 package org.apache.chemistry.opencmis.server.support.query;
 
 import java.math.BigDecimal;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 }
 
 @members {
-    private static Log LOG = LogFactory.getLog(CmisQueryWalker.class);
+    private static final Logger log = LoggerFactory.getLogger(CmisQueryWalker.class);
 
     private QueryObject queryObj;
     private Tree wherePredicateTree;
@@ -298,7 +298,9 @@ search_condition
       }
     | value_expression
       {
-          LOG.debug("  add node to where: " + $value_expression.start + " id: " + System.identityHashCode($value_expression.start));
+          if (log.isDebugEnabled()) {
+              log.debug("  add node to where: " + $value_expression.start + " id: " + System.identityHashCode($value_expression.start));
+          }
           queryObj.addWhereReference($value_expression.start, $value_expression.result);
       }
     | literal

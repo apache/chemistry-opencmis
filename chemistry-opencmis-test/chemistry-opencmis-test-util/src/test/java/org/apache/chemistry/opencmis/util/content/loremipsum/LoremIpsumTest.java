@@ -24,25 +24,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.Writer;
 
-import org.apache.chemistry.opencmis.util.content.loremipsum.LoremIpsum;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoremIpsumTest {
 
-    private static final Log LOG = LogFactory.getLog(LoremIpsumTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoremIpsumTest.class);
 
     String sample = "One two three four five six. Seven eight nine ten eleven twelve. "
 		+ "\n\n"

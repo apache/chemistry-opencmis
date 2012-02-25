@@ -45,12 +45,12 @@ import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class FractalGenerator {
-    private static final Log LOG = LogFactory.getLog(FractalGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FractalGenerator.class);
 
     private final static int ZOOM_STEPS_PER_BATCH = 10;
     private final static int DEFAULT_MAX_ITERATIONS = 33;

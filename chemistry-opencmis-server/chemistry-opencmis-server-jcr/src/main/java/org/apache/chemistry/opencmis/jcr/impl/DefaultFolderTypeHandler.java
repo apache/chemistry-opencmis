@@ -27,8 +27,8 @@ import org.apache.chemistry.opencmis.jcr.JcrFolder;
 import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
 import org.apache.chemistry.opencmis.jcr.query.IdentifierMap;
 import org.apache.chemistry.opencmis.jcr.type.JcrFolderTypeHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -39,7 +39,7 @@ import javax.jcr.nodetype.NodeType;
  */
 public class DefaultFolderTypeHandler extends AbstractJcrTypeHandler implements JcrFolderTypeHandler {
 
-    private static final Log log = LogFactory.getLog(DefaultFolderTypeHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultFolderTypeHandler.class);
 
     private static class FolderIdentifierMap extends DefaultIdentifierMapBase {
 

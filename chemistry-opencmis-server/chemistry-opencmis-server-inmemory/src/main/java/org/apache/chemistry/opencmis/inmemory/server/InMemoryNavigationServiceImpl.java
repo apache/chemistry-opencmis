@@ -59,12 +59,12 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
-    private static final Log LOG = LogFactory.getLog(InMemoryNavigationServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryNavigationServiceImpl.class);
 
     final AtomLinkInfoProvider fAtomLinkProvider;
 

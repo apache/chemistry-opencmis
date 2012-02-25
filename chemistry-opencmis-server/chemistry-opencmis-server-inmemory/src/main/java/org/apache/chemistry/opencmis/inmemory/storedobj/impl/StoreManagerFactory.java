@@ -19,8 +19,8 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * create objects that are stored in a persistent store
@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class StoreManagerFactory {
 
-    private static final Log log = LogFactory.getLog(StoreManagerFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(StoreManagerFactory.class);
 
     private StoreManagerFactory() {
     }

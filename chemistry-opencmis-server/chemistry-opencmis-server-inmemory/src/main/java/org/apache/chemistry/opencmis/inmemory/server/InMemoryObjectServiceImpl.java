@@ -78,11 +78,11 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeValidator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
-    private static final Log LOG = LogFactory.getLog(InMemoryServiceFactoryImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryServiceFactoryImpl.class.getName());
 
     final AtomLinkInfoProvider fAtomLinkProvider;
 

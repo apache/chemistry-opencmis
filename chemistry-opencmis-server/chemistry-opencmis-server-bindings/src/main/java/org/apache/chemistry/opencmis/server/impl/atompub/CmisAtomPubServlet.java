@@ -76,8 +76,8 @@ import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CMIS AtomPub servlet.
@@ -87,7 +87,7 @@ public class CmisAtomPubServlet extends HttpServlet {
     public static final String PARAM_CALL_CONTEXT_HANDLER = "callContextHandler";
     public static final String PARAM_TRUSTED_PROXIES = "trustedProxies";
 
-    private static final Log LOG = LogFactory.getLog(CmisAtomPubServlet.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(CmisAtomPubServlet.class.getName());
 
     private static final long serialVersionUID = 1L;
 

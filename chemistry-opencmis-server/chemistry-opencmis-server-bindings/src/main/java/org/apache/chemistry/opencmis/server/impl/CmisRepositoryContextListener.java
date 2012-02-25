@@ -29,8 +29,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CMIS context listener.
@@ -39,7 +39,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
 
     public static final String SERVICES_FACTORY = "org.apache.chemistry.opencmis.servicesfactory";
 
-    private static final Log log = LogFactory.getLog(CmisRepositoryContextListener.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(CmisRepositoryContextListener.class.getName());
 
     private static final String CONFIG_INIT_PARAM = "org.apache.chemistry.opencmis.REPOSITORY_CONFIG_FILE";
     private static final String CONFIG_FILENAME = "/repository.properties";

@@ -37,15 +37,15 @@ import org.apache.chemistry.opencmis.commons.spi.PolicyService;
 import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * * CMIS local SPI implementation.
  */
 public class CmisLocalSpi implements CmisSpi {
 
-    private static final Log log = LogFactory.getLog(CmisLocalSpi.class);
+    private static final Logger log = LoggerFactory.getLogger(CmisLocalSpi.class);
 
     private final CmisServiceFactory factory;
 

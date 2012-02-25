@@ -36,13 +36,13 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumBasicPermissions;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAce;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAcl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.Permission;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 public class AclTest {
 
-    private static final Log LOG = LogFactory.getLog(AclTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AclTest.class);
 
     final static String ANDREAS = "andreas";
     final static String BERTA = "berta";
@@ -80,7 +80,7 @@ public class AclTest {
         assertTrue(acl.getAces().get(0) == aceA);
     
         acl = new InMemoryAcl(createAceList());
-        LOG.debug(acl);
+        LOG.debug(acl.toString());
         
         assertEquals(2, acl.getAces().size());
         assertTrue(acl.getAces().get(0) == aceR);

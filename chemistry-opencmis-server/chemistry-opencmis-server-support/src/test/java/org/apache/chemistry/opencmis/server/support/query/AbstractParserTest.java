@@ -31,8 +31,8 @@ import org.antlr.runtime.Lexer;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.stringtemplate.StringTemplate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  This class is clone of org.antlr.gunit.gUnitBase class adapted to Java style
@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class AbstractParserTest{
 
-    private static final Log log = LogFactory.getLog(AbstractParserTest.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractParserTest.class);
 
     protected String superGrammarName;
     Class<?> lexer;

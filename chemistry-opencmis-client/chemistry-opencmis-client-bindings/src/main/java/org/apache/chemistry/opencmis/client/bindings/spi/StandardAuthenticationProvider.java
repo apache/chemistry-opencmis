@@ -187,7 +187,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
 
         try {
             return Collections.singletonList("Basic "
-                    + Base64.encodeBytes((username + ":" + password).getBytes("ISO-8859-1")));
+                    + Base64.encodeBytes((username + ":" + password).getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {
             // shouldn't happen...
             return Collections.emptyList();

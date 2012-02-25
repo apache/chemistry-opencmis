@@ -53,8 +53,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service wrapper.
@@ -63,7 +63,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
 
     public static final BigInteger MINUS_ONE = BigInteger.valueOf(-1);
 
-    private static final Log log = LogFactory.getLog(CmisServiceWrapper.class);
+    private static final Logger log = LoggerFactory.getLogger(CmisServiceWrapper.class);
 
     private BigInteger defaultTypesMaxItems = null;
     private BigInteger defaultTypesDepth = MINUS_ONE;
@@ -134,7 +134,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
         } else {
             // should not happen if the connector works correctly
             // it's alarming enough to log the exception
-            log.warn(e);
+            log.warn(e.toString(), e);
 
             return new CmisRuntimeException(e.getMessage(), e);
         }
@@ -316,9 +316,8 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     /**
-     * Returns the
-     * <code>AclPropagation.REPOSITORYDETERMINED</code> if <code>value</code> is
-     * <code>null</code>.
+     * Returns the <code>AclPropagation.REPOSITORYDETERMINED</code> if
+     * <code>value</code> is <code>null</code>.
      */
     protected AclPropagation getDefault(AclPropagation value) {
         if (value == null) {
@@ -329,9 +328,8 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     /**
-     * Returns the
-     * <code>RelationshipDirection.SOURCE</code> if <code>value</code> is
-     * <code>null</code> .
+     * Returns the <code>RelationshipDirection.SOURCE</code> if
+     * <code>value</code> is <code>null</code> .
      */
     protected RelationshipDirection getDefault(RelationshipDirection value) {
         if (value == null) {

@@ -18,11 +18,11 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jens
@@ -30,7 +30,7 @@ import org.junit.Test;
  */
 public class TestParserStrict extends AbstractParserTest{
 
-    private static final Log log = LogFactory.getLog(TestParserStrict.class);
+    private static final Logger log = LoggerFactory.getLogger(TestParserStrict.class);
 
     @Before
     public void setUp() {

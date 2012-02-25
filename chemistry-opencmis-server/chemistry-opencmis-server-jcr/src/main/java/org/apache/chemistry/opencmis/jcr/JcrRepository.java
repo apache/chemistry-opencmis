@@ -62,8 +62,8 @@ import org.apache.chemistry.opencmis.jcr.type.JcrDocumentTypeHandler;
 import org.apache.chemistry.opencmis.jcr.type.JcrFolderTypeHandler;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.Util;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
@@ -90,7 +90,7 @@ import java.util.Set;
  * JCR back-end for CMIS server.
  */
 public class JcrRepository {
-    private static final Log log = LogFactory.getLog(JcrRepository.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrRepository.class);
 
     private final Repository repository;
     private final JcrTypeManager typeManager;
@@ -113,7 +113,7 @@ public class JcrRepository {
     }
 
     /**
-     * Log into the underlying JCR repository.
+     * Logger into the underlying JCR repository.
      * 
      * @param credentials
      * @param workspaceName

@@ -42,11 +42,11 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
-    private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractSingleFilingImpl.class.getName());
 
     FolderImpl(ObjectStoreImpl objStore) {
         super(objStore);

@@ -67,12 +67,12 @@ import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
-    private static final Log LOG = LogFactory.getLog(Main.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class.getName());
     private static final BigInteger TYPE_DEPTH_ALL = BigInteger.valueOf(-1);
     private static final BigInteger MAX_ITEMS = null;
     private static final BigInteger SKIP_COUNT = BigInteger.valueOf(0);
@@ -536,7 +536,7 @@ public class Main {
                 if (fout != null)
                     fout.close();
             } catch (IOException e) {
-                LOG.error(e);
+                LOG.error(e.toString(), e);
             }
         }
     }

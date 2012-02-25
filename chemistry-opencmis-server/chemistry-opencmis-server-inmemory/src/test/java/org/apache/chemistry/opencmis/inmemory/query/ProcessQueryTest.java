@@ -35,14 +35,14 @@ import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.TextSearchLexer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ProcessQueryTest extends AbstractQueryTest {
 
-    private static final Log LOG = LogFactory.getLog(ProcessQueryTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessQueryTest.class);
 
     private static class TestQueryProcessor extends AbstractQueryConditionProcessor {
 

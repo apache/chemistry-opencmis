@@ -25,8 +25,8 @@ import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
 import org.apache.chemistry.opencmis.jcr.PathManager;
 import org.apache.chemistry.opencmis.jcr.query.IdentifierMap;
 import org.apache.chemistry.opencmis.jcr.util.Predicate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class JcrTypeHandlerManager {
 
-    private static final Log log = LogFactory.getLog(JcrTypeHandlerManager.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrTypeHandlerManager.class);
 
     private final PathManager pathManager;
     private final JcrTypeManager typeManager;

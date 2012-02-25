@@ -55,14 +55,14 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class VersioningTest extends AbstractServiceTest {
-    private static final Log log = LogFactory.getLog(ObjectServiceTest.class);
+    private static final Logger log = LoggerFactory.getLogger(ObjectServiceTest.class);
     private static final String PROP_VALUE = "Mickey Mouse";
     private static final String PROP_VALUE_NEW = "Donald Duck";
     private static final String PROP_NAME = "My Versioned Document";

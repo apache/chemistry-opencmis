@@ -59,12 +59,12 @@ import org.apache.chemistry.opencmis.inmemory.types.TypeDefinitions;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
-    private static final Log LOG = LogFactory.getLog(InMemoryServiceFactoryImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryServiceFactoryImpl.class.getName());
     private static final BigInteger DEFAULT_MAX_ITEMS_OBJECTS = BigInteger.valueOf(1000);
     private static final BigInteger DEFAULT_MAX_ITEMS_TYPES = BigInteger.valueOf(100);
     private static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(2);

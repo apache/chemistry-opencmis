@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.util.repository;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

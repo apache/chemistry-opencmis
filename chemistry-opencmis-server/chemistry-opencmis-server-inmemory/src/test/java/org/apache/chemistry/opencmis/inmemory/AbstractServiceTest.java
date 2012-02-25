@@ -60,12 +60,12 @@ import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceFactoryImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AbstractServiceTest {
 
-    private static final Log LOG = LogFactory.getLog(AbstractServiceTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractServiceTest.class);
 
     protected static final String REPOSITORY_ID = "UnitTestRepository";
     protected BindingsObjectFactory fFactory = new BindingsObjectFactoryImpl();

@@ -110,9 +110,9 @@ import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CmisBrowserBindingServlet extends HttpServlet {
 
@@ -120,7 +120,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
 
     public static final String PARAM_CALL_CONTEXT_HANDLER = "callContextHandler";
 
-    private static final Log LOG = LogFactory.getLog(CmisBrowserBindingServlet.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(CmisBrowserBindingServlet.class.getName());
 
     private Dispatcher repositoryDispatcher;
     private Dispatcher rootDispatcher;

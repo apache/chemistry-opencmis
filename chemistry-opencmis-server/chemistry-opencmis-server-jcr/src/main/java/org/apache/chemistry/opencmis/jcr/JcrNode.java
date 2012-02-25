@@ -49,8 +49,8 @@ import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.Util;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -75,7 +75,7 @@ import java.util.Set;
  */
 public abstract class JcrNode {
 
-    private static final Log log = LogFactory.getLog(JcrNode.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrNode.class);
 
     /**
      * Default value for last cmis:createdBy and cmis:modifiedBy

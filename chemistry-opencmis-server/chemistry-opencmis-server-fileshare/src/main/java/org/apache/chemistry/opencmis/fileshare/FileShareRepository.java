@@ -90,6 +90,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
@@ -124,9 +125,8 @@ import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * File system back-end for CMIS server.
@@ -145,7 +145,7 @@ public class FileShareRepository {
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    private static final Log log = LogFactory.getLog(FileShareRepository.class);
+    private static final Logger log = LoggerFactory.getLogger(FileShareRepository.class);
 
     /** Repository id */
     private final String repositoryId;
@@ -2091,7 +2091,7 @@ public class FileShareRepository {
             return root;
         }
 
-        return new File(root, (new String(Base64.decodeBase64(id.getBytes("ISO-8859-1")), "UTF-8")).replace('/',
+        return new File(root, (new String(Base64.decode(id.getBytes("US-ASCII")), "UTF-8")).replace('/',
                 File.separatorChar));
     }
 
@@ -2121,7 +2121,7 @@ public class FileShareRepository {
 
         String path = getRepositoryPath(file);
 
-        return new String(Base64.encodeBase64(path.getBytes("UTF-8")), "ISO-8859-1");
+        return Base64.encodeBytes(path.getBytes("UTF-8"));
     }
 
     private String getRepositoryPath(File file) {

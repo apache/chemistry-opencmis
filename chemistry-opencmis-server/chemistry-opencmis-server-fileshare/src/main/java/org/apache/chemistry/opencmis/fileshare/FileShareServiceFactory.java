@@ -38,8 +38,8 @@ import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileShareServiceFactory extends AbstractServiceFactory {
 
@@ -54,7 +54,7 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
     private static final BigInteger DEFAULT_MAX_ITEMS_OBJECTS = BigInteger.valueOf(200);
     private static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(10);
 
-    private static final Log log = LogFactory.getLog(FileShareServiceFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(FileShareServiceFactory.class);
 
     private RepositoryMap repositoryMap;
     private TypeManager typeManager;

@@ -27,8 +27,8 @@ import java.util.Properties;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 
 public class ItemIterableTest {
 
-    private static final Log log = LogFactory.getLog(ItemIterableTest.class);
+    private static final Logger log = LoggerFactory.getLogger(ItemIterableTest.class);
     static {
         Properties p = new Properties();
         try {

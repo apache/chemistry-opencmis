@@ -40,8 +40,8 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefiniti
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that manages a type system for a repository types can be added, the
@@ -52,7 +52,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class TypeManagerImpl implements TypeManagerCreatable {
 
-    private static final Log LOG = LogFactory.getLog(TypeManagerImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TypeManagerImpl.class.getName());
     /**
      * map from repository id to a types map
      */

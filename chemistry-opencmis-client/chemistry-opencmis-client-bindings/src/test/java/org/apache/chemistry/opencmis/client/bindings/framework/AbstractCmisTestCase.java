@@ -51,8 +51,8 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -96,7 +96,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
     private String fTestRepositoryId;
     private String fTestFolderId;
 
-    private static final Log log = LogFactory.getLog(AbstractCmisTestCase.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractCmisTestCase.class);
 
     /**
      * Read configuration file.
