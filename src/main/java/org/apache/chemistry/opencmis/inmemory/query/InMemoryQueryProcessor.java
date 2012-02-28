@@ -183,8 +183,11 @@ public class InMemoryQueryProcessor {
 
                 if (sel instanceof ColumnReference) {
                     String propId = ((ColumnReference) sel).getPropertyId();
-                    Object propVal1 = so1.getProperties().get(propId).getFirstValue();
-                    Object propVal2 = so2.getProperties().get(propId).getFirstValue();
+                    PropertyDefinition<?> pd = ((ColumnReference) sel).getPropertyDefinition();
+                    
+                    Object propVal1 = PropertyUtil.getProperty(so1, propId, pd);
+                    Object propVal2 = PropertyUtil.getProperty(so2, propId, pd);
+
                     if (propVal1 == null && propVal2 == null) {
                         result = 0;
                     } else if (propVal1 == null) {
