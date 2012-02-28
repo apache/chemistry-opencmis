@@ -29,6 +29,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,6 +199,22 @@ public class LoginDialog extends JDialog {
                     createClientSession();
 
                     List<Repository> repositories = clientSession.getRepositories();
+
+                    Collections.sort(repositories, new Comparator<Repository>() {
+                        @Override
+                        public int compare(Repository r1, Repository r2) {
+                            if (r1 == null || r1.getName() == null) {
+                                return 1;
+                            }
+
+                            if (r2 == null || r2.getName() == null) {
+                                return -1;
+                            }
+
+                            return r1.getName().compareTo(r2.getName());
+                        }
+                    });
+
                     if (repositories.size() > 0) {
 
                         for (Repository repository : repositories) {
