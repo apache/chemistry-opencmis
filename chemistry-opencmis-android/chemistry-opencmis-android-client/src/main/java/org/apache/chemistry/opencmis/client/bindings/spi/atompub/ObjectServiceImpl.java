@@ -106,6 +106,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
+        //TODO
         // object.setPolicyIds(convertPolicyIds(policies));
 
         String mediaType = null;
@@ -156,8 +157,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
-        // CmisObjectType object = new CmisObjectType();
-        // object.setProperties(convert(properties));
+		//TODO
         // object.setPolicyIds(convertPolicyIds(policies));
 
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
@@ -208,8 +208,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
-        // CmisObjectType object = new CmisObjectType();
-        // object.setProperties(convert(properties));
+        //TODO
         // object.setPolicyIds(convertPolicyIds(policies));
 
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
@@ -257,8 +256,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
-        // CmisObjectType object = new CmisObjectType();
-        // object.setProperties(convert(properties));
+		//TODO
         // object.setPolicyIds(convertPolicyIds(policies));
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
 
@@ -300,8 +298,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
-        // CmisObjectType object = new CmisObjectType();
-        // object.setProperties(convert(properties));
+        //TODO
         // object.setPolicyIds(convertPolicyIds(policies));
 
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
@@ -704,7 +701,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
                 // extract current ACL
                 ObjectData object = (ObjectData) element.getObject();
                 originalAces = object.getAcl();
-                // originalAces = convert(object.getAcl(), object.isExactACL());
 
                 break;
             }

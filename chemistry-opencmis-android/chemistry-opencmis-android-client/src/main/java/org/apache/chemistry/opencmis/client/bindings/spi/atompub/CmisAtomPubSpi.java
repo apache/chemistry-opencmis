@@ -29,11 +29,15 @@ import org.apache.chemistry.opencmis.commons.spi.PolicyService;
 import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CMIS AtomPub SPI implementation.
  */
 public class CmisAtomPubSpi implements CmisSpi {
+
+    private static final Logger log = LoggerFactory.getLogger(CmisAtomPubSpi.class);
 
     private final BindingSession session;
 
@@ -51,6 +55,9 @@ public class CmisAtomPubSpi implements CmisSpi {
      * Constructor.
      */
     public CmisAtomPubSpi(BindingSession session) {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing AtomPub SPI...");
+        }
 
         this.session = session;
 

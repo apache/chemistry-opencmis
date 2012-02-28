@@ -1,62 +1,77 @@
 package org.apache.chemistry.opencmis.commons.impl;
 
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_ACLCAP_ACL_PROPAGATION;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_ACLCAP_SUPPORTED_PERMISSIONS;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_ACL;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_ALL_VERSIONS_SEARCHABLE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_CHANGES;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_CONTENT_STREAM_UPDATES;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_GET_DESCENDANTS;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_GET_FOLDER_TREE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_JOIN;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_MULTIFILING;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_PWC_SEARCHABLE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_PWC_UPDATABLE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_QUERY;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_RENDITIONS;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_UNFILING;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_CAP_VERSION_SPECIFIC_FILING;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_CARDINALITY;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_DESCRIPTION;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_DISPLAYNAME;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_INHERITED;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_LOCALNAME;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_LOCALNAMESPACE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_MAX_LENGTH;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_MAX_VALUE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_MIN_VALUE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_OPENCHOICE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_ORDERABLE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_PRECISION;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_QUERYABLE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_QUERYNAME;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_REQUIRED;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_RESOLUTION;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_PROPERTY_TYPE_UPDATABILITY;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_RENDITION_DOCUMENT_ID;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_RENDITION_HEIGHT;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_RENDITION_KIND;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_RENDITION_LENGTH;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_RENDITION_MIMETYPE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_RENDITION_STREAM_ID;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_RENDITION_TITLE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_RENDITION_WIDTH;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_CHANGES_INCOMPLETE;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_CHANGE_LOCK_TOKEN;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_CMIS_VERSION_SUPPORTED;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_DESCRIPTION;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_ID;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_NAME;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_PRODUCT;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_PRODUCT_VERSION;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_REPOSITORY_URL;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_ROOT_FOLDER_ID;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_ROOT_FOLDER_URL;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_THIN_CLIENT_URI;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_REPINFO_VENDOR;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_TYPE_CONTENTSTREAM_ALLOWED;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_TYPE_PARENT_ID;
-import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.JSON_TYPE_VERSIONABLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_CARDINALITY;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_DESCRIPTION;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_DISPLAYNAME;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_INHERITED;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_LOCALNAME;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_LOCALNAMESPACE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_MAX_LENGTH;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_MAX_VALUE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_MIN_VALUE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_OPENCHOICE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_ORDERABLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_PRECISION;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_QUERYABLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_QUERYNAME;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_REQUIRED;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_RESOLUTION;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_TYPE_UPDATABILITY;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ACLCAP_ACL_PROPAGATION;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ACLCAP_SUPPORTED_PERMISSIONS;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_ACL;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_ALL_VERSIONS_SEARCHABLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_CHANGES;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_CONTENT_STREAM_UPDATES;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_GET_DESCENDANTS;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_GET_FOLDER_TREE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_JOIN;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_MULTIFILING;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_PWC_SEARCHABLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_PWC_UPDATABLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_QUERY;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_RENDITIONS;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_UNFILING;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CAP_VERSION_SPECIFIC_FILING;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_RENDITION_DOCUMENT_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_RENDITION_HEIGHT;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_RENDITION_KIND;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_RENDITION_LENGTH;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_RENDITION_MIMETYPE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_RENDITION_STREAM_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_RENDITION_TITLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_RENDITION_WIDTH;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_CHANGES_INCOMPLETE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_CHANGE_LOCK_TOKEN;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_CMIS_VERSION_SUPPORTED;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_DESCRIPTION;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_NAME;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_PRODUCT;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_PRODUCT_VERSION;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_REPOSITORY_URL;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_ROOT_FOLDER_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_ROOT_FOLDER_URL;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_THIN_CLIENT_URI;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_REPINFO_VENDOR;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_BASE_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_CONTENTSTREAM_ALLOWED;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_CONTROLABLE_ACL;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_CONTROLABLE_POLICY;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_CREATABLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_DESCRIPTION;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_DISPLAYNAME;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_FILEABLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_FULLTEXT_INDEXED;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_INCLUDE_IN_SUPERTYPE_QUERY;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_LOCALNAME;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_LOCALNAMESPACE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_PARENT_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_QUERYABLE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_QUERYNAME;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TYPE_VERSIONABLE;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -133,7 +148,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
-import org.xmlpull.v1.XmlPullParser;
 
 public class AtomPubConverter {
 
@@ -146,21 +160,21 @@ public class AtomPubConverter {
 
         RepositoryInfoBrowserBindingImpl result = new RepositoryInfoBrowserBindingImpl();
 
-        result.setId(getString(repositoryInfoRawValues, JSON_REPINFO_ID));
-        result.setName(getString(repositoryInfoRawValues, JSON_REPINFO_NAME));
-        result.setDescription(getString(repositoryInfoRawValues, JSON_REPINFO_DESCRIPTION));
-        result.setVendorName(getString(repositoryInfoRawValues, JSON_REPINFO_VENDOR));
-        result.setProductName(getString(repositoryInfoRawValues, JSON_REPINFO_PRODUCT));
-        result.setProductVersion(getString(repositoryInfoRawValues, JSON_REPINFO_PRODUCT_VERSION));
-        result.setRootFolder(getString(repositoryInfoRawValues, JSON_REPINFO_ROOT_FOLDER_ID));
-        result.setRepositoryUrl(getString(repositoryInfoRawValues, JSON_REPINFO_REPOSITORY_URL));
-        result.setRootUrl(getString(repositoryInfoRawValues, JSON_REPINFO_ROOT_FOLDER_URL));
+        result.setId(getString(repositoryInfoRawValues, TAG_REPINFO_ID));
+        result.setName(getString(repositoryInfoRawValues, TAG_REPINFO_NAME));
+        result.setDescription(getString(repositoryInfoRawValues, TAG_REPINFO_DESCRIPTION));
+        result.setVendorName(getString(repositoryInfoRawValues, TAG_REPINFO_VENDOR));
+        result.setProductName(getString(repositoryInfoRawValues, TAG_REPINFO_PRODUCT));
+        result.setProductVersion(getString(repositoryInfoRawValues, TAG_REPINFO_PRODUCT_VERSION));
+        result.setRootFolder(getString(repositoryInfoRawValues, TAG_REPINFO_ROOT_FOLDER_ID));
+        result.setRepositoryUrl(getString(repositoryInfoRawValues, TAG_REPINFO_REPOSITORY_URL));
+        result.setRootUrl(getString(repositoryInfoRawValues, TAG_REPINFO_ROOT_FOLDER_URL));
         result.setCapabilities(convertRepositoryCapabilities(repositoryCapabilitiesRawValues));
         result.setAclCapabilities(aclCapabilities);
-        result.setLatestChangeLogToken(getString(repositoryInfoRawValues, JSON_REPINFO_CHANGE_LOCK_TOKEN));
-        result.setCmisVersionSupported(getString(repositoryInfoRawValues, JSON_REPINFO_CMIS_VERSION_SUPPORTED));
-        result.setThinClientUri(getString(repositoryInfoRawValues, JSON_REPINFO_THIN_CLIENT_URI));
-        result.setChangesIncomplete(getBoolean(repositoryInfoRawValues, JSON_REPINFO_CHANGES_INCOMPLETE));
+        result.setLatestChangeLogToken(getString(repositoryInfoRawValues, TAG_REPINFO_CHANGE_LOCK_TOKEN));
+        result.setCmisVersionSupported(getString(repositoryInfoRawValues, TAG_REPINFO_CMIS_VERSION_SUPPORTED));
+        result.setThinClientUri(getString(repositoryInfoRawValues, TAG_REPINFO_THIN_CLIENT_URI));
+        result.setChangesIncomplete(getBoolean(repositoryInfoRawValues, TAG_REPINFO_CHANGES_INCOMPLETE));
 
         List<BaseTypeId> types = new ArrayList<BaseTypeId>();
         if (changesOnType != null) {
@@ -188,21 +202,21 @@ public class AtomPubConverter {
 
         RepositoryCapabilitiesImpl result = new RepositoryCapabilitiesImpl();
 
-        result.setCapabilityContentStreamUpdates(getEnum(values, JSON_CAP_CONTENT_STREAM_UPDATES,
+        result.setCapabilityContentStreamUpdates(getEnum(values, TAG_CAP_CONTENT_STREAM_UPDATES,
                 CapabilityContentStreamUpdates.class));
-        result.setCapabilityChanges(getEnum(values, JSON_CAP_CHANGES, CapabilityChanges.class));
-        result.setCapabilityRendition(getEnum(values, JSON_CAP_RENDITIONS, CapabilityRenditions.class));
-        result.setSupportsGetDescendants(getBoolean(values, JSON_CAP_GET_DESCENDANTS));
-        result.setSupportsGetFolderTree(getBoolean(values, JSON_CAP_GET_FOLDER_TREE));
-        result.setSupportsMultifiling(getBoolean(values, JSON_CAP_MULTIFILING));
-        result.setSupportsUnfiling(getBoolean(values, JSON_CAP_UNFILING));
-        result.setSupportsVersionSpecificFiling(getBoolean(values, JSON_CAP_VERSION_SPECIFIC_FILING));
-        result.setIsPwcSearchable(getBoolean(values, JSON_CAP_PWC_SEARCHABLE));
-        result.setIsPwcUpdatable(getBoolean(values, JSON_CAP_PWC_UPDATABLE));
-        result.setAllVersionsSearchable(getBoolean(values, JSON_CAP_ALL_VERSIONS_SEARCHABLE));
-        result.setCapabilityQuery(getEnum(values, JSON_CAP_QUERY, CapabilityQuery.class));
-        result.setCapabilityJoin(getEnum(values, JSON_CAP_JOIN, CapabilityJoin.class));
-        result.setCapabilityAcl(getEnum(values, JSON_CAP_ACL, CapabilityAcl.class));
+        result.setCapabilityChanges(getEnum(values, TAG_CAP_CHANGES, CapabilityChanges.class));
+        result.setCapabilityRendition(getEnum(values, TAG_CAP_RENDITIONS, CapabilityRenditions.class));
+        result.setSupportsGetDescendants(getBoolean(values, TAG_CAP_GET_DESCENDANTS));
+        result.setSupportsGetFolderTree(getBoolean(values, TAG_CAP_GET_FOLDER_TREE));
+        result.setSupportsMultifiling(getBoolean(values, TAG_CAP_MULTIFILING));
+        result.setSupportsUnfiling(getBoolean(values, TAG_CAP_UNFILING));
+        result.setSupportsVersionSpecificFiling(getBoolean(values, TAG_CAP_VERSION_SPECIFIC_FILING));
+        result.setIsPwcSearchable(getBoolean(values, TAG_CAP_PWC_SEARCHABLE));
+        result.setIsPwcUpdatable(getBoolean(values, TAG_CAP_PWC_UPDATABLE));
+        result.setAllVersionsSearchable(getBoolean(values, TAG_CAP_ALL_VERSIONS_SEARCHABLE));
+        result.setCapabilityQuery(getEnum(values, TAG_CAP_QUERY, CapabilityQuery.class));
+        result.setCapabilityJoin(getEnum(values, TAG_CAP_JOIN, CapabilityJoin.class));
+        result.setCapabilityAcl(getEnum(values, TAG_CAP_ACL, CapabilityAcl.class));
 
         // handle extensions
         // convertExtension(values, result, CAP_KEYS);
@@ -219,9 +233,9 @@ public class AtomPubConverter {
 
         AclCapabilitiesDataImpl result = new AclCapabilitiesDataImpl();
 
-        result.setSupportedPermissions(getEnum(AclCapabilitiesRawValue, JSON_ACLCAP_SUPPORTED_PERMISSIONS,
+        result.setSupportedPermissions(getEnum(AclCapabilitiesRawValue, TAG_ACLCAP_SUPPORTED_PERMISSIONS,
                 SupportedPermissions.class));
-        result.setAclPropagation(getEnum(AclCapabilitiesRawValue, JSON_ACLCAP_ACL_PROPAGATION, AclPropagation.class));
+        result.setAclPropagation(getEnum(AclCapabilitiesRawValue, TAG_ACLCAP_ACL_PROPAGATION, AclPropagation.class));
 
         if (permissionDefinitionList != null) {
             result.setPermissionDefinitionData(permissionDefinitionList);
@@ -575,14 +589,14 @@ public class AtomPubConverter {
 
         RenditionDataImpl result = new RenditionDataImpl();
 
-        result.setBigHeight(getInteger(json, JSON_RENDITION_HEIGHT));
-        result.setKind(getString(json, JSON_RENDITION_KIND));
-        result.setBigLength(getInteger(json, JSON_RENDITION_LENGTH));
-        result.setMimeType(getString(json, JSON_RENDITION_MIMETYPE));
-        result.setRenditionDocumentId(getString(json, JSON_RENDITION_DOCUMENT_ID));
-        result.setStreamId(getString(json, JSON_RENDITION_STREAM_ID));
-        result.setTitle(getString(json, JSON_RENDITION_TITLE));
-        result.setBigWidth(getInteger(json, JSON_RENDITION_WIDTH));
+        result.setBigHeight(getInteger(json, TAG_RENDITION_HEIGHT));
+        result.setKind(getString(json, TAG_RENDITION_KIND));
+        result.setBigLength(getInteger(json, TAG_RENDITION_LENGTH));
+        result.setMimeType(getString(json, TAG_RENDITION_MIMETYPE));
+        result.setRenditionDocumentId(getString(json, TAG_RENDITION_DOCUMENT_ID));
+        result.setStreamId(getString(json, TAG_RENDITION_STREAM_ID));
+        result.setTitle(getString(json, TAG_RENDITION_TITLE));
+        result.setBigWidth(getInteger(json, TAG_RENDITION_WIDTH));
 
         // convertExtension(json, result, RENDITION_KEYS);
 
@@ -605,9 +619,9 @@ public class AtomPubConverter {
         case CMIS_DOCUMENT:
             result = new DocumentTypeDefinitionImpl();
             ((DocumentTypeDefinitionImpl) result).setContentStreamAllowed(getEnum(definitionRawValues,
-                    JSON_TYPE_CONTENTSTREAM_ALLOWED, ContentStreamAllowed.class));
+                   TYPE_CONTENTSTREAM_ALLOWED, ContentStreamAllowed.class));
             ((DocumentTypeDefinitionImpl) result).setIsVersionable(getBoolean(definitionRawValues,
-                    JSON_TYPE_VERSIONABLE));
+                    TYPE_VERSIONABLE));
             break;
         case CMIS_RELATIONSHIP:
             result = new RelationshipTypeDefinitionImpl();
@@ -640,22 +654,22 @@ public class AtomPubConverter {
             throw new CmisRuntimeException("Type '" + baseType + "' does not match a base type!");
         }
 
-        result.setId(getString(definitionRawValues, JSONConstants.JSON_TYPE_ID));
-        result.setLocalName(getString(definitionRawValues, JSONConstants.JSON_TYPE_LOCALNAME));
-        result.setLocalNamespace(getString(definitionRawValues, JSONConstants.JSON_TYPE_LOCALNAMESPACE));
-        result.setDisplayName(getString(definitionRawValues, JSONConstants.JSON_TYPE_DISPLAYNAME));
-        result.setQueryName(getString(definitionRawValues, JSONConstants.JSON_TYPE_QUERYNAME));
-        result.setDescription(getString(definitionRawValues, JSONConstants.JSON_TYPE_DESCRIPTION));
-        result.setBaseTypeId(getEnum(definitionRawValues, JSONConstants.JSON_TYPE_BASE_ID, BaseTypeId.class));
-        result.setIsCreatable(getBoolean(definitionRawValues, JSONConstants.JSON_TYPE_CREATABLE));
-        result.setIsFileable(getBoolean(definitionRawValues, JSONConstants.JSON_TYPE_FILEABLE));
-        result.setIsQueryable(getBoolean(definitionRawValues, JSONConstants.JSON_TYPE_QUERYABLE));
-        result.setIsFulltextIndexed(getBoolean(definitionRawValues, JSONConstants.JSON_TYPE_FULLTEXT_INDEXED));
+        result.setId(getString(definitionRawValues, TYPE_ID));
+        result.setLocalName(getString(definitionRawValues, TYPE_LOCALNAME));
+        result.setLocalNamespace(getString(definitionRawValues, TYPE_LOCALNAMESPACE));
+        result.setDisplayName(getString(definitionRawValues, TYPE_DISPLAYNAME));
+        result.setQueryName(getString(definitionRawValues, TYPE_QUERYNAME));
+        result.setDescription(getString(definitionRawValues, TYPE_DESCRIPTION));
+        result.setBaseTypeId(getEnum(definitionRawValues, TYPE_BASE_ID, BaseTypeId.class));
+        result.setIsCreatable(getBoolean(definitionRawValues, TYPE_CREATABLE));
+        result.setIsFileable(getBoolean(definitionRawValues, TYPE_FILEABLE));
+        result.setIsQueryable(getBoolean(definitionRawValues, TYPE_QUERYABLE));
+        result.setIsFulltextIndexed(getBoolean(definitionRawValues, TYPE_FULLTEXT_INDEXED));
         result.setIsIncludedInSupertypeQuery(getBoolean(definitionRawValues,
-                JSONConstants.JSON_TYPE_INCLUDE_IN_SUPERTYPE_QUERY));
-        result.setIsControllablePolicy(getBoolean(definitionRawValues, JSONConstants.JSON_TYPE_CONTROLABLE_POLICY));
-        result.setIsControllableAcl(getBoolean(definitionRawValues, JSONConstants.JSON_TYPE_CONTROLABLE_ACL));
-        result.setParentTypeId(getString(definitionRawValues, JSON_TYPE_PARENT_ID));
+                TYPE_INCLUDE_IN_SUPERTYPE_QUERY));
+        result.setIsControllablePolicy(getBoolean(definitionRawValues, TYPE_CONTROLABLE_POLICY));
+        result.setIsControllableAcl(getBoolean(definitionRawValues, TYPE_CONTROLABLE_ACL));
+        result.setParentTypeId(getString(definitionRawValues, TYPE_PARENT_ID));
 
         if (propertyDefinitionList != null) {
             for (PropertyDefinition<?> propertyDefinition : propertyDefinitionList) {
@@ -685,7 +699,7 @@ public class AtomPubConverter {
         }
 
         // find
-        Cardinality cardinality = getEnum(propertyTypeRawValues, JSON_PROPERTY_TYPE_CARDINALITY, Cardinality.class);
+        Cardinality cardinality = getEnum(propertyTypeRawValues, ATTR_PROPERTY_TYPE_CARDINALITY, Cardinality.class);
         if (cardinality == null) {
             throw new CmisRuntimeException("Invalid property type '" + id + "'! Cardinality not set!");
         }
@@ -694,7 +708,7 @@ public class AtomPubConverter {
         case STRING:
             result = new PropertyStringDefinitionImpl();
             ((PropertyStringDefinitionImpl) result).setMaxLength(getInteger(propertyTypeRawValues,
-                    JSON_PROPERTY_TYPE_MAX_LENGTH));
+                    ATTR_PROPERTY_TYPE_MAX_LENGTH));
             // ((PropertyStringDefinitionImpl)
             // result).setChoices(convertChoicesString(json.get(JSON_PROPERTY_TYPE_CHOICE)));
             break;
@@ -711,27 +725,27 @@ public class AtomPubConverter {
         case INTEGER:
             result = new PropertyIntegerDefinitionImpl();
             ((PropertyIntegerDefinitionImpl) result).setMinValue(getInteger(propertyTypeRawValues,
-                    JSON_PROPERTY_TYPE_MIN_VALUE));
+                    ATTR_PROPERTY_TYPE_MIN_VALUE));
             ((PropertyIntegerDefinitionImpl) result).setMaxValue(getInteger(propertyTypeRawValues,
-                    JSON_PROPERTY_TYPE_MAX_VALUE));
+                    ATTR_PROPERTY_TYPE_MAX_VALUE));
             // ((PropertyIntegerDefinitionImpl)
             // result).setChoices(convertChoicesInteger(json.get(JSON_PROPERTY_TYPE_CHOICE)));
             break;
         case DATETIME:
             result = new PropertyDateTimeDefinitionImpl();
             ((PropertyDateTimeDefinitionImpl) result).setDateTimeResolution(getEnum(propertyTypeRawValues,
-                    JSON_PROPERTY_TYPE_RESOLUTION, DateTimeResolution.class));
+                    ATTR_PROPERTY_TYPE_RESOLUTION, DateTimeResolution.class));
             // ((PropertyDateTimeDefinitionImpl)
             // result).setChoices(convertChoicesDateTime(json.get(JSON_PROPERTY_TYPE_CHOICE)));
             break;
         case DECIMAL:
             result = new PropertyDecimalDefinitionImpl();
             ((PropertyDecimalDefinitionImpl) result).setMinValue(getDecimal(propertyTypeRawValues,
-                    JSON_PROPERTY_TYPE_MIN_VALUE));
+                    ATTR_PROPERTY_TYPE_MIN_VALUE));
             ((PropertyDecimalDefinitionImpl) result).setMaxValue(getDecimal(propertyTypeRawValues,
-                    JSON_PROPERTY_TYPE_MAX_VALUE));
+                    ATTR_PROPERTY_TYPE_MAX_VALUE));
             ((PropertyDecimalDefinitionImpl) result).setPrecision(getEnum(propertyTypeRawValues,
-                    JSON_PROPERTY_TYPE_PRECISION, DecimalPrecision.class));
+                    ATTR_PROPERTY_TYPE_PRECISION, DecimalPrecision.class));
             // ((PropertyDecimalDefinitionImpl)
             // result).setChoices(convertChoicesDecimal(json.get(JSON_PROPERTY_TYPE_CHOICE)));
             break;
@@ -762,20 +776,20 @@ public class AtomPubConverter {
          */
 
         // generic
-        result.setId(getString(propertyTypeRawValues, JSONConstants.JSON_PROPERTY_TYPE_ID));
+        result.setId(getString(propertyTypeRawValues, ATTR_PROPERTY_TYPE_ID));
         result.setPropertyType(propertyType);
         result.setCardinality(cardinality);
-        result.setLocalName(getString(propertyTypeRawValues, JSON_PROPERTY_TYPE_LOCALNAME));
-        result.setLocalNamespace(getString(propertyTypeRawValues, JSON_PROPERTY_TYPE_LOCALNAMESPACE));
-        result.setQueryName(getString(propertyTypeRawValues, JSON_PROPERTY_TYPE_QUERYNAME));
-        result.setDescription(getString(propertyTypeRawValues, JSON_PROPERTY_TYPE_DESCRIPTION));
-        result.setDisplayName(getString(propertyTypeRawValues, JSON_PROPERTY_TYPE_DISPLAYNAME));
-        result.setIsInherited(getBoolean(propertyTypeRawValues, JSON_PROPERTY_TYPE_INHERITED));
-        result.setIsOpenChoice(getBoolean(propertyTypeRawValues, JSON_PROPERTY_TYPE_OPENCHOICE));
-        result.setIsOrderable(getBoolean(propertyTypeRawValues, JSON_PROPERTY_TYPE_ORDERABLE));
-        result.setIsQueryable(getBoolean(propertyTypeRawValues, JSON_PROPERTY_TYPE_QUERYABLE));
-        result.setIsRequired(getBoolean(propertyTypeRawValues, JSON_PROPERTY_TYPE_REQUIRED));
-        result.setUpdatability(getEnum(propertyTypeRawValues, JSON_PROPERTY_TYPE_UPDATABILITY, Updatability.class));
+        result.setLocalName(getString(propertyTypeRawValues, ATTR_PROPERTY_TYPE_LOCALNAME));
+        result.setLocalNamespace(getString(propertyTypeRawValues, ATTR_PROPERTY_TYPE_LOCALNAMESPACE));
+        result.setQueryName(getString(propertyTypeRawValues, ATTR_PROPERTY_TYPE_QUERYNAME));
+        result.setDescription(getString(propertyTypeRawValues, ATTR_PROPERTY_TYPE_DESCRIPTION));
+        result.setDisplayName(getString(propertyTypeRawValues, ATTR_PROPERTY_TYPE_DISPLAYNAME));
+        result.setIsInherited(getBoolean(propertyTypeRawValues, ATTR_PROPERTY_TYPE_INHERITED));
+        result.setIsOpenChoice(getBoolean(propertyTypeRawValues, ATTR_PROPERTY_TYPE_OPENCHOICE));
+        result.setIsOrderable(getBoolean(propertyTypeRawValues, ATTR_PROPERTY_TYPE_ORDERABLE));
+        result.setIsQueryable(getBoolean(propertyTypeRawValues, ATTR_PROPERTY_TYPE_QUERYABLE));
+        result.setIsRequired(getBoolean(propertyTypeRawValues, ATTR_PROPERTY_TYPE_REQUIRED));
+        result.setUpdatability(getEnum(propertyTypeRawValues, ATTR_PROPERTY_TYPE_UPDATABILITY, Updatability.class));
 
         // handle extensions
         // convertExtension(json, result, PROPERTY_TYPE_KEYS);
@@ -856,7 +870,6 @@ public class AtomPubConverter {
 
     private static Date parseAtomPubDate(String atomPubDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        // sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         sdf.setLenient(true);
         Date d = null;
 
@@ -876,30 +889,5 @@ public class AtomPubConverter {
             }
         }
         return d;
-    }
-
-    /**
-     * Skips a tag or subtree.
-     */
-    private static void skip(XmlPullParser parser) throws Exception {
-        int level = 1;
-        while (next(parser)) {
-            int event = parser.getEventType();
-            if (event == XmlPullParser.START_TAG) {
-                level++;
-            } else if (event == XmlPullParser.END_TAG) {
-                level--;
-                if (level == 0) {
-                    break;
-                }
-            }
-        }
-
-        next(parser);
-    }
-
-    private static boolean next(XmlPullParser parser) throws Exception {
-        parser.next();
-        return true;
     }
 }

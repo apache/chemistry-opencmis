@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-//import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -126,22 +125,11 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
 
         UrlBuilder url = new UrlBuilder(link);
 
-        // compile query request
-        // final CmisQueryType query = new CmisQueryType();
-        // query.setStatement(statement);
-        // query.setSearchAllVersions(searchAllVersions);
-        // query.setIncludeAllowableActions(includeAllowableActions);
-        // query.setIncludeRelationships(convert(EnumIncludeRelationships.class,
-        // includeRelationships));
-        // query.setRenditionFilter(renditionFilter);
-        // query.setMaxItems(maxItems);
-        // query.setSkipCount(skipCount);
-
         final Map<String, String> queryParameters = new HashMap<String, String>(6);
-        queryParameters.put("statement", statement);
-        queryParameters.put(Constants.PARAM_ALLOWABLE_ACTIONS, searchAllVersions.toString());
-        // queryParameters.put(Constants.PARAM_RELATIONSHIPS,
-        // searchAllVersions);
+        queryParameters.put(CmisAtomPubConstants.TAG_QUERY_STATEMENT, statement);
+        queryParameters.put(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions.toString());
+        queryParameters.put(Constants.PARAM_ALL_VERSIONS,  searchAllVersions.toString());
+        queryParameters.put(Constants.PARAM_RELATIONSHIPS,  includeRelationships.toString());
         queryParameters.put(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         queryParameters.put(Constants.PARAM_MAX_ITEMS, maxItems.toString());
         queryParameters.put(Constants.PARAM_SKIP_COUNT, skipCount.toString());
@@ -149,9 +137,6 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         // post the query and parse results
         HttpUtils.Response resp = post(url, Constants.MEDIATYPE_QUERY, new HttpUtils.Output() {
             public void write(OutputStream out) throws Exception {
-                // TODO
-                // JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createQuery(query),
-                // out, false);
                 AtomEntryWriter.writeQuery(out, queryParameters);
             }
         });

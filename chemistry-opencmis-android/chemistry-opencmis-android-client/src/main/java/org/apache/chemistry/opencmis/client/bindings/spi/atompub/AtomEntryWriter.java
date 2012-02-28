@@ -26,6 +26,12 @@ import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtom
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_MEDIATYPE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ENTRY;
 
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_VALUE;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_QUERY;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_QUERY_STATEMENT;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_DEFINITION_ID;
+
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -65,10 +71,10 @@ public class AtomEntryWriter {
     private static final String PREFIX_ATOM = "atom";
     private static final String PREFIX_CMIS = "cmis";
     private static final String PREFIX_RESTATOM = "cmisra";
+    private static final String ENCODING = "UTF-8";
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    // private final CmisObjectType object;
     private final ObjectData object;
     private final InputStream stream;
     private final String mediaType;
@@ -107,13 +113,11 @@ public class AtomEntryWriter {
      * Writes the entry to an output stream.
      */
     public void write(OutputStream out) throws Exception {
-        // XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        // XMLStreamWriter writer = factory.createXMLStreamWriter(out,v);
         XmlSerializer writer = Xml.newSerializer();
-        writer.setOutput(out, "UTF-8");
+        writer.setOutput(out, ENCODING);
 
         // start doc
-        writer.startDocument("UTF-8", false);
+        writer.startDocument(ENCODING, false);
         writer.setPrefix(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
         writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
         writer.setPrefix(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
@@ -148,8 +152,6 @@ public class AtomEntryWriter {
 
         // object
         writeObject(writer, object);
-        // JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(object),
-        // writer, true);
 
         // end entry
         writer.endTag(Constants.NAMESPACE_ATOM, TAG_ENTRY);
@@ -162,14 +164,14 @@ public class AtomEntryWriter {
 
     public static void writeQuery(OutputStream out, Map<String, String> queryParams) throws Exception {
         XmlSerializer writer = Xml.newSerializer();
-        writer.setOutput(out, "UTF-8");
+        writer.setOutput(out, ENCODING);
         writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
-        writer.startTag(Constants.NAMESPACE_CMIS, "query");
+        writer.startTag(Constants.NAMESPACE_CMIS, TAG_QUERY);
         writer.attribute(null, PREFIX_CMIS, Constants.NAMESPACE_CMIS);
 
-        writer.startTag(Constants.NAMESPACE_CMIS, "statement");
-        writer.cdsect(queryParams.get("statement"));
-        writer.endTag(Constants.NAMESPACE_CMIS, "statement");
+        writer.startTag(Constants.NAMESPACE_CMIS, TAG_QUERY_STATEMENT);
+        writer.cdsect(queryParams.get(TAG_QUERY_STATEMENT));
+        writer.endTag(Constants.NAMESPACE_CMIS, TAG_QUERY_STATEMENT);
         writeTagIfNotNull(writer, Constants.NAMESPACE_CMIS, Constants.PARAM_SEARCH_ALL_VERSIONS,
                 queryParams.get(Constants.PARAM_SEARCH_ALL_VERSIONS));
         writeTagIfNotNull(writer, Constants.NAMESPACE_CMIS, Constants.PARAM_ALLOWABLE_ACTIONS,
@@ -183,21 +185,21 @@ public class AtomEntryWriter {
         writeTagIfNotNull(writer, Constants.NAMESPACE_CMIS, Constants.PARAM_SKIP_COUNT,
                 queryParams.get(Constants.PARAM_SKIP_COUNT));
 
-        writer.endTag(Constants.NAMESPACE_CMIS, "query");
+        writer.endTag(Constants.NAMESPACE_CMIS, TAG_QUERY);
         writer.flush();
     }
 
     public static void writeACL(OutputStream out, Acl acl) throws Exception {
         XmlSerializer writer = Xml.newSerializer();
-        writer.setOutput(out, "UTF-8");
+        writer.setOutput(out, ENCODING);
         writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
         writer.startTag(Constants.NAMESPACE_CMIS, "acl");
         writer.attribute(null, PREFIX_CMIS, Constants.NAMESPACE_CMIS);
 
         writer.startTag(Constants.NAMESPACE_CMIS, "permission");
 
-        // writeTag(writer, Constants.NAMESPACE_CMIS, "direct",
-        // acl.getAces().get(0).)
+        // TODO Implements 
+        //writeTag(writer, Constants.NAMESPACE_CMIS, "direct", acl.getAces().get(0).)
 
         writer.endTag(Constants.NAMESPACE_CMIS, "permission");
 
@@ -276,18 +278,14 @@ public class AtomEntryWriter {
 
     private static void writeProperty(XmlSerializer writer, PropertyData<?> prop) throws Exception {
         writer.startTag(Constants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
-        // writer.attribute(null, JSON_PROPERTY_QUERYNAME, prop.getQueryName());
-        // writer.attribute(null, JSON_PROPERTY_DISPLAYNAME,
-        // prop.getDisplayName());
-        // writer.attribute(null, JSON_PROPERTY_LOCALNAME, prop.getLocalName());
-        writer.attribute(null, "propertyDefinitionId", prop.getId());
+        writer.attribute(null, ATTR_PROPERTY_DEFINITION_ID, prop.getId());
         writeValues(writer, prop.getValues());
         writer.endTag(Constants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
     }
 
     private static void writeValues(XmlSerializer writer, List<?> values) throws Exception {
         for (Object value : values) {
-            writeTag(writer, Constants.NAMESPACE_CMIS, "value", convertPropertyValue(value));
+            writeTag(writer, Constants.NAMESPACE_CMIS, TAG_VALUE, convertPropertyValue(value));
         }
     }
 

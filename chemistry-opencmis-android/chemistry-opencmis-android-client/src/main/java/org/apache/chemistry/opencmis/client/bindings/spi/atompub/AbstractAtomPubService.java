@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-//import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -857,17 +855,12 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         UrlBuilder aclUrl = new UrlBuilder(link);
         aclUrl.addParameter(Constants.PARAM_ACL_PROPAGATION, aclPropagation);
 
-        // set up object and writer
-        // TODO
-        // final CmisAccessControlListType aclJaxb = convert(acl);
 
         // update
         HttpUtils.Response resp = put(aclUrl, Constants.MEDIATYPE_ACL, new HttpUtils.Output() {
             public void write(OutputStream out) throws Exception {
-                // TODO
+                // TODO not implemented
                 AtomEntryWriter.writeACL(out, acl);
-                // JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createAcl(aclJaxb),
-                // out, false);
             }
         });
 
