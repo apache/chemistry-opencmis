@@ -473,7 +473,19 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContainsAtPos("alpha", 2, res) || resultContainsAtPos("alpha", 1, res) || resultContainsAtPos("alpha", 0, res));
         assertTrue(resultContainsAtPos("gamma", 2, res) || resultContainsAtPos("gamma", 1, res) || resultContainsAtPos("gamma", 0, res));
         assertTrue(resultContainsAtPos("delta", 2, res) || resultContainsAtPos("delta", 1, res) || resultContainsAtPos("delta", 0, res));
-}
+    }
+    
+    // reported JIRA issue CMIS-510
+    @Test
+    public void testOrderBySystemProperties() {
+        String statement = "SELECT * from cmis:document ORDER BY "+ PropertyIds.NAME;
+        ObjectList res = doQuery(statement);
+        assertEquals(5, res.getObjects().size());
+        statement = "SELECT * from cmis:document ORDER BY " + PropertyIds.CREATION_DATE + " ASC";
+        assertEquals(5, res.getObjects().size());
+        statement = "SELECT * from cmis:document ORDER BY " + PropertyIds.LAST_MODIFICATION_DATE + " DESC";
+        assertEquals(5, res.getObjects().size());
+    }
 
     @Test
     public void testIsNull() {
