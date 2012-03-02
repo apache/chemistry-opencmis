@@ -82,7 +82,7 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
         setBaseTypeId(BaseTypeId.CMIS_POLICY);
         setId(id);
         if (displayName == null) {
-            displayName = '#' + id + '#';
+            displayName = id;
         }
         setDisplayName(displayName);
         // create some suitable defaults for convenience

@@ -83,7 +83,7 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
         setBaseTypeId(BaseTypeId.CMIS_RELATIONSHIP);
         setId(id);
         if (displayName == null) {
-            displayName = '#' + id + '#';
+            displayName = id;
         }
         setDisplayName(displayName);
         // create some suitable defaults for convenience
