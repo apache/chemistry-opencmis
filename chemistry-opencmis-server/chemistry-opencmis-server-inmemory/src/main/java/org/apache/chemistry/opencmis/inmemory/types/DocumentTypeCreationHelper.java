@@ -84,37 +84,37 @@ public class DocumentTypeCreationHelper {
     public static void setBasicPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
 
         PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.NAME,
-                "CMIS Name Property", Updatability.READWRITE);
+                "Name", Updatability.READWRITE);
         propS.setIsRequired(true);
         propertyDefinitions.put(propS.getId(), propS);
 
         PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.OBJECT_ID,
-                "CMIS Object Id Property", Updatability.READONLY);
+                "Object Id", Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.OBJECT_TYPE_ID, "CMIS Object Type Id Property", Updatability.ONCREATE);
+        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.OBJECT_TYPE_ID, "Type-Id", Updatability.ONCREATE);
         propId.setIsRequired(true);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.BASE_TYPE_ID, "CMIS Base Type Id Property", Updatability.READONLY);
+        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.BASE_TYPE_ID, "Base-Type-Id", Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CREATED_BY, "CMIS Created By Property", Updatability.READONLY);
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CREATED_BY, "Created By", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
         PropertyDateTimeDefinitionImpl propD = PropertyCreationHelper.createDateTimeDefinition(
-                PropertyIds.CREATION_DATE, "CMIS Creation Date Property", Updatability.READONLY);
+                PropertyIds.CREATION_DATE, "Creation Date", Updatability.READONLY);
         propertyDefinitions.put(propD.getId(), propD);
 
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.LAST_MODIFIED_BY,
-                "CMIS Last Modified By Property", Updatability.READONLY);
+                "Modified By", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
         propD = PropertyCreationHelper.createDateTimeDefinition(PropertyIds.LAST_MODIFICATION_DATE,
-                "CMIS Last Modification Date Property", Updatability.READONLY);
+                "Modification Date", Updatability.READONLY);
         propertyDefinitions.put(propD.getId(), propD);
 
-        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CHANGE_TOKEN, "CMIS Change Token Property", Updatability.READONLY);
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CHANGE_TOKEN, "Change Token", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
     }
 
@@ -122,60 +122,60 @@ public class DocumentTypeCreationHelper {
 
         setBasicPropertyDefinitions(propertyDefinitions);
         PropertyBooleanDefinitionImpl propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_IMMUTABLE,
-                "CMIS Is Immutable Property", Updatability.READONLY);
+                "Immutable", Updatability.READONLY);
         propertyDefinitions.put(propB.getId(), propB);
 
         propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_LATEST_VERSION,
-                "CMIS Is Latest Version Property", Updatability.READONLY);
+                "Is Latest Version", Updatability.READONLY);
         propertyDefinitions.put(propB.getId(), propB);
 
         propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_MAJOR_VERSION,
-                "CMIS Is Major Version Property", Updatability.READONLY);
+                "Is Major Version", Updatability.READONLY);
         propertyDefinitions.put(propB.getId(), propB);
 
         propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_LATEST_MAJOR_VERSION,
-                "CMIS Is Latest Major Version Property", Updatability.READONLY);
+                "Is Latest Major Version", Updatability.READONLY);
         propertyDefinitions.put(propB.getId(), propB);
 
         PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.VERSION_LABEL,
-                "CMIS Version Label Property", Updatability.READONLY);
+                "Version Label", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
         PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.VERSION_SERIES_ID,
-                "CMIS Version Series Id Property", Updatability.READONLY);
+                "Version Series Id", Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
         propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
-                "CMIS Is Version Series Checked Out Property", Updatability.READONLY);
+                "Checked Out", Updatability.READONLY);
         propertyDefinitions.put(propB.getId(), propB);
 
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY,
-                "CMIS Version Series Checked Out By Property", Updatability.READONLY);
+                "Checked Out By", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
         propId = PropertyCreationHelper.createIdDefinition(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
-                "CMIS Version Series Checked Out Id Property", Updatability.READONLY);
+                "Checked Out Id", Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CHECKIN_COMMENT,
-                "CMIS Checkin Comment Property", Updatability.READONLY);
+                "Checkin Comment", Updatability.READONLY);
         // read-only, because
         // not set as property
         propertyDefinitions.put(propS.getId(), propS);
 
         PropertyIntegerDefinitionImpl propI = PropertyCreationHelper.createIntegerDefinition(
-                PropertyIds.CONTENT_STREAM_LENGTH, "CMIS Content Stream Length Property", Updatability.READONLY);
+                PropertyIds.CONTENT_STREAM_LENGTH, "Content Length", Updatability.READONLY);
         propertyDefinitions.put(propI.getId(), propI);
 
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CONTENT_STREAM_MIME_TYPE,
-                "CMIS Content Stream Mime Type Property", Updatability.READONLY);
+                "Mime Type", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CONTENT_STREAM_FILE_NAME,
-                "CMIS Content Stream File Name Property", Updatability.READONLY);
+                "File Name", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.CONTENT_STREAM_ID, "CMIS Stream Id Property", Updatability.READONLY);
+        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.CONTENT_STREAM_ID, "Stream Id", Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
     }
@@ -184,16 +184,16 @@ public class DocumentTypeCreationHelper {
 
         setBasicPropertyDefinitions(propertyDefinitions);
         PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.PARENT_ID,
-                "CMIS Parent Id Property", Updatability.READONLY);
+                "Parent Id", Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
         propId = PropertyCreationHelper.createIdDefinition(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
-                "CMIS Allowed Childe Object Type Ids Property", Updatability.READONLY);
+                "Allowed Child Types", Updatability.READONLY);
         propId.setCardinality(Cardinality.MULTI);
         propertyDefinitions.put(propId.getId(), propId);
 
         PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.PATH,
-                "CMIS Path Property", Updatability.READONLY);
+                "Path", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
     }
@@ -202,7 +202,7 @@ public class DocumentTypeCreationHelper {
 
         setBasicPropertyDefinitions(propertyDefinitions);
         PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.POLICY_TEXT,
-                "CMIS Policy Text Property", Updatability.READONLY);
+                "Policy Text", Updatability.READONLY);
         propS.setIsRequired(true);
         propertyDefinitions.put(propS.getId(), propS);
     }
@@ -211,11 +211,11 @@ public class DocumentTypeCreationHelper {
 
         setBasicPropertyDefinitions(propertyDefinitions);
         PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.SOURCE_ID,
-                "CMIS Source Id Property", Updatability.READONLY);
+                "Source Id", Updatability.READONLY);
         propId.setIsRequired(true);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.TARGET_ID, "CMIS Target Id Property", Updatability.READONLY);
+        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.TARGET_ID, "Target Id", Updatability.READONLY);
         propId.setIsRequired(true);
         propertyDefinitions.put(propId.getId(), propId);
     }

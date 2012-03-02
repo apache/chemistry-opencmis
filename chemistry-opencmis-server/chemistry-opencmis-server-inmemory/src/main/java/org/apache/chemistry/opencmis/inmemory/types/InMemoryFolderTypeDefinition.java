@@ -82,7 +82,7 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
         setBaseTypeId(BaseTypeId.CMIS_FOLDER);
         setId(id);
         if (displayName == null) {
-            displayName = '#' + id + '#';
+            displayName = id;
         }
         setDisplayName(displayName);
         // create some suitable defaults for convenience

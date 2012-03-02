@@ -86,7 +86,7 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
         setBaseTypeId(BaseTypeId.CMIS_DOCUMENT);
         setId(id);
         if (displayName == null) {
-            displayName = '#' + id + '#';
+            displayName = id;
         }
         setDisplayName(displayName);
         // create some suitable defaults for convenience
