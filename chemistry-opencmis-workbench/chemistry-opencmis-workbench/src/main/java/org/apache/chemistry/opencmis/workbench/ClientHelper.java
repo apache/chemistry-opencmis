@@ -187,7 +187,7 @@ public class ClientHelper {
             return "";
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss ZZZ");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ZZZ");
         return sdf.format(cal.getTime());
     }
 
