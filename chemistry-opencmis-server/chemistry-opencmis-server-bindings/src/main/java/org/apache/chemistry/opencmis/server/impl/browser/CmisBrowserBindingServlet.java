@@ -70,10 +70,10 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.prepareContext;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setStatus;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.io.IOException;
@@ -420,11 +420,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             LOG.error(ex.getMessage(), ex);
         }
 
-        if (getBooleanParameter(request, Constants.PARAM_SUPPRESS_RESPONSE_CODES, false)) {
-            statusCode = HttpServletResponse.SC_OK;
-        }
-
-        response.setStatus(statusCode);
+        setStatus(request, response, statusCode);
         response.setContentType(JSON_MIME_TYPE);
         if (context != null) {
             setCookie(request, response, context.getRepositoryId(), (String) context.get(CONTEXT_TRANSACTION),

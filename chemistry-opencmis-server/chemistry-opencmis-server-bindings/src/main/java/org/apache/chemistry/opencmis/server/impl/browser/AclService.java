@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl.browser;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setStatus;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
@@ -79,7 +80,7 @@ public class AclService {
         Acl acl = service.applyAcl(repositoryId, objectId, createAddAcl(cp), createRemoveAcl(cp), aclPropagation, null);
 
         // return ACL
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
 
         JSONObject jsonObject = JSONConverter.convert(acl);
         if (jsonObject == null) {

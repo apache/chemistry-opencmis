@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.io.IOException;
@@ -380,8 +381,8 @@ public class BrowserBindingUtils {
         if (request instanceof POSTHttpServletRequestWrapper) {
             POSTHttpServletRequestWrapper post = (POSTHttpServletRequestWrapper) request;
             if (post.getStream() != null) {
-                result = new ContentStreamImpl(post.getFilename(), BigInteger.valueOf(post.getSize()),
-                        post.getContentType(), post.getStream());
+                result = new ContentStreamImpl(post.getFilename(), post.getSize(), post.getContentType(),
+                        post.getStream());
             }
         }
 
@@ -391,6 +392,18 @@ public class BrowserBindingUtils {
     protected static ObjectData getSimpleObject(CmisService service, String repositoryId, String objectId) {
         return service.getObject(repositoryId, objectId, null, false, IncludeRelationships.NONE, "cmis:none", false,
                 false, null);
+    }
+
+    /**
+     * Sets the given HTTP status code if the surpessResponseCodes parameter is
+     * not set to true; otherwise sets HTTP status code 200 (OK).
+     */
+    public static void setStatus(HttpServletRequest request, HttpServletResponse response, int statusCode) {
+        if (getBooleanParameter(request, Constants.PARAM_SUPPRESS_RESPONSE_CODES, false)) {
+            statusCode = HttpServletResponse.SC_OK;
+        }
+
+        response.setStatus(statusCode);
     }
 
     /**

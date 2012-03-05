@@ -45,6 +45,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.getSimpleObject;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setStatus;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeEmpty;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
@@ -122,7 +123,7 @@ public final class ObjectService {
         // return object
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
@@ -162,7 +163,7 @@ public final class ObjectService {
         // return object
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
@@ -193,7 +194,7 @@ public final class ObjectService {
         // return object
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
@@ -224,7 +225,7 @@ public final class ObjectService {
         // return object
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
@@ -254,7 +255,7 @@ public final class ObjectService {
         // return object
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
@@ -296,7 +297,7 @@ public final class ObjectService {
             status = HttpServletResponse.SC_CREATED;
         }
 
-        response.setStatus(status);
+        setStatus(request, response, status);
         setCookie(request, response, repositoryId, transaction, createCookieValue(status, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);
@@ -445,7 +446,7 @@ public final class ObjectService {
         if (offset == null && length == null) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
-            response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+            setStatus(request, response, HttpServletResponse.SC_PARTIAL_CONTENT);
         }
         response.setContentType(contentType);
         if (content.getFileName() != null) {
@@ -564,7 +565,7 @@ public final class ObjectService {
         // set headers
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         response.setHeader("Location", location);
 
         // return object
@@ -598,7 +599,7 @@ public final class ObjectService {
         // set headers
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         response.setHeader("Location", location);
 
         // return object

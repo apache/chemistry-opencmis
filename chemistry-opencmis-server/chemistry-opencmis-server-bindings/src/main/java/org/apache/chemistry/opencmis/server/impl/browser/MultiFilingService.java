@@ -24,6 +24,7 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.com
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.getSimpleObject;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setStatus;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -71,7 +72,7 @@ public class MultiFilingService {
         // set headers
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         response.setHeader("Location", location);
 
         // return object
@@ -104,7 +105,7 @@ public class MultiFilingService {
         // set headers
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         response.setHeader("Location", location);
 
         // return object

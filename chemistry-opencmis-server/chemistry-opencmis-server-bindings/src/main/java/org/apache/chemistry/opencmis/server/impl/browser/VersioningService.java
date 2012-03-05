@@ -35,6 +35,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.getSimpleObject;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setStatus;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeEmpty;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
@@ -89,10 +90,9 @@ public class VersioningService {
         // set headers
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         response.setHeader("Location", location);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, transaction,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
@@ -146,7 +146,7 @@ public class VersioningService {
 
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
         response.setHeader("Location", location);
 
         setCookie(request, response, repositoryId, transaction,

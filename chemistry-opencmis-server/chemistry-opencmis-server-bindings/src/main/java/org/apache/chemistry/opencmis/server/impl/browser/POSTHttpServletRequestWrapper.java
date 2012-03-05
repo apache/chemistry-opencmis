@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.impl.browser;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -33,15 +34,18 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.util.Streams;
 
 public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private final boolean isMultipart;
     private Map<String, String[]> parameters;
     private String filename;
     private String contentType;
-    private long size;
+    private BigInteger size;
     private InputStream stream;
 
     public POSTHttpServletRequestWrapper(HttpServletRequest request) throws Exception {
@@ -60,23 +64,60 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
         isMultipart = ServletFileUpload.isMultipartContent(request);
 
         if (isMultipart) {
-            // multipart processing
-            DiskFileItemFactory itemFactory = new DiskFileItemFactory();
-            itemFactory.setSizeThreshold(memoryThreshold);
+            if (true) {
+                // multipart processing - the safe way
+                DiskFileItemFactory itemFactory = new DiskFileItemFactory();
+                itemFactory.setSizeThreshold(memoryThreshold);
 
-            ServletFileUpload upload = new ServletFileUpload(itemFactory);
-            @SuppressWarnings("unchecked")
-            List<FileItem> fileItems = upload.parseRequest(request);
+                ServletFileUpload upload = new ServletFileUpload(itemFactory);
+                @SuppressWarnings("unchecked")
+                List<FileItem> fileItems = upload.parseRequest(request);
 
-            for (FileItem item : fileItems) {
-                if (item.isFormField()) {
-                    addParameter(item.getFieldName(), item.getString());
-                } else {
-                    filename = item.getName();
-                    contentType = (item.getContentType() == null ? Constants.MEDIATYPE_OCTETSTREAM : item
-                            .getContentType());
-                    size = item.getSize();
-                    stream = item.getInputStream();
+                for (FileItem item : fileItems) {
+                    if (item.isFormField()) {
+                        addParameter(item.getFieldName(), item.getString());
+                    } else {
+                        filename = item.getName();
+                        contentType = (item.getContentType() == null ? Constants.MEDIATYPE_OCTETSTREAM : item
+                                .getContentType());
+                        size = BigInteger.valueOf(item.getSize());
+                        stream = item.getInputStream();
+                    }
+                }
+            } else {
+                // multipart processing - optimized but unsafe
+                // big content is not buffered on disk but has to be the last
+                // part of the request
+                // code is parked here until we find a way to make it safe
+
+                ServletFileUpload upload = new ServletFileUpload();
+                FileItemIterator iter = upload.getItemIterator(request);
+
+                while (iter.hasNext()) {
+                    FileItemStream item = iter.next();
+                    String name = item.getFieldName();
+                    InputStream itemStream = item.openStream();
+
+                    if (item.isFormField()) {
+                        addParameter(name, Streams.asString(itemStream));
+                    } else {
+                        filename = item.getName();
+                        contentType = (item.getContentType() == null ? Constants.MEDIATYPE_OCTETSTREAM : item
+                                .getContentType());
+
+                        if (item.getHeaders() != null) {
+                            String lengthStr = item.getHeaders().getHeader("Content-Length");
+                            if (lengthStr != null) {
+                                try {
+                                    size = new BigInteger(lengthStr);
+                                } catch (NumberFormatException e) {
+                                }
+                            }
+                        }
+
+                        stream = itemStream;
+                        break;
+                    }
                 }
             }
 
@@ -167,7 +208,7 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
         return contentType;
     }
 
-    public long getSize() {
+    public BigInteger getSize() {
         return size;
     }
 
