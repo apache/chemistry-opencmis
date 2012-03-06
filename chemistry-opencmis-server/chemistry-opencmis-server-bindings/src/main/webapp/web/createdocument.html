@@ -59,7 +59,7 @@ function createDocument() {
 
     createForm.action = rootFolderUrl + createForm.folder.value;
     lastTransaction = createGUID();
-    createForm.transaction.value = lastTransaction;
+    createForm.cmistransaction.value = lastTransaction;
  
     return true;
 }
@@ -92,7 +92,7 @@ function showNewDocumentId(result) {
 
 <form id="createForm" action="" method="POST" target="result" enctype="multipart/form-data" onsubmit="return createDocument()">
 <input name="cmisaction" type="hidden" value="createDocument" />
-<input name="transaction" type="hidden" value="" />
+<input name="cmistransaction" type="hidden" value="" />
 <table>
 <tr>
     <td>Folder:</td>

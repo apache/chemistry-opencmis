@@ -58,7 +58,7 @@ function createFolder() {
 
     createForm.action = rootFolderUrl + createForm.folder.value;
     lastTransaction = createGUID();
-    createForm.transaction.value = lastTransaction;
+    createForm.cmistransaction.value = lastTransaction;
  
     return true;
 }
@@ -91,7 +91,7 @@ function showNewFolderId(result) {
 
 <form id="createForm" action="" method="POST" target="result" onsubmit="return createFolder()">
 <input name="cmisaction" type="hidden" value="createFolder" />
-<input name="transaction" type="hidden" value="" />
+<input name="cmistransaction" type="hidden" value="" />
 <table>
 <tr>
     <td>Folder:</td>
