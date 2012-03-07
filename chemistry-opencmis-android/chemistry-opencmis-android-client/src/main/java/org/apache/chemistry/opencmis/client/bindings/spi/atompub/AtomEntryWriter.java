@@ -34,6 +34,7 @@ import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtom
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -45,6 +46,7 @@ import java.util.TimeZone;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -251,6 +253,11 @@ public class AtomEntryWriter {
         if (object.getProperties() != null) {
             writer.startTag(Constants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
             writeProperties(writer, object.getProperties().getPropertyList());
+            
+            if (object.getProperties().getExtensions() != null && object.getProperties().getExtensions().isEmpty() == false){
+            	writeExtensions(writer, object.getProperties().getExtensions());
+            }
+            
             writer.endTag(Constants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
         }
         writer.endTag(Constants.NAMESPACE_RESTATOM, Constants.SELECTOR_OBJECT);
@@ -281,6 +288,25 @@ public class AtomEntryWriter {
         writer.attribute(null, ATTR_PROPERTY_DEFINITION_ID, prop.getId());
         writeValues(writer, prop.getValues());
         writer.endTag(Constants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
+    }
+    
+    private static void writeExtensions(XmlSerializer writer, List<CmisExtensionElement> extensions) throws Exception{
+    	for (CmisExtensionElement cmisExtensionElement : extensions) {
+    		writer.startTag(cmisExtensionElement.getNamespace(), cmisExtensionElement.getName());
+    		writeAttributes(writer, cmisExtensionElement.getAttributes());
+    		if (cmisExtensionElement.getChildren() != null && cmisExtensionElement.getChildren().isEmpty() == false){
+    			writeExtensions(writer, cmisExtensionElement.getChildren());
+    		} else if (cmisExtensionElement.getValue() != null){
+    			writer.text(cmisExtensionElement.getValue());
+    		}
+            writer.endTag(cmisExtensionElement.getNamespace(), cmisExtensionElement.getName());
+		}
+    }
+    
+    private static void writeAttributes(XmlSerializer writer,  Map<String, String> values) throws Exception{
+    	for (Map.Entry<String, String> value : values.entrySet()) {
+            writer.attribute(null, value.getKey(), value.getValue());
+		}
     }
 
     private static void writeValues(XmlSerializer writer, List<?> values) throws Exception {

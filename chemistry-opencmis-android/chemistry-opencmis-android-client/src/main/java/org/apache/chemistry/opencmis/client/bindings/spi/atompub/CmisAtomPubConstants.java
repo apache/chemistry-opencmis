@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Constants for AtomPub.
  */
@@ -95,16 +98,39 @@ public final class CmisAtomPubConstants {
     public static final String TAG_REPINFO_REPOSITORY_URL = "repositoryUrl";
     public static final String TAG_REPINFO_ROOT_FOLDER_URL = "rootFolderUrl";
     public static final String TAG_REPINFO_CAPABILITIES = "capabilities";
-    public static final String TAG_REPINFO_ACL_CAPABILITIES = "aclCapabilities";
+    public static final String TAG_REPINFO_ACL_CAPABILITY = "aclCapability";
     public static final String TAG_REPINFO_CHANGE_LOCK_TOKEN = "latestChangeLogToken";
     public static final String TAG_REPINFO_CMIS_VERSION_SUPPORTED = "cmisVersionSupported";
     public static final String TAG_REPINFO_THIN_CLIENT_URI = "thinClientURI";
     public static final String TAG_REPINFO_CHANGES_INCOMPLETE = "changesIncomplete";
     public static final String TAG_REPINFO_CHANGES_ON_TYPE = "changesOnType";
-    public static final String TAG_REPINFO_PRINCIPAL_ID_ANONYMOUS = "principalIdAnonymous";
-    public static final String TAG_REPINFO_PRINCIPAL_ID_ANYONE = "principalIdAnyone";
+    public static final String TAG_REPINFO_PRINCIPAL_ANONYMOUS = "principalAnonymous";
+    public static final String TAG_REPINFO_PRINCIPAL_ANYONE = "principalAnyone";
     
-    public static final String TAG_ACLCAP_ACL = "aclCapability";
+    
+    public static final Set<String> REPINFO_KEYS = new HashSet<String>();
+    static {
+        REPINFO_KEYS.add(TAG_REPINFO_ID);
+        REPINFO_KEYS.add(TAG_REPINFO_NAME);
+        REPINFO_KEYS.add(TAG_REPINFO_DESCRIPTION);
+        REPINFO_KEYS.add(TAG_REPINFO_VENDOR);
+        REPINFO_KEYS.add(TAG_REPINFO_PRODUCT);
+        REPINFO_KEYS.add(TAG_REPINFO_PRODUCT_VERSION);
+        REPINFO_KEYS.add(TAG_REPINFO_ROOT_FOLDER_ID);
+        REPINFO_KEYS.add(TAG_REPINFO_REPOSITORY_URL);
+        REPINFO_KEYS.add(TAG_REPINFO_ROOT_FOLDER_URL);
+        REPINFO_KEYS.add(TAG_REPINFO_CAPABILITIES);
+        REPINFO_KEYS.add(TAG_REPINFO_ACL_CAPABILITY);
+        REPINFO_KEYS.add(TAG_REPINFO_CHANGE_LOCK_TOKEN);
+        REPINFO_KEYS.add(TAG_REPINFO_CMIS_VERSION_SUPPORTED);
+        REPINFO_KEYS.add(TAG_REPINFO_THIN_CLIENT_URI);
+        REPINFO_KEYS.add(TAG_REPINFO_CHANGES_INCOMPLETE);
+        REPINFO_KEYS.add(TAG_REPINFO_CHANGES_ON_TYPE);
+        REPINFO_KEYS.add(TAG_REPINFO_PRINCIPAL_ANONYMOUS);
+        REPINFO_KEYS.add(TAG_REPINFO_PRINCIPAL_ANYONE);
+    }
+    
+    
     public static final String TAG_ACLCAP_ACL_PROPAGATION = "propagation";
     public static final String TAG_ACLCAP_SUPPORTED_PERMISSIONS = "supportedPermissions";
     public static final String TAG_ACLCAP_PERMISSIONS = "permissions";
@@ -193,5 +219,27 @@ public final class CmisAtomPubConstants {
     public static final String TAG_QUERY = "query";
     public static final String TAG_QUERY_STATEMENT = "statement";
 
+    
+    public static final String TAG_OBJECT_PROPERTIES = "properties";
+    public static final String TAG_OBJECT_ALLOWABLE_ACTIONS = "allowableActions";
+    public static final String TAG_OBJECT_RELATIONSHIPS = "relationships";
+    public static final String TAG_OBJECT_CHANGE_EVENT_INFO = "changeEventInfo";
+    public static final String TAG_OBJECT_ACL = "acl";
+    public static final String TAG_OBJECT_EXACT_ACL = "exactACL";
+    public static final String TAG_OBJECT_POLICY_IDS = "policyIds";
+    public static final String TAG_OBJECT_RENDITIONS = "renditions";
+    
+    public static final Set<String> OBJECT_KEYS = new HashSet<String>();
+    static {
+        OBJECT_KEYS.add(TAG_OBJECT_PROPERTIES);
+        OBJECT_KEYS.add(TAG_OBJECT_ALLOWABLE_ACTIONS);
+        OBJECT_KEYS.add(TAG_OBJECT_RELATIONSHIPS);
+        OBJECT_KEYS.add(TAG_OBJECT_CHANGE_EVENT_INFO);
+        OBJECT_KEYS.add(TAG_OBJECT_ACL);
+        OBJECT_KEYS.add(TAG_OBJECT_EXACT_ACL);
+        OBJECT_KEYS.add(TAG_OBJECT_POLICY_IDS);
+        OBJECT_KEYS.add(TAG_OBJECT_RENDITIONS);
+    }
+    
     
 }
