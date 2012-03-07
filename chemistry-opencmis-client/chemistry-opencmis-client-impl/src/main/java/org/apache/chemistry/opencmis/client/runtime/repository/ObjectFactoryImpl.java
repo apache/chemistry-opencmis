@@ -214,8 +214,10 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             return new RelationshipTypeImpl(this.session, (RelationshipTypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof PolicyTypeDefinition) {
             return new PolicyTypeImpl(this.session, (PolicyTypeDefinition) typeDefinition);
+        } else if (typeDefinition == null) {
+            throw new CmisRuntimeException("No base type supplied!");
         } else {
-            throw new CmisRuntimeException("Unknown base type!");
+            throw new CmisRuntimeException("Unknown base type! Received " + typeDefinition.getClass().getName());
         }
     }
 
