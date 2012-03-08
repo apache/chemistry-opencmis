@@ -18,4 +18,4 @@ rem @version@
 
 cd %~dp0\lib
 
-start /B javaw -classpath "*" org.apache.chemistry.opencmis.workbench.Workbench
+start /B javaw -classpath ".;*" org.apache.chemistry.opencmis.workbench.Workbench
