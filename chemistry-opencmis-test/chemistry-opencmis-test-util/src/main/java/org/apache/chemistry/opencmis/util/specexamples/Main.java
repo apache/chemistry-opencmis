@@ -239,16 +239,16 @@ public class Main {
 
     private void getObject(String objectId) {
         LOG.debug("getObject " + objectId);
-        objSvc.getObject(repositoryId, objectId, "*", false /* includeAllowableActions */,
+        objSvc.getObject(repositoryId, objectId, "*", true /* includeAllowableActions */,
                 IncludeRelationships.NONE /* includeRelationships */, null /* renditionFilter */,
-                false /* includePolicyIds */, false /* includeAcl */, null);
+                false /* includePolicyIds */, true /* includeAcl */, null);
         renameFiles("getObject");
         LOG.debug("getObject() done.");
     }
 
     private void getChildren(String folderId) {
         LOG.debug("getChildren " + folderId);
-        navSvc.getChildren(repositoryId, folderId, "*", null /* orderBy */, false /* includeAllowableActions */,
+        navSvc.getChildren(repositoryId, folderId, "*", null /* orderBy */, true /* includeAllowableActions */,
                 IncludeRelationships.NONE, null /* renditionFilter */, true /* includePathSegment */, MAX_ITEMS,
                 SKIP_COUNT, null);
         renameFiles("getChildren");
@@ -258,7 +258,7 @@ public class Main {
     private void getDescendants(String folderId) {
         final BigInteger DEPTH = BigInteger.valueOf(3);
         LOG.debug("getDescendants " + folderId);
-        navSvc.getDescendants(repositoryId, folderId, DEPTH, "*", false /* includeAllowableActions */,
+        navSvc.getDescendants(repositoryId, folderId, DEPTH, "*", true /* includeAllowableActions */,
                 IncludeRelationships.NONE, null /* renditionFilter */, true /* includePathSegment */, null);
         renameFiles("getDescendants");
         LOG.debug("getDescendants() done.");
@@ -267,7 +267,7 @@ public class Main {
     private void doQuery() {
         LOG.debug("doQuery ");
         String statement = "SELECT * from cmis:document WHERE IN_FOLDER('" + rootFolderId + "')";
-        discSvc.query(repositoryId, statement, false /* searchAllVersions */, false /* includeAllowableActions */,
+        discSvc.query(repositoryId, statement, false /* searchAllVersions */, true /* includeAllowableActions */,
                 IncludeRelationships.NONE, null, MAX_ITEMS, SKIP_COUNT, null);
         renameFiles("doQuery");
         LOG.debug("doQuery() done.");
