@@ -70,7 +70,7 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        return JSONConverter.convertObjectList(json);
+        return JSONConverter.convertObjectList(json, true);
     }
 
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
@@ -96,6 +96,6 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
             }
         }
 
-        return JSONConverter.convertObjectList(json);
+        return JSONConverter.convertObjectList(json, false);
     }
 }

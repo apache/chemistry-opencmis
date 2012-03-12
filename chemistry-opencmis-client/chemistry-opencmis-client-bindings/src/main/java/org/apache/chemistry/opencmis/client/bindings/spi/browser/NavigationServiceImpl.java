@@ -155,6 +155,6 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObjectList(json);
+        return JSONConverter.convertObjectList(json, false);
     }
 }

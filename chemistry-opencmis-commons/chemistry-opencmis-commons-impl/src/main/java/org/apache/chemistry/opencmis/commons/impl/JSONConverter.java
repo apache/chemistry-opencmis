@@ -845,7 +845,7 @@ public class JSONConverter {
         }
 
         // relationships
-        if (object.getRelationships() != null) {
+        if ((object.getRelationships() != null) && (!object.getRelationships().isEmpty())) {
             JSONArray relationships = new JSONArray();
 
             for (ObjectData relationship : object.getRelationships()) {
@@ -873,7 +873,8 @@ public class JSONConverter {
         }
 
         // policy ids
-        if ((object.getPolicyIds() != null) && (object.getPolicyIds().getPolicyIds() != null)) {
+        if ((object.getPolicyIds() != null) && (object.getPolicyIds().getPolicyIds() != null)
+                && (!object.getPolicyIds().getPolicyIds().isEmpty())) {
             JSONArray policyIds = new JSONArray();
 
             for (String pi : object.getPolicyIds().getPolicyIds()) {
@@ -884,7 +885,7 @@ public class JSONConverter {
         }
 
         // renditions
-        if (object.getRenditions() != null) {
+        if ((object.getRenditions() != null) && (!object.getRenditions().isEmpty())) {
             JSONArray renditions = new JSONArray();
 
             for (RenditionData rendition : object.getRenditions()) {
@@ -1085,10 +1086,17 @@ public class JSONConverter {
             }
         }
 
-        result.put(JSON_OBJECTLIST_OBJECTS, objects);
+        if (isQueryResult) {
+            result.put(JSON_QUERYRESULTLIST_RESULTS, objects);
 
-        setIfNotNull(JSON_OBJECTLIST_HAS_MORE_ITEMS, list.hasMoreItems(), result);
-        setIfNotNull(JSON_OBJECTLIST_NUM_ITEMS, list.getNumItems(), result);
+            setIfNotNull(JSON_QUERYRESULTLIST_HAS_MORE_ITEMS, list.hasMoreItems(), result);
+            setIfNotNull(JSON_QUERYRESULTLIST_NUM_ITEMS, list.getNumItems(), result);
+        } else {
+            result.put(JSON_OBJECTLIST_OBJECTS, objects);
+
+            setIfNotNull(JSON_OBJECTLIST_HAS_MORE_ITEMS, list.hasMoreItems(), result);
+            setIfNotNull(JSON_OBJECTLIST_NUM_ITEMS, list.getNumItems(), result);
+        }
 
         convertExtension(list, result);
 
@@ -2020,14 +2028,15 @@ public class JSONConverter {
     /**
      * Converts a object list.
      */
-    public static ObjectList convertObjectList(Map<String, Object> json) {
+    public static ObjectList convertObjectList(Map<String, Object> json, boolean isQueryResult) {
         if (json == null) {
             return null;
         }
 
         ObjectListImpl result = new ObjectListImpl();
 
-        List<Object> jsonChildren = getList(json.get(JSON_OBJECTLIST_OBJECTS));
+        List<Object> jsonChildren = getList(json.get(isQueryResult ? JSON_QUERYRESULTLIST_RESULTS
+                : JSON_OBJECTLIST_OBJECTS));
         List<ObjectData> objects = new ArrayList<ObjectData>();
 
         if (jsonChildren != null) {
@@ -2040,10 +2049,11 @@ public class JSONConverter {
         }
 
         result.setObjects(objects);
-        result.setHasMoreItems(getBoolean(json, JSON_OBJECTLIST_HAS_MORE_ITEMS));
-        result.setNumItems(getInteger(json, JSON_OBJECTLIST_NUM_ITEMS));
+        result.setHasMoreItems(getBoolean(json, isQueryResult ? JSON_QUERYRESULTLIST_NUM_ITEMS
+                : JSON_OBJECTLIST_HAS_MORE_ITEMS));
+        result.setNumItems(getInteger(json, isQueryResult ? JSON_QUERYRESULTLIST_NUM_ITEMS : JSON_OBJECTLIST_NUM_ITEMS));
 
-        convertExtension(json, result, OBJECTLIST_KEYS);
+        convertExtension(json, result, isQueryResult ? QUERYRESULTLIST_KEYS : OBJECTLIST_KEYS);
 
         return result;
     }
