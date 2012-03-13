@@ -61,13 +61,13 @@ public class TypeValidator {
             // check query name syntax
             if (null == pd2.getQueryName())
                 throw new CmisInvalidArgumentException("property query name cannot be null.");
-            if (!NameValidator.isValidName(pd2.getQueryName()))
+            if (!NameValidator.isValidQueryName(pd2.getQueryName()))
                 throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
     
             // check local name syntax
             if (null == pd2.getLocalName())
                 throw new CmisInvalidArgumentException("property local name cannot be null.");
-            if (!NameValidator.isValidName(pd2.getLocalName()))
+            if (!NameValidator.isValidLocalName(pd2.getLocalName()))
                 throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
             
             for (TypeDefinitionContainer tdc : tdl) {

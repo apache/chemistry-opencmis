@@ -215,7 +215,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         // test illegal property id
         typeDef = createTypeForAddingAtRuntime();
         pd = getPropertyDefinitionImpl(typeDef);
-        pd.setQueryName(pd.getQueryName() + "!!!");
+        pd.setQueryName(pd.getQueryName() + "!*!");
         checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
 
         // test null property query name
