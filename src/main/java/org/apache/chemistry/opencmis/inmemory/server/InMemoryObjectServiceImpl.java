@@ -740,7 +740,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         // check name syntax
-        if (!NameValidator.isValidId(name)) {
+        if (!NameValidator.isValidName(name)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
         }
 
