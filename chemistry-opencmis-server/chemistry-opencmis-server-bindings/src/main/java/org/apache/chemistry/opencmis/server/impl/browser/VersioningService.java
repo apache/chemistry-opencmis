@@ -27,6 +27,7 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RES
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_TYPE_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
@@ -121,6 +122,7 @@ public class VersioningService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        String typeId = (String) context.get(CONTEXT_OBJECT_TYPE_ID);
         Boolean major = getBooleanParameter(request, PARAM_MAJOR);
         String checkinComment = getStringParameter(request, PARAM_CHECKIN_COMMENT);
         String transaction = getStringParameter(request, PARAM_TRANSACTION);
@@ -130,7 +132,7 @@ public class VersioningService {
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         Holder<String> objectIdHolder = new Holder<String>(objectId);
 
-        service.checkIn(repositoryId, objectIdHolder, major, createProperties(cp, null, typeCache),
+        service.checkIn(repositoryId, objectIdHolder, major, createProperties(cp, typeId, typeCache),
                 createContentStream(request), checkinComment, createPolicies(cp), createAddAcl(cp),
                 createRemoveAcl(cp), null);
 
