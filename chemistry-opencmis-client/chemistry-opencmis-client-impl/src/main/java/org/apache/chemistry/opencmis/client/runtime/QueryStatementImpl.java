@@ -384,7 +384,7 @@ public class QueryStatementImpl implements QueryStatement {
     }
 
     private static String convert(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         return "'" + sdf.format(date) + "'";
