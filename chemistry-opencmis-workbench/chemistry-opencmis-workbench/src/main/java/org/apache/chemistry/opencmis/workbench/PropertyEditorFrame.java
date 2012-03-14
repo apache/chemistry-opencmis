@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -575,12 +576,14 @@ public class PropertyEditorFrame extends JFrame {
         private final SpinnerNumberModel hour;
         private final SpinnerNumberModel min;
         private final SpinnerNumberModel sec;
+        private final TimeZone timezone;
 
         public DateTimePropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
             setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
             setBackground(bgColor);
 
             GregorianCalendar cal = (value == null ? new GregorianCalendar() : (GregorianCalendar) value);
+            timezone = cal.getTimeZone();
 
             day = new SpinnerNumberModel(cal.get(Calendar.DATE), 1, 31, 1);
             addSpinner(new JSpinner(day), status);
@@ -619,6 +622,8 @@ public class PropertyEditorFrame extends JFrame {
             sec = new SpinnerNumberModel(cal.get(Calendar.SECOND), 0, 59, 1);
             JSpinner secSpinner = new JSpinner(sec);
             addSpinner(secSpinner, status);
+
+            add(new JLabel(" " + timezone.getDisplayName(true, TimeZone.SHORT)));
         }
 
         private void addSpinner(final JSpinner spinner, final UpdateStatus status) {
@@ -634,6 +639,8 @@ public class PropertyEditorFrame extends JFrame {
 
         public Object getPropertyValue() {
             GregorianCalendar result = new GregorianCalendar();
+
+            result.setTimeZone(timezone);
 
             result.set(Calendar.YEAR, year.getNumber().intValue());
             int mi = 0;
