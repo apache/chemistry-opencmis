@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -369,7 +370,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                 } else if (firstValue instanceof String) {
                     propertyData = bof.createPropertyStringData(id, (List<String>) values);
                 } else {
-                    throw new IllegalArgumentException("Property '" + id + "' is a String property!");
+                    throwWrongTypeError(firstValue, "string", String.class, id);
                 }
             } else if (definition instanceof PropertyIdDefinition) {
                 if (firstValue == null) {
@@ -377,7 +378,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                 } else if (firstValue instanceof String) {
                     propertyData = bof.createPropertyIdData(id, (List<String>) values);
                 } else {
-                    throw new IllegalArgumentException("Property '" + id + "' is an Id property!");
+                    throwWrongTypeError(firstValue, "string", String.class, id);
                 }
             } else if (definition instanceof PropertyHtmlDefinition) {
                 if (firstValue == null) {
@@ -385,7 +386,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                 } else if (firstValue instanceof String) {
                     propertyData = bof.createPropertyHtmlData(id, (List<String>) values);
                 } else {
-                    throw new IllegalArgumentException("Property '" + id + "' is a HTML property!");
+                    throwWrongTypeError(firstValue, "html", String.class, id);
                 }
             } else if (definition instanceof PropertyUriDefinition) {
                 if (firstValue == null) {
@@ -393,7 +394,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                 } else if (firstValue instanceof String) {
                     propertyData = bof.createPropertyUriData(id, (List<String>) values);
                 } else {
-                    throw new IllegalArgumentException("Property '" + id + "' is an URI property!");
+                    throwWrongTypeError(firstValue, "uri", String.class, id);
                 }
             } else if (definition instanceof PropertyIntegerDefinition) {
                 if (firstValue == null) {
@@ -410,7 +411,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
                     propertyData = bof.createPropertyIntegerData(id, list);
                 } else {
-                    throw new IllegalArgumentException("Property '" + id + "' is an Integer property!");
+                    throwWrongTypeError(firstValue, "integer", Integer.class, id);
                 }
             } else if (definition instanceof PropertyBooleanDefinition) {
                 if (firstValue == null) {
@@ -418,7 +419,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                 } else if (firstValue instanceof Boolean) {
                     propertyData = bof.createPropertyBooleanData(id, (List<Boolean>) values);
                 } else {
-                    throw new IllegalArgumentException("Property '" + id + "' is a Boolean property!");
+                    throwWrongTypeError(firstValue, "boolean", Boolean.class, id);
                 }
             } else if (definition instanceof PropertyDecimalDefinition) {
                 if (firstValue == null) {
@@ -437,15 +438,23 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
                     propertyData = bof.createPropertyDecimalData(id, list);
                 } else {
-                    throw new IllegalArgumentException("Property '" + id + "' is a Decimal property!");
+                    throwWrongTypeError(firstValue, "decimal", BigDecimal.class, id);
                 }
             } else if (definition instanceof PropertyDateTimeDefinition) {
                 if (firstValue == null) {
                     propertyData = bof.createPropertyDateTimeData(id, (List<GregorianCalendar>) null);
                 } else if (firstValue instanceof GregorianCalendar) {
                     propertyData = bof.createPropertyDateTimeData(id, (List<GregorianCalendar>) values);
+                } else if (firstValue instanceof Date) {
+                    List<GregorianCalendar> list = new ArrayList<GregorianCalendar>(values.size());
+                    for (Object d : values) {
+                        GregorianCalendar cal = new GregorianCalendar();
+                        cal.setTime((Date)d);
+                        list.add(cal);
+                    }
+                    propertyData = bof.createPropertyDateTimeData(id, list);
                 } else {
-                    throw new IllegalArgumentException("Property '" + id + "' is a DateTime property!");
+                    throwWrongTypeError(firstValue, "datetime", GregorianCalendar.class, id);
                 }
             }
 
@@ -560,4 +569,22 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
         return new ChangeEventsImpl(changeLogToken, events, hasMoreItems, totalNumItems);
     }
+    
+    private void throwWrongTypeError(Object obj, String type, Class<?> clazz, String id) {
+        String expectedTypes;
+        if (clazz.equals(BigInteger.class))
+            expectedTypes = "<BigInteger, Byte, Short, Integer, Long>";
+        else if (clazz.equals(BigDecimal.class))
+            expectedTypes = "<BigDecimal, Float, Double, Byte, Short, Integer, Long>";
+        else if (clazz.equals(GregorianCalendar.class))
+            expectedTypes = "<java.util.GregorianCalendar, java.util.Date>";
+        else
+            expectedTypes = clazz.getName();
+            
+        String message = "Property '" + id +"' is a " + type + " property. Expected type '"
+                + expectedTypes + "' but received a '" + obj.getClass().getName() + "' property.";
+        
+        throw new IllegalArgumentException(message);
+    }
 }
+
