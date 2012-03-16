@@ -49,11 +49,11 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.impl.server.TypeCacheImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 /**
  * Navigation Service operations.
@@ -99,7 +99,6 @@ public final class NavigationService {
     /**
      * getDescendants.
      */
-    @SuppressWarnings("unchecked")
     public static void getDescendants(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
@@ -133,7 +132,6 @@ public final class NavigationService {
     /**
      * getFolderTree.
      */
-    @SuppressWarnings("unchecked")
     public static void getFolderTree(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
@@ -190,7 +188,6 @@ public final class NavigationService {
     /**
      * getObjectParents.
      */
-    @SuppressWarnings("unchecked")
     public static void getObjectParents(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters

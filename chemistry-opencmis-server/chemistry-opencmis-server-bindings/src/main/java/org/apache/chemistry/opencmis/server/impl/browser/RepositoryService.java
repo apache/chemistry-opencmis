@@ -42,11 +42,11 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONValue;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 /**
  * Repository Service operations.
@@ -59,7 +59,6 @@ public final class RepositoryService {
     /**
      * getRepositories.
      */
-    @SuppressWarnings("unchecked")
     public static void getRepositories(CallContext context, CmisService service, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         // execute
@@ -80,7 +79,6 @@ public final class RepositoryService {
     /**
      * getRepositoryInfo.
      */
-    @SuppressWarnings("unchecked")
     public static void getRepositoryInfo(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // execute
@@ -153,7 +151,6 @@ public final class RepositoryService {
         BrowserBindingUtils.writeJSON(jsonTypeList, request, response);
     }
 
-    @SuppressWarnings("unchecked")
     public static void getTypeDescendants(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters

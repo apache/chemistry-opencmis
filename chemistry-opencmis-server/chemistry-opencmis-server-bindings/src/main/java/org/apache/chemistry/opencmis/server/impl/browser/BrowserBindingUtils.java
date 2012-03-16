@@ -62,12 +62,12 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONStreamAware;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
 
 public class BrowserBindingUtils {
 
@@ -446,7 +446,6 @@ public class BrowserBindingUtils {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static String createCookieValue(int code, String objectId, String ex, String message) {
         JSONObject result = new JSONObject();
 

@@ -51,12 +51,12 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.impl.server.TypeCacheImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 /**
  * Versioning Service operations.
@@ -157,7 +157,9 @@ public class VersioningService {
         writeJSON(jsonObject, request, response);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * getAllVersions.
+     */
     public static void getAllVersions(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters

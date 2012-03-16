@@ -143,8 +143,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabili
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 
 /**
  * OpenCMIS objects to JSON converter.
@@ -160,7 +160,6 @@ public class JSONConverter {
     /**
      * Converts a repository info object.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(RepositoryInfo repositoryInfo, String repositoryUrl, String rootUrl) {
         if (repositoryInfo == null) {
             return null;
@@ -204,7 +203,6 @@ public class JSONConverter {
     /**
      * Converts a capabilities object.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(RepositoryCapabilities capabilities) {
         if (capabilities == null) {
             return null;
@@ -236,7 +234,6 @@ public class JSONConverter {
     /**
      * Converts an ACL capabilities object.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(AclCapabilities capabilities) {
         if (capabilities == null) {
             return null;
@@ -823,7 +820,6 @@ public class JSONConverter {
     /**
      * Converts an object.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(ObjectData object, TypeCache typeCache, boolean isQueryResult) {
         if (object == null) {
             return null;
@@ -903,7 +899,6 @@ public class JSONConverter {
     /**
      * Converts a bag of properties.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(Properties properties, String objectId, TypeCache typeCache, boolean isQueryResult) {
         if (properties == null) {
             return null;
@@ -933,7 +928,6 @@ public class JSONConverter {
     /**
      * Converts a property.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(PropertyData<?> property, PropertyDefinition<?> propDef) {
         if (property == null) {
             return null;
@@ -987,7 +981,6 @@ public class JSONConverter {
     /**
      * Converts allowable actions.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(AllowableActions allowableActions) {
         if (allowableActions == null) {
             return null;
@@ -1008,7 +1001,6 @@ public class JSONConverter {
     /**
      * Converts an ACL.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(Acl acl) {
         if ((acl == null) || (acl.getAces() == null)) {
             return null;
@@ -1046,7 +1038,6 @@ public class JSONConverter {
     /**
      * Converts a rendition.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(RenditionData rendition) {
         if (rendition == null) {
             return null;
@@ -1071,7 +1062,6 @@ public class JSONConverter {
     /**
      * Converts a query object list.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(ObjectList list, TypeCache typeCache, boolean isQueryResult) {
         if (list == null) {
             return null;
@@ -1106,7 +1096,6 @@ public class JSONConverter {
     /**
      * Converts an object in a folder list.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(ObjectInFolderData objectInFolder, TypeCache typeCache) {
         if ((objectInFolder == null) || (objectInFolder.getObject() == null)) {
             return null;
@@ -1124,7 +1113,6 @@ public class JSONConverter {
     /**
      * Converts a folder list.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(ObjectInFolderList objectInFolderList, TypeCache typeCache) {
         if (objectInFolderList == null) {
             return null;
@@ -1153,7 +1141,6 @@ public class JSONConverter {
     /**
      * Converts a folder container.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(ObjectInFolderContainer container, TypeCache typeCache) {
         if (container == null) {
             return null;
@@ -1179,7 +1166,6 @@ public class JSONConverter {
     /**
      * Converts an object parent.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(ObjectParentData parent, TypeCache typeCache) {
         if ((parent == null) || (parent.getObject() == null)) {
             return null;
@@ -1199,7 +1185,6 @@ public class JSONConverter {
     /**
      * Converts a type definition.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(TypeDefinition type) {
         if (type == null) {
             return null;
@@ -1253,7 +1238,6 @@ public class JSONConverter {
     /**
      * Converts a property type definition.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(PropertyDefinition<?> propertyDefinition) {
         if (propertyDefinition == null) {
             return null;
@@ -1336,7 +1320,6 @@ public class JSONConverter {
     /**
      * Converts choices.
      */
-    @SuppressWarnings("unchecked")
     private static <T> JSONArray convertChoices(List<Choice<T>> choices, Cardinality cardinality) {
         if (choices == null) {
             return null;
@@ -1374,7 +1357,6 @@ public class JSONConverter {
     /**
      * Converts a type definition list.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(TypeDefinitionList list) {
         if (list == null) {
             return null;
@@ -1434,7 +1416,6 @@ public class JSONConverter {
     /**
      * Converts a type definition container.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(TypeDefinitionContainer container) {
         if (container == null) {
             return null;
@@ -1755,8 +1736,8 @@ public class JSONConverter {
                         if (values != null) {
                             propertyValues = new ArrayList<BigInteger>();
                             for (Object obj : values) {
-                                if (obj instanceof Number) {
-                                    propertyValues.add(BigInteger.valueOf(((Number) obj).longValue()));
+                                if (obj instanceof BigInteger) {
+                                    propertyValues.add((BigInteger) obj);
                                 } else {
                                     throw new CmisRuntimeException("Invalid property value: " + obj);
                                 }
@@ -1772,10 +1753,8 @@ public class JSONConverter {
                         if (values != null) {
                             propertyValues = new ArrayList<BigDecimal>();
                             for (Object obj : values) {
-                                if (obj instanceof Double) {
-                                    propertyValues.add(BigDecimal.valueOf((Double) obj));
-                                } else if (obj instanceof Number) {
-                                    propertyValues.add(BigDecimal.valueOf(((Number) obj).longValue()));
+                                if (obj instanceof BigDecimal) {
+                                    propertyValues.add((BigDecimal) obj);
                                 } else {
                                     throw new CmisRuntimeException("Invalid property value: " + obj);
                                 }
@@ -2063,7 +2042,6 @@ public class JSONConverter {
     /**
      * Converts FailedToDelete ids.
      */
-    @SuppressWarnings("unchecked")
     public static JSONObject convert(FailedToDeleteData ftd) {
         if (ftd == null) {
             return null;
@@ -2115,7 +2093,6 @@ public class JSONConverter {
 
     // -----------------------------------------------------------------
 
-    @SuppressWarnings("unchecked")
     public static void convertExtension(ExtensionsData source, JSONObject target) {
         if (source == null || source.getExtensions() == null) {
             return;
@@ -2130,7 +2107,6 @@ public class JSONConverter {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static JSONObject convertExtensionList(List<CmisExtensionElement> extensionList) {
         if (extensionList == null) {
             return null;
@@ -2270,15 +2246,13 @@ public class JSONConverter {
             }
             throw new CmisRuntimeException("Invalid Boolean value!");
         case INTEGER:
-            if (value instanceof Number) {
-                return BigInteger.valueOf(((Number) value).longValue());
+            if (value instanceof BigInteger) {
+                return (BigInteger) value;
             }
             throw new CmisRuntimeException("Invalid Integer value!");
         case DECIMAL:
-            if (value instanceof Double) {
-                return BigDecimal.valueOf((Double) value);
-            } else if (value instanceof Number) {
-                return BigDecimal.valueOf(((Number) value).longValue());
+            if (value instanceof BigDecimal) {
+                return (BigDecimal) value;
             }
             throw new CmisRuntimeException("Invalid Decimal value!");
         case DATETIME:
@@ -2293,7 +2267,6 @@ public class JSONConverter {
         throw new CmisRuntimeException("Unkown property type!");
     }
 
-    @SuppressWarnings("unchecked")
     public static JSONArray getJSONArrayFromList(List<?> list) {
         if (list == null) {
             return null;
@@ -2327,7 +2300,6 @@ public class JSONConverter {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public static void setIfNotNull(String name, Object obj, JSONObject json) {
         if (obj != null) {
             json.put(name, obj);
@@ -2362,12 +2334,12 @@ public class JSONConverter {
                 + (o instanceof List ? "JSON object" : o.getClass().getSimpleName()) + ": " + o.toString());
     }
 
-    public static String getString(@SuppressWarnings("rawtypes") Map json, String key) {
+    public static String getString(Map<String, Object> json, String key) {
         Object obj = json.get(key);
         return obj == null ? null : obj.toString();
     }
 
-    public static Boolean getBoolean(@SuppressWarnings("rawtypes") Map json, String key) {
+    public static Boolean getBoolean(Map<String, Object> json, String key) {
         Object obj = json.get(key);
 
         if (obj instanceof Boolean) {
@@ -2377,29 +2349,27 @@ public class JSONConverter {
         return null;
     }
 
-    public static BigInteger getInteger(@SuppressWarnings("rawtypes") Map json, String key) {
+    public static BigInteger getInteger(Map<String, Object> json, String key) {
         Object obj = json.get(key);
 
-        if (obj instanceof Number) {
-            return BigInteger.valueOf(((Number) obj).longValue());
+        if (obj instanceof BigInteger) {
+            return (BigInteger) obj;
         }
 
         return null;
     }
 
-    public static BigDecimal getDecimal(@SuppressWarnings("rawtypes") Map json, String key) {
+    public static BigDecimal getDecimal(Map<String, Object> json, String key) {
         Object obj = json.get(key);
 
-        if (obj instanceof Double) {
-            return BigDecimal.valueOf((Double) obj);
-        } else if (obj instanceof Number) {
-            return BigDecimal.valueOf(((Number) obj).longValue());
+        if (obj instanceof BigDecimal) {
+            return (BigDecimal) obj;
         }
 
         return null;
     }
 
-    public static GregorianCalendar getDateTime(@SuppressWarnings("rawtypes") Map json, String key) {
+    public static GregorianCalendar getDateTime(Map<String, Object> json, String key) {
         Object obj = json.get(key);
 
         if (obj instanceof Number) {
@@ -2412,7 +2382,7 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Enum<T>> T getEnum(@SuppressWarnings("rawtypes") Map json, String key, Class<T> clazz) {
+    public static <T extends Enum<T>> T getEnum(Map<String, Object> json, String key, Class<T> clazz) {
         String value = getString(json, key);
         if (value == null) {
             return null;

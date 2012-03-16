@@ -53,9 +53,9 @@ import org.apache.chemistry.opencmis.commons.impl.JSONConstants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.JSONParser;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
+import org.apache.chemistry.opencmis.commons.impl.json.parser.ContainerFactory;
+import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 
 /**
  * Base class for all Browser Binding client services.
@@ -63,14 +63,12 @@ import org.json.simple.parser.JSONParser;
 public abstract class AbstractBrowserBindingService implements LinkAccess {
 
     protected static final ContainerFactory SIMPLE_CONTAINER_FACTORY = new ContainerFactory() {
-        @SuppressWarnings("rawtypes")
-        public Map createObjectContainer() {
-            return new LinkedHashMap();
+        public Map<String, Object> createObjectContainer() {
+            return new LinkedHashMap<String, Object>();
         }
 
-        @SuppressWarnings("rawtypes")
-        public List creatArrayContainer() {
-            return new ArrayList();
+        public List<Object> creatArrayContainer() {
+            return new ArrayList<Object>();
         }
     };
 

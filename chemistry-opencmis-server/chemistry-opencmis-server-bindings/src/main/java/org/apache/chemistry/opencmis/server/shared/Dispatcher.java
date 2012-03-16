@@ -49,7 +49,7 @@ public class Dispatcher implements Serializable {
     private static final Log LOG = LogFactory.getLog(Dispatcher.class.getName());
 
     private final boolean caseSensitive;
-    private final Map<String, Method> methodMap = new HashMap<String, Method>();
+    private Map<String, Method> methodMap = new HashMap<String, Method>();
 
     public Dispatcher() {
         this(true);

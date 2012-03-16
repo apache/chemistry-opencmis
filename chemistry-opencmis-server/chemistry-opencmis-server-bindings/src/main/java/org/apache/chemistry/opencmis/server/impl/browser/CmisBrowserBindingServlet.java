@@ -100,6 +100,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedEx
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
@@ -112,7 +113,6 @@ import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.simple.JSONObject;
 
 public class CmisBrowserBindingServlet extends HttpServlet {
 
@@ -405,7 +405,6 @@ public class CmisBrowserBindingServlet extends HttpServlet {
     /**
      * Prints the error as JSON.
      */
-    @SuppressWarnings("unchecked")
     private static void printError(Exception ex, HttpServletRequest request, HttpServletResponse response,
             CallContext context) {
         int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
