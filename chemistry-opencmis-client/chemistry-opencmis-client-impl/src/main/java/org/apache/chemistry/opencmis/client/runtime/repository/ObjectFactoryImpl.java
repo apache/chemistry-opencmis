@@ -411,7 +411,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
                     propertyData = bof.createPropertyIntegerData(id, list);
                 } else {
-                    throwWrongTypeError(firstValue, "integer", Integer.class, id);
+                    throwWrongTypeError(firstValue, "integer", BigInteger.class, id);
                 }
             } else if (definition instanceof PropertyBooleanDefinition) {
                 if (firstValue == null) {
@@ -575,7 +575,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         if (clazz.equals(BigInteger.class))
             expectedTypes = "<BigInteger, Byte, Short, Integer, Long>";
         else if (clazz.equals(BigDecimal.class))
-            expectedTypes = "<BigDecimal, Float, Double, Byte, Short, Integer, Long>";
+            expectedTypes = "<BigDecimal, Double, Float, Byte, Short, Integer, Long>";
         else if (clazz.equals(GregorianCalendar.class))
             expectedTypes = "<java.util.GregorianCalendar, java.util.Date>";
         else
