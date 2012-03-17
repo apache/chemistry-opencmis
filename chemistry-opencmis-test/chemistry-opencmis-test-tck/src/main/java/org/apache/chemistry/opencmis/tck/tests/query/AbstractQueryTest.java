@@ -18,24 +18,20 @@
  */
 package org.apache.chemistry.opencmis.tck.tests.query;
 
-import java.util.Map;
+import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
+import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
-import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTestGroup;
+public abstract class AbstractQueryTest extends AbstractSessionTest {
 
-/**
- * This test group contains query tests.
- */
-public class QueryTestGroup extends AbstractSessionTestGroup {
-    @Override
-    public void init(Map<String, String> parameters) throws Exception {
-        super.init(parameters);
+    protected boolean supportsQuery(Session session) {
+        RepositoryInfo repository = session.getRepositoryInfo();
 
-        setName("Query Test Group");
-        setDescription("Query and content changes tests.");
+        if (repository.getCapabilities().getQueryCapability() == null) {
+            return false;
+        }
 
-        addTest(new QuerySmokeTest());
-        addTest(new QueryRootFolderTest());
-        addTest(new QueryLikeTest());
-        addTest(new ContentChangesSmokeTest());
+        return repository.getCapabilities().getQueryCapability() != CapabilityQuery.NONE;
     }
 }

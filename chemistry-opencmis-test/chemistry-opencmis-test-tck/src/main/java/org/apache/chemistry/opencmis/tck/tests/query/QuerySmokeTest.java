@@ -33,18 +33,15 @@ import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
-import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 import org.apache.chemistry.opencmis.tck.impl.CmisTestResultImpl;
 
 /**
  * Query smoke test.
  */
-public class QuerySmokeTest extends AbstractSessionTest {
+public class QuerySmokeTest extends AbstractQueryTest {
 
     @Override
     public void init(Map<String, String> parameters) {
@@ -60,6 +57,8 @@ public class QuerySmokeTest extends AbstractSessionTest {
         if (supportsQuery(session)) {
             String testType = "cmis:document";
             String statement = "SELECT * FROM " + testType;
+
+            addResult(createInfoResult("Query: " + statement));
 
             ObjectType type = session.getTypeDefinition(testType);
 
@@ -156,15 +155,5 @@ public class QuerySmokeTest extends AbstractSessionTest {
         result.getChildren().addAll(results);
 
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
-    }
-
-    protected boolean supportsQuery(Session session) {
-        RepositoryInfo repository = session.getRepositoryInfo();
-
-        if (repository.getCapabilities().getQueryCapability() == null) {
-            return false;
-        }
-
-        return repository.getCapabilities().getQueryCapability() != CapabilityQuery.NONE;
     }
 }
