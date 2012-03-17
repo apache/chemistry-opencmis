@@ -28,6 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.NumberFormat;
@@ -509,8 +511,19 @@ public class PropertyEditorFrame extends JFrame {
         private static final long serialVersionUID = 1L;
 
         public IntegerPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
-            super(value, NumberFormat.getIntegerInstance(), status, bgColor);
+            super(value, createFormat(), status, bgColor);
             setHorizontalAlignment(JTextField.RIGHT);
+        }
+
+        private static DecimalFormat createFormat() {
+            DecimalFormat result = new DecimalFormat("#,##0");
+            result.setParseBigDecimal(true);
+            result.setParseIntegerOnly(true);
+            return result;
+        }
+
+        public Object getPropertyValue() throws Exception {
+            return ((BigDecimal) super.getValue()).toBigIntegerExact();
         }
     }
 
@@ -521,8 +534,14 @@ public class PropertyEditorFrame extends JFrame {
         private static final long serialVersionUID = 1L;
 
         public DecimalPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
-            super(value, new DecimalFormat("#,##0.##########"), status, bgColor);
+            super(value, createFormat(), status, bgColor);
             setHorizontalAlignment(JTextField.RIGHT);
+        }
+
+        private static DecimalFormat createFormat() {
+            DecimalFormat result = new DecimalFormat("#,##0.#############################");
+            result.setParseBigDecimal(true);
+            return result;
         }
     }
 

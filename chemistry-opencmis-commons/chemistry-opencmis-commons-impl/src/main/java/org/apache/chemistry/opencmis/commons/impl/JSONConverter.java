@@ -1756,6 +1756,8 @@ public class JSONConverter {
                             for (Object obj : values) {
                                 if (obj instanceof BigDecimal) {
                                     propertyValues.add((BigDecimal) obj);
+                                } else if (obj instanceof BigInteger) {
+                                    propertyValues.add(new BigDecimal((BigInteger) obj));
                                 } else {
                                     throw new CmisRuntimeException("Invalid property value: " + obj);
                                 }
