@@ -1645,6 +1645,7 @@ public class JSONConverter {
     /**
      * Converts properties.
      */
+    @SuppressWarnings("unchecked")
     public static Properties convertProperties(Map<String, Object> json) {
         if (json == null) {
             return null;
@@ -1672,7 +1673,7 @@ public class JSONConverter {
                 Object value = jsonPropertyMap.get(JSON_PROPERTY_VALUE);
                 List<Object> values = null;
                 if (value instanceof List) {
-                    values = (List<Object>) values;
+                    values = (List<Object>) value;
                 } else if (value != null) {
                     values = Collections.singletonList(value);
                 }
