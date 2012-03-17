@@ -25,33 +25,33 @@ import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
 
 public class CancelCheckOutPanel extends ActionPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public CancelCheckOutPanel(ClientModel model) {
-		super("Cancel Check-out Object", "Cancel Check-out", model);
-	}
+    public CancelCheckOutPanel(ClientModel model) {
+        super("Cancel Check-out Object", "Cancel Check-out", model);
+    }
 
-	@Override
-	protected void createActionComponents() {
-	}
+    @Override
+    protected void createActionComponents() {
+    }
 
-	@Override
-	public boolean isAllowed() {
-		if ((getObject() == null) || !(getObject() instanceof Document)) {
-			return false;
-		}
+    @Override
+    public boolean isAllowed() {
+        if ((getObject() == null) || !(getObject() instanceof Document)) {
+            return false;
+        }
 
-		if ((getObject().getAllowableActions() == null)
-				|| (getObject().getAllowableActions().getAllowableActions() == null)) {
-			return true;
-		}
+        if ((getObject().getAllowableActions() == null)
+                || (getObject().getAllowableActions().getAllowableActions() == null)) {
+            return true;
+        }
 
-		return getObject().getAllowableActions().getAllowableActions()
-				.contains(Action.CAN_CANCEL_CHECK_OUT);
-	}
+        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_CANCEL_CHECK_OUT);
+    }
 
-	@Override
-	public void doAction() throws Exception {
-		((Document) getObject()).cancelCheckOut();
-	}
+    @Override
+    public boolean doAction() throws Exception {
+        ((Document) getObject()).cancelCheckOut();
+        return false;
+    }
 }

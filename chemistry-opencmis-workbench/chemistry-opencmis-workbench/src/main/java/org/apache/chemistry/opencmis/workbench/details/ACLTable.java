@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 
@@ -25,6 +26,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.workbench.AclEditorFrame;
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class ACLTable extends AbstractDetailsTable {
@@ -46,6 +48,16 @@ public class ACLTable extends AbstractDetailsTable {
         if ((aa == null) || (aa.getAllowableActions() == null)
                 || aa.getAllowableActions().contains(Action.CAN_APPLY_ACL)) {
             new AclEditorFrame(getClientModel(), getObject());
+
+            try {
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                getClientModel().reloadObject();
+                getClientModel().reloadFolder();
+            } catch (Exception ex) {
+                ClientHelper.showError(null, ex);
+            } finally {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
         }
     }
 

@@ -29,44 +29,42 @@ import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
 
 public class CheckInPanel extends ActionPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JCheckBox majorBox;
-	private JTextField filenameField;
+    private JCheckBox majorBox;
+    private JTextField filenameField;
 
-	public CheckInPanel(ClientModel model) {
-		super("Check-in Object", "Check-in", model);
-	}
+    public CheckInPanel(ClientModel model) {
+        super("Check-in Object", "Check-in", model);
+    }
 
-	@Override
-	protected void createActionComponents() {
-		majorBox = new JCheckBox("major version", true);
-		addActionComponent(majorBox);
+    @Override
+    protected void createActionComponents() {
+        majorBox = new JCheckBox("major version", true);
+        addActionComponent(majorBox);
 
-		filenameField = new JTextField(30);
-		addActionComponent(createFilenamePanel(filenameField));
-	}
+        filenameField = new JTextField(30);
+        addActionComponent(createFilenamePanel(filenameField));
+    }
 
-	@Override
-	public boolean isAllowed() {
-		if ((getObject() == null) || !(getObject() instanceof Document)) {
-			return false;
-		}
+    @Override
+    public boolean isAllowed() {
+        if ((getObject() == null) || !(getObject() instanceof Document)) {
+            return false;
+        }
 
-		if ((getObject().getAllowableActions() == null)
-				|| (getObject().getAllowableActions().getAllowableActions() == null)) {
-			return true;
-		}
+        if ((getObject().getAllowableActions() == null)
+                || (getObject().getAllowableActions().getAllowableActions() == null)) {
+            return true;
+        }
 
-		return getObject().getAllowableActions().getAllowableActions()
-				.contains(Action.CAN_CHECK_IN);
-	}
+        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_IN);
+    }
 
-	@Override
-	public void doAction() throws Exception {
-		ContentStream content = getClientModel().createContentStream(
-				filenameField.getText());
-		((Document) getObject()).checkIn(majorBox.isSelected(), null, content,
-				null, null, null, null);
-	}
+    @Override
+    public boolean doAction() throws Exception {
+        ContentStream content = getClientModel().createContentStream(filenameField.getText());
+        ((Document) getObject()).checkIn(majorBox.isSelected(), null, content, null, null, null, null);
+        return false;
+    }
 }

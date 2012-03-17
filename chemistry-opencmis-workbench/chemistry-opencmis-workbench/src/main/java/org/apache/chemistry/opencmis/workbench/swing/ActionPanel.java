@@ -42,113 +42,115 @@ import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public abstract class ActionPanel extends JPanel implements ActionListener {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ClientModel model;
-	private CmisObject object;
+    private final ClientModel model;
+    private CmisObject object;
 
-	private JPanel centerPanel;
+    private JPanel centerPanel;
 
-	public ActionPanel(String title, String buttonLabel, ClientModel model) {
-		super();
-		this.model = model;
-		createGUI(title, buttonLabel);
-	}
+    public ActionPanel(String title, String buttonLabel, ClientModel model) {
+        super();
+        this.model = model;
+        createGUI(title, buttonLabel);
+    }
 
-	public ClientModel getClientModel() {
-		return model;
-	}
+    public ClientModel getClientModel() {
+        return model;
+    }
 
-	public void setObject(CmisObject object) {
-		this.object = object;
-	}
+    public void setObject(CmisObject object) {
+        this.object = object;
+    }
 
-	public CmisObject getObject() {
-		return object;
-	}
+    public CmisObject getObject() {
+        return object;
+    }
 
-	protected void createGUI(String title, String buttonLabel) {
-		BorderLayout borderLayout = new BorderLayout();
-		borderLayout.setVgap(3);
-		setLayout(borderLayout);
+    protected void createGUI(String title, String buttonLabel) {
+        BorderLayout borderLayout = new BorderLayout();
+        borderLayout.setVgap(3);
+        setLayout(borderLayout);
 
-		setBackground(Color.WHITE);
+        setBackground(Color.WHITE);
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createEmptyBorder(5, 5, 5, 5),
                 BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY, 2),
                         BorderFactory.createEmptyBorder(5, 5, 5, 5))));
 
-		Font labelFont = UIManager.getFont("Label.font");
-		Font boldFont = labelFont.deriveFont(Font.BOLD,
-				labelFont.getSize2D() * 1.2f);
+        Font labelFont = UIManager.getFont("Label.font");
+        Font boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);
 
-		JLabel titleLabel = new JLabel(title);
-		titleLabel.setFont(boldFont);
-		add(titleLabel, BorderLayout.PAGE_START);
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(boldFont);
+        add(titleLabel, BorderLayout.PAGE_START);
 
-		centerPanel = new JPanel();
-		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
-		centerPanel.setBackground(Color.WHITE);
-		add(centerPanel, BorderLayout.CENTER);
+        centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+        centerPanel.setBackground(Color.WHITE);
+        add(centerPanel, BorderLayout.CENTER);
 
-		createActionComponents();
+        createActionComponents();
 
-		JButton deleteButton = new JButton(buttonLabel);
-		deleteButton.addActionListener(this);
-		add(deleteButton, BorderLayout.PAGE_END);
+        JButton deleteButton = new JButton(buttonLabel);
+        deleteButton.addActionListener(this);
+        add(deleteButton, BorderLayout.PAGE_END);
 
-		setMaximumSize(new Dimension(Short.MAX_VALUE, getPreferredSize().height));
-	}
+        setMaximumSize(new Dimension(Short.MAX_VALUE, getPreferredSize().height));
+    }
 
-	protected void addActionComponent(JComponent comp) {
-		comp.setAlignmentX(LEFT_ALIGNMENT);
-		centerPanel.add(comp);
-	}
+    protected void addActionComponent(JComponent comp) {
+        comp.setAlignmentX(LEFT_ALIGNMENT);
+        centerPanel.add(comp);
+    }
 
-	@Override
+    @Override
     public void actionPerformed(ActionEvent e) {
-		try {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			doAction();
-			model.reloadFolder();
-		} catch (Exception ex) {
-			ClientHelper.showError(null, ex);
-		} finally {
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
-	}
+        try {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            if (doAction()) {
+                model.reloadObject();
+            }
+            model.reloadFolder();
+        } catch (Exception ex) {
+            ClientHelper.showError(null, ex);
+        } finally {
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
 
-	protected abstract void createActionComponents();
+    protected abstract void createActionComponents();
 
-	public abstract boolean isAllowed();
+    public abstract boolean isAllowed();
 
-	public abstract void doAction() throws Exception;
+    /**
+     * @return <code>true</code> if object should be reloaded.
+     */
+    public abstract boolean doAction() throws Exception;
 
-	protected JPanel createFilenamePanel(final JTextField filenameField) {
-		JPanel filePanel = new JPanel(new BorderLayout());
-		filePanel.setBackground(Color.WHITE);
+    protected JPanel createFilenamePanel(final JTextField filenameField) {
+        JPanel filePanel = new JPanel(new BorderLayout());
+        filePanel.setBackground(Color.WHITE);
 
-		filePanel.add(new JLabel("File:"), BorderLayout.LINE_START);
+        filePanel.add(new JLabel("File:"), BorderLayout.LINE_START);
 
-		filePanel.add(filenameField, BorderLayout.CENTER);
+        filePanel.add(filenameField, BorderLayout.CENTER);
 
-		JButton browseButton = new JButton("Browse");
-		browseButton.addActionListener(new ActionListener() {
-			@Override
+        JButton browseButton = new JButton("Browse");
+        browseButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
-				JFileChooser fileChooser = new JFileChooser();
-				int chooseResult = fileChooser.showDialog(filenameField,
-						"Select");
-				if (chooseResult == JFileChooser.APPROVE_OPTION) {
-					if (fileChooser.getSelectedFile().isFile()) {
-						filenameField.setText(fileChooser.getSelectedFile()
-								.getAbsolutePath());
-					}
-				}
-			}
-		});
-		filePanel.add(browseButton, BorderLayout.LINE_END);
+                JFileChooser fileChooser = new JFileChooser();
+                int chooseResult = fileChooser.showDialog(filenameField, "Select");
+                if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    if (fileChooser.getSelectedFile().isFile()) {
+                        filenameField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+                    }
+                }
+            }
+        });
+        filePanel.add(browseButton, BorderLayout.LINE_END);
 
-		return filePanel;
-	}
+        return filePanel;
+    }
 }

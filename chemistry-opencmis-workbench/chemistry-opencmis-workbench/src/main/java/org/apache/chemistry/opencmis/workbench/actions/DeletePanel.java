@@ -26,37 +26,37 @@ import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
 
 public class DeletePanel extends ActionPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JCheckBox allVersionsBox;
+    private JCheckBox allVersionsBox;
 
-	public DeletePanel(ClientModel model) {
-		super("Delete Object", "Delete", model);
-	}
+    public DeletePanel(ClientModel model) {
+        super("Delete Object", "Delete", model);
+    }
 
-	@Override
-	protected void createActionComponents() {
-		allVersionsBox = new JCheckBox("delete all versions", true);
-		addActionComponent(allVersionsBox);
-	}
+    @Override
+    protected void createActionComponents() {
+        allVersionsBox = new JCheckBox("delete all versions", true);
+        addActionComponent(allVersionsBox);
+    }
 
-	@Override
-	public boolean isAllowed() {
-		if (getObject() == null) {
-			return false;
-		}
+    @Override
+    public boolean isAllowed() {
+        if (getObject() == null) {
+            return false;
+        }
 
-		if ((getObject().getAllowableActions() == null)
-				|| (getObject().getAllowableActions().getAllowableActions() == null)) {
-			return true;
-		}
+        if ((getObject().getAllowableActions() == null)
+                || (getObject().getAllowableActions().getAllowableActions() == null)) {
+            return true;
+        }
 
-		return getObject().getAllowableActions().getAllowableActions()
-				.contains(Action.CAN_DELETE_OBJECT);
-	}
+        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_DELETE_OBJECT);
+    }
 
-	@Override
-	public void doAction() throws Exception {
-		getObject().delete(allVersionsBox.isSelected());
-	}
+    @Override
+    public boolean doAction() throws Exception {
+        getObject().delete(allVersionsBox.isSelected());
+        return false;
+    }
 }

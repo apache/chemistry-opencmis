@@ -34,48 +34,45 @@ import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
 
 public class MovePanel extends ActionPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JTextField targetFolderField;
+    private JTextField targetFolderField;
 
-	public MovePanel(ClientModel model) {
-		super("Move Object", "Move", model);
-	}
+    public MovePanel(ClientModel model) {
+        super("Move Object", "Move", model);
+    }
 
-	@Override
-	protected void createActionComponents() {
-		JPanel targetFolderPanel = new JPanel(new BorderLayout());
-		targetFolderPanel.setBackground(Color.WHITE);
+    @Override
+    protected void createActionComponents() {
+        JPanel targetFolderPanel = new JPanel(new BorderLayout());
+        targetFolderPanel.setBackground(Color.WHITE);
 
-		targetFolderPanel.add(new JLabel("Target Folder Id:"),
-				BorderLayout.LINE_START);
+        targetFolderPanel.add(new JLabel("Target Folder Id:"), BorderLayout.LINE_START);
 
-		targetFolderField = new JTextField(30);
-		targetFolderPanel.add(targetFolderField, BorderLayout.CENTER);
+        targetFolderField = new JTextField(30);
+        targetFolderPanel.add(targetFolderField, BorderLayout.CENTER);
 
-		addActionComponent(targetFolderPanel);
-	}
+        addActionComponent(targetFolderPanel);
+    }
 
-	@Override
-	public boolean isAllowed() {
-		if ((getObject() == null)
-				|| !(getObject() instanceof FileableCmisObject)) {
-			return false;
-		}
+    @Override
+    public boolean isAllowed() {
+        if ((getObject() == null) || !(getObject() instanceof FileableCmisObject)) {
+            return false;
+        }
 
-		if ((getObject().getAllowableActions() == null)
-				|| (getObject().getAllowableActions().getAllowableActions() == null)) {
-			return true;
-		}
+        if ((getObject().getAllowableActions() == null)
+                || (getObject().getAllowableActions().getAllowableActions() == null)) {
+            return true;
+        }
 
-		return getObject().getAllowableActions().getAllowableActions()
-				.contains(Action.CAN_MOVE_OBJECT);
-	}
+        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_MOVE_OBJECT);
+    }
 
-	@Override
-	public void doAction() throws Exception {
-		ObjectId targetFolderId = new ObjectIdImpl(targetFolderField.getText());
-		((FileableCmisObject) getObject()).move(getClientModel()
-				.getCurrentFolder(), targetFolderId);
-	}
+    @Override
+    public boolean doAction() throws Exception {
+        ObjectId targetFolderId = new ObjectIdImpl(targetFolderField.getText());
+        ((FileableCmisObject) getObject()).move(getClientModel().getCurrentFolder(), targetFolderId);
+        return true;
+    }
 }

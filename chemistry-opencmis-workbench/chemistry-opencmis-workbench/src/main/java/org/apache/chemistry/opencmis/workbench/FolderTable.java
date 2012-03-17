@@ -70,6 +70,8 @@ public class FolderTable extends JTable implements FolderListener {
     private final ClientModel model;
 
     private Map<BaseTypeId, ImageIcon> icons;
+    private ImageIcon checkedOutIcon;
+    private ImageIcon pwcIcon;
 
     public FolderTable(final ClientModel model) {
         super();
@@ -170,6 +172,9 @@ public class FolderTable extends JTable implements FolderListener {
         icons.put(BaseTypeId.CMIS_FOLDER, ClientHelper.getIcon("folder.png"));
         icons.put(BaseTypeId.CMIS_RELATIONSHIP, ClientHelper.getIcon("relationship.png"));
         icons.put(BaseTypeId.CMIS_POLICY, ClientHelper.getIcon("policy.png"));
+
+        checkedOutIcon = ClientHelper.getIcon("checkedout.png");
+        pwcIcon = ClientHelper.getIcon("pwc.png");
     }
 
     public void folderLoaded(ClientModelEvent event) {
@@ -225,6 +230,18 @@ public class FolderTable extends JTable implements FolderListener {
 
             switch (columnIndex) {
             case 0:
+                if (obj instanceof Document) {
+                    Document doc = (Document) obj;
+                    if (Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut())) {
+                        if (doc.getId().equals(doc.getVersionSeriesCheckedOutId())) {
+                            return pwcIcon;
+                        } else {
+                            return checkedOutIcon;
+                        }
+                    } else {
+                        return icons.get(BaseTypeId.CMIS_DOCUMENT);
+                    }
+                }
                 return icons.get(obj.getBaseTypeId());
             case 1:
                 return obj.getName();

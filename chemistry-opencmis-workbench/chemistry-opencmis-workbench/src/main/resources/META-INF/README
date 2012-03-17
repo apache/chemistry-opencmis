@@ -7,6 +7,13 @@ This CMIS client is distributed under the Apache License, version 2.0.
 Please see the NOTICE and LICENSE files for details.
 
 
+Get the latest released CMIS Workbench from here:
+http://chemistry.apache.org/java/download.html
+
+Get the latest nightly build from here:
+https://builds.apache.org/job/Chemistry%20-%20OpenCMIS%20-%20install/ws/trunk/chemistry-opencmis-workbench/chemistry-opencmis-workbench/target/
+
+
 
 System properties reference
 ---------------------------

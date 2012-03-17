@@ -50,7 +50,7 @@ public class RemoveObjectFromFolderPanel extends ActionPanel {
                 folderField.setText("");
             }
         }
-        
+
         super.setVisible(visible);
     }
 
@@ -82,8 +82,9 @@ public class RemoveObjectFromFolderPanel extends ActionPanel {
     }
 
     @Override
-    public void doAction() throws Exception {
+    public boolean doAction() throws Exception {
         ObjectId folderId = getClientModel().getClientSession().getSession().createObjectId(folderField.getText());
         ((FileableCmisObject) getObject()).removeFromFolder(folderId);
+        return true;
     }
 }

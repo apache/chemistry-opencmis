@@ -25,33 +25,33 @@ import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
 
 public class DeleteContentStreamPanel extends ActionPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DeleteContentStreamPanel(ClientModel model) {
-		super("Delete Content Stream", "Delete Content Stream", model);
-	}
+    public DeleteContentStreamPanel(ClientModel model) {
+        super("Delete Content Stream", "Delete Content Stream", model);
+    }
 
-	@Override
-	protected void createActionComponents() {
-	}
+    @Override
+    protected void createActionComponents() {
+    }
 
-	@Override
-	public boolean isAllowed() {
-		if ((getObject() == null) || !(getObject() instanceof Document)) {
-			return false;
-		}
+    @Override
+    public boolean isAllowed() {
+        if ((getObject() == null) || !(getObject() instanceof Document)) {
+            return false;
+        }
 
-		if ((getObject().getAllowableActions() == null)
-				|| (getObject().getAllowableActions().getAllowableActions() == null)) {
-			return true;
-		}
+        if ((getObject().getAllowableActions() == null)
+                || (getObject().getAllowableActions().getAllowableActions() == null)) {
+            return true;
+        }
 
-		return getObject().getAllowableActions().getAllowableActions()
-				.contains(Action.CAN_DELETE_CONTENT_STREAM);
-	}
+        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_DELETE_CONTENT_STREAM);
+    }
 
-	@Override
-	public void doAction() throws Exception {
-		((Document) getObject()).deleteContentStream();
-	}
+    @Override
+    public boolean doAction() throws Exception {
+        ((Document) getObject()).deleteContentStream();
+        return true;
+    }
 }

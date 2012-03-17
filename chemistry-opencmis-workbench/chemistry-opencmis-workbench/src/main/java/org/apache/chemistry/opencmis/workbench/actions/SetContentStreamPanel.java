@@ -29,44 +29,42 @@ import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
 
 public class SetContentStreamPanel extends ActionPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JTextField filenameField;
-	private JCheckBox overwriteBox;
+    private JTextField filenameField;
+    private JCheckBox overwriteBox;
 
-	public SetContentStreamPanel(ClientModel model) {
-		super("Set Content Stream", "Set Content Stream", model);
-	}
+    public SetContentStreamPanel(ClientModel model) {
+        super("Set Content Stream", "Set Content Stream", model);
+    }
 
-	@Override
-	protected void createActionComponents() {
-		filenameField = new JTextField(30);
-		addActionComponent(createFilenamePanel(filenameField));
+    @Override
+    protected void createActionComponents() {
+        filenameField = new JTextField(30);
+        addActionComponent(createFilenamePanel(filenameField));
 
-		overwriteBox = new JCheckBox("overwrite", true);
-		addActionComponent(overwriteBox);
-	}
+        overwriteBox = new JCheckBox("overwrite", true);
+        addActionComponent(overwriteBox);
+    }
 
-	@Override
-	public boolean isAllowed() {
-		if ((getObject() == null) || !(getObject() instanceof Document)) {
-			return false;
-		}
+    @Override
+    public boolean isAllowed() {
+        if ((getObject() == null) || !(getObject() instanceof Document)) {
+            return false;
+        }
 
-		if ((getObject().getAllowableActions() == null)
-				|| (getObject().getAllowableActions().getAllowableActions() == null)) {
-			return true;
-		}
+        if ((getObject().getAllowableActions() == null)
+                || (getObject().getAllowableActions().getAllowableActions() == null)) {
+            return true;
+        }
 
-		return getObject().getAllowableActions().getAllowableActions()
-				.contains(Action.CAN_SET_CONTENT_STREAM);
-	}
+        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_SET_CONTENT_STREAM);
+    }
 
-	@Override
-	public void doAction() throws Exception {
-		ContentStream content = getClientModel().createContentStream(
-				filenameField.getText());
-		((Document) getObject()).setContentStream(content, overwriteBox
-				.isSelected());
-	}
+    @Override
+    public boolean doAction() throws Exception {
+        ContentStream content = getClientModel().createContentStream(filenameField.getText());
+        ((Document) getObject()).setContentStream(content, overwriteBox.isSelected());
+        return true;
+    }
 }

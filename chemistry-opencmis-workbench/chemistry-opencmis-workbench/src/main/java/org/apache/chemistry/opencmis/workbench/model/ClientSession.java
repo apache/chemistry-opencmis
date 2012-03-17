@@ -70,6 +70,8 @@ public class ClientSession {
         FOLDER_PROPERTY_SET.add(PropertyIds.CREATION_DATE);
         FOLDER_PROPERTY_SET.add(PropertyIds.LAST_MODIFIED_BY);
         FOLDER_PROPERTY_SET.add(PropertyIds.LAST_MODIFICATION_DATE);
+        FOLDER_PROPERTY_SET.add(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
+        FOLDER_PROPERTY_SET.add(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID);
     }
 
     private static final Set<String> VERSION_PROPERTY_SET = new HashSet<String>();

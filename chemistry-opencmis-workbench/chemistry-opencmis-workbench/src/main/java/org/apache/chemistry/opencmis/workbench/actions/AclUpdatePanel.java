@@ -25,33 +25,33 @@ import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
 
 public class AclUpdatePanel extends ActionPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public AclUpdatePanel(ClientModel model) {
-		super("Change ACL", "Open ACL Editor", model);
-	}
+    public AclUpdatePanel(ClientModel model) {
+        super("Change ACL", "Open ACL Editor", model);
+    }
 
-	@Override
-	protected void createActionComponents() {
-	}
+    @Override
+    protected void createActionComponents() {
+    }
 
-	@Override
-	public boolean isAllowed() {
-		if (getObject() == null) {
-			return false;
-		}
+    @Override
+    public boolean isAllowed() {
+        if (getObject() == null) {
+            return false;
+        }
 
-		if ((getObject().getAllowableActions() == null)
-				|| (getObject().getAllowableActions().getAllowableActions() == null)) {
-			return true;
-		}
+        if ((getObject().getAllowableActions() == null)
+                || (getObject().getAllowableActions().getAllowableActions() == null)) {
+            return true;
+        }
 
-		return getObject().getAllowableActions().getAllowableActions()
-				.contains(Action.CAN_APPLY_ACL);
-	}
+        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_APPLY_ACL);
+    }
 
-	@Override
-	public void doAction() throws Exception {
-		new AclEditorFrame(getClientModel(), getObject());
-	}
+    @Override
+    public boolean doAction() throws Exception {
+        new AclEditorFrame(getClientModel(), getObject());
+        return false;
+    }
 }
