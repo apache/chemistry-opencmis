@@ -194,7 +194,6 @@
         <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-server</module>
         <!-- <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench-webstart</module> -->
         <module>chemistry-opencmis-dist</module>
-    <module>chemistry-opencmis-javascript-client</module>
   </modules>
 
     <properties>
