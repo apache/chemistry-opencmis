@@ -18,4 +18,4 @@ rem specific language governing permissions and limitations
 rem under the License.
 rem
 rem
-call runcmd.bat --Binding=AtomPub --Command=CreateDocument --RepositoryId=A1 --ContentSizeInKB=25
+call runcmd.bat --Command=CreateDocument --RepositoryId=A1 --ContentSizeInKB=25

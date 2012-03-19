@@ -36,7 +36,7 @@ public class MultiThreadedObjectGenerator {
     private MultiThreadedObjectGenerator() {
     }
 
-    static class ObjectGeneratorRunner implements Runnable {
+    public static class ObjectGeneratorRunner implements Runnable {
         private final Action fAction;
         ObjectGenerator fObjGen;
         private String fRootFolderId;
