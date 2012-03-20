@@ -20,6 +20,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class DummyCallContext implements CallContext {
     public BigInteger getLength() {
         return (BigInteger) get(LENGTH);
     }
-    
+
     public String getPassword() {
         return (String) get(PASSWORD);
     }
@@ -79,5 +80,13 @@ public class DummyCallContext implements CallContext {
 
     public void put(String key, String value) {
         fParameter.put(key, value);
+    }
+
+    public File getTempDirectory() {
+        return null;
+    }
+
+    public int getMemoryThreshold() {
+        return 4 * 1024 * 1024;
     }
 }

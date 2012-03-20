@@ -25,6 +25,8 @@ public class ConfigConstants {
     public static final String REPOSITORY_INFO_CREATOR_CLASS = "InMemoryServer.RepositoryInfoCreatorClass";
     public static final String REPOSITORY_CLASS = "InMemoryServer.Class";
     public static final String OVERRIDE_CALL_CONTEXT = "InMemoryServer.OverrideCallContext";
+    public static final String MEMORY_THRESHOLD = "InMemoryServer.MemoryThreshold";
+    public static final String TEMP_DIR = "InMemoryServer.TempDir";
 
     // Helper constants that allow to fill a repository with data on
     // initialization

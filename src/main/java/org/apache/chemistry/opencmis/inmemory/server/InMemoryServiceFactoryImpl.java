@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
+import java.io.File;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -76,6 +77,10 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     private boolean fUseOverrideCtx = false;
     private StoreManager storeManager; // singleton root of everything
     private CleanManager cleanManager = null;
+    
+    private File tempDir;
+    private int memoryThreshold;
+    
 
     @Override
     public void init(Map<String, String> parameters) {
@@ -98,6 +103,12 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             storeManager = StoreManagerFactory.createInstance(repositoryClassName);
         }
 
+        String tempDirStr = parameters.get(ConfigConstants.TEMP_DIR);
+        tempDir = (tempDirStr == null ? super.getTempDirectory() : new File(tempDirStr));
+        
+        String memoryThresholdStr = parameters.get(ConfigConstants.MEMORY_THRESHOLD);
+        memoryThreshold = (memoryThresholdStr == null ? super.getMemoryThreshold(): Integer.parseInt(memoryThresholdStr));
+        
         Date deploymentTime = new Date();
         String strDate = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US).format(deploymentTime);
 
@@ -107,7 +118,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
         fillRepositoryIfConfigured(parameters);
 
-        Long cleanInterval = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.CLEAN_REPOSITORY_INTERVAL);
+        Long cleanInterval = ConfigurationSettings
+                .getConfigurationValueAsLong(ConfigConstants.CLEAN_REPOSITORY_INTERVAL);
         if (null != cleanInterval && cleanInterval > 0) {
             scheduleCleanRepositoryJob(cleanInterval);
         }
@@ -121,30 +133,41 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
     @Override
     public CmisService getService(CallContext context) {
-      LOG.debug("start getService()");
+        LOG.debug("start getService()");
 
-      // Attach the CallContext to a thread local context that can be
-      // accessed from everywhere
-      // Some unit tests set their own context. So if we find one then we use
-      // this one and ignore the provided one. Otherwise we set a new context.
-      if (fUseOverrideCtx && null != OVERRIDE_CTX) {
-          context = OVERRIDE_CTX;
-      }
+        // Attach the CallContext to a thread local context that can be
+        // accessed from everywhere
+        // Some unit tests set their own context. So if we find one then we use
+        // this one and ignore the provided one. Otherwise we set a new context.
+        if (fUseOverrideCtx && null != OVERRIDE_CTX) {
+            context = OVERRIDE_CTX;
+        }
 
-      CmisServiceWrapper<InMemoryService> wrapperService = threadLocalService.get();
-      if (wrapperService == null) {
-          wrapperService = new CmisServiceWrapper<InMemoryService>(new InMemoryService(
-                  inMemoryServiceParameters, storeManager), DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES,
-                  DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
-          threadLocalService.set(wrapperService);
-      }
+        CmisServiceWrapper<InMemoryService> wrapperService = threadLocalService.get();
+        if (wrapperService == null) {
+            wrapperService = new CmisServiceWrapper<InMemoryService>(new InMemoryService(inMemoryServiceParameters,
+                    storeManager), DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS,
+                    DEFAULT_DEPTH_OBJECTS);
+            threadLocalService.set(wrapperService);
+        }
 
-      wrapperService.getWrappedService().setCallContext(context);
+        wrapperService.getWrappedService().setCallContext(context);
 
-      LOG.debug("stop getService()");
-      return wrapperService.getWrappedService(); // wrapperService;
-  }
+        LOG.debug("stop getService()");
+        return wrapperService.getWrappedService(); // wrapperService;
+    }
 
+    @Override
+    public File getTempDirectory() {
+        return tempDir;
+    }
+
+    @Override
+    public int getMemoryThreshold() {
+        return memoryThreshold;
+    }
+    
+    
     @Override
     public void destroy() {
         if (null != cleanManager) {
@@ -156,7 +179,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     public StoreManager getStoreManger() {
         return storeManager;
     }
-    
+
     private void initStorageManager(Map<String, String> parameters) {
         // initialize in-memory management
         String repositoryClassName = (String) parameters.get(ConfigConstants.REPOSITORY_CLASS);
@@ -187,7 +210,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             }
         }
 
-        // check if a type definitions XML file is configured. if yes import type definitions
+        // check if a type definitions XML file is configured. if yes import
+        // type definitions
         String typeDefsFileName = parameters.get(ConfigConstants.TYPE_XML);
         if (null == typeDefsFileName)
             LOG.info("No file name for type definitions given, no types will be created.");
@@ -204,7 +228,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     }
 
     private void importTypesFromFile(TypeManagerCreatable tmc, String typeDefsFileName) {
-       
+
         InputStream is = this.getClass().getResourceAsStream("/" + typeDefsFileName);
 
         if (null == is) {
@@ -217,11 +241,12 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             TypeDefinition typeDef = null;
             Unmarshaller u = InMemoryJaxbHelper.createUnmarshaller();
             JAXBElement<TypeDefinitions> types = (JAXBElement<TypeDefinitions>) u.unmarshal(is);
-            for (CmisTypeDefinitionType td: types.getValue().getTypeDefinitions()) {
+            for (CmisTypeDefinitionType td : types.getValue().getTypeDefinitions()) {
                 LOG.debug("Found type in file: " + td.getLocalName());
                 typeDef = Converter.convert(td);
                 if (typeDef.getPropertyDefinitions() == null) {
-                    ((AbstractTypeDefinition)typeDef).setPropertyDefinitions( new LinkedHashMap<String, PropertyDefinition<?>>());
+                    ((AbstractTypeDefinition) typeDef)
+                            .setPropertyDefinitions(new LinkedHashMap<String, PropertyDefinition<?>>());
                 }
                 tmc.addTypeDefinition(typeDef);
             }
@@ -231,173 +256,188 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     }
 
     private static List<String> readPropertiesToSetFromConfig(Map<String, String> parameters, String keyPrefix) {
-      List<String> propsToSet = new ArrayList<String>();
-      for (int i = 0;; ++i) {
-          String propertyKey = keyPrefix + Integer.toString(i);
-          String propertyToAdd = parameters.get(propertyKey);
-          if (null == propertyToAdd) {
-            break;
-        } else {
-            propsToSet.add(propertyToAdd);
+        List<String> propsToSet = new ArrayList<String>();
+        for (int i = 0;; ++i) {
+            String propertyKey = keyPrefix + Integer.toString(i);
+            String propertyToAdd = parameters.get(propertyKey);
+            if (null == propertyToAdd) {
+                break;
+            } else {
+                propsToSet.add(propertyToAdd);
+            }
         }
-      }
-      return propsToSet;
+        return propsToSet;
     }
-
 
     private void fillRepositoryIfConfigured(Map<String, String> parameters) {
 
-      class DummyCallContext implements CallContext {
+        class DummyCallContext implements CallContext {
 
-          public String get(String key) {
-              return null;
-          }
+            public String get(String key) {
+                return null;
+            }
 
-          public String getBinding() {
-              return null;
-          }
+            public String getBinding() {
+                return null;
+            }
 
-          public boolean isObjectInfoRequired() {
-              return false;
-          }
+            public boolean isObjectInfoRequired() {
+                return false;
+            }
 
-          public String getRepositoryId() {
-              return null;
-          }
+            public String getRepositoryId() {
+                return null;
+            }
 
-          public String getLocale() {
-              return null;
-          }
+            public String getLocale() {
+                return null;
+            }
 
-          public BigInteger getOffset() {
-              return null;
-          }
+            public BigInteger getOffset() {
+                return null;
+            }
 
-          public BigInteger getLength() {
-              return null;
-          }
+            public BigInteger getLength() {
+                return null;
+            }
 
-          public String getPassword() {
-              return null;
-          }
+            public String getPassword() {
+                return null;
+            }
 
-          public String getUsername() {
-              return null;
-          }
-      }
+            public String getUsername() {
+                return null;
+            }
 
-//      List<String> allAvailableRepositories = storeManager.getAllRepositoryIds();
-      String repositoryId = parameters.get(ConfigConstants.REPOSITORY_ID);
-      String doFillRepositoryStr = parameters.get(ConfigConstants.USE_REPOSITORY_FILER);
-      String contentKindStr = parameters.get(ConfigConstants.CONTENT_KIND);
-      boolean doFillRepository = doFillRepositoryStr == null ? false : Boolean.parseBoolean(doFillRepositoryStr);
+            public File getTempDirectory() {
 
-      if (doFillRepository /* && !allAvailableRepositories.contains(repositoryId) */ ) {
+                return null;
+            }
 
-          // create an initial temporary service instance to fill the repository
-
-          InMemoryService svc = new InMemoryService(inMemoryServiceParameters, storeManager);
-
-          BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
-
-          String levelsStr = parameters.get(ConfigConstants.FILLER_DEPTH);
-          int levels = 1;
-          if (null != levelsStr) {
-            levels = Integer.parseInt(levelsStr);
+            public int getMemoryThreshold() {
+                return 0;
+            }
         }
 
-          String docsPerLevelStr = parameters.get(ConfigConstants.FILLER_DOCS_PER_FOLDER);
-          int docsPerLevel = 1;
-          if (null != docsPerLevelStr) {
-            docsPerLevel = Integer.parseInt(docsPerLevelStr);
-        }
+        // List<String> allAvailableRepositories =
+        // storeManager.getAllRepositoryIds();
+        String repositoryId = parameters.get(ConfigConstants.REPOSITORY_ID);
+        String doFillRepositoryStr = parameters.get(ConfigConstants.USE_REPOSITORY_FILER);
+        String contentKindStr = parameters.get(ConfigConstants.CONTENT_KIND);
+        boolean doFillRepository = doFillRepositoryStr == null ? false : Boolean.parseBoolean(doFillRepositoryStr);
 
-          String childrenPerLevelStr = parameters.get(ConfigConstants.FILLER_FOLDERS_PER_FOLDER);
-          int childrenPerLevel = 2;
-          if (null != childrenPerLevelStr) {
-            childrenPerLevel = Integer.parseInt(childrenPerLevelStr);
-        }
+        if (doFillRepository /*
+                              * &&
+                              * !allAvailableRepositories.contains(repositoryId)
+                              */) {
 
-          String documentTypeId = parameters.get(ConfigConstants.FILLER_DOCUMENT_TYPE_ID);
-          if (null == documentTypeId) {
-            documentTypeId = BaseTypeId.CMIS_DOCUMENT.value();
-        }
+            // create an initial temporary service instance to fill the
+            // repository
 
-          String folderTypeId = parameters.get(ConfigConstants.FILLER_FOLDER_TYPE_ID);
-          if (null == folderTypeId) {
-            folderTypeId = BaseTypeId.CMIS_FOLDER.value();
-        }
+            InMemoryService svc = new InMemoryService(inMemoryServiceParameters, storeManager);
 
-          int contentSizeKB = 0;
-          String contentSizeKBStr = parameters.get(ConfigConstants.FILLER_CONTENT_SIZE);
-          if (null != contentSizeKBStr) {
-            contentSizeKB = Integer.parseInt(contentSizeKBStr);
-        }
-          
-        ObjectGenerator.CONTENT_KIND contentKind;
-        if (null == contentKindStr)
-            contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
-        else {
-            if (contentKindStr.equals("static/text"))
-                contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
-            else if (contentKindStr.equals("lorem/text"))
+            BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
+
+            String levelsStr = parameters.get(ConfigConstants.FILLER_DEPTH);
+            int levels = 1;
+            if (null != levelsStr) {
+                levels = Integer.parseInt(levelsStr);
+            }
+
+            String docsPerLevelStr = parameters.get(ConfigConstants.FILLER_DOCS_PER_FOLDER);
+            int docsPerLevel = 1;
+            if (null != docsPerLevelStr) {
+                docsPerLevel = Integer.parseInt(docsPerLevelStr);
+            }
+
+            String childrenPerLevelStr = parameters.get(ConfigConstants.FILLER_FOLDERS_PER_FOLDER);
+            int childrenPerLevel = 2;
+            if (null != childrenPerLevelStr) {
+                childrenPerLevel = Integer.parseInt(childrenPerLevelStr);
+            }
+
+            String documentTypeId = parameters.get(ConfigConstants.FILLER_DOCUMENT_TYPE_ID);
+            if (null == documentTypeId) {
+                documentTypeId = BaseTypeId.CMIS_DOCUMENT.value();
+            }
+
+            String folderTypeId = parameters.get(ConfigConstants.FILLER_FOLDER_TYPE_ID);
+            if (null == folderTypeId) {
+                folderTypeId = BaseTypeId.CMIS_FOLDER.value();
+            }
+
+            int contentSizeKB = 0;
+            String contentSizeKBStr = parameters.get(ConfigConstants.FILLER_CONTENT_SIZE);
+            if (null != contentSizeKBStr) {
+                contentSizeKB = Integer.parseInt(contentSizeKBStr);
+            }
+
+            ObjectGenerator.CONTENT_KIND contentKind;
+            if (null == contentKindStr)
                 contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
-            else if (contentKindStr.equals("lorem/html"))
-                contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumHtml;
-            else if (contentKindStr.equals("fractal/jpeg"))
-                contentKind = ObjectGenerator.CONTENT_KIND.ImageFractalJpeg;
-            else
-                contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
-        }
-          // Create a hierarchy of folders and fill it with some documents
-            ObjectGenerator gen = new ObjectGenerator(objectFactory, svc, svc, svc, repositoryId,
-                   contentKind);
+            else {
+                if (contentKindStr.equals("static/text"))
+                    contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+                else if (contentKindStr.equals("lorem/text"))
+                    contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
+                else if (contentKindStr.equals("lorem/html"))
+                    contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumHtml;
+                else if (contentKindStr.equals("fractal/jpeg"))
+                    contentKind = ObjectGenerator.CONTENT_KIND.ImageFractalJpeg;
+                else
+                    contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+            }
+            // Create a hierarchy of folders and fill it with some documents
+            ObjectGenerator gen = new ObjectGenerator(objectFactory, svc, svc, svc, repositoryId, contentKind);
 
-          gen.setNumberOfDocumentsToCreatePerFolder(docsPerLevel);
+            gen.setNumberOfDocumentsToCreatePerFolder(docsPerLevel);
 
-          // Set the type id for all created documents:
-          gen.setDocumentTypeId(documentTypeId);
+            // Set the type id for all created documents:
+            gen.setDocumentTypeId(documentTypeId);
 
-          // Set the type id for all created folders:
-          gen.setFolderTypeId(folderTypeId);
+            // Set the type id for all created folders:
+            gen.setFolderTypeId(folderTypeId);
 
-          // Set contentSize
-          gen.setContentSizeInKB(contentSizeKB);
+            // Set contentSize
+            gen.setContentSizeInKB(contentSizeKB);
 
-          // set properties that need to be filled
-          // set the properties the generator should fill with values for
-          // documents:
-          // Note: must be valid properties in configured document and folder type
+            // set properties that need to be filled
+            // set the properties the generator should fill with values for
+            // documents:
+            // Note: must be valid properties in configured document and folder
+            // type
 
-          List<String> propsToSet = readPropertiesToSetFromConfig(parameters, ConfigConstants.FILLER_DOCUMENT_PROPERTY);
-          if (null != propsToSet) {
-            gen.setDocumentPropertiesToGenerate(propsToSet);
-        }
+            List<String> propsToSet = readPropertiesToSetFromConfig(parameters,
+                    ConfigConstants.FILLER_DOCUMENT_PROPERTY);
+            if (null != propsToSet) {
+                gen.setDocumentPropertiesToGenerate(propsToSet);
+            }
 
-          propsToSet = readPropertiesToSetFromConfig(parameters, ConfigConstants.FILLER_FOLDER_PROPERTY);
-          if (null != propsToSet) {
-            gen.setFolderPropertiesToGenerate(propsToSet);
-        }
+            propsToSet = readPropertiesToSetFromConfig(parameters, ConfigConstants.FILLER_FOLDER_PROPERTY);
+            if (null != propsToSet) {
+                gen.setFolderPropertiesToGenerate(propsToSet);
+            }
 
-          // Simulate a runtime context with configuration parameters
-          // Attach the CallContext to a thread local context that can be accessed
-          // from everywhere
-          DummyCallContext ctx = new DummyCallContext();
-          svc.setCallContext(ctx);
+            // Simulate a runtime context with configuration parameters
+            // Attach the CallContext to a thread local context that can be
+            // accessed
+            // from everywhere
+            DummyCallContext ctx = new DummyCallContext();
+            svc.setCallContext(ctx);
 
-          // Build the tree
-          RepositoryInfo rep = svc.getRepositoryInfo(repositoryId, null);
-          String rootFolderId = rep.getRootFolderId();
+            // Build the tree
+            RepositoryInfo rep = svc.getRepositoryInfo(repositoryId, null);
+            String rootFolderId = rep.getRootFolderId();
 
-          try {
-              gen.createFolderHierachy(levels, childrenPerLevel, rootFolderId);
-              // Dump the tree
-              gen.dumpFolder(rootFolderId, "*");
-          } catch (Exception e) {
-              LOG.error("Could not create folder hierarchy with documents. " + e);
-              e.printStackTrace();
-          }
-      } // if
+            try {
+                gen.createFolderHierachy(levels, childrenPerLevel, rootFolderId);
+                // Dump the tree
+                gen.dumpFolder(rootFolderId, "*");
+            } catch (Exception e) {
+                LOG.error("Could not create folder hierarchy with documents. " + e);
+                e.printStackTrace();
+            }
+        } // if
 
     } // fillRepositoryIfConfigured
 
@@ -406,12 +446,12 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         ScheduledFuture<?> cleanerHandle = null;
 
-        public void startCleanRepositoryJob (long intervalInMinutes) {
+        public void startCleanRepositoryJob(long intervalInMinutes) {
 
             final Runnable cleaner = new Runnable() {
                 public void run() {
                     LOG.info("Cleaning repository as part of a scheduled maintenance job.");
-                    for(String repositoryId: storeManager.getAllRepositoryIds()) {
+                    for (String repositoryId : storeManager.getAllRepositoryIds()) {
                         ObjectStore store = storeManager.getObjectStore(repositoryId);
                         store.clear();
                         fillRepositoryIfConfigured(ConfigurationSettings.getParameters());
@@ -422,8 +462,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             };
 
             LOG.info("Repository Clean Job starting clean job, interval " + intervalInMinutes + " min");
-            cleanerHandle =
-                scheduler.scheduleAtFixedRate(cleaner, intervalInMinutes, intervalInMinutes, TimeUnit.MINUTES);
+            cleanerHandle = scheduler.scheduleAtFixedRate(cleaner, intervalInMinutes, intervalInMinutes,
+                    TimeUnit.MINUTES);
         }
 
         public void stopCleanRepositoryJob() {
