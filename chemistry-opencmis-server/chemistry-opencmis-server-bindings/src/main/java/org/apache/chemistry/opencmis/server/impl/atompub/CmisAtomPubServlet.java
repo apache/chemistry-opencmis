@@ -43,6 +43,7 @@ import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_PUT;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -91,6 +92,9 @@ public class CmisAtomPubServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
+    private File tempDir;
+    private int memoryThreshold;
+
     private Dispatcher dispatcher;
     private CallContextHandler callContextHandler;
 
@@ -108,6 +112,13 @@ public class CmisAtomPubServlet extends HttpServlet {
                 throw new ServletException("Could not load call context handler: " + e, e);
             }
         }
+
+        // get memory threshold and temp directory
+        CmisServiceFactory factory = (CmisServiceFactory) config.getServletContext().getAttribute(
+                CmisRepositoryContextListener.SERVICES_FACTORY);
+
+        tempDir = factory.getTempDirectory();
+        memoryThreshold = factory.getMemoryThreshold();
 
         // initialize the dispatcher
         dispatcher = new Dispatcher();
@@ -163,7 +174,7 @@ public class CmisAtomPubServlet extends HttpServlet {
         CallContext context = null;
         try {
             context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_ATOMPUB,
-                    callContextHandler);
+                    callContextHandler, tempDir, memoryThreshold);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {

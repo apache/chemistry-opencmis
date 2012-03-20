@@ -66,6 +66,7 @@ import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_MES
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_STACKTRACE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_BASETYPE_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_TRANSACTION;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.HTML_MIME_TYPE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.JSON_MIME_TYPE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.prepareContext;
@@ -76,6 +77,7 @@ import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
@@ -122,6 +124,9 @@ public class CmisBrowserBindingServlet extends HttpServlet {
 
     private static final Log LOG = LogFactory.getLog(CmisBrowserBindingServlet.class.getName());
 
+    private File tempDir;
+    private int memoryThreshold;
+
     private Dispatcher repositoryDispatcher;
     private Dispatcher rootDispatcher;
     private CallContextHandler callContextHandler;
@@ -140,6 +145,13 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                 throw new ServletException("Could not load call context handler: " + e, e);
             }
         }
+
+        // get memory threshold and temp directory
+        CmisServiceFactory factory = (CmisServiceFactory) config.getServletContext().getAttribute(
+                CmisRepositoryContextListener.SERVICES_FACTORY);
+
+        tempDir = factory.getTempDirectory();
+        memoryThreshold = factory.getMemoryThreshold();
 
         // initialize the dispatchers
         repositoryDispatcher = new Dispatcher(false);
@@ -232,7 +244,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         CallContext context = null;
         try {
             context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_BROWSER,
-                    callContextHandler);
+                    callContextHandler, tempDir, memoryThreshold);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {
@@ -334,7 +346,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                             response);
                 }
             } else if (METHOD_POST.equals(method)) {
-                POSTHttpServletRequestWrapper postRequest = new POSTHttpServletRequestWrapper(request);
+                POSTHttpServletRequestWrapper postRequest = new POSTHttpServletRequestWrapper(request, tempDir,
+                        memoryThreshold);
 
                 String cmisaction = getStringParameter(postRequest, Constants.CONTROL_CMISACTION);
                 String objectId = getStringParameter(postRequest, Constants.CONTROL_OBJECT_ID);
@@ -419,26 +432,35 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             LOG.error(ex.getMessage(), ex);
         }
 
-        setStatus(request, response, statusCode);
-        response.setContentType(JSON_MIME_TYPE);
-        if (context != null) {
-            setCookie(request, response, context.getRepositoryId(), (String) context.get(CONTEXT_TRANSACTION),
-                    createCookieValue(statusCode, null, exceptionName, ex.getMessage()));
-        }
+        String transaction = (context == null ? null : (String) context.get(CONTEXT_TRANSACTION));
 
-        JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put(ERROR_EXCEPTION, exceptionName);
-        jsonResponse.put(ERROR_MESSAGE, ex.getMessage());
+        if (transaction == null) {
+            setStatus(request, response, statusCode);
+            response.setContentType(JSON_MIME_TYPE);
 
-        String st = ExceptionHelper.getStacktraceAsString(ex);
-        if (st != null) {
-            jsonResponse.put(ERROR_STACKTRACE, st);
-        }
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put(ERROR_EXCEPTION, exceptionName);
+            jsonResponse.put(ERROR_MESSAGE, ex.getMessage());
 
-        try {
-            writeJSON(jsonResponse, request, response);
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            String st = ExceptionHelper.getStacktraceAsString(ex);
+            if (st != null) {
+                jsonResponse.put(ERROR_STACKTRACE, st);
+            }
+
+            try {
+                writeJSON(jsonResponse, request, response);
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        } else {
+            setStatus(request, response, HttpServletResponse.SC_OK);
+            response.setContentType(HTML_MIME_TYPE);
+            response.setContentLength(0);
+
+            if (context != null) {
+                setCookie(request, response, context.getRepositoryId(), transaction,
+                        createCookieValue(statusCode, null, exceptionName, ex.getMessage()));
+            }
         }
     }
 }

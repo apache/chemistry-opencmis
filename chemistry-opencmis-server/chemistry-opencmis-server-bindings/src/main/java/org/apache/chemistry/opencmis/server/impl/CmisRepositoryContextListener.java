@@ -125,7 +125,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
 
         factory.init(parameters);
 
-        log.info("Initialized Services Factory: " + parameters);
+        log.info("Initialized Services Factory: " + factory.getClass().getName());
 
         return factory;
     }

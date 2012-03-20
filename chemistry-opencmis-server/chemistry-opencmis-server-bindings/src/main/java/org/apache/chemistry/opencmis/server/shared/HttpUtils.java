@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.shared;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.Map;
@@ -43,7 +44,8 @@ public class HttpUtils {
      * Creates a {@link CallContext} object from a servlet request.
      */
     public static CallContext createContext(HttpServletRequest request, HttpServletResponse response,
-            ServletContext servletContext, String binding, CallContextHandler callContextHandler) {
+            ServletContext servletContext, String binding, CallContextHandler callContextHandler, File tempDir,
+            int memoryThreshold) {
         String[] pathFragments = splitPath(request);
 
         String repositoryId = null;
@@ -67,6 +69,10 @@ public class HttpUtils {
         context.put(CallContext.SERVLET_CONTEXT, servletContext);
         context.put(CallContext.HTTP_SERVLET_REQUEST, request);
         context.put(CallContext.HTTP_SERVLET_RESPONSE, response);
+
+        // temp files
+        context.put(CallContext.TEMP_DIR, tempDir);
+        context.put(CallContext.MEMORY_THRESHOLD, memoryThreshold);
 
         // decode range
         String rangeHeader = request.getHeader("Range");

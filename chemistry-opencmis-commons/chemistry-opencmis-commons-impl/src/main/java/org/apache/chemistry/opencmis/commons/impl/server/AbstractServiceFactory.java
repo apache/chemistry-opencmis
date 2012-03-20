@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.server;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -33,4 +34,19 @@ public abstract class AbstractServiceFactory implements CmisServiceFactory {
     }
 
     public abstract CmisService getService(CallContext context);
+
+    /**
+     * Returns the Java temp directory.
+     */
+    public File getTempDirectory() {
+        String tempDir = System.getProperty("java.io.tmpdir");
+        return new File(tempDir);
+    }
+
+    /**
+     * Returns a threshold of 4 MiB.
+     */
+    public int getMemoryThreshold() {
+        return 4 * 1024 * 1024;
+    }
 }

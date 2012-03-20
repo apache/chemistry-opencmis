@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -48,11 +49,8 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private BigInteger size;
     private InputStream stream;
 
-    public POSTHttpServletRequestWrapper(HttpServletRequest request) throws Exception {
-        this(request, 4 * 1024 * 1024);
-    }
-
-    public POSTHttpServletRequestWrapper(HttpServletRequest request, int memoryThreshold) throws Exception {
+    public POSTHttpServletRequestWrapper(HttpServletRequest request, File tempDir, int memoryThreshold)
+            throws Exception {
         super(request);
 
         parameters = new HashMap<String, String[]>();
@@ -66,8 +64,7 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
         if (isMultipart) {
             if (true) {
                 // multipart processing - the safe way
-                DiskFileItemFactory itemFactory = new DiskFileItemFactory();
-                itemFactory.setSizeThreshold(memoryThreshold);
+                DiskFileItemFactory itemFactory = new DiskFileItemFactory(memoryThreshold, tempDir);
 
                 ServletFileUpload upload = new ServletFileUpload(itemFactory);
                 @SuppressWarnings("unchecked")

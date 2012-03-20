@@ -72,6 +72,7 @@ import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 public class BrowserBindingUtils {
 
     public static final String JSON_MIME_TYPE = "application/json";
+    public static final String HTML_MIME_TYPE = "text/html";
 
     public static final String ROOT_PATH_FRAGMENT = "root";
 
@@ -463,21 +464,28 @@ public class BrowserBindingUtils {
      */
     public static void writeJSON(JSONStreamAware json, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        response.setContentType(JSON_MIME_TYPE);
-        response.setCharacterEncoding("UTF-8");
+        String transaction = getStringParameter(request, Constants.PARAM_TRANSACTION);
 
-        String callback = getStringParameter(request, Constants.PARAM_CALLBACK);
-        if (callback != null) {
-            if (!callback.matches("[A-Za-z0-9._\\[\\]]*")) {
-                throw new CmisInvalidArgumentException("Invalid callback name!");
+        if (transaction == null) {
+            response.setContentType(JSON_MIME_TYPE);
+            response.setCharacterEncoding("UTF-8");
+
+            String callback = getStringParameter(request, Constants.PARAM_CALLBACK);
+            if (callback != null) {
+                if (!callback.matches("[A-Za-z0-9._\\[\\]]*")) {
+                    throw new CmisInvalidArgumentException("Invalid callback name!");
+                }
+                response.getWriter().print(callback + "(");
             }
-            response.getWriter().print(callback + "(");
-        }
 
-        json.writeJSONString(response.getWriter());
+            json.writeJSONString(response.getWriter());
 
-        if (callback != null) {
-            response.getWriter().print(");");
+            if (callback != null) {
+                response.getWriter().print(");");
+            }
+        } else {
+            response.setContentType(HTML_MIME_TYPE);
+            response.setContentLength(0);
         }
 
         response.getWriter().flush();

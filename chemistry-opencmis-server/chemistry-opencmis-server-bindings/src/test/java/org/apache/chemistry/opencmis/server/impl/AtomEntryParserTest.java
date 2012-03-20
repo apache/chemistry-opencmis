@@ -38,6 +38,8 @@ import org.junit.Test;
  */
 public class AtomEntryParserTest {
 
+    private static final int THRESHOLD = 4 * 1024 * 1024;
+
     private static final String CMIS_ENTRY_CONTENT = "This is my content!";
     private static final String CMIS_ENTRY = "<?xml version='1.0' encoding='utf-8'?>"
             + "<atom:entry xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:cmis=\"http://docs.oasis-open.org/ns/cmis/core/200908/\" xmlns:cmisra=\"http://docs.oasis-open.org/ns/cmis/restatom/200908/\">"
@@ -169,7 +171,7 @@ public class AtomEntryParserTest {
 
     @Test
     public void testAtomTitle() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(ATOM_ENTRY_NAME.getBytes()));
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(ATOM_ENTRY_NAME.getBytes()), null, THRESHOLD);
 
         assertNotNull(aep);
         assertNotNull(aep.getObject());
@@ -177,15 +179,15 @@ public class AtomEntryParserTest {
         assertNotNull(aep.getObject().getProperties().getProperties());
         assertNotNull(aep.getObject().getProperties().getProperties().get(PropertyIds.NAME) instanceof PropertyString);
 
-        PropertyString nameProperty = (PropertyString) aep.getObject().getProperties().getProperties().get(
-                PropertyIds.NAME);
+        PropertyString nameProperty = (PropertyString) aep.getObject().getProperties().getProperties()
+                .get(PropertyIds.NAME);
 
         assertEquals("atom.title", nameProperty.getFirstValue());
     }
 
     @Test
     public void testNullStream() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(null);
+        AtomEntryParser aep = new AtomEntryParser(null, null, THRESHOLD);
 
         assertNotNull(aep);
         assertNull(aep.getId());
@@ -196,7 +198,7 @@ public class AtomEntryParserTest {
 
     @Test
     public void testEmptyStream() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]));
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]), null, THRESHOLD);
 
         assertNotNull(aep);
         assertNull(aep.getId());
@@ -206,7 +208,7 @@ public class AtomEntryParserTest {
     }
 
     private static byte[] parse(byte[] entry) throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry));
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), null, THRESHOLD);
         ContentStream contentStream = aep.getContentStream();
 
         assertNotNull(contentStream);

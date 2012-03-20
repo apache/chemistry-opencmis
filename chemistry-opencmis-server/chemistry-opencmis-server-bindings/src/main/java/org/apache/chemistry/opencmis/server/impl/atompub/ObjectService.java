@@ -81,7 +81,7 @@ public final class ObjectService {
         VersioningState versioningState = getEnumParameter(request, Constants.PARAM_VERSIONIG_STATE,
                 VersioningState.class);
 
-        AtomEntryParser parser = new AtomEntryParser();
+        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold());
         parser.setIgnoreAtomContentSrc(true); // needed for some clients
         parser.parse(request.getInputStream());
 
@@ -137,7 +137,8 @@ public final class ObjectService {
     public static void createRelationship(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
+        AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
+                context.getMemoryThreshold());
 
         // execute
         String newObjectId = service.createRelationship(repositoryId, parser.getProperties(), parser.getPolicyIds(),
@@ -447,7 +448,8 @@ public final class ObjectService {
         String checkinComment = getStringParameter(request, Constants.PARAM_CHECKIN_COMMENT);
         Boolean major = getBooleanParameter(request, Constants.PARAM_MAJOR);
 
-        AtomEntryParser parser = new AtomEntryParser(request.getInputStream());
+        AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
+                context.getMemoryThreshold());
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);

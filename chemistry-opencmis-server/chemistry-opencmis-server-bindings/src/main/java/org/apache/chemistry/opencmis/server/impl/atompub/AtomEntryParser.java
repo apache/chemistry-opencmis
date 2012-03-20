@@ -79,6 +79,9 @@ public class AtomEntryParser {
 
     protected boolean ignoreAtomContentSrc;
 
+    private File tempDir;
+    private int memoryThreshold;
+
     private ObjectData object;
     private ContentStreamImpl atomContentStream;
     private ContentStreamImpl cmisContentStream;
@@ -86,13 +89,16 @@ public class AtomEntryParser {
     /**
      * Constructor.
      */
-    public AtomEntryParser() {
+    public AtomEntryParser(File tempDir, int memoryThreshold) {
+        this.tempDir = tempDir;
+        this.memoryThreshold = memoryThreshold;
     }
 
     /**
      * Constructor that immediately parses the given stream.
      */
-    public AtomEntryParser(InputStream stream) throws Exception {
+    public AtomEntryParser(InputStream stream, File tempDir, int memoryThreshold) throws Exception {
+        this(tempDir, memoryThreshold);
         parse(stream);
     }
 
@@ -382,8 +388,8 @@ public class AtomEntryParser {
     /**
      * Parses a tag that contains base64 encoded content.
      */
-    private static ThresholdOutputStream readBase64(XMLStreamReader parser) throws Exception {
-        ThresholdOutputStream bufferStream = new ThresholdOutputStream();
+    private ThresholdOutputStream readBase64(XMLStreamReader parser) throws Exception {
+        ThresholdOutputStream bufferStream = new ThresholdOutputStream(64 * 1024, tempDir, memoryThreshold);
         Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
 
         next(parser);
@@ -580,23 +586,25 @@ public class AtomEntryParser {
     private static class ThresholdOutputStream extends OutputStream {
 
         private static final int MAX_GROW = 10 * 1024 * 1024;
-        // TODO: make threshold configurable
-        private static final int THRESHOLD = 4 * 1024 * 1024;
+        private static final int DEFAULT_THRESHOLD = 4 * 1024 * 1024;
+
+        private File tempDir;
+        private int memoryThreshold;
 
         private byte[] buf = null;
         private int bufSize = 0;
         private long size;
-        private File tmpFile;
+        private File tempFile;
         private OutputStream tmpStream;
 
-        public ThresholdOutputStream() {
-            this(64 * 1024);
-        }
-
-        public ThresholdOutputStream(int initSize) {
+        public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold) {
             if (initSize < 0) {
                 throw new IllegalArgumentException("Negative initial size: " + initSize);
             }
+
+            this.tempDir = tempDir;
+            this.memoryThreshold = (memoryThreshold < 0 ? DEFAULT_THRESHOLD : memoryThreshold);
+
             buf = new byte[initSize];
         }
 
@@ -605,15 +613,15 @@ public class AtomEntryParser {
                 return;
             }
 
-            if (bufSize + nextBufferSize > THRESHOLD) {
+            if (bufSize + nextBufferSize > memoryThreshold) {
                 if (tmpStream == null) {
-                    tmpFile = File.createTempFile("opencmis", null);
-                    tmpStream = new FileOutputStream(tmpFile);
+                    tempFile = File.createTempFile("opencmis", null, tempDir);
+                    tmpStream = new FileOutputStream(tempFile);
                 }
                 tmpStream.write(buf, 0, bufSize);
 
-                if (buf.length != THRESHOLD) {
-                    buf = new byte[THRESHOLD];
+                if (buf.length != memoryThreshold) {
+                    buf = new byte[memoryThreshold];
                 }
                 bufSize = 0;
 
@@ -685,8 +693,8 @@ public class AtomEntryParser {
                 // ignore
             }
 
-            if (tmpFile != null) {
-                tmpFile.delete();
+            if (tempFile != null) {
+                tempFile.delete();
             }
 
             buf = null;
@@ -769,7 +777,7 @@ public class AtomEntryParser {
             private boolean isDeleted = false;
 
             public InternalTempFileInputStream() throws FileNotFoundException {
-                super(new BufferedInputStream(new FileInputStream(tmpFile), THRESHOLD));
+                super(new BufferedInputStream(new FileInputStream(tempFile), 64 * 1024));
             }
 
             @Override
@@ -783,7 +791,7 @@ public class AtomEntryParser {
 
                 if (b == -1 && !isDeleted) {
                     super.close();
-                    isDeleted = tmpFile.delete();
+                    isDeleted = tempFile.delete();
                 }
 
                 return b;
@@ -800,7 +808,7 @@ public class AtomEntryParser {
 
                 if (n == -1 && !isDeleted) {
                     super.close();
-                    isDeleted = tmpFile.delete();
+                    isDeleted = tempFile.delete();
                 }
 
                 return n;
@@ -810,7 +818,7 @@ public class AtomEntryParser {
             public void close() throws IOException {
                 if (!isDeleted) {
                     super.close();
-                    isDeleted = tmpFile.delete();
+                    isDeleted = tempFile.delete();
                 }
             }
         }

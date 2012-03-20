@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,6 +76,14 @@ public class CallContextImpl implements CallContext {
         return (BigInteger) get(LENGTH);
     }
 
+    public File getTempDirectory() {
+        return (File) get(TEMP_DIR);
+    }
+
+    public int getMemoryThreshold() {
+        return (Integer) get(MEMORY_THRESHOLD);
+    }
+
     /**
      * Adds a parameter.
      */
@@ -88,5 +97,4 @@ public class CallContextImpl implements CallContext {
     public Object remove(String key) {
         return parameter.remove(key);
     }
-
 }

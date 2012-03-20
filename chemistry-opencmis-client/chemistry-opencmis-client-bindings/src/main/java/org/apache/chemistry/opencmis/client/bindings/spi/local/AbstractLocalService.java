@@ -20,6 +20,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -135,6 +136,14 @@ public abstract class AbstractLocalService {
 
         public boolean isObjectInfoRequired() {
             return false;
+        }
+
+        public File getTempDirectory() {
+            return null;
+        }
+
+        public int getMemoryThreshold() {
+            return 0;
         }
     }
 }

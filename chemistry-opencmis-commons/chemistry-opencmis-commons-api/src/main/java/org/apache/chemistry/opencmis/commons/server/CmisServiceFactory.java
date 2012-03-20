@@ -20,6 +20,7 @@
  */
 package org.apache.chemistry.opencmis.commons.server;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -44,4 +45,22 @@ public interface CmisServiceFactory {
      * {@link CmisService#close()} will be called.
      */
     CmisService getService(CallContext context);
+
+    /**
+     * Returns the absolute path of the directory that should be used for
+     * temporary files.
+     * 
+     * @return absolute path of temp directory
+     */
+    File getTempDirectory();
+
+    /**
+     * Returns up to which size content should be kept in memory. Documents
+     * bigger than this threshold will be cached in a temporary directory.
+     * 
+     * @return the threshold in bytes
+     * 
+     * @see CmisServiceFactory#getTempDirectory()
+     */
+    int getMemoryThreshold();
 }

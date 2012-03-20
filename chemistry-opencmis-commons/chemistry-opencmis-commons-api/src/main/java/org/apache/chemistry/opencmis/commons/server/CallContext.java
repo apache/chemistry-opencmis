@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.server;
 
+import java.io.File;
 import java.math.BigInteger;
 
 /**
@@ -42,6 +43,9 @@ public interface CallContext {
     String SERVLET_CONTEXT = "servletContext";
     String HTTP_SERVLET_REQUEST = "httpServletRequest";
     String HTTP_SERVLET_RESPONSE = "httpServletResponse";
+
+    String TEMP_DIR = "tempDir";
+    String MEMORY_THRESHOLD = "memoryThreshold";
 
     /**
      * Returns the binding. Usually it returns
@@ -94,4 +98,14 @@ public interface CallContext {
      * Returns the content length if set, <code>null</code> otherwise
      */
     BigInteger getLength();
+
+    /**
+     * Returns the temp directory.
+     */
+    File getTempDirectory();
+
+    /**
+     * Returns the memory threshold.
+     */
+    int getMemoryThreshold();
 }
