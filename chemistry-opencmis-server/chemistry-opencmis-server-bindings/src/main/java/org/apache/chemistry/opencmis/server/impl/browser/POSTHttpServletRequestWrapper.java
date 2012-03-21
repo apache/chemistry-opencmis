@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,7 +27,6 @@ import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,12 +34,10 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStream;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.util.Streams;
 
 public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private final boolean isMultipart;
@@ -62,58 +60,63 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
         isMultipart = ServletFileUpload.isMultipartContent(request);
 
         if (isMultipart) {
-            if (true) {
-                // multipart processing - the safe way
-                DiskFileItemFactory itemFactory = new DiskFileItemFactory(memoryThreshold, tempDir);
+            ServletFileUpload upload = new ServletFileUpload();
+            FileItemIterator iter = upload.getItemIterator(request);
 
-                ServletFileUpload upload = new ServletFileUpload(itemFactory);
-                @SuppressWarnings("unchecked")
-                List<FileItem> fileItems = upload.parseRequest(request);
+            while (iter.hasNext()) {
+                FileItemStream item = iter.next();
+                String name = item.getFieldName();
+                InputStream itemStream = new BufferedInputStream(item.openStream());
 
-                for (FileItem item : fileItems) {
-                    if (item.isFormField()) {
-                        addParameter(item.getFieldName(), item.getString());
-                    } else {
-                        filename = item.getName();
-                        contentType = (item.getContentType() == null ? Constants.MEDIATYPE_OCTETSTREAM : item
-                                .getContentType());
-                        size = BigInteger.valueOf(item.getSize());
-                        stream = item.getInputStream();
-                    }
-                }
-            } else {
-                // multipart processing - optimized but unsafe
-                // big content is not buffered on disk but has to be the last
-                // part of the request
-                // code is parked here until we find a way to make it safe
+                if (item.isFormField()) {
+                    InputStreamReader reader = new InputStreamReader(itemStream, "UTF-8");
 
-                ServletFileUpload upload = new ServletFileUpload();
-                FileItemIterator iter = upload.getItemIterator(request);
+                    try {
+                        StringBuilder sb = new StringBuilder();
 
-                while (iter.hasNext()) {
-                    FileItemStream item = iter.next();
-                    String name = item.getFieldName();
-                    InputStream itemStream = item.openStream();
-
-                    if (item.isFormField()) {
-                        addParameter(name, Streams.asString(itemStream));
-                    } else {
-                        filename = item.getName();
-                        contentType = (item.getContentType() == null ? Constants.MEDIATYPE_OCTETSTREAM : item
-                                .getContentType());
-
-                        if (item.getHeaders() != null) {
-                            String lengthStr = item.getHeaders().getHeader("Content-Length");
-                            if (lengthStr != null) {
-                                try {
-                                    size = new BigInteger(lengthStr);
-                                } catch (NumberFormatException e) {
-                                }
-                            }
+                        char[] buffer = new char[64 * 1024];
+                        int b = 0;
+                        while ((b = reader.read(buffer)) > -1) {
+                            sb.append(buffer, 0, b);
                         }
 
-                        stream = itemStream;
-                        break;
+                        addParameter(name, sb.toString());
+                    } finally {
+                        try {
+                            reader.close();
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+                } else {
+                    filename = item.getName();
+                    contentType = (item.getContentType() == null ? Constants.MEDIATYPE_OCTETSTREAM : item
+                            .getContentType());
+
+                    ThresholdOutputStream os = new ThresholdOutputStream(tempDir, memoryThreshold);
+
+                    try {
+                        byte[] buffer = new byte[64 * 1024];
+                        int b = 0;
+                        while ((b = itemStream.read(buffer)) > -1) {
+                            os.write(buffer, 0, b);
+                        }
+
+                        os.close();
+
+                        size = BigInteger.valueOf(os.getSize());
+                        stream = os.getInputStream();
+                    } catch (Exception e) {
+                        // if something went wrong, make sure the temp file will
+                        // be deleted
+                        os.destroy();
+                        throw e;
+                    } finally {
+                        try {
+                            itemStream.close();
+                        } catch (Exception e) {
+                            // ignore
+                        }
                     }
                 }
             }
